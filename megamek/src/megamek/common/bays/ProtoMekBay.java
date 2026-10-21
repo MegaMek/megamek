@@ -84,7 +84,7 @@ public final class ProtoMekBay extends UnitBay {
      * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
-    public boolean canLoad(Entity unit) {
+    public boolean canLoad(Entity unit, int usableDoors) {
         // Assume that we cannot carry the unit, unless it is a ProtoMek
         boolean result = unit instanceof ProtoMek;
 
@@ -95,7 +95,7 @@ public final class ProtoMekBay extends UnitBay {
         }
 
         // is the door functional
-        if (doors <= loadedThisTurn) {
+        if (usableDoors <= loadedThisTurn) {
             result = false;
         }
 

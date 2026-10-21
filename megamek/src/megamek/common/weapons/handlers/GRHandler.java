@@ -80,7 +80,7 @@ public class GRHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(
                   toReturn, getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),

@@ -128,11 +128,11 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
 
         if ((target instanceof Entity)
-              && ((Entity) target).hasActiveBlueShield()) {
+              && ((Entity) target).hasActiveBlueShield() && !isTargetShieldedByCapitalBuilding()) {
             toReturn = (int) Math.max(Math.floor(toReturn / 2.0), 1);
         }
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -142,7 +142,7 @@ public class PPCHandler extends EnergyWeaponHandler {
             toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
+        toReturn = applyGlancingBlowModifier(toReturn, usesConventionalInfantryDamage());
 
         return (int) Math.ceil(toReturn);
     }

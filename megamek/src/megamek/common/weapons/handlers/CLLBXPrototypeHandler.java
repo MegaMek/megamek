@@ -45,7 +45,6 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -73,7 +72,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
 
@@ -93,8 +92,8 @@ public class CLLBXPrototypeHandler extends LBXHandler {
         } else {
             // flat modifier of -1, because of prototype
             nHitsModifier -= 1;
-            PlanetaryConditions conditions = game.getPlanetaryConditions();
-            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
+            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier,
+                  attackingEntity.isAffectedByEMI(target.getPosition()));
         }
 
         Report r = new Report(3325);

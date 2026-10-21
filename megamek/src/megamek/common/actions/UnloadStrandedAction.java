@@ -48,11 +48,19 @@ public class UnloadStrandedAction extends AbstractEntityAction {
     @Serial
     private static final long serialVersionUID = -8319076127334875298L;
     private final int playerId;
+    private final megamek.common.board.Coords exitPosition;
 
     public UnloadStrandedAction(int playerId, int entityId) {
+        this(playerId, entityId, null);
+    }
+
+    public UnloadStrandedAction(int playerId, int entityId, megamek.common.board.Coords exitPosition) {
         super(entityId);
         this.playerId = playerId;
+        this.exitPosition = exitPosition;
     }
+
+    public megamek.common.board.Coords getExitPosition() { return exitPosition; }
 
     public int getPlayerId() {
         return playerId;

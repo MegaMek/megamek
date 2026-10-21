@@ -36,7 +36,11 @@ package megamek.common.loaders;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -45,10 +49,13 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
+import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class BLKStructureFileTest {
@@ -68,6 +75,36 @@ public class BLKStructureFileTest {
         AbstractBuildingEntity e = getBuildingEntity(FILENAME_SIMPLE_BUILDING_ENTITY);
         assertEquals(0, e.getOArmor(0), "Failed to load tonnage");
         assertEquals(9, e.getEquipment().size(), "Failed to load equipment");
+    }
+
+    @Test
+    void equipmentAboveAShorterMobileHexIsNotLoaded() throws Exception {
+        String file = Files.readString(Path.of("testresources/megamek/common/units/MekBayMobileStructure.blk"));
+        // The second hex is one level tall (hex_heights), so level 2 of it is not part of the structure
+        String aboveTheHex = "\n<Level 2 1.0,0.0,-1.0 Equipment>\nISMediumLaser\n</Level 2 1.0,0.0,-1.0 Equipment>\n";
+        BuildingBlock block = new BuildingBlock(
+              new ByteArrayInputStream((file + aboveTheHex).getBytes(StandardCharsets.UTF_8)));
+        AbstractBuildingEntity mobile = (AbstractBuildingEntity) new BLKStructureFile(block).getEntity();
+        assertEquals(1, mobile.getInternalBuilding().getHeight(new CubeCoords(1, 0, -1)));
+        assertTrue(mobile.getEquipment().stream().noneMatch(mounted -> mounted.getType() instanceof ISLaserMedium));
+        assertEquals(1, mobile.getWeaponList().size(), "the level 0 weapon of the short hex still loads");
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "-1, 20", "0, 0", "17, 17" })
+    void buildingAmmoRetainsDefaultAndExplicitStartingLoads(int authoredShots, int expectedShots) throws Exception {
+        AbstractBuildingEntity building = getBuildingEntity(FILENAME_SIMPLE_BUILDING_ENTITY);
+        BuildingBlock block = new BuildingBlock();
+        block.writeBlockData("Audit Equipment", "IS Ammo AC/5"
+              + (authoredShots < 0 ? "" : ":Shots" + authoredShots + "#"));
+        BLKFile loader = new BLKFile();
+        loader.dataFile = block;
+        loader.loadEquipment(building, "Audit", 0);
+
+        var ammo = building.getAmmo().getLast();
+        assertEquals(expectedShots, ammo.getBaseShotsLeft());
+        assertEquals(expectedShots, ammo.getOriginalShots());
+        assertEquals(1.0, ammo.getTonnage(), "Starting load does not resize the building's ammo bin");
     }
 
     static Stream<Arguments> buildingTestData() {
@@ -303,9 +340,8 @@ public class BLKStructureFileTest {
      * @return The location index, or -1 if not found
      */
     private int getLocationByName(AbstractBuildingEntity building, String locationName) {
-        String[] locationNames = building.getLocationNames();
-        for (int i = 0; i < locationNames.length; i++) {
-            if (locationNames[i].equals(locationName)) {
+        for (int i = 0; i < building.locations(); i++) {
+            if (building.getConstructionLocationName(i).equals(locationName)) {
                 return i;
             }
         }

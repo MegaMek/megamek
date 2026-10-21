@@ -38,10 +38,10 @@ import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.fo
 import java.util.function.Predicate;
 
 import megamek.common.MPCalculationSetting;
-import megamek.common.board.Coords;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
+import megamek.common.units.MobileStructure;
 
 /**
  * Battle Value calculator for Structures (AbstractBuildingEntity).
@@ -63,7 +63,9 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
     @Override
     protected void processArmor() {
         // Structures use Armor Factor × 2.5
-        int armorFactor = entity.getOArmor(0);
+        AbstractBuildingEntity building = (AbstractBuildingEntity) entity;
+        int armorFactor = building.getInternalBuilding().getOriginalCoordsList().stream()
+              .mapToInt(building.getInternalBuilding()::getArmor).sum();
         double armorBV = armorFactor * 2.5;
 
         defensiveValue += armorBV;
@@ -77,9 +79,9 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
         // Structures use Construction Factor (CF) × 1.5
         AbstractBuildingEntity building = (AbstractBuildingEntity) entity;
 
-        if (!building.getCoordsList().isEmpty()) {
-            Coords firstHex = building.getCoordsList().getFirst();
-            int cf = building.getCurrentCF(firstHex);
+        if (!building.getInternalBuilding().getOriginalCoordsList().isEmpty()) {
+            int cf = building.getInternalBuilding().getOriginalCoordsList().stream()
+                  .mapToInt(building.getInternalBuilding()::getCurrentCF).sum();
             double cfBV = cf * 1.5;
 
             defensiveValue += cfBV;
@@ -128,6 +130,15 @@ public class AbstractBuildingEntityBVCalculator extends BVCalculator {
     protected int offensiveSpeedFactorMP() {
         // Use maximum MP rating for speed factor
         return entity.getRunMP(MPCalculationSetting.BV_CALCULATION);
+    }
+
+    @Override
+    public double getOffensiveSpeedFactorMultiplier() {
+        if (entity instanceof MobileStructure mobile) {
+            // The shared movement engine stores quarters; BV uses the printed maximum MP (TO:AUE p.191).
+            return Math.round(Math.pow(1 + ((mobile.getMaximumMP() - 5) / 10.0), 1.2) * 100.0) / 100.0;
+        }
+        return super.getOffensiveSpeedFactorMultiplier();
     }
 
 }

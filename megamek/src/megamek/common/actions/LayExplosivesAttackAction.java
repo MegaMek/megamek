@@ -110,7 +110,7 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-        if ((target.getTargetType() != Targetable.TYPE_BUILDING)
+        if ((!Targetable.isBuildingType(target.getTargetType()))
               && (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "You can only target structures (buildings, bridges, fuel tanks)");

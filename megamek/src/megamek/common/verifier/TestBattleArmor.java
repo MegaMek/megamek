@@ -1047,7 +1047,7 @@ public class TestBattleArmor extends TestEntity {
             correct = false;
         }
 
-        for (int t = 1; t < ba.getSquadSize(); t++) {
+        for (int t = 1; t <= ba.getSquadSize(); t++) {
             double trooperWeight = calculateWeight(t);
             if (trooperWeight > ba.getTrooperWeight()) {
                 buff.append("Trooper ")
@@ -1231,7 +1231,7 @@ public class TestBattleArmor extends TestEntity {
             // Equipment assigned to this trooper but not mounted shouldn't be
             // counted, unless it's squad-level equipment
             if ((m.getLocation() == trooper) && (trooper != BattleArmor.LOC_SQUAD)
-                  && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE)) {
+                  && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE) && !m.isDWPMounted()) {
                 continue;
             }
 
@@ -1264,7 +1264,8 @@ public class TestBattleArmor extends TestEntity {
             // counted, unless it's squad-level equipment
             if ((m.getLocation() == trooper)
                   && (trooper != BattleArmor.LOC_SQUAD)
-                  && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE)) {
+                  && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE)
+                  && ((m.getLinkedBy() == null) || !m.getLinkedBy().isDWPMounted())) {
                 continue;
             }
             double modifier = 1;
@@ -1307,7 +1308,7 @@ public class TestBattleArmor extends TestEntity {
     @Override
     public double calculateWeightExact() {
         double totalWeight = 0.0;
-        for (int i = 0; i < ba.getSquadSize(); i++) {
+        for (int i = 1; i <= ba.getSquadSize(); i++) {
             totalWeight += calculateWeight(i);
         }
         return totalWeight;

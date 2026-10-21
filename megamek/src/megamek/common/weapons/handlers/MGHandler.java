@@ -78,7 +78,7 @@ public class MGHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn = nDamPerHit;
-        if (weapon.isRapidFire() && !(target.isConventionalInfantry())) {
+        if (weapon.isRapidFire() && !(usesConventionalInfantryDamage())) {
             // Check for rapid fire Option. Only MGs can be rapid fire.
             // nDamPerHit was already set in useAmmo
             toReturn = applyGlancingBlowModifier(toReturn, false);
@@ -88,7 +88,7 @@ public class MGHandler extends AmmoWeaponHandler {
                       toReturn * 2);
             }
         } else {
-            if (target.isConventionalInfantry()) {
+            if (usesConventionalInfantryDamage()) {
                 toReturn = Compute.directBlowInfantryDamage(
                       weaponType.getDamage(), getInfantryDamageClassShift(),
                       resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -147,7 +147,7 @@ public class MGHandler extends AmmoWeaponHandler {
         Report r = new Report(3220);
         r.subject = subjectId;
         vPhaseReport.add(r);
-        if (weapon.isRapidFire() && !target.isConventionalInfantry()) {
+        if (weapon.isRapidFire() && !usesConventionalInfantryDamage()) {
             r.newlines = 0;
             r = new Report(3225);
             r.subject = subjectId;

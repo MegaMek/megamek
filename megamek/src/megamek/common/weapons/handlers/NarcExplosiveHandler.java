@@ -76,7 +76,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         getAMSHitsMod(vPhaseReport);
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 return ((BattleArmor) attackingEntity).getShootingStrength();
@@ -144,7 +144,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         } else {
             toReturn = 4;
         }
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(WeaponType.WEAPON_DIRECT_FIRE),
@@ -153,7 +153,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             toReturn = Math.ceil(toReturn);
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
+        toReturn = applyGlancingBlowModifier(toReturn, usesConventionalInfantryDamage());
         return (int) toReturn;
     }
 }

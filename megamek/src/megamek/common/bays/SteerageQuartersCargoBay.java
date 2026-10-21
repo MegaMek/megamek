@@ -101,7 +101,7 @@ public final class SteerageQuartersCargoBay extends Bay {
      * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
-    public boolean canLoad(Entity unit) {
+    public boolean canLoad(Entity unit, int usableDoors) {
         // Assume that we cannot carry the unit.
         return false;
     }

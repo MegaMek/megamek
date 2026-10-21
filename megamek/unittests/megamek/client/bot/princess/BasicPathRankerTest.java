@@ -1872,6 +1872,7 @@ class BasicPathRankerTest {
         final Board mockBoard = mock(Board.class);
         final Hex mockHex = new Hex();
         when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
+        when(mockBoard.getBuildingsVector()).thenReturn(new Vector<>());
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         when(mockBoard.isSpace()).thenReturn(false);
         when(mockBoard.isGround()).thenReturn(true);

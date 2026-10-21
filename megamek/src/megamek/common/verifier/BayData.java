@@ -306,7 +306,8 @@ public enum BayData {
             return en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         } else {
             return en.hasETypeFlag(Entity.ETYPE_TANK)
-                  || en.hasETypeFlag(Entity.ETYPE_AERO);
+                  || en.hasETypeFlag(Entity.ETYPE_AERO)
+                  || en.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY);
         }
     }
 

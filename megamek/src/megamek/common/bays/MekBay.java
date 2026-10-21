@@ -41,7 +41,6 @@ import megamek.common.TechAdvancement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
@@ -71,12 +70,12 @@ public final class MekBay extends UnitBay {
     }
 
     @Override
-    public boolean canLoad(Entity unit) {
+    public boolean canLoad(Entity unit, int usableDoors) {
         boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MEK);
         boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode()
               == LandAirMek.CONV_MODE_MEK);
         boolean loadableOtherMek = (unit instanceof Mek) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMek);
-        return (getUnused() >= 1) && (doors > loadedThisTurn) && !unit.isSuperHeavy() && (loadableLAM || loadableQuadVee || loadableOtherMek);
+        return (getUnused() >= 1) && (usableDoors > loadedThisTurn) && !unit.isSuperHeavy() && (loadableLAM || loadableQuadVee || loadableOtherMek);
     }
 
     @Override

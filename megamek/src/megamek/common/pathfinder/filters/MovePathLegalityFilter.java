@@ -53,10 +53,11 @@ public class MovePathLegalityFilter extends Filter<MovePath> {
 
     @Override
     public boolean shouldStay(MovePath edge) {
-        if (edge.getEntity().isAero()) {
+        if (edge.getEntity().isAero() || edge.getEntity() instanceof megamek.common.units.MobileStructure) {
             /*
              * isMovementPossible is currently not working for aero units,
-             * so we have to use a substitute.
+             * and mobile steps already validate their complete footprint and quarter-MP commitments.
+             * Generic movement/deployment restrictions must not reject their legal collisions or pivots.
              */
             if (edge.length() == 0) {
                 return true;

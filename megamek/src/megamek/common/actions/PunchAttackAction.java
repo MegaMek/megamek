@@ -282,7 +282,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+        if ((Targetable.isBuildingType(target.getTargetType()))
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
               || (target.isBuildingEntityOrGunEmplacement())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,

@@ -59,6 +59,15 @@ public class GameCFREvent extends GameEvent {
     private int eId;
 
     private int targetId;
+    private List<Integer> buildingWeaponIds = List.of();
+
+    public List<Integer> getBuildingWeaponIds() {
+        return buildingWeaponIds;
+    }
+
+    public void setBuildingWeaponIds(List<Integer> ids) {
+        buildingWeaponIds = List.copyOf(ids);
+    }
 
     /**
      * The equipment number for the AMS used in AMS_ASSIGN CFRs.
@@ -225,8 +234,8 @@ public class GameCFREvent extends GameEvent {
     public void setTAGTargetTypes(List<Integer> targetTypes) {
         tagTargetTypes = new ArrayList<>(targetTypes);
     }
-    
+
     public void setDirection(int direction) { this.direction = direction;}
-    
+
     public int getDirection() { return direction; }
 }

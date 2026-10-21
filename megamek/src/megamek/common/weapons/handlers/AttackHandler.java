@@ -129,9 +129,9 @@ public interface AttackHandler {
     default int getBuildingDamageAdjustment(Entity entityTarget, IBuilding bldg,
           boolean targetStickingOutOfBuilding,
           int nDamage) {
-        // some buildings scale remaining damage that is not absorbed
-        // TODO: this isn't quite right for castles brian
-        if ((bldg != null) && !targetStickingOutOfBuilding && (entityTarget.isInBuilding())) {
+        // Castles Brian resolve external hits through the building's threshold rule; internal combat stays unscaled.
+        if ((bldg != null) && !bldg.usesCapitalScale()
+              && !targetStickingOutOfBuilding && (entityTarget.isInBuilding())) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
         return nDamage;

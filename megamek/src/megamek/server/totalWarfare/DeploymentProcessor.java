@@ -101,7 +101,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         }
 
         DeploymentServerHelper deploymentServerHelper = new DeploymentServerHelper(gameManager);
-        boolean isLegalLocation = deploymentServerHelper.isLegalDeployment(coords, boardId, entity, nFacing);
+        boolean isLegalLocation = deploymentServerHelper.isLegalDeployment(coords, boardId, entity, nFacing, elevation);
 
         if ((turn == null) || !turn.isValid(connId, entity, getGame())
               // FIXME: The combination with assault drop and the assault drop check dont look right:

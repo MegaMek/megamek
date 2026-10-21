@@ -74,7 +74,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
 
@@ -124,7 +124,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),

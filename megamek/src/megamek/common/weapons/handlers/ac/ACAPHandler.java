@@ -95,7 +95,7 @@ public class ACAPHandler extends ACWeaponHandler {
         }
         // Resolve damage normally.
         int nDamage = nDamPerHit * Math.min(nCluster, hits);
-        if (bDirect && !target.isConventionalInfantry()) {
+        if (bDirect && !usesConventionalInfantryDamage()) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
         }
 

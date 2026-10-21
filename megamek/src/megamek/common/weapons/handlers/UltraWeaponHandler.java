@@ -115,7 +115,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump BAs can't mount UACS/RACs
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
 
@@ -257,7 +257,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = weaponType.getDamage();
         // infantry get hit by all shots
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (howManyShots > 1) { // Is this a cluster attack?
                 // Compute maximum damage potential for cluster weapons
                 toReturn = howManyShots * weaponType.getDamage();

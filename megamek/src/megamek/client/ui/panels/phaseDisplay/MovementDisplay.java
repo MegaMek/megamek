@@ -118,6 +118,8 @@ import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.moves.BuildingRoofEntry;
 import megamek.common.moves.ClimbingHelper;
+import megamek.common.moves.MobileStructureAirMovement;
+import megamek.common.moves.MobileStructureMovement;
 import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
@@ -163,6 +165,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     // Command used only in menus and has no associated button
     public static final int CMD_NO_BUTTON = 1 << 8;
     public static final int CMD_PROTOMEK = 1 << 9;
+    public static final int CMD_MOBILE = 1 << 10;
 
     // Convenience defines for common combinations
     public static final int CMD_AERO_BOTH = CMD_AERO | CMD_AERO_VECTORED;
@@ -181,6 +184,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
+    private int mobileLinkActionEntity = Entity.NONE;
     private int originalFacing = -1;
 
     // Deployment settings.
@@ -337,7 +341,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_SUB_STANDARD = 0;
     public static final int GEAR_SUB_MEK_BOOSTERS = 2;
 
-    public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2dMP%s";
+    public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2sMP%s";
 
     /**
      * Creates and lays out a new movement phase display for the specified clientGUI.getClient().
@@ -551,7 +555,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         int flag = CMD_MEK;
         // Chain of Instance Of Tests that should be refactored using either polymorphism or something else.
         if (currentlySelectedEntity != null) {
-            if (currentlySelectedEntity instanceof Infantry) {
+            if (currentlySelectedEntity instanceof megamek.common.units.MobileStructure) {
+                flag = CMD_TANK | CMD_MOBILE;
+            } else if (currentlySelectedEntity instanceof Infantry) {
                 flag = CMD_INF;
             } else if (currentlySelectedEntity instanceof VTOL) {
                 flag = CMD_VTOL;
@@ -645,7 +651,31 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /**
      * Selects an entity, by number, for movement.
      */
+    private int mobileAvoidanceEntity = Entity.NONE;
+
+    public void beginMobileCollisionAvoidance(int entityId) {
+        mobileAvoidanceEntity = entityId;
+        beginMyTurn();
+        selectEntity(entityId);
+        setNextEnabled(false);
+        setForwardIniEnabled(false);
+        clientgui.addToast(ToastLevel.INFO, Messages.getString("MovementDisplay.MobileAvoidance"), currentEntity());
+    }
+
+    private boolean hasMovementControl() {
+        return mobileAvoidanceEntity != Entity.NONE || clientgui.getClient().isMyTurn();
+    }
+
+    @Override
+    public boolean shouldReceiveKeyCommands() {
+        return mobileLinkActionEntity == Entity.NONE && hasMovementControl()
+              && !clientgui.isChatBoxActive() && !isIgnoringEvents() && isVisible();
+    }
+
     public void selectEntity(int entityID) {
+        if (mobileAvoidanceEntity != Entity.NONE && entityID != mobileAvoidanceEntity) {
+            return;
+        }
         final Entity oldEntity = currentEntity();
         if (oldEntity != null) {
             clear(false);
@@ -704,7 +734,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // see the unit's position and surrounding hexes before being prompted.
         // The Descend button (MOVE_DESCEND) provides a backup way to reopen the
         // dialog if the player closes it without choosing.
-        if ((selectedEntity instanceof Mek climbingMek) && climbingMek.isClimbing()) {
+        if ((selectedEntity instanceof Mek climbingMek) && climbingMek.isClimbing()
+              && climbingMek.getOccupiedWall() == null) {
             SwingUtilities.invokeLater(() -> promptContinueClimbing(climbingMek));
         }
 
@@ -996,6 +1027,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateRACButton();
         updateSearchlightButton();
         updateLoadButtons();
+        boolean mobileAtStart = selectedUnit instanceof megamek.common.units.MobileStructure && cmd.length() == 0;
+        getBtn(MoveCommand.MOVE_MODULE_LINK).setEnabled(mobileAtStart
+              && !megamek.common.moves.MobileStructureLinkage.candidates((megamek.common.units.MobileStructure) selectedUnit).isEmpty());
+        getBtn(MoveCommand.MOVE_MODULE_UNLINK).setEnabled(mobileAtStart
+              && !megamek.common.moves.MobileStructureLinkage.partners((megamek.common.units.MobileStructure) selectedUnit).isEmpty());
         updateElevationButtons();
         updateElevatorButtons();
         updateTakeOffButtons();
@@ -1182,7 +1218,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void addStepToMovePath(MoveStepType moveStep) {
-        cmd.addStep(moveStep);
+        if (currentEntity() instanceof megamek.common.units.MobileStructure mobile
+              && (moveStep == MoveStepType.TURN_LEFT || moveStep == MoveStepType.TURN_RIGHT)) {
+            var pivots = megamek.common.moves.MobileStructureGeometry.pivots(mobile);
+            List<String> labels = pivots.stream().map(h -> cmd.getFinalCoords().toCube()
+                  .add(megamek.common.moves.MobileStructureLinkage.rotate(h, cmd.getFinalFacing())).toOffset().getBoardNum()).toList();
+            String choice = labels.getFirst();
+            if (labels.size() > 1) {
+                choice = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                      Messages.getString("MovementDisplay.MobilePivot"), Messages.getString("MovementDisplay.MobilePivot"),
+                      JOptionPane.QUESTION_MESSAGE, null, labels.toArray(), choice);
+                if (choice == null) {
+                    return;
+                }
+            }
+            var pivot = pivots.get(labels.indexOf(choice));
+            cmd.addStep(moveStep, Map.of(MoveStep.MOBILE_PIVOT_Q_KEY, (int) pivot.q(),
+                  MoveStep.MOBILE_PIVOT_R_KEY, (int) pivot.r()));
+        } else {
+            cmd.addStep(moveStep);
+        }
         updateMove();
     }
 
@@ -1715,9 +1770,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank())
                                || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
             boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC()
-                                  || (!(currentEntity instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
-            String moveMsg = Messages.getString("MovementDisplay.Move") + " (" + mp + "MP)" + (psrCheck ? "*" : "")
-                             + (damageCheck ? "!" : "");
+                  || (!(currentEntity instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
+            String moveMsg = Messages.getString("MovementDisplay.Move") + " ("
+                  + SharedUtility.formatMovementPoints(currentEntity, mp) + "MP)" + (psrCheck ? "*" : "")
+                  + (damageCheck ? "!" : "");
             updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, computeTurnDetails());
         }
     }
@@ -1750,12 +1806,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // switching to a new move type, so write a line
             if (accumTypeCount != 0) {
                 turnDetails.add(String.format(turnDetailsFormat,
-                                              accumLegal ? validTextColor : invalidTextColor,
-                                              accumTypeCount == 1 ? "" : "x" + accumTypeCount,
-                                              accumType,
-                                              unicodeIcon,
-                                              accumMP,
-                                              "*".repeat(accumDanger)));
+                      accumLegal ? validTextColor : invalidTextColor,
+                      accumTypeCount == 1 ? "" : "x" + accumTypeCount,
+                      accumType,
+                      unicodeIcon,
+                      SharedUtility.formatMovementPoints(cmd.getEntity(), accumMP),
+                      "*".repeat(accumDanger)));
             }
 
             // switching to a new move type, reset
@@ -1776,9 +1832,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // add line for last moves
         turnDetails.add(String.format(turnDetailsFormat,
-                                      accumLegal ? validTextColor : invalidTextColor,
-                                      accumTypeCount == 1 ? "" : "x" + accumTypeCount,
-                                      accumType, unicodeIcon, accumMP, "*".repeat(accumDanger)));
+              accumLegal ? validTextColor : invalidTextColor,
+              accumTypeCount == 1 ? "" : "x" + accumTypeCount,
+              accumType, unicodeIcon, SharedUtility.formatMovementPoints(cmd.getEntity(), accumMP),
+              "*".repeat(accumDanger)));
         return turnDetails;
     }
 
@@ -2519,9 +2576,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (needNagForOther()) {
             boolean landOrVerticalLand = cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VERTICAL_LAND);
             if ((currentlySelectedEntity != null) && landOrVerticalLand) {
-                Set<Coords> landingPath = ((IAero) currentlySelectedEntity).getLandingCoords(cmd.contains(MoveStepType.VERTICAL_LAND),
-                                                                                             cmd.getFinalCoords(),
-                                                                                             cmd.getFinalFacing());
+                Set<Coords> landingPath = currentlySelectedEntity instanceof megamek.common.units.MobileStructure mobile
+                      ? new HashSet<>(megamek.common.moves.MobileStructureAirMovement.footprint(mobile))
+                      : ((IAero) currentlySelectedEntity).getLandingCoords(cmd.contains(MoveStepType.VERTICAL_LAND),
+                            cmd.getFinalCoords(), cmd.getFinalFacing());
                 if (landingPath.stream()
                                .map(c -> game.getBoard(currentEntity()).getHex(c))
                                .filter(Objects::nonNull)
@@ -2562,6 +2620,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         cmd.clipToPossible();
+
+        if (mobileAvoidanceEntity != Entity.NONE) {
+            if (cmd.isJumping() || cmd.getMpUsed() > currentEntity.getWalkMP()) {
+                clientgui.addToast(ToastLevel.WARNING, Messages.getString("MovementDisplay.MobileAvoidanceWalk"),
+                      currentEntity);
+                return;
+            }
+            clientgui.getClient().sendMobileAvoidanceCFRResponse(mobileAvoidanceEntity, cmd);
+            mobileAvoidanceEntity = Entity.NONE;
+            endMyTurn();
+            return;
+        }
+
+        if (currentEntity instanceof megamek.common.units.MobileStructure mobile && mobile.isWaterStructure()
+              && !mobile.isImmobile()) {
+            List<Double> speeds = new ArrayList<>();
+            for (int q = Math.max(0, mobile.getWaterSpeedQuarters() - 4);
+                  q <= Math.min(mobile.getMaximumMPQuarters(), mobile.getWaterSpeedQuarters() + 4); q++) {
+                speeds.add(q / 4.0);
+            }
+            Double speed = (Double) JOptionPane.showInputDialog(clientgui.getFrame(),
+                  Messages.getString("MovementDisplay.MobileSpeed"), Messages.getString("MovementDisplay.MobileSpeedTitle"),
+                  JOptionPane.QUESTION_MESSAGE, null, speeds.toArray(),
+                  speeds.get(Math.clamp(cmd.getMpUsed() - Math.max(0, mobile.getWaterSpeedQuarters() - 4),
+                        0, speeds.size() - 1)));
+            if (speed == null) {
+                return;
+            }
+            cmd.setMobileSpeedQuarters((int) (speed * 4));
+        }
 
         if (checkNags()) {
             return;
@@ -2604,7 +2692,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
                              int boardId) {
         if (shiftHeld || (gear == GEAR_TURN)) {
             if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {
-                cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
+                if (currentEntity() instanceof MobileStructure mobile) {
+                    if (cmd.getFinalCoords().equals(dest)) {
+                        return;
+                    }
+                    int destFacing = cmd.getFinalCoords().direction(dest);
+                    while (cmd.getFinalFacing() != destFacing && cmd.getMpUsed() < mobile.getWalkMP()
+                          && (cmd.getLastStep() == null
+                                || cmd.getLastStep().getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)) {
+                        int previousFacing = cmd.getFinalFacing();
+                        addStepToMovePath(MovePath.getDirection(previousFacing, destFacing));
+                        // Canceling the pivot chooser leaves the existing path unchanged.
+                        if (cmd.getFinalFacing() == previousFacing) {
+                            break;
+                        }
+                    }
+                } else {
+                    cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
+                }
             }
         } else if ((gear == GEAR_JUMP) && (jumpSubGear == GEAR_SUB_MEK_BOOSTERS)) {
             if (cmd.getFinalBoardId() != boardId) {
@@ -2803,7 +2908,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     //
     @Override
     public synchronized void hexMoused(BoardViewEvent boardViewEvent) {
-        if (clientgui == null) {
+        if (clientgui == null || mobileLinkActionEntity != Entity.NONE) {
             return;
         }
 
@@ -2819,7 +2924,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                          && game.useVectorMove();
 
         // ignore buttons other than 1
-        if (!clientgui.getClient().isMyTurn() || ((boardViewEvent.getButton() != MouseEvent.BUTTON1))) {
+        if (!hasMovementControl() || ((boardViewEvent.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
@@ -3138,7 +3243,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                                                      .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
                                                                              cmd.getHexesMoved());
                         } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK) ||
-                                   (target.getTargetType() == Targetable.TYPE_BUILDING)) {
+                              (Targetable.isBuildingType(target.getTargetType()))) {
                             IBuilding bldg = game.getBoard(currentlySelectedEntity).getBuildingAt(moveto);
                             toAttacker = ChargeAttackAction.getDamageTakenBy(currentlySelectedEntity, bldg, moveto);
                         }
@@ -3539,6 +3644,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
+        if (currentEntity instanceof MobileStructure mobile) {
+            Coords position = cmd.getFinalCoords();
+            int facing = cmd.getFinalFacing();
+            int elevation = cmd.getFinalElevation();
+            boolean canChangeElevation = position != null && cmd.getFinalBoardId() == mobile.getBoardId()
+                  && !mobile.isImmobile() && cmd.getMpUsed() < mobile.getWalkMP()
+                  && (cmd.getLastStep() == null
+                        || cmd.getLastStep().getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)
+                  && (mobile.getMovementMode() == EntityMovementMode.SUBMARINE
+                        || mobile.getMovementMode() == EntityMovementMode.VTOL);
+            setRaiseEnabled(canChangeElevation && MobileStructureMovement.cost(game, mobile,
+                  position, facing, elevation, position, facing, elevation + 1) != MobileStructureMovement.PROHIBITED);
+            setLowerEnabled(canChangeElevation && MobileStructureMovement.cost(game, mobile,
+                  position, facing, elevation, position, facing, elevation - 1) != MobileStructureMovement.PROHIBITED);
+            return;
+        }
+
         if (currentEntity.isAirborne()) {
             // then use altitude not elevation
             if (cmd.getFinalAltitude() == 0) {
@@ -3625,7 +3747,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        IndustrialElevator elevator = game.getIndustrialElevator(BoardLocation.of(finalPos, finalBoardId));
+        IndustrialElevator elevator = game.getIndustrialElevator(BoardLocation.of(finalPos, finalBoardId), finalElevation);
         if (elevator == null) {
             LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: elevator terrain at {} but no elevator "
                          + "registered with the game", currentEntity.getShortName(), finalPos);
@@ -3643,7 +3765,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setElevatorDownEnabled(false);
             return;
         }
-        int currentLoad = (int) elevator.getCurrentLoad(game);
+        double currentLoad = elevator.getCurrentLoad(game);
         if (currentLoad > elevator.getCapacityTons()) {
             LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: elevator at {} overloaded ({}t / {}t)",
                          currentEntity.getShortName(), finalPos, currentLoad, elevator.getCapacityTons());
@@ -3704,6 +3826,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         final Entity currentEntity = currentEntity();
+        if (currentEntity instanceof megamek.common.units.MobileStructure mobile) {
+            setTakeOffEnabled(false);
+            setVTakeOffEnabled(megamek.common.moves.MobileStructureAirMovement.canAttempt(mobile, MoveStepType.VERTICAL_TAKE_OFF));
+            return;
+        }
         if ((currentEntity instanceof IAero aero)
             && currentEntity.isAero()
             && !currentEntity.isAirborne()
@@ -3741,6 +3868,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         Entity selectedEntity = currentEntity();
+        if (selectedEntity instanceof megamek.common.units.MobileStructure mobile) {
+            setVLandEnabled(megamek.common.moves.MobileStructureAirMovement.canAttempt(mobile, MoveStepType.VERTICAL_LAND));
+            return;
+        }
         if ((selectedEntity == null) || !selectedEntity.isAero() || !(selectedEntity instanceof IAero aero)) {
             return;
         }
@@ -3759,10 +3890,50 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (selectedEntity.isAirborne() && (altitudeAboveTerrain(selectedEntity) == 1)) {
+        boolean atDeckAltitude = false;
+        if (selectedEntity.isAirborne()) {
+            int landingBoardId = game.isOnGroundMap(selectedEntity) ? selectedEntity.getBoardId() : groundMapAtAtmosphericHex();
+            atDeckAltitude = isAtFlightDeckAltitude(selectedEntity, landingBoardId);
+        }
+        if (selectedEntity.isAirborne() && (altitudeAboveTerrain(selectedEntity) == 1 || atDeckAltitude)) {
             setLandEnabled(aero.canLandHorizontally());
             setVLandEnabled(aero.canLandVertically());
         }
+    }
+
+    /**
+     * @param selectedEntity the airborne unit that may land
+     * @param landingBoardId the board the selected airborne unit would land on
+     *
+     * @return {@code true} if the selected unit flies at the altitude of a building flight deck on the landing board.
+     *       On a ground map the unit must also be over one of that deck's hexes.
+     */
+    private boolean isAtFlightDeckAltitude(Entity selectedEntity, int landingBoardId) {
+        boolean isOnGroundMap = game.isOnGroundMap(selectedEntity);
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!(entity instanceof AbstractBuildingEntity building) || (building.getBoardId() != landingBoardId)) {
+                continue;
+            }
+            for (BuildingFlightDeckRules.Deck deck : BuildingFlightDeckRules.decks(building)) {
+                boolean isOverThisDeck = !isOnGroundMap || deck.hexes().contains(selectedEntity.getPosition());
+                if (isOverThisDeck && isDeckAtAltitude(deck, selectedEntity.getAltitude())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** @return {@code true} if any hex of the flight deck lies at the given aerospace altitude */
+    private static boolean isDeckAtAltitude(BuildingFlightDeckRules.Deck deck, int altitude) {
+        for (Coords deckHex : deck.hexes()) {
+            int deckAltitude = MobileStructureAirMovement.aerospaceAltitude(deck.carrier(), deckHex,
+                  deck.carrier().getHeight(deckHex));
+            if (deckAltitude == altitude) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private int altitudeAboveTerrain(Entity aero) {
@@ -3794,6 +3965,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateHoverButton() {
         final Entity currentEntity = currentEntity();
         if (currentEntity == null) {
+            return;
+        }
+        if (currentEntity instanceof megamek.common.units.MobileStructure mobile) {
+            setHoverEnabled(megamek.common.moves.MobileStructureAirMovement.isAirborne(mobile)
+                  && !mobile.isImmobile() && !cmd.contains(MoveStepType.HOVER));
             return;
         }
 
@@ -4022,6 +4198,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
+        if (currentEntity instanceof MobileStructure mobile
+              && !megamek.common.units.MobileStructureBayLaunch.available(mobile, cmd.getFinalCoords(),
+                    cmd.getFinalFacing(), cmd.getFinalElevation())) {
+            setLaunchEnabled(false);
+            return;
+        }
         setLaunchEnabled(!currentEntity.getLaunchableFighters().isEmpty() ||
                          !currentEntity.getLaunchableSmallCraft().isEmpty() ||
                          !currentEntity.getLaunchableDropships().isEmpty());
@@ -4849,12 +5031,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void updateLoadButton() {
         final Entity currentEntity = currentEntity();
-        if (currentEntity == null) {
+        if (currentEntity == null || !currentEntity.isDeployed()) {
             setLoadEnabled(false);
             return;
         }
-        if (!currentEntity.isDeployed() || (currentEntity.getWalkMP() <= 0 && !currentEntity.isAerospace()) || (
-                currentEntity.isAerospace() && currentEntity.isAirborne())) {
+        if (currentEntity instanceof MobileStructure mobile) {
+            setLoadEnabled(MobileStructureCargoRules.loadableUnits(mobile,
+                  new megamek.common.moves.MobileStructureLinkage.Pose(cmd.getFinalCoords(), cmd.getFinalFacing(),
+                        cmd.getFinalElevation())).stream().anyMatch(cargo -> cargo.getTargetBay() == UNSET_BAY));
+            return;
+        }
+        if ((currentEntity.getWalkMP() <= 0 && !currentEntity.isAerospace()) || (
+              currentEntity.isAerospace()
+                    && currentEntity.isAirborne())) {
             setLoadEnabled(false);
             return;
         }
@@ -4897,6 +5086,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         setUnloadButtonLabel(MoveCommand.MOVE_UNLOAD.getCmd());
+        if (currentEntity instanceof MobileStructure mobile) {
+            var pose = new megamek.common.moves.MobileStructureLinkage.Pose(cmd.getFinalCoords(), cmd.getFinalFacing(),
+                  cmd.getFinalElevation());
+            setUnloadEnabled(unloadableUnits.stream().anyMatch(cargo -> !MobileStructureCargoRules.exits(mobile, cargo, pose).isEmpty()));
+            return;
+        }
         if ((currentEntity instanceof SmallCraft) || currentEntity.isSupportVehicle()) {
             // A grounded carrier's Unload also offers the units only its cranes can unload (TW p.91), and the units
             // the cranes are already unloading, so that work can be stopped
@@ -4984,40 +5179,32 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateMountButton() {
         final Entity movingEntity = currentEntity();
-        if ((movingEntity != null) && CraneRules.isCraneOnlyUnit(movingEntity)) {
+        if (movingEntity != null && CraneRules.isCraneOnlyUnit(movingEntity)
+              && megamek.common.units.BuildingFlightDeckRules.onDeck(movingEntity) == null) {
             updateLoadByCraneButton(movingEntity);
             return;
         }
         setMountButtonLabel(MoveCommand.MOVE_MOUNT.getCmd());
-        if ((movingEntity == null) || (movingEntity instanceof SmallCraft)) {
+        if ((movingEntity == null) || (movingEntity instanceof SmallCraft
+              && megamek.common.units.BuildingFlightDeckRules.onDeck(movingEntity) == null)) {
             setMountEnabled(false);
             return;
         }
 
         final Coords pos = finalPosition();
         int elev = movingEntity.getElevation();
-        int mpUsed = movingEntity.mpUsed;
         if (cmd != null) {
             elev = cmd.getFinalElevation();
-            mpUsed = cmd.getMpUsed();
         }
-        final boolean hasMountableUnit = isFinalPositionOnBoard() &&
-              !Compute.getMountableUnits(movingEntity, pos, finalBoardId(),
+        final List<Entity> mountableUnits = isFinalPositionOnBoard()
+              ? Compute.getMountableUnits(movingEntity, pos, finalBoardId(),
                     elev + game.getBoard(movingEntity).getHex(pos).getLevel(),
-                    game).isEmpty();
-        // Same rule the MOUNT step enforces on the path, so the button only lights when the mount would be legal
-        final boolean isJumping = (cmd != null) && cmd.isJumping();
-        final MountPathHelper.MountRestriction restriction = MountPathHelper.mountRestriction(movingEntity,
-              movingEntity.getWalkMP(), mpUsed, isJumping);
-        final boolean canMount = hasMountableUnit &&
-              !movingEntity.isAirborne() &&
-              (restriction == MountPathHelper.MountRestriction.NONE);
-        if (hasMountableUnit) {
-            // Only logged next to a transport, when the player expects the button, so the log is not flooded
-            LOGGER.debug("[Mount] {}: Mount button {} (MP used {} of Walking MP {}, jumping {}, restriction {})",
-                  movingEntity.getDisplayName(), canMount ? "enabled" : "disabled", mpUsed,
-                  movingEntity.getWalkMP(), isJumping, restriction);
-        }
+                    game) : List.of();
+        // Compile against the actual carrier: a building's flight deck can stow units that require cranes elsewhere.
+        final MovePath path = cmd != null ? cmd : new MovePath(game, movingEntity);
+        final boolean canMount = !movingEntity.isAirborne() && mountableUnits.stream().anyMatch(carrier ->
+              path.clone().addStep(MoveStepType.MOUNT, carrier).getLastStepMovementType()
+                    != EntityMovementType.MOVE_ILLEGAL);
         setMountEnabled(canMount);
     }
 
@@ -5317,7 +5504,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             elev += hex.getLevel();
         }
 
-        List<Entity> mountableUnits = Compute.getMountableUnits(currentEntity, pos, finalBoardId(), elev, game);
+        MovePath path = cmd != null ? cmd : new MovePath(game, currentEntity);
+        List<Entity> mountableUnits = Compute.getMountableUnits(currentEntity, pos, finalBoardId(), elev, game).stream()
+              .filter(carrier -> path.clone().addStep(MoveStepType.MOUNT, carrier).getLastStepMovementType()
+                    != EntityMovementType.MOVE_ILLEGAL)
+              .toList();
 
         // Handle error condition.
         if (mountableUnits.isEmpty()) {
@@ -5386,13 +5577,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity choice;
 
         Vector<Entity> choices = new Vector<>();
-        for (Coords coords : Compute.getLoadableCoords(currentEntity(), finalPosition(), finalBoardId())) {
-            for (Entity other : game.getEntitiesVector(coords)) {
-                // Only allow selecting units that aren't already getting loaded
-                if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, true,
-                      cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)
-                      && !CraneRules.mustBoardByCrane(currentEntity(), other)) {
-                    choices.addElement(other);
+        if (currentEntity() instanceof MobileStructure mobile) {
+            choices.addAll(MobileStructureCargoRules.loadableUnits(mobile,
+                  new megamek.common.moves.MobileStructureLinkage.Pose(cmd.getFinalCoords(), cmd.getFinalFacing(),
+                        cmd.getFinalElevation())).stream().filter(cargo -> cargo.getTargetBay() == UNSET_BAY).toList());
+        } else {
+            for (Coords coords : Compute.getLoadableCoords(currentEntity(), finalPosition(), finalBoardId())) {
+                for (Entity other : game.getEntitiesVector(coords)) {
+                    // Only allow selecting units that aren't already getting loaded
+                    if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, true,
+                          cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)
+                          && !CraneRules.mustBoardByCrane(currentEntity(), other)) {
+                        choices.addElement(other);
+                    }
                 }
             }
         }
@@ -5437,8 +5634,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         List<Integer> bayChoices = new ArrayList<>();
         for (Transporter transporter : currentEntity().getTransports()) {
-            if (transporter.canLoad(choice) && (transporter instanceof Bay)) {
-                bayChoices.add(((Bay) transporter).getBayNumber());
+            if (transporter instanceof Bay bay) {
+                if (currentEntity() instanceof MobileStructure mobile
+                      && !MobileStructureCargoRules.mountingBays(mobile, choice, choice.getPosition(),
+                            choice.getGame().getBoard(choice).getHex(choice.getPosition()).getLevel() + choice.getElevation(),
+                            new megamek.common.moves.MobileStructureLinkage.Pose(cmd.getFinalCoords(), cmd.getFinalFacing(),
+                                  cmd.getFinalElevation()))
+                            .contains(transporter)) { continue; }
+                if (!(currentEntity() instanceof MobileStructure) && !bay.canLoad(choice)) { continue; }
+                bayChoices.add(bay.getBayNumber());
             }
         }
 
@@ -5799,7 +6003,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private List<Coords> unloadPositions(Entity unloaded) {
         Entity currentEntity = currentEntity();
         if (currentEntity == null) {
-            return null;
+            return List.of();
+        }
+        if (currentEntity instanceof MobileStructure mobile) {
+            var pose = new megamek.common.moves.MobileStructureLinkage.Pose(cmd.getFinalCoords(), cmd.getFinalFacing(),
+                  cmd.getFinalElevation());
+            return MobileStructureCargoRules.exits(mobile, unloaded, pose).stream()
+                  .map(MobileStructureCargoRules.Exit::position).toList();
         }
         // we need to allow the user to select a hex for offloading
         Coords pos = currentEntity.getPosition();
@@ -5860,8 +6070,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @return The position to unload to
      */
     private @Nullable Coords getUnloadPosition(Entity unloaded) {
-        Entity currentEntity = currentEntity();
-        List<Coords> ring = unloadPositions(unloaded);
+        return chooseUnloadPosition(currentEntity(), unloadPositions(unloaded));
+    }
+
+    private @Nullable Coords chooseUnloadPosition(Entity currentEntity, List<Coords> ring) {
         if (ring.isEmpty()) {
             clientgui.addToast(ToastLevel.ERROR,
                                Messages.getString("MovementDisplay.NoPlaceToUnload.message"), currentEntity());
@@ -5964,7 +6176,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // not where you are, but where you will be
                 loadedPos = Compute.getFinalPosition(currentEntity.getPosition(), cmd.getFinalVectors());
             }
-            boolean isGood = false;
+            boolean isGood = !megamek.common.moves.MobileStructureBayRecovery.candidates(currentEntity, cmd).isEmpty();
+            if (isGood) {
+                setRecoverEnabled(true);
+            }
             for (Entity other : game.getEntitiesVector(loadedPos)) {
                 // Is the other unit friendly and not the current entity? must be done with its movement it also must
                 // be the same heading and velocity
@@ -6106,7 +6321,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
              * that these excess fighters will be distributed equally among
              * available doors
              */
-            doors = currentBay.getCurrentDoors();
+            doors = currentBay.getUsableDoors();
             if (currentFighters.isEmpty()) {
                 bayNum++;
                 continue;
@@ -6437,6 +6652,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LOGGER.error("MovementDisplay#getRecoveryUnits() called without a valid entity");
             return NO_UNIT_SELECTED;
         }
+        choices.addAll(megamek.common.moves.MobileStructureBayRecovery.candidates(currentEntity, cmd));
+
         // collect all possible choices
         Coords loadedPos = cmd.getFinalCoords();
         if (game.useVectorMove()) {
@@ -6867,6 +7084,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
     // GameListener
     //
     @Override
+    public void gameEntityChange(megamek.common.event.entity.GameEntityChangeEvent event) {
+        if (mobileLinkActionEntity != Entity.NONE && event.getEntity().getId() == mobileLinkActionEntity) {
+            int entityId = mobileLinkActionEntity;
+            mobileLinkActionEntity = Entity.NONE;
+            SwingUtilities.invokeLater(() -> selectEntity(entityId));
+        }
+    }
+
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -6900,7 +7126,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().isMyTurn()) {
+        if (hasMovementControl()) {
             // Can the player unload entities stranded on immobile transports?
             if (clientgui.getClient().canUnloadStranded()) {
                 unloadStranded();
@@ -6933,7 +7159,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().isMyTurn() && !game.getPhase().isMovement()) {
+        if (hasMovementControl() && !game.getPhase().isMovement()) {
             endMyTurn();
         }
 
@@ -7213,7 +7439,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        if (!clientgui.getClient().isMyTurn()) {
+        if (!hasMovementControl()) {
             // odd...
             return;
         }
@@ -7571,6 +7797,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
                 gear = MovementDisplay.GEAR_LAND;
             } // else - didn't find a unit to load
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODULE_LINK.getCmd())
+              || actionCmd.equals(MoveCommand.MOVE_MODULE_UNLINK.getCmd())) {
+            if (currentEntity() instanceof megamek.common.units.MobileStructure mobile && cmd.length() == 0) {
+                boolean linking = actionCmd.equals(MoveCommand.MOVE_MODULE_LINK.getCmd());
+                List<Entity> choices = new ArrayList<>(linking ? megamek.common.moves.MobileStructureLinkage.candidates(mobile)
+                      : megamek.common.moves.MobileStructureLinkage.partners(mobile));
+                if (!choices.isEmpty()) {
+                    String choice = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                          Messages.getString("MovementDisplay.ModulePartner"), Messages.getString("MovementDisplay." + actionCmd),
+                          JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(choices), null);
+                    Entity other = (Entity) SharedUtility.getTargetPicked(choices, choice);
+                    if (other != null) {
+                        MovePath action = new MovePath(game, mobile);
+                        action.addStep(linking ? MoveStepType.MODULE_LINK : MoveStepType.MODULE_UNLINK, other);
+                        mobileLinkActionEntity = mobile.getId();
+                        disableButtons();
+                        clientgui.getClient().moveEntity(mobile.getId(), action);
+                    }
+                }
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_TOW.getCmd())) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
@@ -7593,7 +7839,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       waitingForCarrier.getDisplayName());
                 addStepToMovePath(MoveStepType.STOP_CRANE_OPERATION, waitingForCarrier);
                 ready();
-            } else if (CraneRules.isCraneOnlyUnit(currentEntity())) {
+            } else if (CraneRules.isCraneOnlyUnit(currentEntity())
+                  && megamek.common.units.BuildingFlightDeckRules.onDeck(currentEntity()) == null) {
                 // For VTOLs, fighters and small craft the Mount button reads Load by Crane (TW p.90)
                 SmallCraft carrier = CraneCommandDialogs.chooseCarrier(clientgui.getFrame(), currentEntity(),
                       CraneRules.carriersInReach(currentEntity(), game));
@@ -7620,7 +7867,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else if (other != null) {
                 // A unit leaving a VTOL or WiGE that has not landed stays in its hex (TW p.225, errata v12.0)
                 boolean unloadsIntoCarrierHex = isCarrierAirborneAtEndOfPath(currentEntity());
-                if (!unloadsIntoCarrierHex && (!other.isInfantry() ||
+                if (!unloadsIntoCarrierHex && (!other.isInfantry() || currentEntity() instanceof MobileStructure ||
                     currentEntity() instanceof SmallCraft ||
                     (currentEntity().isSupportVehicle() && (currentEntity().getWeightClass()
                                                             == EntityWeightClass.WEIGHT_LARGE_SUPPORT))
@@ -8278,15 +8525,31 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                  names);
 
         // Convert the indexes into selected entity IDs and tell the server.
-        int[] ids = null;
-        if (indexes != null) {
-            ids = new int[indexes.length];
-            for (int index = 0; index < indexes.length; index++) {
+        List<Integer> chosenIds = new ArrayList<>();
+        Map<Integer, Coords> exits = new HashMap<>();
+        if (null != indexes) {
+            for (int index : indexes) {
                 entity = stranded.elementAt(index);
-                ids[index] = entity.getId();
+                transport = game.getEntity(entity.getTransportId());
+                if (transport instanceof MobileStructure mobile) {
+                    List<Coords> exitPositions = new ArrayList<>();
+                    for (MobileStructureCargoRules.Exit exit : MobileStructureCargoRules.exits(mobile, entity)) {
+                        exitPositions.add(exit.position());
+                    }
+                    Coords destination = chooseUnloadPosition(mobile, exitPositions);
+                    if (destination == null) {
+                        continue;
+                    }
+                    exits.put(entity.getId(), destination);
+                }
+                chosenIds.add(entity.getId());
             }
         }
-        clientgui.getClient().sendUnloadStranded(ids);
+        int[] chosenIdArray = new int[chosenIds.size()];
+        for (int index = 0; index < chosenIdArray.length; index++) {
+            chosenIdArray[index] = chosenIds.get(index);
+        }
+        clientgui.getClient().sendUnloadStranded(chosenIdArray, exits);
     }
 
     // board view listener
@@ -8298,7 +8561,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        if (clientgui.getClient().isMyTurn() && (currentEntity != null)) {
+        if (hasMovementControl() && (currentEntity != null)) {
             clientgui.maybeShowUnitDisplay();
             clientgui.centerOnUnit(currentEntity);
         }
@@ -8317,7 +8580,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().isMyTurn()) {
+        if (hasMovementControl()) {
             GameTurn currentTurn = game.getTurn();
 
             if (currentTurn != null && currentTurn.isValidEntity(entity, game)) {
@@ -8861,8 +9124,28 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return cmd;
     }
 
+    public void planWallStep(MoveStepType type, megamek.common.units.WallTarget target) {
+        if (cmd != null && (type == MoveStepType.WALL_ASCEND || type == MoveStepType.WALL_DESCEND
+              || type == MoveStepType.WALL_LAND)) {
+            cmd.addStep(type, target);
+            updateMove();
+        }
+    }
+
     private void performAeroLand(LandingDirection landingDirection) {
         Entity entity = currentEntity();
+        if (entity instanceof megamek.common.units.MobileStructure mobile) {
+            if (landingDirection == VERTICAL
+                  && megamek.common.moves.MobileStructureAirMovement.canAttempt(mobile, MoveStepType.VERTICAL_LAND)) {
+                landingConfirmation.ask();
+                if (landingConfirmation.isOkSelected()) {
+                    clear();
+                    addStepToMovePath(MoveStepType.VERTICAL_LAND);
+                    ready();
+                }
+            }
+            return;
+        }
         if (!(entity instanceof IAero aero) || !entity.isAero()) {
             LOGGER.warn("Selected aero landing for a non-aero unit!");
             return;
@@ -9583,19 +9866,28 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void processDeploymentTurn(Entity entity,
                                        Coords coords) {
-        int originalFacing = entity.getFacing();
+        if (coords.equals(entity.getPosition())) {
+            return;
+        }
+        int facing = entity.getPosition().direction(coords);
+        if (entity instanceof AbstractBuildingEntity building
+              && !building.isDeploymentPositionAndFacingValid(entity.getPosition(), facing,
+                    entity.getElevation(), entity.getBoardId())) {
+            clientgui.addToast(ToastLevel.WARNING, Messages.getString("DeploymentDisplay.buildingCannotRotate"), entity);
+            return;
+        }
         // Update the facing first so we can check the train
-        entity.setFacing(entity.getPosition().direction(coords));
+        int originalFacing = entity.getFacing();
+        entity.setFacing(facing);
         DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
         if (!deploymentHelper.checkDeployment(game.getBoard(entity.getBoardId()),
                                               entity,
                                               entity.getPosition(),
                                               false, false)) {
-            // Reset original facing
+            // Restore the facing since it won't work
             entity.setFacing(originalFacing);
             return;
         }
-        entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
         // Clear the train and refresh the UI
         clearTrain(entity);

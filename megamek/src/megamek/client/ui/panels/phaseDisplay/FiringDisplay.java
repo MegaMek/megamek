@@ -1224,7 +1224,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                     RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
                           currentEntity.getId(), currentEntity.getEquipmentNum(weapons.get(loop)));
                     addAttack(rwma);
-                    ready();
+                    if (currentEntity instanceof AbstractBuildingEntity) {
+                        updateTarget();
+                        updateDonePanel();
+                    } else {
+                        ready();
+                    }
                 }
             }
         }

@@ -79,7 +79,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double toReturn = weaponType.getRackSize();
             toReturn = Compute.directBlowInfantryDamage(
                   toReturn, getInfantryDamageClassShift(),
@@ -101,7 +101,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount HAGs
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
         int nHits;

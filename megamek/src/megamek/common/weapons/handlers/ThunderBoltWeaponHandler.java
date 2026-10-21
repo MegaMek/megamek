@@ -88,7 +88,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         toReturn = Game.rulesManager.getRulesWeapons()
                                     .thunderboltMinimum(toReturn, nRange, minRange, weapon.isHotLoaded());
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),

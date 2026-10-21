@@ -139,6 +139,11 @@ public class CostCalculator {
         }
 
         for (Mounted<?> mounted : entity.getEquipment()) {
+            // TM p. 346: rocket launchers include their one shot; the ammo price is for post-battle reloads.
+            if (mounted.isOneShotAmmo() && mounted.getType() instanceof AmmoType ammo
+                  && ammo.getAmmoType() == AmmoType.AmmoTypeEnum.ROCKET_LAUNCHER) {
+                continue;
+            }
             double num = 1.0;
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
                   && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD))) {

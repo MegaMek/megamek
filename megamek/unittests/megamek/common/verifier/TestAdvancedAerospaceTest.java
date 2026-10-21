@@ -32,6 +32,7 @@
  */
 package megamek.common.verifier;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -41,10 +42,13 @@ import java.io.File;
 import java.util.Vector;
 
 import megamek.common.bays.Bay;
+import megamek.common.bays.CrewQuartersCargoBay;
+import megamek.common.bays.MekBay;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
 import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.SpaceStation;
+import megamek.common.units.Warship;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -132,5 +136,66 @@ class TestAdvancedAerospaceTest {
         bays.add(new NavalRepairFacility(500.0, 1, 1, Jumpship.LOC_AFT, false));
 
         assertTrue(test.correctBays(new StringBuffer()));
+    }
+
+    @Test
+    void officersAreIncludedInMinimumCrew() {
+        SpaceStation station = new SpaceStation();
+        station.setWeight(100000);
+        station.setNCrew(65);
+        station.setNOfficers(11);
+        station.addTransporter(new CrewQuartersCargoBay(65));
+
+        assertTrue(new TestAdvancedAerospace(station, verifier.aeroOption, "test")
+              .correctCrew(new StringBuffer()));
+        assertEquals(65, station.getNCrew());
+    }
+
+    @Test
+    void extraAssignedCrewRequireOfficersRoundedUp() {
+        Warship warship = new Warship();
+        warship.setWeight(100000);
+        warship.setNCrew(73);
+        warship.setNOfficers(11);
+        warship.addTransporter(new CrewQuartersCargoBay(73));
+        TestAdvancedAerospace test = new TestAdvancedAerospace(warship, verifier.aeroOption, "test");
+        StringBuffer messages = new StringBuffer();
+
+        assertFalse(test.correctCrew(messages));
+        assertEquals("Requires at least 13 officers\n", messages.toString());
+        warship.setNOfficers(13);
+        assertTrue(test.correctCrew(new StringBuffer()));
+        assertEquals(73, warship.getNCrew());
+    }
+
+    @Test
+    void assignedCrewExcludeBayPersonnelMarinesAndPassengers() {
+        Jumpship jumpship = new Jumpship();
+        jumpship.setWeight(100000);
+        jumpship.addTransporter(new MekBay(3, 1, 1));
+        assertEquals(6, jumpship.getBayPersonnel());
+        jumpship.setNCrew(24);
+        jumpship.setNOfficers(3);
+        jumpship.setNPassenger(12);
+        jumpship.setNMarines(12);
+        jumpship.setNBattleArmor(6);
+        jumpship.addTransporter(new CrewQuartersCargoBay(48));
+
+        assertTrue(new TestAdvancedAerospace(jumpship, verifier.aeroOption, "test")
+              .correctCrew(new StringBuffer()));
+    }
+
+    @Test
+    void understaffedVesselRetainsMinimumOfficerRequirement() {
+        SpaceStation station = new SpaceStation();
+        station.setWeight(100000);
+        station.setNCrew(6);
+        station.setNOfficers(1);
+        station.addTransporter(new CrewQuartersCargoBay(6));
+        StringBuffer messages = new StringBuffer();
+
+        assertFalse(new TestAdvancedAerospace(station, verifier.aeroOption, "test").correctCrew(messages));
+        assertTrue(messages.toString().contains("Requires 65 crew and only has 6"));
+        assertTrue(messages.toString().contains("Requires at least 11 officers"));
     }
 }

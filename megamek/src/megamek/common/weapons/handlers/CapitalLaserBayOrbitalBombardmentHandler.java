@@ -39,8 +39,10 @@ import static megamek.common.weapons.ArtilleryHandlerHelper.firingPlayerName;
 import static megamek.common.weapons.ArtilleryHandlerHelper.isForwardObserver;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Player;
@@ -50,6 +52,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
@@ -208,14 +211,16 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             clearMines(reports, actualHit, game, attackingEntity, gameManager);
 
             Vector<Integer> alreadyHit = new Vector<>();
-            var blastShape = AreaEffectHelper.shapeBlast(null, actualHit, falloff, board.getHex(actualHit).getLevel(),
+            var blastShape = AreaEffectHelper.shapeBlast(null, actualHit, board.getBoardId(), falloff,
+                  board.getHex(actualHit).getLevel(),
                   false, false, false, game, false);
 
-            for (var entry : blastShape.keySet()) {
+            Set<BoardLocation> damagedCapitalBuildings = new HashSet<>();
+            for (var entry : AreaEffectHelper.blastLocationsByDamage(blastShape)) {
                 alreadyHit = gameManager.artilleryDamageHex(entry.getValue(), board.getBoardId(), actualHit,
                       blastShape.get(entry), null, subjectId, attackingEntity, null, false, entry.getKey(),
                       board.getHex(actualHit).getLevel(), reports,
-                      false, alreadyHit, false, falloff);
+                      false, alreadyHit, false, falloff, damagedCapitalBuildings);
             }
         }
         return false;

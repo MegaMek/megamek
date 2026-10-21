@@ -249,6 +249,11 @@ public class ToHitData extends TargetRoll {
         return cover;
     }
 
+    private megamek.common.units.WallTarget coverWall;
+
+    public megamek.common.units.WallTarget getCoverWall() { return coverWall; }
+    public void setCoverWall(megamek.common.units.WallTarget wall) { coverWall = wall; }
+
     public void setCover(int cover) {
         this.cover = cover;
     }

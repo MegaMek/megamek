@@ -330,6 +330,18 @@ public class ObjectiveMarker extends GroundObject {
     }
 
     /**
+     * A carried objective is never hit by attacks on its carrier, unlike ordinary cargo (TW p.261). Damage to the
+     * carrier only calls for the forced-drop roll (Core Standard Missions, Mobile Objectives), and only a Fragile
+     * objective risks destruction, from the events listed under Fragile Objectives.
+     *
+     * @return {@link CarriedObjectDamageAllocation#NEVER}
+     */
+    @Override
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.NEVER;
+    }
+
+    /**
      * Damages this objective. Objective counters are abstract markers without a damage capacity: any damage destroys
      * them. Per the {@link ICarryable} contract, this does <i>not</i> check {@link #isInvulnerable()} - callers must
      * do that, and objectives are invulnerable unless the mission allows their destruction.

@@ -355,6 +355,21 @@ class VictoryPointVictoryTest {
     }
 
     @Test
+    void testARaidPointStillCarriedByACarrierPushedOffTheBattlefieldPaysItsSide() {
+        // RAW: pushed over an edge it may leave by, the carrier counts as having left with it (a push over any other
+        // edge leaves the objective behind on the board, so a pushed carrier still holding one took a legal edge)
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(2));
+        carrier.pickupCarryableObject(carriedRaidPoint(), Mek.LOC_RIGHT_ARM);
+        game.removeEntity(carrier.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(3, (int) result.getTeamScore(2));
+        assertTrue(result.getReports().stream().anyMatch(report -> report.messageId == 7174));
+    }
+
+    @Test
     void testARaidPointLostWithADestroyedCarrierThatNeverDroppedItPaysNobody() {
         enableObjectiveScoring();
         BipedMek carrier = carrierOf(playerOn(2));

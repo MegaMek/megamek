@@ -4756,6 +4756,7 @@ public class TWGameManager extends AbstractGameManager {
                     r = new Report(2030, Report.PUBLIC);
                     r.addDesc(entity);
                     addReport(r);
+                    addReport(new ObjectiveCarryHandler(this).resolveCarrierForcedOffBoard(entity, curPos));
 
                     for (Entity e : entity.getLoadedUnits()) {
                         game.removeEntity(e.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
@@ -9720,6 +9721,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.addDesc(entity);
                 r.add(retreatEdge);
                 displacementReport.add(r);
+                displacementReport.addAll(new ObjectiveCarryHandler(this).resolveCarrierForcedOffBoard(entity, src));
                 // TODO : remove passengers and swarmers.
             }
             return displacementReport;

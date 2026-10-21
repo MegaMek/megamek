@@ -3736,7 +3736,9 @@ public abstract class Entity extends TurnOrdered
         } else if (location < locations()) {
             carriedObjects.put(location, carryable);
         }
-        endOfTurnCargoInteraction = true;
+        if (carryable.blocksAttacksOnPickupTurn()) {
+            endOfTurnCargoInteraction = true;
+        }
     }
 
     /**
@@ -3902,6 +3904,13 @@ public abstract class Entity extends TurnOrdered
         // if the weapon location is blocked by the carried object, then we cannot fire
         // the weapon
         for (int carriedObjectLocation : getCarriedObjects().keySet()) {
+            if (!getCarriedObjects().get(carriedObjectLocation).blocksTorsoWeaponsWhenCarried()) {
+                // only the holding arm is tied up
+                if (carriedObjectLocation == location) {
+                    return false;
+                }
+                continue;
+            }
             if (getBlockedFiringLocations().containsKey(carriedObjectLocation) &&
                 getBlockedFiringLocations().get(carriedObjectLocation).contains(location)) {
                 return false;

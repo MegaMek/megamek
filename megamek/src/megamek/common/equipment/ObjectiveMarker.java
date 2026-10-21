@@ -342,6 +342,28 @@ public class ObjectiveMarker extends GroundObject {
     }
 
     /**
+     * Unlike cargo (TW p.261), a carried objective ties up only the arm holding it: "That arm cannot be used to make
+     * ranged or physical attacks for as long as the objective is carried" (Core Standard Missions, Mobile Objectives).
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean blocksTorsoWeaponsWhenCarried() {
+        return false;
+    }
+
+    /**
+     * Unlike cargo (TW p.261), picking up an objective does not stop the Mek attacking that turn; the Mobile Objectives
+     * rule only rules out the carrying arm.
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean blocksAttacksOnPickupTurn() {
+        return false;
+    }
+
+    /**
      * Damages this objective. Objective counters are abstract markers without a damage capacity: any damage destroys
      * them. Per the {@link ICarryable} contract, this does <i>not</i> check {@link #isInvulnerable()} - callers must
      * do that, and objectives are invulnerable unless the mission allows their destruction.

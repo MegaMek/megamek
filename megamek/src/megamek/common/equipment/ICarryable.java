@@ -90,6 +90,26 @@ public interface ICarryable extends InGameObject {
         return CarriedObjectDamageAllocation.NEVER;
     }
 
+    /**
+     * Whether carrying this object in a Mek's arm also stops the front torso weapons from firing, as cargo held in the
+     * hands does (TW p.261). An object that only ties up the arm holding it returns {@code false}.
+     *
+     * @return {@code true} if the torso weapons are blocked as well as the carrying arm
+     */
+    default boolean blocksTorsoWeaponsWhenCarried() {
+        return true;
+    }
+
+    /**
+     * Whether picking this object up stops the unit from attacking for the rest of the turn, as picking up cargo does
+     * (TW p.261).
+     *
+     * @return {@code true} if the unit cannot attack in the turn it picks this object up
+     */
+    default boolean blocksAttacksOnPickupTurn() {
+        return true;
+    }
+
     void processPickupStep(MoveStep step, Integer cargoPickupLocation,
           TWGameManager gameManager, Entity entityPickingUpTarget, EntityMovementType overallMoveType);
 

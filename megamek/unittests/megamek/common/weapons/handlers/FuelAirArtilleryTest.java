@@ -40,10 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;

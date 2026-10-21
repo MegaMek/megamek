@@ -37,9 +37,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -190,6 +193,40 @@ public final class Factions2 {
         }
         registerAliases();
         LOGGER.info("Loaded a total of {} factions and commands", factions.size());
+        warnAboutFactionsWithoutIcons();
+    }
+
+    /**
+     * Warns about factions that name a MekHQ logo ({@code logo:}) but no icon ({@code icon:}). MegaMek never shows the
+     * MekHQ logo, so without this warning such a faction silently gets the generic logo. This is typical of a custom
+     * faction written for MekHQ before icons existed.
+     */
+    private void warnAboutFactionsWithoutIcons() {
+        List<String> factionCodes = findFactionsWithLegacyLogoOnly(factions.values());
+        if (!factionCodes.isEmpty()) {
+            LOGGER.warn("[FactionIcon] These factions have a logo: line but no icon: line, so MegaMek shows the " +
+                        "generic logo for them: {}. The logo: line is only used by MekHQ. To show their own logo in " +
+                        "MegaMek, add an icon: line naming an image in data/images/universe/factions/",
+                  String.join(", ", factionCodes));
+        }
+    }
+
+    /**
+     * @param factions the factions to check
+     *
+     * @return the sorted codes of the factions that have a MekHQ logo but no icon
+     *
+     * @see Faction2#hasLegacyLogoWithoutIcon()
+     */
+    static List<String> findFactionsWithLegacyLogoOnly(Collection<Faction2> factions) {
+        List<String> factionCodes = new ArrayList<>();
+        for (Faction2 faction : factions) {
+            if (faction.hasLegacyLogoWithoutIcon()) {
+                factionCodes.add(faction.getKey());
+            }
+        }
+        Collections.sort(factionCodes);
+        return factionCodes;
     }
 
     /**

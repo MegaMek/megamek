@@ -3381,10 +3381,10 @@ public abstract class Entity extends TurnOrdered
      */
     public synchronized void setDuplicateMarker(int duplicateMarker) {
         this.duplicateMarker = duplicateMarker;
-        if (duplicateMarker > 1) {
-            shortName = createShortName(duplicateMarker);
-            displayName = createDisplayName(duplicateMarker);
-        }
+        // Rebuild the names even for marker 1: a unit can arrive already named "#2" (MekHQ numbers units across
+        // the whole hangar), and keeping that name would clash with the unit this game numbers as #2.
+        shortName = createShortName(duplicateMarker);
+        displayName = createDisplayName(duplicateMarker);
     }
 
     /**

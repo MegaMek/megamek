@@ -99,6 +99,7 @@ class FuelAirRulesTest {
     void beforeEach() {
         gameManager = Mockito.spy(new TWGameManager());
         Mockito.doNothing().when(gameManager).send(any(Packet.class));
+        Mockito.doNothing().when(gameManager).send(anyInt(), any(Packet.class));
         Mockito.doNothing().when(gameManager).entityUpdate(anyInt());
         game = gameManager.getGame();
         game.setBoard(0, board(0));

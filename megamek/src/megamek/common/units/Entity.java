@@ -11216,6 +11216,16 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Clears the removal condition back to {@link IEntityRemovalConditions#REMOVE_UNKNOWN}, which
+     * {@link #setRemovalCondition(int)} cannot do as it never lowers the condition. This is for a unit that is taken
+     * out of one game and sent into another, as MekHQ does: otherwise a unit wrecked in an earlier battle keeps that
+     * condition, and its retreat from a later battle is recorded as a wreck.
+     */
+    public void resetRemovalCondition() {
+        removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
+    }
+
+    /**
      * @return whether this entity is clearing a minefield.
      */
     public boolean isClearingMinefield() {

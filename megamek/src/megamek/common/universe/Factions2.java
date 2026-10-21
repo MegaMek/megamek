@@ -212,15 +212,15 @@ public final class Factions2 {
     }
 
     /**
-     * @param factions the factions to check
+     * @param candidateFactions the factions to check
      *
      * @return the sorted codes of the factions that have a MekHQ logo but no icon
      *
      * @see Faction2#hasLegacyLogoWithoutIcon()
      */
-    static List<String> findFactionsWithLegacyLogoOnly(Collection<Faction2> factions) {
+    static List<String> findFactionsWithLegacyLogoOnly(Collection<Faction2> candidateFactions) {
         List<String> factionCodes = new ArrayList<>();
-        for (Faction2 faction : factions) {
+        for (Faction2 faction : candidateFactions) {
             if (faction.hasLegacyLogoWithoutIcon()) {
                 factionCodes.add(faction.getKey());
             }

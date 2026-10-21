@@ -33,7 +33,7 @@
 package megamek.common.universe;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A publication a Bloodname House is attested in.

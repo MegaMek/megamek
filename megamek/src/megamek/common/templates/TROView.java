@@ -53,11 +53,11 @@ import java.util.stream.Collectors;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateMethodModelEx;
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.bays.Bay;

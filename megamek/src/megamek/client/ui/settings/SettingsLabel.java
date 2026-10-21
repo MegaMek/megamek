@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.JLabel;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /** A localized, consistently styled label for settings forms. */
 public class SettingsLabel extends JLabel implements SettingsHelpProvider {

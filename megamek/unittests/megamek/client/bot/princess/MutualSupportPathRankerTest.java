@@ -59,6 +59,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.MekWarrior;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -461,6 +462,38 @@ class MutualSupportPathRankerTest {
 
         assertEquals(List.of(new Coords(3, 3)),
               MutualSupportPathRanker.deployedPositions(List.of(unitHere, unitElsewhere), 0));
+    }
+
+    /**
+     * Issue #9194: an ejected pilot is not part of either force's line. Counting one that ejects beside the bot's
+     * force would drop the mean enemy distance and read as the enemy suddenly closing in.
+     */
+    @Test
+    void ejectedCrewHaveNoSayInPosture() {
+        Entity enemyMek = mock(BipedMek.class);
+        when(enemyMek.getPosition()).thenReturn(new Coords(3, 3));
+        when(enemyMek.isDeployed()).thenReturn(true);
+
+        Entity ejectedPilot = mock(MekWarrior.class);
+        when(ejectedPilot.getPosition()).thenReturn(new Coords(9, 9));
+        when(ejectedPilot.isDeployed()).thenReturn(true);
+
+        assertEquals(List.of(new Coords(3, 3)),
+              MutualSupportPathRanker.deployedPositions(List.of(enemyMek, ejectedPilot), 0));
+    }
+
+    /**
+     * A side reduced to ejected crews has not lost, so their positions still count when nothing else is left;
+     * otherwise the posture would read "no enemy in sight" against a force that is still on the board.
+     */
+    @Test
+    void ejectedCrewCountInPostureWhenNothingElseIsLeft() {
+        Entity ejectedPilot = mock(MekWarrior.class);
+        when(ejectedPilot.getPosition()).thenReturn(new Coords(9, 9));
+        when(ejectedPilot.isDeployed()).thenReturn(true);
+
+        assertEquals(List.of(new Coords(9, 9)),
+              MutualSupportPathRanker.deployedPositions(List.of(ejectedPilot), 0));
     }
     // END - Combat posture at water
 

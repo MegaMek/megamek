@@ -43,7 +43,10 @@ import static megamek.common.units.Terrains.FUEL_TANK;
 import static megamek.common.units.Terrains.FUEL_TANK_CF;
 import static megamek.common.units.Terrains.FUEL_TANK_MAGN;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -52,8 +55,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,6 +70,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
@@ -86,9 +92,9 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.*;
 import megamek.common.Hex;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.internationalization.I18n;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -125,6 +131,10 @@ public class BotConfigDialog extends AbstractButtonDialog
     private final JButton removeTargetButton = new TipButton(Messages.getString("BotConfigDialog.removeTarget"));
     private final DefaultListModel<Object> targetsListModel = new DefaultListModel<>();
     private final TipList<Object> targetsList = new TipList<>(targetsListModel);
+    /** The unit picker shown inline in Strategic Targets; the targets list now holds only hex targets. */
+    private BotTargetPickerPanel targetPicker;
+    /** The height of the inline unit list, in unscaled pixels. */
+    private static final int TARGET_PICKER_HEIGHT = 320;
 
     private final MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.forcedWithdrawalCheck"));
@@ -250,10 +260,9 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     @Override
     protected Container createCenterPane() {
-        JPanel result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
-        result.add(nameSection());
-        result.add(settingSection());
+        JPanel result = new JPanel(new BorderLayout());
+        result.add(nameSection(), BorderLayout.PAGE_START);
+        result.add(settingSection(), BorderLayout.CENTER);
         return result;
     }
 
@@ -307,29 +316,38 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /**
-     * The setting section contains the presets list on the left side and the princess settings on the right.
+     * The settings as two tabs: Behavior, with the presets list beside the sliders and the retreat options under them,
+     * and Strategic Targets. The target picker gets a page of its own instead of sitting at the bottom of one long
+     * scrolling column.
      */
-    private JPanel settingSection() {
-        var princessScroll = new JScrollPane(princessPanel());
-        princessScroll.getVerticalScrollBar().setUnitIncrement(16);
-        princessScroll.setBorder(null);
-        JPanel presetsPanel = presetsPanel();
+    private JTabbedPane settingSection() {
+        JPanel behaviorSettings = new JPanel();
+        behaviorSettings.setLayout(new BoxLayout(behaviorSettings, BoxLayout.PAGE_AXIS));
+        behaviorSettings.add(behaviorSection());
+        behaviorSettings.add(retreatSection());
 
-        var result = new JPanel(new BorderLayout(0, 0));
-        result.setAlignmentX(LEFT_ALIGNMENT);
-        result.add(princessScroll, BorderLayout.CENTER);
-        result.add(presetsPanel, BorderLayout.LINE_START);
+        JPanel behaviorPage = new JPanel(new BorderLayout(0, 0));
+        behaviorPage.add(presetsPanel(), BorderLayout.LINE_START);
+        behaviorPage.add(scrollingPage(behaviorSettings), BorderLayout.CENTER);
+
+        JTabbedPane result = new JTabbedPane();
+        result.addTab(Messages.getString("BotConfigDialog.behaviorSection"), behaviorPage);
+        result.addTab(Messages.getString("BotConfigDialog.targetsSection"), targetsSection());
         return result;
     }
 
-    /** The princess panel contains the individual princess settings. */
-    private JPanel princessPanel() {
-        JPanel result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
-        result.add(behaviorSection());
-        result.add(retreatSection());
-        result.add(targetsSection());
-        return result;
+    /**
+     * @param page a settings page
+     *
+     * @return the page in a vertical scroll pane, top-aligned so a short page does not float in the middle
+     */
+    private static JScrollPane scrollingPage(JPanel page) {
+        JPanel topAligned = new JPanel(new BorderLayout());
+        topAligned.add(page, BorderLayout.PAGE_START);
+        JScrollPane scroll = new JScrollPane(topAligned);
+        scroll.getVerticalScrollBar().setUnitIncrement(UIUtil.scaleForGUI(16));
+        scroll.setBorder(null);
+        return scroll;
     }
 
     private JPanel nameSection() {
@@ -350,8 +368,10 @@ public class BotConfigDialog extends AbstractButtonDialog
         namePanel.add(nameLabel);
         namePanel.add(nameField);
 
+        // name and AI share one line, so the header stays a single compact row above the tabs
+        namePanel.add(Box.createHorizontalStrut(UIUtil.scaleForGUI(20)));
+        namePanel.add(aiTypePanel());
         panContent.add(namePanel);
-        panContent.add(aiTypePanel());
         return result;
     }
 
@@ -520,10 +540,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     private JPanel targetsSection() {
-        JPanel result = new OptionPanel("BotConfigDialog.targetsSection");
-        Content panContent = new Content();
-        panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
-        result.add(panContent);
+        int gap = UIUtil.scaleForGUI(8);
+        JPanel result = new JPanel(new BorderLayout(0, gap));
+        result.setBorder(BorderFactory.createEmptyBorder(gap, gap, gap, gap));
 
         addTargetButton.setMnemonic(KeyEvent.VK_X);
         addTargetButton.addActionListener(this);
@@ -540,8 +559,12 @@ public class BotConfigDialog extends AbstractButtonDialog
         removeButtonPanel.add(removeTargetButton);
 
         var addButtonPanel = new FixedXPanel(new FlowLayout(FlowLayout.LEFT));
-        addButtonPanel.add(addUnitButton);
+        addButtonPanel.add(new JLabel(Messages.getString("BotConfigDialog.hexTargets")));
         addButtonPanel.add(addTargetButton);
+        // with a game the picker lists the units by name; before there is one, units can only be added by ID
+        if (client == null) {
+            addButtonPanel.add(addUnitButton);
+        }
 
         var buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
@@ -555,13 +578,20 @@ public class BotConfigDialog extends AbstractButtonDialog
         targetsList.setLayoutOrientation(JList.VERTICAL);
         targetsList.setCellRenderer(new TargetsRenderer());
         targetsList.setFont(UIUtil.getDefaultFont());
-        targetsList.setVisibleRowCount(6);
+        targetsList.setVisibleRowCount(3);
         targetsList.setPrototypeCellValue(new Coords(21, 22));
         JScrollPane targetsListScroller = new JScrollPane(targetsList);
 
-        panContent.add(buttonPanel);
-        panContent.add(targetsListScroller);
+        Game game = (client == null) ? null : client.getGame();
+        targetPicker = new BotTargetPickerPanel(game, configuredBot(), Map.of(), Set.of(), TARGET_PICKER_HEIGHT);
 
+        JPanel hexTargets = new JPanel(new BorderLayout());
+        hexTargets.add(buttonPanel, BorderLayout.PAGE_START);
+        hexTargets.add(targetsListScroller, BorderLayout.CENTER);
+
+        // the picker takes the page; the hex list keeps its few rows at the bottom
+        result.add(targetPicker, BorderLayout.CENTER);
+        result.add(hexTargets, BorderLayout.PAGE_END);
         return result;
     }
 
@@ -652,8 +682,28 @@ public class BotConfigDialog extends AbstractButtonDialog
                 }
             }
         }
-        targetsListModel.addAll(princessBehavior.getPriorityUnitTargets());
+        Map<Integer, Integer> priorities = new HashMap<>();
+        for (int unitId : princessBehavior.getPriorityUnitTargets()) {
+            priorities.put(unitId, princessBehavior.getTargetPriority(unitId));
+        }
+        targetPicker.setPickedPriorities(priorities);
         updateEnabledStates();
+    }
+
+    /**
+     * @return the bot being configured as a player in the game, or {@code null} when there is no game yet or the bot
+     *       does not exist yet
+     */
+    private @Nullable Player configuredBot() {
+        if ((client == null) || (fixedBotPlayerName == null)) {
+            return null;
+        }
+        for (Player player : client.getGame().getPlayersList()) {
+            if (fixedBotPlayerName.equals(player.getName())) {
+                return player;
+            }
+        }
+        return null;
     }
 
     /** Updates all necessary enabled states of buttons/dropdowns. */
@@ -788,13 +838,10 @@ public class BotConfigDialog extends AbstractButtonDialog
             }
 
         } else if (e.getSource() == addUnitButton) {
-            var dlg = new BotConfigTargetUnitDialog(getFrame());
-            dlg.setVisible(true);
-            if (dlg.getResult() == DialogResult.CONFIRMED) {
-                dlg.getSelectedIDs()
-                      .stream()
-                      .filter(c -> !targetsListModel.contains(c))
-                      .forEach(targetsListModel::addElement);
+            var unitIdDialog = new BotConfigTargetUnitDialog(getFrame());
+            unitIdDialog.setVisible(true);
+            if (unitIdDialog.getResult() == DialogResult.CONFIRMED) {
+                targetPicker.addAtDefaultPriority(unitIdDialog.getSelectedIDs());
             }
 
         } else if (e.getSource() == removeTargetButton) {
@@ -926,9 +973,10 @@ public class BotConfigDialog extends AbstractButtonDialog
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {
                 tempBehavior.addStrategicTarget(targetsListModel.get(i).toString());
-            } else {
-                tempBehavior.addPriorityUnit(Integer.toString((int) targetsListModel.get(i)));
             }
+        }
+        for (Map.Entry<Integer, Integer> picked : targetPicker.getPickedPriorities().entrySet()) {
+            tempBehavior.setPriorityUnit(picked.getKey(), picked.getValue());
         }
         princessBehavior = tempBehavior;
     }

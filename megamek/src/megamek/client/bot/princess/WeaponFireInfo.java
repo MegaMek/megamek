@@ -47,14 +47,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.Scatter;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
@@ -71,9 +73,13 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.units.LargeSupportTank;
 import megamek.common.units.Mek;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
+import megamek.common.units.VTOL;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.DamageFalloff;
@@ -93,6 +99,9 @@ public class WeaponFireInfo {
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
     private static final double[] ZERO_DAMAGE = { 0.0, 0.0, 0.0 };
+    /** The number of ways two dice can roll each total, indexed by the total. */
+    private static final int[] WAYS_TO_ROLL_ON_TWO_DICE = { 0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+    private static final double TWO_DICE_OUTCOMES = 36.0;
 
     private WeaponAttackAction action;
     private Entity shooter;
@@ -104,6 +113,7 @@ public class WeaponFireInfo {
     private double maxDamage;
     private double maxFriendlyDamage = 0;
     private double maxBuildingDamage = 0;
+    private double expectedScatterFriendlyDamage = 0;
     private double damageOnHit;
     private int damageDirection = -1; // direction damage is coming from relative to target
     private ToHitData toHit = null;
@@ -250,6 +260,38 @@ public class WeaponFireInfo {
         return damageDirection;
     }
 
+    /**
+     * @return {@code true} for a vehicle that takes hits on the standard vehicle hit table; VTOLs, large support
+     *       vehicles and superheavy tanks roll on tables of their own
+     */
+    private static boolean usesStandardVehicleHitTable(Tank vehicle) {
+        return !(vehicle instanceof VTOL) && !(vehicle instanceof LargeSupportTank)
+              && !(vehicle instanceof SuperHeavyTank);
+    }
+
+    /**
+     * Adds the chance that this weapon destroys a vehicle. A vehicle is destroyed when any of its locations runs out
+     * of internal structure ({@code Tank#getTransferLocation}), so every location the weapon could destroy counts,
+     * weighted by how likely the shot is to land there, times the chance to hit.
+     */
+    private void addVehicleKillProbability(Tank vehicle) {
+        boolean hasTurret = !vehicle.hasNoTurret();
+        boolean hasDualTurret = hasTurret && !vehicle.hasNoDualTurret();
+        for (int location = Tank.LOC_FRONT; location < vehicle.locations(); location++) {
+            double locationOdds = ProbabilityCalculator.getVehicleHitProbability(getDamageDirection(), location,
+                  hasTurret, hasDualTurret);
+            if ((locationOdds <= 0) || vehicle.isLocationBad(location)) {
+                continue;
+            }
+            int armor = Math.max(0, vehicle.getArmor(location));
+            int internal = Math.max(0, vehicle.getInternal(location));
+            // would a hit destroy it: the damage if it hits, with the chance to hit counted once, below
+            if (getDamageOnHit() >= (armor + internal)) {
+                setKillProbability(getKillProbability() + (locationOdds * getProbabilityToHit()));
+            }
+        }
+    }
+
     private int calcDamageDirection() {
         return ((calcAttackDirection() - getTargetState().getFacing()) + 6) % 6;
     }
@@ -298,6 +340,14 @@ public class WeaponFireInfo {
 
     double getMaxBuildingDamage() {
         return maxBuildingDamage;
+    }
+
+    /**
+     * @return the friendly damage expected from this shot missing and scattering, already weighted by the chance of
+     *       each missed roll; only set for our own direct artillery shots, otherwise 0
+     */
+    double getExpectedScatterFriendlyDamage() {
+        return expectedScatterFriendlyDamage;
     }
 
     double getProbabilityToHit() {
@@ -609,11 +659,13 @@ public class WeaponFireInfo {
                     }
                 }
 
-                return new double[] {
-                      damage,
-                      (artillery) ? damage * 4 : 0D,
-                      (artillery) ? damage * 8 : 0D
-                };
+                if (!artillery) {
+                    return new double[] { damage, 0D, 0D };
+                }
+                // An artillery shell also lands on the hexes around the target; count the friendly units and
+                // buildings it would catch there rather than assuming a fixed multiple of the damage.
+                double[] collateralDamage = computeArtilleryCollateralDamage();
+                return new double[] { damage, collateralDamage[1], collateralDamage[2] };
             }
         }
 
@@ -834,52 +886,158 @@ public class WeaponFireInfo {
                       game, false
                 );
 
-                // now we go through all affected hexes and add up the damage done
-                // Entries for blast shape are: (absolute level: Coords) : damage
-                // e.g. the center of an HE bomb to level 4 of a building on a level 2 hex at (1,3) is:
-                //   `(6: (1, 3)): 10`
-                List<Entity> hitVictims = new ArrayList<>();
-                for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
-                    Coords coords = entry.getValue();
-                    Hex hex = game.getBoard().getHex(coords);
-                    // Currently, bombs off board are not supported.
-                    if (hex == null) {
-                        continue;
-                    }
-                    // Record collateral damage to buildings
-                    if (hex.getTerrain(Terrains.BLDG_ELEV) != null && hex.ceiling() >= entry.getKey()) {
-                        // Only approximate building damage here.
-                        // Blast damage to buildings is cumulative.
-                        buildingDamage += blastShape.get(entry) * 2;
-                    }
-                    // Record damage to enemy and friendly units
-                    // Entities can only be hit once per hex they occupy; blastShape assures we record
-                    // highest damage first.
-                    for (final Entity currentVictim : game.getEntitiesVector(coords)) {
-                        // Skip airborne, already-blasted, and hidden entities in calcs
-                        if (currentVictim.isAirborne()
-                              || hitVictims.contains(currentVictim)
-                              || currentVictim.isHidden()) {
-                            continue;
-                        }
-
-                        int floor = currentVictim.getElevation() + hex.getLevel();
-                        int ceil = currentVictim.relHeight() + hex.getLevel();
-                        if (!(floor <= entry.getKey() && entry.getKey() <= ceil)) {
-                            continue;
-                        }
-                        hitVictims.add(currentVictim);
-                        // Infantry take at least double damage from AE, if not 4x or 8x.
-                        if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
-                            damage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
-                        } else { // we prefer not to blow up friendlies if we can help it
-                            friendlyDamage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
-                        }
-                    }
-                }
+                double[] bombDamage = computeBlastDamage(shooter, targetHex.getBoardId(), blastShape);
+                damage += bombDamage[0];
+                friendlyDamage += bombDamage[1];
+                buildingDamage += bombDamage[2];
             }
         }
 
+        return new double[] { damage, friendlyDamage, buildingDamage };
+    }
+
+    /**
+     * Estimates what an artillery shell aimed at the target would do to everything in its blast, using the blast of
+     * the ammo the weapon would fire.
+     *
+     * @return The expected damage to enemies, to friendly units and to buildings, in that order; all zero when the
+     *       weapon has no ammo or the target has no hex.
+     */
+    private double[] computeArtilleryCollateralDamage() {
+        AmmoMounted ammo = (preferredAmmo != null) ? preferredAmmo : weapon.getLinkedAmmo();
+        Coords center = target.getPosition();
+        if ((ammo == null) || (center == null)) {
+            return ZERO_DAMAGE;
+        }
+        Hex centerHex = game.getBoard(target).getHex(center);
+        if (centerHex == null) {
+            return ZERO_DAMAGE;
+        }
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo.getType(), center,
+              centerHex.getLevel(), true, false, false, game, false);
+        return computeBlastDamage(getShooter(), target.getBoardId(), blastShape);
+    }
+
+    /**
+     * @return {@code true} if this is a firing-phase artillery shot, which scatters when it misses
+     */
+    private boolean isDirectArtilleryShot() {
+        AmmoMounted ammo = (preferredAmmo != null) ? preferredAmmo : weapon.getLinkedAmmo();
+        return DirectArtilleryToHitGuess.appliesTo(weapon.getType(), ammo, getShooter(), target, game);
+    }
+
+    /**
+     * Estimates the damage this artillery shot would do to friendly units if it misses. The engine moves a missed
+     * shell one hex for each point it missed by, less {@link Scatter#SPA_SCATTER_REDUCTION} hexes for an Oblique
+     * Artilleryman, in one of six directions ({@code ArtilleryWeaponDistantFireHandler}). Every missed roll is
+     * weighted by its chance on two dice and every direction counts one sixth. With the Advanced Scatter option the
+     * engine rolls the distance instead; that is estimated with the standard rule. A shell that lands off the board
+     * does no harm.
+     *
+     * <p>Example: a shot needing 10 that rolls 3 lands 7 hexes away, so a friendly Warhammer 7 hexes behind the
+     * target is at risk on that roll.</p>
+     *
+     * @param toHitNumber the roll the shot needs
+     *
+     * @return the expected friendly damage from misses
+     */
+    double computeScatterFriendlyDamage(final int toHitNumber) {
+        AmmoMounted ammo = (preferredAmmo != null) ? preferredAmmo : weapon.getLinkedAmmo();
+        Coords center = target.getPosition();
+        // 2 or less never misses (this includes automatic hits); more than 12 is never fired
+        if ((ammo == null) || (center == null) || (toHitNumber <= 2) || (toHitNumber > 12)) {
+            return 0;
+        }
+        Board board = game.getBoard(target);
+        int scatterReduction = getShooter().hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)
+              ? Scatter.SPA_SCATTER_REDUCTION : 0;
+        double expectedDamage = 0;
+        for (int roll = 2; roll < toHitNumber; roll++) {
+            double rollChance = WAYS_TO_ROLL_ON_TWO_DICE[roll] / TWO_DICE_OUTCOMES;
+            int scatterDistance = Math.max(toHitNumber - roll - scatterReduction, 0);
+            if (scatterDistance == 0) {
+                expectedDamage += rollChance * friendlyBlastDamageAt(board, ammo, center);
+                continue;
+            }
+            for (int direction = 0; direction < 6; direction++) {
+                Coords landing = center.translated(direction, scatterDistance);
+                expectedDamage += (rollChance / 6) * friendlyBlastDamageAt(board, ammo, landing);
+            }
+        }
+        return expectedDamage;
+    }
+
+    /**
+     * @return the damage a shell landing on the given hex would do to friendly units, 0 if the hex is off the board
+     */
+    private double friendlyBlastDamageAt(final Board board, final AmmoMounted ammo, final Coords landing) {
+        if (!board.contains(landing)) {
+            return 0;
+        }
+        Hex landingHex = board.getHex(landing);
+        if (landingHex == null) {
+            return 0;
+        }
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo.getType(), landing,
+              landingHex.getLevel(), true, false, false, game, false);
+        return computeBlastDamage(getShooter(), target.getBoardId(), blastShape)[1];
+    }
+
+    /**
+     * Adds up the damage a blast does to enemy units, friendly units and buildings.
+     *
+     * @param shooter    The unit making the attack; units on its team count as friendly.
+     * @param boardId    The board the blast lands on; hexes and units are looked up on this board only.
+     * @param blastShape The blast: (absolute level, hex) to damage, highest damage first.
+     *
+     * @return The expected damage to enemies, to friendly units and to buildings, in that order.
+     */
+    private double[] computeBlastDamage(final Entity shooter, final int boardId,
+          final Map<Map.Entry<Integer, Coords>, Integer> blastShape) {
+        Board board = game.getBoard(boardId);
+        double damage = 0D, friendlyDamage = 0D, buildingDamage = 0D;
+        // Entries for blast shape are: (absolute level: Coords) : damage
+        // e.g. the center of an HE bomb to level 4 of a building on a level 2 hex at (1,3) is:
+        //   `(6: (1, 3)): 10`
+        List<Entity> hitVictims = new ArrayList<>();
+        for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
+            Coords coords = entry.getValue();
+            Hex hex = board.getHex(coords);
+            // Currently, bombs off board are not supported.
+            if (hex == null) {
+                continue;
+            }
+            // Record collateral damage to buildings
+            if (hex.getTerrain(Terrains.BLDG_ELEV) != null && hex.ceiling() >= entry.getKey()) {
+                // Only approximate building damage here.
+                // Blast damage to buildings is cumulative.
+                buildingDamage += blastShape.get(entry) * 2;
+            }
+            // Record damage to enemy and friendly units
+            // Entities can only be hit once per hex they occupy; blastShape assures we record
+            // highest damage first.
+            for (final Entity currentVictim : game.getEntitiesVector(coords, boardId)) {
+                // Skip airborne, already-blasted, and hidden entities in calcs
+                if (currentVictim.isAirborne()
+                      || hitVictims.contains(currentVictim)
+                      || currentVictim.isHidden()) {
+                    continue;
+                }
+
+                int floor = currentVictim.getElevation() + hex.getLevel();
+                int ceil = currentVictim.relHeight() + hex.getLevel();
+                if (!(floor <= entry.getKey() && entry.getKey() <= ceil)) {
+                    continue;
+                }
+                hitVictims.add(currentVictim);
+                // Infantry take at least double damage from AE, if not 4x or 8x.
+                if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
+                    damage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
+                } else { // we prefer not to blow up friendlies if we can help it
+                    friendlyDamage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
+                }
+            }
+        }
         return new double[] { damage, friendlyDamage, buildingDamage };
     }
 
@@ -970,6 +1128,11 @@ public class WeaponFireInfo {
 
         setMaxDamage(computeExpectedDamage());
         setDamageOnHit(getMaxDamage());
+        // Only for our own firing decision: a missed direct artillery shot scatters, and it can land on our units.
+        // Path ranking and enemy estimates use guesses and skip this, as it shapes a blast for every missed roll.
+        expectedScatterFriendlyDamage = (!guess && isDirectArtilleryShot())
+              ? computeScatterFriendlyDamage(getToHit().getValue())
+              : 0;
 
         if (debugEnabled) {
             msg.append("\n\tHeat: ").append(getHeat());
@@ -1020,8 +1183,11 @@ public class WeaponFireInfo {
                 }
             }
         }
-        // No target Mek found; nothing to do
+        // No target Mek found: a vehicle on the standard hit table has its own kill chance, anything else none
         if (targetMek == null) {
+            if ((potentialTarget instanceof Tank vehicle) && usesStandardVehicleHitTable(vehicle)) {
+                addVehicleKillProbability(vehicle);
+            }
             if (debugEnabled) {
                 logger.debug(msg.toString());
             }
@@ -1058,8 +1224,10 @@ public class WeaponFireInfo {
             final int targetArmor = Math.max(0, targetMek.getArmor(hitLocation, (3 == getDamageDirection())));
             final int targetInternals = Math.max(0, targetMek.getInternal(hitLocation));
 
-            // If the location could be destroyed outright...
-            if (getExpectedDamage() > ((targetArmor + targetInternals))) {
+            // If a hit could destroy the location outright... The damage if it hits, not the expected damage: the
+            // chance to hit is multiplied in below, and counting it here as well made a sure kill on a hit look like
+            // none (issue #9178).
+            if (getDamageOnHit() >= (targetArmor + targetInternals)) {
                 setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
                 if (Mek.LOC_CENTER_TORSO == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
@@ -1068,7 +1236,7 @@ public class WeaponFireInfo {
                 }
 
                 // If the armor can be breached, but the location not destroyed...
-            } else if (getExpectedDamage() > (targetArmor)) {
+            } else if (getDamageOnHit() > targetArmor) {
                 setExpectedCriticals(getExpectedCriticals() +
                       (hitLocationProbability * getProbabilityToHit() *
                             expectedCriticalHitCount));

@@ -59,13 +59,13 @@ import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
 import com.thoughtworks.xstream.XStream;
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.commandLine.AbstractCommandLineParser.ParseException;
 import megamek.common.equipment.Minefield;

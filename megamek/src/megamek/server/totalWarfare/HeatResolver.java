@@ -1420,7 +1420,7 @@ class HeatResolver extends AbstractTWRuleHandler {
 
     /**
      * Creates a report for TCP automatic shutdown avoidance if the entity has a Triple-Core Processor. Per IO pg 81,
-     * TCP-implanted MechWarriors and fighter pilots automatically succeed at all shutdown-avoidance checks for extreme
+     * TCP-implanted MekWarriors and fighter pilots automatically succeed at all shutdown-avoidance checks for extreme
      * heat, except for those described as "automatic shutdown". Note: Unlike aimed shots, TCP heat shutdown avoidance
      * does NOT require VDNI - the implant works standalone for this benefit.
      *

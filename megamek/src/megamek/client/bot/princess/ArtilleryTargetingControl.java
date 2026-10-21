@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.Messages;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
 import megamek.common.Hex;
@@ -52,7 +53,6 @@ import megamek.common.HexTarget;
 import megamek.common.Player;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

@@ -33,7 +33,7 @@
 
 package megamek.common.units;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 public enum System {
     CHASSIS, ENGINE, ARMOR, JUMP_JET, COMMUNICATIONS, TARGETING;

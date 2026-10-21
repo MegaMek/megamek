@@ -60,21 +60,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.settings.SettingsBadge;
-import megamek.client.ui.settings.SettingsFilterable;
-import megamek.client.ui.settings.SettingsFormPanel;
-import megamek.client.ui.settings.SettingsHeaderPanel;
-import megamek.client.ui.settings.SettingsNavigationPanel;
-import megamek.client.ui.settings.SettingsNavigationText;
-import megamek.client.ui.settings.SettingsPagePanel;
-import megamek.client.ui.settings.SettingsPane;
-import megamek.client.ui.settings.SettingsRoute;
-import megamek.client.ui.settings.SettingsTextProvider;
+import megamek.client.ui.settings.*;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.MMRandom;
-import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
@@ -481,7 +472,6 @@ public class GameOptionsPane extends JPanel {
                   "GameOptionsDialog.title", icon)
                   .header(new SettingsHeaderPanel(pageSeed.definition().id(), pageTitle, icon))
                   .showDetailsPanel(!directPage)
-                  .sectionsExpandedByDefault(sectionRows.size() == 1)
                   .standardContentWidth();
             if (directPage) {
                 builder.intro("GameOptionsDialog.page.landing.intro")

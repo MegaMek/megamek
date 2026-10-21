@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -124,6 +124,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         double expectedDamage = 0;
         for (WeaponFireInfo weaponFireInfo : this) {
             expectedDamage += weaponFireInfo.getMaxFriendlyDamage() * weaponFireInfo.getProbabilityToHit();
+            // a missed artillery shell scatters; this part is already weighted by the chance of each miss
+            expectedDamage += weaponFireInfo.getExpectedScatterFriendlyDamage();
         }
         return expectedDamage;
     }

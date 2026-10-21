@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -57,7 +58,6 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -673,17 +673,18 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
 
         ArrayList<Force> result = new ArrayList<>();
 
-        // Users should now only use HashSet.
-        if (object instanceof HashSet<?> set) {
-            for (Object forces : set) {
-                if (forces instanceof Force verifiedForce) {
+        // Accept any collection, as getEntityList does. Accepting only a HashSet silently dropped every force packet
+        // sent as a list - renames, drag-and-drop attaches and the server's own update echo (issue #9290).
+        if (object instanceof Collection<?> collection) {
+            for (Object force : collection) {
+                if (force instanceof Force verifiedForce) {
                     result.add(verifiedForce);
                 }
             }
             return result;
         }
 
-        throw new InvalidPacketDataException("HashSet", object, index);
+        throw new InvalidPacketDataException("Collection<?>", object, index);
     }
 
     /**

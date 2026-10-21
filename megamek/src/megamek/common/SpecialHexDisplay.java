@@ -35,13 +35,13 @@
 
 package megamek.common;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;

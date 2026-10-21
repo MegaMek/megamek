@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,17 +41,19 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.IGame;
 import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;
@@ -767,6 +769,60 @@ public final class Forces implements Serializable {
             }
         }
         return result;
+    }
+
+    /**
+     * Returns the given units in the order the lobby's force tree shows them: top-level forces in id order, and within
+     * each force its own units first, then its sub forces, depth first. Units outside any force come last, in their
+     * given order.
+     * <p>
+     * A unit list file keeps no explicit order, so loading one rebuilds the forces and their units in the order the
+     * units appear in the file. Saving in this order lets that rebuild reproduce the tree as it was arranged (issue
+     * #9290).
+     * </p>
+     *
+     * @param units the units to order
+     * @param <T>   the unit type
+     *
+     * @return a new list holding the same units in tree order
+     */
+    public <T extends ForceAssignable> List<T> sortedInTreeOrder(Collection<T> units) {
+        Map<Integer, T> remainingUnits = new LinkedHashMap<>();
+        for (T unit : units) {
+            remainingUnits.put(unit.getId(), unit);
+        }
+
+        List<Force> topLevelForces = new ArrayList<>(getTopLevelForces());
+        topLevelForces.sort(Comparator.comparingInt(Force::getId));
+
+        List<T> result = new ArrayList<>();
+        for (Force topLevelForce : topLevelForces) {
+            addInTreeOrder(topLevelForce, remainingUnits, result);
+        }
+        result.addAll(remainingUnits.values());
+        return result;
+    }
+
+    /**
+     * Moves the given force's units from {@code remainingUnits} to {@code result} in the force's own order, then does
+     * the same for its sub forces, depth first. Walks the force's id lists rather than using
+     * {@link #getFullEntities(Force)}, which returns units in game order instead of the order set with the up/down
+     * buttons.
+     */
+    private <T extends ForceAssignable> void addInTreeOrder(Force force, Map<Integer, T> remainingUnits,
+          List<T> result) {
+        for (int unitId : force.getEntities()) {
+            T unit = remainingUnits.remove(unitId);
+            if (unit != null) {
+                result.add(unit);
+            }
+        }
+        for (int subForceId : force.getSubForces()) {
+            Force subForce = getForce(subForceId);
+            if (subForce != null) {
+                addInTreeOrder(subForce, remainingUnits, result);
+            }
+        }
     }
 
     /**

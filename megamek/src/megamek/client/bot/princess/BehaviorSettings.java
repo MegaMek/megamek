@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,11 +35,13 @@ package megamek.client.bot.princess;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
@@ -58,6 +60,15 @@ public class BehaviorSettings implements Serializable {
     // region Variable Declarations
     @Serial
     private static final long serialVersionUID = -1895924639830817372L;
+
+    /** The keenest target priority: shoot this first. */
+    public static final int HIGHEST_TARGET_PRIORITY = 1;
+
+    /** The target priority a unit gets when nobody chose one, which plays the same as a priority target always has. */
+    public static final int DEFAULT_TARGET_PRIORITY = 3;
+
+    /** The mildest target priority: barely preferred over any other enemy. */
+    public static final int LOWEST_TARGET_PRIORITY = 5;
 
     static final double[] SELF_PRESERVATION_VALUES = {
           2.5,
@@ -153,6 +164,10 @@ public class BehaviorSettings implements Serializable {
     private final Set<String> strategicBuildingTargets = new HashSet<>(); // What (besides enemy units) do I want to
     // blow up?
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
+    // How keenly, 1 to 5, for each priority unit set to anything but the default. Not final, and read only through
+    // targetPriorityMap(), because a save or settings packet written before this field existed loads it as null.
+    // A plain HashMap: the network input filter rejects immutable maps.
+    private HashMap<Integer, Integer> targetPriorities = new HashMap<>();
     private int mutualSupportIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
     private int antiCrowding = 0; // How much do I want to avoid crowding my teammates?
@@ -197,7 +212,7 @@ public class BehaviorSettings implements Serializable {
         copy.setIgnoreDamageOutput(isIgnoreDamageOutput());
         copy.setExperimental(isExperimental());
         getStrategicBuildingTargets().forEach(copy::addStrategicTarget);
-        getPriorityUnitTargets().forEach(copy::addPriorityUnit);
+        getPriorityUnitTargets().forEach(unitId -> copy.setPriorityUnit(unitId, getTargetPriority(unitId)));
         getIgnoredUnitTargets().forEach(copy::addIgnoredUnitTarget);
 
         return copy;
@@ -469,6 +484,54 @@ public class BehaviorSettings implements Serializable {
      */
     void removePriorityUnit(final int id) {
         priorityUnitTargets.remove(id);
+        targetPriorityMap().remove(id);
+    }
+
+    /**
+     * Adds an enemy unit to the priority list with a target priority, or changes the target priority of one already on
+     * it. Priorities outside 1 to 5 are pulled back into that range.
+     *
+     * @param unitId   the ID of the unit
+     * @param priority how keenly the bot goes for it, from {@link #HIGHEST_TARGET_PRIORITY} (shoot first) to
+     *                 {@link #LOWEST_TARGET_PRIORITY}
+     */
+    public void setPriorityUnit(final int unitId, final int priority) {
+        int clampedPriority = Math.clamp(priority, HIGHEST_TARGET_PRIORITY, LOWEST_TARGET_PRIORITY);
+        if (clampedPriority != priority) {
+            logger.debug("[PriorityTargets] target priority {} for unit {} is out of range, using {}", priority, unitId,
+                  clampedPriority);
+        }
+        priorityUnitTargets.add(unitId);
+        // only non-default priorities are stored, so two settings with the same targets compare equal however the
+        // default was reached
+        if (clampedPriority == DEFAULT_TARGET_PRIORITY) {
+            targetPriorityMap().remove(unitId);
+        } else {
+            targetPriorityMap().put(unitId, clampedPriority);
+        }
+    }
+
+    /**
+     * Returns how keenly the bot goes for a unit on its priority list. A unit added without a priority, including every
+     * unit in settings saved before priorities existed, reads as {@link #DEFAULT_TARGET_PRIORITY}.
+     *
+     * @param unitId the ID of the unit
+     *
+     * @return the target priority, 1 (shoot first) to 5
+     */
+    public int getTargetPriority(final int unitId) {
+        return targetPriorityMap().getOrDefault(unitId, DEFAULT_TARGET_PRIORITY);
+    }
+
+    /**
+     * @return the stored non-default target priorities, created on first use when this object was loaded from a save
+     *       or packet written before the field existed
+     */
+    private Map<Integer, Integer> targetPriorityMap() {
+        if (targetPriorities == null) {
+            targetPriorities = new HashMap<>();
+        }
+        return targetPriorities;
     }
 
     /**
@@ -1219,7 +1282,7 @@ public class BehaviorSettings implements Serializable {
         }
         out.append("\n\t\t Priority Units:");
         for (final int id : getPriorityUnitTargets()) {
-            out.append("  ").append(id);
+            out.append("  ").append(id).append(" (target priority ").append(getTargetPriority(id)).append(')');
         }
         out.append("\n\t\t Ignored Units:");
         for (final int id : getIgnoredUnitTargets()) {
@@ -1269,6 +1332,8 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (!priorityUnitTargets.equals(that.priorityUnitTargets)) {
             return false;
+        } else if (!targetPriorityMap().equals(that.targetPriorityMap())) {
+            return false;
         } else if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
             return false;
         } else if (exclusiveMutualSupport != that.exclusiveMutualSupport) {
@@ -1297,6 +1362,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + retreatEdge.hashCode();
         result = 31 * result + strategicBuildingTargets.hashCode();
         result = 31 * result + priorityUnitTargets.hashCode();
+        result = 31 * result + targetPriorityMap().hashCode();
         result = 31 * result + ignoredUnitTargets.hashCode();
         result = 31 * result + numberOfEnemiesToConsiderFacing;
         result = 31 * result + allowFacingTolerance;

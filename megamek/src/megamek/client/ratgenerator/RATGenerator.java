@@ -34,7 +34,7 @@ package megamek.client.ratgenerator;
 
 import static megamek.utilities.ImageUtilities.addTintToImageIcon;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -44,23 +44,24 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.swing.*;
+import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ratgenerator.UnitTable.TableEntry;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.Faction;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.UnitType;
+import megamek.common.universe.Faction2;
 import megamek.common.universe.Factions2;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -2060,130 +2061,149 @@ public class RATGenerator {
         return (fRec == null) || fRec.isInEra(era);
     }
 
+    /** The directory holding the faction icons named by each faction's {@link Faction2#getIcon(int) icon}. */
+    public static final String FACTION_LOGO_DIRECTORY = "data/images/universe/factions/";
+    private static final String FACTION_LOGO_FILE_TYPE = ".png";
+
     /**
      * Returns the logo ImageIcon for a specific faction and game year.
      *
-     * <p>This method resolves the appropriate logo file for the given {@code factionCode} and {@code gameYear},
-     * accounting for historical changes in faction logos over time where applicable.</p>
-     *
-     * <p>The resulting image is loaded from the predefined directory as a PNG file and tinted black.
-     * For unknown or missing faction codes, a default logo is used.</p>
+     * <p>The logo file is resolved by {@link #getFactionLogoFile(int, String)} and tinted with
+     * {@code tintColor}.</p>
      *
      * @param gameYear    the year in the game context, potentially affecting logo selection for some factions
      * @param factionCode the code identifying the faction (e.g., "FS" for Federated Suns)
+     * @param tintColor   the color the logo is tinted with
      *
-     * @return an {@link ImageIcon} object for the specified faction, tinted black
+     * @return an {@link ImageIcon} for the specified faction, or {@code null} if the logo file does not exist
      */
-    public @Nullable ImageIcon getFactionLogo(int gameYear, String factionCode, Color tintColor) {
-        final String IMAGE_DIRECTORY = "data/images/universe/factions/";
-        final String FILE_TYPE = ".png";
-
-        String key = switch (factionCode) {
-            case "ARC", "ARD" -> "logo_aurigan_coalition";
-            case "CDP" -> "logo_calderon_protectorate";
-            case "CC" -> "logo_capellan_confederation";
-            case "CIR" -> "logo_circinus_federation";
-            case "CBS" -> "logo_clan_blood_spirit";
-            case "CB" -> "logo_clan_burrock";
-            case "CCC" -> "logo_clan_cloud_cobra";
-            case "CCO" -> "logo_clan_coyote";
-            case "CFM" -> "logo_clan_fire_mandrills";
-            case "CGB" -> {
-                if (gameYear >= 3060) {
-                    yield "logo_rasalhague_dominion";
-                } else {
-                    yield "logo_clan_ghost_bear";
-                }
-            }
-            case "CGS" -> "logo_clan_goliath_scorpion";
-            case "CHH" -> "logo_clan_hells_horses";
-            case "CIH" -> "logo_clan_ice_hellion";
-            case "CJF" -> "logo_clan_jade_falcon";
-            case "CMG" -> "logo_clan_mongoose";
-            case "CNC" -> "logo_clan_nova_cat";
-            case "CDS" -> {
-                if (gameYear <= 2984 || gameYear >= 3100) {
-                    yield "logo_clan_sea_fox";
-                } else {
-                    yield "logo_clan_diamond_sharks";
-                }
-            }
-            case "CSJ" -> "logo_clan_smoke_jaguar";
-            case "CSR" -> "logo_clan_snow_raven";
-            case "CSA" -> "logo_clan_star_adder";
-            case "CSV" -> "logo_clan_steel_viper";
-            case "CSL" -> "logo_clan_stone_lion";
-            case "CW", "CWE", "CWIE" -> "logo_clan_wolf";
-            case "CWOV" -> "logo_clan_wolverine";
-            case "CS" -> "logo_comstar";
-            case "DC" -> "logo_draconis_combine";
-            case "DA" -> "logo_duchy_of_andurien";
-            case "DTA" -> "logo_duchy_of_tamarind_abbey";
-            case "CEI" -> "logo_escorpion_imperio";
-            case "FC" -> "logo_federated_commonwealth";
-            case "FS" -> "logo_federated_suns";
-            case "FOR" -> "logo_fiefdom_of_randis";
-            case "FVC" -> "logo_filtvelt_coalition";
-            case "FRR" -> "logo_free_rasalhague_republic";
-            case "FWL" -> "logo_free_worlds_league";
-            case "FR" -> "logo_fronc_reaches";
-            case "HL" -> "logo_hanseatic_league";
-            case "IP" -> "logo_illyrian_palatinate";
-            case "LL" -> "logo_lothian_league";
-            case "LA" -> "logo_lyran_alliance";
-            case "MOC" -> "logo_magistracy_of_canopus";
-            case "MH" -> "logo_marian_hegemony";
-            case "MERC" -> "logo_mercenaries";
-            case "MV" -> "logo_morgrains_valkyrate";
-            case "NC" -> "logo_nueva_castile";
-            case "OC" -> "logo_oberon_confederation";
-            case "OA" -> "logo_outworld_alliance";
-            case "PIR" -> "logo_pirates";
-            case "RD" -> "logo_rasalhague_dominion";
-            case "RF" -> "logo_regulan_fiefs";
-            case "ROS" -> "logo_republic_of_the_sphere";
-            case "RWR" -> "logo_rim_worlds_republic";
-            case "IND" -> "logo_security_forces";
-            case "SIC" -> "logo_st_ives_compact";
-            case "SL" -> "logo_star_league";
-            case "TC" -> "logo_taurian_concordat";
-            case "TD" -> "logo_tortuga_dominions";
-            case "UC" -> "logo_umayyad_caliphate";
-            case "WOB" -> "logo_word_of_blake";
-            case "TH" -> "logo_terran_hegemony";
-            case "CI" -> "logo_chainelane_isles";
-            case "SOC" -> "logo_the_society";
-            case "CWI" -> "logo_clan_widowmaker";
-            case "EF" -> "logo_elysian_fields";
-            case "GV" -> "logo_greater_valkyrate";
-            case "JF" -> "logo_jarnfolk";
-            case "MSC" -> "logo_marik_stewart_commonwealth";
-            case "OP" -> "logo_oriente_protectorate";
-            case "RA" -> "logo_raven_alliance";
-            case "RCM" -> "logo_rim_commonality";
-            case "NIOPS" -> "logo_niops_association";
-            case "AXP" -> "logo_axumite_providence";
-            case "NDC" -> "logo_new_delphi_compact";
-            case "REB" -> "logo_rebels";
-            // Fallbacks
-            default -> {
-                Faction faction = Faction.fromAbbr(factionCode);
-                if (faction.isClan()) {
-                    yield "logo_clan_generic";
-                } else {
-                    yield "logo_mercenaries";
-                }
-            }
-        };
-
-        final String filename = IMAGE_DIRECTORY + key + FILE_TYPE;
-        File file = new File(filename);
-        if (file.exists()) {
-            ImageIcon icon = new ImageIcon(filename);
+    public static @Nullable ImageIcon getFactionLogo(int gameYear, String factionCode, Color tintColor) {
+        File file = getFactionLogoFile(gameYear, factionCode);
+        if (file.isFile()) {
+            ImageIcon icon = new ImageIcon(file.getPath());
             icon = addTintToImageIcon(icon.getImage(), tintColor);
             return icon;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns the file holding a faction's logo for the given year. A logo in the user directory takes precedence over
+     * the installed one, so custom factions in the user directory can bring their own icons and installed icons can be
+     * replaced. When the faction's dedicated logo is found in neither place, the generic logo of
+     * {@link #getGenericFactionLogoFile(String)} is used.
+     *
+     * @param gameYear    the year in the game context, potentially affecting logo selection for some factions
+     * @param factionCode the code identifying the faction (e.g., "FS" for Federated Suns)
+     *
+     * @return the faction's logo file; it does not exist if neither the dedicated nor the generic logo was found
+     */
+    public static File getFactionLogoFile(int gameYear, String factionCode) {
+        String canonicalAddress = getCanonicalFactionLogoAddress(gameYear, factionCode);
+        if (canonicalAddress != null) {
+            File file = findFactionLogoFile(canonicalAddress);
+            if (file != null) {
+                return file;
+            }
+            LOGGER.warn("Could not find the faction icon {} of {}, using the generic logo", canonicalAddress,
+                  factionCode);
+        }
+        return getGenericFactionLogoFile(factionCode);
+    }
+
+    /**
+     * Returns the file holding the generic logo used for factions without a dedicated one: the generic Clan logo for
+     * Clan factions, or the mercenary logo otherwise. A logo in the user directory takes precedence over the installed
+     * one.
+     *
+     * @param factionCode the code identifying the faction (e.g., "FS" for Federated Suns)
+     *
+     * @return the generic logo file; it does not exist if the logo was found in neither place
+     */
+    public static File getGenericFactionLogoFile(String factionCode) {
+        String genericAddress = getGenericFactionLogoAddress(factionCode);
+        File file = findFactionLogoFile(genericAddress);
+        return (file == null) ? new File(genericAddress) : file;
+    }
+
+    /**
+     * @return the logo file at the given relative address in the user directory if it exists there, else the
+     *       installed one if that exists, else {@code null}
+     */
+    private static @Nullable File findFactionLogoFile(String address) {
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        if ((userDir != null) && !userDir.isBlank()) {
+            File userFile = new File(userDir, address);
+            if (userFile.isFile()) {
+                return userFile;
+            }
+        }
+        File file = new File(address);
+        return file.isFile() ? file : null;
+    }
+
+    /**
+     * Resolves the file path for a faction's logo, accounting for historical changes in faction logos over time.
+     *
+     * <p>Factions without a dedicated logo fall back to a generic Clan logo for Clan factions, or the mercenary
+     * logo otherwise.</p>
+     *
+     * @param gameYear    the year in the game context, potentially affecting logo selection for some factions
+     * @param factionCode the code identifying the faction (e.g., "FS" for Federated Suns)
+     *
+     * @return the relative path to the faction's logo PNG
+     */
+    public static String getFactionLogoAddress(int gameYear, String factionCode) {
+        String canonicalAddress = getCanonicalFactionLogoAddress(gameYear, factionCode);
+        return (canonicalAddress == null) ? getGenericFactionLogoAddress(factionCode) : canonicalAddress;
+    }
+
+    private static String getGenericFactionLogoAddress(String factionCode) {
+        boolean isClan = Factions2.getInstance().getFaction(factionCode)
+                               .map(Faction2::isClan)
+                               .orElseGet(() -> Faction.fromAbbr(factionCode).isClan());
+        String key = isClan ? "logo_clan_generic" : "logo_mercenaries";
+        return FACTION_LOGO_DIRECTORY + key + FACTION_LOGO_FILE_TYPE;
+    }
+
+    /**
+     * Returns the path to a faction's dedicated logo, or {@code null} if the faction has none. Callers can use this
+     * to distinguish a dedicated logo from the generic fallback used by {@link #getFactionLogoAddress(int, String)}.
+     *
+     * <p>The logo is the faction's {@link Faction2#getIcon(int) icon} for the given year, as set in its YAML file.
+     * A command without an icon of its own inherits the icon of its parent, found by dropping the last part of its
+     * key (e.g. {@code CC.SIL.1st} inherits from {@code CC.SIL}, which in turn inherits from {@code CC}). This also
+     * applies to a command that has no faction data of its own, such as one only known to the RAT generator.</p>
+     *
+     * @param gameYear    the year in the game context, potentially affecting logo selection for some factions
+     * @param factionCode the code identifying the faction (e.g., "FS" for Federated Suns)
+     *
+     * @return the relative path to the faction's dedicated logo PNG, or {@code null} if the faction has no icon
+     */
+    public static @Nullable String getCanonicalFactionLogoAddress(int gameYear, String factionCode) {
+        String currentCode = factionCode;
+        while (currentCode != null) {
+            Optional<Faction2> faction = Factions2.getInstance().getFaction(currentCode);
+            if (faction.isPresent()) {
+                String icon = faction.get().getIcon(gameYear);
+                if ((icon != null) && !icon.isBlank()) {
+                    return FACTION_LOGO_DIRECTORY + icon;
+                }
+                // An alias resolves to its canonical faction, whose key gives the parent
+                currentCode = faction.get().getKey();
+            }
+            currentCode = getParentFactionCode(currentCode);
+        }
+        return null;
+    }
+
+    /**
+     * @return the code of the faction or command one level up (e.g. {@code CC.SIL} for {@code CC.SIL.1st}), or
+     *       {@code null} for a top-level faction
+     */
+    private static @Nullable String getParentFactionCode(String factionCode) {
+        int parentSeparator = factionCode.lastIndexOf('.');
+        return (parentSeparator > 0) ? factionCode.substring(0, parentSeparator) : null;
     }
 }

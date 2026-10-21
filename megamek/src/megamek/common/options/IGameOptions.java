@@ -36,7 +36,7 @@ package megamek.common.options;
 import java.util.Collection;
 import java.util.Enumeration;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface IGameOptions {
 

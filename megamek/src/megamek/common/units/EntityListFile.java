@@ -48,6 +48,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
@@ -1122,6 +1123,14 @@ public class EntityListFile {
                     output.write("\" " + MULParser.ATTR_INF_SPEC + "=\"");
                     output.write(infantry.getSpecializations() + "");
                 }
+                // Inferno or standard SRM munitions are declared before the battle (TW p. 143), so the choice is
+                // not part of the design and must be saved with the unit.
+                if (infantry.hasSrmLauncher()) {
+                    output.write("\" " + MULParser.ATTR_SRM_MUNITION + "=\"");
+                    output.write(infantry.isInfernoSrmsDeclared()
+                          ? MULParser.VALUE_SRM_MUNITION_INFERNO
+                          : MULParser.VALUE_SRM_MUNITION_STANDARD);
+                }
                 // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): not part of the cached design, so
                 // persist it (and whether the platoon has fired it this scenario) so it round-trips through MUL/save
                 // games and to MekHQ.
@@ -1362,6 +1371,11 @@ public class EntityListFile {
                 // dropship only crits
                 if (a instanceof Dropship d) {
                     output.write(EntityListFile.getDropshipCritString(d));
+                }
+
+                // jumpship, warship and space station crits
+                if (a instanceof Jumpship jumpship) {
+                    output.write(EntityListFile.getJumpshipCritString(jumpship));
                 }
 
             }
@@ -1977,15 +1991,86 @@ public class EntityListFile {
     }
 
     // Dropship crits
-    private static String getDropshipCritString(Dropship a) {
+    /**
+     * Writes the damage a JumpShip, WarShip or space station carries beyond its integrity values: hits on the K-F drive
+     * components and the L-F battery, and which grav decks and docking collars are damaged. MekHQ writes its saves with
+     * its own entity writer and calls this so both keep the same damage.
+     *
+     * @param jumpship the JumpShip, WarShip or space station
+     *
+     * @return the element, or an empty string when none of these is damaged
+     */
+    public static String getJumpshipCritString(Jumpship jumpship) {
+        StringBuilder critValues = new StringBuilder();
+        appendHitAttribute(critValues, MULParser.ATTR_KF_HELIUM_TANK, jumpship.getKFHeliumTankHit());
+        appendHitAttribute(critValues, MULParser.ATTR_KF_DRIVE_COIL, jumpship.getKFDriveCoilHit());
+        appendHitAttribute(critValues, MULParser.ATTR_KF_FIELD_INITIATOR, jumpship.getKFFieldInitiatorHit());
+        appendHitAttribute(critValues, MULParser.ATTR_KF_CHARGING_SYSTEM, jumpship.getKFChargingSystemHit());
+        appendHitAttribute(critValues, MULParser.ATTR_KF_DRIVE_CONTROLLER, jumpship.getKFDriveControllerHit());
+        appendHitAttribute(critValues, MULParser.ATTR_LF_BATTERY, jumpship.getLFBatteryHit());
+        appendListAttribute(critValues, MULParser.ATTR_DAMAGED_GRAV_DECKS, listDamagedGravDecks(jumpship));
+        appendListAttribute(critValues, MULParser.ATTR_DAMAGED_DOCKING_COLLARS, listDamagedDockingCollars(jumpship));
+        if (critValues.isEmpty()) {
+            return "";
+        }
+        return "      <" + MULParser.ELE_JUMPSHIP_CRIT + critValues + "/>\n";
+    }
+
+    private static void appendHitAttribute(StringBuilder critValues, String attribute, boolean isHit) {
+        if (isHit) {
+            critValues.append(' ').append(attribute).append("=\"").append(MULParser.VALUE_NONE).append('"');
+        }
+    }
+
+    private static void appendListAttribute(StringBuilder critValues, String attribute, List<String> values) {
+        if (!values.isEmpty()) {
+            critValues.append(' ').append(attribute).append("=\"").append(String.join(",", values)).append('"');
+        }
+    }
+
+    /**
+     * @return the index of each damaged grav deck, as {@link Jumpship#getGravDeckDamageFlag(int)} numbers them
+     */
+    private static List<String> listDamagedGravDecks(Jumpship jumpship) {
+        List<String> damagedDecks = new ArrayList<>();
+        for (int deckIndex = 0; deckIndex < jumpship.getGravDecks().size(); deckIndex++) {
+            if (jumpship.getGravDeckDamageFlag(deckIndex) == 1) {
+                damagedDecks.add(String.valueOf(deckIndex));
+            }
+        }
+        return damagedDecks;
+    }
+
+    /**
+     * @return the collar number of each damaged docking collar
+     */
+    private static List<String> listDamagedDockingCollars(Jumpship jumpship) {
+        List<String> damagedCollars = new ArrayList<>();
+        for (DockingCollar collar : jumpship.getDockingCollars()) {
+            if (collar.isDamaged()) {
+                damagedCollars.add(String.valueOf(collar.getCollarNumber()));
+            }
+        }
+        return damagedCollars;
+    }
+
+    /**
+     * Writes a DropShip's docking collar and K-F boom damage. MekHQ writes its saves with its own entity writer and
+     * calls this so both keep the same damage.
+     *
+     * @param dropship the DropShip
+     *
+     * @return the element, or an empty string when neither is damaged
+     */
+    public static String getDropshipCritString(Dropship dropship) {
         String retVal = "      <" + MULParser.ELE_DROP_CRIT;
         String critVal = "";
 
         // crits
-        if (a.isDockCollarDamaged()) {
+        if (dropship.isDockCollarDamaged()) {
             critVal = critVal + ' ' + MULParser.ATTR_DOCKING_COLLAR + "=\"" + MULParser.VALUE_NONE + '"';
         }
-        if (a.isKFBoomDamaged()) {
+        if (dropship.isKFBoomDamaged()) {
             critVal = critVal + ' ' + MULParser.ATTR_KF_BOOM + "=\"" + MULParser.VALUE_NONE + '"';
         }
 

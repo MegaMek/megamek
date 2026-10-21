@@ -58,6 +58,7 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Configuration;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BugReportBundle;
@@ -148,7 +149,8 @@ public class PackageBugReportAction extends AbstractAction {
         Client client = (clientSupplier == null) ? null : clientSupplier.get();
         if ((client == null) || !client.isConnected()) {
             LOGGER.info("[BugReport] No connected game; packaging logs and system information only");
-            buildArchive(archiveFile, null, I18N.get("package.noGame"));
+            buildArchive(archiveFile, null, I18N.get("package.noGame"),
+                  BugReportBundle.newestGameSummaryDirectory(Configuration.gameSummaryImagesMMDir()));
             return;
         }
 
@@ -195,6 +197,7 @@ public class PackageBugReportAction extends AbstractAction {
     private void requestSaveThenBuildArchive(Client client, File archiveFile) {
         File archiveDirectory = archiveFile.getParentFile();
         String temporarySaveName = temporarySaveNameFor(archiveFile);
+        File gameSummaryDirectory = new File(Configuration.gameSummaryImagesMMDir(), client.getGame().getUUIDString());
 
         // Whichever of the callback and the timeout arrives first wins; the other must become a no-op.
         AtomicBoolean alreadyProceeded = new AtomicBoolean(false);
@@ -206,7 +209,7 @@ public class PackageBugReportAction extends AbstractAction {
                       SAVE_TIMEOUT_MILLISECONDS);
                 client.setSaveCompletionCallback(null);
                 client.setAwaitingSave(false);
-                buildArchive(archiveFile, null, I18N.get("package.saveTimedOut"));
+                buildArchive(archiveFile, null, I18N.get("package.saveTimedOut"), gameSummaryDirectory);
             }
         });
         timeoutTimer.setRepeats(false);
@@ -216,10 +219,10 @@ public class PackageBugReportAction extends AbstractAction {
                 timeoutTimer.stop();
                 if (savedFile == null) {
                     LOGGER.warn("[BugReport] The save could not be written; packaging logs only");
-                    buildArchive(archiveFile, null, I18N.get("package.saveFailed"));
+                    buildArchive(archiveFile, null, I18N.get("package.saveFailed"), gameSummaryDirectory);
                 } else {
                     LOGGER.info("[BugReport] Save returned as {}; building archive", savedFile.getName());
-                    buildArchive(archiveFile, savedFile, null);
+                    buildArchive(archiveFile, savedFile, null, gameSummaryDirectory);
                 }
             }
         }));
@@ -243,14 +246,18 @@ public class PackageBugReportAction extends AbstractAction {
      * @param saveGameFile  the save to include, or {@code null} for a logs-only archive
      * @param cautionNotice a note explaining why the save is missing, shown with the result, or {@code null} when
      *                      nothing went wrong
+     * @param gameSummaryDirectory the minimap image folder of the game the report is about, or {@code null} for none
      */
-    private void buildArchive(File archiveFile, @Nullable File saveGameFile, @Nullable String cautionNotice) {
+    private void buildArchive(File archiveFile, @Nullable File saveGameFile, @Nullable String cautionNotice,
+          @Nullable File gameSummaryDirectory) {
         ClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
-        File logDirectory = new File(clientPreferences.getLogDirectory());
+        File logDirectory = new File(BugReportBundle.TEXT_LOG_DIRECTORY);
+        File gameReportDirectory = new File(clientPreferences.getLogDirectory());
         String systemInformation = MegaMek.getUnderlyingInformation(MegaMek.getOriginProject(),
               MMConstants.PROJECT_NAME);
-        BugReportBundle bundle = new BugReportBundle(logDirectory, saveGameFile, systemInformation,
-              clientPreferences.getGameLogFilename());
+        BugReportBundle bundle = new BugReportBundle(new BugReportBundle.Sources(logDirectory, gameReportDirectory,
+              new File(MMConstants.SAVEGAME_DIR), saveGameFile, systemInformation,
+              clientPreferences.getGameLogFilename(), gameSummaryDirectory));
 
         new SwingWorker<BugReportBundle.BundleResult, Void>() {
             @Override

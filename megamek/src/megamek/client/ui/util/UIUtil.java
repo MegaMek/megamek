@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.MMToggleButton;
@@ -58,7 +59,6 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.widget.RawImagePanel;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
@@ -1140,6 +1140,12 @@ public final class UIUtil {
 
         String hintText;
 
+        /**
+         * Set only while the box holds its own hint as text. Comparing the text with the hint instead would mistake a
+         * player who typed exactly the hint, which for an example such as "3-7, 10" is a sensible thing to type.
+         */
+        private boolean isShowingHint = false;
+
         public TipTextField(int n) {
             super(n);
         }
@@ -1165,9 +1171,20 @@ public final class UIUtil {
             updateHint();
         }
 
+        /**
+         * Returns what the player typed. While the box is empty and unfocused it holds the hint as its text, so
+         * {@link #getText()} returns the hint then; a search or an ID list must not read the hint as input.
+         *
+         * @return the typed text, or an empty string while only the hint is showing
+         */
+        public String getEnteredText() {
+            return isShowingHint ? "" : getText();
+        }
+
         private void updateHint() {
             if (getText().isEmpty()) {
                 setText(hintText);
+                isShowingHint = true;
                 setForeground(uiGray());
                 setCaretPosition(0);
             }
@@ -1175,6 +1192,7 @@ public final class UIUtil {
 
         @Override
         public void setText(String t) {
+            isShowingHint = false;
             if ((t != null) && !t.isBlank()) {
                 setForeground(null);
             }
@@ -1189,7 +1207,7 @@ public final class UIUtil {
 
             @Override
             public void focusGained(FocusEvent e) {
-                if (getText().equals(hintText)) {
+                if (isShowingHint) {
                     setText("");
                 }
                 setForeground(null);

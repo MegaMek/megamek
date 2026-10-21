@@ -58,6 +58,32 @@ public class TOCNode extends RulesetNode {
         flagNodes = new ArrayList<>();
     }
 
+    /**
+     * Whether this table of contents offers anything. A ruleset file with no {@code <toc>} still gets an empty one, which
+     * means "use the parent's", not "offer nothing".
+     *
+     * @return {@code true} when there is no unit type, echelon, rating or flag option at all
+     */
+    public boolean isEmpty() {
+        return unitTypeNodes.isEmpty() && echelonNodes.isEmpty() && ratingNodes.isEmpty() && flagNodes.isEmpty();
+    }
+
+    /**
+     * Whether these menus offer a faction any unit type in a year. The Force Generator leaves out a faction they do not,
+     * since it could only show empty menus.
+     *
+     * @param faction the faction key
+     * @param year    the year
+     *
+     * @return {@code true} when at least one unit type option applies
+     */
+    public boolean offersUnitTypes(String faction, int year) {
+        ForceDescriptor probe = new ForceDescriptor();
+        probe.setFaction(faction);
+        probe.setYear(year);
+        return findUnitTypes(probe) != null;
+    }
+
     public ValueNode findUnitTypes(ForceDescriptor fd) {
         for (ValueNode n : unitTypeNodes) {
             if (n.matches(fd)) {

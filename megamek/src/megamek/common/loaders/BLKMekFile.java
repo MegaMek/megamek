@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -108,20 +108,6 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         }
         mek.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
-        int engineCode = BLKFile.FUSION;
-        if (dataFile.exists("engine_type")) {
-            engineCode = dataFile.getDataAsInt("engine_type")[0];
-        }
-        int engineFlags = 0;
-        if (mek.isClan()) {
-            engineFlags = Engine.CLAN_ENGINE;
-        }
-        if (!dataFile.exists("walkingMP")) {
-            throw new EntityLoadingException("Could not find walkingMP block.");
-        }
-        int engineRating = dataFile.getDataAsInt("walkingMP")[0] * (int) mek.getWeight();
-        mek.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
-
         if (!dataFile.exists("jumpingMP")) {
             throw new EntityLoadingException("Could not find block.");
         }
@@ -138,6 +124,31 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         } else {
             mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
+
+        int engineCode = BLKFile.FUSION;
+        if (dataFile.exists("engine_type")) {
+            engineCode = dataFile.getDataAsInt("engine_type")[0];
+        }
+        int engineFlags = 0;
+        // Support for mixed tech units with an engine with a different tech base
+        if (dataFile.exists("clan_engine")) {
+            if (Boolean.parseBoolean(dataFile.getDataAsString("clan_engine")[0])) {
+                engineFlags |= Engine.CLAN_ENGINE;
+            }
+        } else if (mek.isClan()) {
+            engineFlags |= Engine.CLAN_ENGINE;
+        }
+        if (mek.isIndustrial()) {
+            engineFlags |= Engine.INDUSTRIAL_ENGINE;
+        }
+        if (!dataFile.exists("walkingMP")) {
+            throw new EntityLoadingException("Could not find walkingMP block.");
+        }
+        int engineRating = dataFile.getDataAsInt("walkingMP")[0] * (int) mek.getWeight();
+        if (engineRating > 400) {
+            engineFlags |= Engine.LARGE_ENGINE;
+        }
+        mek.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         boolean patchworkArmor = false;
         if (dataFile.exists("armor_type")) {

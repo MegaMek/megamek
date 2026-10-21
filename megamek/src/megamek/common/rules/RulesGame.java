@@ -33,9 +33,9 @@ package megamek.common.rules;
  */
 
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
@@ -163,6 +163,7 @@ public abstract class RulesGame {
         int deploymentRound = entity.getDeployRound();
         int currentRound = entity.getGame().getCurrentRound();
         int startingPos = entity.getStartingPos();
+
         return (!entity.isDeployed() && deploymentRound >= 0
                 && deploymentRound <= currentRound
                 && restrictDeploymentWidth(entity.getOwner(), startingPos));
@@ -210,9 +211,6 @@ public abstract class RulesGame {
      */
     public boolean restrictDeploymentWidth(@Nullable Player player,
                                            int deploymentArea) {
-        if ((player != null) && player.isBot()) {
-            return false;
-        }
         if (isWalkOnDeployment() &&
             (deploymentArea != Board.START_CENTER &&
              deploymentArea != Board.START_ANY &&

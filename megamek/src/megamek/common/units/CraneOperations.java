@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * The crane loading and unloading work in progress for one grounded Small Craft or DropShip (TW p.90-91). Kept as its own

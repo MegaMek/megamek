@@ -36,7 +36,7 @@ package megamek.common.net.connections;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.logging.MMLogger;
 
 /**

@@ -32,7 +32,7 @@
  */
 package megamek.common.battlefieldSupport;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * The artillery piece carried by a Battlefield Support Asset with the Artillery Special. The type is shown on the Asset

@@ -37,8 +37,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.MarinePointsBreakdown;
 import megamek.common.compute.MarinePointsScoreCalculator;
 import megamek.common.units.AbstractBuildingEntity;

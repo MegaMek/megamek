@@ -55,11 +55,11 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.FormationMixPreview;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 
 /**
  * Lets the player ask for more of one kind of lance and less of another.

@@ -44,9 +44,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandlesTank;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;

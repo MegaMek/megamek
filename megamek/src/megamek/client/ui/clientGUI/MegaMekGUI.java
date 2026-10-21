@@ -69,6 +69,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.SuiteConstants;
@@ -117,7 +118,6 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.SensorChoiceHandler;
 import megamek.common.game.Game;
@@ -343,7 +343,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (medalImage == null) {
             return targetMedalWidth; // Skip drawing if medalImage is not initialized
         }
-        VolatileImage image = medalImage.getImage();
+        VolatileImage image = medalImage.getImage(frame.getGraphicsConfiguration());
         if (image.getWidth(null) > 0 && image.getHeight(null) > 0) {
             double medalHeightScalePercent = 0.15; // Medal height as 15% of panel height
             int originalMedalWidth = image.getWidth(null);
@@ -378,7 +378,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      */
     private @Nullable Rectangle drawLogo(Graphics2D g2d, int panelWidth, int panelHeight, int targetMedalWidth,
           int padding) {
-        VolatileImage image = logoImage.getImage();
+        VolatileImage image = logoImage.getImage(frame.getGraphicsConfiguration());
         if (image.getWidth(null) > 0 && image.getHeight(null) > 0) {
             double logoWidthScalePercent = 0.25; // Logo width as 25% of panel width
 
@@ -568,6 +568,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.pack();
         // center window in screen
         frame.setLocationRelativeTo(null);
+        LOGGER.debug("Main menu built at GUI scale {}: frame {}x{}, splash {}x{}, button {}x{}",
+              GUIPreferences.getInstance().getGUIScale(),
+              frame.getWidth(), frame.getHeight(),
+              splashPanel.getWidth(), splashPanel.getHeight(),
+              hostB.getWidth(), hostB.getHeight());
     }
 
     /**
@@ -1824,6 +1829,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 break;
             case GUIPreferences.GUI_SCALE:
                 updateGuiScaling();
+                // The menu's button and splash sizes are fixed when it is built, so rebuild it at the new scale
+                if (frame != null) {
+                    showMainMenu();
+                    frame.repaint();
+                }
                 break;
         }
     }

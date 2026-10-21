@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Provides a means to track unit names for collisions. This API is not thread safe.

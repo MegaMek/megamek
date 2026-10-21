@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
@@ -48,7 +49,6 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -343,6 +343,7 @@ public class Precognition implements Runnable {
                 case SEND_TOAST:
                 case UPDATE_CUT_HEXES:
                 case SYNC_TEMPORARY_ECM_FIELDS:
+                case TEAM_INITIATIVE:
                     LOGGER.debug("Intentionally ignoring PacketCommand: {}", c.command().name());
                     break;
                 default:

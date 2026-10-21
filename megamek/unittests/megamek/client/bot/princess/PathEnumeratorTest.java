@@ -32,16 +32,37 @@
  */
 package megamek.client.bot.princess;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
+import java.time.Duration;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
+import megamek.common.BulldozerMovePath;
+import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
+import megamek.common.Player;
+import megamek.common.board.Board;
+import megamek.common.board.BoardType;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.pathfinder.BoardClusterTracker;
+import megamek.common.units.BipedMek;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -85,5 +106,113 @@ class PathEnumeratorTest {
 
         assertFalse(pathEnumerator.getEntitiesWithLocation(queriedLocation, false).contains(entityId),
               "A unit with no potential location at the queried hex must not be found");
+    }
+
+    @Test
+    void longRangePathsAreBuiltOnFirstUseNotOnRecalculation() {
+        Hex[] hexes = new Hex[20 * 20];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex();
+        }
+        Board board = new Board(20, 20, hexes);
+        board.setBoardType(BoardType.GROUND);
+        Game game = new Game();
+        game.setBoard(board);
+        Player owner = new Player(1, "Owner");
+        game.addPlayer(1, owner);
+
+        BipedMek mek = spy(new BipedMek());
+        mek.setId(1);
+        mek.setGame(game);
+        mek.setOwner(owner);
+        // Weight and internal structure, so the legs count as intact and the walk MP is real
+        mek.setWeight(50);
+        mek.autoSetInternal();
+        mek.setOriginalWalkMP(4);
+        mek.setPosition(new Coords(10, 18));
+        mek.setFacing(0);
+        mek.setDeployed(true);
+        doReturn(true).when(mek).isSelectableThisTurn();
+        game.addEntity(mek);
+
+        // A unit with no enemy in sight moves to contact, across the board
+        Princess princess = mock(Princess.class);
+        UnitBehavior behaviorTracker = mock(UnitBehavior.class);
+        when(princess.getLocalPlayer()).thenReturn(owner);
+        when(princess.getGame()).thenReturn(game);
+        when(princess.getUnitBehaviorTracker()).thenReturn(behaviorTracker);
+        when(princess.getClusterTracker()).thenReturn(new BoardClusterTracker());
+        when(princess.getEnemyHotSpots()).thenReturn(List.of());
+        when(behaviorTracker.getBehaviorType(mek, princess)).thenReturn(BehaviorType.MoveToContact);
+        when(behaviorTracker.getWaypointForEntity(mek)).thenReturn(Optional.empty());
+
+        PathEnumerator pathEnumerator = new PathEnumerator(princess, game);
+        pathEnumerator.recalculateMovesFor(mek);
+
+        assertNotNull(pathEnumerator.getUnitPaths().get(mek.getId()), "the standard paths are still built at once");
+        assertNull(pathEnumerator.getLongRangePaths().get(mek.getId()),
+              "recalculating must not build the long-range paths, which most units never read");
+
+        List<BulldozerMovePath> longRangePaths = pathEnumerator.getLongRangePathsFor(mek);
+        assertNotNull(longRangePaths);
+        assertFalse(longRangePaths.isEmpty(), "the first request builds the long-range paths");
+        assertSame(longRangePaths, pathEnumerator.getLongRangePathsFor(mek), "a second request must not rebuild them");
+    }
+
+    /**
+     * Issue #9265: at 0.04 g a 4 walk MP Mek has 100 walk MP. The backwards search used that figure and never finished,
+     * so the bot never took its movement turn. Both searches are now capped at the gravity-free MP.
+     */
+    @Test
+    void lowGravityDoesNotBlowUpThePathSearch() {
+        Hex[] hexes = new Hex[12 * 12];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex();
+        }
+        Board board = new Board(12, 12, hexes);
+        board.setBoardType(BoardType.GROUND);
+        Game game = new Game();
+        game.setBoard(board);
+        game.getPlanetaryConditions().setGravity(0.04f);
+        Player owner = new Player(1, "Owner");
+        game.addPlayer(1, owner);
+
+        // A real unit, not a spy: a spy's per-call overhead makes even a normal path search take a minute
+        BipedMek mek = new BipedMek();
+        mek.setId(1);
+        mek.setGame(game);
+        mek.setOwner(owner);
+        mek.setWeight(50);
+        mek.autoSetInternal();
+        mek.setOriginalWalkMP(4);
+        mek.setPosition(new Coords(6, 6));
+        mek.setFacing(0);
+        mek.setDeployed(true);
+        game.addEntity(mek);
+        assertTrue(mek.isSelectableThisTurn(), "the test needs the Mek to be able to move");
+        assertEquals(100, mek.getWalkMP(), "the test needs the low gravity to multiply the walk MP");
+
+        Princess princess = mock(Princess.class);
+        UnitBehavior behaviorTracker = mock(UnitBehavior.class);
+        when(princess.getLocalPlayer()).thenReturn(owner);
+        when(princess.getGame()).thenReturn(game);
+        when(princess.getUnitBehaviorTracker()).thenReturn(behaviorTracker);
+        when(princess.getClusterTracker()).thenReturn(new BoardClusterTracker());
+        when(princess.getEnemyHotSpots()).thenReturn(List.of());
+        when(behaviorTracker.getBehaviorType(mek, princess)).thenReturn(BehaviorType.MoveToContact);
+        when(behaviorTracker.getWaypointForEntity(mek)).thenReturn(Optional.empty());
+
+        PathEnumerator pathEnumerator = new PathEnumerator(princess, game);
+        assertTimeoutPreemptively(Duration.ofSeconds(60), () -> pathEnumerator.recalculateMovesFor(mek),
+              "the path search must finish on a low gravity world");
+
+        List<MovePath> paths = pathEnumerator.getUnitPaths().get(mek.getId());
+        assertNotNull(paths);
+        assertFalse(paths.isEmpty(), "the Mek still has moves to choose from");
+        int gravityFreeRunMP = mek.getRunMP(MPCalculationSetting.NO_GRAVITY);
+        for (MovePath path : paths) {
+            assertTrue(path.getMpUsed() <= gravityFreeRunMP,
+                  "no path may spend more than the gravity-free run MP, but one spent " + path.getMpUsed());
+        }
     }
 }

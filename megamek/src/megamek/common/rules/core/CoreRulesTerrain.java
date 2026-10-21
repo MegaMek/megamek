@@ -38,7 +38,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.Terrains;
 
 public class CoreRulesTerrain extends RulesTerrain {
-    
+
     /**
      * {@inheritDoc}
      * Road to road elevation change is -1 MP
@@ -46,8 +46,8 @@ public class CoreRulesTerrain extends RulesTerrain {
     @Override
     public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) {
         if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && deltaElevation > 0) {
-            return -1;
-        }        
+            return 1;
+        }
         return 0;
     }
 

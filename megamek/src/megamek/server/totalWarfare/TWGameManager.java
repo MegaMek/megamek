@@ -47,13 +47,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.board.Board;
@@ -116,6 +116,7 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPSR;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesUnderwater;
 import megamek.common.turns.CounterGrappleTurn;
 import megamek.common.turns.PrephaseTurn;
@@ -295,6 +296,7 @@ public class TWGameManager extends AbstractGameManager {
         EquipmentType.initializeTypes();
         game.getOptions().initialize();
         game.getOptions().loadOptions();
+        initializeRules();
 
         game.setPhase(GamePhase.LOUNGE);
         MapSettings mapSettings = game.getMapSettings();
@@ -317,6 +319,19 @@ public class TWGameManager extends AbstractGameManager {
     public TWGameManager(@Nullable TWDamageManager damageManager) {
         this();
         setDamageManager(damageManager);
+    }
+
+    private void initializeRules() {
+        IOption rules_system = null;
+        rules_system = game.getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+
+        String loadedOption = (game.rulesManager instanceof CoreRulesManager) ?
+                              OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+        if (rules_system == null) {
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
+        } else if (!rules_system.stringValue().equals(loadedOption)) {
+            game.initializeRulesManager(rules_system.stringValue());
+        }
     }
 
     public void setDamageManager(TWDamageManager damageManager) {
@@ -377,6 +392,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new RemoveSmokeCommand(server, this));
         commands.add(new RescueCommand(server, this));
         commands.add(new ForcedWithdrawalOrderCommand(server, this));
+        commands.add(new UnitOrderCommand(server, this));
+        commands.add(new RadioCommand(server, this));
         commands.add(new ChangeWeatherCommand(server, this));
         commands.add(new TraitorCommand(server, this));
         commands.add(new ListEntitiesCommand(server, this));
@@ -1907,6 +1924,7 @@ public class TWGameManager extends AbstractGameManager {
             determineTurnOrder(GamePhase.INITIATIVE);
             clearReports();
             writeInitiativeReport(true);
+            sendTeamInitiative();
             sendReport(true);
             return; // don't end the phase yet, players need to see new report
         }
@@ -2971,6 +2989,15 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         transmitAllPlayerUpdates();
+    }
+
+    /**
+     * Sends every team's initiative roll to all clients, keyed by player id. A player update only carries the
+     * player's roll for ordering within their team; the team roll that decides who wins initiative is not in it. Bots
+     * need the team roll to judge whether a Tactical Genius reroll is worth spending.
+     */
+    void sendTeamInitiative() {
+        send(packetHelper.createTeamInitiativePacket());
     }
 
     private Vector<GameTurn> initGameTurnsWithStranded(TurnVectors team_order) {
@@ -6464,6 +6491,9 @@ public class TWGameManager extends AbstractGameManager {
         // return, re-deploy then
         // fly off again instantly.
         aero.setOutControl(false);
+        // A failed heat control roll this round only takes effect next round, so clear it too or the unit is
+        // put back out of control while off the board, where it never gets a recovery roll.
+        aero.setOutControlHeat(false);
 
         return r;
     }
@@ -7045,11 +7075,24 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Creates an artillery flare of the given radius above the target
+     * Creates an artillery flare of the given radius above the target, on the first board.
+     *
+     * @deprecated a flare lights only its own board; use {@link #deliverArtilleryFlare(Coords, int, int)}
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public void deliverArtilleryFlare(Coords coords, int radius) {
-        Flare flare = new Flare(coords, 0, 5, radius, Flare.F_DRIFTING);
+        deliverArtilleryFlare(coords, 0, radius);
+    }
+
+    /**
+     * Creates an artillery flare of the given radius above the target, on the board it was fired at, drifting with the
+     * wind. It lights from the turn it arrives and lasts five turns, that one included (TO:AR p.152). The Core Rules
+     * have no illumination rounds yet, so this Total Warfare rule applies under both.
+     */
+    public void deliverArtilleryFlare(Coords coords, int boardId, int radius) {
+        Flare flare = new Flare(coords, boardId, 5, radius, Flare.F_IGNITED | Flare.F_DRIFTING);
         game.addFlare(flare);
+        LOGGER.debug("[Illumination] flare of radius {} over {} on board {}", radius, coords, boardId);
     }
 
     public void deliverMortarFlare(Coords coords, int boardId, int duration) {
@@ -26343,6 +26386,9 @@ public class TWGameManager extends AbstractGameManager {
             // Remove any carried pilot IDs (does not apply to other carried entities)
             entity.resetPickedUpMekWarriors();
 
+            // A unit joining this game has not left it yet, whatever happened to it in an earlier battle
+            entity.clearBattleOutcome();
+
             // If we're adding a ProtoMek, calculate its unit number.
             if (entity instanceof ProtoMek) {
                 // How many ProtoMeks does the player already have?
@@ -27660,7 +27706,7 @@ public class TWGameManager extends AbstractGameManager {
                                       (lastUnitNum == (char) entity.getUnitNumber());
                             }
                         });
-                        if (lastUnit.next() != null) {
+                        if (lastUnit.hasNext()) {
                             Entity lastUnitMember = lastUnit.next();
                             lastUnitMember.setUnitNumber(deletedUnitNum);
                             entityUpdate(lastUnitMember.getId());
@@ -29595,7 +29641,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (caa.getTargetType() == Targetable.TYPE_ENTITY &&
                       ((Entity) caa.getTarget(game)).canFall() &&
                       caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
-                    Game.rulesManager.getRulesPSR().clubImpact(game, attackingEntity);
+                    Game.rulesManager.getRulesPSR().clubImpact(game, (Entity) caa.getTarget(game));
                 }
             }
             case DfaAttackAction daa -> {

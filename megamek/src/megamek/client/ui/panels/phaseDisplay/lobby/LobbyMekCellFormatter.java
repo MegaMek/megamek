@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -62,6 +63,8 @@ import megamek.common.interfaces.IStartingPositions;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.*;
 import megamek.common.util.CollectionUtil;
@@ -391,7 +394,7 @@ class LobbyMekCellFormatter {
         result.append("<B>").append(entity.getShortNameRaw()).append("</B></FONT>");
 
         // ID
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+        if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
             result.append(UIUtil.fontHTML(uiGray()));
             result.append(" [ID: ").append(entity.getId()).append("]</FONT>");
         }
@@ -667,7 +670,7 @@ class LobbyMekCellFormatter {
                       .append(loader.getChassis());
             }
 
-            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
                 result.append(" [").append(entity.getTransportId()).append("]");
             }
             result.append("</I></FONT>");
@@ -700,7 +703,7 @@ class LobbyMekCellFormatter {
                 }
             }
 
-            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
                 result.append(" [").append(entity.getTransportId()).append("]");
             }
             result.append("</I></FONT>");
@@ -830,7 +833,7 @@ class LobbyMekCellFormatter {
               && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";
-            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
                 value += UIUtil.fontHTML(uiGray());
                 value += MessageFormat.format("[{0}] </FONT>", entity.getId());
             }
@@ -874,7 +877,7 @@ class LobbyMekCellFormatter {
 
         // Signs before the unit name
         // ID
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+        if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
             result.append(UIUtil.fontHTML(uiGray()));
             result.append(MessageFormat.format("[{0}] </FONT>", entity.getId()));
         }
@@ -1037,7 +1040,7 @@ class LobbyMekCellFormatter {
             if (loader != null) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>(");
                 result.append(loader.getChassis());
-                if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+                if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
                     result.append(" [").append(entity.getTransportId()).append("]");
                 }
                 result.append(")</I></FONT>");
@@ -1166,6 +1169,34 @@ class LobbyMekCellFormatter {
         return formatForce(force, lobby);
     }
 
+    /**
+     * @return the lance's role as a short tag - "Convoy, exits North" or "Escort of Bravo Lance" - or {@code null}
+     *       when none of its own units has one
+     */
+    private static @Nullable String roleTag(Force force, Game game) {
+        List<Entity> units = new ArrayList<>();
+        for (int unitId : force.getEntities()) {
+            Entity unit = game.getEntity(unitId);
+            if (unit != null) {
+                units.add(unit);
+            }
+        }
+        LanceRole role = LanceRoles.roleOf(units);
+        if (role == null) {
+            return null;
+        }
+        if (role.isConvoy() && role.isWaitingAtRouteEnd()) {
+            return Messages.getString("BotCommandPanel.Role.tag.convoyWaits");
+        }
+        if (role.isConvoy()) {
+            return Messages.getString("BotCommandPanel.Role.tag.convoy",
+                  Messages.getString("BotCommandPanel.Role.edge." + role.getExitEdge().name()));
+        }
+        Force convoy = game.getForces().getForce(role.getConvoyForceId());
+        return Messages.getString("BotCommandPanel.Role.tag.escort", (convoy == null)
+              ? Messages.getString("BotCommandPanel.Role.tag.convoyGone") : convoy.getName());
+    }
+
     private static String formatForce(Force force,
           ChatLounge lobby) {
         Client client = lobby.getClientGUI().getClient();
@@ -1197,9 +1228,16 @@ class LobbyMekCellFormatter {
         result.append("<B>").append(force.getName()).append("</B></FONT>");
 
         // ID
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+        if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
             result.append(fontHTML(uiGray()));
             result.append(" [").append(force.getId()).append("]</FONT>");
+        }
+
+        // A bot lance's role, set from its Role menu
+        String roleTag = roleTag(force, game);
+        if (roleTag != null) {
+            result.append(fontHTML(uiGray()));
+            result.append(MekTableModel.DOT_SPACER).append(roleTag).append("</FONT>");
         }
 
         // Display force owner

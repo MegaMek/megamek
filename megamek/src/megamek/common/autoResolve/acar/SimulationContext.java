@@ -45,9 +45,9 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
 import megamek.common.Team;
-import megamek.common.annotations.Nullable;
 import megamek.common.autoResolve.acar.action.Action;
 import megamek.common.autoResolve.acar.action.ActionHandler;
 import megamek.common.autoResolve.acar.order.Orders;

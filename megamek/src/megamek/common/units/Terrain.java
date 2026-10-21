@@ -41,7 +41,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.equipment.MiscType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;

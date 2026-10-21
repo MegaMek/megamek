@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
@@ -50,7 +51,6 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
-import org.jspecify.annotations.NonNull;
 
 /**
  * Tracks enemy units and calculates threat scores based on their positions and capabilities.
@@ -176,7 +176,7 @@ public class EnemyTracker {
                   id -> new EnemyProfile(enemy));
 
             var averageDamagePotential = Stream.of(
-                        FireControl.getMaxDamageAtRange(enemy, enemy.getMaxWeaponRange(), false, false),
+                        FireControl.getMaxDamageAtRange(enemy, getOwner().getMaxWeaponRange(enemy), false, false),
                         FireControl.getMaxDamageAtRange(enemy, 1, false, false))
                   .mapToDouble(d -> d)
                   .average()
@@ -282,7 +282,7 @@ public class EnemyTracker {
         }
 
         @Override
-        public int compareTo(@NonNull Double aDouble) {
+        public int compareTo(@Nonnull Double aDouble) {
             return Double.compare(threatScore, aDouble);
         }
     }

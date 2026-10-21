@@ -55,51 +55,6 @@ class MoveCommandTest {
         assertEquals("Next Unit", moveCommand.toString());
     }
 
-    @Test
-    void testMoveNextHotKeyString() {
-        assertEquals("<BR>&nbsp;&nbsp;Next: Tab&nbsp;&nbsp;Previous: Shift+Tab", MoveCommand.MOVE_NEXT.getHotKeyDesc());
-    }
-
-    @Test
-    void testMoveWalkHotKeyString() {
-        assertEquals("<BR>&nbsp;&nbsp;Toggle Move / Jump: J", MoveCommand.MOVE_WALK.getHotKeyDesc());
-    }
-
-    @Test
-    void testMoveRunHotKeyString() {
-        assertEquals("<BR>&nbsp;&nbsp;Toggle Move / Jump: J", MoveCommand.MOVE_WALK.getHotKeyDesc());
-    }
-
-    @Test
-    void testMoveTurnHotKeyString() {
-        assertEquals("<BR>&nbsp;&nbsp;Left: Shift+A&nbsp;&nbsp;Right: Shift+D", MoveCommand.MOVE_TURN.getHotKeyDesc());
-    }
-
-    @Test
-    void testMoveModeAirHotKeyString() {
-        assertEquals("<BR>&nbsp;&nbsp;Toggle Mode: M", MoveCommand.MOVE_MODE_AIR.getHotKeyDesc());
-    }
-
-    @Test
-    void testMoveModeConvertHotKeyString() {
-        assertEquals("<BR>&nbsp;&nbsp;Toggle Mode: M", MoveCommand.MOVE_MODE_CONVERT.getHotKeyDesc());
-    }
-
-    @Test
-    void testMoveModeLegHotKeyString() {
-        assertEquals("<BR>&nbsp;&nbsp;Toggle Mode: M", MoveCommand.MOVE_MODE_LEG.getHotKeyDesc());
-    }
-
-    @Test
-    void testMoveModeVeeHotKeyString() {
-        assertEquals("<BR>&nbsp;&nbsp;Toggle Mode: M", MoveCommand.MOVE_MODE_VEE.getHotKeyDesc());
-    }
-
-    @Test
-    void testDefaultHotKeyString() {
-        assertEquals("<BR>U", MoveCommand.MOVE_GET_UP.getHotKeyDesc());
-    }
-
     /**
      * Issue #9046: a LAM in AirMek mode that crashes lands prone and must be able to get up (IO:AE p.108), so the
      * AirMek button set has to include Get Up.

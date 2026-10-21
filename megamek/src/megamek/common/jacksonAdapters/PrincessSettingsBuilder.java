@@ -36,15 +36,18 @@ package megamek.common.jacksonAdapters;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.CombatPosture;
 import megamek.client.bot.princess.PrincessException;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
@@ -75,6 +78,24 @@ public class PrincessSettingsBuilder {
     private static final String PRINCESS_POSTURE = "posture";
     private static final String PRINCESS_FLEE = "flee";
     private static final String PRINCESS_FORCED_WITHDRAW = "forcedwithdraw";
+    private static final String PRINCESS_PRIORITY_TARGETS = "prioritytargets";
+
+    /**
+     * One entry of a scenario's {@code priorityTargets:} list: a unit the bot should go for first, and optionally how
+     * keenly. Scenario units can carry a fixed {@code id:}, which is what {@code unit} refers to.
+     *
+     * <pre>
+     * bot:
+     *   priorityTargets:
+     *   - unit: 12
+     *     priority: 1
+     *   - unit: 14
+     * </pre>
+     *
+     * @param unit     the ID of the target unit
+     * @param priority the target priority, 1 (shoot first) to 5, or {@code null} for the default, 3
+     */
+    public record PriorityTarget(int unit, @Nullable Integer priority) {}
 
     @JsonAlias(PRINCESS_SELF_PRESERVATION)
     private int selfPreservation = -1;
@@ -109,6 +130,9 @@ public class PrincessSettingsBuilder {
     private CombatPosture combatPosture;
 
     private String description = null;
+
+    @JsonAlias(PRINCESS_PRIORITY_TARGETS)
+    private List<PriorityTarget> priorityTargets = new ArrayList<>();
 
     @SuppressWarnings("unused")
     public PrincessSettingsBuilder selfPreservation(int selfPreservation) {
@@ -227,6 +251,7 @@ public class PrincessSettingsBuilder {
         if (combatPosture != null) {
             settings.setCombatPosture(combatPosture);
         }
+        addPriorityTargets(settings);
 
         if ((description == null) || description.isBlank()) {
             description = "(No description)";
@@ -238,6 +263,25 @@ public class PrincessSettingsBuilder {
         }
 
         return settings;
+    }
+
+    /**
+     * Puts the scenario's priority targets on the bot's list.
+     *
+     * @param settings the settings being built
+     */
+    private void addPriorityTargets(BehaviorSettings settings) {
+        if (priorityTargets == null) {
+            return;
+        }
+        for (PriorityTarget target : priorityTargets) {
+            int priority = (target.priority() == null) ? BehaviorSettings.DEFAULT_TARGET_PRIORITY : target.priority();
+            settings.setPriorityUnit(target.unit(), priority);
+        }
+        if (!priorityTargets.isEmpty()) {
+            LOGGER.debug("[PriorityTargets] scenario sets {} priority target(s): {}", priorityTargets.size(),
+                  priorityTargets);
+        }
     }
 
     /**

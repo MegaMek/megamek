@@ -35,8 +35,8 @@ package megamek.common.rules;
 
 import java.util.ArrayList;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
-import megamek.common.annotations.Nullable;
 
 public abstract class RulesHeat {
 

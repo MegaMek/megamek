@@ -35,11 +35,11 @@ package megamek.client.bot.princess;
 import java.util.Map;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.coverage.Builder;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
-import megamek.common.annotations.Nullable;
-import megamek.common.equipment.WeaponMounted;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 
 /**

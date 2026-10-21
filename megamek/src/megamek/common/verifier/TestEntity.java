@@ -49,11 +49,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.enums.MPBoosters;
@@ -1254,6 +1254,10 @@ public abstract class TestEntity implements TestEntityOption {
 
         int eTLYear = getEntity().getTechLevelYear();
         for (Mounted<?> mounted : getEntity().getEquipment()) {
+            // Skip anything the unit's own tech level leaves out, such as a ProtoMek's built-in EI outside Full Tracking
+            if (getEntity().isIgnoredForTechLevel(mounted)) {
+                continue;
+            }
             EquipmentType nextE = mounted.getType();
             int eqRulesLevel = getEntity().isMixedTech()
                   ? nextE.findMinimumRulesLevel().ordinal()

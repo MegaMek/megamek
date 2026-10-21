@@ -35,8 +35,8 @@ package megamek.common.rules.core;
 
 import java.util.ArrayList;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.rules.RulesHeat;

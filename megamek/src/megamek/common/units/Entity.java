@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
@@ -57,7 +58,6 @@ import megamek.client.ui.util.ViewFormatting;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;
@@ -104,6 +104,8 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.Quirks;
+import megamek.common.orders.LanceRole;
+import megamek.common.orders.UnitOrders;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
@@ -503,6 +505,16 @@ public abstract class Entity extends TurnOrdered
      * through {@link #getForcedWithdrawalOrder()}, which reads a unit from an older savegame as having no order.
      */
     private ForcedWithdrawalOrder forcedWithdrawalOrder = ForcedWithdrawalOrder.BOT_RULES;
+    /**
+     * The standing orders a player has given this unit's bot for it: route, facing, pause and edge orders. Read it
+     * through {@link #getUnitOrders()}, which reads a unit from an older savegame as having no orders.
+     */
+    private UnitOrders unitOrders = UnitOrders.NONE;
+    /**
+     * The role set on this unit - a convoy or an escort - or {@code null} for none; it outlasts the unit's routes.
+     * {@code null} in a savegame made before lance roles.
+     */
+    private LanceRole lanceRole;
     public int mpUsed = 0;
     public int underwaterRounds = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
@@ -1711,12 +1723,7 @@ public abstract class Entity extends TurnOrdered
      */
     private void addEquipmentTechAdvancement(CompositeTechLevel techLevel) {
         for (Mounted<?> mounted : getEquipment()) {
-            // ProtoMek EI is built-in per IO:AE p.69 -- only count toward tech level
-            // in Full Tracking mode (Off and Pilot Only = Standard tech)
-            if (isProtoMek()
-                && (mounted.getType() instanceof MiscType)
-                && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
-                && !isNeuralInterfaceFullTracking()) {
+            if (isIgnoredForTechLevel(mounted)) {
                 continue;
             }
 
@@ -1726,6 +1733,25 @@ public abstract class Entity extends TurnOrdered
                                        Messages.getString("CompositeTechLevel.component.armoredComponent"));
             }
         }
+    }
+
+    /**
+     * Whether a mounted item is left out of this unit's tech level. Both the unit's composite tech level and the unit
+     * validator ask this, so the two cannot disagree about the same item.
+     *
+     * <p>A ProtoMek's EI Interface is built in (IO:AE p.69) and only counts in Full Tracking mode, where the unit
+     * becomes Experimental. Under Off and Pilot Abilities Only, and with no game attached, it is left out and the
+     * ProtoMek keeps the tech level its other equipment gives it.</p>
+     *
+     * @param mounted the mounted item to check
+     *
+     * @return {@code true} if the item does not count toward this unit's tech level
+     */
+    public boolean isIgnoredForTechLevel(Mounted<?> mounted) {
+        return isProtoMek()
+              && (mounted.getType() instanceof MiscType)
+              && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
+              && !isNeuralInterfaceFullTracking();
     }
 
     /**
@@ -2312,6 +2338,42 @@ public abstract class Entity extends TurnOrdered
      */
     public void setForcedWithdrawalOrder(ForcedWithdrawalOrder order) {
         forcedWithdrawalOrder = order;
+    }
+
+    /**
+     * @return the standing orders a player has given this unit's bot for it; {@link UnitOrders#NONE} when there are
+     *       none, including for a unit loaded from a savegame made before unit orders existed
+     */
+    public UnitOrders getUnitOrders() {
+        return (unitOrders == null) ? UnitOrders.NONE : unitOrders;
+    }
+
+    /**
+     * Replaces the standing orders for this unit. They last until changed, finished or cleared.
+     *
+     * @param orders the new orders; {@code null} clears them
+     */
+    public void setUnitOrders(@Nullable UnitOrders orders) {
+        unitOrders = (orders == null) ? UnitOrders.NONE : orders;
+    }
+
+    /**
+     * The role set on this unit itself - a convoy or an escort. A unit with none takes its lance's role; read that
+     * through {@link megamek.common.orders.LanceRoles#effectiveRole(Entity)}.
+     *
+     * @return the role, or {@code null} for none
+     */
+    public @Nullable LanceRole getLanceRole() {
+        return lanceRole;
+    }
+
+    /**
+     * Sets the role of this unit's lance. A role outlasts the unit's routes: a new route, Stop or Clear leaves it.
+     *
+     * @param role the role, or {@code null} for none
+     */
+    public void setLanceRole(@Nullable LanceRole role) {
+        lanceRole = role;
     }
 
     /**
@@ -3281,6 +3343,20 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Alternate convenience function to support doing a check for airborne aero on a ground map that is not
+     * yet deployed. So just check the aero, game, and board location.
+     *
+     * @param includeDeploymentStep Only true during walk on deployment
+     * @return True if this is an airborne aircraft on a ground map.
+     */
+    public boolean isAirborneAeroOnGroundMap(boolean includeDeploymentStep) {
+        if (!includeDeploymentStep) {
+            return isAirborneAeroOnGroundMap();
+        }
+        return isAero() && (game != null) && game.isOnGroundMap(this.getBoardLocation());
+    }
+
+    /**
      * Convenience method to determine whether this entity should be treated as a landed aero on a ground map.
      *
      * @return True if this is an aero landed on a ground map.
@@ -3305,10 +3381,10 @@ public abstract class Entity extends TurnOrdered
      */
     public synchronized void setDuplicateMarker(int duplicateMarker) {
         this.duplicateMarker = duplicateMarker;
-        if (duplicateMarker > 1) {
-            shortName = createShortName(duplicateMarker);
-            displayName = createDisplayName(duplicateMarker);
-        }
+        // Rebuild the names even for marker 1: a unit can arrive already named "#2" (MekHQ numbers units across
+        // the whole hangar), and keeping that name would clash with the unit this game numbers as #2.
+        shortName = createShortName(duplicateMarker);
+        displayName = createDisplayName(duplicateMarker);
     }
 
     /**
@@ -4961,12 +5037,14 @@ public abstract class Entity extends TurnOrdered
                                 boolean rearMounted,
                                 int nAmmo)
             throws LocationFullException {
-        if ((mounted instanceof AmmoMounted) && (nAmmo > 1)) {
+        if ((mounted instanceof AmmoMounted ammoMounted) && (nAmmo > 1)) {
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
-            double tonnage = Math.max(1, nAmmo / ((AmmoMounted) mounted).getType().getShots()) * mounted.getTonnage();
-            ((AmmoMounted) mounted).setAmmoCapacity(tonnage);
+            // Large craft round the mass of their ammunition up to the nearest ton, whatever the number of rounds
+            int shotsPerTon = ammoMounted.getType().getShots();
+            double tonnage = Math.ceil((double) nAmmo / shotsPerTon) * mounted.getTonnage();
+            ammoMounted.setAmmoCapacity(tonnage);
         }
 
         addEquipment(mounted, loc, rearMounted);
@@ -6983,7 +7061,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MechWarriors, vehicle
+     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MekWarriors, vehicle
      * commanders, and fighter pilots with TCP and VDNI/BVDNI may execute aimed shots as if equipped with a Targeting
      * Computer.
      *
@@ -6999,7 +7077,7 @@ public abstract class Entity extends TurnOrdered
         if (!hasTCP || !hasVdni) {
             return false;
         }
-        // Only MechWarriors, vehicle commanders, and fighter pilots qualify
+        // Only MekWarriors, vehicle commanders, and fighter pilots qualify
         // Use isFighter() to include both Aerospace and Conventional Fighters per IO pg 81
         return isMek() || isCombatVehicle() || isFighter();
     }
@@ -11135,6 +11213,21 @@ public abstract class Entity extends TurnOrdered
         if (this.removalCondition < removalCondition) {
             this.removalCondition = removalCondition;
         }
+    }
+
+    /**
+     * Forgets how this unit left an earlier battle and who was credited with destroying it. Call this when the unit
+     * joins a new battle: {@link #setRemovalCondition(int)} never lowers the condition, so a unit that arrives still
+     * marked as a wreck (for example a MekHQ unit that was destroyed, recovered and repaired) would otherwise be
+     * recorded as a wreck again even if it only fled.
+     */
+    public void clearBattleOutcome() {
+        if ((removalCondition != IEntityRemovalConditions.REMOVE_UNKNOWN) || (killerId != Entity.NONE)) {
+            LOGGER.debug("[BattleOutcome] {}: cleared removal condition {} and killer {} left from an earlier battle",
+                  getShortNameRaw(), removalCondition, killerId);
+        }
+        removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
+        killerId = Entity.NONE;
     }
 
     /**
@@ -17394,7 +17487,7 @@ public abstract class Entity extends TurnOrdered
             int range;
 
             if (isAirborne()) {
-                int rangeMultiplier = type.isCapital() ? 2 : 1;
+                int rangeMultiplier = type.usesCapitalRangeBrackets() ? 2 : 1;
                 rangeMultiplier *= isAirborneAeroOnGroundMap() ? 8 : 1;
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;

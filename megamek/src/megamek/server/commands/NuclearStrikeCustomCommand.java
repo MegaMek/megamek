@@ -39,6 +39,7 @@ import java.util.Optional;
 import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.actions.NukeDetonatedAction;
+import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoType;
 import megamek.common.event.player.GamePlayerStrategicActionEvent;
 import megamek.common.options.OptionsConstants;
@@ -50,6 +51,8 @@ import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
+import megamek.server.nuclear.NuclearBlastProfile;
+import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -95,14 +98,12 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
             return;
         }
 
-        int[] nuke = {
-              (int) args.get("x").getValue() - 1,
-              (int) args.get("y").getValue() - 1,
-              (int) args.get("dmg").getValue(),
-              (int) args.get("deg").getValue(),
-              (int) args.get("radius").getValue(),
-              (int) args.get("depth").getValue()
-        };
+        Coords groundZero = new Coords((int) args.get("x").getValue() - 1, (int) args.get("y").getValue() - 1);
+        ScheduledNuke nuke = new ScheduledNuke(groundZero,
+              NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
+                    (int) args.get("deg").getValue(),
+                    (int) args.get("radius").getValue(),
+                    (int) args.get("depth").getValue()));
 
         var playerID = (Optional<Integer>) args.get("playerID").getValue();
         var player = getGameManager().getGame().getPlayer(playerID.orElse(Player.PLAYER_NONE));

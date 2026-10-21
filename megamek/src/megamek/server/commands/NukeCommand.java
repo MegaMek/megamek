@@ -36,6 +36,8 @@ package megamek.server.commands;
 
 import java.util.List;
 
+import megamek.common.board.Coords;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
@@ -44,6 +46,8 @@ import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
+import megamek.server.nuclear.NuclearBlastProfile;
+import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -51,6 +55,13 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author Luana Coppio
  */
 public class NukeCommand extends ClientServerCommand {
+
+    /** The weapons the "type" argument numbers 0 to 4 stand for, as listed in the argument help. */
+    private static final NuclearWeaponType[] TYPE_NUMBERS = { NuclearWeaponType.DAVY_CROCKETT_I,
+                                                             NuclearWeaponType.DAVY_CROCKETT_M,
+                                                             NuclearWeaponType.ALAMO,
+                                                             NuclearWeaponType.SANTA_ANA,
+                                                             NuclearWeaponType.PEACEMAKER };
 
     private final TWGameManager gameManager;
 
@@ -129,13 +140,12 @@ public class NukeCommand extends ClientServerCommand {
             //
             try {
                 var typeOpt = ((OptionalIntegerArgument) args.get("type")).getValue();
-                int[] nuke = new int[] {
-                      (int) args.get("x").getValue() - 1,
-                      (int) args.get("y").getValue() - 1,
-                      typeOpt.orElseThrow()
-                };
+                Coords groundZero = new Coords((int) args.get("x").getValue() - 1,
+                      (int) args.get("y").getValue() - 1);
+                ScheduledNuke nuke = new ScheduledNuke(groundZero,
+                      NuclearBlastProfile.groundBurst(TYPE_NUMBERS[typeOpt.orElseThrow()]));
                 // is the hex on the board?
-                if (!gameManager.getGame().getBoard().contains(nuke[0], nuke[1])) {
+                if (!gameManager.getGame().getBoard().contains(groundZero)) {
                     server.sendServerChat(connId, "Specified hex is not on the board.");
                     return;
                 }
@@ -146,17 +156,16 @@ public class NukeCommand extends ClientServerCommand {
             }
         } else {
             try {
-                int[] nuke = new int[] {
-                      (int) args.get("x").getValue() - 1,
-                      (int) args.get("y").getValue() - 1,
-                      (int) args.get("dmg").getValue(),
-                      (int) args.get("deg").getValue(),
-                      (int) args.get("radius").getValue(),
-                      (int) args.get("depth").getValue()
-                };
+                Coords groundZero = new Coords((int) args.get("x").getValue() - 1,
+                      (int) args.get("y").getValue() - 1);
+                ScheduledNuke nuke = new ScheduledNuke(groundZero,
+                      NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
+                            (int) args.get("deg").getValue(),
+                            (int) args.get("radius").getValue(),
+                            (int) args.get("depth").getValue()));
 
                 // is the hex on the board?
-                if (!gameManager.getGame().getBoard().contains(nuke[0], nuke[1])) {
+                if (!gameManager.getGame().getBoard().contains(groundZero)) {
                     server.sendServerChat(connId, "Specified hex is not on the board.");
                     return;
                 }

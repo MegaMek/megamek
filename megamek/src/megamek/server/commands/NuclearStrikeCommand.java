@@ -39,7 +39,9 @@ import java.util.Optional;
 import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.actions.NukeDetonatedAction;
+import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.event.player.GamePlayerStrategicActionEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -50,6 +52,8 @@ import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
+import megamek.server.nuclear.NuclearBlastProfile;
+import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -63,14 +67,6 @@ public class NuclearStrikeCommand extends ClientServerCommand {
               Messages.getString("Gamemaster.cmd.nuke.longName"));
     }
 
-    public enum NukeType {
-        DAVY_CROCKETT_I,
-        DAVY_CROCKETT_M,
-        ALAMO,
-        SANTA_ANA,
-        PEACEMAKER
-    }
-
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
@@ -78,8 +74,8 @@ public class NuclearStrikeCommand extends ClientServerCommand {
               new CoordYArgument("y", Messages.getString("Gamemaster.cmd.y")),
               new EnumArgument<>("type",
                     Messages.getString("Gamemaster.cmd.nuke.type"),
-                    NukeType.class,
-                    NukeType.DAVY_CROCKETT_M),
+                    NuclearWeaponType.class,
+                    NuclearWeaponType.DAVY_CROCKETT_M),
               new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID"))
         );
     }
@@ -100,12 +96,9 @@ public class NuclearStrikeCommand extends ClientServerCommand {
             return;
         }
 
-        var nukeType = (NukeType) args.get("type").getValue();
-        int[] nuke = {
-              (int) args.get("x").getValue() - 1,
-              (int) args.get("y").getValue() - 1,
-              nukeType.ordinal()
-        };
+        var nukeType = (NuclearWeaponType) args.get("type").getValue();
+        Coords groundZero = new Coords((int) args.get("x").getValue() - 1, (int) args.get("y").getValue() - 1);
+        ScheduledNuke nuke = new ScheduledNuke(groundZero, NuclearBlastProfile.groundBurst(nukeType));
 
         var playerID = (Optional<Integer>) args.get("playerID").getValue();
         var player = getGameManager().getGame().getPlayer(playerID.orElse(Player.PLAYER_NONE));

@@ -447,7 +447,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                       vPhaseReport,
                       gameManager);
             } else {
-                gameManager.drawNukeHitOnBoard(targetPos);
+                gameManager.drawNukeHitOnBoard(finalPos);
                 gameManager.getGame().processGameEvent(
                       new GamePlayerStrategicActionEvent(gameManager,
                             new NukeDetonatedAction(attackingEntity.getId(),

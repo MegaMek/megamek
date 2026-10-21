@@ -152,6 +152,7 @@ import megamek.server.UnitOwnershipRules.OwnershipVerdict;
 import megamek.server.commands.*;
 import megamek.server.nuclear.NuclearBlastProfile;
 import megamek.server.nuclear.NuclearDetonationResolver;
+import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
 
@@ -211,7 +212,7 @@ public class TWGameManager extends AbstractGameManager {
 
     private final List<DynamicTerrainProcessor> terrainProcessors = new ArrayList<>();
 
-    private final ArrayList<int[]> scheduledNukes = new ArrayList<>();
+    private final List<ScheduledNuke> scheduledNukes = new ArrayList<>();
     private final ArrayList<OrbitalBombardment> scheduledOrbitalBombardment = new ArrayList<>();
 
     /**
@@ -20124,13 +20125,11 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * add a nuke to be exploded in the next weapons attack phase
      *
-     * @param nuke this is an int[] with i=0 and i=1 being X and Y coordinates respectively, If the input array is
-     *             length 3, then i=2 is NukeType (from HS:3070) If the input array is length 6, then i=2 is the base
-     *             damage dealt, i=3 is the degradation, i=4 is the secondary radius, and i=5 is the crater depth
+     * @param nuke the Ground Zero hex and the detonation's numbers
      */
-    public void addScheduledNuke(int[] nuke) {
+    public void addScheduledNuke(ScheduledNuke nuke) {
         scheduledNukes.add(nuke);
-        drawNukeIncomingOnBoard(nuke);
+        drawNukeIncomingOnBoard(nuke.groundZero());
     }
 
     /**
@@ -20228,29 +20227,13 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    public void drawNukeHitOnBoard(Coords coord) {
-        int[] position = { coord.getX(), coord.getY() };
-        drawNukeHitOnBoard(position);
-    }
-
     /**
      * explode any scheduled nukes
      */
     void resolveScheduledNukes() {
-        for (int[] nuke : scheduledNukes) {
-            drawNukeHitOnBoard(nuke);
-            if ((nuke.length == 3) && (nuke[2] >= 0) && (nuke[2] < NuclearWeaponType.values().length)) {
-                doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1), NuclearWeaponType.values()[nuke[2]],
-                      mainPhaseReport);
-            }
-            if (nuke.length == 6) {
-                doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1),
-                      nuke[2],
-                      nuke[3],
-                      nuke[4],
-                      nuke[5],
-                      mainPhaseReport);
-            }
+        for (ScheduledNuke nuke : scheduledNukes) {
+            drawNukeHitOnBoard(nuke.groundZero());
+            new NuclearDetonationResolver(this).resolve(nuke.groundZero(), nuke.profile(), mainPhaseReport);
         }
         scheduledNukes.clear();
     }
@@ -20281,9 +20264,18 @@ public class TWGameManager extends AbstractGameManager {
         getMainPhaseReport().add(r);
     }
 
-    public void drawNukeHitOnBoard(int[] nukeArgs) {
+    /**
+     * Marks the hexes around a nuclear detonation on the board.
+     *
+     * @param groundZero the Ground Zero hex
+     */
+    public void drawNukeHitOnBoard(Coords groundZero) {
         // Turns out this object can be used here
-        var nuke = new OrbitalBombardment.Builder().x(nukeArgs[0] - 1).y(nukeArgs[1] - 1).radius(4).damage(0).build();
+        var nuke = new OrbitalBombardment.Builder().x(groundZero.getX())
+              .y(groundZero.getY())
+              .radius(4)
+              .damage(0)
+              .build();
 
         var allCoords = nuke.getAllAffectedCoords();
         var hexes = getGame().getBoard().getSpecialHexDisplayTable();
@@ -20319,8 +20311,12 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    private void drawNukeIncomingOnBoard(int[] nukeArgs) {
-        var nuke = new OrbitalBombardment.Builder().x(nukeArgs[0] - 1).y(nukeArgs[1] - 1).radius(4).damage(0).build();
+    private void drawNukeIncomingOnBoard(Coords groundZero) {
+        var nuke = new OrbitalBombardment.Builder().x(groundZero.getX())
+              .y(groundZero.getY())
+              .radius(4)
+              .damage(0)
+              .build();
 
         var allCoords = nuke.getAllAffectedCoords();
         for (var coord : allCoords) {
@@ -20373,23 +20369,6 @@ public class TWGameManager extends AbstractGameManager {
         doExplosion(damage, degradation, false, position, true, tmpV, blastedUnitsVec, -1, true);
         Report.indentAll(tmpV, 2);
         getMainPhaseReport().addAll(tmpV);
-    }
-
-    /**
-     * explode a nuke
-     *
-     * @param position        the position that will be hit by the nuke
-     * @param baseDamage      the base damage from the blast
-     * @param degradation     how fast the blast's power degrades
-     * @param secondaryRadius the secondary blast radius
-     * @param craterDepth     the depth of the crater created by the blast
-     * @param vDesc           a vector that contains the output report
-     */
-    public void doNuclearExplosion(Coords position, int baseDamage, int degradation, int secondaryRadius,
-          int craterDepth, Vector<Report> vDesc) {
-        new NuclearDetonationResolver(this).resolve(position,
-              NuclearBlastProfile.custom(baseDamage, degradation, secondaryRadius, craterDepth),
-              vDesc);
     }
 
     /**

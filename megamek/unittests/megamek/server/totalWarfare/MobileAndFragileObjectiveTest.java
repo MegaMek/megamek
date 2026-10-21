@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
+import megamek.common.HitData;
 import megamek.common.MMRandom;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -148,6 +149,33 @@ class MobileAndFragileObjectiveTest {
         assertTrue(game.getGroundObjects(CARRIER_HEX).contains(flag), "the objective lands where its carrier died");
         assertFalse(flag.isDestroyed());
         assertTrue(carrier.getDistinctCarriedObjects().isEmpty());
+    }
+
+    @Test
+    void testAHitOnTheCarrierLeavesTheObjectiveInItsHand() {
+        // RAW (Mobile Objectives): damage to the carrier calls for a forced-drop roll, it never wrecks the objective
+        rollEveryDieAs(1);
+        ObjectiveMarker flag = mobileFlag();
+        BipedMek carrier = carrying(flag);
+
+        gameManager.damageEntity(carrier, new HitData(Mek.LOC_CENTER_TORSO), 5);
+        gameManager.damageEntity(carrier, new HitData(Mek.LOC_RIGHT_ARM), 5);
+
+        assertFalse(flag.isDestroyed());
+        assertEquals(List.of(flag), carrier.getDistinctCarriedObjects());
+    }
+
+    @Test
+    void testAHitOnTheCarrierIsNoFragileTrigger() {
+        rollEveryDieAs(1);
+        ObjectiveMarker flag = mobileFlag();
+        flag.setFragile(true);
+        BipedMek carrier = carrying(flag);
+
+        gameManager.damageEntity(carrier, new HitData(Mek.LOC_CENTER_TORSO), 5);
+
+        assertFalse(flag.isDestroyed());
+        assertEquals(List.of(flag), carrier.getDistinctCarriedObjects());
     }
 
     @Test

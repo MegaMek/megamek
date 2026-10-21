@@ -817,7 +817,7 @@ public class EquipChoicePanel extends JPanel {
               client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECH_LEVEL));
         boolean allowNukes = client.getGame()
               .getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
+              .booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
         m_bombs = new BombChoicePanel((IBomber) entity, allowNukes,
               techLevel >= TechConstants.T_SIMPLE_ADVANCED, this, gbc);
     }

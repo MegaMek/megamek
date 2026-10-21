@@ -254,8 +254,89 @@ class GameOptionsTest {
               testMe.stringOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE));
     }
 
+    /** The three nuclear weapon switches are gone; one option replaces them. */
+    @Test
+    void retiredNukeSwitchesAreNoLongerRegistered() {
+        assertNull(testMe.getOption(RETIRED_AT2_NUKES));
+        assertNull(testMe.getOption(RETIRED_ALLOW_NUKES));
+        assertNull(testMe.getOption(RETIRED_REALLY_ALLOW_NUKES));
+        assertNotNull(testMe.getOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS));
+        assertFalse(testMe.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS), "nukes are off by default");
+    }
+
+    /** A file that allowed nuclear ordnance still allows nuclear weapons after loading. */
+    @Test
+    void loadingSavedNuclearOrdnanceSwitchAllowsNuclearWeapons() {
+        File file = tempDirectory.resolve("retired-at2-nukes-on.xml").toFile();
+        Vector<IBasicOption> saved = new Vector<>();
+        saved.add(new BasicOption(RETIRED_AT2_NUKES, true));
+        GameOptions.saveOptions(saved, file.getAbsolutePath());
+
+        Vector<IOption> changed = testMe.loadOptions(file, false);
+
+        assertTrue(testMe.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS));
+        assertTrue(changed.contains(testMe.getOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)),
+              "the switched-on option is reported as a changed option");
+    }
+
+    /** Command-line nukes needed both switches; a file with both on still allows nuclear weapons. */
+    @Test
+    void loadingBothSavedCommandSwitchesAllowsNuclearWeapons() {
+        File file = tempDirectory.resolve("retired-command-nukes-on.xml").toFile();
+        Vector<IBasicOption> saved = new Vector<>();
+        saved.add(new BasicOption(RETIRED_ALLOW_NUKES, true));
+        saved.add(new BasicOption(RETIRED_REALLY_ALLOW_NUKES, true));
+        GameOptions.saveOptions(saved, file.getAbsolutePath());
+
+        testMe.loadOptions(file, false);
+
+        assertTrue(testMe.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS));
+    }
+
+    /** One command switch on its own never allowed command-line nukes, so it does not allow them now. */
+    @Test
+    void loadingOneSavedCommandSwitchChangesNothing() {
+        File file = tempDirectory.resolve("retired-command-nukes-half.xml").toFile();
+        Vector<IBasicOption> saved = new Vector<>();
+        saved.add(new BasicOption(RETIRED_ALLOW_NUKES, true));
+        saved.add(new BasicOption(RETIRED_REALLY_ALLOW_NUKES, false));
+        saved.add(new BasicOption(RETIRED_AT2_NUKES, false));
+        GameOptions.saveOptions(saved, file.getAbsolutePath());
+
+        testMe.loadOptions(file, false);
+
+        assertFalse(testMe.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS));
+    }
+
+    /** The campaign-file loader migrates the same way. */
+    @Test
+    void fillingFromCampaignXmlAllowsNuclearWeaponsWhenOrdnanceWasOn() throws Exception {
+        NodeList nodes = campaignGameOptionNodes(gameOptionNode(RETIRED_ALLOW_NUKES, "false")
+              + gameOptionNode(RETIRED_AT2_NUKES, "true"));
+
+        testMe.fillFromXML(nodes);
+
+        assertTrue(testMe.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS));
+    }
+
+    @Test
+    void fillingFromCampaignXmlLeavesNuclearWeaponsOffWhenAllSwitchesWereOff() throws Exception {
+        NodeList nodes = campaignGameOptionNodes(gameOptionNode(RETIRED_AT2_NUKES, "false")
+              + gameOptionNode(RETIRED_ALLOW_NUKES, "false")
+              + gameOptionNode(RETIRED_REALLY_ALLOW_NUKES, "false"));
+
+        testMe.fillFromXML(nodes);
+
+        assertFalse(testMe.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS));
+    }
+
     /** The name the retired switch was saved under, spelled out so the test does not depend on the constant. */
     private static final String LEGACY_MANEI_DOMINI = "manei_domini";
+
+    /** The names the retired nuclear weapon switches were saved under. */
+    private static final String RETIRED_AT2_NUKES = "at2_nukes";
+    private static final String RETIRED_ALLOW_NUKES = "allow_nukes";
+    private static final String RETIRED_REALLY_ALLOW_NUKES = "really_allow_nukes";
 
     private static String gameOptionNode(String name, String value) {
         return "<gameOption><name>" + name + "</name><value>" + value + "</value></gameOption>";

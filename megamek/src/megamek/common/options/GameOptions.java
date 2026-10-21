@@ -127,8 +127,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, true);
         addOption(allowed, OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH, false);
         addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false);
-        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false);
-        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false);
+        addOption(allowed, OptionsConstants.ALLOWED_NUCLEAR_WEAPONS, false);
 
         IBasicOptionGroup advancedRules = addGroup("advancedRules");
         addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false);
@@ -316,7 +315,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_WAYPOINT_LAUNCH, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH, false);
-        addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY, false);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER, true);
         addOption(advAeroRules, OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT, true);
@@ -380,9 +378,14 @@ public class GameOptions extends BasicGameOptions {
 
             StringBuilder logMessages = new StringBuilder("\n");
             boolean legacyImplantsEnabled = false;
+            RetiredNukeSwitches retiredNukeSwitches = new RetiredNukeSwitches();
             for (IBasicOption bo : opts.getOptions()) {
                 if (isLegacyManeiDominiOption(bo.getName())) {
                     legacyImplantsEnabled |= Boolean.parseBoolean(String.valueOf(bo.getValue()));
+                    continue;
+                }
+                if (RetiredNukeSwitches.isRetired(bo.getName())) {
+                    retiredNukeSwitches.record(bo.getName(), Boolean.parseBoolean(String.valueOf(bo.getValue())));
                     continue;
                 }
                 changedOptions.add(parseOptionNode(bo, print, logMessages));
@@ -390,6 +393,10 @@ public class GameOptions extends BasicGameOptions {
             IOption migratedNeuralInterface = migrateLegacyManeiDominiOption(legacyImplantsEnabled);
             if (migratedNeuralInterface != null) {
                 changedOptions.add(migratedNeuralInterface);
+            }
+            IOption migratedNuclearWeapons = migrateRetiredNukeSwitches(retiredNukeSwitches);
+            if (migratedNuclearWeapons != null) {
+                changedOptions.add(migratedNuclearWeapons);
             }
             logger.info(logMessages.toString());
         } catch (Exception e) {
@@ -489,6 +496,69 @@ public class GameOptions extends BasicGameOptions {
               OptionsConstants.RPG_MANEI_DOMINI, OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE,
               OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
         return neuralInterface;
+    }
+
+    /**
+     * Switches the nuclear weapons option on when a saved file switched nuclear weapons on under the retired names.
+     *
+     * @param retiredNukeSwitches the retired switches read from the file
+     *
+     * @return the nuclear weapons option if it was switched on, or {@code null} if nothing changed
+     */
+    private @Nullable IOption migrateRetiredNukeSwitches(RetiredNukeSwitches retiredNukeSwitches) {
+        if (!retiredNukeSwitches.allowedNuclearWeapons()) {
+            return null;
+        }
+        IOption nuclearWeapons = getOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
+        if ((nuclearWeapons == null) || nuclearWeapons.booleanValue()) {
+            return null;
+        }
+        nuclearWeapons.setValue(true);
+        logger.info("[Nukes] Migrated the retired nuclear weapon switches: they allowed nukes, so '{}' is switched on",
+              OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
+        return nuclearWeapons;
+    }
+
+    /**
+     * The three switches that {@link OptionsConstants#ALLOWED_NUCLEAR_WEAPONS} replaced, by the names they were saved
+     * under. Nuclear ordnance needed {@code at2_nukes}; the command-line nukes needed both {@code allow_nukes} and
+     * {@code really_allow_nukes}.
+     */
+    private static final class RetiredNukeSwitches {
+        private static final String ORDNANCE = "at2_nukes";
+        private static final String COMMANDS = "allow_nukes";
+        private static final String COMMANDS_CONFIRMED = "really_allow_nukes";
+
+        private boolean ordnance;
+        private boolean commands;
+        private boolean commandsConfirmed;
+
+        /**
+         * @param optionName the name read from a saved options file, or {@code null}
+         *
+         * @return {@code true} if it is one of the retired nuclear weapon switches
+         */
+        static boolean isRetired(@Nullable String optionName) {
+            return ORDNANCE.equals(optionName) || COMMANDS.equals(optionName)
+                  || COMMANDS_CONFIRMED.equals(optionName);
+        }
+
+        void record(String optionName, boolean value) {
+            switch (optionName) {
+                case ORDNANCE -> ordnance |= value;
+                case COMMANDS -> commands |= value;
+                case COMMANDS_CONFIRMED -> commandsConfirmed |= value;
+                default -> {
+                }
+            }
+        }
+
+        /**
+         * @return {@code true} if the saved switches let players use nuclear ordnance or command-line nukes
+         */
+        boolean allowedNuclearWeapons() {
+            return ordnance || (commands && commandsConfirmed);
+        }
     }
 
     public static void saveOptions(Vector<IBasicOption> options) {
@@ -599,6 +669,7 @@ public class GameOptions extends BasicGameOptions {
      */
     public void fillFromXML(final NodeList nl) {
         boolean legacyImplantsEnabled = false;
+        RetiredNukeSwitches retiredNukeSwitches = new RetiredNukeSwitches();
         for (int x = 0; x < nl.getLength(); x++) {
             try {
                 final Node wn = nl.item(x);
@@ -610,6 +681,7 @@ public class GameOptions extends BasicGameOptions {
                 IOption option = null;
                 boolean migrateNeuralInterface = false;
                 boolean readingLegacyManeiDomini = false;
+                String readingRetiredNukeSwitch = null;
                 for (int y = 0; y < nl2.getLength(); y++) {
                     final Node wn2 = nl2.item(y);
                     switch (wn2.getNodeName()) {
@@ -621,6 +693,7 @@ public class GameOptions extends BasicGameOptions {
                                 migrateNeuralInterface = true;
                             }
                             readingLegacyManeiDomini = isLegacyManeiDominiOption(optionName);
+                            readingRetiredNukeSwitch = RetiredNukeSwitches.isRetired(optionName) ? optionName : null;
                             option = getOption(optionName);
                             break;
                         case "value":
@@ -630,6 +703,11 @@ public class GameOptions extends BasicGameOptions {
                                 // node is read, so the two cannot fight over the order they were saved in
                                 legacyImplantsEnabled |= Boolean.parseBoolean(value);
                                 readingLegacyManeiDomini = false;
+                                break;
+                            }
+                            if (readingRetiredNukeSwitch != null) {
+                                retiredNukeSwitches.record(readingRetiredNukeSwitch, Boolean.parseBoolean(value));
+                                readingRetiredNukeSwitch = null;
                                 break;
                             }
                             // Migrate old boolean value to new CHOICE value
@@ -670,6 +748,7 @@ public class GameOptions extends BasicGameOptions {
             }
         }
         migrateLegacyManeiDominiOption(legacyImplantsEnabled);
+        migrateRetiredNukeSwitches(retiredNukeSwitches);
     }
     // endregion MekHQ I/O
 }

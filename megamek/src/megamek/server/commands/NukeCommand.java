@@ -130,8 +130,7 @@ public class NukeCommand extends ClientServerCommand {
     @Override
     protected void runCommand(int connId, Arguments args) {
         // Check to make sure nuking is allowed by game options!
-        if (!(server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES)
-              && server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_NUKES))) {
+        if (!server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
             server.sendServerChat(connId, "Command-line nukes are not enabled in this game.");
             return;
         }

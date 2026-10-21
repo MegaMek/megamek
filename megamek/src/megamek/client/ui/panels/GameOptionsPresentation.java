@@ -240,8 +240,7 @@ final class GameOptionsPresentation {
               OptionsConstants.ALLOWED_SHOW_EXTINCT,
               OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH,
               OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL,
-              OptionsConstants.ALLOWED_ALLOW_NUKES,
-              OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES);
+              OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
     }
 
     private static void registerAdvancedRulesOptions() {
@@ -495,7 +494,6 @@ final class GameOptionsPresentation {
         register(AEROSPACE, AEROSPACE_VESSELS, "aerospace.vessels.ordnance",
               OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AMMO_EXPLOSIONS,
               OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_SPACE_BOMB,
-              OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES,
               OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS);
     }
 

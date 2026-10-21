@@ -1194,7 +1194,7 @@ public class BotCommandsPanel extends JPanel {
      */
     private Set<SpecialAmmo> availableArtilleryAmmo(Player botPlayer) {
         Set<SpecialAmmo> available = EnumSet.noneOf(SpecialAmmo.class);
-        boolean nukesAllowed = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_NUKES);
+        boolean nukesAllowed = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
         for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
             if (unit instanceof Entity entity) {
                 collectLoadedArtilleryAmmo(entity, nukesAllowed, available);

@@ -39,6 +39,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.nuclear.NuclearBlastProfile;
 import megamek.server.nuclear.ScheduledNuke;
@@ -65,8 +66,7 @@ class NuclearStrikeCommandTest {
         Game game = new Game();
         game.addPlayer(GAME_MASTER_CONNECTION, gameMaster);
         game.setBoard(new Board(16, 17));
-        game.getOptions().getOption("allow_nukes").setValue(true);
-        game.getOptions().getOption("really_allow_nukes").setValue(true);
+        game.getOptions().getOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS).setValue(true);
 
         gameManager = Mockito.mock(TWGameManager.class);
         Mockito.when(gameManager.getGame()).thenReturn(game);

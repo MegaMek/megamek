@@ -95,7 +95,7 @@ class CapitalMissileMissReportTest {
         TWGameManager gameManager = new TWGameManager();
         Game game = gameManager.getGame();
         game.getOptions().getOption(OptionsConstants.ALLOWED_TECH_LEVEL).setValue("Experimental");
-        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES).setValue(true);
+        game.getOptions().getOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS).setValue(true);
         game.setBoard(Board.getSpaceBoard(16, 17));
         Player attackerOwner = new Player(0, "Attacker");
         Player targetOwner = new Player(1, "Defender");

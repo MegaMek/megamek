@@ -472,7 +472,7 @@ public class TeamLoadOutGenerator {
      * @return boolean true if legal for combination of inputs, false otherwise. Determines if an AmmoType is loaded.
      */
     public boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech) {
-        boolean allowNukes = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
+        boolean allowNukes = gameOptions.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
         return checkLegality(aType, faction, techBase, mixedTech, allowedYear, legalLevel, eraBasedTechLevel,
               showExtinct, allowNukes);
     }
@@ -744,7 +744,7 @@ public class TeamLoadOutGenerator {
      */
     public HashMap<String, Object> generateValidMunitionsForFactionAndEra(String faction) {
         boolean allowMixed = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH);
-        boolean allowNukes = gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
+        boolean allowNukes = gameOptions.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
         return generateValidMunitionsForFactionAndEra(
               EquipmentType.allTypes(), faction, allowedYear,
               legalLevel, allowMixed, eraBasedTechLevel, showExtinct, allowNukes);

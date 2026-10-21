@@ -164,7 +164,7 @@ class AmmoRowPanel implements ChangeListener {
         }
         if (ammoType.hasFlag(AmmoType.F_NUCLEAR)
               && !bayMunitionsChoicePanel.getGame().getOptions().booleanOption(
-              OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES)) {
+              OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
             return false;
         }
         if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {

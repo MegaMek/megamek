@@ -86,8 +86,7 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
         // The GM can ignore the rules and nuke at will
         if (!isGM(connId)) {
             // Check to make sure nuking is allowed by game options!
-            if (!(server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES)
-                  && server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_NUKES))) {
+            if (!server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
                 server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.nuke.error.disabled"));
                 return;
             }

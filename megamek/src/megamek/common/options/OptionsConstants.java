@@ -367,8 +367,22 @@ public class OptionsConstants {
     public static final String ALLOWED_SHOW_EXTINCT = "show_extinct";
     public static final String ALLOWED_ALL_AMMO_MIXED_TECH = "clan_ignore_eq_limits";
     public static final String ALLOWED_NO_CLAN_PHYSICAL = "no_clan_physical";
-    public static final String ALLOWED_ALLOW_NUKES = "allow_nukes";
-    public static final String ALLOWED_REALLY_ALLOW_NUKES = "really_allow_nukes";
+    /**
+     * Nuclear weapons (IO:AE pp. 163-171): nuclear ordnance for players and the GM nuke commands. Replaces the
+     * retired {@code allow_nukes}, {@code really_allow_nukes} and {@code at2_nukes} switches; a saved value of those
+     * is migrated on load.
+     */
+    public static final String ALLOWED_NUCLEAR_WEAPONS = "nuclear_weapons";
+    /**
+     * @deprecated Merged into {@link #ALLOWED_NUCLEAR_WEAPONS}, which this now names.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public static final String ALLOWED_ALLOW_NUKES = ALLOWED_NUCLEAR_WEAPONS;
+    /**
+     * @deprecated Merged into {@link #ALLOWED_NUCLEAR_WEAPONS}, which this now names.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public static final String ALLOWED_REALLY_ALLOW_NUKES = ALLOWED_NUCLEAR_WEAPONS;
     public static final String ADVANCED_MINEFIELDS = "minefields";
     public static final String ADVANCED_HIDDEN_UNITS = "hidden_units";
     public static final String ADVANCED_BLACK_ICE = "black_ice";
@@ -560,7 +574,11 @@ public class OptionsConstants {
     public static final String ADVANCED_AERO_RULES_STRATOPS_WAYPOINT_LAUNCH = "stratops_waypoint_launch";
     public static final String ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS = "stratops_advanced_sensors";
     public static final String ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH = "variable_damage_thresh";
-    public static final String ADVANCED_AERO_RULES_AT2_NUKES = "at2_nukes";
+    /**
+     * @deprecated Merged into {@link #ALLOWED_NUCLEAR_WEAPONS}, which this now names.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public static final String ADVANCED_AERO_RULES_AT2_NUKES = ALLOWED_NUCLEAR_WEAPONS;
     public static final String ADVANCED_AERO_RULES_AERO_SANITY = "aero_sanity";
     public static final String ADVANCED_AERO_RULES_RETURN_FLYOVER = "return_flyover";
     public static final String ADVANCED_AERO_RULES_CLIMB_OUT = "climb_out";

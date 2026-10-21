@@ -466,7 +466,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
         // Extra nuke controls don't apply in the context menu; rely on game option!
         reconfigurationParameters.nukesBannedForMe = lobby.game()
               .getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AT2_NUKES);
+              .booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
         // Reduce Pirate ammo somewhat; others get full loadouts
         reconfigurationParameters.isPirate = faction.equalsIgnoreCase("PIR");
         reconfigurationParameters.binFillPercent = (reconfigurationParameters.isPirate) ?

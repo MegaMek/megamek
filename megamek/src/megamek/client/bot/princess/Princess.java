@@ -1413,6 +1413,8 @@ public class Princess extends BotClient {
             }
 
             return null;
+        } else if (EmplacementDeployment.isGunEmplacementBuilding(deployedUnit)) {
+            return calculateEmplacementBuildingDeploymentCoords(deployedUnit, possibleDeployCoords);
         } else if (getGame().useVectorMove()) {
             return calculateAdvancedAerospaceDeploymentCoords(deployedUnit, possibleDeployCoords);
         } else {
@@ -1443,6 +1445,31 @@ public class Princess extends BotClient {
         }
 
         return null;
+    }
+
+    /**
+     * Picks the hex for a TO:AR gun emplacement: dry ground, spaced from the other emplacements, with the widest field
+     * of fire. See {@link EmplacementDeployment}.
+     *
+     * @param deployedUnit         The emplacement being deployed
+     * @param possibleDeployCoords The coordinates being considered for deployment
+     *
+     * @return The chosen coordinates, or null if none are legal
+     */
+    private @Nullable Coords calculateEmplacementBuildingDeploymentCoords(final Entity deployedUnit,
+          final List<Coords> possibleDeployCoords) {
+        final Board board = game.getBoard(deployedUnit);
+        final List<Coords> legalCoords = possibleDeployCoords.stream()
+              .filter(c -> super.getFirstValidCoords(deployedUnit, List.of(c)) != null)
+              .toList();
+        final List<Coords> otherEmplacements = getEntitiesOwned().stream()
+              .filter(e -> (e != deployedUnit) && e.isDeployed() && (e.getPosition() != null)
+                    && (e.getBoardId() == board.getBoardId()) && EmplacementDeployment.isGunEmplacementBuilding(e))
+              .map(Entity::getPosition)
+              .toList();
+        final Coords enemyCentre = getEnemyDeploymentCenter(board).orElse(null);
+        return EmplacementDeployment.choose(deployedUnit, legalCoords, board, otherEmplacements,
+              c -> EmplacementDeployment.fieldOfFire(game, board, c, deployedUnit, enemyCentre));
     }
 
     /**
@@ -1740,7 +1767,9 @@ public class Princess extends BotClient {
                     mp.clear();
                     mp.addStep((deployedUnit.getAnyTypeMaxJumpMP() == 0) ? MoveStepType.NONE : MoveStepType.START_JUMP);
                     mp.getLastStep().setPosition(c);
-                    current = bestRank - rankKernelAroundCoords(mp, deployedUnit, RADIUS, (BasicPathRanker) ranker);
+                    // the kernel scores the paths out of a hex, and a unit that cannot move takes none of them
+                    current = bestRank - (cannotMove(deployedUnit) ? 0
+                          : rankKernelAroundCoords(mp, deployedUnit, RADIUS, (BasicPathRanker) ranker));
                     if (current > scoreToBeat) {
                         scoreToBeat = current;
                         bestCandidate = c;

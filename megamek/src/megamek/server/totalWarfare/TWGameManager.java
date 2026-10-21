@@ -26386,6 +26386,9 @@ public class TWGameManager extends AbstractGameManager {
             // Remove any carried pilot IDs (does not apply to other carried entities)
             entity.resetPickedUpMekWarriors();
 
+            // A unit joining this game has not left it yet, whatever happened to it in an earlier battle
+            entity.clearBattleOutcome();
+
             // If we're adding a ProtoMek, calculate its unit number.
             if (entity instanceof ProtoMek) {
                 // How many ProtoMeks does the player already have?

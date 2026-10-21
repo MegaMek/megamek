@@ -11216,6 +11216,21 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Forgets how this unit left an earlier battle and who was credited with destroying it. Call this when the unit
+     * joins a new battle: {@link #setRemovalCondition(int)} never lowers the condition, so a unit that arrives still
+     * marked as a wreck (for example a MekHQ unit that was destroyed, recovered and repaired) would otherwise be
+     * recorded as a wreck again even if it only fled.
+     */
+    public void clearBattleOutcome() {
+        if ((removalCondition != IEntityRemovalConditions.REMOVE_UNKNOWN) || (killerId != Entity.NONE)) {
+            LOGGER.debug("[BattleOutcome] {}: cleared removal condition {} and killer {} left from an earlier battle",
+                  getShortNameRaw(), removalCondition, killerId);
+        }
+        removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
+        killerId = Entity.NONE;
+    }
+
+    /**
      * @return whether this entity is clearing a minefield.
      */
     public boolean isClearingMinefield() {

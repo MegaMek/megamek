@@ -260,12 +260,20 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
-                // Currently Artillery Cannons _can_ make Flak attacks using FAE munitions
-                // If this is an ASF Flak attack we know we hit an entity by itself in the air,
-                // so just hit it for full damage.
+                // An Artillery Cannon is a ballistic weapon (TO:AUE 6th printing, p.97), so it can fire FAE munitions
+                // at an aerospace fighter as a normal ballistic weapon. Forum ruling of 14 June 2024, which postdates
+                // and agrees with IO:AE 3rd printing (fuel-air has no "F" damage type, p.160):
+                // https://www.battletech.com/forums/index.php/topic,84169.msg1993664.html. If this is an ASF attack
+                // we know we hit an entity by itself in the air, so hit it for its damage, after the fuel-air
+                // atmosphere rule (IO:AE 3rd printing, p.159).
                 if (asfFlak) {
+                    if (AreaEffectHelper.fuelAirHasNoEffect(game, target.getBoardId(), attackingEntity,
+                          vPhaseReport)) {
+                        return false;
+                    }
                     AreaEffectHelper.artilleryDamageEntity((Entity) target,
-                          ammoType.getRackSize(),
+                          AreaEffectHelper.fuelAirDamageInAtmosphere(game, ammoType.getRackSize(), attackingEntity,
+                                vPhaseReport),
                           null,
                           0,
                           false,

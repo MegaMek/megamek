@@ -31445,14 +31445,28 @@ public class TWGameManager extends AbstractGameManager {
      * @return a <code>Vector<Report></code> for the phase report
      */
     Vector<Report> resolveIceBroken(Coords c) {
+        //LEGACY use boardId version
+        return resolveIceBroken(c, 0);
+    }
+
+    /**
+     * remove Ice in the hex that's at the passed coords and board, and let entities fall into water below it, if
+     * there is water
+     *
+     * @param c       the <code>Coords</code> of the hex where ice should be removed
+     * @param boardId the id of the board the hex is on
+     *
+     * @return a <code>Vector<Report></code> for the phase report
+     */
+    Vector<Report> resolveIceBroken(Coords c, int boardId) {
         Vector<Report> vPhaseReport = new Vector<>();
-        Hex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard(boardId).getHex(c);
         hex.removeTerrain(Terrains.ICE);
-        sendChangedHex(c);
+        sendChangedHex(c, boardId);
         // if there is water below the ice
         if (hex.terrainLevel(Terrains.WATER) > 0) {
             // drop entities on the surface into the water
-            for (Entity e : game.getEntitiesVector(c)) {
+            for (Entity e : game.getEntitiesVector(c, boardId)) {
                 // If the unit is on the surface, and is no longer allowed in
                 // the hex
                 boolean isHoverOrWiGE = (e.getMovementMode() == EntityMovementMode.HOVER) ||
@@ -31474,24 +31488,32 @@ public class TWGameManager extends AbstractGameManager {
      * melt any snow or ice in a hex, including checking for the effects of breaking through ice
      */
     private Vector<Report> meltIceAndSnow(Coords c, int entityId) {
+        //LEGACY use boardId version
+        return meltIceAndSnow(c, 0, entityId);
+    }
+
+    /**
+     * melt any snow or ice in a hex on the given board, including checking for the effects of breaking through ice
+     */
+    private Vector<Report> meltIceAndSnow(Coords c, int boardId, int entityId) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
-        Hex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard(boardId).getHex(c);
         r = new Report(3069);
         r.indent(2);
         r.subject = entityId;
         vDesc.add(r);
         if (hex.containsTerrain(Terrains.SNOW)) {
             hex.removeTerrain(Terrains.SNOW);
-            sendChangedHex(c);
+            sendChangedHex(c, boardId);
         }
         if (hex.containsTerrain(Terrains.ICE)) {
-            vDesc.addAll(resolveIceBroken(c));
+            vDesc.addAll(resolveIceBroken(c, boardId));
         }
         // if we were not in water, then add mud
         if (!hex.containsTerrain(Terrains.MUD) && !hex.containsTerrain(Terrains.WATER)) {
             hex.addTerrain(new Terrain(Terrains.MUD, 1));
-            sendChangedHex(c);
+            sendChangedHex(c, boardId);
         }
         return vDesc;
     }
@@ -32109,55 +32131,54 @@ public class TWGameManager extends AbstractGameManager {
                         (altitude < effectiveLevel + hex.terrainLevel(Terrains.FUEL_TANK_ELEV))) &&
                   !(asfFlak)) {
                 if (!((ammo != null) && (ammo.getMunitionType().contains(Munitions.M_FLECHETTE)))) {
+                    // An armored building halves the fuel-air blast damage, rounding down, before all other effects
+                    // (IO:AE 3rd printing, p.160). Castle Brian buildings would too, but they are not modelled.
+                    // Armored and light are not mutually exclusive.
+                    int blastDamage = damage;
+                    if (isFuelAirBomb && (bldg.getArmor(coords) > 0)) {
+                        blastDamage = (int) Math.floor(damage * .5);
+
+                        r = new Report(9992);
+                        r.indent(1);
+                        r.subject = killer.getId();
+                        r.newlines = 1;
+                        vPhaseReport.addElement(r);
+                    }
+
                     int buildingDamage;
                     if (variableDamage) {
                         // Dropship exhaust? Sayonara, buildings!
-                        buildingDamage = Compute.d6(damage) * 3;
+                        buildingDamage = Compute.d6(blastDamage) * 3;
                     } else {
                         // Central hex damage is determined by AE radius
-                        buildingDamage = damage * ((falloff.radius > 0) ? 3 : 2);
+                        buildingDamage = blastDamage * ((falloff.radius > 0) ? 3 : 2);
                         // Lower damage as distance increases
                         int hDist = coords.distance(attackSource);
                         int vDist = Math.abs(targetLevel - altitude);
                         if (falloff.radius == 0) {
                             // For single-hex AE attacks, damage above and below center is normal damage
                             if (hDist == 0 && vDist == 1) {
-                                buildingDamage = damage;
+                                buildingDamage = blastDamage;
                             }
                         } else {
                             // For multi-hex AE attacks, damage reduces in two stages
                             if (hDist + vDist == 1) {
-                                buildingDamage = damage * 2;
+                                buildingDamage = blastDamage * 2;
                             } else if (hDist + vDist >= 2) {
-                                buildingDamage = damage;
+                                buildingDamage = blastDamage;
                             }
                         }
                     }
 
-                    if (isFuelAirBomb) {
-                        // light buildings take 1.5x damage from fuel-air bombs
-                        if (bldg.getBuildingType() == BuildingType.LIGHT) {
-                            buildingDamage = (int) Math.ceil(buildingDamage * 1.5);
+                    // light buildings take 1.5x damage from fuel-air bombs, rounding up (IO:AE 3rd printing, p.160)
+                    if (isFuelAirBomb && (bldg.getBuildingType() == BuildingType.LIGHT)) {
+                        buildingDamage = (int) Math.ceil(buildingDamage * 1.5);
 
-                            r = new Report(9991);
-                            r.indent(1);
-                            r.subject = killer.getId();
-                            r.newlines = 1;
-                            vPhaseReport.addElement(r);
-                        }
-
-                        // armored and "castle brian" buildings take .5 damage from fuel-air bombs,
-                        // but I have no idea how to determine if a building is a castle or a brian
-                        // note that being armored and being "light" are not mutually exclusive
-                        if (bldg.getArmor(coords) > 0) {
-                            buildingDamage = (int) Math.floor(buildingDamage * .5);
-
-                            r = new Report(9992);
-                            r.indent(1);
-                            r.subject = killer.getId();
-                            r.newlines = 1;
-                            vPhaseReport.addElement(r);
-                        }
+                        r = new Report(9991);
+                        r.indent(1);
+                        r.subject = killer.getId();
+                        r.newlines = 1;
+                        vPhaseReport.addElement(r);
                     }
 
                     // damage the building (skip basement damage if no basement has been discovered)
@@ -32330,9 +32351,7 @@ public class TWGameManager extends AbstractGameManager {
             if (hex.getTerrain(Terrains.BLDG_ELEV) != null) {
                 // Get an entity that's near or below the ceiling level
                 // and point the bombs at it.
-                Iterator<Entity> targetEnemies = game.getEnemyEntities(center, killer);
-                while (targetEnemies.hasNext()) {
-                    Entity next = targetEnemies.next();
+                for (Entity next : game.getEnemyEntities(center, targetHex.getBoardId(), killer)) {
                     // Find the enemies in the target hex; if one's on a valid building or
                     // water level, make its elevation the target level.
                     if (next.getElevation() + hex.getLevel() <= hex.ceiling() + 1) {
@@ -32346,6 +32365,7 @@ public class TWGameManager extends AbstractGameManager {
         if (type == BombTypeEnum.FAE_SMALL || type == BombTypeEnum.FAE_LARGE) {
             // pass FAE bombs with the special handler
             alreadyHit = AreaEffectHelper.processFuelAirDamage(center,
+                  targetHex.getBoardId(),
                   targetLevel,
                   (BombType) EquipmentType.get(type.getInternalName()),
                   killer,
@@ -32395,22 +32415,24 @@ public class TWGameManager extends AbstractGameManager {
      * deliver inferno bomb
      *
      * @param coords    the <code>Coords</code> where to deliver
+     * @param boardId   the id of the board the hex is on
      * @param ae        the attacking <code>entity</code>
      * @param subjectId the <code>int</code> id of the target
      */
-    public Vector<Integer> deliverBombInferno(Coords coords, Entity ae, int subjectId, Vector<Report> vPhaseReport) {
-        Hex h = game.getBoard().getHex(coords);
+    public Vector<Integer> deliverBombInferno(Coords coords, int boardId, Entity ae, int subjectId,
+          Vector<Report> vPhaseReport) {
+        Hex h = game.getBoard(boardId).getHex(coords);
         Report r;
         Vector<Integer> alreadyHit = new Vector<>();
         // Unless there is a fire in the hex already, start one.
         if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_BOMB) {
-            ignite(coords, Terrains.FIRE_LVL_INFERNO_BOMB, vPhaseReport);
+            ignite(coords, boardId, Terrains.FIRE_LVL_INFERNO_BOMB, vPhaseReport);
         }
         // possibly melt ice and snow
         if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
-            vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+            vPhaseReport.addAll(meltIceAndSnow(coords, boardId, subjectId));
         }
-        for (Entity entity : game.getEntitiesVector(coords)) {
+        for (Entity entity : game.getEntitiesVector(coords, boardId)) {
             if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
                 continue;
             }

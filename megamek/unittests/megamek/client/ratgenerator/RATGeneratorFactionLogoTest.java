@@ -183,6 +183,23 @@ class RATGeneratorFactionLogoTest {
         assertEquals(DIRECTORY + image + ".png", RATGenerator.getCanonicalFactionLogoAddress(year, code));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+          "3025, FS.UNLISTED, logo_federated_suns",
+          "3025, FS.CRG.UNLISTED, logo_crucis_lancers",
+          "3025, FS.UNLISTED.1st, logo_federated_suns",
+          "3060, CGB.UNLISTED, logo_rasalhague_dominion"
+    })
+    void commandWithoutFactionDataInheritsFromParent(int year, String code, String image) {
+        // Commands such as these exist only in the RAT generator data, which the availability panel lists
+        assertEquals(DIRECTORY + image + ".png", RATGenerator.getCanonicalFactionLogoAddress(year, code));
+    }
+
+    @Test
+    void commandWithoutFactionDataUnderUnknownFactionHasNoDedicatedArtwork() {
+        assertNull(RATGenerator.getCanonicalFactionLogoAddress(3025, "CUSTOM.UNLISTED"));
+    }
+
     @Test
     void commandWithoutIconInAnyParentFallsBackToGenericLogo() {
         assertNull(RATGenerator.getCanonicalFactionLogoAddress(3025, "CLANLESS.GC"));

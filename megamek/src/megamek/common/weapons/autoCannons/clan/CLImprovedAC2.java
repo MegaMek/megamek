@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,7 +57,7 @@ public class CLImprovedAC2 extends ACWeapon {
 
     public CLImprovedAC2() {
         super();
-        name = "Improved Autocannon/2";
+        name = "Improved AC/2";
         setInternalName("Improved Autocannon/2");
         addLookupName("CLIMPAC2");
         sortingName = "Improved Autocannon/02";

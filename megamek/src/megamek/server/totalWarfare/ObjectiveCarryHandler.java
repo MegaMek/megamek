@@ -34,6 +34,7 @@ package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
@@ -66,6 +67,8 @@ class ObjectiveCarryHandler extends AbstractTWRuleHandler {
     static final int REPORT_FORCED_DROP_CHECK = 7165;
     /** "Objective X is pushed from Y to Z: only one objective fits in a hex." */
     static final int REPORT_OBJECTIVE_DISPLACED = 7168;
+    /** "X is forced off the battlefield; objective Y stays behind in hex Z." */
+    static final int REPORT_OBJECTIVE_LEFT_BEHIND = 7177;
 
     /** RAW: two intact hand actuators make the forced-drop roll easier by this much (two claws do not). */
     static final int TWO_HANDS_MODIFIER = -2;
@@ -169,6 +172,44 @@ class ObjectiveCarryHandler extends AbstractTWRuleHandler {
         LOGGER.info("[Objective] {} drops {} as cargo{}", carrier.getShortName(), marker.generalName(),
               marker.isDestroyed() ? "; it is destroyed" : "; it lands intact");
         return false;
+    }
+
+    /**
+     * A carrier pushed or skidding off the battlefield (Core Standard Missions, Mobile Objectives, Displaced Off the
+     * Battlefield). Over an edge it is allowed to leave by, it counts as having left with the objective, which then
+     * pays as carried off at mission end. Over any other edge the objective stays behind in the last hex on the
+     * battlefield the carrier occupied. Being displaced is not a drop, so a Fragile objective is not at risk.
+     *
+     * @param carrier       the unit leaving the battlefield
+     * @param lastInPlayHex the last hex on the battlefield it occupied
+     *
+     * @return the report lines, for the caller's report of the displacement
+     */
+    Vector<Report> resolveCarrierForcedOffBoard(Entity carrier, Coords lastInPlayHex) {
+        Vector<Report> reports = new Vector<>();
+        List<ObjectiveMarker> carriedMarkers = carriedObjectives(carrier);
+        if (carriedMarkers.isEmpty()) {
+            return reports;
+        }
+        if (getGame().canFleeFrom(carrier, lastInPlayHex)) {
+            LOGGER.info("[Objective] {} is forced off the battlefield at {}, an edge it may leave by - it takes {} with "
+                  + "it", carrier.getShortName(), lastInPlayHex.getBoardNum(), carriedMarkers.getFirst().generalName());
+            return reports;
+        }
+        for (ObjectiveMarker marker : carriedMarkers) {
+            LOGGER.info("[Objective] {} is forced off the battlefield at {}, not an edge it may leave by - {} stays in "
+                  + "that hex", carrier.getShortName(), lastInPlayHex.getBoardNum(), marker.generalName());
+            carrier.dropCarriedObject(marker, false);
+            placeDroppedObjective(carrier, lastInPlayHex, marker);
+            Report report = new Report(REPORT_OBJECTIVE_LEFT_BEHIND, Report.PUBLIC);
+            report.subject = carrier.getId();
+            report.addDesc(carrier);
+            report.add(marker.generalName());
+            report.add(lastInPlayHex.getBoardNum());
+            reports.add(report);
+        }
+        gameManager.sendGroundObjectUpdate();
+        return reports;
     }
 
     /**

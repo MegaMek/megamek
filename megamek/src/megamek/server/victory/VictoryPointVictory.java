@@ -274,7 +274,8 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
      * A carried Raid point pays its carrier's side. A Mek still on the board carrying one holds it when the game ends
      * (RAW: carrying an objective controls it), and one that fled the battlefield with it took it off the field
      * (RAW: an objective carried out through a legal departure edge counts as taken off the field). Fleeing is only
-     * allowed through a legal edge, so every unit that fled qualifies.
+     * allowed through a legal edge, so every unit that fled qualifies. So does one pushed off the battlefield still
+     * carrying it: a push over any other edge has already left the objective behind on the board.
      */
     private void awardCarriedRaidPoints(Game game, VictoryPointTracker tracker, List<Report> endScoringReports) {
         for (Entity carrier : game.getEntitiesVector()) {
@@ -286,7 +287,9 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         }
         for (Enumeration<Entity> retreated = game.getRetreatedEntities(); retreated.hasMoreElements(); ) {
             Entity carrier = retreated.nextElement();
-            if (carrier.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT) {
+            boolean isFled = carrier.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT;
+            boolean isPushedOff = carrier.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED;
+            if (isFled || isPushedOff) {
                 for (ObjectiveMarker marker : carriedRaidPoints(carrier)) {
                     awardCarriedRaidPoint(game, tracker, carrier, marker, true, endScoringReports);
                 }

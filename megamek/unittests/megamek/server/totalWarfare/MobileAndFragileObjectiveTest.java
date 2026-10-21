@@ -48,10 +48,12 @@ import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.Cargo;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.game.Game;
+import megamek.common.hexArea.BorderHexArea;
 import megamek.common.net.packets.Packet;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
@@ -313,6 +315,65 @@ class MobileAndFragileObjectiveTest {
         new ObjectiveCarryHandler(gameManager).placeDroppedObjective(carrier, edgeHex, mobileFlag());
 
         assertTrue(game.getGroundObjects(edgeHex).contains(lying), "pushed off the board, it stays in its last hex");
+    }
+
+    // --- a carrier forced off the battlefield ---
+
+    @Test
+    void testACarrierPushedOffAnEdgeItMayNotLeaveByLeavesTheObjectiveInItsLastHex() {
+        Coords northEdgeHex = new Coords(5, 0);
+        alice.setFleeZone(new BorderHexArea(false, true, false, false));
+        ObjectiveMarker flag = mobileFlag();
+        BipedMek carrier = mekAt(alice, northEdgeHex);
+        carrier.pickupCarryableObject(flag, Mek.LOC_RIGHT_ARM);
+
+        Vector<Report> reports = gameManager.doEntityDisplacement(carrier, northEdgeHex, northEdgeHex.translated(0),
+              null);
+
+        assertTrue(game.getGroundObjects(northEdgeHex).contains(flag), "RAW: placed in the last in-play hex");
+        assertTrue(carrier.getDistinctCarriedObjects().isEmpty());
+        assertFalse(flag.isDestroyed());
+        assertTrue(reports.stream().anyMatch(report ->
+              report.messageId == ObjectiveCarryHandler.REPORT_OBJECTIVE_LEFT_BEHIND));
+    }
+
+    @Test
+    void testACarrierPushedOffAnEdgeItMayLeaveByTakesTheObjectiveWithIt() {
+        Coords northEdgeHex = new Coords(5, 0);
+        alice.setFleeZone(new BorderHexArea(true, false, false, false));
+        ObjectiveMarker flag = mobileFlag();
+        BipedMek carrier = mekAt(alice, northEdgeHex);
+        carrier.pickupCarryableObject(flag, Mek.LOC_RIGHT_ARM);
+
+        gameManager.doEntityDisplacement(carrier, northEdgeHex, northEdgeHex.translated(0), null);
+
+        assertEquals(List.of(flag), carrier.getDistinctCarriedObjects(), "RAW: it counts as leaving with it");
+        assertTrue(game.getGroundObjects(northEdgeHex).isEmpty());
+    }
+
+    // --- firing while carrying ---
+
+    @Test
+    void testACarrierCanFireEverythingButTheArmHoldingTheObjective() {
+        BipedMek carrier = carrying(mobileFlag());
+
+        assertFalse(carrier.canFireWeapon(Mek.LOC_RIGHT_ARM), "RAW: the carrying arm cannot attack");
+        assertTrue(carrier.canFireWeapon(Mek.LOC_LEFT_ARM));
+        assertTrue(carrier.canFireWeapon(Mek.LOC_LEFT_TORSO));
+        assertTrue(carrier.canFireWeapon(Mek.LOC_CENTER_TORSO));
+        assertTrue(carrier.canFireWeapon(Mek.LOC_RIGHT_TORSO));
+        assertFalse(carrier.endOfTurnCargoInteraction(), "picking up an objective does not end its attacks");
+    }
+
+    @Test
+    void testOrdinaryCargoStillBlocksTheTorsoAndTheTurnsAttacks() {
+        // the cargo rule (TW p.261) is unchanged for everything that is not an objective
+        BipedMek carrier = mekAt(alice, CARRIER_HEX);
+        carrier.pickupCarryableObject(new Cargo(), Mek.LOC_RIGHT_ARM);
+
+        assertFalse(carrier.canFireWeapon(Mek.LOC_CENTER_TORSO));
+        assertTrue(carrier.canFireWeapon(Mek.LOC_LEFT_ARM));
+        assertTrue(carrier.endOfTurnCargoInteraction());
     }
 
     @Test

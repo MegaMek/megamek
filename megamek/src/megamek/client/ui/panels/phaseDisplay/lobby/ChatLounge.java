@@ -2183,14 +2183,18 @@ public class ChatLounge extends AbstractPhaseDisplay
                           Messages.getString("ChatLounge.SelectBotOrPlayer"));
                     return;
                 }
-                ArrayList<Entity> entities = client().getGame().getPlayerEntities(selectedPlayer, false);
+                ArrayList<Entity> entities = unitsInForceTreeOrder(selectedPlayer);
                 for (Entity entity : entities) {
                     entity.setForceString(game().getForces().forceStringFor(entity));
                 }
-                if (ev.getSource().equals(butSaveList)) {
-                    clientgui.saveListFile(entities, selectedPlayer.getName());
-                } else {
-                    clientgui.printList(entities, (JButton) ev.getSource());
+                try {
+                    if (ev.getSource().equals(butSaveList)) {
+                        clientgui.saveListFile(entities, selectedPlayer.getName());
+                    } else {
+                        clientgui.printList(entities, (JButton) ev.getSource());
+                    }
+                } finally {
+                    clearForceStrings(entities);
                 }
 
             } else if (ev.getSource().equals(butAddBot)) {
@@ -2798,6 +2802,34 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshDoneButton(done);
         for (AbstractClient botClient : clientgui.getLocalBots().values()) {
             botClient.sendDone(done);
+        }
+    }
+
+    /**
+     * Returns the player's units in the order the force tree shows them, so a saved unit list reloads with the forces
+     * and units in the order they were arranged (issue #9290).
+     *
+     * @param player the player whose units are saved or printed
+     *
+     * @return the player's units in force tree order
+     */
+    private ArrayList<Entity> unitsInForceTreeOrder(Player player) {
+        List<Entity> units = game().getPlayerEntities(player, false);
+        ArrayList<Entity> orderedUnits = new ArrayList<>(game().getForces().sortedInTreeOrder(units));
+        LOGGER.debug("[ForceTree] Saving {} units of {} in force tree order", orderedUnits.size(), player.getName());
+        return orderedUnits;
+    }
+
+    /**
+     * Clears the force names stamped onto units for writing a unit list. A stamp left behind takes precedence over
+     * the live force tree the next time the unit is written to a file, so a force renamed since would come back with
+     * its old name (issue #9290).
+     *
+     * @param units the units whose stamps are cleared
+     */
+    private static void clearForceStrings(List<Entity> units) {
+        for (Entity unit : units) {
+            unit.setForceString("");
         }
     }
 

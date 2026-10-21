@@ -63,7 +63,7 @@ import megamek.logging.MMLogger;
  * out of it and how easily the unit can reach the far edge, neither of which means anything for a building, and it
  * penalised every terrain type in the hex so the bot hunted for bare ground. On a town map the bare ground in the
  * centre zone is the ragged fringe of the town, so the emplacements piled up there, height 1 among taller buildings,
- * unable to see or be seen (MekHQ issue 9571).</p>
+ * unable to see or be seen (MegaMek issue #9302).</p>
  *
  * <h2>The rule</h2>
  *

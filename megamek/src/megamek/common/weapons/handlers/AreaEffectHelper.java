@@ -717,7 +717,7 @@ public class AreaEffectHelper {
                     if (lowBarDamage == 0) {
                         report = new Report(9991);
                         report.indent(1);
-                        report.subject = killer.getId();
+                        report.subject = subjectId;
                         report.newlines = 1;
                         vPhaseReport.addElement(report);
                     }

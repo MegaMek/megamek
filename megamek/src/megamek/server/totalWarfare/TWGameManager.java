@@ -32146,7 +32146,7 @@ public class TWGameManager extends AbstractGameManager {
 
                         r = new Report(9992);
                         r.indent(1);
-                        r.subject = killer.getId();
+                        r.subject = subjectId;
                         r.newlines = 1;
                         vPhaseReport.addElement(r);
                     }
@@ -32182,7 +32182,7 @@ public class TWGameManager extends AbstractGameManager {
 
                         r = new Report(9991);
                         r.indent(1);
-                        r.subject = killer.getId();
+                        r.subject = subjectId;
                         r.newlines = 1;
                         vPhaseReport.addElement(r);
                     }

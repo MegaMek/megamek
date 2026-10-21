@@ -232,7 +232,7 @@ class FuelAirRulesTest {
      * in-the-open doubling. Before the fix the open-terrain check read the first board.
      */
     @Test
-    void openTerrainIsJudgedOnTheInfantrysOwnBoard() {
+    void openTerrainIsJudgedOnTheInfantryUnitsOwnBoard() {
         game.getBoard(SECOND_BOARD).getHex(IMPACT).addTerrain(new Terrain(Terrains.WOODS, 1));
         ConvInfantry infantry = platoon(IMPACT, SECOND_BOARD);
 

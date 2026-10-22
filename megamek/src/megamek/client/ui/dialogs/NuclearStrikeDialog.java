@@ -100,6 +100,12 @@ public class NuclearStrikeDialog extends JDialog {
     private final JComboBox<PlayerChoice> playerChoice = new JComboBox<>();
     private final JPanel warheadCards = new JPanel(new CardLayout());
     private final JPanel statsPanel = new JPanel(new GridBagLayout());
+    private final JLabel impactValue = new JLabel();
+    private final JLabel dropValue = new JLabel();
+    private final JLabel blastRadiusValue = new JLabel();
+    private final JLabel secondaryValue = new JLabel();
+    private final JLabel craterValue = new JLabel();
+    private final JLabel roughValue = new JLabel();
     private final JLabel reachLabel = new JLabel();
     private final JLabel customRadiusLabel = new JLabel();
     private final JLabel errorLabel = new JLabel(" ");
@@ -218,6 +224,12 @@ public class NuclearStrikeDialog extends JDialog {
         choiceCell.weightx = 1;
         panel.add(warheadChoice, choiceCell);
 
+        addStat(0, 0, "NuclearStrike.dialog.impact", impactValue);
+        addStat(1, 0, "NuclearStrike.dialog.dropPerHex", dropValue);
+        addStat(0, 1, "NuclearStrike.dialog.blastRadius", blastRadiusValue);
+        addStat(1, 1, "NuclearStrike.dialog.secondary", secondaryValue);
+        addStat(0, 2, "NuclearStrike.dialog.crater", craterValue);
+        addStat(1, 2, "NuclearStrike.dialog.rough", roughValue);
         JPanel bookCard = new JPanel();
         bookCard.setLayout(new BoxLayout(bookCard, BoxLayout.Y_AXIS));
         statsPanel.setAlignmentX(LEFT_ALIGNMENT);
@@ -354,8 +366,8 @@ public class NuclearStrikeDialog extends JDialog {
         pack();
     }
 
+    /** Puts the warhead's figures into the labels built once in {@link #warheadSection()}. */
     private void fillStats(NuclearBlastProfile profile) {
-        statsPanel.removeAll();
         String crater = (profile.craterDepth() == 0)
               ? Messages.getString("NuclearStrike.dialog.none")
               : Messages.getString("NuclearStrike.dialog.craterSize", profile.craterDepth(), profile.craterRadius());
@@ -363,18 +375,15 @@ public class NuclearStrikeDialog extends JDialog {
         String rough = (roughRing < 0)
               ? Messages.getString("NuclearStrike.dialog.none")
               : Messages.getString("NuclearStrike.dialog.hexes", roughRing);
-        addStat(0, 0, "NuclearStrike.dialog.impact", String.format("%,d", profile.impactDamage()));
-        addStat(1, 0, "NuclearStrike.dialog.dropPerHex", String.format("%,d", profile.damageReduction()));
-        addStat(0, 1, "NuclearStrike.dialog.blastRadius",
-              Messages.getString("NuclearStrike.dialog.hexes", profile.blastRadius()));
-        addStat(1, 1, "NuclearStrike.dialog.secondary",
-              Messages.getString("NuclearStrike.dialog.hexes", profile.secondaryRadius()));
-        addStat(0, 2, "NuclearStrike.dialog.crater", crater);
-        addStat(1, 2, "NuclearStrike.dialog.rough", rough);
-        statsPanel.revalidate();
+        impactValue.setText(String.format("%,d", profile.impactDamage()));
+        dropValue.setText(String.format("%,d", profile.damageReduction()));
+        blastRadiusValue.setText(Messages.getString("NuclearStrike.dialog.hexes", profile.blastRadius()));
+        secondaryValue.setText(Messages.getString("NuclearStrike.dialog.hexes", profile.secondaryRadius()));
+        craterValue.setText(crater);
+        roughValue.setText(rough);
     }
 
-    private void addStat(int column, int row, String labelKey, String value) {
+    private void addStat(int column, int row, String labelKey, JLabel valueLabel) {
         JLabel nameLabel = new JLabel(Messages.getString(labelKey));
         nameLabel.setForeground(UIManager.getColor("Label.disabledForeground"));
         GridBagConstraints nameCell = cell(column * 2, row);
@@ -382,7 +391,7 @@ public class NuclearStrikeDialog extends JDialog {
         GridBagConstraints valueCell = cell((column * 2) + 1, row);
         valueCell.anchor = GridBagConstraints.EAST;
         valueCell.insets.right = UIUtil.scaleForGUI(18);
-        statsPanel.add(new JLabel(value), valueCell);
+        statsPanel.add(valueLabel, valueCell);
     }
 
     /**

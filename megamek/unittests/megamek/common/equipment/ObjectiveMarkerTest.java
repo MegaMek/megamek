@@ -284,6 +284,31 @@ class ObjectiveMarkerTest {
         assertFalse(restoredScheme.isDecided());
     }
 
+    @Test
+    void testRaidPayoutSurvivesSerialization() throws Exception {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setScoringScheme(ObjectiveScoringScheme.raid(ObjectiveScoringScheme.RaidPayout.AT_GAME_END));
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(byteStream)) {
+            objectOutput.writeObject(marker);
+        }
+        ObjectiveMarker restored;
+        try (ObjectInputStream objectInput = new ObjectInputStream(
+              new ByteArrayInputStream(byteStream.toByteArray()))) {
+            restored = (ObjectiveMarker) objectInput.readObject();
+        }
+
+        assertEquals(ObjectiveScoringScheme.RaidPayout.AT_GAME_END, restored.getScoringScheme().getRaidPayout(),
+              "the payout chosen in Victory Setup must reach the server and the other clients");
+    }
+
+    @Test
+    void testANewRaidPointPaysEveryEndPhaseAsPrinted() {
+        assertEquals(ObjectiveScoringScheme.RaidPayout.EVERY_END_PHASE,
+              ObjectiveScoringScheme.raid().getRaidPayout());
+    }
+
     // --- control retention (a mission with more points than units) ---
 
     @Test

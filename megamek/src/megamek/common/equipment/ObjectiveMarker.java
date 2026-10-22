@@ -259,7 +259,7 @@ public class ObjectiveMarker extends GroundObject {
     /**
      * Only a Raid point can be Mobile. The other held schemes are won by a zone on the map, and scoring only reads
      * objectives lying on the ground, so a zone carried off in a Mek's hand would stop scoring altogether. Raid asks who
-     * has the objective when the game ends, which a carried objective answers.
+     * has the objective, each End Phase or when the game ends, which a carried objective answers.
      *
      * @param preset the point's scoring scheme
      *

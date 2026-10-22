@@ -54,6 +54,8 @@ import megamek.server.commands.FirefightCommand;
 import megamek.server.commands.FirestarterCommand;
 import megamek.server.commands.FirestormCommand;
 import megamek.server.commands.NoFiresCommand;
+import megamek.server.commands.NuclearStrikeCommand;
+import megamek.server.commands.NuclearStrikeCustomCommand;
 import megamek.server.commands.OrbitalBombardmentCommand;
 import megamek.server.commands.RemoveSmokeCommand;
 
@@ -118,8 +120,11 @@ public final class GameMasterCommandMenu {
      */
     static List<ClientServerCommand> commandsFor(@Nullable Coords coords, @Nullable Board board) {
         if ((coords == null) || (board == null)) {
-            LOGGER.debug("[GMCommands] menu opened without a hex - offering the board-wide commands");
-            return boardWideCommands();
+            LOGGER.debug("[GMCommands] menu opened without a hex - offering the board-wide commands and the "
+                  + "nuclear strikes, aimed by typing the hex");
+            List<ClientServerCommand> offered = new ArrayList<>(boardWideCommands());
+            offered.addAll(nuclearStrikes());
+            return offered;
         }
         List<ClientServerCommand> applicable = new ArrayList<>();
         for (HexCommand hexCommand : hexTargetedCommands()) {
@@ -130,6 +135,7 @@ public final class GameMasterCommandMenu {
                       coords.getBoardNum(), hexCommand.command().getName());
             }
         }
+        applicable.addAll(nuclearStrikes());
         return applicable;
     }
 
@@ -186,6 +192,17 @@ public final class GameMasterCommandMenu {
               new HexCommand(new FirestarterCommand(null, null), GameMasterCommandMenu::anyHex),
               new HexCommand(new FirefightCommand(null, null), GameMasterCommandMenu::hasFire),
               new HexCommand(new OrbitalBombardmentCommand(null, null), GameMasterCommandMenu::anyHex));
+    }
+
+    /**
+     * Creates the nuclear strike commands. They act on one hex, but they are offered from both menus: from a right-click
+     * they are aimed at the clicked hex, and from the game commands strip the dialog asks for the hex instead. A strike
+     * is often aimed at a hex well off the part of the map on screen, which a right-click cannot reach.
+     *
+     * @return The nuclear strike commands, in menu order
+     */
+    static List<ClientServerCommand> nuclearStrikes() {
+        return List.of(new NuclearStrikeCommand(null, null), new NuclearStrikeCustomCommand(null, null));
     }
 
     /** @return {@code true} always; for the commands that work on any hex, whatever is or is not in it */

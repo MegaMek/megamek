@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -59,6 +60,8 @@ import org.junit.jupiter.api.Test;
  * <p>Commands that act on a single unit belong in that unit's Edit Damage dialog and must appear in neither menu.</p>
  */
 class GameMasterCommandMenuTest {
+    /** The nuclear strikes are aimed at one hex, but offered from both menus. */
+    private static final Set<String> NUCLEAR_STRIKES = Set.of("ns", "nsc");
 
     /**
      * A board holding one hex of each kind the menu cares about, so the tests can ask what is offered on a hex that
@@ -92,6 +95,11 @@ class GameMasterCommandMenuTest {
     }
 
     /** @return {@code true} if the command asks for a hex, which it can only get from a right-clicked hex */
+    /** @return {@code true} for the nuclear strikes, the hex commands that are offered from both menus */
+    private static boolean isNuclearStrike(ClientServerCommand command) {
+        return NUCLEAR_STRIKES.contains(command.getName());
+    }
+
     private static boolean takesAHex(ClientServerCommand command) {
         return command.defineArguments()
               .stream()
@@ -109,6 +117,9 @@ class GameMasterCommandMenuTest {
 
         assertFalse(offered.isEmpty(), "the board-wide commands should be offered without a hex");
         for (ClientServerCommand command : offered) {
+            if (isNuclearStrike(command)) {
+                continue;
+            }
             assertFalse(takesAHex(command),
                   command.getName() + " takes a hex, so it must not be offered where there is none");
         }
@@ -136,8 +147,12 @@ class GameMasterCommandMenuTest {
               .map(ClientServerCommand::getName)
               .toList();
 
-        assertTrue(hexTargeted.stream().noneMatch(boardWide::contains),
-              "a command should appear in one menu or the other, never both");
+        for (String command : hexTargeted) {
+            if (!NUCLEAR_STRIKES.contains(command)) {
+                assertFalse(boardWide.contains(command),
+                      command + " should appear in one menu or the other, never both");
+            }
+        }
     }
 
     @Test
@@ -167,6 +182,22 @@ class GameMasterCommandMenuTest {
     void aCommandThatWorksAnywhereIsOfferedOnABareHex() {
         assertTrue(offeredOn(BARE_HEX).contains("firestarter"),
               "a hex can be set alight whatever is or is not in it");
+    }
+
+    @Test
+    void bothNuclearStrikesAreOfferedWithoutAHex() {
+        List<String> offered = GameMasterCommandMenu.commandsFor(null, null)
+              .stream()
+              .map(ClientServerCommand::getName)
+              .toList();
+        assertTrue(offered.containsAll(NUCLEAR_STRIKES), "the Commands button offers both nuclear strikes");
+    }
+
+    @Test
+    void bothNuclearStrikesAreOfferedOnAnyHex() {
+        List<String> offered = offeredOn(BARE_HEX);
+        assertTrue(offered.contains("ns"), "a nuclear strike can be aimed at any hex");
+        assertTrue(offered.contains("nsc"), "a custom nuclear strike can be aimed at any hex");
     }
 
     @Test

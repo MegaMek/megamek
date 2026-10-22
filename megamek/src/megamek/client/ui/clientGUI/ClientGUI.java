@@ -43,6 +43,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.KeyboardFocusManager;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -4213,11 +4215,29 @@ public class ClientGUI extends AbstractClientGUI
     @Override
     public boolean shouldIgnoreHotKeys() {
         return ignoreHotKeys
+              || !isGameWindowActive()
               || ((gameOptionsDialog != null) && gameOptionsDialog.isVisible())
               || UIUtil.isModalDialogDisplayed()
               || ((help != null) && help.isVisible())
               || ((commonSettingsDialog != null) && commonSettingsDialog.isVisible())
               || ((aw != null) && aw.isVisible());
+    }
+
+    /**
+     * The key dispatcher is registered application-wide, so when this game runs inside MekHQ it also sees keys typed
+     * into MekHQ windows. Hotkeys must only fire while the game frame, or a window it owns such as the minimap, is the
+     * active window; otherwise e.g. Backspace (undo step) and the arrow keys (weapon/target cycling) are swallowed
+     * from MekHQ text fields. See MekHQ issue #10642.
+     */
+    private boolean isGameWindowActive() {
+        Window window = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+        while (window != null) {
+            if (window == frame) {
+                return true;
+            }
+            window = window.getOwner();
+        }
+        return false;
     }
 
     void editBots() {

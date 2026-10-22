@@ -2483,7 +2483,7 @@ public class TWDamageManager implements IDamageManager {
           boolean nukeS2S, ModsInfo mods) {
         boolean isPlatoon = true;
         int entityId = infantry.getId();
-        Hex te_hex = game.getBoard().getHex(infantry.getPosition());
+        Hex te_hex = game.getHexOf(infantry);
         boolean damageIS = mods.damageIS;
         Report report;
 
@@ -2771,7 +2771,7 @@ public class TWDamageManager implements IDamageManager {
 
         // First, find all valid enemy targets in the hex
         List<Entity> validTargets = new ArrayList<>();
-        for (Entity target : game.getEntitiesVector(position)) {
+        for (Entity target : game.getEntitiesVector(position, infantry.getBoardId())) {
             // Skip the infantry itself
             if (target.getId() == infantry.getId()) {
                 continue;

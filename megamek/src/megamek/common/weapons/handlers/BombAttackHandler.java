@@ -330,7 +330,8 @@ public class BombAttackHandler extends WeaponHandler {
                 dropHex.setTargetLevel(((HexTarget) target).getTargetLevel());
 
                 if (type == BombTypeEnum.INFERNO) {
-                    hitIds = gameManager.deliverBombInferno(drop, attackingEntity, subjectId, vPhaseReport);
+                    hitIds = gameManager.deliverBombInferno(drop, target.getBoardId(), attackingEntity, subjectId,
+                          vPhaseReport);
                 } else if (type == BombTypeEnum.THUNDER) {
                     gameManager.deliverThunderMinefield(drop,
                           attackingEntity.getOwner().getId(),

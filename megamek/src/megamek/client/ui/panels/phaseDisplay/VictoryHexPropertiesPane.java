@@ -62,6 +62,7 @@ import megamek.common.Player;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
+import megamek.common.equipment.ObjectiveScoringScheme.RaidPayout;
 import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.logging.MMLogger;
@@ -149,6 +150,11 @@ public final class VictoryHexPropertiesPane {
         payoutCombo.setSelectedItem(scheme.getScanPayout());
         payoutCombo.setRenderer(new MessageKeyRenderer("VictoryHex.payout.", true));
         JLabel payoutLabel = new JLabel(Messages.getString("VictoryHex.scanPayout"));
+        // a Raid point's one setting: every End Phase, as printed, or once at game end
+        JComboBox<RaidPayout> raidPayoutCombo = new JComboBox<>(RaidPayout.values());
+        raidPayoutCombo.setSelectedItem(scheme.getRaidPayout());
+        raidPayoutCombo.setRenderer(new MessageKeyRenderer("VictoryHex.raidPayout.", true));
+        JLabel raidPayoutLabel = new JLabel(Messages.getString("VictoryHex.raidPayout"));
         // whose the point is. A scanning mission reads either something nobody owns or something belonging to
         // a particular side, and without this every scan point came out as an unowned white flag
         JComboBox<SideChoice> belongsToCombo = new JComboBox<>();
@@ -179,14 +185,15 @@ public final class VictoryHexPropertiesPane {
         List<JComponent> controlRows = List.of(retainControlLabel, retainControlCheckbox, startingControlLabel,
               startingControlCombo, radiusLabel, radiusSpinner);
         SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
-              retainControlCheckbox, payoutCombo, scanRows, controlRows, thresholdLabel, rateLabel,
-              countingLabel, schemeDescription);
+              retainControlCheckbox, payoutCombo, raidPayoutCombo, raidPayoutLabel, scanRows, controlRows,
+              thresholdLabel, rateLabel, countingLabel, schemeDescription);
         schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
         countingCombo.addActionListener(event -> refreshSchemeRows(controls));
         thresholdSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         retainControlCheckbox.addActionListener(event -> refreshSchemeRows(controls));
         payoutCombo.addActionListener(event -> refreshSchemeRows(controls));
+        raidPayoutCombo.addActionListener(event -> refreshSchemeRows(controls));
         refreshSchemeRows(controls);
 
         // the order a player decides these in: what kind of point is this, how is it won, who holds it
@@ -200,17 +207,18 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 1, thresholdLabel, thresholdSpinner);
         addRow(propertiesPanel, 2, countingLabel, countingCombo);
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
-        addRow(propertiesPanel, 4, payoutLabel, payoutCombo);
-        addRow(propertiesPanel, 5, belongsToLabel, belongsToCombo);
+        addRow(propertiesPanel, 4, raidPayoutLabel, raidPayoutCombo);
+        addRow(propertiesPanel, 5, payoutLabel, payoutCombo);
+        addRow(propertiesPanel, 6, belongsToLabel, belongsToCombo);
         if (gameMaster) {
-            addRow(propertiesPanel, 6, revealsLabel, revealsField);
+            addRow(propertiesPanel, 7, revealsLabel, revealsField);
         }
-        addRow(propertiesPanel, 7, retainControlLabel, retainControlCheckbox);
-        addRow(propertiesPanel, 8, startingControlLabel, startingControlCombo);
-        addRow(propertiesPanel, 9, radiusLabel, radiusSpinner);
-        addRow(propertiesPanel, 10, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
-        addRow(propertiesPanel, 11, new JLabel(Messages.getString("VictoryHex.variants")), variantChecks.panel());
-        pinRowsToTheTop(propertiesPanel, 12);
+        addRow(propertiesPanel, 8, retainControlLabel, retainControlCheckbox);
+        addRow(propertiesPanel, 9, startingControlLabel, startingControlCombo);
+        addRow(propertiesPanel, 10, radiusLabel, radiusSpinner);
+        addRow(propertiesPanel, 11, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
+        addRow(propertiesPanel, 12, new JLabel(Messages.getString("VictoryHex.variants")), variantChecks.panel());
+        pinRowsToTheTop(propertiesPanel, 13);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -237,6 +245,7 @@ public final class VictoryHexPropertiesPane {
         boolean retainsControl = !isScanPoint && retainControlCheckbox.isSelected();
         scheme.setRetainsControlWhenEmpty(retainsControl);
         scheme.setScanPayout((ScanPayout) payoutCombo.getSelectedItem());
+        scheme.setRaidPayout((RaidPayout) raidPayoutCombo.getSelectedItem());
         // a greyed dropdown keeps whatever it last showed, so its choice only counts while retention is on;
         // without retention the first End Phase would clear a starting holder anyway
         ControlChoice startingControl = retainsControl
@@ -379,7 +388,9 @@ public final class VictoryHexPropertiesPane {
      * @param rateSpinner       the per-turn rate (grip drain or capture progress)
      * @param retainControl     whether the point keeps its holder once the zone empties
      * @param scanPayout        when a Scan point pays its points
-     * @param scanRows          the rows shown only for a Scan point: the payout choice and, for a game master, the
+     * @param raidPayout        when a Raid point pays its points, shown only for a Raid point
+     * @param raidPayoutLabel   the label of the Raid payout selector
+     * @param scanRows         the rows shown only for a Scan point: the payout choice and, for a game master, the
      *                          note the scan reveals
      * @param controlRows       the retention, starting holder and radius rows, hidden for a Scan point
      * @param thresholdLabel    the label naming the threshold for the selected preset
@@ -389,7 +400,7 @@ public final class VictoryHexPropertiesPane {
      */
     private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
           JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JComboBox<ScanPayout> scanPayout,
-          List<JComponent> scanRows, List<JComponent> controlRows, JLabel thresholdLabel,
+          JComboBox<RaidPayout> raidPayout, JLabel raidPayoutLabel, List<JComponent> scanRows, List<JComponent> controlRows, JLabel thresholdLabel,
           JLabel rateLabel, JLabel countingLabel, JLabel schemeDescription) {}
 
     /** Width of the game master's note field, in text columns. */
@@ -432,7 +443,8 @@ public final class VictoryHexPropertiesPane {
         Object rate = controls.rateSpinner().getValue();
         HoldCounting counting = (HoldCounting) controls.countingCombo().getSelectedItem();
         String presetDescription = describeConfiguredPreset(preset, threshold, rate, counting,
-              controls.retainControl().isSelected(), (ScanPayout) controls.scanPayout().getSelectedItem());
+              controls.retainControl().isSelected(), (ScanPayout) controls.scanPayout().getSelectedItem(),
+              (RaidPayout) controls.raidPayout().getSelectedItem());
         controls.schemeDescription().setText("<html><body style='width: 260px'>" + presetDescription
               + "</body></html>");
         controls.schemeCombo().setToolTipText(presetDescription);
@@ -457,6 +469,9 @@ public final class VictoryHexPropertiesPane {
         controls.rateSpinner().setVisible(usesRate);
         controls.countingLabel().setVisible(usesCounting);
         controls.countingCombo().setVisible(usesCounting);
+        boolean usesRaidPayout = preset == SchemePreset.RAID;
+        controls.raidPayoutLabel().setVisible(usesRaidPayout);
+        controls.raidPayout().setVisible(usesRaidPayout);
         resizeDialogToFit(controls, layoutBefore);
     }
 
@@ -472,7 +487,8 @@ public final class VictoryHexPropertiesPane {
      */
     private static String layoutSignature(SchemeControls controls) {
         return controls.thresholdSpinner().isVisible() + "/" + controls.countingCombo().isVisible() + "/"
-              + controls.rateSpinner().isVisible() + "/" + controls.schemeDescription().getText();
+              + controls.rateSpinner().isVisible() + "/" + controls.raidPayout().isVisible() + "/"
+              + controls.schemeDescription().getText();
     }
 
     /**
@@ -523,16 +539,17 @@ public final class VictoryHexPropertiesPane {
      * @return the plain-words what-it-does / how-to-make-it-work description of the point as configured
      */
     private static String describeConfiguredPreset(SchemePreset preset, Object threshold, Object rate,
-          HoldCounting counting, boolean retainsControl, ScanPayout scanPayout) {
+          HoldCounting counting, boolean retainsControl, ScanPayout scanPayout, RaidPayout raidPayout) {
         String presetDescription = switch (preset) {
             case SCAN -> Messages.getString("VictoryHex.describe.scan."
                   + scanPayout.name().toLowerCase(Locale.ROOT));
+            case RAID -> Messages.getString("VictoryHex.describe.raid."
+                  + raidPayout.name().toLowerCase(Locale.ROOT));
             case HOLD -> Messages.getString("VictoryHex.describe.hold."
                   + counting.name().toLowerCase(Locale.ROOT), threshold);
             case DEFEND -> Messages.getString("VictoryHex.describe.defend", threshold, rate);
             case CAPTURE -> Messages.getString("VictoryHex.describe.capture", threshold, rate);
-            case STANDARD, RAID -> Messages.getString("VictoryHex.describe."
-                  + preset.name().toLowerCase(Locale.ROOT));
+            case STANDARD -> Messages.getString("VictoryHex.describe.standard");
         };
         if (!retainsControl) {
             return presetDescription;
@@ -685,6 +702,7 @@ public final class VictoryHexPropertiesPane {
      */
     public static String describeScheme(ObjectiveScoringScheme scheme) {
         return describeConfiguredPreset(scheme.getPreset(), scheme.getThreshold(), scheme.getRatePerTurn(),
-              scheme.getHoldCounting(), scheme.retainsControlWhenEmpty(), scheme.getScanPayout());
+              scheme.getHoldCounting(), scheme.retainsControlWhenEmpty(), scheme.getScanPayout(),
+              scheme.getRaidPayout());
     }
 }

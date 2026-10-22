@@ -69,7 +69,8 @@ import megamek.server.victory.VictoryPointTracker;
  *
  * <P>Scoring (standard control mission, played with four counters, two per side): each End Phase a side receives 1 VP
  * for controlling at least one friendly and at least one enemy objective, and 2 VP for controlling all objectives on
- * the board. The other schemes (Raid, Hold, Defend, Capture) carry their own counters, and Scan points are read by the
+ * the board. A Raid point pays its own controller, every End Phase or once at game end. The other schemes (Hold,
+ * Defend, Capture) carry their own counters, and Scan points are read by the
  * scan pass. A carried Mobile objective is controlled by its carrier; a destroyed Defend or Capture point counts as
  * taken by its attacker. Carrying and destruction themselves live in {@link ObjectiveCarryHandler} and
  * {@link ObjectiveDestructionHandler}.</P>
@@ -111,6 +112,8 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private static final int REPORT_CAPTURE_PUSHED_BACK = 7142;
     /** "Control point X at Y was destroyed - it counts as taken by Z!" */
     static final int REPORT_DESTROYED_POINT_TAKEN = 7173;
+    /** "X controls objective Y: +N victory point(s)." - a Raid point paying this End Phase. */
+    static final int REPORT_RAID_POINT_PAID = 7178;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -219,7 +222,8 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             // count, the Capture meter - needs someone standing there: possession is kept, progress is not made
             switch (objective.marker().getScoringScheme().getPreset()) {
                 case STANDARD -> standardObjectives.add(new ResolvedObjective(objective, owningSide, controller));
-                case RAID -> { /* end-scored when the game ends; control is stored above for that */ }
+                // a Raid point paid at game end is scored then, from the control stored above
+                case RAID -> payRaidPointThisEndPhase(objective, controller, tracker);
                 case HOLD -> {
                     if (isHeldWithoutPresence) {
                         pauseHoldCounter(objective);
@@ -241,6 +245,50 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         // the printed-rules pairing scoring runs over the STANDARD points only; the other presets carry
         // their own counters and award their point value when they are decided
         awardStandardControlVictoryPoints(standardObjectives, tracker);
+    }
+
+    /**
+     * Pays a Raid point set to pay every End Phase: its controller this End Phase receives its victory points (Core
+     * p.217, Objective Raid). An uncontrolled point pays nobody. A decoy is exposed instead, as it would now pay, and
+     * one in a carrier's hand is taken from it. A point set to pay at game end is left for the end of the game.
+     */
+    private void payRaidPointThisEndPhase(PlacedObjective objective, @Nullable Side controller,
+          VictoryPointTracker tracker) {
+        ObjectiveMarker marker = objective.marker();
+        if (!marker.getScoringScheme().isRaidPaidEveryEndPhase()) {
+            LOGGER.debug("[Objective] {} at {}: Raid point paid at game end - nothing paid this End Phase",
+                  marker.generalName(), objective.position());
+            return;
+        }
+        if (controller == null) {
+            LOGGER.debug("[Objective] {} at {}: Raid point uncontrolled - nobody is paid this End Phase",
+                  marker.generalName(), objective.position());
+            return;
+        }
+        if (marker.isFalseObjective()) {
+            Entity carrier = objective.carrier();
+            if (carrier != null) {
+                carrier.dropCarriedObject(marker, false);
+                gameManager.entityUpdate(carrier.getId());
+            }
+            new ObjectiveDecoyHandler(gameManager).exposeDecoy(marker, objective.position(),
+                  ObjectiveDecoyHandler.REPORT_DECOY_AT_PAYOUT);
+            return;
+        }
+        int points = marker.getVictoryPointValue();
+        String reason = "Raid: controls " + marker.generalName();
+        if (controller.isTeam()) {
+            tracker.awardToTeam(controller.id(), points, getGame().getCurrentRound(), reason);
+        } else {
+            tracker.awardToPlayer(controller.id(), points, getGame().getCurrentRound(), reason);
+        }
+        Report report = new Report(REPORT_RAID_POINT_PAID, Report.PUBLIC);
+        report.add(displayName(controller));
+        report.add(marker.generalName());
+        report.add(points);
+        addReport(report);
+        LOGGER.debug("[Objective] {} at {}: Raid point pays {} (+{} VP)", marker.generalName(),
+              objective.position(), displayName(controller), points);
     }
 
     /**

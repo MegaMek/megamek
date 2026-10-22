@@ -44,6 +44,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
+import megamek.common.equipment.ObjectiveScoringScheme.RaidPayout;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.jacksonAdapters.ObjectiveDeserializer.ObjectiveInfo;
 import org.junit.jupiter.api.Test;
@@ -284,6 +285,43 @@ class ObjectiveDeserializerTest {
               payout: scan
               """));
         assertEquals(ObjectiveScoringScheme.ScanPayout.ON_SCAN, immediate.marker().getScoringScheme().getScanPayout());
+    }
+
+    @Test
+    void testARaidPointPaysEveryEndPhaseUnlessTheScenarioSaysGameEnd() throws Exception {
+        ObjectiveInfo printed = ObjectiveDeserializer.parse(parseYaml("""
+              name: Crate
+              at: [ 4, 4 ]
+              scheme: raid
+              """));
+        ObjectiveInfo everyTurn = ObjectiveDeserializer.parse(parseYaml("""
+              name: Crate
+              at: [ 4, 4 ]
+              scheme: raid
+              payout: everyTurn
+              """));
+        ObjectiveInfo gameEnd = ObjectiveDeserializer.parse(parseYaml("""
+              name: Crate
+              at: [ 4, 4 ]
+              scheme: raid
+              payout: gameEnd
+              """));
+
+        assertEquals(RaidPayout.EVERY_END_PHASE, printed.marker().getScoringScheme().getRaidPayout());
+        assertEquals(RaidPayout.EVERY_END_PHASE, everyTurn.marker().getScoringScheme().getRaidPayout());
+        assertEquals(RaidPayout.AT_GAME_END, gameEnd.marker().getScoringScheme().getRaidPayout());
+    }
+
+    @Test
+    void testAnUnknownRaidPayoutThrows() throws Exception {
+        JsonNode node = parseYaml("""
+              name: Crate
+              at: [ 4, 4 ]
+              scheme: raid
+              payout: exit
+              """);
+
+        assertThrows(IllegalArgumentException.class, () -> ObjectiveDeserializer.parse(node));
     }
 
     @Test

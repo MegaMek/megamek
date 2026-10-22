@@ -33,10 +33,12 @@
 package megamek.server.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -57,6 +59,7 @@ class NuclearStrikeCommandTest {
     private static final int STRIKER = 2;
 
     private Server server;
+    private Game game;
     private TWGameManager gameManager;
 
     @BeforeEach
@@ -64,7 +67,7 @@ class NuclearStrikeCommandTest {
         Player gameMaster = new Player(GAME_MASTER_CONNECTION, "Game Master");
         gameMaster.setGameMaster(true);
 
-        Game game = new Game();
+        game = new Game();
         game.addPlayer(GAME_MASTER_CONNECTION, gameMaster);
         game.setBoard(new Board(16, 17));
         game.getOptions().getOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS).setValue(true);
@@ -95,9 +98,27 @@ class NuclearStrikeCommandTest {
     }
 
     @Test
+    void nuclearStrikeGoesOffInTheRoundNamed() {
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=10", "y=12", "type=ALAMO", "round=5" });
+
+        assertEquals(5, scheduledNuke().detonationRound());
+    }
+
+    @Test
+    void nuclearStrikeForARoundAlreadyPastIsRefused() {
+        game.setRoundCount(4);
+        game.setPhase(GamePhase.END);
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=10", "y=12", "type=ALAMO", "round=4" });
+
+        Mockito.verify(gameManager, Mockito.never()).addScheduledNuke(any(ScheduledNuke.class));
+    }
+
+    @Test
     void nuclearStrikeIsCreditedToTheNamedPlayer() {
         Player striker = new Player(STRIKER, "Striker");
-        server.getGame().addPlayer(STRIKER, striker);
+        game.addPlayer(STRIKER, striker);
         new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
               new String[] { "ns", "x=10", "y=12", "type=ALAMO", "playerID=" + STRIKER });
 

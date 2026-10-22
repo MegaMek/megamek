@@ -77,7 +77,9 @@ public class NuclearStrikeCommand extends ClientServerCommand {
                     Messages.getString("Gamemaster.cmd.nuke.type"),
                     NuclearWeaponType.class,
                     NuclearWeaponType.DAVY_CROCKETT_M),
-              new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID"))
+              new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID")),
+              new OptionalIntegerArgument("round", Messages.getString("NuclearStrike.cmd.round"), 1,
+                    Integer.MAX_VALUE)
         );
     }
 
@@ -103,8 +105,12 @@ public class NuclearStrikeCommand extends ClientServerCommand {
         var nukeType = (NuclearWeaponType) args.get("type").getValue();
         Coords groundZero = new Coords((int) args.get("x").getValue() - 1, (int) args.get("y").getValue() - 1);
         var playerID = (Optional<Integer>) args.get("playerID").getValue();
+        int detonationRound = detonationRound(connId, (Optional<Integer>) args.get("round").getValue());
+        if (detonationRound == ROUND_REFUSED) {
+            return;
+        }
         ScheduledNuke nuke = new ScheduledNuke(groundZero, NuclearBlastProfile.groundBurst(nukeType), nukeType,
-              firingPlayerId(connId, playerID));
+              firingPlayerId(connId, playerID), detonationRound);
 
         var player = getGameManager().getGame().getPlayer(playerID.orElse(Player.PLAYER_NONE));
         if (player != null) {

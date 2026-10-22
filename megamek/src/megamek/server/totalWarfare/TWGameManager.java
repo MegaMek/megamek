@@ -213,7 +213,6 @@ public class TWGameManager extends AbstractGameManager {
 
     private final List<DynamicTerrainProcessor> terrainProcessors = new ArrayList<>();
 
-    private final List<ScheduledNuke> scheduledNukes = new ArrayList<>();
     private final ArrayList<OrbitalBombardment> scheduledOrbitalBombardment = new ArrayList<>();
 
     /**
@@ -20134,12 +20133,13 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void addScheduledNuke(ScheduledNuke nuke) {
         Player firingPlayer = game.getPlayer(nuke.firingPlayerId());
-        LOGGER.info("[Nukes] Scheduled for the end of the next weapons phase at hex {}: {} {}, fired by {}",
-              nuke.groundZero().getBoardNum(), nuke.warheadName(), nuke.profile(),
+        LOGGER.info("[Nukes] Scheduled for the end of the weapons phase of round {} at hex {}: {} {}, fired by {}",
+              nuke.detonationRound(), nuke.groundZero().getBoardNum(), nuke.warheadName(), nuke.profile(),
               (firingPlayer == null) ? "nobody" : firingPlayer.getName());
-        scheduledNukes.add(nuke);
-        drawNukeIncomingOnBoard(nuke.groundZero(), firingPlayer);
-        new NuclearStrikeNotifications(this).announceIncoming(nuke.groundZero(), firingPlayer);
+        game.getScheduledNukes().add(nuke);
+        drawNukeIncomingOnBoard(nuke.groundZero(), nuke.detonationRound(), firingPlayer);
+        new NuclearStrikeNotifications(this).announceIncoming(nuke.groundZero(), nuke.detonationRound(),
+              firingPlayer);
     }
 
     /**
@@ -20241,14 +20241,23 @@ public class TWGameManager extends AbstractGameManager {
      * explode any scheduled nukes
      */
     void resolveScheduledNukes() {
-        for (ScheduledNuke nuke : scheduledNukes) {
+        List<ScheduledNuke> dueNukes = new ArrayList<>();
+        for (ScheduledNuke nuke : game.getScheduledNukes()) {
+            if (nuke.detonationRound() <= game.getRoundCount()) {
+                dueNukes.add(nuke);
+            } else {
+                LOGGER.info("[Nukes] Strike on hex {} waits for round {} (this is round {})",
+                      nuke.groundZero().getBoardNum(), nuke.detonationRound(), game.getRoundCount());
+            }
+        }
+        for (ScheduledNuke nuke : dueNukes) {
             drawNukeHitOnBoard(nuke.groundZero());
             int unitsDestroyed = new NuclearDetonationResolver(this).resolve(nuke.groundZero(), nuke.profile(),
                   mainPhaseReport);
             new NuclearStrikeNotifications(this).announceDetonation(nuke.warheadName(), nuke.groundZero(),
                   unitsDestroyed);
         }
-        scheduledNukes.clear();
+        game.getScheduledNukes().removeAll(dueNukes);
     }
 
     /**
@@ -20328,7 +20337,7 @@ public class TWGameManager extends AbstractGameManager {
      * Marks the hexes around an incoming strike. Like an artillery target, the marker shows only to the firing
      * player's side; with no firing player it shows to everyone, as it always did.
      */
-    private void drawNukeIncomingOnBoard(Coords groundZero, @Nullable Player firingPlayer) {
+    private void drawNukeIncomingOnBoard(Coords groundZero, int detonationRound, @Nullable Player firingPlayer) {
         var nuke = new OrbitalBombardment.Builder().x(groundZero.getX())
               .y(groundZero.getY())
               .radius(4)
@@ -20344,9 +20353,9 @@ public class TWGameManager extends AbstractGameManager {
             getGame().getBoard()
                   .addSpecialHexDisplay(coord,
                         new SpecialHexDisplay(SpecialHexDisplay.Type.NUKE_INCOMING,
-                              getGame().getRoundCount(),
+                              detonationRound,
                               (firingPlayer == null) ? getGame().getPlayersList().getFirst() : firingPlayer,
-                              Messages.getString("Nuke.hitOnRound", getGame().getRoundCount()),
+                              Messages.getString("Nuke.hitOnRound", detonationRound),
                               (firingPlayer == null)
                                     ? SpecialHexDisplay.SHD_VISIBLE_TO_ALL
                                     : SpecialHexDisplay.SHD_VISIBLE_TO_TEAM));

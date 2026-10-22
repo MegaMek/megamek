@@ -149,7 +149,9 @@ public class NukeCommand extends ClientServerCommand {
                       (int) args.get("y").getValue() - 1);
                 NuclearWeaponType weaponType = TYPE_NUMBERS[typeOpt.orElseThrow()];
                 ScheduledNuke nuke = new ScheduledNuke(groundZero, NuclearBlastProfile.groundBurst(weaponType),
-                      weaponType, connId);
+                      weaponType, connId,
+                      ScheduledNuke.earliestDetonationRound(gameManager.getGame().getRoundCount(),
+                            gameManager.getGame().getPhase()));
                 // is the hex on the board?
                 if (!gameManager.getGame().getBoard().contains(groundZero)) {
                     logger.info("[Nukes] /nuke refused: hex {} is not on the board", groundZero.getBoardNum());
@@ -173,7 +175,9 @@ public class NukeCommand extends ClientServerCommand {
                             (int) args.get("radius").getValue(),
                             (int) args.get("depth").getValue()),
                       null,
-                      connId);
+                      connId,
+                      ScheduledNuke.earliestDetonationRound(gameManager.getGame().getRoundCount(),
+                            gameManager.getGame().getPhase()));
 
                 // is the hex on the board?
                 if (!gameManager.getGame().getBoard().contains(groundZero)) {

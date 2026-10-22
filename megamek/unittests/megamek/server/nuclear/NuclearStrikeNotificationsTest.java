@@ -80,7 +80,7 @@ class NuclearStrikeNotificationsTest {
 
     @Test
     void incomingStrikeIsToldOnlyToTheFiringSide() {
-        notifications.announceIncoming(GROUND_ZERO, gameManager.getGame().getPlayer(FIRING_PLAYER));
+        notifications.announceIncoming(GROUND_ZERO, 4, gameManager.getGame().getPlayer(FIRING_PLAYER));
 
         Mockito.verify(gameManager).send(eq(FIRING_PLAYER), any(Packet.class));
         Mockito.verify(gameManager).send(eq(TEAMMATE), any(Packet.class));
@@ -88,13 +88,15 @@ class NuclearStrikeNotificationsTest {
     }
 
     @Test
-    void incomingToastNamesTheHex() {
-        notifications.announceIncoming(GROUND_ZERO, gameManager.getGame().getPlayer(FIRING_PLAYER));
+    void incomingToastNamesTheHexAndRound() {
+        notifications.announceIncoming(GROUND_ZERO, 4, gameManager.getGame().getPlayer(FIRING_PLAYER));
 
         ArgumentCaptor<Packet> packet = ArgumentCaptor.forClass(Packet.class);
         Mockito.verify(gameManager).send(eq(FIRING_PLAYER), packet.capture());
         assertEquals(GameToastEvent.Level.WARNING, packet.getValue().getObject(0));
-        assertTrue(((String) packet.getValue().getObject(1)).contains("2525"), "the toast names hex 2525");
+        String message = (String) packet.getValue().getObject(1);
+        assertTrue(message.contains("2525"), "the toast names hex 2525");
+        assertTrue(message.contains("round 4"), "the toast names the round it detonates in");
     }
 
     @Test

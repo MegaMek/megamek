@@ -110,6 +110,7 @@ import megamek.common.units.*;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
+import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryPointLevel;
@@ -235,6 +236,9 @@ public final class Game extends AbstractGame implements Serializable,
 
     // smoke clouds
     private final List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
+
+    // nuclear strikes ordered by a GM and waiting for their round; null when loaded from a save made before them
+    private List<ScheduledNuke> scheduledNukes = new ArrayList<>();
 
     // industrial elevators (player-controlled)
     private final Map<BoardLocation, IndustrialElevator> industrialElevators = new ConcurrentHashMap<>();
@@ -1668,6 +1672,7 @@ public final class Game extends AbstractGame implements Serializable,
         illuminatedPositions.clear();
         clearAllReports();
         smokeCloudList.clear();
+        getScheduledNukes().clear();
         temporaryECMFields.clear();
         // Without this, a reset game re-uses the previous game's elevators: initialization deliberately
         // skips boards whose elevators already exist, so stale platform positions would carry over.
@@ -3652,6 +3657,17 @@ public final class Game extends AbstractGame implements Serializable,
             planetaryConditions.alterConditions(conditions);
             processGameEvent(new GameSettingsChangeEvent(this));
         }
+    }
+
+    /**
+     * Returns the nuclear strikes waiting for their round. Serialized with game saves, so a strike set for a later
+     * round still goes off after a reload.
+     */
+    public List<ScheduledNuke> getScheduledNukes() {
+        if (scheduledNukes == null) {
+            scheduledNukes = new ArrayList<>();
+        }
+        return scheduledNukes;
     }
 
     public void addSmokeCloud(SmokeCloud cloud) {

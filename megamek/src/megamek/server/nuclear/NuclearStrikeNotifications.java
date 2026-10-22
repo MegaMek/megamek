@@ -63,16 +63,18 @@ public class NuclearStrikeNotifications {
      * Warns the firing player and their teammates that a strike is inbound and where. Enemies are not told, just as
      * they are not told where artillery is aimed.
      *
-     * @param groundZero   the hex the strike is aimed at
+     * @param groundZero      the hex the strike is aimed at
+     * @param detonationRound the round the strike detonates in
      * @param firingPlayer the player held responsible for the strike, or {@code null} when there is none
      */
-    public void announceIncoming(Coords groundZero, @Nullable Player firingPlayer) {
+    public void announceIncoming(Coords groundZero, int detonationRound, @Nullable Player firingPlayer) {
         if (firingPlayer == null) {
             LOGGER.info("[Nukes] No incoming toast for hex {}: the strike has no firing player",
                   groundZero.getBoardNum());
             return;
         }
-        String message = Messages.getString("NuclearStrike.toast.incoming", groundZero.getBoardNum());
+        String message = Messages.getString("NuclearStrike.toast.incoming", groundZero.getBoardNum(),
+              detonationRound);
         int told = 0;
         for (Player player : gameManager.getGame().getPlayersList()) {
             if (!player.isEnemyOf(firingPlayer)) {

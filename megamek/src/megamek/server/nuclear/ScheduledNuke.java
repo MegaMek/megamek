@@ -35,19 +35,35 @@ package megamek.server.nuclear;
 import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.board.Coords;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.NuclearWeaponType;
 
 /**
- * A nuclear detonation ordered by a GM command, waiting for the end of the next weapons attack phase. Held only by the
- * server's game manager and never saved with the game.
+ * A nuclear detonation ordered by a GM command, waiting for the end of the weapons attack phase of its round. Kept in
+ * the game, so a strike set for a later round survives a save and reload.
  *
- * @param groundZero     the Ground Zero hex
- * @param profile        the detonation's damage, radii and crater depth
- * @param weaponType     the standard weapon fired, or {@code null} for a custom device
- * @param firingPlayerId the player held responsible; their side is warned of the strike, as with artillery
+ * @param groundZero      the Ground Zero hex
+ * @param profile         the detonation's damage, radii and crater depth
+ * @param weaponType      the standard weapon fired, or {@code null} for a custom device
+ * @param firingPlayerId  the player held responsible; their side is warned of the strike, as with artillery
+ * @param detonationRound the round at the end of whose weapons attack phase the strike detonates
  */
 public record ScheduledNuke(Coords groundZero, NuclearBlastProfile profile, @Nullable NuclearWeaponType weaponType,
-      int firingPlayerId) {
+      int firingPlayerId, int detonationRound) {
+
+    /**
+     * The earliest round a strike ordered now can detonate in. Strikes go off at the end of the weapons attack phase,
+     * so one ordered before that phase is over can still go off this round; one ordered later waits for the next.
+     *
+     * @param roundCount the current round
+     * @param phase      the current phase
+     *
+     * @return the earliest detonation round, never before round 1
+     */
+    public static int earliestDetonationRound(int roundCount, GamePhase phase) {
+        boolean weaponsPhaseStillToCome = phase.ordinal() <= GamePhase.FIRING.ordinal();
+        return Math.max(1, weaponsPhaseStillToCome ? roundCount : roundCount + 1);
+    }
 
     /**
      * @return the warhead's name for reports and toasts, such as "Santa Ana" or "Custom nuclear device"

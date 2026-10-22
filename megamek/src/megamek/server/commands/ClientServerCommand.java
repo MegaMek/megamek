@@ -47,6 +47,7 @@ import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
+import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -137,6 +138,34 @@ public abstract class ClientServerCommand extends ServerCommand {
             manager.sendToast(GameToastEvent.Level.GAMEMASTER,
                   Messages.getString("Gamemaster.toast.command", sender.getName(), longName), null);
         }
+    }
+
+    /** Returned by {@link #detonationRound} when the round asked for has already passed its weapons phase. */
+    protected static final int ROUND_REFUSED = -1;
+
+    /**
+     * The round a strike detonates in: the one named in the command, or else the next weapons attack phase. A round
+     * whose weapons phase is already over is refused, with a message to the sender.
+     *
+     * @param connId         the connection that sent the command
+     * @param requestedRound the round named in the command, if any
+     *
+     * @return the detonation round, or {@link #ROUND_REFUSED}
+     */
+    protected int detonationRound(int connId, Optional<Integer> requestedRound) {
+        int earliestRound = ScheduledNuke.earliestDetonationRound(gameManager.getGame().getRoundCount(),
+              gameManager.getGame().getPhase());
+        if (requestedRound.isEmpty()) {
+            return earliestRound;
+        }
+        if (requestedRound.get() < earliestRound) {
+            logger.info("[Nukes] /{} from connection {} refused: round {} is before the earliest, round {}",
+                  getName(), connId, requestedRound.get(), earliestRound);
+            server.sendServerChat(connId,
+                  Messages.getString("NuclearStrike.cmd.roundTooEarly", requestedRound.get(), earliestRound));
+            return ROUND_REFUSED;
+        }
+        return requestedRound.get();
     }
 
     protected boolean isGM(int connId) {

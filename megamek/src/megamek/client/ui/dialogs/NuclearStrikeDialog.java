@@ -74,6 +74,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.logging.MMLogger;
 import megamek.server.nuclear.NuclearBlastProfile;
+import megamek.server.nuclear.ScheduledNuke;
 
 /**
  * The Game Master's nuclear strike order: where, which warhead, and whose side fired it. It shows the warhead's figures
@@ -113,6 +114,8 @@ public class NuclearStrikeDialog extends JDialog {
     private final JSpinner dropSpinner = new JSpinner(new SpinnerNumberModel(23, 1, 1_000_000, 1));
     private final JSpinner secondarySpinner = new JSpinner(new SpinnerNumberModel(85, 1, 1_000, 1));
     private final JSpinner craterSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 9, 1));
+    private final int earliestRound;
+    private final JSpinner roundSpinner;
 
     /**
      * @param clientGUI  the client GUI the dialog belongs to
@@ -121,6 +124,9 @@ public class NuclearStrikeDialog extends JDialog {
     public NuclearStrikeDialog(ClientGUI clientGUI, @Nullable Coords groundZero) {
         super(clientGUI.getFrame(), Messages.getString("NuclearStrike.dialog.title"), false);
         this.clientGUI = clientGUI;
+        earliestRound = ScheduledNuke.earliestDetonationRound(clientGUI.getClient().getGame().getRoundCount(),
+              clientGUI.getClient().getGame().getPhase());
+        roundSpinner = new JSpinner(new SpinnerNumberModel(earliestRound, earliestRound, Integer.MAX_VALUE, 1));
         if (groundZero != null) {
             hexField.setText(groundZero.getBoardNum());
         }
@@ -207,6 +213,13 @@ public class NuclearStrikeDialog extends JDialog {
         GridBagConstraints pickCell = cell(2, 0);
         pickCell.weightx = 1;
         panel.add(pickButton, pickCell);
+
+        panel.add(new JLabel(Messages.getString("NuclearStrike.dialog.round")), cell(0, 1));
+        roundSpinner.setPreferredSize(UIUtil.scaleForGUI(80, 24));
+        panel.add(roundSpinner, cell(1, 1));
+        JLabel earliestLabel = new JLabel(Messages.getString("NuclearStrike.dialog.roundHelp", earliestRound));
+        new FlatLafStyleBuilder().size(0.85).apply(earliestLabel);
+        panel.add(earliestLabel, cell(2, 1));
         return panel;
     }
 
@@ -466,6 +479,7 @@ public class NuclearStrikeDialog extends JDialog {
                   .append(" radius=").append(secondarySpinner.getValue())
                   .append(" depth=").append(craterSpinner.getValue());
         }
+        command.append(" round=").append(roundSpinner.getValue());
         PlayerChoice firingPlayer = (PlayerChoice) playerChoice.getSelectedItem();
         if ((firingPlayer != null) && (firingPlayer.playerId() != Player.PLAYER_NONE)) {
             command.append(" playerID=").append(firingPlayer.playerId());

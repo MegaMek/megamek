@@ -76,7 +76,9 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
               new IntegerArgument("deg", Messages.getString("Gamemaster.cmd.nukeCommand.deg"), 0, 1_000_000),
               new IntegerArgument("radius", Messages.getString("Gamemaster.cmd.nukeCommand.radius"), 1, 1000),
               new IntegerArgument("depth", Messages.getString("Gamemaster.cmd.nukeCommand.depth"), 0, 9),
-              new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID"))
+              new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID")),
+              new OptionalIntegerArgument("round", Messages.getString("NuclearStrike.cmd.round"), 1,
+                    Integer.MAX_VALUE)
         );
     }
 
@@ -104,13 +106,18 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
 
         Coords groundZero = new Coords((int) args.get("x").getValue() - 1, (int) args.get("y").getValue() - 1);
         var playerID = (Optional<Integer>) args.get("playerID").getValue();
+        int detonationRound = detonationRound(connId, (Optional<Integer>) args.get("round").getValue());
+        if (detonationRound == ROUND_REFUSED) {
+            return;
+        }
         ScheduledNuke nuke = new ScheduledNuke(groundZero,
               NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
                     (int) args.get("deg").getValue(),
                     (int) args.get("radius").getValue(),
                     (int) args.get("depth").getValue()),
               null,
-              firingPlayerId(connId, playerID));
+              firingPlayerId(connId, playerID),
+              detonationRound);
 
         var player = getGameManager().getGame().getPlayer(playerID.orElse(Player.PLAYER_NONE));
         if (player != null) {

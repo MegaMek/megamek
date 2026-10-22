@@ -13973,6 +13973,14 @@ public abstract class Entity extends TurnOrdered
         iNarcPods.clear();
     }
 
+    /**
+     * This clears all artillery fire adjustment and auto hit hexes from an Entity. It is used in MekHQ to clear this
+     * transient data.
+     */
+    public void clearArtilleryModifiers() {
+        aTracker.clearAllModifiers();
+    }
+
     public PilotingRollData checkSideSlip(EntityMovementType moveType,
                                           Hex prevHex,
                                           EntityMovementType overallMoveType,

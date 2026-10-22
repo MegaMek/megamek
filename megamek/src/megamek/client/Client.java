@@ -134,6 +134,8 @@ import megamek.server.SmokeCloud;
  */
 public class Client extends AbstractClient {
     private final static MMLogger LOGGER = MMLogger.create(Client.class);
+    /** A hex update at least this large is logged with how long it took to apply. */
+    private static final int LARGE_HEX_UPDATE = 100;
 
     /**
      * The game state object: this object is not ever replaced during a game, only updated. A reference can therefore be
@@ -1261,7 +1263,12 @@ public class Client extends AbstractClient {
                     break;
                 case CHANGE_HEXES:
                     var changedHexes = packet.getBoardLocationHexMap(0);
+                    long hexStartNanos = System.nanoTime();
                     game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
+                    if (changedHexes.size() >= LARGE_HEX_UPDATE) {
+                        LOGGER.info("[Hexes] Applied {} changed hexes in {} ms", changedHexes.size(),
+                              (System.nanoTime() - hexStartNanos) / 1_000_000);
+                    }
                     break;
                 case BLDG_ADD:
                     receiveBuildingAdd(packet);

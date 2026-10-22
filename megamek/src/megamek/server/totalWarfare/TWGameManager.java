@@ -12176,7 +12176,11 @@ public class TWGameManager extends AbstractGameManager {
                 magma.setTerrainFactor(tf);
             }
         }
-        sendChangedHex(c, boardId);
+        // Only woods, jungle, ice and magma can be cleared, so a hex with none of them has not changed. Skipping it
+        // spares the clients one update per bare hex, which is every hex of a large blast on open ground.
+        if ((woods != null) || (jungle != null) || (ice != null) || (magma != null)) {
+            sendChangedHex(c, boardId);
+        }
 
         // any attempt to clear a heavy industrial hex may cause an explosion
         checkExplodeIndustrialZone(c, boardId, vPhaseReport);
@@ -20128,6 +20132,8 @@ public class TWGameManager extends AbstractGameManager {
      * @param nuke the Ground Zero hex and the detonation's numbers
      */
     public void addScheduledNuke(ScheduledNuke nuke) {
+        LOGGER.info("[Nukes] Scheduled for the end of the next weapons phase at hex {}: {}",
+              nuke.groundZero().getBoardNum(), nuke.profile());
         scheduledNukes.add(nuke);
         drawNukeIncomingOnBoard(nuke.groundZero());
     }
@@ -27883,6 +27889,25 @@ public class TWGameManager extends AbstractGameManager {
             send(createHexChangePacket(coords, boardId, game.getHex(coords, boardId)));
         } else {
             IGame.LOGGER.error("Trying to send a hex update for a non-existent hex!");
+        }
+    }
+
+    /**
+     * Sends the given hexes of one board to the clients in a single update, so that a change touching many hexes
+     * redraws the board once rather than once per hex.
+     *
+     * @param changedCoords the hexes that changed; those not on the board are skipped
+     * @param boardId       the board the hexes are on
+     */
+    public void sendChangedHexes(Collection<Coords> changedCoords, int boardId) {
+        Map<BoardLocation, Hex> changedHexes = new HashMap<>();
+        for (Coords coords : changedCoords) {
+            if (game.hasBoardLocation(coords, boardId)) {
+                changedHexes.put(BoardLocation.of(coords, boardId), game.getHex(coords, boardId));
+            }
+        }
+        if (!changedHexes.isEmpty()) {
+            send(new Packet(PacketCommand.CHANGE_HEXES, changedHexes));
         }
     }
 

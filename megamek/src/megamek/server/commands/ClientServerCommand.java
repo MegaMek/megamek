@@ -114,6 +114,8 @@ public abstract class ClientServerCommand extends ServerCommand {
             runCommand(connId, parsedArguments);
             postRunCommand(connId);
         } catch (IllegalArgumentException e) {
+            logger.info("[Commands] /{} from connection {} refused, invalid arguments {}: {}", getName(), connId,
+                  String.join(" ", args), e.getMessage());
             server.sendServerChat(connId, "Invalid arguments: " + e.getMessage() + "\nUsage: " + this.getHelp());
         } catch (Exception e) {
             server.sendServerChat(connId,
@@ -147,6 +149,8 @@ public abstract class ClientServerCommand extends ServerCommand {
         if (!gameManager.getGame()
               .getBoard()
               .contains(((int) args.get("x").getValue()) - 1, ((int) args.get("y").getValue()) - 1)) {
+            logger.info("[Commands] /{} from connection {} refused: hex {}, {} is not on the board", getName(), connId,
+                  args.get("x").getValue(), args.get("y").getValue());
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.error.outOfBounds"));
             return true;
         }

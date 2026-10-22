@@ -435,6 +435,9 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (ammoType.getMunitionType().contains(Munitions.M_DAVY_CROCKETT_M)) {
+            logger.info("[Nukes] Davy Crockett-M from {} aimed at hex {}, landed at hex {}",
+                  attackingEntity.getDisplayName(), (targetPos == null) ? "off board" : targetPos.getBoardNum(),
+                  finalPos.getBoardNum());
             if (target.isOffBoard()) {
                 gameManager.getGame().processGameEvent(
                       new GamePlayerStrategicActionEvent(gameManager,

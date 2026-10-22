@@ -119,6 +119,8 @@ public class NukeCommand extends ClientServerCommand {
                   args.length == 4 ? defineArguments() : customArguments()));
             runCommand(connId, parsedArguments);
         } catch (IllegalArgumentException e) {
+            logger.info("[Nukes] /nuke from connection {} refused, invalid arguments {}: {}", connId,
+                  String.join(" ", args), e.getMessage());
             server.sendServerChat(connId, "Invalid arguments: " + e.getMessage() + "\nUsage: " + this.getHelp());
         } catch (Exception e) {
             server.sendServerChat(connId,
@@ -131,6 +133,7 @@ public class NukeCommand extends ClientServerCommand {
     protected void runCommand(int connId, Arguments args) {
         // Check to make sure nuking is allowed by game options!
         if (!server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
+            logger.info("[Nukes] /nuke refused for connection {}: nuclear weapons are off", connId);
             server.sendServerChat(connId, "Command-line nukes are not enabled in this game.");
             return;
         }
@@ -145,12 +148,14 @@ public class NukeCommand extends ClientServerCommand {
                       NuclearBlastProfile.groundBurst(TYPE_NUMBERS[typeOpt.orElseThrow()]));
                 // is the hex on the board?
                 if (!gameManager.getGame().getBoard().contains(groundZero)) {
+                    logger.info("[Nukes] /nuke refused: hex {} is not on the board", groundZero.getBoardNum());
                     server.sendServerChat(connId, "Specified hex is not on the board.");
                     return;
                 }
                 gameManager.addScheduledNuke(nuke);
                 server.sendServerChat(connId, "A nuke is incoming!  Take cover!");
             } catch (Exception e) {
+                logger.warn("[Nukes] /nuke with a nuke type failed", e);
                 server.sendServerChat(connId, "Nuke command failed (1). " + getHelp());
             }
         } else {
@@ -165,12 +170,14 @@ public class NukeCommand extends ClientServerCommand {
 
                 // is the hex on the board?
                 if (!gameManager.getGame().getBoard().contains(groundZero)) {
+                    logger.info("[Nukes] /nuke refused: hex {} is not on the board", groundZero.getBoardNum());
                     server.sendServerChat(connId, "Specified hex is not on the board.");
                     return;
                 }
                 gameManager.addScheduledNuke(nuke);
                 server.sendServerChat(connId, "A nuke is incoming!  Take cover!");
             } catch (Exception e) {
+                logger.warn("[Nukes] /nuke with custom figures failed", e);
                 server.sendServerChat(connId, "Nuke command failed (2). " + getHelp());
             }
         }

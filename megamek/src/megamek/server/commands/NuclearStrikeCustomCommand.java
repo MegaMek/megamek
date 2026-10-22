@@ -87,6 +87,8 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
         if (!isGM(connId)) {
             // Check to make sure nuking is allowed by game options!
             if (!server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
+                logger.info("[Nukes] /nsc refused for connection {}: nuclear weapons are off and the sender "
+                      + "is not the GM", connId);
                 server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.nuke.error.disabled"));
                 return;
             }

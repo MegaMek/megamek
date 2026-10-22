@@ -32,7 +32,9 @@
  */
 package megamek.server.nuclear;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -46,6 +48,7 @@ import megamek.common.units.Tank;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -53,6 +56,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * secondary effects (IO:AE pp. 164-166).
  */
 public class NuclearDetonationResolver {
+    private static final MMLogger LOGGER = MMLogger.create(NuclearDetonationResolver.class);
+
     /** Nuclear blast damage is applied in 5-point clusters (IO:AE p.165). */
     private static final int BLAST_CLUSTER_SIZE = 5;
 
@@ -75,6 +80,10 @@ public class NuclearDetonationResolver {
      * @param vDesc    a vector that contains the output report
      */
     public void resolve(Coords position, NuclearBlastProfile profile, Vector<Report> vDesc) {
+        long startNanos = System.nanoTime();
+        // Every hex the detonation changes goes to the clients in one update at the end. A Santa Ana changes every
+        // hex of a normal map, and one packet per hex made each client redraw the board thousands of times.
+        Set<Coords> changedHexes = new LinkedHashSet<>();
         // Just in case.
         if (vDesc == null) {
             vDesc = new Vector<>();
@@ -90,9 +99,14 @@ public class NuclearDetonationResolver {
         vDesc.add(r);
 
         int craterRadius = profile.craterRadius();
+        LOGGER.info("[Nukes] Detonation at hex {}: impact {}, damage reduction {}/hex, blast radius {}, "
+              + "secondary radius {}, crater depth {}, crater radius {}", position.getBoardNum(),
+              profile.impactDamage(), profile.damageReduction(), profile.blastRadius(), profile.secondaryRadius(),
+              profile.craterDepth(), craterRadius);
         for (int range = 0; range < craterRadius; range++) {
             // The crater is 1 level shallower for every 2 hexes from Ground Zero (IO:AE p.164).
             int curDepth = profile.craterDepthAt(range);
+            LOGGER.info("[Nukes] Crater ring {}: lowered {} level(s)", range, curDepth);
             // Get the set of hexes at this range.
             List<Coords> hexSet = position.allAtDistance(range);
 
@@ -116,7 +130,7 @@ public class NuclearDetonationResolver {
                 myHex.removeAllTerrains();
                 myHex.clearExits();
 
-                gameManager.sendChangedHex(myHexCoords);
+                changedHexes.add(myHexCoords);
             }
         }
 
@@ -139,6 +153,8 @@ public class NuclearDetonationResolver {
                 continue;
             }
 
+            LOGGER.info("[Nukes] {} at hex {} is inside the crater ({} hexes from Ground Zero): destroyed",
+                  entity.getDisplayName(), entity.getPosition().getBoardNum(), position.distance(entity.getPosition()));
             vDesc.addAll(gameManager.destroyEntity(entity, "nuclear explosion proximity", false, false));
             // Kill the crew
             entity.getCrew().setDoomed(true);
@@ -197,12 +213,15 @@ public class NuclearDetonationResolver {
             gzHex.setLevel(gzHex.floor());
         }
         gzHex.removeAllTerrains();
+        changedHexes.add(position);
 
         // Next, for whatever's left, do terrain effects
         // such as clearing, roughing, and boiling off water.
         // Each ring takes the blast damage for its own distance from Ground Zero (IO:AE p.165).
         for (int x = craterRadius; profile.damageAt(x) >= NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE; x++) {
             int damageAtRange = profile.damageAt(x);
+            LOGGER.info("[Nukes] Terrain ring {}: {} damage, {}", x, damageAtRange,
+                  (damageAtRange >= 200) ? "dry hexes become rough" : "woods and jungle thinned only");
             // Damage terrain as necessary.
             // Get all the hexes, and then iterate through them.
             List<Coords> hexSet = position.allAtDistance(x);
@@ -254,9 +273,18 @@ public class NuclearDetonationResolver {
                     }
                 }
 
-                gameManager.sendChangedHex(myHexCoords);
+                changedHexes.add(myHexCoords);
             }
         }
+
+        gameManager.sendChangedHexes(changedHexes, 0);
+
+        int lastRing = craterRadius;
+        while (profile.damageAt(lastRing) >= NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE) {
+            lastRing++;
+        }
+        LOGGER.info("[Nukes] Terrain damage stops at ring {}: {} damage is below {}", lastRing,
+              profile.damageAt(lastRing), NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE);
 
         // Lastly, do secondary effects.
         for (Entity entity : game.getEntitiesVector()) {
@@ -281,6 +309,9 @@ public class NuclearDetonationResolver {
             // entity.
             gameManager.applySecondaryNuclearEffects(entity, position, vDesc);
         }
+
+        LOGGER.info("[Nukes] Detonation at hex {} resolved in {} ms; {} changed hexes sent in one update",
+              position.getBoardNum(), (System.nanoTime() - startNanos) / 1_000_000, changedHexes.size());
 
         // All right. We're done.
         r = new Report(1216, Report.PUBLIC);

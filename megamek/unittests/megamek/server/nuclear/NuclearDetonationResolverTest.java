@@ -36,7 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 
+import java.util.Collection;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -52,6 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 /**
@@ -114,5 +117,17 @@ class NuclearDetonationResolverTest {
 
         assertTrue(hexAt(34).containsTerrain(Terrains.ROUGH), "34 hexes takes 218 and becomes rough");
         assertTrue(!hexAt(35).containsTerrain(Terrains.ROUGH), "35 hexes takes 195 and stays clear");
+    }
+
+    @Test
+    void changedHexesGoToTheClientsInOneUpdate() {
+        detonate(NuclearWeaponType.SANTA_ANA);
+
+        ArgumentCaptor<Collection<Coords>> changed = ArgumentCaptor.captor();
+        Mockito.verify(gameManager, Mockito.times(1)).sendChangedHexes(changed.capture(), eq(0));
+        Mockito.verify(gameManager, Mockito.never()).sendChangedHex(any(Coords.class), anyInt());
+        assertTrue(changed.getValue().contains(GROUND_ZERO), "the crater at Ground Zero is in the update");
+        assertTrue(changed.getValue().contains(new Coords(GROUND_ZERO.getX(), GROUND_ZERO.getY() - 34)),
+              "a hex the blast turned rough is in the update");
     }
 }

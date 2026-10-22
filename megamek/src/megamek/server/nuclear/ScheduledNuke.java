@@ -32,13 +32,27 @@
  */
 package megamek.server.nuclear;
 
+import jakarta.annotation.Nullable;
+import megamek.client.ui.Messages;
 import megamek.common.board.Coords;
+import megamek.common.equipment.enums.NuclearWeaponType;
 
 /**
  * A nuclear detonation ordered by a GM command, waiting for the end of the next weapons attack phase. Held only by the
  * server's game manager and never saved with the game.
  *
- * @param groundZero the Ground Zero hex
- * @param profile    the detonation's damage, radii and crater depth
+ * @param groundZero     the Ground Zero hex
+ * @param profile        the detonation's damage, radii and crater depth
+ * @param weaponType     the standard weapon fired, or {@code null} for a custom device
+ * @param firingPlayerId the player held responsible; their side is warned of the strike, as with artillery
  */
-public record ScheduledNuke(Coords groundZero, NuclearBlastProfile profile) {}
+public record ScheduledNuke(Coords groundZero, NuclearBlastProfile profile, @Nullable NuclearWeaponType weaponType,
+      int firingPlayerId) {
+
+    /**
+     * @return the warhead's name for reports and toasts, such as "Santa Ana" or "Custom nuclear device"
+     */
+    public String warheadName() {
+        return (weaponType == null) ? Messages.getString("NuclearWeapon.custom") : weaponType.getDisplayName();
+    }
+}

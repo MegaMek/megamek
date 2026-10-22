@@ -85,6 +85,7 @@ public class HexTargetPicker {
     private final boolean singleHex;
     private final int maxHexes;
     private final Consumer<String> onTargetsSelected;
+    private Runnable onCancelled = () -> { };
 
     // insertion order matters: waypoints are followed in the order they were picked
     private final Map<Coords, FieldOfFireSprite> pickedHexes = new LinkedHashMap<>();
@@ -115,6 +116,16 @@ public class HexTargetPicker {
         this.singleHex = singleHex;
         this.maxHexes = maxHexes;
         this.onTargetsSelected = onTargetsSelected;
+    }
+
+    /**
+     * Sets what happens when picking ends without a hex, by Cancel, closing the control dialog or a phase change.
+     * By default nothing happens.
+     *
+     * @param onCancelled run once when picking ends with no hex picked
+     */
+    public void setOnCancelled(Runnable onCancelled) {
+        this.onCancelled = onCancelled;
     }
 
     /**
@@ -269,6 +280,8 @@ public class HexTargetPicker {
                   .map(coords -> coords.hexCode(boardView.getBoard()))
                   .collect(Collectors.joining("-"));
             onTargetsSelected.accept(targets);
+        } else {
+            onCancelled.run();
         }
     }
 }

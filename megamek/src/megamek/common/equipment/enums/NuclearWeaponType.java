@@ -32,6 +32,8 @@
  */
 package megamek.common.equipment.enums;
 
+import megamek.client.ui.Messages;
+
 /**
  * The standard nuclear weapons, with the values of the Standard Nuclear Weaponry Table (IO:AE 3rd printing, p.164).
  * Radii and damage reductions are in ground-map hexes; heights are Low-Altitude Map altitudes.
@@ -139,5 +141,19 @@ public enum NuclearWeaponType {
      */
     public int getCraterDepth() {
         return craterDepth;
+    }
+
+    /**
+     * @return the weapon's name as the rulebook prints it, such as "Santa Ana"
+     */
+    public String getDisplayName() {
+        return Messages.getString("NuclearWeapon." + name());
+    }
+
+    /**
+     * @return how the weapon is delivered, such as "artillery round" or "missile"
+     */
+    public String getDelivery() {
+        return Messages.getString("NuclearWeapon." + name() + ".delivery");
     }
 }

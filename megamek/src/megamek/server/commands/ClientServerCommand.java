@@ -37,8 +37,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import megamek.client.ui.Messages;
+import megamek.common.Player;
+import megamek.common.event.GameToastEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
@@ -103,6 +106,37 @@ public abstract class ClientServerCommand extends ServerCommand {
     protected boolean preRun(int connId) {
         // Override to add pre-run checks, return false to cancel the command
         return true;
+    }
+
+    /**
+     * The player a strike or attack is credited to: the one named in the command, or else the player who sent it.
+     *
+     * @param connId   the connection that sent the command
+     * @param playerId the player named in the command, if any
+     *
+     * @return the id of the player held responsible
+     */
+    protected int firingPlayerId(int connId, Optional<Integer> playerId) {
+        if (playerId.isPresent() && (server.getGame().getPlayer(playerId.get()) != null)) {
+            return playerId.get();
+        }
+        return connId;
+    }
+
+    /**
+     * Announces a Game Master's strike to every player with a toast in the Game Master's color, as every Game Master
+     * command is announced. A strike by a player who is not the Game Master is not announced this way.
+     *
+     * @param manager  the game manager to send the toast through
+     * @param connId   the connection that ordered the strike
+     * @param longName the command's display name
+     */
+    protected void announceGameMasterStrike(TWGameManager manager, int connId, String longName) {
+        Player sender = server.getPlayer(connId);
+        if ((sender != null) && sender.getGameMaster()) {
+            manager.sendToast(GameToastEvent.Level.GAMEMASTER,
+                  Messages.getString("Gamemaster.toast.command", sender.getName(), longName), null);
+        }
     }
 
     protected boolean isGM(int connId) {

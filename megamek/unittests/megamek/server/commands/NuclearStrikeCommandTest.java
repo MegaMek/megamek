@@ -54,6 +54,7 @@ import org.mockito.Mockito;
  */
 class NuclearStrikeCommandTest {
     private static final int GAME_MASTER_CONNECTION = 1;
+    private static final int STRIKER = 2;
 
     private Server server;
     private TWGameManager gameManager;
@@ -89,6 +90,18 @@ class NuclearStrikeCommandTest {
         ScheduledNuke nuke = scheduledNuke();
         assertEquals(new Coords(9, 11), nuke.groundZero(), "hex 1012");
         assertEquals(NuclearBlastProfile.groundBurst(NuclearWeaponType.SANTA_ANA), nuke.profile());
+        assertEquals(NuclearWeaponType.SANTA_ANA, nuke.weaponType());
+        assertEquals(GAME_MASTER_CONNECTION, nuke.firingPlayerId(), "with no player named, the sender fired it");
+    }
+
+    @Test
+    void nuclearStrikeIsCreditedToTheNamedPlayer() {
+        Player striker = new Player(STRIKER, "Striker");
+        server.getGame().addPlayer(STRIKER, striker);
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=10", "y=12", "type=ALAMO", "playerID=" + STRIKER });
+
+        assertEquals(STRIKER, scheduledNuke().firingPlayerId());
     }
 
     @Test
@@ -108,5 +121,6 @@ class NuclearStrikeCommandTest {
         ScheduledNuke nuke = scheduledNuke();
         assertEquals(new Coords(9, 11), nuke.groundZero(), "hex 1012");
         assertEquals(NuclearBlastProfile.custom(1000, 23, 85, 1), nuke.profile());
+        assertEquals(null, nuke.weaponType(), "a custom device has no standard weapon");
     }
 }

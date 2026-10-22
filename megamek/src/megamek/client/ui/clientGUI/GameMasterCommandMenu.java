@@ -42,6 +42,7 @@ import javax.swing.JMenuItem;
 import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ClientCommandDialog;
+import megamek.client.ui.dialogs.NuclearStrikeDialog;
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -54,8 +55,6 @@ import megamek.server.commands.FirefightCommand;
 import megamek.server.commands.FirestarterCommand;
 import megamek.server.commands.FirestormCommand;
 import megamek.server.commands.NoFiresCommand;
-import megamek.server.commands.NuclearStrikeCommand;
-import megamek.server.commands.NuclearStrikeCustomCommand;
 import megamek.server.commands.OrbitalBombardmentCommand;
 import megamek.server.commands.RemoveSmokeCommand;
 
@@ -99,6 +98,12 @@ public final class GameMasterCommandMenu {
                   new ClientCommandDialog(clientGUI.getFrame(), clientGUI, command, coords).setVisible(true));
             menu.add(commandItem);
         }
+        // The nuclear strike has a dialog of its own, offered from both menus: a right-click aims it at the clicked
+        // hex, and from the Commands button it is aimed by typing or picking the hex, which reaches hexes off screen.
+        menu.addSeparator();
+        JMenuItem nuclearStrikeItem = new JMenuItem(Messages.getString("NuclearStrike.dialog.menu"));
+        nuclearStrikeItem.addActionListener(event -> new NuclearStrikeDialog(clientGUI, coords).setVisible(true));
+        menu.add(nuclearStrikeItem);
         return menu;
     }
 
@@ -120,11 +125,8 @@ public final class GameMasterCommandMenu {
      */
     static List<ClientServerCommand> commandsFor(@Nullable Coords coords, @Nullable Board board) {
         if ((coords == null) || (board == null)) {
-            LOGGER.debug("[GMCommands] menu opened without a hex - offering the board-wide commands and the "
-                  + "nuclear strikes, aimed by typing the hex");
-            List<ClientServerCommand> offered = new ArrayList<>(boardWideCommands());
-            offered.addAll(nuclearStrikes());
-            return offered;
+            LOGGER.debug("[GMCommands] menu opened without a hex - offering the board-wide commands");
+            return boardWideCommands();
         }
         List<ClientServerCommand> applicable = new ArrayList<>();
         for (HexCommand hexCommand : hexTargetedCommands()) {
@@ -135,7 +137,6 @@ public final class GameMasterCommandMenu {
                       coords.getBoardNum(), hexCommand.command().getName());
             }
         }
-        applicable.addAll(nuclearStrikes());
         return applicable;
     }
 
@@ -192,17 +193,6 @@ public final class GameMasterCommandMenu {
               new HexCommand(new FirestarterCommand(null, null), GameMasterCommandMenu::anyHex),
               new HexCommand(new FirefightCommand(null, null), GameMasterCommandMenu::hasFire),
               new HexCommand(new OrbitalBombardmentCommand(null, null), GameMasterCommandMenu::anyHex));
-    }
-
-    /**
-     * Creates the nuclear strike commands. They act on one hex, but they are offered from both menus: from a right-click
-     * they are aimed at the clicked hex, and from the game commands strip the dialog asks for the hex instead. A strike
-     * is often aimed at a hex well off the part of the map on screen, which a right-click cannot reach.
-     *
-     * @return The nuclear strike commands, in menu order
-     */
-    static List<ClientServerCommand> nuclearStrikes() {
-        return List.of(new NuclearStrikeCommand(null, null), new NuclearStrikeCustomCommand(null, null));
     }
 
     /** @return {@code true} always; for the commands that work on any hex, whatever is or is not in it */

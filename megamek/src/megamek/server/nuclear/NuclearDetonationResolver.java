@@ -33,6 +33,7 @@
 package megamek.server.nuclear;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,9 +82,17 @@ public class NuclearDetonationResolver {
      * @param position the Ground Zero hex
      * @param profile  the detonation's damage, radii and crater depth
      * @param vDesc    a vector that contains the output report
+     *
+     * @return the number of units the detonation destroyed
      */
-    public void resolve(Coords position, NuclearBlastProfile profile, Vector<Report> vDesc) {
+    public int resolve(Coords position, NuclearBlastProfile profile, Vector<Report> vDesc) {
         long startNanos = System.nanoTime();
+        Set<Integer> standingBefore = new HashSet<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!entity.isDestroyed() && !entity.isDoomed()) {
+                standingBefore.add(entity.getId());
+            }
+        }
         // Every hex the detonation changes goes to the clients in one update at the end. A Santa Ana changes every
         // hex of a normal map, and one packet per hex made each client redraw the board thousands of times.
         Set<Coords> changedHexes = new LinkedHashSet<>();
@@ -331,6 +340,14 @@ public class NuclearDetonationResolver {
         r.indent();
         r.newlines = 2;
         vDesc.add(r);
+
+        int unitsDestroyed = 0;
+        for (Entity entity : game.getEntitiesVector()) {
+            if (standingBefore.contains(entity.getId()) && (entity.isDestroyed() || entity.isDoomed())) {
+                unitsDestroyed++;
+            }
+        }
+        return unitsDestroyed;
     }
 
     private static String ringOrNone(int ring) {

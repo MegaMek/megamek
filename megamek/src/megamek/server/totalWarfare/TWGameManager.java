@@ -152,6 +152,7 @@ import megamek.server.UnitOwnershipRules.OwnershipVerdict;
 import megamek.server.commands.*;
 import megamek.server.nuclear.NuclearBlastProfile;
 import megamek.server.nuclear.NuclearDetonationResolver;
+import megamek.server.nuclear.NuclearStrikeNotifications;
 import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
@@ -20132,10 +20133,13 @@ public class TWGameManager extends AbstractGameManager {
      * @param nuke the Ground Zero hex and the detonation's numbers
      */
     public void addScheduledNuke(ScheduledNuke nuke) {
-        LOGGER.info("[Nukes] Scheduled for the end of the next weapons phase at hex {}: {}",
-              nuke.groundZero().getBoardNum(), nuke.profile());
+        Player firingPlayer = game.getPlayer(nuke.firingPlayerId());
+        LOGGER.info("[Nukes] Scheduled for the end of the next weapons phase at hex {}: {} {}, fired by {}",
+              nuke.groundZero().getBoardNum(), nuke.warheadName(), nuke.profile(),
+              (firingPlayer == null) ? "nobody" : firingPlayer.getName());
         scheduledNukes.add(nuke);
-        drawNukeIncomingOnBoard(nuke.groundZero());
+        drawNukeIncomingOnBoard(nuke.groundZero(), firingPlayer);
+        new NuclearStrikeNotifications(this).announceIncoming(nuke.groundZero(), firingPlayer);
     }
 
     /**
@@ -20239,7 +20243,10 @@ public class TWGameManager extends AbstractGameManager {
     void resolveScheduledNukes() {
         for (ScheduledNuke nuke : scheduledNukes) {
             drawNukeHitOnBoard(nuke.groundZero());
-            new NuclearDetonationResolver(this).resolve(nuke.groundZero(), nuke.profile(), mainPhaseReport);
+            int unitsDestroyed = new NuclearDetonationResolver(this).resolve(nuke.groundZero(), nuke.profile(),
+                  mainPhaseReport);
+            new NuclearStrikeNotifications(this).announceDetonation(nuke.warheadName(), nuke.groundZero(),
+                  unitsDestroyed);
         }
         scheduledNukes.clear();
     }
@@ -20317,7 +20324,11 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    private void drawNukeIncomingOnBoard(Coords groundZero) {
+    /**
+     * Marks the hexes around an incoming strike. Like an artillery target, the marker shows only to the firing
+     * player's side; with no firing player it shows to everyone, as it always did.
+     */
+    private void drawNukeIncomingOnBoard(Coords groundZero, @Nullable Player firingPlayer) {
         var nuke = new OrbitalBombardment.Builder().x(groundZero.getX())
               .y(groundZero.getY())
               .radius(4)
@@ -20325,6 +20336,7 @@ public class TWGameManager extends AbstractGameManager {
               .build();
 
         var allCoords = nuke.getAllAffectedCoords();
+        List<Coords> markedHexes = new ArrayList<>();
         for (var coord : allCoords) {
             if (!getGame().getBoard().contains(coord)) {
                 continue;
@@ -20333,13 +20345,14 @@ public class TWGameManager extends AbstractGameManager {
                   .addSpecialHexDisplay(coord,
                         new SpecialHexDisplay(SpecialHexDisplay.Type.NUKE_INCOMING,
                               getGame().getRoundCount(),
-                              getGame().getPlayersList().getFirst(),
-                              // The player should not matter, I just don't want to
-                              // cause a NullPointerError
+                              (firingPlayer == null) ? getGame().getPlayersList().getFirst() : firingPlayer,
                               Messages.getString("Nuke.hitOnRound", getGame().getRoundCount()),
-                              SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
-            sendChangedHex(coord);
+                              (firingPlayer == null)
+                                    ? SpecialHexDisplay.SHD_VISIBLE_TO_ALL
+                                    : SpecialHexDisplay.SHD_VISIBLE_TO_TEAM));
+            markedHexes.add(coord);
         }
+        sendChangedHexes(markedHexes, 0);
     }
 
     /**
@@ -20350,7 +20363,9 @@ public class TWGameManager extends AbstractGameManager {
      * @param vDesc    a vector that contains the output report
      */
     public void doNuclearExplosion(Coords position, NuclearWeaponType nukeType, Vector<Report> vDesc) {
-        new NuclearDetonationResolver(this).resolve(position, NuclearBlastProfile.groundBurst(nukeType), vDesc);
+        int unitsDestroyed = new NuclearDetonationResolver(this).resolve(position,
+              NuclearBlastProfile.groundBurst(nukeType), vDesc);
+        new NuclearStrikeNotifications(this).announceDetonation(nukeType.getDisplayName(), position, unitsDestroyed);
     }
 
     /**

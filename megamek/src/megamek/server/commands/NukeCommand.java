@@ -47,6 +47,7 @@ import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
 import megamek.server.nuclear.NuclearBlastProfile;
+import megamek.server.nuclear.NuclearStrikeNotifications;
 import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -134,6 +135,7 @@ public class NukeCommand extends ClientServerCommand {
         // Check to make sure nuking is allowed by game options!
         if (!server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
             logger.info("[Nukes] /nuke refused for connection {}: nuclear weapons are off", connId);
+            new NuclearStrikeNotifications(gameManager).announceDisabled(connId);
             server.sendServerChat(connId, "Command-line nukes are not enabled in this game.");
             return;
         }
@@ -145,8 +147,9 @@ public class NukeCommand extends ClientServerCommand {
                 var typeOpt = ((OptionalIntegerArgument) args.get("type")).getValue();
                 Coords groundZero = new Coords((int) args.get("x").getValue() - 1,
                       (int) args.get("y").getValue() - 1);
-                ScheduledNuke nuke = new ScheduledNuke(groundZero,
-                      NuclearBlastProfile.groundBurst(TYPE_NUMBERS[typeOpt.orElseThrow()]));
+                NuclearWeaponType weaponType = TYPE_NUMBERS[typeOpt.orElseThrow()];
+                ScheduledNuke nuke = new ScheduledNuke(groundZero, NuclearBlastProfile.groundBurst(weaponType),
+                      weaponType, connId);
                 // is the hex on the board?
                 if (!gameManager.getGame().getBoard().contains(groundZero)) {
                     logger.info("[Nukes] /nuke refused: hex {} is not on the board", groundZero.getBoardNum());
@@ -155,6 +158,7 @@ public class NukeCommand extends ClientServerCommand {
                 }
                 gameManager.addScheduledNuke(nuke);
                 server.sendServerChat(connId, "A nuke is incoming!  Take cover!");
+                announceGameMasterStrike(gameManager, connId, getLongName());
             } catch (Exception e) {
                 logger.warn("[Nukes] /nuke with a nuke type failed", e);
                 server.sendServerChat(connId, "Nuke command failed (1). " + getHelp());
@@ -167,7 +171,9 @@ public class NukeCommand extends ClientServerCommand {
                       NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
                             (int) args.get("deg").getValue(),
                             (int) args.get("radius").getValue(),
-                            (int) args.get("depth").getValue()));
+                            (int) args.get("depth").getValue()),
+                      null,
+                      connId);
 
                 // is the hex on the board?
                 if (!gameManager.getGame().getBoard().contains(groundZero)) {
@@ -177,6 +183,7 @@ public class NukeCommand extends ClientServerCommand {
                 }
                 gameManager.addScheduledNuke(nuke);
                 server.sendServerChat(connId, "A nuke is incoming!  Take cover!");
+                announceGameMasterStrike(gameManager, connId, getLongName());
             } catch (Exception e) {
                 logger.warn("[Nukes] /nuke with custom figures failed", e);
                 server.sendServerChat(connId, "Nuke command failed (2). " + getHelp());

@@ -52,6 +52,7 @@ import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
 import megamek.server.nuclear.NuclearBlastProfile;
+import megamek.server.nuclear.NuclearStrikeNotifications;
 import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -89,6 +90,7 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
             if (!server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
                 logger.info("[Nukes] /nsc refused for connection {}: nuclear weapons are off and the sender "
                       + "is not the GM", connId);
+                new NuclearStrikeNotifications(gameManager).announceDisabled(connId);
                 server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.nuke.error.disabled"));
                 return;
             }
@@ -101,13 +103,15 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
         }
 
         Coords groundZero = new Coords((int) args.get("x").getValue() - 1, (int) args.get("y").getValue() - 1);
+        var playerID = (Optional<Integer>) args.get("playerID").getValue();
         ScheduledNuke nuke = new ScheduledNuke(groundZero,
               NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
                     (int) args.get("deg").getValue(),
                     (int) args.get("radius").getValue(),
-                    (int) args.get("depth").getValue()));
+                    (int) args.get("depth").getValue()),
+              null,
+              firingPlayerId(connId, playerID));
 
-        var playerID = (Optional<Integer>) args.get("playerID").getValue();
         var player = getGameManager().getGame().getPlayer(playerID.orElse(Player.PLAYER_NONE));
         if (player != null) {
             gameManager.getGame().processGameEvent(
@@ -119,5 +123,6 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
 
         gameManager.addScheduledNuke(nuke);
         server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.nuke.success"));
+        announceGameMasterStrike(gameManager, connId, getLongName());
     }
 }

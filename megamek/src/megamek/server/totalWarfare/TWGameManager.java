@@ -4756,6 +4756,7 @@ public class TWGameManager extends AbstractGameManager {
                     r = new Report(2030, Report.PUBLIC);
                     r.addDesc(entity);
                     addReport(r);
+                    addReport(new ObjectiveCarryHandler(this).resolveCarrierForcedOffBoard(entity, curPos));
 
                     for (Entity e : entity.getLoadedUnits()) {
                         game.removeEntity(e.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
@@ -9720,6 +9721,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.addDesc(entity);
                 r.add(retreatEdge);
                 displacementReport.add(r);
+                displacementReport.addAll(new ObjectiveCarryHandler(this).resolveCarrierForcedOffBoard(entity, src));
                 // TODO : remove passengers and swarmers.
             }
             return displacementReport;
@@ -10112,6 +10114,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithGroundObjectListMap(0);
+        new ObjectivePlacementHandler(this).checkReceivedVariants(groundObjects, connectionId);
         getGame().setGroundObjects(groundObjects);
 
         // make sure to update the other clients with the new ground objects data structure
@@ -11933,6 +11936,12 @@ public class TWGameManager extends AbstractGameManager {
         // Ignore bad coordinates.
         if (hex == null) {
             return false;
+        }
+
+        // a heat-causing weapon hitting the hex risks a Fragile objective there, whether or not the hex catches fire
+        if (bHotGun || bInferno) {
+            new ObjectiveDestructionHandler(this).checkFragileObjectivesInHex(c, boardId,
+                  ObjectiveDestructionHandler.FragileRisk.HEAT_WEAPON);
         }
 
         // Ignore if fire is not enabled as a game option
@@ -16528,6 +16537,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveScans() {
         new ObjectiveScanHandler(this).resolveScans();
+    }
+
+    /**
+     * The forced-drop rolls for units that took damage this phase while carrying a Mobile objective. Delegates to
+     * {@link ObjectiveCarryHandler} so the objectives rules do not add to this already very large class.
+     */
+    void resolveForcedObjectiveDrops() {
+        new ObjectiveCarryHandler(this).resolveForcedObjectiveDrops();
     }
 
     /**
@@ -24447,7 +24464,11 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     entity.dropCarriedObject(cargo, false);
                     if (game.getBoard().contains(coords)) {
-                        game.placeGroundObject(coords, cargo);
+                        if (cargo instanceof ObjectiveMarker objectiveMarker) {
+                            new ObjectiveCarryHandler(this).placeDroppedObjective(entity, coords, objectiveMarker);
+                        } else {
+                            game.placeGroundObject(coords, cargo);
+                        }
                         cargoDropped = true;
                     }
                 }
@@ -32250,6 +32271,11 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
+        // area-effect damage in the hex risks a Fragile objective there; an air burst against flyers does not
+        if (!flak) {
+            new ObjectiveDestructionHandler(this).checkFragileObjectivesInHex(coords, boardId,
+                  ObjectiveDestructionHandler.FragileRisk.AREA_EFFECT);
+        }
         return alreadyHit;
     }
 
@@ -32982,6 +33008,10 @@ public class TWGameManager extends AbstractGameManager {
     boolean damageCargo(boolean isFlying, Entity entity, ICarryable cargo) {
         if (cargo.isInvulnerable()) {
             return false;
+        }
+        if (cargo instanceof ObjectiveMarker objectiveMarker) {
+            // an objective is never wrecked by a drop; only a Fragile one risks destruction
+            return new ObjectiveCarryHandler(this).resolveDropDamage(entity, objectiveMarker);
         }
 
         boolean cargoDestroyed = false;

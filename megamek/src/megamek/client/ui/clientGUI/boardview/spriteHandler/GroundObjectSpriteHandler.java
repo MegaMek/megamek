@@ -75,6 +75,9 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      */
     private static final Color NEUTRAL_COLOR = Color.WHITE;
 
+    /** A destroyed objective's flag: grey, so a wreck reads differently from any point still in play. */
+    private static final Color DESTROYED_COLOR = Color.DARK_GRAY;
+
     /** Exponent applied to a point's progress fraction before it tints the colour; below 1 front-loads. */
     private static final double TINT_CURVE_EXPONENT = 0.5;
 
@@ -104,8 +107,11 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
                 for (ICarryable groundObject : currentGroundObjectList.get(coords)) {
                     if ((groundObject instanceof ObjectiveMarker marker) && showOverlays) {
                         flagCount++;
-                        currentSprites.addAll(zoneOutlineSprites(boardView, game.getBoard(), coords,
-                              marker.getControlRadius(), marker));
+                        // a destroyed objective controls nothing, so it has no zone to outline
+                        if (!marker.isDestroyed()) {
+                            currentSprites.addAll(zoneOutlineSprites(boardView, game.getBoard(), coords,
+                                  marker.getControlRadius(), marker));
+                        }
                     }
                     currentSprites.add(spriteFor(groundObject, coords, boardView));
                 }
@@ -169,6 +175,11 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
                   ? Messages.getString("VictoryHex.word."
                         + marker.getScoringScheme().getPreset().name().toLowerCase(Locale.ROOT))
                   : null;
+            if (marker.isDestroyed()) {
+                // the wreck stays on the board to show what happened, marked so nobody mistakes it for a live point
+                return new HexFlagSprite(boardView, coords, DESTROYED_COLOR, schemeWord,
+                      Messages.getString("VictoryHex.flag.destroyed"));
+            }
             // A point this player has ordered read says so where its counter would go, so a scan order on a flag
             // is as visible as one on a unit. Only the ordering player sees it; the sweep drawn to the hex is
             // private for the same reason.

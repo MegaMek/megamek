@@ -63,7 +63,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * the carrier, and are dropped voluntarily or when the carrier is destroyed, falls, becomes immobile or fails the
  * forced-drop Piloting Skill Roll after taking damage.</P>
  */
-public class ObjectiveMarker extends GroundObject {
+public class ObjectiveMarker extends GroundObject implements Cloneable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -84,8 +84,10 @@ public class ObjectiveMarker extends GroundObject {
     private boolean insideBuilding = false;
     private boolean buildingLinkInitialized = false;
     /**
-     * What a successful scan of this point tells the scanning side, written by a game master, a scenario file or
-     * MekHQ: "The scan reveals..." Empty when there is nothing to say. Sent only to the side that scanned.
+     * What a successful scan of this point tells the scanning side, written by the player who placed the point, a
+     * game master, a scenario file or MekHQ: "The scan reveals..." Empty when there is nothing to say. Before the
+     * scan only the placer's side and a game master may read it (see {@link #isScanNoteVisibleTo(Player, Player)}),
+     * and afterwards only the side that scanned is told.
      */
     private String scanRevealsNote = "";
     private boolean destructionProcessed = false;
@@ -129,6 +131,28 @@ public class ObjectiveMarker extends GroundObject {
      */
     public static boolean isDesignationVisibleTo(Player owner, Player viewer) {
         return viewer.isGameMaster() || !viewer.isEnemyOf(owner);
+    }
+
+    /**
+     * Tells whether a player may read a point's scan note before anyone has scanned it: the player who placed the
+     * point, their team and a game master. Anyone else learns the note only from the End Phase report of their own
+     * successful scan. The server asks this for every copy of the board it sends, removing the note from the copies
+     * of players who may not read it, and again when a player sends the board back, so a copy without the note
+     * cannot wipe it.
+     *
+     * @param placer the player who placed the point, or {@code null} when they are no longer in the game
+     * @param viewer the player who would read the note
+     *
+     * @return {@code true} when the viewer may read the note
+     */
+    public static boolean isScanNoteVisibleTo(@Nullable Player placer, Player viewer) {
+        if (viewer.isGameMaster()) {
+            return true;
+        }
+        if (placer == null) {
+            return false;
+        }
+        return isDesignationVisibleTo(placer, viewer);
     }
 
     /**
@@ -200,6 +224,23 @@ public class ObjectiveMarker extends GroundObject {
     /** @param scanRevealsNote what the scan reveals, or empty for nothing; {@code null} is treated as empty */
     public void setScanRevealsNote(String scanRevealsNote) {
         this.scanRevealsNote = (scanRevealsNote == null) ? "" : scanRevealsNote.trim();
+    }
+
+    /**
+     * Makes the copy of this point that is sent to a player who may not read its scan note: everything the same,
+     * the note emptied. The copy shares this point's scoring scheme, so it is for sending only, never for changing.
+     *
+     * @return a copy of this point without its scan note
+     */
+    public ObjectiveMarker copyWithoutScanNote() {
+        try {
+            ObjectiveMarker copy = (ObjectiveMarker) super.clone();
+            copy.scanRevealsNote = "";
+            return copy;
+        } catch (CloneNotSupportedException exception) {
+            // cannot happen: this class is Cloneable
+            throw new IllegalStateException("ObjectiveMarker must be cloneable", exception);
+        }
     }
 
     public void setVictoryPointValue(int victoryPointValue) {

@@ -769,7 +769,7 @@ public class MapMenu extends JPopupMenu {
             marker.setOwnerId(client.getLocalPlayer().getId());
         }
         VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(gui.getFrame(), marker,
-              client.getGame().getPlayersList(), true);
+              client.getGame().getPlayersList());
         switch (result) {
             case SAVED -> client.sendObjectiveEdit(coords, marker);
             case REMOVED -> client.sendObjectiveEdit(coords, null);

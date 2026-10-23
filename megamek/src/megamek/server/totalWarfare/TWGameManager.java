@@ -1088,7 +1088,7 @@ public class TWGameManager extends AbstractGameManager {
             // would kill every connecting client, which is exactly a bot taking over a loaded seat.
             send(connectionId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings(),
                   new HashMap<>(getGame().getBotTypes())));
-            send(connectionId, new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
+            new ScanNotePrivacyHandler(this).sendGroundObjectsTo(connectionId);
         }
     }
 
@@ -10112,10 +10112,12 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithGroundObjectListMap(0);
+        new ScanNotePrivacyHandler(this).keepNotesTheSenderCannotRead(groundObjects,
+              getGame().getPlayer(connectionId));
         getGame().setGroundObjects(groundObjects);
 
         // make sure to update the other clients with the new ground objects data structure
-        send(packet);
+        sendGroundObjectUpdate();
 
         // in the Victory Setup phase this packet is the player's turn action: storing their control
         // points ends their turn, exactly as the minefield packet does in the minefield phase
@@ -33031,10 +33033,10 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Convenience function to send a ground object update.
+     * Sends every player their copy of the ground objects, without the scan notes they may not read.
      */
     public void sendGroundObjectUpdate() {
-        send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, game.getGroundObjects()));
+        new ScanNotePrivacyHandler(this).sendGroundObjectsToEveryone();
     }
 
     /**

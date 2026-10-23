@@ -33,6 +33,8 @@
 package megamek.client.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -42,5 +44,16 @@ class MessagesTest {
     void actuatorHitMessagesRemainSeparateAndPreserveSpacing() {
         assertEquals(" actuator ", Messages.getString("ActuatorHits.Actuator"));
         assertEquals(" hip", Messages.getString("ActuatorHits.Hip"));
+    }
+
+    @Test
+    void captureDescriptionFillsInItsNumbersAndKeepsTheApostrophe() {
+        // a lone apostrophe starts literal text in the formatter, which used to print {0} and {1} as-is
+        String description = Messages.getString("VictoryHex.describe.capture", 3, 1);
+
+        assertTrue(description.contains("owner's enemies"), description);
+        assertTrue(description.contains("progress meter to 3"), description);
+        assertTrue(description.contains("add 1 per turn"), description);
+        assertFalse(description.contains("{"), description);
     }
 }

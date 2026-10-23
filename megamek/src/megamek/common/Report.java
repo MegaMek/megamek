@@ -36,15 +36,14 @@ package megamek.common;
 
 import static megamek.client.ui.util.UIUtil.uiGray;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.io.Serial;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
@@ -296,6 +295,22 @@ public class Report implements ReportEntry {
         obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
         tagCounter = r.tagCounter;
         imageCode = r.imageCode;
+    }
+
+    /**
+     * Allow us to set a new message ID on an existing message, and replace the data
+     *
+     * @param reportId   new report ID
+     * @param newTagData new data for it
+     */
+    public void setMessageId(int reportId,
+                             @Nullable Vector<String> newTagData) {
+        messageId = reportId;
+        if (tagData == null) {
+            tagData.clear();
+        } else {
+            tagData = (Vector<String>) newTagData.clone();
+        }
     }
 
     /**

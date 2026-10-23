@@ -101,12 +101,12 @@ public interface ICarryable extends InGameObject {
     }
 
     /**
-     * Whether picking this object up stops the unit from attacking for the rest of the turn, as picking up cargo does
-     * (TW p.261).
+     * Whether picking this object up, or setting it down, stops the unit from attacking for the rest of the turn, as
+     * handling cargo does (TW p.261).
      *
-     * @return {@code true} if the unit cannot attack in the turn it picks this object up
+     * @return {@code true} if the unit cannot attack in the turn it picks this object up or sets it down
      */
-    default boolean blocksAttacksOnPickupTurn() {
+    default boolean blocksAttacksOnPickupOrDropTurn() {
         return true;
     }
 

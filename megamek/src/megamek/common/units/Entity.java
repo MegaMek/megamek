@@ -13973,6 +13973,61 @@ public abstract class Entity extends TurnOrdered
         iNarcPods.clear();
     }
 
+    /**
+     * This clears the state an Entity builds up during a game that must not carry over into the next one, such as
+     * artillery fire adjustment, MASC levels, ongoing effects and links to other units by their (now meaningless) game
+     * ids. It is used in MekHQ to clear this transient data between scenarios. Subclasses that add such state should
+     * override this and call super.
+     */
+    public void clearGameState() {
+        // Artillery: fire adjustment and auto hit hexes, and which enemy teams have spotted this unit off board
+        aTracker.clearAllModifiers();
+        offBoardShotObservers.clear();
+        setOffBoard(0, OffBoardDirection.NONE);
+
+        // SPAs and equipment whose state builds up over the rounds of a game
+        bloodStalkerTarget = Entity.NONE;
+        blueShieldRounds = 0;
+        nMASCLevel = 0;
+        bMASCWentUp = false;
+        usedMASC = false;
+        nSuperchargerLevel = 0;
+        bSuperchargerWentUp = false;
+        usedSupercharger = false;
+        consecutiveRHSUses = 0;
+        usedRHSLastTurn = false;
+        rhsWentUp = false;
+
+        // Ongoing effects
+        infernos.clear();
+        manualShutdown = false;
+        carcass = false;
+        captured = false;
+
+        // Interactions with other units and objects of the last game
+        if (carriedObjects != null) {
+            carriedObjects.clear();
+        }
+        clearInfantryCombatState();
+        infantryActionLeaving = false;
+        isTowing = Entity.NONE;
+        tractor = Entity.NONE;
+        towedBy = Entity.NONE;
+        isTractorFor.clear();
+        connectedUnits.clear();
+        c3emActive = false;
+        c3emOperatingTurns = 0;
+        c3emOriginalMasterId = NONE;
+        c3MasterLostId = NONE;
+        // Grapples are only held by the subclasses that can grapple, so these are no-ops for the others
+        setGrappled(Entity.NONE, false);
+        setGrappleSide(Entity.GRAPPLE_BOTH);
+
+        for (Mounted<?> mounted : getEquipment()) {
+            mounted.clearGameState();
+        }
+    }
+
     public PilotingRollData checkSideSlip(EntityMovementType moveType,
                                           Hex prevHex,
                                           EntityMovementType overallMoveType,

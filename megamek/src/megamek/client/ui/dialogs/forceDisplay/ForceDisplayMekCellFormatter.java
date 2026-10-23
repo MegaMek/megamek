@@ -256,7 +256,7 @@ class ForceDisplayMekCellFormatter {
 
         // Tonnage
         if (GUIP.getForceDisplayBtnTonnage()) {
-            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getNumberFormatLocale());
             String tonnage = formatter.format(entity.getWeight());
             tonnage += "t";
             result.append(formatCell(tonnage, 40));

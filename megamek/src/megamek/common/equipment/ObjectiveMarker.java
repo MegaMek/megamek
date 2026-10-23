@@ -233,10 +233,21 @@ public class ObjectiveMarker extends GroundObject implements Cloneable {
      * @return a copy of this point without its scan note
      */
     public ObjectiveMarker copyWithoutScanNote() {
+        ObjectiveMarker copy = clone();
+        copy.scanRevealsNote = "";
+        return copy;
+    }
+
+    /**
+     * A shallow copy: the copy shares this point's scoring scheme and every other object it refers to, so changing
+     * one through the copy changes it here too. Used to send a point in a different form, never to edit one.
+     *
+     * @return a shallow copy of this point
+     */
+    @Override
+    protected ObjectiveMarker clone() {
         try {
-            ObjectiveMarker copy = (ObjectiveMarker) super.clone();
-            copy.scanRevealsNote = "";
-            return copy;
+            return (ObjectiveMarker) super.clone();
         } catch (CloneNotSupportedException exception) {
             // cannot happen: this class is Cloneable
             throw new IllegalStateException("ObjectiveMarker must be cloneable", exception);

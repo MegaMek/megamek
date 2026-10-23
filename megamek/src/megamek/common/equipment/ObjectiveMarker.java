@@ -63,7 +63,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * the carrier, and are dropped voluntarily or when the carrier is destroyed, falls, becomes immobile or fails the
  * forced-drop Piloting Skill Roll after taking damage.</P>
  */
-public class ObjectiveMarker extends GroundObject {
+public class ObjectiveMarker extends GroundObject implements Cloneable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -84,8 +84,10 @@ public class ObjectiveMarker extends GroundObject {
     private boolean insideBuilding = false;
     private boolean buildingLinkInitialized = false;
     /**
-     * What a successful scan of this point tells the scanning side, written by a game master, a scenario file or
-     * MekHQ: "The scan reveals..." Empty when there is nothing to say. Sent only to the side that scanned.
+     * What a successful scan of this point tells the scanning side, written by the player who placed the point, a
+     * game master, a scenario file or MekHQ: "The scan reveals..." Empty when there is nothing to say. Before the
+     * scan only the placer's side and a game master may read it (see {@link #isScanNoteVisibleTo(Player, Player)}),
+     * and afterwards only the side that scanned is told.
      */
     private String scanRevealsNote = "";
     private boolean destructionProcessed = false;
@@ -98,6 +100,15 @@ public class ObjectiveMarker extends GroundObject {
      */
     private boolean belongsToSideChosen = false;
     private int belongsToPlayerId = Player.PLAYER_NONE;
+    /**
+     * Which side scores a Scan point by scanning it. By default the side that placed it, which is how every scan
+     * point worked before the choice existed; set to the other side, a player can hide something for the enemy to
+     * find and write what they discover. Separate from {@link #getBelongsToPlayerId()}, which is whose the point is
+     * in the story and decides the flag's colour. The same two fields as belongs-to, for the same reason: player
+     * zero cannot be told apart from an unset int in a save written before this existed.
+     */
+    private boolean scannedBySideChosen = false;
+    private int scannedByPlayerId = Player.PLAYER_NONE;
     private int controllingTeam = NO_CONTROLLER;
     private int controllingPlayerId = NO_CONTROLLER;
     // the pre-set lobby placement position; null when the marker has no pre-set position
@@ -129,6 +140,28 @@ public class ObjectiveMarker extends GroundObject {
      */
     public static boolean isDesignationVisibleTo(Player owner, Player viewer) {
         return viewer.isGameMaster() || !viewer.isEnemyOf(owner);
+    }
+
+    /**
+     * Tells whether a player may read a point's scan note before anyone has scanned it: the player who placed the
+     * point, their team and a game master. Anyone else learns the note only from the End Phase report of their own
+     * successful scan. The server asks this for every copy of the board it sends, removing the note from the copies
+     * of players who may not read it, and again when a player sends the board back, so a copy without the note
+     * cannot wipe it.
+     *
+     * @param placer the player who placed the point, or {@code null} when they are no longer in the game
+     * @param viewer the player who would read the note
+     *
+     * @return {@code true} when the viewer may read the note
+     */
+    public static boolean isScanNoteVisibleTo(@Nullable Player placer, Player viewer) {
+        if (viewer.isGameMaster()) {
+            return true;
+        }
+        if (placer == null) {
+            return false;
+        }
+        return isDesignationVisibleTo(placer, viewer);
     }
 
     /**
@@ -167,6 +200,22 @@ public class ObjectiveMarker extends GroundObject {
         this.belongsToSideChosen = true;
     }
 
+    /**
+     * @return the player whose side scores this Scan point by scanning it, and reads its note when the scan
+     *       succeeds. Falls back to whoever placed it while no side has been chosen.
+     */
+    public int getScannedByPlayerId() {
+        return scannedBySideChosen ? scannedByPlayerId : getOwnerId();
+    }
+
+    /**
+     * @param playerId the player whose side scores this Scan point by scanning it
+     */
+    public void setScannedByPlayerId(int playerId) {
+        this.scannedByPlayerId = playerId;
+        this.scannedBySideChosen = true;
+    }
+
     /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */
     public int getControlRadius() {
         return controlRadius;
@@ -200,6 +249,34 @@ public class ObjectiveMarker extends GroundObject {
     /** @param scanRevealsNote what the scan reveals, or empty for nothing; {@code null} is treated as empty */
     public void setScanRevealsNote(String scanRevealsNote) {
         this.scanRevealsNote = (scanRevealsNote == null) ? "" : scanRevealsNote.trim();
+    }
+
+    /**
+     * Makes the copy of this point that is sent to a player who may not read its scan note: everything the same,
+     * the note emptied. The copy shares this point's scoring scheme, so it is for sending only, never for changing.
+     *
+     * @return a copy of this point without its scan note
+     */
+    public ObjectiveMarker copyWithoutScanNote() {
+        ObjectiveMarker copy = clone();
+        copy.scanRevealsNote = "";
+        return copy;
+    }
+
+    /**
+     * A shallow copy: the copy shares this point's scoring scheme and every other object it refers to, so changing
+     * one through the copy changes it here too. Used to send a point in a different form, never to edit one.
+     *
+     * @return a shallow copy of this point
+     */
+    @Override
+    protected ObjectiveMarker clone() {
+        try {
+            return (ObjectiveMarker) super.clone();
+        } catch (CloneNotSupportedException exception) {
+            // cannot happen: this class is Cloneable
+            throw new IllegalStateException("ObjectiveMarker must be cloneable", exception);
+        }
     }
 
     public void setVictoryPointValue(int victoryPointValue) {

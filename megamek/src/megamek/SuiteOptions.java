@@ -72,7 +72,7 @@ public class SuiteOptions {
      *
      * @return the Locale to use for number formatting
      */
-    public final Locale getNumberFormatLocale() {
+    public static Locale getNumberFormatLocale() {
         return Locale.US;
     }
     // endregion Temporary

@@ -55,7 +55,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import megamek.MegaMek;
+import megamek.SuiteOptions;
 import megamek.client.bot.BotClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -295,7 +295,7 @@ class PlayerTable extends JTable {
             result.append(UIUtil.DOT_SPACER);
             String msgBVPlain = Messages.getString("ChatLounge.BVplain");
             result.append(msgBVPlain).append(": ");
-            NumberFormat formatter = NumberFormat.getIntegerInstance(MegaMek.getMMOptions().getNumberFormatLocale());
+            NumberFormat formatter = NumberFormat.getIntegerInstance(SuiteOptions.getNumberFormatLocale());
             result.append((player.getBV() != 0) ? formatter.format(player.getBV()) : "--");
 
             // Initiative Mod

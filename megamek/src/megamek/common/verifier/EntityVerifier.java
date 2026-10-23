@@ -209,7 +209,7 @@ public class EntityVerifier implements MekSummaryCache.Listener {
         MekSummary[] ms = mekSummaryCache.getAllMeks();
 
         logger.info("""
-                    
+
                     Mek Options: {}
                     Protomek Options: {}
                     Tank Options: {}
@@ -321,9 +321,9 @@ public class EntityVerifier implements MekSummaryCache.Listener {
                     logger.error("""
                           Error: Invalid argument.
                           Usage:
-                          
+
                           EntityVerifier [flags]
-                          
+
                           Valid Flags:
                               -file <FILENAME> Specify a file to validate,
                                               else the data directory is checked

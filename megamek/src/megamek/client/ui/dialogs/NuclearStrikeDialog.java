@@ -217,10 +217,26 @@ public class NuclearStrikeDialog extends JDialog {
         panel.add(new JLabel(Messages.getString("NuclearStrike.dialog.round")), cell(0, 1));
         roundSpinner.setPreferredSize(UIUtil.scaleForGUI(80, 24));
         panel.add(roundSpinner, cell(1, 1));
-        JLabel earliestLabel = new JLabel(Messages.getString("NuclearStrike.dialog.roundHelp", earliestRound));
-        new FlatLafStyleBuilder().size(0.85).apply(earliestLabel);
-        panel.add(earliestLabel, cell(2, 1));
+        String earliestHelp = Messages.getString("NuclearStrike.dialog.roundHelp", earliestRound);
+        roundSpinner.setToolTipText(earliestHelp);
+        ((JSpinner.DefaultEditor) roundSpinner.getEditor()).getTextField().setToolTipText(earliestHelp);
+        JLabel countdownLabel = new JLabel();
+        new FlatLafStyleBuilder().size(0.85).apply(countdownLabel);
+        int currentRound = clientGUI.getClient().getGame().getRoundCount();
+        roundSpinner.addChangeListener(event -> countdownLabel.setText(roundsAhead(currentRound)));
+        countdownLabel.setText(roundsAhead(currentRound));
+        panel.add(countdownLabel, cell(2, 1));
         return panel;
+    }
+
+    /**
+     * @param currentRound the round the game is in
+     *
+     * @return how far ahead the chosen round is, such as "This round" or "In 4 rounds"
+     */
+    private String roundsAhead(int currentRound) {
+        int roundsAhead = (int) roundSpinner.getValue() - currentRound;
+        return Messages.getString("NuclearStrike.dialog.roundsAhead", roundsAhead);
     }
 
     private JPanel warheadSection() {

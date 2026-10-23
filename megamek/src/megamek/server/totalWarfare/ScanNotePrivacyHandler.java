@@ -138,7 +138,8 @@ class ScanNotePrivacyHandler extends AbstractTWRuleHandler {
             }
         }
         if (keptNotes > 0) {
-            LOGGER.debug("[Scan] Kept {} scan note(s) that {} may not read as they were", keptNotes,
+            // once per Victory Setup turn at most, and the one line a playtest needs to see this guard work
+            LOGGER.info("[Scan] Kept {} scan note(s) that {} may not read as they were", keptNotes,
                   describe(sender));
         }
     }

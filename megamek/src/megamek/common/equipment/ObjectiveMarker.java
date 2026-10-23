@@ -100,6 +100,15 @@ public class ObjectiveMarker extends GroundObject implements Cloneable {
      */
     private boolean belongsToSideChosen = false;
     private int belongsToPlayerId = Player.PLAYER_NONE;
+    /**
+     * Which side scores a Scan point by scanning it. By default the side that placed it, which is how every scan
+     * point worked before the choice existed; set to the other side, a player can hide something for the enemy to
+     * find and write what they discover. Separate from {@link #getBelongsToPlayerId()}, which is whose the point is
+     * in the story and decides the flag's colour. The same two fields as belongs-to, for the same reason: player
+     * zero cannot be told apart from an unset int in a save written before this existed.
+     */
+    private boolean scannedBySideChosen = false;
+    private int scannedByPlayerId = Player.PLAYER_NONE;
     private int controllingTeam = NO_CONTROLLER;
     private int controllingPlayerId = NO_CONTROLLER;
     // the pre-set lobby placement position; null when the marker has no pre-set position
@@ -189,6 +198,22 @@ public class ObjectiveMarker extends GroundObject implements Cloneable {
     public void setBelongsToPlayerId(int playerId) {
         this.belongsToPlayerId = playerId;
         this.belongsToSideChosen = true;
+    }
+
+    /**
+     * @return the player whose side scores this Scan point by scanning it, and reads its note when the scan
+     *       succeeds. Falls back to whoever placed it while no side has been chosen.
+     */
+    public int getScannedByPlayerId() {
+        return scannedBySideChosen ? scannedByPlayerId : getOwnerId();
+    }
+
+    /**
+     * @param playerId the player whose side scores this Scan point by scanning it
+     */
+    public void setScannedByPlayerId(int playerId) {
+        this.scannedByPlayerId = playerId;
+        this.scannedBySideChosen = true;
     }
 
     /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */

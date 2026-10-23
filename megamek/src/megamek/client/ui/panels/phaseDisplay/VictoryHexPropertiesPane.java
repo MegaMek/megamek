@@ -156,6 +156,10 @@ public final class VictoryHexPropertiesPane {
         selectOwningSide(belongsToCombo, marker);
         belongsToCombo.setToolTipText(Messages.getString("VictoryHex.belongsTo.tooltip"));
         JLabel belongsToLabel = new JLabel(Messages.getString("VictoryHex.belongsTo"));
+        // which side scores it by scanning: the placer's by default, or the other side's for something hidden for
+        // them to find
+        JComboBox<SideChoice> scannedByCombo = createScannedByCombo(players, marker);
+        JLabel scannedByLabel = new JLabel(Messages.getString("VictoryHex.scannedBy"));
         // what the scan reveals, written by whoever opened the point: its placer or a game master. The note is sent
         // to the scanning side on a success, and before that only the placer's side and a game master are sent it
         JTextArea revealsArea = createRevealsArea(marker);
@@ -169,7 +173,8 @@ public final class VictoryHexPropertiesPane {
         JLabel startingControlLabel = new JLabel(Messages.getString("VictoryHex.startingControl"));
         JLabel radiusLabel = new JLabel(Messages.getString("VictoryHex.radius"));
         // a scan point is read, not held: nothing about control applies to it, so these rows go away with it
-        List<JComponent> scanRows = List.of(payoutLabel, payoutCombo, belongsToLabel, belongsToCombo, revealsPanel);
+        List<JComponent> scanRows = List.of(payoutLabel, payoutCombo, belongsToLabel, belongsToCombo, scannedByLabel,
+              scannedByCombo, revealsPanel);
         List<JComponent> controlRows = List.of(retainControlLabel, retainControlCheckbox, startingControlLabel,
               startingControlCombo, radiusLabel, radiusSpinner);
         SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
@@ -196,6 +201,7 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
         addRow(propertiesPanel, 4, payoutLabel, payoutCombo);
         addRow(propertiesPanel, 5, belongsToLabel, belongsToCombo);
+        addRow(propertiesPanel, 6, scannedByLabel, scannedByCombo);
         addRow(propertiesPanel, 7, retainControlLabel, retainControlCheckbox);
         addRow(propertiesPanel, 8, startingControlLabel, startingControlCombo);
         addRow(propertiesPanel, 9, radiusLabel, radiusSpinner);
@@ -236,6 +242,10 @@ public final class VictoryHexPropertiesPane {
         if (isScanPoint) {
             SideChoice owningSide = (SideChoice) belongsToCombo.getSelectedItem();
             marker.setBelongsToPlayerId((owningSide == null) ? Player.PLAYER_NONE : owningSide.playerId());
+            SideChoice scanningSide = (SideChoice) scannedByCombo.getSelectedItem();
+            if (scanningSide != null) {
+                marker.setScannedByPlayerId(scanningSide.playerId());
+            }
         }
         marker.setControlRadius((Integer) radiusSpinner.getValue());
         marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
@@ -258,8 +268,8 @@ public final class VictoryHexPropertiesPane {
      * @param rateSpinner       the per-turn rate (grip drain or capture progress)
      * @param retainControl     whether the point keeps its holder once the zone empties
      * @param scanPayout        when a Scan point pays its points
-     * @param scanRows          the rows shown only for a Scan point: the payout choice, whose point it is and the
-     *                          note the scan reveals
+     * @param scanRows          the rows shown only for a Scan point: the payout choice, whose point it is, which
+     *                          side scans it and the note the scan reveals
      * @param controlRows       the retention, starting holder and radius rows, hidden for a Scan point
      * @param thresholdLabel    the label naming the threshold for the selected preset
      * @param rateLabel         the label naming the rate for the selected preset
@@ -549,6 +559,28 @@ public final class VictoryHexPropertiesPane {
         public String toString() {
             return label;
         }
+    }
+
+    /**
+     * Builds the "scanned by" selector: one entry per player, pointed at the side that scans the point now - the
+     * placer's unless another side was chosen. There is no "nobody": a point nobody may scan could never score.
+     *
+     * @param players the players in the game
+     * @param marker  the point being edited
+     *
+     * @return the selector
+     */
+    private static JComboBox<SideChoice> createScannedByCombo(List<Player> players, ObjectiveMarker marker) {
+        JComboBox<SideChoice> scannedByCombo = new JComboBox<>();
+        for (Player player : players) {
+            SideChoice choice = new SideChoice(player.getId(), player.getName());
+            scannedByCombo.addItem(choice);
+            if (player.getId() == marker.getScannedByPlayerId()) {
+                scannedByCombo.setSelectedItem(choice);
+            }
+        }
+        scannedByCombo.setToolTipText(Messages.getString("VictoryHex.scannedBy.tooltip"));
+        return scannedByCombo;
     }
 
     /**

@@ -265,6 +265,51 @@ class ObjectiveScanHandlerTest {
     }
 
     @Test
+    void testAPointSetForTheOtherSideIsTheirsToScan() {
+        // Alice hides a depot for Bob to find: Bob's scout scores it and reads what it reveals
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_SCAN);
+        scanPoint.setScannedByPlayerId(bob.getId());
+        scanPoint.setScanRevealsNote("A hidden supply depot.");
+        BipedMek scout = mekOf(bob, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        assertTrue(scanPoint.getScoringScheme().isDecided());
+        assertEquals(POINT_VALUE, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(2),
+              "Bob's team scores it");
+        ArgumentCaptor<Report> reports = ArgumentCaptor.forClass(Report.class);
+        verify(gameManager, atLeastOnce()).addReport(reports.capture());
+        Report reveal = reports.getAllValues().stream()
+              .filter(report -> report.messageId == ObjectiveScanHandler.REPORT_SCAN_REVEALS)
+              .findFirst()
+              .orElseThrow();
+        assertEquals(bob.getId(), reveal.player, "the note is for the scanning side");
+    }
+
+    @Test
+    void testAPointSetForTheOtherSideIsNothingToThePlacer() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_SCAN);
+        scanPoint.setScannedByPlayerId(bob.getId());
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        assertFalse(scanPoint.getScoringScheme().isDecided());
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST));
+    }
+
+    @Test
+    void testAPointIsScannedByItsPlacerUntilAnotherSideIsChosen() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_SCAN);
+
+        assertEquals(alice.getId(), scanPoint.getScannedByPlayerId(), "older saves and scenario points keep working");
+        scanPoint.setScannedByPlayerId(bob.getId());
+        assertEquals(bob.getId(), scanPoint.getScannedByPlayerId());
+    }
+
+    @Test
     void testAPointThatNeedNotBeCarriedHomePaysOnTheScan() {
         ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_SCAN);
         BipedMek scout = mekOf(alice, SCANNER_HEX);

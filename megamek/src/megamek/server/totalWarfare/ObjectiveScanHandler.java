@@ -321,7 +321,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
      */
     private void bankWhatIsThere(Entity scanner, Targetable target, String targetName) {
         int round = getGame().getCurrentRound();
-        ObjectiveMarker scanPoint = scanPointOwnedBySideAt(scanner, target.getPosition());
+        ObjectiveMarker scanPoint = scanPointForSideAt(scanner, target.getPosition());
         if (scanPoint != null) {
             switch (scanPoint.getScoringScheme().getScanPayout()) {
                 case ON_EXIT -> {
@@ -522,7 +522,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         boolean isSensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
         boolean targetIsAUnit = target instanceof Entity;
         if (!targetIsAUnit) {
-            return "the target is a hex or building, not a unit, and no scan point of this side is there"
+            return "the target is a hex or building, not a unit, and no scan point set for this side to scan is there"
                   + " (sensor check mission=" + isSensorCheckMission + ")";
         }
         Entity targetUnit = (Entity) target;
@@ -584,10 +584,10 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * @return the Scan point at the hex that belongs to the scanner's side and has not been scored yet, or
-     *       {@code null}; a point another side placed is not this side's to read and looks like nothing
+     * @return the Scan point at the hex that the scanner's side is to scan (its Scanned by side) and has not been
+     *       scored yet, or {@code null}; a point set for another side to scan looks like nothing
      */
-    private @Nullable ObjectiveMarker scanPointOwnedBySideAt(Entity scanner, Coords position) {
+    private @Nullable ObjectiveMarker scanPointForSideAt(Entity scanner, Coords position) {
         for (ICarryable groundObject : getGame().getGroundObjects(position)) {
             if (!(groundObject instanceof ObjectiveMarker marker)) {
                 continue;
@@ -595,7 +595,8 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             ObjectiveScoringScheme scheme = marker.getScoringScheme();
             boolean isOpenScanPoint = (scheme.getPreset() == SchemePreset.SCAN) && !scheme.isDecided()
                   && !marker.isDestroyed();
-            if (isOpenScanPoint && isSameSide(scanner.getOwner(), getGame().getPlayer(marker.getOwnerId()))) {
+            Player scanningSide = getGame().getPlayer(marker.getScannedByPlayerId());
+            if (isOpenScanPoint && isSameSide(scanner.getOwner(), scanningSide)) {
                 return marker;
             }
         }
@@ -785,7 +786,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                 if (!pointsAlreadyPaid.add(position)) {
                     continue;
                 }
-                ObjectiveMarker scanPoint = scanPointOwnedBySideAt(unit, position);
+                ObjectiveMarker scanPoint = scanPointForSideAt(unit, position);
                 if (scanPoint != null) {
                     pointsAwarded += scoreScanPoint(scanPoint, unit, side);
                 } else {

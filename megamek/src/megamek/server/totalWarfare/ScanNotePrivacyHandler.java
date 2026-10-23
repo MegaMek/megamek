@@ -113,8 +113,10 @@ class ScanNotePrivacyHandler extends AbstractTWRuleHandler {
     /**
      * Puts back, in a board a player has sent at the end of a Victory Setup turn, every scan note that player may
      * not read. Their copy came without those notes, so storing it as sent would wipe them, and a note they could
-     * not read is not theirs to rewrite either. A point is matched to the server's own by its hex and the player who
-     * placed it: only one objective sits in a hex, and points placed in this phase carry no id of their own.
+     * not read is not theirs to rewrite either. A point is matched to the server's own by its hex alone: only one
+     * objective sits in a hex, and points placed in this phase carry no id of their own. Everything else about the
+     * received point came from the sender, the placer included, so none of it can be trusted to find the match.
+     * Whether the note is hidden is decided from the server's point, not the received one.
      *
      * @param receivedGroundObjects the board as the player sent it; its notes are corrected in place
      * @param sender                the player who sent it, or {@code null} when the connection has no player
@@ -127,7 +129,7 @@ class ScanNotePrivacyHandler extends AbstractTWRuleHandler {
                 if (!(groundObject instanceof ObjectiveMarker receivedMarker)) {
                     continue;
                 }
-                ObjectiveMarker storedMarker = storedMarkerMatching(hexObjects.getKey(), receivedMarker);
+                ObjectiveMarker storedMarker = storedMarkerAt(hexObjects.getKey());
                 if ((storedMarker == null) || !isNoteHiddenFrom(storedMarker, sender)) {
                     continue;
                 }
@@ -142,15 +144,13 @@ class ScanNotePrivacyHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * @param hex            the hex the received point sits in
-     * @param receivedMarker the point as a player sent it
+     * @param hex the hex a received point sits in
      *
-     * @return the server's point in the same hex placed by the same player, or {@code null} when there is none
+     * @return the server's point in that hex, or {@code null} when there is none
      */
-    private @Nullable ObjectiveMarker storedMarkerMatching(Coords hex, ObjectiveMarker receivedMarker) {
+    private @Nullable ObjectiveMarker storedMarkerAt(Coords hex) {
         for (ICarryable groundObject : getGame().getGroundObjects(hex)) {
-            if ((groundObject instanceof ObjectiveMarker storedMarker)
-                  && (storedMarker.getOwnerId() == receivedMarker.getOwnerId())) {
+            if (groundObject instanceof ObjectiveMarker storedMarker) {
                 return storedMarker;
             }
         }

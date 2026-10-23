@@ -144,6 +144,14 @@ class ScanNotePrivacyTest {
     }
 
     @Test
+    void relabellingThePointAsTheirOwnDoesNotLetTheOtherSideRewriteTheNote() {
+        // a modified client could claim the point is theirs; the placer is taken from the server's point
+        gameManager.handlePacket(BOB, setupTurn(scanPoint(BOB, "Nothing here.")));
+
+        assertEquals(NOTE, storedMarker().getScanRevealsNote());
+    }
+
+    @Test
     void thePlacerCanChangeTheirNote() {
         gameManager.handlePacket(ALICE, setupTurn(scanPoint(ALICE, "Empty crates.")));
 

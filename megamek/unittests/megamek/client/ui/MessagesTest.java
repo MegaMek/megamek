@@ -48,8 +48,9 @@ class MessagesTest {
 
     @Test
     void captureDescriptionFillsInItsNumbersAndKeepsTheApostrophe() {
-        // a lone apostrophe starts literal text in the formatter, which used to print {0} and {1} as-is
-        String description = Messages.getString("VictoryHex.describe.capture", 3, 1);
+        // a lone apostrophe starts literal text in the formatter, which used to print {0} and {1} as-is.
+        // The numbers go in as text so the check does not depend on how the machine's locale writes digits
+        String description = Messages.getString("VictoryHex.describe.capture", "3", "1");
 
         assertTrue(description.contains("owner's enemies"), description);
         assertTrue(description.contains("progress meter to 3"), description);

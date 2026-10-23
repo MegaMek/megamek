@@ -353,13 +353,13 @@ public class ObjectiveMarker extends GroundObject {
     }
 
     /**
-     * Unlike cargo (TW p.261), picking up an objective does not stop the Mek attacking that turn; the Mobile Objectives
-     * rule only rules out the carrying arm.
+     * Unlike cargo (TW p.261), picking up or setting down an objective does not stop the Mek attacking that turn; the
+     * Mobile Objectives rule only rules out the carrying arm, and only while the objective is carried.
      *
      * @return {@code false}
      */
     @Override
-    public boolean blocksAttacksOnPickupTurn() {
+    public boolean blocksAttacksOnPickupOrDropTurn() {
         return false;
     }
 

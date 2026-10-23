@@ -377,6 +377,31 @@ class MobileAndFragileObjectiveTest {
     }
 
     @Test
+    void testSettingAnObjectiveDownFreesTheArmAndKeepsTheTurnsAttacks() {
+        ObjectiveMarker flag = mobileFlag();
+        BipedMek carrier = carrying(flag);
+
+        carrier.dropCarriedObject(flag, true);
+
+        assertTrue(carrier.canFireWeapon(Mek.LOC_RIGHT_ARM), "the arm is free once the objective is set down");
+        assertTrue(carrier.canFireWeapon(Mek.LOC_CENTER_TORSO));
+        assertFalse(carrier.endOfTurnCargoInteraction(), "setting an objective down does not end its attacks");
+    }
+
+    @Test
+    void testSettingOrdinaryCargoDownStillEndsTheTurnsAttacks() {
+        // the cargo rule (TW p.261) is unchanged for everything that is not an objective
+        Cargo cargo = new Cargo();
+        BipedMek carrier = mekAt(alice, CARRIER_HEX);
+        carrier.pickupCarryableObject(cargo, Mek.LOC_RIGHT_ARM);
+        carrier.newRound(2);
+
+        carrier.dropCarriedObject(cargo, true);
+
+        assertTrue(carrier.endOfTurnCargoInteraction());
+    }
+
+    @Test
     void testADestroyedObjectiveIsNotPushed() {
         ObjectiveMarker wreck = mobileFlag();
         wreck.setDestroyed(true);

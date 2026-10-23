@@ -76,6 +76,14 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponCloseFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponCloseHomingHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantHomingHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponCloseFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponCloseHomingHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantHomingHandler;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardWeapon;
@@ -89,6 +97,9 @@ import megamek.server.victory.VictoryPointTracker;
  */
 public class SerializationHelper {
     private static final MMLogger LOGGER = MMLogger.create(SerializationHelper.class);
+
+    /** Package of the artillery handlers, used to name their pre-0.51.01 classes in older save games. */
+    private static final String ARTILLERY_HANDLER_PACKAGE = "megamek.common.weapons.handlers.artillery.";
 
     private SerializationHelper() {
     }
@@ -145,6 +156,26 @@ public class SerializationHelper {
         xStream.alias(WithdrawnInfernoSrmLaunchers.STANDARD_LAUNCHER_CLASS, InfantrySupportSRMStandardWeapon.class);
         xStream.alias(WithdrawnInfernoSrmLaunchers.LIGHT_LAUNCHER_CLASS, InfantrySupportSRMLightWeapon.class);
         xStream.alias(WithdrawnInfernoSrmLaunchers.HEAVY_LAUNCHER_CLASS, InfantrySupportSRMHeavyWeapon.class);
+
+        // The artillery handlers were renamed from Direct / Indirect to Close / Distant in 0.51.01. Artillery in
+        // flight is saved as its handler in the game's attack list, so older saves still name the old classes.
+        // These aliases are load-only: on the save XStream they would make new saves write the old names.
+        xStream.alias(ARTILLERY_HANDLER_PACKAGE + "ArtilleryWeaponDirectFireHandler",
+              ArtilleryWeaponCloseFireHandler.class);
+        xStream.alias(ARTILLERY_HANDLER_PACKAGE + "ArtilleryWeaponDirectHomingHandler",
+              ArtilleryWeaponCloseHomingHandler.class);
+        xStream.alias(ARTILLERY_HANDLER_PACKAGE + "ArtilleryWeaponIndirectFireHandler",
+              ArtilleryWeaponDistantFireHandler.class);
+        xStream.alias(ARTILLERY_HANDLER_PACKAGE + "ArtilleryWeaponIndirectHomingHandler",
+              ArtilleryWeaponDistantHomingHandler.class);
+        xStream.alias(ARTILLERY_HANDLER_PACKAGE + "ArtilleryBayWeaponDirectFireHandler",
+              ArtilleryBayWeaponCloseFireHandler.class);
+        xStream.alias(ARTILLERY_HANDLER_PACKAGE + "ArtilleryBayWeaponDirectHomingHandler",
+              ArtilleryBayWeaponCloseHomingHandler.class);
+        xStream.alias(ARTILLERY_HANDLER_PACKAGE + "ArtilleryBayWeaponIndirectFireHandler",
+              ArtilleryBayWeaponDistantFireHandler.class);
+        xStream.alias(ARTILLERY_HANDLER_PACKAGE + "ArtilleryBayWeaponIndirectHomingHandler",
+              ArtilleryBayWeaponDistantHomingHandler.class);
         xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
         xStream.aliasField("pilotRolls", Game.class, "pilotingRolls");
 

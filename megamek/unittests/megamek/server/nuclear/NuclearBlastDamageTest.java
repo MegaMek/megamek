@@ -250,4 +250,19 @@ class NuclearBlastDamageTest {
         assertTrue(blastedUnits.contains(cobra.getId()), "the airborne VTOL is in the blast");
         assertTrue(cobra.getTotalArmor() < armorBefore, "and takes its 20 damage");
     }
+
+    @Test
+    void airborneVtolThatFailsItsRollCrashes() throws Exception {
+        // A failed roll knows nothing lower than the ground for a VTOL: it crashes rather than taking motive damage
+        Mockito.doReturn(new Vector<Report>()).when(gameManager).crashVTOLorWiGE(any(Tank.class));
+        // 19 hexes is 5 damage, too little to destroy the VTOL before it rolls
+        Entity cobra = placeUnit("Cobra Transport VTOL.blk", hexNorth(19));
+        cobra.setElevation(3);
+        // Piloting 12 plus the blast's +2 needs 14 on 2d6, so the roll always fails
+        cobra.getCrew().setPiloting(12, 0);
+
+        blast(NuclearWeaponType.DAVY_CROCKETT_M);
+
+        Mockito.verify(gameManager).crashVTOLorWiGE((Tank) cobra);
+    }
 }

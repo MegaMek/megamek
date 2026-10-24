@@ -396,7 +396,8 @@ class NuclearBlastDamage {
      * Units without a Piloting Skill, such as infantry, do not roll.
      */
     private void rollToWithstandBlast(Entity entity, Vector<Report> vDesc) {
-        if (entity.isAirborne()) {
+        // isAirborne() is only true for aerospace units, so a flying VTOL or WiGE needs its own check
+        if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             rollAirborne(entity, vDesc);
         } else if (entity.isMek() && entity.canFall()) {
             game.addPSR(new PilotingRollData(entity.getId(), BLAST_ROLL_MODIFIER, "hit by nuclear blast"));

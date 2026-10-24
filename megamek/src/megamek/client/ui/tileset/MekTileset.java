@@ -429,7 +429,7 @@ public class MekTileset {
                 case VTOL -> default_vtol;
                 case WIGE -> default_wige;
                 case WHEELED -> default_wheeled;
-                case RAIL -> default_rail;
+                case RAIL, MAGLEV -> default_rail;
                 default -> default_tracked;
             };
         };

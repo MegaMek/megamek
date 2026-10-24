@@ -3381,10 +3381,10 @@ public abstract class Entity extends TurnOrdered
      */
     public synchronized void setDuplicateMarker(int duplicateMarker) {
         this.duplicateMarker = duplicateMarker;
-        if (duplicateMarker > 1) {
-            shortName = createShortName(duplicateMarker);
-            displayName = createDisplayName(duplicateMarker);
-        }
+        // Rebuild the names even for marker 1: a unit can arrive already named "#2" (MekHQ numbers units across
+        // the whole hangar), and keeping that name would clash with the unit this game numbers as #2.
+        shortName = createShortName(duplicateMarker);
+        displayName = createDisplayName(duplicateMarker);
     }
 
     /**
@@ -11213,6 +11213,21 @@ public abstract class Entity extends TurnOrdered
         if (this.removalCondition < removalCondition) {
             this.removalCondition = removalCondition;
         }
+    }
+
+    /**
+     * Forgets how this unit left an earlier battle and who was credited with destroying it. Call this when the unit
+     * joins a new battle: {@link #setRemovalCondition(int)} never lowers the condition, so a unit that arrives still
+     * marked as a wreck (for example a MekHQ unit that was destroyed, recovered and repaired) would otherwise be
+     * recorded as a wreck again even if it only fled.
+     */
+    public void clearBattleOutcome() {
+        if ((removalCondition != IEntityRemovalConditions.REMOVE_UNKNOWN) || (killerId != Entity.NONE)) {
+            LOGGER.debug("[BattleOutcome] {}: cleared removal condition {} and killer {} left from an earlier battle",
+                  getShortNameRaw(), removalCondition, killerId);
+        }
+        removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
+        killerId = Entity.NONE;
     }
 
     /**

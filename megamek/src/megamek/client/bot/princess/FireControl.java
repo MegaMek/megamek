@@ -1164,6 +1164,16 @@ public class FireControl {
                   || ((targetEntity != null) && Compute.isFlakToHitTarget(shooter, targetEntity));
             boolean isFlakMunition = !Collections.disjoint(munitionTypes, aaMunitions) || ammoType.countsAsFlak();
             boolean isArtilleryOnlyMunition = !Collections.disjoint(munitionTypes, ArtyOnlyMunitions);
+            // An Artillery Cannon may fire fuel-air at an airborne unit as a normal ballistic weapon (TO:AUE 6th
+            // printing, p.97); artillery weapons may fire only "F" damage type ordnance at it (TO:AR 6th printing,
+            // p.153), and fuel-air has none. Forum ruling of 14 June 2024:
+            // https://www.battletech.com/forums/index.php/topic,84169.msg1993664.html
+            if (isArtilleryOnlyMunition
+                  && munitionTypes.contains(AmmoType.Munitions.M_FAE)
+                  && !munitionTypes.contains(AmmoType.Munitions.M_FLECHETTE)
+                  && !weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
+                isArtilleryOnlyMunition = false;
+            }
             if (isFlakTarget && isFlakMunition) {
                 if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) {
                     toHit.addModifier(TH_WEAPON_FLAK_HAG);

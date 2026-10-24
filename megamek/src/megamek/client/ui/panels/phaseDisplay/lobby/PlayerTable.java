@@ -37,18 +37,25 @@ import static megamek.client.ui.util.UIUtil.scaleForGUI;
 import static megamek.client.ui.util.UIUtil.uiGreen;
 import static megamek.client.ui.util.UIUtil.uiYellow;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import megamek.MegaMek;
+import megamek.SuiteOptions;
 import megamek.client.bot.BotClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -288,7 +295,7 @@ class PlayerTable extends JTable {
             result.append(UIUtil.DOT_SPACER);
             String msgBVPlain = Messages.getString("ChatLounge.BVplain");
             result.append(msgBVPlain).append(": ");
-            NumberFormat formatter = NumberFormat.getIntegerInstance(MegaMek.getMMOptions().getLocale());
+            NumberFormat formatter = NumberFormat.getIntegerInstance(SuiteOptions.getNumberFormatLocale());
             result.append((player.getBV() != 0) ? formatter.format(player.getBV()) : "--");
 
             // Initiative Mod

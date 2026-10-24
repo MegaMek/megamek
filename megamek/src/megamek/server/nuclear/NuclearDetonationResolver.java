@@ -309,6 +309,7 @@ public class NuclearDetonationResolver {
         for (Entity entity : game.getEntitiesVector()) {
             if (standingBefore.contains(entity.getId()) && (entity.isDestroyed() || entity.isDoomed())) {
                 entity.setSalvage(false);
+                LOGGER.info("[Nukes] {} destroyed by the detonation: unsalvageable", entity.getDisplayName());
                 unitsDestroyed++;
             }
         }

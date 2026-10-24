@@ -172,8 +172,12 @@ class NuclearBlastDamage {
                 Coords coords = buildingHexes.nextElement();
                 int distance = groundZero.distance(coords);
                 if (distance < damages.length) {
-                    strengthBefore.put(coords, building.getCurrentCF(coords));
+                    int strength = building.getCurrentCF(coords);
+                    strengthBefore.put(coords, strength);
                     Vector<Report> buildingReport = gameManager.damageBuilding(building, damages[distance], coords);
+                    LOGGER.info("[Nukes] Building {} at hex {} ({} hexes from Ground Zero): CF {} takes {}, CF now {}",
+                          building.getName(), coords.getBoardNum(), distance, strength, damages[distance],
+                          building.getCurrentCF(coords));
                     for (Report report : buildingReport) {
                         report.type = Report.PUBLIC;
                     }
@@ -193,7 +197,11 @@ class NuclearBlastDamage {
         if (!entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             return true;
         }
-        return entity.isAirborneAeroOnGroundMap() && (entity.getAltitude() <= profile.blastHeight());
+        boolean inBlast = entity.isAirborneAeroOnGroundMap() && (entity.getAltitude() <= profile.blastHeight());
+        LOGGER.info("[Nukes] {} is airborne at altitude {} (ground map: {}), blast height {}: {}",
+              entity.getDisplayName(), entity.getAltitude(), entity.isAirborneAeroOnGroundMap(), profile.blastHeight(),
+              inBlast ? "in the blast" : "out of the blast");
+        return inBlast;
     }
 
     /**
@@ -205,7 +213,12 @@ class NuclearBlastDamage {
     private int damageAfterBuilding(Entity entity, Coords entityPosition, int damage,
           Map<Coords, Integer> buildingStrengthBefore, Vector<Report> vDesc) {
         Integer buildingStrength = buildingStrengthBefore.get(entityPosition);
-        if ((buildingStrength == null) || !Compute.isInBuilding(game, entity)) {
+        if (buildingStrength == null) {
+            return damage;
+        }
+        if (!Compute.isInBuilding(game, entity)) {
+            LOGGER.info("[Nukes] {} at hex {} is on or above the building, not inside it: takes the full {}",
+                  entity.getDisplayName(), entityPosition.getBoardNum(), damage);
             return damage;
         }
         int remaining = Math.max(0, damage - buildingStrength);
@@ -312,6 +325,7 @@ class NuclearBlastDamage {
             return;
         }
         entity.changeHeatBuildup(heat, "Nuclear blast");
+        LOGGER.info("[Nukes] {} gains {} heat from {} blast damage", entity.getDisplayName(), heat, damageTaken);
         Report report = new Report(6551);
         report.subject = entity.getId();
         report.indent(2);
@@ -391,8 +405,12 @@ class NuclearBlastDamage {
         } else if (entity instanceof Tank tank) {
             int marginOfFailure = rollAgainstBlast(entity, vDesc);
             if (marginOfFailure > 0) {
+                LOGGER.info("[Nukes] {} failed its roll and rolls for motive damage", entity.getDisplayName());
                 vDesc.addAll(gameManager.vehicleMotiveDamage(tank, 0));
             }
+        } else {
+            LOGGER.info("[Nukes] {} makes no roll: only Meks, vehicles and airborne units roll",
+                  entity.getDisplayName());
         }
     }
 
@@ -403,6 +421,7 @@ class NuclearBlastDamage {
         }
         if (entity.isAirborneVTOLorWIGE()) {
             // A VTOL or WiGE flies below the Low-Altitude Map's first altitude, so any fall puts it on the ground
+            LOGGER.info("[Nukes] {} failed its roll and crashes", entity.getDisplayName());
             if (entity instanceof Tank tank) {
                 vDesc.addAll(gameManager.crashVTOLorWiGE(tank));
             } else {
@@ -420,6 +439,7 @@ class NuclearBlastDamage {
             LOGGER.info("[Nukes] {} falls {} altitude(s) to altitude {}", entity.getDisplayName(), altitudeLost,
                   entity.getAltitude());
             if (gameManager.checkCrash(entity)) {
+                LOGGER.info("[Nukes] {} hits the ground and crashes", entity.getDisplayName());
                 vDesc.addAll(gameManager.processCrash(entity, aero.getCurrentVelocity(), entity.getPosition()));
             }
         }

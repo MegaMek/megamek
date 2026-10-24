@@ -110,7 +110,41 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         if (anyPlaced) {
             gameManager.sendGroundObjectUpdate();
         }
+        markObjectivesPresentAtGameStart();
         warnWhenObjectivesAreOnTheBoardButSwitchedOff();
+    }
+
+    /**
+     * Marks every objective that exists as the game starts - on the board, or still waiting in a player's to-place
+     * list - as one that a reset to the lobby keeps. Anything placed after this point, in the Victory Setup phase
+     * or by a game master, is left unmarked and cleared by the reset.
+     */
+    private void markObjectivesPresentAtGameStart() {
+        int markedCount = 0;
+        for (List<ICarryable> hexObjects : getGame().getGroundObjects().values()) {
+            markedCount += markObjectives(hexObjects);
+        }
+        for (Player player : getGame().getPlayersList()) {
+            markedCount += markObjectives(player.getGroundObjectsToPlace());
+        }
+        VICTORY_HEX_LOGGER.debug("[Objective] {} objective marker(s) exist at the game start and will survive a "
+              + "reset to the lobby", markedCount);
+    }
+
+    /**
+     * @param groundObjects a hex's ground objects or a player's to-place list
+     *
+     * @return how many objective markers in the list were marked
+     */
+    private int markObjectives(List<ICarryable> groundObjects) {
+        int markedCount = 0;
+        for (ICarryable groundObject : groundObjects) {
+            if (groundObject instanceof ObjectiveMarker marker) {
+                marker.setPresentAtGameStart(true);
+                markedCount++;
+            }
+        }
+        return markedCount;
     }
 
     /**
@@ -193,18 +227,27 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Returns every objective marker on the board to its owner's ground-objects-to-place list, restoring the board
-     * position as the marker's lobby position. Called when the game is reset back to the lobby, before the game
-     * (and with it the ground object map) is cleared - without this, returning to the lobby would silently lose all
-     * designated victory hexes. The reset then sends player updates to every client, so the restored designations
-     * show up in everyone's lobby board preview again. A marker whose owner no longer exists is dropped with a
-     * logged warning.
+     * Returns every objective marker on the board that existed when the game started (a scenario's, for example) to
+     * its owner's ground-objects-to-place list, restoring the board position as the marker's lobby position. Called
+     * when the game is reset back to the lobby, before the game (and with it the ground object map) is cleared -
+     * without this, returning to the lobby would silently lose the scenario's victory hexes. The reset then sends
+     * player updates to every client, so the restored designations show up in everyone's lobby board preview again.
+     * A marker placed during the game, in the Victory Setup phase or by a game master, is cleared with the board:
+     * it belonged to that game, and bringing it back put it in every game after. A marker whose owner no longer
+     * exists is dropped with a logged warning.
      */
     void returnObjectivesToLobby() {
         int returnedCount = 0;
+        int clearedCount = 0;
         for (Map.Entry<Coords, List<ICarryable>> hexObjects : getGame().getGroundObjects().entrySet()) {
             for (ICarryable groundObject : hexObjects.getValue()) {
                 if (!(groundObject instanceof ObjectiveMarker marker)) {
+                    continue;
+                }
+                if (!marker.isPresentAtGameStart()) {
+                    clearedCount++;
+                    VICTORY_HEX_LOGGER.debug("[Objective] {} at {} was placed during the game - cleared on the "
+                          + "reset to the lobby", marker.generalName(), hexObjects.getKey());
                     continue;
                 }
                 Player owner = getGame().getPlayer(marker.getOwnerId());
@@ -226,9 +269,9 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                       marker.generalName(), hexObjects.getKey(), owner);
             }
         }
-        if (returnedCount > 0) {
-            VICTORY_HEX_LOGGER.info("[Objective] Returned {} objective marker(s) to the lobby on the game reset",
-                  returnedCount);
+        if ((returnedCount > 0) || (clearedCount > 0)) {
+            VICTORY_HEX_LOGGER.info("[Objective] Returned {} objective marker(s) to the lobby on the game reset and "
+                  + "cleared {} placed during the game", returnedCount, clearedCount);
         }
     }
 

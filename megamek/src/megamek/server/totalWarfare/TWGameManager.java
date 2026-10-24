@@ -5840,7 +5840,7 @@ public class TWGameManager extends AbstractGameManager {
         return true;
     }
 
-    boolean checkCrash(Entity entity) {
+    public boolean checkCrash(Entity entity) {
         return checkCrash(entity, entity.getPosition(), entity.getBoardId(), entity.getAltitude());
     }
 
@@ -5882,7 +5882,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return Vector of reports chronicling this disaster.
      */
-    Vector<Report> processCrash(Entity entity, int vel, Coords c) {
+    public Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<>();
         Report report;
         boolean canCrashLand = true;
@@ -22574,7 +22574,7 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
-    boolean crashAirMek(Entity en, PilotingRollData psr, Vector<Report> vDesc) {
+    public boolean crashAirMek(Entity en, PilotingRollData psr, Vector<Report> vDesc) {
         return crashAirMek(en, en.getPosition(), en.getElevation(), en.delta_distance, psr, vDesc);
     }
 
@@ -22640,7 +22640,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return the resulting reports
      */
-    Vector<Report> crashVTOLorWiGE(Tank tank) {
+    public Vector<Report> crashVTOLorWiGE(Tank tank) {
         return airborneVehicleCrashHandler.crashVTOLorWiGE(tank);
     }
 

@@ -43,13 +43,10 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
-import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
-import megamek.common.units.Tank;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
-import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -175,54 +172,24 @@ public class NuclearDetonationResolver {
         Vector<Report> tmpV = new Vector<>();
         Vector<Integer> blastedUnitsVec = new Vector<>();
 
-        new NuclearBlastDamage(gameManager).apply(position, profile.blastDamageByDistance(), tmpV, blastedUnitsVec);
+        new NuclearBlastDamage(gameManager).apply(position, profile, tmpV, blastedUnitsVec);
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 
-        // Everything that was blasted by the explosion has to make a piloting
-        // check at +6.
-        for (int i : blastedUnitsVec) {
-            Entity o = game.getEntity(i);
-
-            if (o == null) {
-                continue;
+        // The Ground Zero hex is stripped bare, unless a building strong enough to withstand the impact still
+        // stands there (IO:AE p.164); the blast above has already destroyed any weaker one.
+        IBuilding groundZeroBuilding = game.getBoard().getBuildingAt(position);
+        if ((groundZeroBuilding == null) || (groundZeroBuilding.getCurrentCF(position) <= 0)) {
+            Hex gzHex = game.getBoard().getHex(position);
+            if (gzHex.containsTerrain(Terrains.WATER)) {
+                gzHex.setLevel(gzHex.floor());
             }
-
-            if (o.canFall()) {
-                // Needs a piloting check at +6 to avoid falling over.
-                game.addPSR(new PilotingRollData(o.getId(), 6, "hit by nuclear blast"));
-            } else if (o instanceof VTOL vt) {
-                // Needs a piloting check at +6 to avoid crashing.
-
-                // Check only applies if it's in the air.
-                // FIXME: is this actually correct? What about
-                // buildings/bridges?
-                if (vt.getElevation() > 0) {
-                    game.addPSR(new PilotingRollData(vt.getId(), 6, "hit by nuclear blast"));
-                }
-            } else if (o instanceof Tank) {
-                // As per official answer on the rules questions board...
-                // Needs a piloting check at +6 to avoid a 1-level fall...
-                // But ONLY if a hover-tank.
-                // TODO : Fix me
-            }
+            gzHex.removeAllTerrains();
+            changedHexes.add(position);
+        } else {
+            LOGGER.info("[Nukes] The building at Ground Zero {} survives with CF {}", position.getBoardNum(),
+                  groundZeroBuilding.getCurrentCF(position));
         }
-
-        // This ISN'T part of the blast, but if there's ANYTHING in the ground
-        // zero hex, destroy it.
-        IBuilding tmpB = game.getBoard().getBuildingAt(position);
-        if (tmpB != null) {
-            r = new Report(2415);
-            r.add(tmpB.getName());
-            gameManager.addReport(r);
-            tmpB.setCurrentCF(0, position);
-        }
-        Hex gzHex = game.getBoard().getHex(position);
-        if (gzHex.containsTerrain(Terrains.WATER)) {
-            gzHex.setLevel(gzHex.floor());
-        }
-        gzHex.removeAllTerrains();
-        changedHexes.add(position);
 
         // Next, for whatever's left, do terrain effects
         // such as clearing, roughing, and boiling off water.
@@ -337,12 +304,16 @@ public class NuclearDetonationResolver {
         r.newlines = 2;
         vDesc.add(r);
 
+        // Nothing a nuclear weapon destroys can be salvaged (IO:AE p.168).
         int unitsDestroyed = 0;
         for (Entity entity : game.getEntitiesVector()) {
             if (standingBefore.contains(entity.getId()) && (entity.isDestroyed() || entity.isDoomed())) {
+                entity.setSalvage(false);
                 unitsDestroyed++;
             }
         }
+        LOGGER.info("[Nukes] {} unit(s) struck by the blast, {} destroyed and marked unsalvageable",
+              blastedUnitsVec.size(), unitsDestroyed);
         return unitsDestroyed;
     }
 

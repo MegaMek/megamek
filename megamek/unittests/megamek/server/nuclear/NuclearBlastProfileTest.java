@@ -131,4 +131,17 @@ class NuclearBlastProfileTest {
         assertEquals(1, profile.damageReduction());
         assertEquals(50, profile.blastRadius());
     }
+
+    @Test
+    void blastHeightComesFromTheTable() {
+        assertEquals(6, NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M).blastHeight());
+        assertEquals(10, NuclearBlastProfile.groundBurst(NuclearWeaponType.PEACEMAKER).blastHeight());
+    }
+
+    @Test
+    void customDeviceTakesTheBlastHeightOfTheClosestStandardWeapon() {
+        // 5,000 is closer to the Alamo's 1,000 than to the Santa Ana's 10,000
+        assertEquals(8, NuclearBlastProfile.custom(5_000, 50, 100, 0).blastHeight());
+        assertEquals(10, NuclearBlastProfile.custom(1_000_000, 500, 400, 0).blastHeight());
+    }
 }

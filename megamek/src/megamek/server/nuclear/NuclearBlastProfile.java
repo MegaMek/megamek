@@ -117,6 +117,24 @@ public record NuclearBlastProfile(int impactDamage, int damageReduction, int bla
     }
 
     /**
+     * The Blast Height: the highest Low-Altitude Map altitude at which an airborne unit takes blast damage (IO:AE
+     * p.164). A custom device has no table row, so it takes the height of the standard weapon closest to it in impact
+     * damage: a custom 5,000-point device uses the Alamo's 8.
+     *
+     * @return the blast height in Low-Altitude Map altitudes
+     */
+    public int blastHeight() {
+        NuclearWeaponType closest = NuclearWeaponType.values()[0];
+        for (NuclearWeaponType weaponType : NuclearWeaponType.values()) {
+            if (Math.abs(weaponType.getImpactDamage() - impactDamage)
+                  < Math.abs(closest.getImpactDamage() - impactDamage)) {
+                closest = weaponType;
+            }
+        }
+        return closest.getBlastHeight();
+    }
+
+    /**
      * @return the number of hex rings, counted from Ground Zero, that lie in the crater; units and terrain in them
      *       are annihilated
      */

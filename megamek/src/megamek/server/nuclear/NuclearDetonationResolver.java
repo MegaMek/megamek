@@ -62,8 +62,6 @@ public class NuclearDetonationResolver {
     /** Marks a kind of terrain damage that reached no ring at all, for the log. */
     private static final int NO_RING = -1;
 
-    /** Nuclear blast damage is applied in 5-point clusters (IO:AE p.165). */
-    private static final int BLAST_CLUSTER_SIZE = 5;
 
     private final TWGameManager gameManager;
     private final Game game;
@@ -174,12 +172,10 @@ public class NuclearDetonationResolver {
         }
 
         // Then, do actual blast damage.
-        // Use the standard blast function for this.
         Vector<Report> tmpV = new Vector<>();
         Vector<Integer> blastedUnitsVec = new Vector<>();
 
-        gameManager.doExplosion(profile.blastDamageByDistance(), true, position, 0, true, tmpV, blastedUnitsVec,
-              BLAST_CLUSTER_SIZE, Entity.NONE, false, false);
+        new NuclearBlastDamage(gameManager).apply(position, profile.blastDamageByDistance(), tmpV, blastedUnitsVec);
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 

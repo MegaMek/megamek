@@ -722,6 +722,11 @@ class ComputeToHitIsImpossible {
             return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
         }
 
+        String fuelAirReason = fuelAirAmmoGateReason(attacker, ammoType, usesAmmo);
+        if (fuelAirReason != null) {
+            return fuelAirReason;
+        }
+
         // LAMs carrying certain types of bombs that require a weapon have attacks that cannot be used in mek mode
         if ((attacker instanceof LandAirMek)
               && (attacker.getConversionMode() == LandAirMek.CONV_MODE_MEK)
@@ -1997,25 +2002,6 @@ class ComputeToHitIsImpossible {
     }
 
     /**
-     * Determines whether the Disposable Weapon rule (TO:AuE p.116, Corrected Sixth Printing) makes the weapon attack
-     * being declared impossible. A Disposable Weapon attack replaces the unit's standard weapon attack, so a platoon or
-     * squad may declare EITHER its Disposable Weapon OR its other weapons in a turn, never both - and this holds
-     * regardless of which is declared first. The rule is only enforced while the corresponding game option is enabled;
-     * otherwise a disposable mount fires as an ordinary weapon and the standard checks apply.
-     *
-     * <p>Infantry anti-Mek attacks (leg attack, swarm, stop-swarm, swarm-mounted weapon) are deliberately not gated
-     * here: they have their own mutual-exclusivity checks and messages further along in the to-hit evaluation, which
-     * produce a more accurate reason than this one.</p>
-     *
-     * @param game       the current game
-     * @param attacker   the attacking unit
-     * @param weapon     the weapon mount being declared (may be {@code null})
-     * @param weaponType the type of the weapon being declared
-     *
-     * @return a localized impossibility reason, or {@code null} if the Disposable Weapon rule does not forbid this
-     *       attack
-     */
-    /**
      * Nuclear ammo can only be fired while the nuclear weapons game option is on. This stops rounds that were loaded
      * before the option was turned off, or that came in with a saved unit, such as a Long Tom's Davy Crockett-M.
      *
@@ -2035,6 +2021,46 @@ class ComputeToHitIsImpossible {
         LOGGER.info("[Nukes] {} cannot fire {}: the nuclear weapons option is off", attacker.getDisplayName(),
               ammoType.getName());
         return Messages.getString("WeaponAttackAction.NoNuclearWeapons");
+    }
+
+    /**
+     * Determines whether the Disposable Weapon rule (TO:AuE p.116, Corrected Sixth Printing) makes the weapon attack
+     * being declared impossible. A Disposable Weapon attack replaces the unit's standard weapon attack, so a platoon or
+     * squad may declare EITHER its Disposable Weapon OR its other weapons in a turn, never both - and this holds
+     * regardless of which is declared first. The rule is only enforced while the corresponding game option is enabled;
+     * otherwise a disposable mount fires as an ordinary weapon and the standard checks apply.
+     *
+     * <p>Infantry anti-Mek attacks (leg attack, swarm, stop-swarm, swarm-mounted weapon) are deliberately not gated
+     * here: they have their own mutual-exclusivity checks and messages further along in the to-hit evaluation, which
+     * produce a more accurate reason than this one.</p>
+     *
+     * @param game       the current game
+     * @param attacker   the attacking unit
+     * @param weapon     the weapon mount being declared (may be {@code null})
+     * @param weaponType the type of the weapon being declared
+     *
+     * @return a localized impossibility reason, or {@code null} if the Disposable Weapon rule does not forbid this
+     *       attack
+     */
+    /**
+     * Airborne units (fighters, airships, VTOLs and anything else in the air) may only employ fuel-air munitions as
+     * bombs (IO:AE 3rd printing, p.159), so they may not fire fuel-air artillery or artillery cannon ammo.
+     *
+     * @param attacker  the attacking unit
+     * @param ammoType  the ammo being fired, if any
+     * @param usesAmmo  whether the weapon is ammo-fed
+     *
+     * @return a localized impossibility reason, or {@code null} if this rule does not forbid the attack
+     */
+    // package-private for regression testing (see ComputeToHitIsImpossibleTest)
+    static @Nullable String fuelAirAmmoGateReason(Entity attacker, @Nullable AmmoType ammoType, boolean usesAmmo) {
+        if (usesAmmo
+              && (ammoType != null)
+              && ammoType.getMunitionType().contains(AmmoType.Munitions.M_FAE)
+              && (attacker.isAirborne() || attacker.isAirborneVTOLorWIGE())) {
+            return Messages.getString("WeaponAttackAction.FuelAirBombsOnly");
+        }
+        return null;
     }
 
     // package-private for regression testing of the order-independent gating (see ComputeToHitIsImpossibleTest)

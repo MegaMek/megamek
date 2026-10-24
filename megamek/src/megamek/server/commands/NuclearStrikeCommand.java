@@ -92,6 +92,7 @@ public class NuclearStrikeCommand extends ClientServerCommand {
                 return;
             }
         }
+        logNuclearOptionCheckPassed(connId);
 
         if (isOutsideOfBoard(connId, args)) {
             return;

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.ui.Messages;
+import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
@@ -106,6 +107,18 @@ public abstract class ClientServerCommand extends ServerCommand {
 
     protected boolean isGM(int connId) {
         return server.getGameManager().getGame().getPlayer(connId).getGameMaster();
+    }
+
+    /**
+     * Logs that a nuclear strike command got past the game option check, and why: the option is on, or the sender
+     * is the GM, who may fire with it off.
+     *
+     * @param connId the connection that sent the command
+     */
+    protected void logNuclearOptionCheckPassed(int connId) {
+        boolean optionOn = server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
+        logger.info("[Nukes] /{} from connection {} allowed: nuclear weapons option {}, sender {} the GM", getName(),
+              connId, optionOn ? "on" : "off", isGM(connId) ? "is" : "is not");
     }
 
     protected void safeParseArgumentsAndRun(int connId, String[] args) {

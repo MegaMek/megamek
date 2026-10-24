@@ -93,6 +93,7 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
                 return;
             }
         }
+        logNuclearOptionCheckPassed(connId);
 
         // is the hex on the board?
         if (isOutsideOfBoard(connId, args)) {

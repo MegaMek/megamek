@@ -137,6 +137,7 @@ public class NukeCommand extends ClientServerCommand {
             server.sendServerChat(connId, "Command-line nukes are not enabled in this game.");
             return;
         }
+        logNuclearOptionCheckPassed(connId);
 
         if (args.hasArg("type")) {
             //

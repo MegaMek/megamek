@@ -2328,6 +2328,17 @@ public class AmmoType extends EquipmentType {
         return capital;
     }
 
+    /**
+     * Whether this ammo is a nuclear weapon, which the nuclear weapons game option controls. The nuclear capital
+     * missiles carry {@link #F_NUCLEAR}; Davy Crockett-M artillery rounds are a munition of ordinary artillery ammo
+     * and do not, so both are checked here.
+     *
+     * @return {@code true} for nuclear capital missiles and Davy Crockett-M rounds
+     */
+    public boolean isNuclear() {
+        return hasFlag(F_NUCLEAR) || munitionType.contains(Munitions.M_DAVY_CROCKETT_M);
+    }
+
     public boolean hasCustomKgPerShot() {
         return kgPerShot > 0;
     }

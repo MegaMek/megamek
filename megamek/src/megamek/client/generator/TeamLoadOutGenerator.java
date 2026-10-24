@@ -503,7 +503,7 @@ public class TeamLoadOutGenerator {
         }
 
         // Nukes are not allowed... unless they are!
-        legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR) || allowNukes);
+        legal &= (!aType.isNuclear() || allowNukes);
 
         return legal;
     }

@@ -464,7 +464,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
         // Parameters are generated _from_ the teams' information, _for_ the selected entities
         ReconfigurationParameters reconfigurationParameters = tlg.generateParameters(entityArrayList, faction, team);
         // Extra nuke controls don't apply in the context menu; rely on game option!
-        reconfigurationParameters.nukesBannedForMe = lobby.game()
+        reconfigurationParameters.nukesBannedForMe = !lobby.game()
               .getOptions()
               .booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
         // Reduce Pirate ammo somewhat; others get full loadouts

@@ -606,6 +606,7 @@ public class EquipChoicePanel extends JPanel {
         Game game = clientgui == null ? client.getGame() : clientgui.getClient().getGame();
         IGameOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
+        boolean nuclearWeaponsAllowed = gameOpts.booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS);
 
         String ammoSelectionTitle = Messages.getString("CustomMekDialog.MunitionsPanelTitle");
         JComponent title = new SectionTitleLabel(ammoSelectionTitle);
@@ -734,6 +735,10 @@ public class EquipChoicePanel extends JPanel {
                 if (!Game.rulesManager.getRulesGame()
                       .allowMinefields(gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) &&
                       AmmoType.canDeliverMinefield(atCheck)) {
+                    continue;
+                }
+
+                if (atCheck.isNuclear() && !nuclearWeaponsAllowed) {
                     continue;
                 }
 

@@ -162,7 +162,7 @@ class AmmoRowPanel implements ChangeListener {
               bayMunitionsChoicePanel.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
             return false;
         }
-        if (ammoType.hasFlag(AmmoType.F_NUCLEAR)
+        if (ammoType.isNuclear()
               && !bayMunitionsChoicePanel.getGame().getOptions().booleanOption(
               OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
             return false;

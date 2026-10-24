@@ -186,6 +186,11 @@ class ComputeToHitIsImpossible {
 
         // Ammo-specific Reasons
         if (ammoType != null) {
+            String nuclearReason = nuclearAmmoGateReason(game, attacker, ammoType);
+            if (nuclearReason != null) {
+                return nuclearReason;
+            }
+
             // Are we dumping that ammo?
             if (usesAmmo && ammo != null && ammo.isDumping()) {
                 attacker.loadWeaponWithSameAmmo(weapon);
@@ -2010,6 +2015,28 @@ class ComputeToHitIsImpossible {
      * @return a localized impossibility reason, or {@code null} if the Disposable Weapon rule does not forbid this
      *       attack
      */
+    /**
+     * Nuclear ammo can only be fired while the nuclear weapons game option is on. This stops rounds that were loaded
+     * before the option was turned off, or that came in with a saved unit, such as a Long Tom's Davy Crockett-M.
+     *
+     * @param game     the current game
+     * @param attacker the attacking unit
+     * @param ammoType the ammo being fired
+     *
+     * @return a localized impossibility reason, or {@code null} if the ammo is not nuclear or nuclear weapons are on
+     */
+    static @Nullable String nuclearAmmoGateReason(Game game, Entity attacker, AmmoType ammoType) {
+        if (!ammoType.isNuclear()) {
+            return null;
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NUCLEAR_WEAPONS)) {
+            return null;
+        }
+        LOGGER.info("[Nukes] {} cannot fire {}: the nuclear weapons option is off", attacker.getDisplayName(),
+              ammoType.getName());
+        return Messages.getString("WeaponAttackAction.NoNuclearWeapons");
+    }
+
     // package-private for regression testing of the order-independent gating (see ComputeToHitIsImpossibleTest)
     static @Nullable String disposableWeaponGateReason(Game game, Entity attacker, @Nullable WeaponMounted weapon,
           WeaponType weaponType) {

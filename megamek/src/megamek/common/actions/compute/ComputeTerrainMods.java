@@ -275,7 +275,7 @@ public class ComputeTerrainMods {
                 toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
                 toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());
                 if (addWaterPartial) {
-                    toHit.addModifier(1, "target has partial cover (water)");
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTargetHasPartialCoverWater"));
                 }
             }
         }

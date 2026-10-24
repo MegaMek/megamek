@@ -39,15 +39,15 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Stream;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
@@ -9603,6 +9603,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         deployTrain(entity);
         cmd = new MovePath(game, entity);
         addDeploymentToMovePath();
+        computeMovementEnvelope(entity);
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);

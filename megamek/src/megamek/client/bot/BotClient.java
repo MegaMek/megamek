@@ -1311,7 +1311,8 @@ public abstract class BotClient extends Client {
         // edge,
         // even when considering terrain destruction
         // attempt to deploy in the biggest area this unit can access instead
-        if (highestFitness < -10) {
+        // (a unit that cannot move accesses no area, so the size of one says nothing about the hex)
+        if ((highestFitness < -10) && !cannotMove(deployed_ent)) {
             for (RankedCoords rc : validCoords) {
                 rc.fitness += getClusterTracker().getBoardClusterSize(deployed_ent, rc.coords, false);
             }
@@ -1329,6 +1330,18 @@ public abstract class BotClient extends Client {
     }
 
     /**
+     * Whether a unit can neither walk nor jump, such as a building or an emplacement. Deployment scores built on where a
+     * unit can go from a hex, such as edge access or open paths around it, mean nothing for such a unit.
+     *
+     * @param entity the unit being deployed
+     *
+     * @return {@code true} if the unit has no walking or jumping movement
+     */
+    protected static boolean cannotMove(Entity entity) {
+        return (entity.getWalkMP() == 0) && (entity.getAnyTypeMaxJumpMP() == 0);
+    }
+
+    /**
      * Determines if the given entity has reasonable access to the "opposite" edge of the board from its current
      * position. Returns 0 if this can be accomplished without destroying any terrain, -50 if this can be accomplished
      * but terrain must be destroyed, -100 if this cannot be accomplished at all
@@ -1336,6 +1349,10 @@ public abstract class BotClient extends Client {
     private int calculateEdgeAccessFitness(Entity entity, Board board) {
         // Flying units can always get anywhere
         if (entity.isAirborne() || entity instanceof VTOL) {
+            return 0;
+        }
+        // A unit that cannot move is never going anywhere, from any hex
+        if (cannotMove(entity)) {
             return 0;
         }
 

@@ -2173,7 +2173,8 @@ public class RATGenerator {
      *
      * <p>The logo is the faction's {@link Faction2#getIcon(int) icon} for the given year, as set in its YAML file.
      * A command without an icon of its own inherits the icon of its parent, found by dropping the last part of its
-     * key (e.g. {@code CC.SIL.1st} inherits from {@code CC.SIL}, which in turn inherits from {@code CC}).</p>
+     * key (e.g. {@code CC.SIL.1st} inherits from {@code CC.SIL}, which in turn inherits from {@code CC}). This also
+     * applies to a command that has no faction data of its own, such as one only known to the RAT generator.</p>
      *
      * @param gameYear    the year in the game context, potentially affecting logo selection for some factions
      * @param factionCode the code identifying the faction (e.g., "FS" for Federated Suns)
@@ -2181,18 +2182,28 @@ public class RATGenerator {
      * @return the relative path to the faction's dedicated logo PNG, or {@code null} if the faction has no icon
      */
     public static @Nullable String getCanonicalFactionLogoAddress(int gameYear, String factionCode) {
-        Optional<Faction2> faction = Factions2.getInstance().getFaction(factionCode);
-        while (faction.isPresent()) {
-            String icon = faction.get().getIcon(gameYear);
-            if ((icon != null) && !icon.isBlank()) {
-                return FACTION_LOGO_DIRECTORY + icon;
+        String currentCode = factionCode;
+        while (currentCode != null) {
+            Optional<Faction2> faction = Factions2.getInstance().getFaction(currentCode);
+            if (faction.isPresent()) {
+                String icon = faction.get().getIcon(gameYear);
+                if ((icon != null) && !icon.isBlank()) {
+                    return FACTION_LOGO_DIRECTORY + icon;
+                }
+                // An alias resolves to its canonical faction, whose key gives the parent
+                currentCode = faction.get().getKey();
             }
-            String key = faction.get().getKey();
-            int parentSeparator = key.lastIndexOf('.');
-            faction = (parentSeparator > 0) ?
-                            Factions2.getInstance().getFaction(key.substring(0, parentSeparator)) :
-                            Optional.empty();
+            currentCode = getParentFactionCode(currentCode);
         }
         return null;
+    }
+
+    /**
+     * @return the code of the faction or command one level up (e.g. {@code CC.SIL} for {@code CC.SIL.1st}), or
+     *       {@code null} for a top-level faction
+     */
+    private static @Nullable String getParentFactionCode(String factionCode) {
+        int parentSeparator = factionCode.lastIndexOf('.');
+        return (parentSeparator > 0) ? factionCode.substring(0, parentSeparator) : null;
     }
 }

@@ -84,6 +84,13 @@ public class AreaEffectHelper {
     // maps equipment name to blast radius index for fuel-air ordnance
     private static Map<String, Integer> fuelAirBlastRadiusIndex;
     private static final int[] fuelAirDamage = { 5, 10, 20, 30 };
+    /**
+     * Vertical levels that count as one hex of distance for the fuel-air infantry destruction roll (IO:AE 3rd
+     * printing, pp.159-160), rounding down. The book gives only the distance "in hexes"; the 5:1 conversion is a
+     * forum ruling of 24 January 2026, which postdates the 3rd printing and supersedes it:
+     * https://www.battletech.com/forums/index.php/topic,88492.msg2077870.html#msg2077870
+     */
+    private static final int LEVELS_PER_HEX_OF_FUEL_AIR_DISTANCE = 5;
 
     /**
      * Worker function that initializes blast radius data for fuel-air explosives of various types.
@@ -97,6 +104,8 @@ public class AreaEffectHelper {
         // the following ammo types have the capability to load FAE munitions:
         // Arrow IV, Thumper, Sniper, Long Tom
         addFuelAirBlastRadiusIndex(AmmoTypeEnum.ARROW_IV, 2);
+        // The prototype Arrow IV fires the same Fuel-Air Missile, radius 2 (IO:AE 3rd printing, p.160 table)
+        addFuelAirBlastRadiusIndex(AmmoTypeEnum.ARROWIV_PROTO, 2);
         addFuelAirBlastRadiusIndex(AmmoTypeEnum.THUMPER, 1);
         addFuelAirBlastRadiusIndex(AmmoTypeEnum.THUMPER_CANNON, 1);
         addFuelAirBlastRadiusIndex(AmmoTypeEnum.SNIPER, 2);
@@ -201,6 +210,44 @@ public class AreaEffectHelper {
     }
 
     /**
+     * Fuel-air ordnance has no effect in space or in an atmosphere thinner than Thin (IO:AE 3rd printing, p.159). Adds
+     * the report when that is the case.
+     *
+     * @return {@code true} if the ordnance does nothing on this board
+     */
+    public static boolean fuelAirHasNoEffect(Game game, int boardId, Entity attacker, Vector<Report> vPhaseReport) {
+        if (game.getBoard(boardId).isSpace()
+              || game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
+            reportFuelAirAtmosphere(9986, attacker, vPhaseReport);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Fuel-air ordnance does half damage, rounding up, in a Thin atmosphere (IO:AE 3rd printing, p.159). Adds the
+     * report when that is the case.
+     *
+     * @return the damage after the atmosphere
+     */
+    public static int fuelAirDamageInAtmosphere(Game game, int damage, Entity attacker,
+          Vector<Report> vPhaseReport) {
+        if (game.getPlanetaryConditions().getAtmosphere().isThin()) {
+            reportFuelAirAtmosphere(9990, attacker, vPhaseReport);
+            return (int) Math.ceil(damage / 2.0);
+        }
+        return damage;
+    }
+
+    private static void reportFuelAirAtmosphere(int messageId, Entity attacker, Vector<Report> vPhaseReport) {
+        Report report = new Report(messageId);
+        report.indent(1);
+        report.subject = attacker.getId();
+        report.newlines = 1;
+        vPhaseReport.addElement(report);
+    }
+
+    /**
      * Helper function that processes damage for fuel-air explosives.
      */
     public static Vector<Integer> processFuelAirDamage(
@@ -209,27 +256,14 @@ public class AreaEffectHelper {
     ) {
         Game game = attacker.getGame();
         Vector<Integer> entitiesToExclude = new Vector<>();
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        boolean thinAir = conditions.getAtmosphere().isThin();
+        boolean thinAir = game.getPlanetaryConditions().getAtmosphere().isThin();
 
-        // sanity check: if this attack is happening in vacuum through very thin atmosphere,
-        // add that to the phase report and terminate early
-        if (game.getBoard(boardId).isSpace()
-              || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
-            Report r = new Report(9986);
-            r.indent(1);
-            r.subject = attacker.getId();
-            r.newlines = 1;
-            vPhaseReport.addElement(r);
+        if (fuelAirHasNoEffect(game, boardId, attacker, vPhaseReport)) {
             return entitiesToExclude;
         }
 
         if (thinAir) {
-            Report r = new Report(9990);
-            r.indent(1);
-            r.subject = attacker.getId();
-            r.newlines = 1;
-            vPhaseReport.addElement(r);
+            reportFuelAirAtmosphere(9990, attacker, vPhaseReport);
         }
 
         // assemble collection of <level, Coords> 3D locations at ranges 0 to radius
@@ -240,14 +274,13 @@ public class AreaEffectHelper {
         // Use DamageFalloff to signal building damage factor
         DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
         HashMap<Entry<Integer, Coords>, Integer> blastShape = shapeBlast(
-              ammo, center, falloff, height, !(ammo instanceof BombType), false, false, game, false
+              ammo, center, boardId, falloff, height, !(ammo instanceof BombType), false, false, game, false
         );
         ArrayList<Coords> checkedAdditional = new ArrayList<>();
 
         for (Entry<Integer, Coords> entry : blastShape.keySet()) {
             Coords bCoords = entry.getValue();
             int bLevel = entry.getKey();
-            int distance = bCoords.distance(center);
             int damage = blastShape.get(entry);
             if (thinAir) {
                 damage = (int) Math.ceil(damage / 2.0);
@@ -257,10 +290,7 @@ public class AreaEffectHelper {
                   entitiesToExclude, false, falloff);
 
             if (!checkedAdditional.contains(bCoords)) {
-                // Perform additional destruction / ignition / minefield checks once per coordinate
-                checkInfantryDestruction(bCoords, distance, attacker, entitiesToExclude, vPhaseReport, game,
-                      gameManager);
-
+                // Perform additional ignition / minefield checks once per coordinate
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
                 gameManager.tryIgniteHex(bCoords, boardId, attacker.getId(), false, false, fireRoll, true, -1,
                       vPhaseReport);
@@ -271,19 +301,51 @@ public class AreaEffectHelper {
                 checkedAdditional.add(bCoords);
             }
         }
+        checkInfantryDestruction(center, boardId, height, attacker, entitiesToExclude, vPhaseReport, game,
+              gameManager);
         return entitiesToExclude;
     }
 
     /**
-     * Worker function that checks for and implements instant infantry destruction due to fuel air ordnance, if
-     * necessary. Checks all units at given coords.
+     * Worker function that checks for and implements instant infantry destruction due to fuel air ordnance, for every
+     * infantry unit on the board that the roll could destroy (IO:AE 3rd printing, pp.159-160: "all infantry units
+     * must also roll 2D6 and add their distance from the FAM's point of impact"). The overpressure check is distinct
+     * from the blast damage and also applies outside the damage radius; its distance counts 1 hex per full 5 levels of
+     * vertical distance from the point of impact. Units already destroyed by the blast do not roll.
+     *
+     * <p>Two forum rulings apply. The beyond-the-radius ruling (29 May 2020) was given on the earlier IO text, which
+     * the 3rd printing repeats unchanged, so it still matches. The vertical distance ruling (24 January 2026)
+     * postdates the 3rd printing and supersedes it where the book is silent.</p>
+     *
+     * @see <a href="https://www.battletech.com/forums/index.php/topic,68787.msg1595383.html#msg1595383">Ruling,
+     *       29 May 2020: the check applies beyond the damage radius</a>
+     * @see <a href="https://www.battletech.com/forums/index.php/topic,88492.msg2077870.html#msg2077870">Ruling,
+     *       24 January 2026: vertical distance, 5 levels to 1 hex</a>
      */
-    public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker,
-          Vector<Integer> alreadyHit,
-          Vector<Report> vPhaseReport, Game game, TWGameManager gameManager) {
-        for (Entity entity : game.getEntitiesVector(coords)) {
-            checkInfantryDestruction(entity, distFromCenter, attacker, alreadyHit, vPhaseReport, game, gameManager);
+    public static void checkInfantryDestruction(Coords center, int boardId, int height, Entity attacker,
+          Vector<Integer> alreadyHit, Vector<Report> vPhaseReport, Game game, TWGameManager gameManager) {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!(entity instanceof Infantry) || entity.isDestroyed() || entity.isDoomed()
+                  || (entity.getPosition() == null) || !entity.isOnBoard(boardId)) {
+                continue;
+            }
+            Hex hex = game.getHexOf(entity);
+            int entityHeight = ((hex == null) ? 0 : hex.getLevel()) + entity.getElevation();
+            int distance = center.distance(entity.getPosition())
+                  + (Math.abs(entityHeight - height) / LEVELS_PER_HEX_OF_FUEL_AIR_DISTANCE);
+            // 2d6 rolls at least 2: beyond this distance the unit cannot be destroyed, so it does not roll
+            if (distance + 2 <= infantryDestructionTarget(entity)) {
+                checkInfantryDestruction(entity, distance, attacker, alreadyHit, vPhaseReport, game, gameManager);
+            }
         }
+    }
+
+    /**
+     * @return the highest modified roll (2d6 + distance) at which fuel-air ordnance destroys this infantry unit:
+     *       conventional infantry on 9 or less, battle armor on less than 7 (IO:AE 3rd printing, p.160)
+     */
+    private static int infantryDestructionTarget(Entity entity) {
+        return (entity instanceof BattleArmor) ? 6 : 9;
     }
 
     /**
@@ -292,14 +354,10 @@ public class AreaEffectHelper {
      */
     public static void checkInfantryDestruction(Entity entity, int distFromCenter, Entity attacker,
           Vector<Integer> alreadyHit, Vector<Report> vPhaseReport, Game game, TWGameManager gameManager) {
-        int rollTarget;
-        if (entity instanceof BattleArmor) {
-            rollTarget = 7;
-        } else if (entity instanceof Infantry) {
-            rollTarget = 9;
-        } else {
+        if (!(entity instanceof Infantry)) {
             return;
         }
+        int rollTarget = infantryDestructionTarget(entity);
 
         Roll diceRoll = Compute.rollD6(2);
         int rollValue = diceRoll.getIntValue() + distFromCenter;
@@ -468,13 +526,9 @@ public class AreaEffectHelper {
             }
         }
 
-        // Conventional infantry take x2 in the open and
-        // an additional x2 damage from AE weapons in general but
-        // this is handled in main damageEntity() function now.
-        if (entity.isConventionalInfantry() && isFuelAirBomb) {
-            // if it's fuel-air, we take more damage!
-            hits *= 2;
-        }
+        // Conventional infantry take x2 in the open and an additional x2 damage from AE weapons in general; this is
+        // handled in the main damageEntity() function. Fuel-air adds nothing on top: its "twice the weapon's damage
+        // value (doubled again in clear or open terrain)" is that same doubling (IO:AE 3rd printing, p.159).
 
         boolean specialCaseFlechette = false;
 
@@ -496,7 +550,6 @@ public class AreaEffectHelper {
                     }
                 }
             }
-            // fuel-air bombs do an additional 2x damage to infantry
             else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
 
                 // wheeled and hover tanks take movement critical
@@ -607,6 +660,10 @@ public class AreaEffectHelper {
                 }
             }
         } else {
+            // Fuel-air damage to locations with BAR below 10 is multiplied by 1.5 and rounded up once over the whole
+            // attack (IO:AE 3rd printing, p.160), not per cluster: 20 damage in four 5-point clusters does 30, not 32.
+            int lowBarDamage = 0;
+            int lowBarDealt = 0;
             while (hits > 0) {
                 int damageToDeal = Math.min(cluster, hits);
                 HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
@@ -617,13 +674,17 @@ public class AreaEffectHelper {
                     // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less than 10.
                 } else if (isFuelAirBomb && !(entity instanceof Infantry)
                       && (entity.getBARRating(hit.getLocation()) < 10)) {
-                    damageToDeal = (int) Math.ceil(damageToDeal * 1.5);
-
-                    report = new Report(9991);
-                    report.indent(1);
-                    report.subject = killer.getId();
-                    report.newlines = 1;
-                    vPhaseReport.addElement(report);
+                    if (lowBarDamage == 0) {
+                        report = new Report(9991);
+                        report.indent(1);
+                        report.subject = subjectId;
+                        report.newlines = 1;
+                        vPhaseReport.addElement(report);
+                    }
+                    lowBarDamage += damageToDeal;
+                    int totalLowBarDamage = (int) Math.ceil(lowBarDamage * 1.5);
+                    damageToDeal = totalLowBarDamage - lowBarDealt;
+                    lowBarDealt = totalLowBarDamage;
                 }
                 vPhaseReport.addAll(gameManager.damageEntity(entity,
                       hit,

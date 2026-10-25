@@ -550,7 +550,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombTypeEnum.FAE_LARGE;
         bomb.blastRadius = 3;
         bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
-        bomb.shots = 2;
+        bomb.shots = 1;
         bomb.bv = 63;
         bomb.cost = 35000;
         bomb.tonnage = 1.0;

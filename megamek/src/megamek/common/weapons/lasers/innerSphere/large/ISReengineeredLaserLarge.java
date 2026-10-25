@@ -77,7 +77,8 @@ public class ISReengineeredLaserLarge extends ReengineeredLaserWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 83);
+        rulesRefs = rulesRefs(rulesRef(SourceBookCode.IO_AE, 83),
+                              rulesRef(SourceBookCode.CORE, 185));
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

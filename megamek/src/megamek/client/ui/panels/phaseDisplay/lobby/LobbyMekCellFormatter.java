@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 
 import jakarta.annotation.Nullable;
-import megamek.MegaMek;
+import megamek.SuiteOptions;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -411,7 +411,7 @@ class LobbyMekCellFormatter {
             // Assets have no weight; show what they are instead of a "0 Tons" reading.
             result.append(Messages.getString("ChatLounge.BFSAsset"));
         } else {
-            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+            NumberFormat formatter = NumberFormat.getNumberInstance(SuiteOptions.getNumberFormatLocale());
             result.append(formatter.format(entity.getWeight()));
             result.append(Messages.getString("ChatLounge.Tons"));
         }

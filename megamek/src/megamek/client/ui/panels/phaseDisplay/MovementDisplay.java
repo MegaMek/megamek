@@ -1443,9 +1443,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 int edgeMaxAffordable = edgeAvailableMP / edgeClimbCostPerLevel;
                 int edgeMaxDescend = Math.min(levelDiff, edgeMaxAffordable);
                 int edgeBasePiloting = edgeMek.getCrew().getPiloting();
-                int edgeArms = ClimbingHelper.countClimbableArms(edgeMek);
-                int edgePsrTarget = edgeBasePiloting + ClimbingHelper.CLIMBING_PSR_MODIFIER
-                                    + ((edgeArms == 1) ? ClimbingHelper.ONE_ARM_PSR_MODIFIER : 0);
+                int edgePsrTarget = edgeBasePiloting + ClimbingHelper.getClimbingRollModifier(edgeMek);
                 for (int i = 1; i <= edgeMaxDescend; i++) {
                     int cost = i * edgeClimbCostPerLevel;
                     String baseLabel = (i == 1)
@@ -1467,15 +1465,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                                                ClimbingChoiceDialog.ClimbingActionType.DROP));
                 }
 
-                // Move as Calculated — commit whatever the path planner already drew (a
-                // routed walk-around for the routed case, the direct leaping step for the
-                // direct case). Lets the player accept the visible path without reading
-                // it as a climb. Distinct from Cancel: this option auto-commits via ready();
-                // Cancel leaves the dialog dismissed so the player can keep editing.
-                descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
-                                                                           Messages.getString(
-                                                                                   "MovementDisplay.ClimbingDialog.walkAsCalculatedOption"),
-                                                                           ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED));
+                // Move as Calculated — commit the routed walk-around the path planner already
+                // drew. Lets the player accept the visible path without reading it as a climb.
+                // Distinct from Cancel: this option auto-commits via ready(); Cancel leaves the
+                // dialog dismissed so the player can keep editing.
+                // Only offered for the routed walk-around. A direct step off the edge only
+                // repeats an option above: with climb mode on the server reads it as a dangle
+                // (refused, losing the turn, for a Mek without two climbing hands), and with
+                // climb mode off it is a leap, the same as the Drop option.
+                if (isRoutedAround) {
+                    descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
+                                                                               Messages.getString(
+                                                                                       "MovementDisplay.ClimbingDialog.walkAsCalculatedOption"),
+                                                                               ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED));
+                } else {
+                    LOGGER.debug("[Climbing] {}: Move as Calculated not offered - the plotted path steps "
+                                 + "straight off the edge, which the server would treat as a dangle",
+                                 edgeMek.getDisplayName());
+                }
 
                 // Cancel - the unit is at the cliff top, not yet on the face,
                 // so "Cling" is the wrong mental model. This option just aborts the descent.
@@ -1539,10 +1546,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 } else if (chosen != null
                            && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED) {
-                    // Commit the existing plotted path as-is — the routed walk-around for
-                    // the routed case, the direct leaping step for the direct case. The
-                    // path is already attached to cmd; just commit it the same way the
-                    // other branches do.
+                    // Commit the existing plotted path as-is — the routed walk-around (the
+                    // option is only offered for that case). The path is already attached to
+                    // cmd; just commit it the same way the other branches do.
                     LOGGER.debug("[CLIMB-TRACE] Move as Calculated chosen: routed={}, "
                                  + "cmd.length={}", isRoutedAround, cmd.length());
                     clientgui.addToast(ToastLevel.INFO,
@@ -4493,10 +4499,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Calculate PSR info for climbing
         int basePiloting = mek.getCrew().getPiloting();
-        int climbableArms = ClimbingHelper.countClimbableArms(mek);
-        int climbPsrMod = ClimbingHelper.CLIMBING_PSR_MODIFIER
-                          + ((climbableArms == 1) ? ClimbingHelper.ONE_ARM_PSR_MODIFIER : 0);
-        int climbPsrTarget = basePiloting + climbPsrMod;
+        int climbPsrTarget = basePiloting + ClimbingHelper.getClimbingRollModifier(mek);
 
         // Build climbing options
         List<ClimbingChoiceDialog.ClimbingOption> climbingOptions = new ArrayList<>();

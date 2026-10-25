@@ -3505,13 +3505,31 @@ public class MoveStep implements Serializable {
                                         && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                                         && (movementType != EntityMovementType.MOVE_VTOL_RUN)
                                         && (movementType != EntityMovementType.MOVE_VTOL_SPRINT);
-            boolean isClimbingMove = isMek
+            boolean canUseClimbing = isMek
                                      && climbMode
                                      && isWalkingMovement
-                                     && (isNewClimb || isContinuedClimb)
                                      && game.getOptions()
                                             .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
                                      && ClimbingHelper.canClimb(entity, prevStep.isProne());
+            boolean isClimbingMove = canUseClimbing && (isNewClimb || isContinuedClimb);
+            // Stepping off a drop too high to walk down (Leaping returned above) is an edge descent. The descent
+            // dialog and the server settle what it really costs, so price it as one level of climbing rather than
+            // as a walk. One level, the cheapest climb-down, costs no more than the old walk price of a 3+ level
+            // drop, so no step that showed the dialog before is pushed past walking MP now. Like a leap,
+            // it replaces the hex and terrain cost: the server bills an edge descent only per level descended.
+            boolean isCliffDrop = (nDestEl < nSrcEl)
+                                  && (deltaElevation > Game.rulesManager.getRulesTerrain()
+                                                                        .getMaxElevationChangeAllowed(srcHex,
+                                                                                                      destHex,
+                                                                                                      entity.getMaxElevationChange()));
+            boolean isEdgeDescent = canUseClimbing && isCliffDrop && !isClimbing;
+            if (isEdgeDescent) {
+                int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
+                mp = climbCostPerLevel;
+                LOGGER.debug("[Climbing] calcMovementCostFor: {}-level edge descent priced as one climbing level "
+                             + "({} MP); the descent dialog sets the real cost", deltaElevation, climbCostPerLevel);
+                return;
+            }
             if (isClimbingMove) {
                 int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
                 // Use player-chosen levels if set, otherwise full elevation delta

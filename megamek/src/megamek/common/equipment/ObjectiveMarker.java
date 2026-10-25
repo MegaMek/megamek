@@ -233,6 +233,42 @@ public class ObjectiveMarker extends GroundObject {
         this.falseObjective = falseObjective;
     }
 
+    /**
+     * Potential and False Objectives cannot be used together (RAW): a candidate waiting to be confirmed by a scan is
+     * not also a decoy. The scenario reader, the properties editor and the server all ask this one question, so a
+     * marker the editor would refuse is refused everywhere.
+     *
+     * @return {@code true} if this marker is flagged both Potential and False
+     */
+    public boolean hasPotentialAndFalseVariants() {
+        return potential && falseObjective;
+    }
+
+    /**
+     * A Scan point cannot be Potential: it is already read with sensors, so the one scan that would confirm it would
+     * also read it, and the flag would add nothing.
+     *
+     * @param preset the point's scoring scheme
+     *
+     * @return {@code true} if a point with this scheme may be Potential
+     */
+    public static boolean canBePotential(ObjectiveScoringScheme.SchemePreset preset) {
+        return preset != ObjectiveScoringScheme.SchemePreset.SCAN;
+    }
+
+    /**
+     * Only a Raid point can be Mobile. The other held schemes are won by a zone on the map, and scoring only reads
+     * objectives lying on the ground, so a zone carried off in a Mek's hand would stop scoring altogether. Raid asks who
+     * has the objective when the game ends, which a carried objective answers.
+     *
+     * @param preset the point's scoring scheme
+     *
+     * @return {@code true} if a point with this scheme may be Mobile
+     */
+    public static boolean canBeMobile(ObjectiveScoringScheme.SchemePreset preset) {
+        return preset == ObjectiveScoringScheme.SchemePreset.RAID;
+    }
+
     /** @return {@code true} if this is a Fragile Objective that risks destruction on qualifying events */
     public boolean isFragile() {
         return fragile;
@@ -291,6 +327,40 @@ public class ObjectiveMarker extends GroundObject {
 
     public void setDestructionProcessed(boolean destructionProcessed) {
         this.destructionProcessed = destructionProcessed;
+    }
+
+    /**
+     * A carried objective is never hit by attacks on its carrier, unlike ordinary cargo (TW p.261). Damage to the
+     * carrier only calls for the forced-drop roll (Core Standard Missions, Mobile Objectives), and only a Fragile
+     * objective risks destruction, from the events listed under Fragile Objectives.
+     *
+     * @return {@link CarriedObjectDamageAllocation#NEVER}
+     */
+    @Override
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.NEVER;
+    }
+
+    /**
+     * Unlike cargo (TW p.261), a carried objective ties up only the arm holding it: "That arm cannot be used to make
+     * ranged or physical attacks for as long as the objective is carried" (Core Standard Missions, Mobile Objectives).
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean blocksTorsoWeaponsWhenCarried() {
+        return false;
+    }
+
+    /**
+     * Unlike cargo (TW p.261), picking up or setting down an objective does not stop the Mek attacking that turn; the
+     * Mobile Objectives rule only rules out the carrying arm, and only while the objective is carried.
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean blocksAttacksOnPickupOrDropTurn() {
+        return false;
     }
 
     /**
@@ -384,17 +454,47 @@ public class ObjectiveMarker extends GroundObject {
 
     // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES - verbatim quote from the printed Objectives rules
     /**
+     * The one rule the client's pickup option and the server's pickup step share: only a Mek carries an objective,
+     * and only one at a time (RAW: "one per 'Mech"). A Mek with two free hands could otherwise lift two, since an
+     * objective weighs nothing.
+     *
+     * @param unit the unit that would pick up an objective
+     *
+     * @return {@code true} if the unit may pick one up
+     */
+    public static boolean canCarryAnother(Entity unit) {
+        if (!(unit instanceof Mek)) {
+            return false;
+        }
+        for (ICarryable carriedObject : unit.getDistinctCarriedObjects()) {
+            if (carriedObject instanceof ObjectiveMarker) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES - verbatim quote from the printed Objectives rules
+    /**
      * Only Meks can pick up Mobile Objectives (RAW: "any standing mobile 'Mech with at least one functional hand
-     * actuator or claw"); pickup attempts by other unit types are refused here as the server-side gate.
+     * actuator or claw"), one at a time, and only an intact Mobile one; other pickup attempts are refused here as
+     * the server-side gate.
      */
     @Override
     public void processPickupStep(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
           Entity entityPickingUpTarget, EntityMovementType overallMoveType) {
-        if (!(entityPickingUpTarget instanceof Mek)) {
-            LOGGER.debug("[Objective] {} cannot pick up {}: only Meks can carry Mobile Objectives",
+        // the server's move-step handling checks only weight, and a flag weighs nothing
+        if (!canBePickedUp(false)) {
+            LOGGER.info("[Objective] {} cannot pick up {}: it is {}", entityPickingUpTarget.getShortName(),
+                  generalName(), destroyed ? "destroyed" : "not a Mobile objective");
+            return;
+        }
+        if (!canCarryAnother(entityPickingUpTarget)) {
+            LOGGER.info("[Objective] {} cannot pick up {}: only a Mek can carry an objective, and only one at a time",
                   entityPickingUpTarget.getShortName(), generalName());
             return;
         }
+        LOGGER.info("[Objective] {} picks up {}", entityPickingUpTarget.getShortName(), generalName());
         super.processPickupStep(step, cargoPickupLocation, gameManager, entityPickingUpTarget, overallMoveType);
     }
 

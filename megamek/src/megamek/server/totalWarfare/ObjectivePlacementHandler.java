@@ -44,9 +44,11 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.event.GameToastEvent;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryPointTracker;
 import megamek.server.victory.VictoryPointVictory;
@@ -166,6 +168,7 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         ObjectiveMarker replacement = null;
         if (payload instanceof ObjectiveMarker sentMarker) {
             replacement = sentMarker;
+            dropForbiddenVariants(sentMarker, coords, sender.getName());
         } else if (payload != null) {
             VICTORY_HEX_LOGGER.warn("[Objective] Dropping an objective edit from {}: the payload is not an objective",
                   sender.getName());
@@ -185,11 +188,118 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         } else {
             change = Messages.getString("ObjectiveEdit.removed");
         }
-        VICTORY_HEX_LOGGER.info("[Objective] Game master {} {} at {}, {} marker(s) replaced", sender.getName(),
-              change, coords.getBoardNum(), replacedCount);
+        VICTORY_HEX_LOGGER.info("[Objective] Game master {} {} at {}, {} marker(s) replaced, variants: {}",
+              sender.getName(), change, coords.getBoardNum(), replacedCount, describeVariants(replacement));
         gameManager.sendGroundObjectUpdate();
         gameManager.sendServerChat(Messages.getString("ObjectiveEdit.announce", sender.getName(), change,
               coords.getBoardNum()));
+    }
+
+    /**
+     * Checks the control points a player sends (the end of their Victory Setup turn, or a Deploy Minefields
+     * placement) and logs what the server stores. Any variant the rules forbid is dropped (see
+     * {@link #dropForbiddenVariants}): the properties editor never offers one, so this only catches an out-of-date or
+     * altered client, but the stored board must still never hold a combination the rules forbid. For the same reason a
+     * candidate arriving already confirmed loses the confirmation (see {@link #clearPreGameConfirmation}). The one
+     * summary line (every point, where it is and its variants) lets a playtest compare what was ticked in the editor
+     * with what the server kept.
+     *
+     * @param groundObjects the ground objects the player sent
+     * @param connectionId  the sending connection, for the log
+     */
+    void checkReceivedVariants(Map<Coords, List<ICarryable>> groundObjects, int connectionId) {
+        Player sender = getGame().getPlayer(connectionId);
+        String senderName = (sender == null) ? ("connection " + connectionId) : sender.getName();
+        List<String> storedPoints = new ArrayList<>();
+        for (Map.Entry<Coords, List<ICarryable>> hexObjects : groundObjects.entrySet()) {
+            for (ICarryable groundObject : hexObjects.getValue()) {
+                if (groundObject instanceof ObjectiveMarker marker) {
+                    dropForbiddenVariants(marker, hexObjects.getKey(), senderName);
+                    clearPreGameConfirmation(marker, hexObjects.getKey(), senderName);
+                    storedPoints.add(marker.generalName() + " at " + hexObjects.getKey().getBoardNum()
+                          + " (variants: " + describeVariants(marker) + ")");
+                }
+            }
+        }
+        VICTORY_HEX_LOGGER.info("[Objective] Ground objects from {} in the {} phase: {} control point(s) stored {}",
+              senderName, getGame().getPhase(), storedPoints.size(), storedPoints);
+    }
+
+    /**
+     * Clears the confirmation of a candidate a player sent before the game began. This packet is only accepted in the
+     * Victory Setup and Deploy Minefields phases, before any scan can have happened, and neither the editor nor the
+     * scenario reader ever confirms a candidate, so a confirmed one here comes from an out-of-date or altered client.
+     * Kept, it would score without the scan that is the point of a Potential objective. A game master's in-game edit
+     * is not checked: it may carry a candidate a scan really did confirm.
+     *
+     * @param marker     the marker a client sent
+     * @param position   where it is, for the log
+     * @param senderName who sent it, for the log
+     */
+    private static void clearPreGameConfirmation(ObjectiveMarker marker, Coords position, String senderName) {
+        if (!marker.isConfirmed()) {
+            return;
+        }
+        marker.setConfirmed(false);
+        VICTORY_HEX_LOGGER.warn("[Objective] {} at {} from {} arrived confirmed before the game began, which only a "
+              + "scan can do - the confirmation was cleared", marker.generalName(), position.getBoardNum(), senderName);
+    }
+
+    /**
+     * @param marker the marker to describe, or {@code null} when a game master removed the point
+     *
+     * @return the marker's variants for the log, such as {@code potential, mobile}, or {@code none}
+     */
+    static String describeVariants(@Nullable ObjectiveMarker marker) {
+        if (marker == null) {
+            return "none";
+        }
+        List<String> variants = new ArrayList<>();
+        if (marker.isPotential()) {
+            variants.add(marker.isConfirmed() ? "potential (confirmed)" : "potential");
+        }
+        if (marker.isFalseObjective()) {
+            variants.add("false");
+        }
+        if (marker.isFragile()) {
+            variants.add("fragile");
+        }
+        if (marker.isMobile()) {
+            variants.add("mobile");
+        }
+        return variants.isEmpty() ? "none" : String.join(", ", variants);
+    }
+
+    /**
+     * Clears the variants a marker may not carry: Potential on a Scan point and Mobile on anything but a Raid point,
+     * then False on a marker that is still also Potential. The scheme rules go first, so a Scan point sent as Potential
+     * and False keeps False, the flag it could have. Between Potential and False, Potential is kept because it is the
+     * safe reading: an unconfirmed candidate cannot score until a scan confirms it, so nobody gains points from the
+     * correction.
+     *
+     * @param marker     the marker a client sent
+     * @param position   where it is, for the log
+     * @param senderName who sent it, for the log
+     */
+    private static void dropForbiddenVariants(ObjectiveMarker marker, Coords position, String senderName) {
+        SchemePreset preset = marker.getScoringScheme().getPreset();
+        if (marker.isPotential() && !ObjectiveMarker.canBePotential(preset)) {
+            marker.setPotential(false);
+            VICTORY_HEX_LOGGER.warn("[Objective] {} at {} from {} was a Potential {} point, which the rules forbid - "
+                  + "the Potential flag was dropped", marker.generalName(), position.getBoardNum(), senderName, preset);
+        }
+        if (marker.isMobile() && !ObjectiveMarker.canBeMobile(preset)) {
+            marker.setMobile(false);
+            VICTORY_HEX_LOGGER.warn("[Objective] {} at {} from {} was a Mobile {} point, but only a Raid point can be "
+                  + "Mobile - the Mobile flag was dropped", marker.generalName(), position.getBoardNum(), senderName,
+                  preset);
+        }
+        if (marker.hasPotentialAndFalseVariants()) {
+            marker.setFalseObjective(false);
+            VICTORY_HEX_LOGGER.warn("[Objective] {} at {} from {} was flagged both Potential and False, which the "
+                  + "rules forbid - the False flag was dropped", marker.generalName(), position.getBoardNum(),
+                  senderName);
+        }
     }
 
     /**
@@ -204,32 +314,56 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         int returnedCount = 0;
         for (Map.Entry<Coords, List<ICarryable>> hexObjects : getGame().getGroundObjects().entrySet()) {
             for (ICarryable groundObject : hexObjects.getValue()) {
-                if (!(groundObject instanceof ObjectiveMarker marker)) {
+                if ((groundObject instanceof ObjectiveMarker marker) && returnToLobby(marker, hexObjects.getKey())) {
+                    returnedCount++;
+                }
+            }
+        }
+        // a Mobile objective still in a Mek's hand would otherwise start the next game in it
+        for (Entity carrier : getGame().getEntitiesVector()) {
+            for (ICarryable carriedObject : List.copyOf(carrier.getDistinctCarriedObjects())) {
+                if (!(carriedObject instanceof ObjectiveMarker marker)) {
                     continue;
                 }
-                Player owner = getGame().getPlayer(marker.getOwnerId());
-                if (owner == null) {
-                    VICTORY_HEX_LOGGER.warn("[Objective] {} at {} has no owner (player ID {}) - dropped on the reset "
-                          + "to the lobby", marker.generalName(), hexObjects.getKey(), marker.getOwnerId());
-                    continue;
+                carrier.dropCarriedObject(marker, false);
+                if ((carrier.getPosition() != null) && returnToLobby(marker, carrier.getPosition())) {
+                    returnedCount++;
                 }
-                marker.setLobbyPosition(hexObjects.getKey());
-                // a fresh game starts with fresh counters - the setup values on the scheme remain - and
-                // with nobody holding the point. The controller lives on the marker, not the scheme, and
-                // it was being carried across the reset: a lobby save then preserved it, and the next
-                // game began with the zone already "held" before anyone had stood in it
-                marker.getScoringScheme().resetState();
-                marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
-                owner.getGroundObjectsToPlace().add(marker);
-                returnedCount++;
-                VICTORY_HEX_LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",
-                      marker.generalName(), hexObjects.getKey(), owner);
             }
         }
         if (returnedCount > 0) {
             VICTORY_HEX_LOGGER.info("[Objective] Returned {} objective marker(s) to the lobby on the game reset",
                   returnedCount);
         }
+    }
+
+    /**
+     * Puts one marker back in its owner's lobby designations, as it stood at the given hex, with the state of the
+     * game it leaves cleared.
+     *
+     * @return {@code true} if it was returned; {@code false} when its owner has left the game
+     */
+    private boolean returnToLobby(ObjectiveMarker marker, Coords position) {
+        Player owner = getGame().getPlayer(marker.getOwnerId());
+        if (owner == null) {
+            VICTORY_HEX_LOGGER.warn("[Objective] {} at {} has no owner (player ID {}) - dropped on the reset "
+                  + "to the lobby", marker.generalName(), position, marker.getOwnerId());
+            return false;
+        }
+        marker.setLobbyPosition(position);
+        // a fresh game starts with fresh counters - the setup values on the scheme remain - and
+        // with nobody holding the point. The controller lives on the marker, not the scheme, and
+        // it was being carried across the reset: a lobby save then preserved it, and the next
+        // game began with the zone already "held" before anyone had stood in it
+        marker.getScoringScheme().resetState();
+        marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
+        // the same goes for a point destroyed in the game being left: the next game gets it whole
+        marker.setDestroyed(false);
+        marker.setDestructionProcessed(false);
+        owner.getGroundObjectsToPlace().add(marker);
+        VICTORY_HEX_LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",
+              marker.generalName(), position, owner);
+        return true;
     }
 
     /**

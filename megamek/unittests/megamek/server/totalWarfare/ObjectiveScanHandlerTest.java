@@ -55,6 +55,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.BankedScan;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
@@ -660,6 +661,154 @@ class ObjectiveScanHandlerTest {
     }
 
     // --- fixture ---
+
+    // --- objective candidates (Potential objectives) ---
+
+    @Test
+    void testAScanConfirmsAnEnemyCandidateWhateverItsScheme() {
+        ObjectiveMarker candidate = candidateOf(bob, ObjectiveScoringScheme.hold(3, HoldCounting.CONSECUTIVE));
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        assertTrue(candidate.isConfirmed(), "a Hold candidate the other side placed is confirmed");
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_CANDIDATE_CONFIRMED));
+        assertFalse(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST),
+              "the confirmation is what the scan found");
+        verify(gameManager).sendGroundObjectUpdate();
+        ScanRecord record = VictoryPointTracker.getTracker(game).getScanLog().getFirst();
+        assertEquals(ScanOutcome.SUCCEEDED, record.outcome());
+        assertEquals("Depot", record.targetName());
+    }
+
+    @Test
+    void testAScanConfirmsTheSidesOwnCandidate() {
+        ObjectiveMarker candidate = candidateOf(alice, ObjectiveScoringScheme.standard());
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        assertTrue(candidate.isConfirmed());
+    }
+
+    @Test
+    void testAFailedScanLeavesTheCandidateUnconfirmed() {
+        ObjectiveMarker candidate = candidateOf(bob, ObjectiveScoringScheme.standard());
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+        handler.nextRoll = 2;
+
+        handler.resolveScans();
+
+        assertFalse(candidate.isConfirmed());
+        assertFalse(reportIds().contains(ObjectiveScanHandler.REPORT_CANDIDATE_CONFIRMED));
+        verify(gameManager, never()).sendGroundObjectUpdate();
+    }
+
+    @Test
+    void testAScanOfAnotherHexLeavesTheCandidateUnconfirmed() {
+        ObjectiveMarker candidate = candidateOf(bob, ObjectiveScoringScheme.standard());
+        when(game.getGroundObjects(EMPTY_HEX)).thenReturn(List.of());
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, EMPTY_HEX);
+
+        handler.resolveScans();
+
+        assertFalse(candidate.isConfirmed());
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST));
+    }
+
+    @Test
+    void testAnAlreadyConfirmedCandidateIsNotConfirmedAgain() {
+        ObjectiveMarker candidate = candidateOf(bob, ObjectiveScoringScheme.standard());
+        candidate.setConfirmed(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        assertFalse(reportIds().contains(ObjectiveScanHandler.REPORT_CANDIDATE_CONFIRMED),
+              "nothing new to announce");
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST));
+        verify(gameManager, never()).sendGroundObjectUpdate();
+    }
+
+    @Test
+    void testOnlyTheCandidateInAHexWithTwoObjectivesIsConfirmed() {
+        ObjectiveMarker plainPoint = new ObjectiveMarker();
+        plainPoint.setName("Ridge");
+        plainPoint.setOwnerId(bob.getId());
+        ObjectiveMarker candidate = new ObjectiveMarker();
+        candidate.setName("Bunker");
+        candidate.setOwnerId(bob.getId());
+        candidate.setPotential(true);
+        when(game.getGroundObjects(POINT_HEX)).thenReturn(List.of(plainPoint, candidate));
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        assertTrue(candidate.isConfirmed());
+        assertFalse(plainPoint.isConfirmed(), "the point that was never a candidate is left alone");
+        assertFalse(plainPoint.isPotential());
+    }
+
+    @Test
+    void testAScanExposesAnEnemyDecoy() {
+        ObjectiveMarker decoy = candidateOf(bob, ObjectiveScoringScheme.standard());
+        decoy.setPotential(false);
+        decoy.setFalseObjective(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        verify(game).removeGroundObject(POINT_HEX, decoy);
+        verify(gameManager).sendGroundObjectUpdate();
+        assertTrue(reportIds().contains(ObjectiveDecoyHandler.REPORT_DECOY_SCANNED));
+        assertFalse(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST));
+    }
+
+    @Test
+    void testScanningYourOwnDecoyScanPointExposesItAndBanksNothing() {
+        ObjectiveMarker decoy = scanPointOf(alice, ScanPayout.ON_EXIT);
+        decoy.setFalseObjective(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        verify(game).removeGroundObject(POINT_HEX, decoy);
+        assertTrue(scout.getBankedScans().isEmpty(), "a decoy gives no reading");
+    }
+
+    @Test
+    void testAFailedScanLeavesTheDecoyHidden() {
+        ObjectiveMarker decoy = candidateOf(bob, ObjectiveScoringScheme.standard());
+        decoy.setPotential(false);
+        decoy.setFalseObjective(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+        handler.nextRoll = 2;
+
+        handler.resolveScans();
+
+        verify(game, never()).removeGroundObject(POINT_HEX, decoy);
+    }
+
+    /** A Potential objective of the given owner and scheme at the point hex, not yet confirmed. */
+    private ObjectiveMarker candidateOf(Player owner, ObjectiveScoringScheme scheme) {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setName("Depot");
+        marker.setOwnerId(owner.getId());
+        marker.setVictoryPointValue(POINT_VALUE);
+        marker.setScoringScheme(scheme);
+        marker.setPotential(true);
+        when(game.getGroundObjects(POINT_HEX)).thenReturn(List.of(marker));
+        return marker;
+    }
 
     private ObjectiveMarker scanPointOf(Player owner, ScanPayout payout) {
         ObjectiveMarker marker = new ObjectiveMarker();

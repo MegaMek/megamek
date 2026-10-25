@@ -60,6 +60,8 @@ import megamek.common.event.GameToastEvent;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Mek;
 import megamek.server.victory.VictoryPointTracker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -223,6 +225,39 @@ class ObjectivePlacementHandlerTest {
         // with the zone already held before anyone has stood in it
         assertEquals(ObjectiveMarker.NO_CONTROLLER, marker.getControllingTeam());
         assertEquals(ObjectiveMarker.NO_CONTROLLER, marker.getControllingPlayerId());
+    }
+
+    @Test
+    void testResetGivesBackADestroyedPointWhole() {
+        when(game.getPlayer(alice.getId())).thenReturn(alice);
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        ObjectiveMarker marker = markerFor(alice, null);
+        marker.setDestroyed(true);
+        marker.setDestructionProcessed(true);
+        groundMap.put(new Coords(2, 2), new ArrayList<>(List.of(marker)));
+
+        handler.returnObjectivesToLobby();
+
+        assertFalse(marker.isDestroyed(), "the next game starts with the point intact");
+        assertFalse(marker.isDestructionProcessed());
+    }
+
+    @Test
+    void testResetTakesACarriedObjectiveFromItsCarrierBackToTheLobby() {
+        when(game.getPlayer(alice.getId())).thenReturn(alice);
+        installRealGroundObjectMap();
+        ObjectiveMarker flag = markerFor(alice, null);
+        flag.setMobile(true);
+        BipedMek carrier = new BipedMek();
+        carrier.setPosition(new Coords(6, 6));
+        carrier.pickupCarryableObject(flag, Mek.LOC_RIGHT_ARM);
+        when(game.getEntitiesVector()).thenReturn(List.of(carrier));
+
+        handler.returnObjectivesToLobby();
+
+        assertTrue(carrier.getDistinctCarriedObjects().isEmpty(), "the next game must not start with it in hand");
+        assertTrue(alice.getGroundObjectsToPlace().contains(flag));
+        assertEquals(new Coords(6, 6), flag.getLobbyPosition());
     }
 
     @Test

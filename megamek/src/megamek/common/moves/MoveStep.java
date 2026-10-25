@@ -3638,7 +3638,7 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * Returns {@code true} if this step leaves the hex the unit began its turn in. A TacOps edge descent (TO:AR p.20)
+     * Returns {@code true} if this step starts from the hex the unit began its turn in. A TacOps edge descent (TO:AR p.20)
      * can only start there: that is the only case the descent dialog and the server's edge dangle and climb-down
      * handling recognise. Without this check, a Mek that walks to a cliff edge and then steps off is moved to the
      * bottom as an ordinary walk.

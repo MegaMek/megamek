@@ -246,6 +246,36 @@ class ObjectivePlacementHandlerTest {
     }
 
     @Test
+    void testTheClientsAreSentTheScenarioPointsAlreadyMarked() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        ObjectiveMarker scenarioMarker = markerFor(bob, null);
+        groundMap.put(new Coords(3, 3), new ArrayList<>(List.of(scenarioMarker)));
+        List<Boolean> markedWhenSent = new ArrayList<>();
+        doAnswer(invocation -> {
+            markedWhenSent.add(scenarioMarker.isPresentAtGameStart());
+            return null;
+        }).when(gameManager).sendGroundObjectUpdate();
+
+        handler.placeLobbyObjectives();
+
+        // a Victory Setup Done sends the client's copy of the board back, so an unmarked copy would undo the mark
+        assertEquals(List.of(true), markedWhenSent);
+    }
+
+    @Test
+    void testMarkingAPointStillToPlaceUpdatesThePlayers() {
+        installRealGroundObjectMap();
+        boardContainingEverything();
+        alice.getGroundObjectsToPlace().add(markerFor(alice, null));
+
+        handler.placeLobbyObjectives();
+
+        verify(gameManager).transmitAllPlayerUpdates();
+        verify(gameManager, never()).sendGroundObjectUpdate();
+    }
+
+    @Test
     void testResetClearsAPointPlacedDuringTheGameAndKeepsTheScenarioPoint() {
         Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
         boardContainingEverything();

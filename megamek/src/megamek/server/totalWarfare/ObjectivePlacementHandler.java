@@ -78,7 +78,6 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         warnWhenVictoryPointsCannotResolve();
         applyStartingVictoryPoints();
         Board board = getGame().getBoard();
-        boolean anyPlaced = false;
         for (Player player : getGame().getPlayersList()) {
             List<ICarryable> groundObjectsToPlace = player.getGroundObjectsToPlace();
             for (ICarryable groundObject : List.copyOf(groundObjectsToPlace)) {
@@ -100,15 +99,11 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                 groundObjectsToPlace.remove(marker);
                 marker.setLobbyPosition(null);
                 getGame().placeGroundObject(position, marker);
-                anyPlaced = true;
                 VICTORY_HEX_LOGGER.info(
                       "[Objective] Placed lobby objective {} (owner ID {}, radius {}, {} scheme) at {}",
                       marker.generalName(), marker.getOwnerId(), marker.getControlRadius(),
                       marker.getScoringScheme().getPreset(), position);
             }
-        }
-        if (anyPlaced) {
-            gameManager.sendGroundObjectUpdate();
         }
         markObjectivesPresentAtGameStart();
         warnWhenObjectivesAreOnTheBoardButSwitchedOff();
@@ -116,19 +111,32 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
 
     /**
      * Marks every objective that exists as the game starts - on the board, or still waiting in a player's to-place
-     * list - as one that a reset to the lobby keeps. Anything placed after this point, in the Victory Setup phase
-     * or by a game master, is left unmarked and cleared by the reset.
+     * list - as one that a reset to the lobby keeps, then sends the marked objectives to every client. Anything
+     * placed after this point, in the Victory Setup phase or by a game master, is left unmarked and cleared by the
+     * reset.
+     * <p>
+     * The sending matters as much as the marking: a player's Done in the Victory Setup phase, and a placement in the
+     * Deploy Minefields phase, send the server that client's copy of the board, which replaces the server's. A
+     * client still holding unmarked copies would undo the marking, and the next reset would clear a scenario's
+     * points.
      */
     private void markObjectivesPresentAtGameStart() {
-        int markedCount = 0;
+        int markedOnBoardCount = 0;
         for (List<ICarryable> hexObjects : getGame().getGroundObjects().values()) {
-            markedCount += markObjectives(hexObjects);
+            markedOnBoardCount += markObjectives(hexObjects);
         }
+        int markedToPlaceCount = 0;
         for (Player player : getGame().getPlayersList()) {
-            markedCount += markObjectives(player.getGroundObjectsToPlace());
+            markedToPlaceCount += markObjectives(player.getGroundObjectsToPlace());
         }
-        VICTORY_HEX_LOGGER.debug("[Objective] {} objective marker(s) exist at the game start and will survive a "
-              + "reset to the lobby", markedCount);
+        if (markedOnBoardCount > 0) {
+            gameManager.sendGroundObjectUpdate();
+        }
+        if (markedToPlaceCount > 0) {
+            gameManager.transmitAllPlayerUpdates();
+        }
+        VICTORY_HEX_LOGGER.debug("[Objective] {} objective marker(s) on the board and {} still to place exist at the "
+              + "game start and will survive a reset to the lobby", markedOnBoardCount, markedToPlaceCount);
     }
 
     /**

@@ -54,13 +54,15 @@ import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
-import megamek.common.units.Entity;
-import megamek.common.game.InGameObject;
-import megamek.common.loaders.MapSettings;
 import megamek.common.Player;
+import megamek.common.force.Force;
+import megamek.common.game.InGameObject;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -70,10 +72,11 @@ public class MekTableModel extends AbstractTableModel {
 
     // region Variable Declarations
     private enum COLS {
-        UNIT, PILOT, PLAYER, BV
+        UNIT, PILOT, PLAYER, FORMATION, BV
     }
 
     public static final int COL_UNIT = COLS.UNIT.ordinal();
+    public static final int COL_FORMATION = COLS.FORMATION.ordinal();
     public static final int COL_PILOT = COLS.PILOT.ordinal();
     public static final int COL_PLAYER = COLS.PLAYER.ordinal();
     public static final int COL_BV = COLS.BV.ordinal();
@@ -113,6 +116,15 @@ public class MekTableModel extends AbstractTableModel {
     private final ArrayList<String> pilotTooltips = new ArrayList<>();
     /** The displayed contents of the Player column. */
     private final ArrayList<String> playerCells = new ArrayList<>();
+    /** The displayed contents of the Formation column. */
+    private final ArrayList<String> formationCells = new ArrayList<>();
+    /** The tooltips of the Formation column: the whole formation chain with full names. */
+    private final ArrayList<String> formationTooltips = new ArrayList<>();
+    /**
+     * The formation of the row last added, so a row in the same formation shows only its name; {@code null} when that
+     * row showed no formation.
+     */
+    private Integer previousFormationId;
     // endregion Variable Declarations
 
     // region Constructors
@@ -147,6 +159,9 @@ public class MekTableModel extends AbstractTableModel {
         } else if (col == COLS.UNIT.ordinal()) {
             return unitCells.get(row);
 
+        } else if (col == COLS.FORMATION.ordinal()) {
+            return formationCells.get(row);
+
         } else {
             return "";
         }
@@ -166,6 +181,9 @@ public class MekTableModel extends AbstractTableModel {
         unitCells.clear();
         pilotCells.clear();
         playerCells.clear();
+        formationCells.clear();
+        formationTooltips.clear();
+        previousFormationId = null;
         fireTableDataChanged();
     }
 
@@ -179,6 +197,9 @@ public class MekTableModel extends AbstractTableModel {
         playerCells.clear();
         unitCells.clear();
         pilotCells.clear();
+        formationCells.clear();
+        formationTooltips.clear();
+        previousFormationId = null;
         for (InGameObject entity : entities) {
             addCellData(entity);
         }
@@ -228,6 +249,30 @@ public class MekTableModel extends AbstractTableModel {
               .booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         unitCells.add(LobbyMekCellFormatter.unitTableEntry(entity, chatLounge, false, chatLounge.isCompact()));
         pilotCells.add(LobbyMekCellFormatter.pilotTableEntry(entity, chatLounge.isCompact(), hideEntity, rpgSkills));
+        addFormationCell(entity, hideEntity);
+    }
+
+    /**
+     * Adds the Formation column content for the given entity, the latest row. While "Group by Formation" is on, a row
+     * in the same formation as the row above shows only the formation's name; otherwise rows only sit together by
+     * chance and each shows its whole chain.
+     */
+    private void addFormationCell(InGameObject entity, boolean hideEntity) {
+        if (hideEntity || !(entity instanceof Entity unit)) {
+            formationCells.add("");
+            formationTooltips.add(null);
+            previousFormationId = null;
+            return;
+        }
+        int formationId = unit.getForceId();
+        boolean grouped = PreferenceManager.getClientPreferences().getLobbyGroupByFormation()
+              || chatLounge.isSortingByFormation();
+        boolean firstOfBlock = !grouped || (formationId == Force.NO_FORCE)
+              || !Integer.valueOf(formationId).equals(previousFormationId);
+        formationCells.add(LobbyMekCellFormatter.formationTableEntry(unit, chatLounge, chatLounge.isCompact(),
+              firstOfBlock));
+        formationTooltips.add(LobbyMekCellFormatter.formationTooltip(unit, chatLounge));
+        previousFormationId = formationId;
     }
 
     /** Returns the tooltip for the given row and column from the tooltip cache. */
@@ -255,6 +300,8 @@ public class MekTableModel extends AbstractTableModel {
             return result + Messages.getString("ChatLounge.colPlayer");
         } else if (column == COLS.BV.ordinal()) {
             return result + Messages.getString("ChatLounge.colBV");
+        } else if (column == COLS.FORMATION.ordinal()) {
+            return result + Messages.getString("ChatLounge.colFormation");
         } else {
             return "??";
         }
@@ -355,6 +402,8 @@ public class MekTableModel extends AbstractTableModel {
                     if (!compact && (unit instanceof Entity entity)) {
                         setIcon(new ImageIcon(entity.getCrew().getPortrait(0).getImage(size)));
                     }
+                } else if (column == COLS.FORMATION.ordinal()) {
+                    setToolTipText(formationTooltips.get(row));
                 } else {
                     setToolTipText(null);
                 }

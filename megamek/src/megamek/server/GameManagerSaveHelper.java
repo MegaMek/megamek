@@ -62,8 +62,6 @@ public record GameManagerSaveHelper(AbstractGameManager gameManager) {
      * @param sendChat When true, the saving (or error) is announced in chat
      */
     void saveGame(String fileName, boolean sendChat) {
-        // Every save comes through here: autosaves and the File menu's Save Game alike
-        gameManager.getGame().getForces().logTopLevelOrder("Saving game to " + fileName);
         // We need to strip the .gz if it exists, otherwise we'll double up on it.
         if (fileName.endsWith(".gz")) {
             fileName = fileName.replace(".gz", "");
@@ -107,6 +105,8 @@ public record GameManagerSaveHelper(AbstractGameManager gameManager) {
      * @param localPath The <code>String</code> path to the file to be used on the client
      */
     public void sendSaveGame(int connId, String fileName, String localPath) {
+        // Logged for a player's own save only; autosaves come through saveGame and stay quiet
+        gameManager.getGame().getForces().logTopLevelOrder("Saving game to " + fileName);
         saveGame(fileName, false);
 
         String finalFileName = fileName;

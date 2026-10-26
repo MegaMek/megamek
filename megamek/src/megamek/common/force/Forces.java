@@ -122,6 +122,8 @@ public final class Forces implements Serializable {
         final Force newForce = new Force(force.getName(), newId, force.getCamouflage().clone(), parent);
         forces.put(newId, newForce);
         parent.addSubForce(newForce);
+        LOGGER.info("[ForceOrder] Created sub force {} (id {}) in {} at place {}", newForce.getName(), newId,
+              parent.getName(), parent.subForceIndex(newForce));
         return newId;
     }
 
@@ -977,6 +979,18 @@ public final class Forces implements Serializable {
             return result;
         }
         Collections.swap(ownerForces, index, target);
+        result.addAll(renumber(ownerForces));
+        LOGGER.info("[ForceOrder] Moved {} {}; order now {}; {} force(s) changed", force.getName(),
+              (step < 0) ? "up" : "down", topLevelOrderDescription(force.getOwnerId()), result.size());
+        return result;
+    }
+
+    /**
+     * Gives each of the forces the position of its place in the list, 0 for the first. Returns the forces whose
+     * position changed.
+     */
+    private static ArrayList<Force> renumber(List<Force> ownerForces) {
+        ArrayList<Force> result = new ArrayList<>();
         for (int position = 0; position < ownerForces.size(); position++) {
             Force ownerForce = ownerForces.get(position);
             if (ownerForce.getPosition() != position) {
@@ -984,8 +998,52 @@ public final class Forces implements Serializable {
                 result.add(ownerForce);
             }
         }
-        LOGGER.info("[ForceOrder] Moved {} {}; order now {}; {} force(s) changed", force.getName(),
-              (step < 0) ? "up" : "down", topLevelOrderDescription(force.getOwnerId()), result.size());
+        return result;
+    }
+
+    /**
+     * Moves the given force to the given place, 0 being the first: a top-level force among its owner's top-level
+     * forces, a sub force among its parent's sub forces. A place past either end means that end. Used when a force
+     * is dragged between two rows of the lobby tree. Returns the forces that changed, empty if nothing moved.
+     */
+    public ArrayList<Force> moveTo(Force force, int index) {
+        ArrayList<Force> result = new ArrayList<>();
+        if (!contains(force)) {
+            return result;
+        }
+        if (force.isTopLevel()) {
+            List<Force> ownerForces = topLevelForcesOf(force.getOwnerId());
+            int currentIndex = ownerForces.indexOf(force);
+            int targetIndex = Math.clamp(index, 0, ownerForces.size() - 1);
+            ownerForces.remove(currentIndex);
+            ownerForces.add(targetIndex, force);
+            result.addAll(renumber(ownerForces));
+            LOGGER.info("[ForceOrder] Moved {} to place {}; order now {}; {} force(s) changed", force.getName(),
+                  targetIndex, topLevelOrderDescription(force.getOwnerId()), result.size());
+        } else {
+            Force parent = getForce(force.getParentId());
+            if ((parent != null) && parent.moveSubForceTo(force, index)) {
+                result.add(parent);
+                LOGGER.info("[ForceOrder] Moved sub force {} to place {} in {}", force.getName(),
+                      parent.subForceIndex(force), parent.getName());
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Moves the given unit to the given place among its force's units, 0 being the first. A place past either end
+     * means that end. Used when a unit is dragged between two rows of the lobby tree. Returns the changed force, or
+     * an empty list if nothing moved or the unit is in no force.
+     */
+    public ArrayList<Force> moveTo(ForceAssignable unit, int index) {
+        ArrayList<Force> result = new ArrayList<>();
+        Force force = getForce(unit);
+        if ((force != null) && force.moveEntityTo(unit.getId(), index)) {
+            result.add(force);
+            LOGGER.info("[ForceOrder] Moved unit {} {} (id {}) to place {} in {}", unit.generalName(),
+                  unit.specificName(), unit.getId(), force.entityIndex(unit), force.getName());
+        }
         return result;
     }
 }

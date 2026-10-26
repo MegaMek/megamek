@@ -671,6 +671,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         mekForceTree = new JTree(mekForceTreeModel);
         mekForceTree.setRootVisible(false);
         mekForceTree.setDragEnabled(true);
+        // Onto a row attaches or adds; between two rows of the same list reorders
+        mekForceTree.setDropMode(DropMode.ON_OR_INSERT);
         mekForceTree.setTransferHandler(new MekForceTreeTransferHandler(this, mekForceTreeModel));
         mekForceTree.setCellRenderer(new MekForceTreeRenderer(this));
         mekForceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);

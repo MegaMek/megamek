@@ -181,6 +181,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
 
             case LMP_F_ADD_TO:
                 forceId = StringUtil.toInt(info, Force.NO_FORCE);
+                LOGGER.info("[ForceOrder] Add to... menu: {} unit(s) to force id {}", entities.size(), forceId);
                 lobby.lobbyActions.forceAddEntity(entities, forceId);
                 break;
 

@@ -477,15 +477,18 @@ class LobbyMekPopup {
     }
 
     private static JMenuItem forceTreeMenu(Force force, Game game, String enToken, ActionListener listener) {
-        JMenuItem result;
         String item = "<HTML>" + force.getName() + idString(game, force.getId());
+        JMenuItem addToForce = menuItem(item, LMP_F_ADD_TO + "|" + force.getId() + enToken, true, listener);
         if (force.getSubForces().isEmpty()) {
-            result = menuItem(item, LMP_F_ADD_TO + "|" + force.getId() + enToken, true, listener);
-        } else {
-            result = new JMenu(item);
-            for (Integer subForceId : force.getSubForces()) {
-                result.add(forceTreeMenu(game.getForces().getForce(subForceId), game, enToken, listener));
-            }
+            return addToForce;
+        }
+        // A force with sub forces opens as a submenu. It lists itself first, so units can join it directly and not
+        // only one of its sub forces.
+        JMenu result = new JMenu(item);
+        result.add(addToForce);
+        result.addSeparator();
+        for (Integer subForceId : force.getSubForces()) {
+            result.add(forceTreeMenu(game.getForces().getForce(subForceId), game, enToken, listener));
         }
         return result;
     }

@@ -403,6 +403,11 @@ public class ServerLobbyHelper {
         }
         if (forcesClone.isValid()) {
             game.setForces(forcesClone);
+            List<String> forceNames = new ArrayList<>();
+            for (Force force : forceList) {
+                forceNames.add(force.getName());
+            }
+            LOGGER.info("[ForceOrder] Server accepted update of {}", forceNames);
             logTopLevelOrder(forceList, forcesClone);
             gameManager.send(createForceUpdatePacket(forceList));
         } else {

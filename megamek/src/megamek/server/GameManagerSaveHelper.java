@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -62,6 +62,8 @@ public record GameManagerSaveHelper(AbstractGameManager gameManager) {
      * @param sendChat When true, the saving (or error) is announced in chat
      */
     void saveGame(String fileName, boolean sendChat) {
+        // Every save comes through here: autosaves and the File menu's Save Game alike
+        gameManager.getGame().getForces().logTopLevelOrder("Saving game to " + fileName);
         // We need to strip the .gz if it exists, otherwise we'll double up on it.
         if (fileName.endsWith(".gz")) {
             fileName = fileName.replace(".gz", "");

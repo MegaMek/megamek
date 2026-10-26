@@ -960,6 +960,7 @@ public class Server implements Runnable {
         }
 
         setGame(newGame);
+        newGame.getForces().logTopLevelOrder("Loaded saved game");
 
         // Saves created before mapName tracking was added land here with Board.BOARD_NAME_UNNAMED.
         // Reconstruct the name from the saved MapSettings so the Ruler title and other UI surfaces

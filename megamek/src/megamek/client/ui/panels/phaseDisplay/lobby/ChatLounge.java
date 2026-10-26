@@ -2817,6 +2817,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         List<Entity> units = game().getPlayerEntities(player, false);
         ArrayList<Entity> orderedUnits = new ArrayList<>(game().getForces().sortedInTreeOrder(units));
         LOGGER.debug("[ForceTree] Saving {} units of {} in force tree order", orderedUnits.size(), player.getName());
+        LOGGER.info("[ForceOrder] Saving units of {} with top-level order {}", player.getName(),
+              game().getForces().topLevelOrderDescription(player.getId()));
         return orderedUnits;
     }
 

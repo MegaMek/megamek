@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,15 +46,19 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 public class MekTreeForceModel extends DefaultTreeModel {
 
     @Serial
     private static final long serialVersionUID = -6458173460367645667L;
+    private static final MMLogger LOGGER = MMLogger.create(MekTreeForceModel.class);
 
     private final ChatLounge lobby;
     /** A sorted list of all top-level objects: top-level forces and force-less entities. */
     private ArrayList<Object> allToplevel;
+    /** The top-level force names last written to the log, so that only a changed order is logged. */
+    private transient List<String> lastLoggedForceOrder = new ArrayList<>();
 
     public MekTreeForceModel(ChatLounge cl) {
         super(new DefaultMutableTreeNode("Root"));
@@ -131,6 +135,21 @@ public class MekTreeForceModel extends DefaultTreeModel {
         allToplevel = new ArrayList<>(toplevel);
         allToplevel.addAll(forceless);
         allToplevel.sort(new MekTreeTopLevelSorter(lobby.getClientGUI().getClient()));
+        logForceOrderIfChanged();
+    }
+
+    /** Logs the top-level forces in the order the tree shows them, when that order differs from the last one logged. */
+    private void logForceOrderIfChanged() {
+        List<String> forceOrder = new ArrayList<>();
+        for (Object topLevelEntry : allToplevel) {
+            if (topLevelEntry instanceof Force force) {
+                forceOrder.add(force.getName());
+            }
+        }
+        if (!forceOrder.equals(lastLoggedForceOrder)) {
+            LOGGER.info("[ForceOrder] Lobby tree shows top-level forces {}", forceOrder);
+            lastLoggedForceOrder = forceOrder;
+        }
     }
 
     @Override

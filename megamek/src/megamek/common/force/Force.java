@@ -361,4 +361,34 @@ public final class Force implements Serializable {
         }
         return false;
     }
+
+    /**
+     * Moves the given unit to the given place among this force's units, 0 being the first. A place past either end
+     * means that end. Returns {@code true} when an actual change occurred.
+     */
+    boolean moveEntityTo(int unitId, int index) {
+        return moveTo(entities, unitId, index);
+    }
+
+    /**
+     * Moves the given sub force to the given place among this force's sub forces, 0 being the first. A place past
+     * either end means that end. Returns {@code true} when an actual change occurred.
+     */
+    boolean moveSubForceTo(Force subForce, int index) {
+        return moveTo(subForces, subForce.getId(), index);
+    }
+
+    private static boolean moveTo(List<Integer> ids, int id, int index) {
+        int currentIndex = ids.indexOf(id);
+        if (currentIndex < 0) {
+            return false;
+        }
+        int targetIndex = Math.clamp(index, 0, ids.size() - 1);
+        if (targetIndex == currentIndex) {
+            return false;
+        }
+        ids.remove(currentIndex);
+        ids.add(targetIndex, id);
+        return true;
+    }
 }

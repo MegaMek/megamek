@@ -362,6 +362,37 @@ public class LobbyActions {
     }
 
     /**
+     * Moves a force to the given place among its siblings (a top-level force among its owner's top-level forces), 0
+     * being the first. Used when a force is dragged between two rows of the force tree.
+     */
+    void forceMoveTo(Force force, int index) {
+        if (!areForcesEditable(List.of(force))) {
+            logger.info("[ForceOrder] Drag of {} refused: the local player may not edit it", force.getName());
+            LobbyErrors.showCannotConfigEnemies(frame());
+            return;
+        }
+        List<Force> changedForces = game().getForces().moveTo(force, index);
+        if (!changedForces.isEmpty()) {
+            client().sendUpdateForce(changedForces);
+        }
+    }
+
+    /**
+     * Moves a unit to the given place among its force's units, 0 being the first. Used when a unit is dragged between
+     * two rows of the force tree.
+     */
+    void forceMoveTo(Entity entity, int index) {
+        if (!validateUpdate(List.of(entity))) {
+            logger.info("[ForceOrder] Drag of {} refused: the local player may not edit it", entity.getShortName());
+            return;
+        }
+        List<Force> changedForces = game().getForces().moveTo(entity, index);
+        if (!changedForces.isEmpty()) {
+            client().sendUpdateForce(changedForces);
+        }
+    }
+
+    /**
      * Displays a CamoChooser to choose an individual camo for the given entities. The camo will only be applied to
      * units configurable by the local player, i.e. his own units or those of his bots.
      */

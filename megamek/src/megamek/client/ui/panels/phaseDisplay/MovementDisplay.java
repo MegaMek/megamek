@@ -1465,7 +1465,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                                                ClimbingChoiceDialog.ClimbingActionType.DROP));
                 }
 
-                // Move as Calculated — commit the routed walk-around the path planner already
+                // Move as Calculated - commit the routed walk-around the path planner already
                 // drew. Lets the player accept the visible path without reading it as a climb.
                 // Distinct from Cancel: this option auto-commits via ready(); Cancel leaves the
                 // dialog dismissed so the player can keep editing.
@@ -1546,7 +1546,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 } else if (chosen != null
                            && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED) {
-                    // Commit the existing plotted path as-is — the routed walk-around (the
+                    // Commit the existing plotted path as-is - the routed walk-around (the
                     // option is only offered for that case). The path is already attached to
                     // cmd; just commit it the same way the other branches do.
                     LOGGER.debug("[CLIMB-TRACE] Move as Calculated chosen: routed={}, "

@@ -784,6 +784,8 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
      * @param mek          the climbing Mek
      * @param elevation    the Mek's starting elevation
      * @param chosenLevels the levels picked in the descent dialog, or {@code 0} for none
+     *
+     * @return every piloting roll the server asked for during the move
      */
     private List<PilotingRollData> runClimbAndCaptureRolls(Mek mek, int elevation, int chosenLevels)
           throws Exception {

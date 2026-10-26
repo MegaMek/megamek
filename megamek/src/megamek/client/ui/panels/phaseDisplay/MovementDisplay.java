@@ -1377,9 +1377,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         //   1. Direct: path is a single FORWARDS into an adjacent edge hex (the original case
         //      — climb mode toggled, leaping enabled, planner produced the direct step).
         //   2. Routed-around: path's FINAL hex is adjacent to entity start AND a 3+ level
-        //      edge, but the planner couldn't make the direct step legal (e.g. leaping OFF,
-        //      no climb mode) and routed around. The player still clicked the cliff hex
-        //      intending to descend; we trigger the dialog and let them pick descent or cancel.
+        //      edge, but the planner couldn't make the direct step legal and routed around.
+        //      The player still clicked the cliff hex intending to descend; we trigger the
+        //      dialog and let them pick descent or cancel.
+        // Both need climb mode on. In Move Thru mode the step is a plain move - a leap with
+        // Leaping on, otherwise illegal - so offering climbing choices there would contradict
+        // the greyed-out step the player is looking at.
         //
         // Re-fetch the last step rather than reusing the cached hasLastStep / cmd.getLastStep()
         // from above — the start-climbing dialog block can cancel and call cmd.removeLastStep(),
@@ -1394,9 +1397,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         long forwardStepCount = (cmd != null) ? cmd.getStepVector().stream()
                                                    .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
         // Edge dangle: walking movement only — jumping uses jump jets to clear the drop
-        // safely (no dangle needed). Climb mode is NOT required: per TO:AR p.20, dangle is
-        // initiated by stepping off a 3+ level edge with two functional arms, and players
-        // shouldn't have to know to toggle climb mode first to get the descent prompt.
+        // safely (no dangle needed).
         boolean isWalkingNotJumping = edgeHasLastStep
                                       && (edgeLastStep.getMovementType(true) != EntityMovementType.MOVE_JUMP);
         // Routed-around case: planner used 2+ FORWARDS steps to reach an adjacent hex —
@@ -1416,7 +1417,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // a concurrent path-rebuild could race with the modal dialog.
             Coords stepPos = edgeLastStep.getPosition();
             int levelDiff = ClimbingHelper.getEdgeDropHeight(currentEntity, stepPos, game);
-            if (ClimbingHelper.isAtEdge(currentEntity, stepPos, game)) {
+            boolean isAtEdge = ClimbingHelper.isAtEdge(currentEntity, stepPos, game);
+            boolean isClimbModeOn = edgeLastStep.climbMode();
+            if (isAtEdge && !isClimbModeOn) {
+                LOGGER.debug("[Climbing] {}: no descent dialog - Move Thru mode, so stepping off the edge is a "
+                             + "plain move", edgeMek.getDisplayName());
+            }
+            if (isAtEdge && isClimbModeOn) {
                 // Build descent options dialog
                 int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, levelDiff);
                 List<ClimbingChoiceDialog.ClimbingOption> descentOptions = new java.util.ArrayList<>();
@@ -1469,10 +1476,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // drew. Lets the player accept the visible path without reading it as a climb.
                 // Distinct from Cancel: this option auto-commits via ready(); Cancel leaves the
                 // dialog dismissed so the player can keep editing.
-                // Only offered for the routed walk-around. A direct step off the edge only
-                // repeats an option above: with climb mode on the server reads it as a dangle
-                // (refused, losing the turn, for a Mek without two climbing hands), and with
-                // climb mode off it is a leap, the same as the Drop option.
+                // Only offered for the routed walk-around. A direct step off the edge in climb
+                // mode is read by the server as a dangle (refused, losing the turn, for a Mek
+                // without two climbing hands), which the options above already cover.
                 if (isRoutedAround) {
                     descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
                                                                                Messages.getString(

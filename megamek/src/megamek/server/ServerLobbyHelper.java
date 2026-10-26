@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import jakarta.annotation.Nullable;
 import megamek.common.Player;
@@ -420,7 +421,8 @@ public class ServerLobbyHelper {
      * lobby move can be checked from the log (issue #9321). Updates that touch only sub forces log nothing.
      */
     private static void logTopLevelOrder(Collection<Force> updatedForces, Forces forces) {
-        Set<Integer> ownerIds = new HashSet<>();
+        // Sorted, so the lines come out in the same order every time
+        Set<Integer> ownerIds = new TreeSet<>();
         for (Force force : updatedForces) {
             if (force.isTopLevel()) {
                 ownerIds.add(force.getOwnerId());

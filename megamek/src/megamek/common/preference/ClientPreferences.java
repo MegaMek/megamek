@@ -87,6 +87,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
      * without every report changing.
      */
     public static final String LOBBY_SHOW_UNIT_ID = "LobbyShowUnitId";
+    public static final String LOBBY_SHOW_FORMATION_COLUMN = "LobbyShowFormationColumn";
+    public static final String LOBBY_GROUP_BY_FORMATION = "LobbyGroupByFormation";
     public static final String USE_CASPAR = "UseCASPAR";
     public static final String UNIT_START_CHAR = "UnitStartChar";
     public static final String DEFAULT_AUTO_EJECT_DISABLED = "DefaultAutoejectDisabled";
@@ -179,6 +181,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(STAMP_FILENAMES, false);
         store.setDefault(USE_CASPAR, false);
         store.setDefault(LOBBY_SHOW_UNIT_ID, true);
+        store.setDefault(LOBBY_SHOW_FORMATION_COLUMN, true);
+        store.setDefault(LOBBY_GROUP_BY_FORMATION, true);
         store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
         store.setDefault(LAST_SCENARIO, "");
 
@@ -311,6 +315,21 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     /**
+     * @return {@code true} when the lobby unit list shows the Formation column, which is the default
+     */
+    public boolean getLobbyShowFormationColumn() {
+        return store.getBoolean(LOBBY_SHOW_FORMATION_COLUMN);
+    }
+
+    /**
+     * @return {@code true} when the lobby unit list keeps each formation together whatever the sort, which is the
+     *       default; {@code false} sorts the whole force as one list
+     */
+    public boolean getLobbyGroupByFormation() {
+        return store.getBoolean(LOBBY_GROUP_BY_FORMATION);
+    }
+
+    /**
      * @return {@code true} if the experimental CASPAR bot is offered as a selectable AI. This is a hidden
      *       option: it is not shown in any settings UI and defaults to {@code false}; enable it by hand-adding
      *       {@code <UseCASPAR>true</UseCASPAR>} to clientsettings.xml.
@@ -423,6 +442,20 @@ public class ClientPreferences extends PreferenceStoreProxy {
      */
     public void setLobbyShowUnitId(boolean state) {
         store.setValue(LOBBY_SHOW_UNIT_ID, state);
+    }
+
+    /**
+     * @param state {@code true} to show the Formation column in the lobby unit list
+     */
+    public void setLobbyShowFormationColumn(boolean state) {
+        store.setValue(LOBBY_SHOW_FORMATION_COLUMN, state);
+    }
+
+    /**
+     * @param state {@code true} to keep each formation together in the lobby unit list whatever the sort
+     */
+    public void setLobbyGroupByFormation(boolean state) {
+        store.setValue(LOBBY_GROUP_BY_FORMATION, state);
     }
 
     public void setUnitStartChar(char c) {

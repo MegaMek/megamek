@@ -330,8 +330,11 @@ public class ChatLounge extends AbstractPhaseDisplay
     private final JButton butCancelSearch = new JButton(Messages.getString("ChatLounge.butCancelSearch"));
 
     private transient MekTableSorter activeSorter;
+    /** Formations in the Sortable View: grouping, the Formation column and their two toggles. */
+    private final transient LobbyFormationDisplay formationDisplay = new LobbyFormationDisplay(this::refreshMekTable);
     private final transient ArrayList<MekTableSorter> unitSorters = new ArrayList<>();
     private final transient ArrayList<MekTableSorter> bvSorters = new ArrayList<>();
+    private final transient ArrayList<MekTableSorter> formationSorters = new ArrayList<>();
 
     /** Shows the C3 manager button only while C3-equipped units are in the lobby. */
     private void updateC3ManagerButton(java.util.List<Entity> allEntities) {
@@ -629,6 +632,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         bvSorters.add(new PlayerBVSorter(clientgui, Sorting.DESCENDING));
         bvSorters.add(new BVSorter(Sorting.ASCENDING));
         bvSorters.add(new BVSorter(Sorting.DESCENDING));
+        formationSorters.addAll(FormationSorter.allFor(clientgui));
         activeSorter = unitSorters.getFirst();
     }
 
@@ -666,6 +670,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             column.setCellRenderer(mekModel.getRenderer());
             setColumnWidth(column);
         }
+        formationDisplay.attachTable(mekTable, () -> activeSorter, formationSorters);
 
         mekForceTreeModel = new MekTreeForceModel(this);
         mekForceTree = new JTree(mekForceTreeModel);
@@ -820,6 +825,12 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         butCollapse.setEnabled(false);
         butExpand.setEnabled(false);
+        butListView.setToolTipText(Messages.getString("ChatLounge.butSortableView.tooltip"));
+        butForceView.setToolTipText(Messages.getString("ChatLounge.butForceView.tooltip"));
+        butCompact.setToolTipText(Messages.getString("ChatLounge.butCompact.tooltip"));
+        butShowUnitID.setToolTipText(Messages.getString("ChatLounge.butShowUnitID.tooltip"));
+        butCollapse.setToolTipText(Messages.getString("ChatLounge.butCollapse.tooltip"));
+        butExpand.setToolTipText(Messages.getString("ChatLounge.butExpand.tooltip"));
 
         lblGameYear.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblTechLevel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -848,6 +859,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         topRight.add(Box.createHorizontalStrut(30));
         topRight.add(butCompact);
         topRight.add(butShowUnitID);
+        formationDisplay.addButtonsTo(topRight);
         topRight.add(Box.createHorizontalStrut(30));
         topRight.add(butCollapse);
         topRight.add(butExpand);
@@ -1539,11 +1551,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         java.util.List<Integer> enIds = getSelectedEntities().stream().map(Entity::getId).toList();
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<>(clientgui.getClient().getEntitiesVector());
-        // Whatever the player is sorting by, a train stays together (the choice is applied to the tractor and its
-        // trailers follow it) and a C3 network stays together in hierarchy order - the branch glyphs drawn in
-        // front of members rely on a member sitting directly under its master.
-        allEntities.sort(MekTableSorter.keepingC3NetworksTogether(allEntities,
-              MekTableSorter.keepingCarriedUnitsTogether(activeSorter)));
+        // Trains, C3 networks and, when grouping is on, formations each stay together whatever the sort
+        formationDisplay.sortForTable(allEntities, game().getForces(), activeSorter);
         updateC3ManagerButton(allEntities);
 
         boolean localUnits = false;
@@ -1601,6 +1610,16 @@ public class ChatLounge extends AbstractPhaseDisplay
                 }
             }
         }
+    }
+
+    /** Returns {@code true} when the Sortable View is sorted by the Formation column, which always groups. */
+    boolean isSortingByFormation() {
+        return activeSorter instanceof FormationSorter;
+    }
+
+    /** Returns the formation display, which knows how the Sortable View groups units. */
+    LobbyFormationDisplay formationDisplay() {
+        return formationDisplay;
     }
 
     /** Adjusts the MekTable to compact/normal mode. */
@@ -3674,6 +3693,9 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
+        if (formationDisplay.preferenceChanged(e.getName())) {
+            return;
+        }
         switch (e.getName()) {
             case ClientPreferences.LOBBY_SHOW_UNIT_ID:
                 setButUnitIDState();
@@ -3833,6 +3855,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             key = GUIPreferences.LOBBY_MEK_TABLE_PLAYER_WIDTH;
         } else if (column.getModelIndex() == MekTableModel.COL_BV) {
             key = GUIPreferences.LOBBY_MEK_TABLE_BV_WIDTH;
+        } else if (column.getModelIndex() == MekTableModel.COL_FORMATION) {
+            key = GUIPreferences.LOBBY_MEK_TABLE_FORMATION_WIDTH;
         } else {
             return;
         }
@@ -3857,6 +3881,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                     key = GUIPreferences.LOBBY_MEK_TABLE_PLAYER_WIDTH;
                 } else if (column.getModelIndex() == MekTableModel.COL_BV) {
                     key = GUIPreferences.LOBBY_MEK_TABLE_BV_WIDTH;
+                } else if ((column.getModelIndex() == MekTableModel.COL_FORMATION) && (column.getWidth() > 0)) {
+                    // A hidden Formation column has zero width; keep the width it had when shown
+                    key = GUIPreferences.LOBBY_MEK_TABLE_FORMATION_WIDTH;
                 } else {
                     continue;
                 }
@@ -3905,6 +3932,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             sorters = unitSorters;
         } else if (col == MekTableModel.COL_BV) {
             sorters = bvSorters;
+        } else if (col == MekTableModel.COL_FORMATION) {
+            sorters = formationSorters;
         } else {
             return;
         }

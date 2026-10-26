@@ -314,6 +314,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LOBBY_MEK_TABLE_PILOT_WIDTH = "LobbyMekTablePilotWidth";
     public static final String LOBBY_MEK_TABLE_PLAYER_WIDTH = "LobbyMekTablePlayerWidth";
     public static final String LOBBY_MEK_TABLE_BV_WIDTH = "LobbyMekTableBVWidth";
+    public static final String LOBBY_MEK_TABLE_FORMATION_WIDTH = "LobbyMekTableFormationWidth";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MEK_SELECTOR_INCLUDE_MODEL = "MekSelectorIncludeModel";
     public static final String MEK_SELECTOR_INCLUDE_NAME = "MekSelectorIncludeName";
@@ -836,6 +837,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(LOBBY_MEK_TABLE_PILOT_WIDTH, 80);
         store.setDefault(LOBBY_MEK_TABLE_PLAYER_WIDTH, 50);
         store.setDefault(LOBBY_MEK_TABLE_BV_WIDTH, 50);
+        store.setDefault(LOBBY_MEK_TABLE_FORMATION_WIDTH, 90);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MEK_SELECTOR_INCLUDE_MODEL, true);
         store.setDefault(MEK_SELECTOR_INCLUDE_NAME, true);

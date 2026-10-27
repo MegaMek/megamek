@@ -16,6 +16,7 @@
 package megamek.release;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -127,8 +128,9 @@ public final class SuiteRecordValidator {
         String[] a = left.split("\\.");
         String[] b = right.split("\\.");
         for (int i = 0; i < 4; i++) {
-            int comparison = Integer.compare(i < a.length ? Integer.parseInt(a[i]) : 0,
-                  i < b.length ? Integer.parseInt(b[i]) : 0);
+            // Components are already validated as decimal digits; BigInteger cannot overflow.
+            int comparison = (i < a.length ? new BigInteger(a[i]) : BigInteger.ZERO)
+                  .compareTo(i < b.length ? new BigInteger(b[i]) : BigInteger.ZERO);
             if (comparison != 0) {
                 return comparison;
             }

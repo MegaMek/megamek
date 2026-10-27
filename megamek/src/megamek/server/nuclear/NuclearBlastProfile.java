@@ -124,6 +124,21 @@ public record NuclearBlastProfile(int impactDamage, int damageReduction, int bla
      * @return the blast height in Low-Altitude Map altitudes
      */
     public int blastHeight() {
+        return closestStandardWeapon().getBlastHeight();
+    }
+
+    /**
+     * The Secondary Effect Height: the highest Low-Altitude Map altitude at which an airborne unit suffers the
+     * secondary effects (IO:AE p.165). A custom device takes the height of the standard weapon closest to it in
+     * impact damage, as for {@link #blastHeight()}: an Alamo's is 9.
+     *
+     * @return the secondary effect height in Low-Altitude Map altitudes
+     */
+    public int secondaryHeight() {
+        return closestStandardWeapon().getSecondaryHeight();
+    }
+
+    private NuclearWeaponType closestStandardWeapon() {
         NuclearWeaponType closest = NuclearWeaponType.values()[0];
         for (NuclearWeaponType weaponType : NuclearWeaponType.values()) {
             if (Math.abs(weaponType.getImpactDamage() - impactDamage)
@@ -131,7 +146,7 @@ public record NuclearBlastProfile(int impactDamage, int damageReduction, int bla
                 closest = weaponType;
             }
         }
-        return closest.getBlastHeight();
+        return closest;
     }
 
     /**

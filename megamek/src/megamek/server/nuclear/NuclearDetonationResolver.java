@@ -272,27 +272,26 @@ public class NuclearDetonationResolver {
               lastRing, profile.damageAt(lastRing), NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE);
 
         // Lastly, do secondary effects.
+        NuclearSecondaryEffects secondaryEffects = new NuclearSecondaryEffects(gameManager);
         for (Entity entity : game.getEntitiesVector()) {
-            // loaded units and off board units don't have a position,
-            // so we don't count 'em here
-            if ((entity.getTransportId() != Entity.NONE) || (entity.getPosition() == null)) {
+            if (entity.isDoomed() || entity.isDestroyed()) {
                 continue;
             }
-
-            // If it's already destroyed...
-            if ((entity.isDoomed()) || (entity.isDestroyed())) {
+            // A carried unit rolls at its carrier's hex and height (HammerGS, 2026-10-26)
+            Entity positioned = (entity.getTransportId() == Entity.NONE)
+                  ? entity
+                  : game.getEntity(entity.getTransportId());
+            // Off-board units have no position
+            if ((positioned == null) || (positioned.getPosition() == null)) {
                 continue;
             }
-
-            // If it's too far away for this...
-            if (position.distance(entity.getPosition()) > profile.secondaryRadius()) {
+            if (position.distance(positioned.getPosition()) > profile.secondaryRadius()) {
                 continue;
             }
-
-            // Actually do secondary effects against it.
-            // Since the effects are unit-dependant, we'll just define it in the
-            // entity.
-            new NuclearSecondaryEffects(gameManager).apply(entity, position, vDesc);
+            if (!NuclearSecondaryEffects.isWithinSecondaryHeight(positioned, profile)) {
+                continue;
+            }
+            secondaryEffects.apply(entity, position, vDesc);
         }
 
         LOGGER.info("[Nukes] Detonation at hex {} resolved in {} ms; {} changed hexes sent in one update",

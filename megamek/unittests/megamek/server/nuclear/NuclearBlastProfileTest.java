@@ -144,4 +144,12 @@ class NuclearBlastProfileTest {
         assertEquals(8, NuclearBlastProfile.custom(5_000, 50, 100, 0).blastHeight());
         assertEquals(10, NuclearBlastProfile.custom(1_000_000, 500, 400, 0).blastHeight());
     }
+
+    @Test
+    void secondaryHeightComesFromTheTable() {
+        assertEquals(8, NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M).secondaryHeight());
+        assertEquals(9, NuclearBlastProfile.groundBurst(NuclearWeaponType.ALAMO).secondaryHeight());
+        // A custom 5,000-point device is closest to the Alamo
+        assertEquals(9, NuclearBlastProfile.custom(5_000, 50, 100, 0).secondaryHeight());
+    }
 }

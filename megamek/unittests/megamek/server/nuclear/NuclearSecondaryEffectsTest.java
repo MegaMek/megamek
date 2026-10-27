@@ -51,6 +51,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.net.packets.Packet;
@@ -318,5 +319,42 @@ class NuclearSecondaryEffectsTest {
         assertEquals(armorBefore, atlas.getTotalArmor());
         Mockito.verify(gameManager, Mockito.never()).damageCrew(any(Entity.class), anyInt());
         assertTrue(atlas.isSufferingEMI(), "EMI lasts the rest of the scenario even on 11+");
+    }
+
+    @Test
+    void fighterAboveTheSecondaryEffectHeightEscapes() throws Exception {
+        // An Alamo's Secondary Effect Height is 9 (IO:AE p.164)
+        NuclearBlastProfile alamo = NuclearBlastProfile.groundBurst(NuclearWeaponType.ALAMO);
+        Entity cheetah = placeUnit("Cheetah F-11.blk");
+
+        cheetah.setAltitude(9);
+        assertTrue(NuclearSecondaryEffects.isWithinSecondaryHeight(cheetah, alamo), "altitude 9 is affected");
+        cheetah.setAltitude(10);
+        assertFalse(NuclearSecondaryEffects.isWithinSecondaryHeight(cheetah, alamo), "altitude 10 is out of reach");
+        assertTrue(NuclearSecondaryEffects.isWithinSecondaryHeight(placeUnit("Atlas AS7-D.mtf"), alamo),
+              "a unit on the ground is always affected");
+    }
+
+    @Test
+    void carriedUnitRollsAtItsCarriersHex() throws Exception {
+        // Past a Davy Crockett's blast radius of 20 but inside its secondary radius of 40. Carried units used to be
+        // skipped.
+        Entity bulldog = placeUnit("Bulldog Medium Tank.blk");
+        bulldog.setPosition(new Coords(0, 0));
+        int distance = GROUND_ZERO.distance(bulldog.getPosition());
+        assertTrue((distance > 20) && (distance <= 40), "outside the blast, inside the secondary radius");
+        Entity elementals = placeUnit("Elemental BA [Laser] (Sqd5).blk");
+        elementals.setPosition(null);
+        elementals.setTransportId(bulldog.getId());
+
+        Roll roll = fixedRoll(11);
+        try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            compute.when(() -> Compute.rollD6(2)).thenReturn(roll);
+            new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO,
+                  NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M), new Vector<Report>());
+        }
+
+        assertTrue(bulldog.isSufferingEMI(), "the carrier rolls");
+        assertTrue(elementals.isSufferingEMI(), "and so do the troops it carries");
     }
 }

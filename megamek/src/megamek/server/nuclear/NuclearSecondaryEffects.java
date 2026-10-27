@@ -171,6 +171,28 @@ public class NuclearSecondaryEffects {
     }
 
     /**
+     * Airborne units suffer the secondary effects only at or below the weapon's Secondary Effect Height (IO:AE
+     * p.165). A fighter at altitude 10 over an Alamo (height 9) escapes them; at altitude 9 it does not. VTOLs and
+     * WiGEs fly below the Low-Altitude Map's first altitude, so they are always within it.
+     *
+     * @param entity  the unit, or the carrier of a carried unit
+     * @param profile the detonation's numbers
+     *
+     * @return {@code true} if the unit is low enough to suffer the secondary effects
+     */
+    static boolean isWithinSecondaryHeight(Entity entity, NuclearBlastProfile profile) {
+        // isAirborne() is only true for aerospace units, so a flying VTOL or WiGE needs its own check
+        if (!entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+            return true;
+        }
+        boolean within = entity.isAirborneAeroOnGroundMap() && (entity.getAltitude() <= profile.secondaryHeight());
+        LOGGER.info("[Nukes] {} is airborne at altitude {} (ground map: {}), secondary effect height {}: {}",
+              entity.getDisplayName(), entity.getAltitude(), entity.isAirborneAeroOnGroundMap(),
+              profile.secondaryHeight(), within ? "affected" : "out of reach");
+        return within;
+    }
+
+    /**
      * The +2 goes to combat vehicles, Meks, battle armor and aerospace craft (IO:AE p.166). Support vehicles,
      * ProtoMeks, conventional infantry and gun emplacements roll without it: a Locust gets it, a support APC does not.
      *

@@ -13978,8 +13978,60 @@ public abstract class Entity extends TurnOrdered
      * artillery fire adjustment, MASC levels, ongoing effects and links to other units by their (now meaningless) game
      * ids. It is used in MekHQ to clear this transient data between scenarios. Subclasses that add such state should
      * override this and call super.
+     *
+     * <p>EntityPersistenceRegressionTest checks that every field of an Entity and its equipment is either reset here
+     * or listed, with the reason it may persist, in its allowed-to-persist.txt.</p>
      */
     public void clearGameState() {
+        // Improvised clubs picked up during the last game
+        removeMisc(EquipmentTypeLookup.LIMB_CLUB);
+        removeMisc(EquipmentTypeLookup.GIRDER_CLUB);
+        removeMisc(EquipmentTypeLookup.TREE_CLUB);
+
+        // Deployment, position and movement on the last game's map
+        setDeployed(false);
+        setDeployRound(0);
+        setNeverDeployed(true);
+        setElevation(0);
+        setPassedThrough(new Vector<>());
+        resetFiringArcs();
+        setEvading(false);
+        setFacing(0);
+        setPosition(null);
+        getSecondaryPositions().clear();
+        setProne(false);
+        setHullDown(false);
+        setStuck(false);
+        setConversionMode(0);
+        setHidden(false);
+        setDone(false);
+        // Without this a unit that fled the last battle still reports the edge it left by
+        setRetreatedDirection(OffBoardDirection.NONE);
+
+        // Heat, shutdown and the condition the unit ended the last game in
+        heat = 0;
+        heatBuildup = 0;
+        underwaterRounds = 0;
+        resetCoolantFailureAmount();
+        setShutDown(false);
+        setSearchlightState(false);
+        setDoomed(false);
+        setDestroyed(false);
+        // Without this a unit wrecked, recovered and repaired is written off again the next time it only flees
+        clearBattleOutcome();
+
+        // Transport, swarming and targeting links to other units by their game ids
+        resetBays();
+        setTransportId(Entity.NONE);
+        resetTransporter();
+        setUnloaded(false);
+        setSwarmAttackerId(Entity.NONE);
+        setSwarmTargetId(Entity.NONE);
+        setLastTarget(Entity.NONE);
+        clearNarcAndiNarcPods();
+        // Orders given to the unit's bot in this battle, such as a flee order, must not steer it in the next one
+        setUnitOrders(UnitOrders.NONE);
+
         // Artillery: fire adjustment and auto hit hexes, and which enemy teams have spotted this unit off board
         aTracker.clearAllModifiers();
         offBoardShotObservers.clear();

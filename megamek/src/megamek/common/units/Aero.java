@@ -3149,6 +3149,11 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
     @Override
     public void clearGameState() {
         super.clearGameState();
+        // Back to the flight mode and altitude every aerospace unit starts a game with
+        setMovementMode(isSpheroid() ? EntityMovementMode.SPHEROID : EntityMovementMode.AERODYNE);
+        setAltitude(5);
+        setCurrentVelocity(0);
+        setNextVelocity(0);
         outControl = false;
         outCtrlHeat = false;
         randomMove = false;

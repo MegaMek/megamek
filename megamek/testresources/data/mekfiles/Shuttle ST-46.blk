@@ -1,0 +1,212 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-e158-7bdd-8050-3cd9c4fc6ec3
+</UUID>
+
+<UnitType>
+SmallCraft
+</UnitType>
+
+<Name>
+Shuttle
+</Name>
+
+<Model>
+ST-46
+</Model>
+
+<mul id:>
+5060
+</mul id:>
+
+<year>
+2528
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:12.0:0:1::-1:0
+2ndclassquarters:0.0:0:-1::-1:0
+crewquarters:0.0:0:-1::-1:0
+1stclassquarters:0.0:0:-1::-1:0
+steeragequarters:15.0:0:-1::-1:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+1
+</armor_tech_level>
+
+<armor>
+160
+48
+48
+64
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
+
+<capabilities>
+<p>Powered by an Entech 200c fusion engine, the ST-46 achieves a safe acceleration of 2G and a maximum of 3G. Its aerodyne profile reduces fuel consumption during atmospheric descent, an advantage over spheroid craft of similar mass. With only 5 tons of fuel, the ST-46's range is limited to short inter-orbital and planetary transit; the explicit gap that prompted development of the companion KR-61. Unlike that design, the ST-46 carries no sleeping or food preparation accommodations.</p><p>The craft carries 18.5 tons of standard armor, substantially more protection than the KR-61's 6 tons, reflecting its more frequent atmospheric and docking operations where minor collisions and landing stress are routine. The ST-46 is entirely unarmed. A significant structural limitation is the lack of internal access between the forward passenger section and the aft cargo hold: crew must exit the craft to reach the starboard cargo hatch, though ducting does connect the cargo section to the engineering bay. The design also requires a prepared ferrocrete runway for landing, making it unsuitable for operations on undeveloped worlds where only rough terrain is available.</p><p>Passenger capacity is eight, accessed through the cockpit or the vessel's single airlock. The 12-ton cargo hold offers nearly five times the payload of the KR-61, reinforcing the ST-46's role as a bulk short-range workhorse rather than a long-haul passenger craft.</p>
+</capabilities>
+
+<overview>
+<p>The ST-46 Shuttle is the most common general-purpose shuttlecraft operating across the Inner Sphere and Periphery. Introduced in 2528, seventy years before the more specialized KR-61 Long-Range Shuttlecraft, the ST-46 became the standard short-hop utility craft for JumpShips, WarShips, space stations, and large transports throughout known space. Designed for reliability and versatility over passenger comfort or long-range endurance, it filled a niche no other single vessel could claim as broadly as its own.</p>
+</overview>
+
+<deployment>
+<p>The ST-46 serves as the standard short-range shuttle aboard JumpShips, WarShips, space stations, and large transport vessels across every major faction. It handles routine cargo transfers, crew transport, and passenger runs that do not justify detaching a full DropShip. Unlike the KR-61, it is optimized for high-frequency short hops rather than long runs to distant jump points.</p>
+</deployment>
+
+<history>
+<p>The ST-46 Shuttle and KR-61 Long-Range Shuttlecraft together form the backbone of civilian small craft logistics across the Inner Sphere and Periphery. The ST-46 entered service first, in 2528, establishing a broad production base among the major Houses as the standard workhorse shuttle for JumpShips, WarShips, space stations, and large transport vessels. The KR-61 followed seventy years later, in 2598, purpose-built to address the ST-46's primary limitation: with only 5 tons of fuel, the ST-46 could not reliably service the long distances between inner system worlds and zenith or nadir jump points. The KR-61's doubled fuel capacity and extended habitability accommodations filled that gap, and the two designs have operated in complementary roles ever since.</p><p>Many of the same manufacturing facilities produce both types. Earthwerks Ltd. on Ares maintained uninterrupted Capellan production of both shuttles across every era from the Star League through the ilClan period. Hinsdale Elec on Dover did the same for the Draconis Combine. Andurien AeroTech operated lines for both at Lopez and Westover in Free Worlds League space. The United Outworlders Corporation on Ramora produced both designs for the Outworlds Alliance and later the Raven Alliance. This shared production base helped ensure both types survived the technological regression of the Succession Wars, remaining available across all major factions even as more complex spacecraft fell out of production.</p><p>Additional producers served individual factions. Semier Data Tron on Tharkad supplied the Lyran Commonwealth with ST-46s from the Star League through the Civil War era before shutting down during the Jihad. Shipil Company on Skye and Majesty Metals and Manufacturing on Dunianshire each produced the KR-61 without a corresponding ST-46 line. Federated-Boeing Interstellar at Port Simon Shipyards on Galax produced both for the Federated Suns and later the Federated Commonwealth.</p><p>Clan versions of both designs emerged centuries into the Succession Wars period. The ST-46C appeared in 2897, initially misidentified by some Inner Sphere observers as captured IS craft given its unarmed civilian configuration. The KR-61C followed in 2851, adopting Clan-grade composite armor for a modest improvement in protection. Full Clan Occupation Zone production of both Clan variants began by 3080, with Clan Jade Falcon's Falcon's Roost Orbital Assembly Plant on Sudeten and the Ghost Bear Tseng Facility on Alshain manufacturing both the ST-46C and KR-61C alongside one another, maintaining the paired production pattern established by their Inner Sphere predecessors.</p>
+</history>
+
+<manufacturer>
+Andurien AeroTech (A Division of Free Worlds Defense Industries)|Andurien AeroTech (A Division of Free Worlds Defense Industries)|Earthwerks Ltd.|Federated-Boeing Interstellar - Port Simon Shipyards|Hinsdale Elec|Semier Data Tron|United Outworlders Corporation
+</manufacturer>
+
+<primaryFactory>
+Lopez|Westover|Ares|Galax|Dover|Tharkad|Ramora
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Entech
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:200c
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemModels>
+
+<source>
+TR:3057r
+</source>
+
+<published>
+RS:Aero2
+</published>
+
+<tonnage>
+100.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+3
+</crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+0
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

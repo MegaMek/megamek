@@ -1971,6 +1971,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     @Override
     public void clearGameState() {
         super.clearGameState();
+        unjamTurret(getLocTurret());
+        unjamTurret(getLocTurret2());
+        resetJammedWeapons();
         extinguishAll();
         m_nStunnedTurns = 0;
         // Fortifying and rubble clearing in progress refer to hexes of the last game's map

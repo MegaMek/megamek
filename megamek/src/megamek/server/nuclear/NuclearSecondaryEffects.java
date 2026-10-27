@@ -41,16 +41,20 @@ import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.BuildingType;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.game.Game;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
+import megamek.common.units.Aero;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
-import megamek.common.units.Terrains;
-import megamek.common.weapons.DamageType;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -58,6 +62,58 @@ import megamek.server.totalWarfare.TWGameManager;
  * Nuclear Effects Table and the electromagnetic interference that follows (IO:AE pp. 165-166).
  */
 public class NuclearSecondaryEffects {
+    private static final MMLogger LOGGER = MMLogger.create(NuclearSecondaryEffects.class);
+
+    /** Added to the roll for combat vehicles, Meks, battle armor and aerospace craft (IO:AE p.166). */
+    static final int UNIT_TYPE_BONUS = 2;
+    /** Added to the roll for a unit inside a hardened structure (IO:AE p.166). */
+    static final int HARDENED_STRUCTURE_BONUS = 2;
+    /** The Shutdown Avoid Check target for Meks and fighters on a 5-6 (IO:AE p.166). */
+    static final int SEVERE_SHUTDOWN_TARGET = 10;
+    /** The Shutdown Avoid Check target for Meks and fighters on a 7-10 (IO:AE p.166). */
+    static final int MODERATE_SHUTDOWN_TARGET = 6;
+    /** A Mek that shuts down rolls to stay standing at +3, as for a heat shutdown. */
+    private static final int SHUTDOWN_PILOTING_MODIFIER = 3;
+    private static final String DESTROYED_REASON = "nuclear explosion secondary effects";
+
+    /** The rows of the Secondary Nuclear Effects Table (IO:AE p.166). */
+    enum SecondaryEffectBand {
+        /** 2-4: the unit is destroyed. */
+        DESTROYED(0, 0, 0),
+        /** 5-6: heavy casualties, two critical hits, Shutdown Avoid Check at 10+, four pilot hits. */
+        SEVERE(2, SEVERE_SHUTDOWN_TARGET, 4),
+        /** 7-10: lighter casualties, one critical hit, Shutdown Avoid Check at 6+, two pilot hits. */
+        MODERATE(1, MODERATE_SHUTDOWN_TARGET, 2),
+        /** 11+: no damage. */
+        NONE(0, 0, 0);
+
+        private final int criticalHits;
+        private final int shutdownTarget;
+        private final int pilotHits;
+
+        SecondaryEffectBand(int criticalHits, int shutdownTarget, int pilotHits) {
+            this.criticalHits = criticalHits;
+            this.shutdownTarget = shutdownTarget;
+            this.pilotHits = pilotHits;
+        }
+
+        /**
+         * @param modifiedRoll the 2d6 roll plus its bonuses
+         *
+         * @return the table row for that roll: a Mek rolling 5 + 2 = 7 lands on {@link #MODERATE}
+         */
+        static SecondaryEffectBand forRoll(int modifiedRoll) {
+            if (modifiedRoll <= 4) {
+                return DESTROYED;
+            } else if (modifiedRoll <= 6) {
+                return SEVERE;
+            } else if (modifiedRoll <= 10) {
+                return MODERATE;
+            }
+            return NONE;
+        }
+    }
+
     private final TWGameManager gameManager;
     private final Game game;
 
@@ -70,148 +126,243 @@ public class NuclearSecondaryEffects {
     }
 
     /**
-     * Handles secondary effects from nuclear blasts against all units in range.
+     * Rolls on the Secondary Nuclear Effects Table for one unit, applies the result and leaves the unit suffering
+     * electromagnetic interference for the rest of the scenario (IO:AE pp. 165-166). The caller decides whether the
+     * unit is within the secondary radius.
      *
-     * @param entity   The entity to affect.
-     * @param position The coordinates of the nuclear blast, for to-hit directions.
-     * @param vDesc    a description vector to use for reports.
+     * @param entity     the unit
+     * @param groundZero the Ground Zero hex; critical hits roll on the side facing it
+     * @param vDesc      the report the results are added to
      */
-    public void apply(Entity entity, Coords position, Vector<Report> vDesc) {
-        // If it's already destroyed, give up. We really don't care.
+    public void apply(Entity entity, Coords groundZero, Vector<Report> vDesc) {
         if (entity.isDestroyed()) {
+            LOGGER.info("[Nukes] {} is already destroyed: no secondary effects roll", entity.getDisplayName());
             return;
         }
 
-        // Check to see if the infantry is in a protective structure.
-        boolean inHardenedBuilding = (Compute.isInBuilding(game, entity) &&
-              (game.getBoard()
-                    .getHex(entity.getPosition())
-                    .terrainLevel(Terrains.BUILDING) == 4));
+        // A carried unit rolls where its carrier is, and a transport is not a structure (HammerGS, 2026-10-26)
+        boolean carried = entity.getTransportId() != Entity.NONE;
+        boolean insideBuilding = !carried && Compute.isInBuilding(game, entity);
+        boolean inHardenedBuilding = insideBuilding && isHardenedBuilding(entity);
+        boolean unitTypeBonus = hasUnitTypeBonus(entity);
+        int side = carried ? ToHitData.SIDE_FRONT : entity.sideTable(groundZero);
 
-        // Roll 2d6.
         Roll diceRoll = Compute.rollD6(2);
-        int rollValue = diceRoll.getIntValue();
+        int modifiedRoll = diceRoll.getIntValue() + rollBonus(unitTypeBonus, inHardenedBuilding);
 
-        Report r = new Report(6555);
-        r.subject = entity.getId();
-        r.add(entity.getDisplayName());
-        r.add(diceRoll);
+        Report report = new Report(6555);
+        report.subject = entity.getId();
+        report.add(entity.getDisplayName());
+        report.add(diceRoll);
+        report.add(inHardenedBuilding ? " + " + HARDENED_STRUCTURE_BONUS + " (in a hardened building)" : "");
+        report.add(unitTypeBonus ? " + " + UNIT_TYPE_BONUS + " (Mek, combat vehicle, battle armor or aerospace)" : "");
+        report.indent(2);
+        vDesc.add(report);
 
-        // If they are in protective structure, add 2 to the roll.
-        if (inHardenedBuilding) {
-            rollValue += 2;
-            r.add(" + 2 (unit is in hardened building)");
-        } else {
-            r.add("");
-        }
+        SecondaryEffectBand band = SecondaryEffectBand.forRoll(modifiedRoll);
+        LOGGER.info("[Nukes] {} rolls {} on the Secondary Nuclear Effects Table (unit type bonus: {}, inside a "
+                    + "building: {}, hardened building: {}, carried: {}) = {}: {}", entity.getDisplayName(),
+              diceRoll.getIntValue(), unitTypeBonus, insideBuilding, inHardenedBuilding, carried, modifiedRoll, band);
+        applyBand(entity, band, side, insideBuilding, vDesc);
 
-        // Also, if the entity is "hardened" against EMI, it gets a +2.
-        // For these purposes, I'm going to hand this off to the Entity itself
-        // to tell us.
-        // Right now, it IS based purely on class, but I won't rule out the idea
-        // of
-        // "nuclear hardening" as equipment for a support vehicle, for example.
-        if (entity.isNuclearHardened()) {
-            rollValue += 2;
-            r.add(" + 2 (unit is hardened against EMI)");
-        } else {
-            r.add("");
-        }
-
-        r.indent(2);
-        vDesc.add(r);
-
-        // Now, compare it to the table, and apply the effects.
-        if (rollValue <= 4) {
-            // The unit is destroyed.
-            // Sucks, doesn't it?
-            // This applies to all units.
-            // Yup, just sucks.
-            vDesc.addAll(gameManager.destroyEntity(entity, "nuclear explosion secondary effects", false, false));
-            // Kill the crew
-            entity.getCrew().setDoomed(true);
-        } else if (rollValue <= 6) {
-            if (entity instanceof BattleArmor myBA) {
-                // It takes 50% casualties, rounded up.
-                int numDeaths = (int) (Math.ceil((myBA.getNumberActiveTroopers()) / 2.0));
-                for (int x = 0; x < numDeaths; x++) {
-                    vDesc.addAll(gameManager.applyCriticalHit(entity, 0, null, false, 0, false));
-                }
-            } else if (entity instanceof Infantry) {
-                // Standard infantry are auto-killed in this band, unless
-                // they're in a building.
-                if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
-                    // 50% casualties, rounded up.
-                    int damage = (int) (Math.ceil((entity.getInternal(ConvInfantry.LOC_INFANTRY)) / 2.0));
-                    vDesc.addAll(gameManager.damageEntity(entity, new HitData(ConvInfantry.LOC_INFANTRY), damage, true,
-                          DamageType.NONE, false));
-                } else {
-                    vDesc.addAll(gameManager.destroyEntity(entity, "nuclear explosion secondary effects", false, false));
-                    entity.getCrew().setDoomed(true);
-                }
-            } else if (entity instanceof Tank) {
-                // All vehicles suffer two critical hits...
-                HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(gameManager.oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
-                hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(gameManager.oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
-
-                // ...and a Crew Killed hit.
-                vDesc.addAll(gameManager.applyCriticalHit(entity, 0, new CriticalSlot(0, Tank.CRIT_CREW_KILLED), false, 0, false));
-            } else if ((entity instanceof Mek) || (entity instanceof ProtoMek)) {
-                // 'Meks suffer two critical hits...
-                HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(gameManager.oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
-                hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(gameManager.oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
-
-                // and four pilot hits.
-                vDesc.addAll(gameManager.damageCrew(entity, 4));
-            }
-            // Buildings and gun emplacements and such are only affected by the EMI.
-            // No auto-crits or anything.
-        } else if (rollValue <= 10) {
-            if (entity instanceof BattleArmor myBA) {
-                // It takes 25% casualties, rounded up.
-                int numDeaths = (int) (Math.ceil(((myBA.getNumberActiveTroopers())) / 4.0));
-                for (int x = 0; x < numDeaths; x++) {
-                    vDesc.addAll(gameManager.applyCriticalHit(entity, 0, null, false, 0, false));
-                }
-            } else if (entity instanceof Infantry) {
-                if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
-                    // 25% casualties, rounded up.
-                    int damage = (int) (Math.ceil((entity.getInternal(ConvInfantry.LOC_INFANTRY)) / 4.0));
-                    vDesc.addAll(gameManager.damageEntity(entity, new HitData(ConvInfantry.LOC_INFANTRY), damage, true,
-                          DamageType.NONE, false));
-                } else {
-                    // 50% casualties, rounded up.
-                    int damage = (int) (Math.ceil((entity.getInternal(ConvInfantry.LOC_INFANTRY)) / 2.0));
-                    vDesc.addAll(gameManager.damageEntity(entity, new HitData(ConvInfantry.LOC_INFANTRY), damage, true,
-                          DamageType.NONE, false));
-                }
-            } else if (entity instanceof Tank) {
-                // It takes one crit...
-                HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(gameManager.oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
-
-                // Plus a Crew Stunned critical.
-                vDesc.addAll(gameManager.applyCriticalHit(entity, 0, new CriticalSlot(0, Tank.CRIT_CREW_STUNNED), false, 0, false));
-            } else if ((entity instanceof Mek) || (entity instanceof ProtoMek)) {
-                // 'Meks suffer a critical hit...
-                HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(gameManager.oneCriticalEntity(entity, hd.getLocation(), hd.isRear(), 0));
-
-                // and two pilot hits.
-                vDesc.addAll(gameManager.damageCrew(entity, 2));
-            }
-            // Buildings and gun emplacements and such are only affected by
-            // the EMI.
-            // No auto-crits or anything.
-        }
-        // If it's 11+, there are no secondary effects beyond EMI.
-        // Lucky bastards.
-
-        // And lastly, the unit is now affected by electromagnetic interference.
         entity.setEMI(true);
+        LOGGER.info("[Nukes] {} suffers electromagnetic interference for the rest of the scenario",
+              entity.getDisplayName());
+    }
+
+    /**
+     * The +2 goes to combat vehicles, Meks, battle armor and aerospace craft (IO:AE p.166). Support vehicles,
+     * ProtoMeks, conventional infantry and gun emplacements roll without it: a Locust gets it, a support APC does not.
+     *
+     * @param entity the unit
+     *
+     * @return {@code true} if the unit adds the unit type bonus to its roll
+     */
+    static boolean hasUnitTypeBonus(Entity entity) {
+        if (entity.isSupportVehicle() || (entity instanceof GunEmplacement)) {
+            return false;
+        }
+        return entity.isMek()
+              || entity.isCombatVehicle()
+              || (entity instanceof BattleArmor)
+              || (entity instanceof Aero);
+    }
+
+    /**
+     * @param unitTypeBonus      whether the unit gets the unit type bonus
+     * @param inHardenedBuilding whether the unit is inside a hardened building
+     *
+     * @return the total added to the 2d6 roll
+     */
+    static int rollBonus(boolean unitTypeBonus, boolean inHardenedBuilding) {
+        int bonus = 0;
+        if (unitTypeBonus) {
+            bonus += UNIT_TYPE_BONUS;
+        }
+        if (inHardenedBuilding) {
+            bonus += HARDENED_STRUCTURE_BONUS;
+        }
+        return bonus;
+    }
+
+    private boolean isHardenedBuilding(Entity entity) {
+        IBuilding building = game.getBoard(entity.getBoardId()).getBuildingAt(entity.getPosition());
+        return (building != null) && (building.getBuildingType() == BuildingType.HARDENED);
+    }
+
+    /**
+     * Applies one row of the table to the unit.
+     *
+     * @param entity         the unit
+     * @param band           the table row
+     * @param side           the side of the unit facing Ground Zero
+     * @param insideBuilding whether the unit is inside a building
+     * @param vDesc          the report the results are added to
+     */
+    void applyBand(Entity entity, SecondaryEffectBand band, int side, boolean insideBuilding, Vector<Report> vDesc) {
+        switch (band) {
+            case DESTROYED -> destroy(entity, vDesc);
+            case SEVERE, MODERATE -> applyDamagingBand(entity, band, side, insideBuilding, vDesc);
+            case NONE -> LOGGER.info("[Nukes] {} takes no damage from the secondary effects",
+                  entity.getDisplayName());
+        }
+    }
+
+    private void destroy(Entity entity, Vector<Report> vDesc) {
+        vDesc.addAll(gameManager.destroyEntity(entity, DESTROYED_REASON, false, false));
+        entity.getCrew().setDoomed(true);
+        // The table adds 1D6 critical hits, but the unit is already destroyed and unsalvageable (HammerGS, 2026-10-26)
+        LOGGER.info("[Nukes] {} is destroyed and its crew killed; the 1D6 critical hits are skipped on a destroyed "
+              + "unit", entity.getDisplayName());
+    }
+
+    private void applyDamagingBand(Entity entity, SecondaryEffectBand band, int side, boolean insideBuilding,
+          Vector<Report> vDesc) {
+        boolean severe = band == SecondaryEffectBand.SEVERE;
+        if (entity instanceof BattleArmor battleArmor) {
+            // Battle armor is armored infantry: 50% or 25% casualties, rounded up
+            int activeTroopers = battleArmor.getNumberActiveTroopers();
+            int troopersKilled = (int) Math.ceil(activeTroopers / (severe ? 2.0 : 4.0));
+            LOGGER.info("[Nukes] {} loses {} of {} troopers", entity.getDisplayName(), troopersKilled,
+                  activeTroopers);
+            for (int trooper = 0; trooper < troopersKilled; trooper++) {
+                vDesc.addAll(gameManager.applyCriticalHit(entity, 0, null, false, 0, false));
+            }
+        } else if (entity instanceof Infantry infantry) {
+            applyInfantryCasualties(infantry, severe, insideBuilding, vDesc);
+        } else if (entity instanceof Tank) {
+            // Conventional and support vehicles: critical hits plus Crew Killed or Crew Stunned
+            LOGGER.info("[Nukes] {} takes {} critical hit(s) and a Crew {} critical", entity.getDisplayName(),
+                  band.criticalHits, severe ? "Killed" : "Stunned");
+            rollCriticalHits(entity, side, band.criticalHits, vDesc);
+            int crewCritical = severe ? Tank.CRIT_CREW_KILLED : Tank.CRIT_CREW_STUNNED;
+            vDesc.addAll(gameManager.applyCriticalHit(entity, 0, new CriticalSlot(0, crewCritical), false, 0, false));
+        } else if ((entity instanceof Mek) || (entity instanceof ProtoMek) || (entity instanceof Aero)) {
+            // Meks and fighter units; ProtoMeks take the Mek row (HammerGS, 2026-10-26)
+            LOGGER.info("[Nukes] {} takes {} critical hit(s) and {} pilot hit(s)", entity.getDisplayName(),
+                  band.criticalHits, band.pilotHits);
+            rollCriticalHits(entity, side, band.criticalHits, vDesc);
+            rollShutdownAvoid(entity, band.shutdownTarget, Compute.rollD6(2), vDesc);
+            vDesc.addAll(gameManager.damageCrew(entity, band.pilotHits));
+        } else {
+            LOGGER.info("[Nukes] {} has no row on the table and takes no damage", entity.getDisplayName());
+        }
+    }
+
+    /**
+     * Unarmored infantry outside buildings are killed on a 5-6 and lose 50% on a 7-10. Armored infantry and infantry
+     * inside buildings lose 50% on a 5-6 and 25% on a 7-10 (IO:AE p.166). Casualties round up: 28 troopers in flak
+     * armor lose 14 on a 5-6.
+     */
+    private void applyInfantryCasualties(Infantry infantry, boolean severe, boolean insideBuilding,
+          Vector<Report> vDesc) {
+        boolean armored = (infantry instanceof ConvInfantry convInfantry) && convInfantry.hasArmor();
+        boolean protectedColumn = armored || insideBuilding;
+        if (severe && !protectedColumn) {
+            LOGGER.info("[Nukes] {} is unarmored infantry outside a building: killed", infantry.getDisplayName());
+            destroy(infantry, vDesc);
+            return;
+        }
+        double divisor = (severe || !protectedColumn) ? 2.0 : 4.0;
+        int troopers = infantry.getInternal(ConvInfantry.LOC_INFANTRY);
+        int casualties = (int) Math.ceil(troopers / divisor);
+        int remaining = Math.max(0, troopers - casualties);
+        LOGGER.info("[Nukes] {} (armored: {}, inside a building: {}) loses {} of {} troopers",
+              infantry.getDisplayName(), armored, insideBuilding, casualties, troopers);
+        // The casualties are already troopers, so they come straight off the trooper count. The weapon damage
+        // routine would divide them by the armor divisor, which the table has already allowed for.
+        infantry.setInternal(remaining, ConvInfantry.LOC_INFANTRY);
+        infantry.damageThisPhase += casualties;
+        Report report = new Report(6557);
+        report.subject = infantry.getId();
+        report.indent(3);
+        report.addDesc(infantry);
+        report.add(casualties);
+        report.add(remaining);
+        vDesc.add(report);
+        if (remaining == 0) {
+            destroy(infantry, vDesc);
+        }
+    }
+
+    /** Critical hit locations roll on the side of the unit facing Ground Zero (IO:AE p.166). */
+    private void rollCriticalHits(Entity entity, int side, int criticalHits, Vector<Report> vDesc) {
+        for (int hit = 0; hit < criticalHits; hit++) {
+            HitData hitData = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
+            if (entity instanceof Aero aero) {
+                // Rolling the location sets the aerospace critical for it, as for a takeoff critical
+                vDesc.addAll(gameManager.applyCriticalHit(entity, hitData.getLocation(),
+                      new CriticalSlot(0, aero.getPotCrit()), true, 0, false));
+            } else {
+                vDesc.addAll(gameManager.oneCriticalEntity(entity, hitData.getLocation(), hitData.isRear(), 0));
+            }
+        }
+    }
+
+    /**
+     * The Shutdown Avoid Check for Meks and fighters (IO:AE p.166). A unit that fails restarts in a later heat phase
+     * like any other shutdown (HammerGS, 2026-10-26). ProtoMeks have no shutdown rules. DropShips, JumpShips and
+     * capital fighters skip it: the heat phase never restarts them, so a failed check would keep them down for the
+     * rest of the game.
+     *
+     * @param entity   the unit
+     * @param target   the number to roll to avoid shutting down
+     * @param diceRoll the 2d6 roll
+     * @param vDesc    the report the results are added to
+     */
+    void rollShutdownAvoid(Entity entity, int target, Roll diceRoll, Vector<Report> vDesc) {
+        if (entity instanceof ProtoMek) {
+            LOGGER.info("[Nukes] {} is a ProtoMek: no Shutdown Avoid Check", entity.getDisplayName());
+            return;
+        }
+        if (entity.isLargeCraft() || entity.isCapitalFighter()) {
+            LOGGER.info("[Nukes] {} is a large craft or capital fighter: no Shutdown Avoid Check, as nothing would "
+                  + "restart it", entity.getDisplayName());
+            return;
+        }
+        if (entity.isShutDown()) {
+            LOGGER.info("[Nukes] {} is already shut down: no Shutdown Avoid Check", entity.getDisplayName());
+            return;
+        }
+        boolean avoided = diceRoll.getIntValue() >= target;
+        Report report = new Report(6556);
+        report.subject = entity.getId();
+        report.indent(3);
+        report.addDesc(entity);
+        report.add(target);
+        report.add(diceRoll);
+        report.choose(avoided);
+        vDesc.add(report);
+        LOGGER.info("[Nukes] {} needs {}+ to avoid shutdown, rolls {}: {}", entity.getDisplayName(), target,
+              diceRoll.getIntValue(), avoided ? "stays running" : "shuts down");
+        if (avoided) {
+            return;
+        }
+        entity.setShutDown(true);
+        if (entity.canFall()) {
+            game.addPSR(new PilotingRollData(entity.getId(), SHUTDOWN_PILOTING_MODIFIER, "reactor shutdown"));
+            LOGGER.info("[Nukes] {} must make a piloting roll at +{} or fall", entity.getDisplayName(),
+                  SHUTDOWN_PILOTING_MODIFIER);
+        }
     }
 }

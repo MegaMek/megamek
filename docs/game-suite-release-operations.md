@@ -1,18 +1,56 @@
-# Manual game-suite coordinator: setup and recovery
+# Game-suite coordinator: setup, schedule and recovery
 
-The coordinator and suite archive tooling require Python 3.10+; the manual
+The coordinator and suite archive tooling require Python 3.10+; the
 workflow installs 3.11. For local suite Gradle builds/verification, use
 `-PsuitePythonExecutable=/absolute/path/to/python` when `python` on Windows
-or `python3` elsewhere is missing or too old.
+or `python3` elsewhere is missing or too old. The workflow sets `TMPDIR` to the
+runner's temporary directory on the root disk: the frozen worktrees and builds
+exceed the RAM-backed `/tmp` (about 7.8 GB) on Ubuntu 26.04 runners.
 
-`.github/workflows/game-suite-release.yml` is **manual only**. No Tuesday
-schedule is enabled and Nightlies are independent. Dispatch with membership
-Weekly, Milestone, or Development. `dry_run=true` is the default: it performs
+`.github/workflows/game-suite-release.yml` runs two ways:
+
+- **Scheduled Weekly**: every Tuesday at 06:00 UTC (Monday night in the
+  Americas). A scheduled run is always membership Weekly, live
+  (`dry_run=false`), without bootstrap, and uses the `suite-release-weekly`
+  environment, which publishes without a reviewer. It runs only on
+  `MegaMek/megamek` and only while `SUITE_RELEASES_ENABLED` is `true`; set the
+  variable to anything else to pause the schedule (the job is skipped, not failed).
+- **Manual dispatch** from `main`: membership Weekly (a corrective Weekly
+  between schedules), Milestone, or Development. `dry_run=true` is the
+  default and uses `suite-release-dry-run`; a manual live run uses
+  `suite-release-live` and waits for a required reviewer.
+
+## Version numbers
+
+- **Weekly** versions are allocated automatically: the newest *published*
+  three-part release across the three repositories (draft releases are
+  ignored) plus the next unused fourth-component revision. After `v0.51.0`
+  and `v0.51.00.1`, the next Weekly is `0.51.00.2`, then `0.51.00.3`, and so
+  on. Leave the `version` input empty; it is rejected for Weekly.
+- **Development and Milestone** releases (the regular X.YY.ZZ releases, such as
+  the quarterly `0.51.01`) are dispatched manually with an explicit `version`.
+  It must be canonical three-part, unused by any tag or release (including
+  drafts), and newer than every published release. Once it is published, the
+  following Weekly becomes `0.51.01.1`.
+
+The ordering is `0.51.00` < `0.51.00.2` < `0.51.01` < `0.51.01.1`, which matches
+MegaMek's `Version` and the launcher. The packaged `Version.properties` carries
+the Weekly number as `revision`.
+
+A dry run performs
 remote-byte preflight, frozen-source pinned builds and archive verification,
 but creates **no** tags, releases, assets, or record. A verified unchanged
 Weekly is a no-op (no new record). An unchanged Milestone or Development
 creates a new complete record reusing all three verified product assets; the
 first/bootstrap record must build all three products.
+
+Every run writes a job summary (suite version, membership, each product's
+version, built or reused, archive SHA-256, frozen source commits, and the
+result or the `BLOCKED` reason) and uploads the sealed `inventory.json`,
+`build_result.json` and `seal.json` as the `suite-state-*` artifact for 30 days.
+A failed **scheduled** run opens an issue titled
+"Scheduled Weekly suite release failed", or comments on it if it is still open.
+Close the issue once the cause is resolved.
 
 ## Configuration before permitting live runs
 
@@ -20,21 +58,28 @@ Keep repository/org Actions variable `SUITE_RELEASES_ENABLED` unset or anything
 other than the literal `true` until an operator has reviewed all three product
 verifiers on official main and exercised dry runs. Configure
 `SUITE_RELEASE_APP_ID` (Actions variable) and
-`SUITE_RELEASE_APP_PRIVATE_KEY` (Actions secret). The GitHub App installation
+`SUITE_RELEASE_APP_PRIVATE_KEY` (environment secret on **both**
+`suite-release-live` and `suite-release-weekly`). The GitHub App installation
 must grant Contents write to **exactly** `MegaMek/megamek`,
 `MegaMek/megameklab`, `MegaMek/mekhq`; do not grant access to `mm-data`.
-Protect the `suite-release-live` environment with required human reviewers
-and restrict deployment branches to the reviewed coordinator branch before
-setting the enable variable to `true`. The dry-run environment is
+Protect the `suite-release-live` environment with required human reviewers.
+Restrict deployment branches of `suite-release-live` and
+`suite-release-weekly` to `main`; the workflow selects `suite-release-weekly`
+only for scheduled events, so a manual dispatch cannot use the unattended
+environment. Set the enable variable to `true` only after this is in place.
+The dry-run environment is
 `suite-release-dry-run`; it does not receive the App token. Workflow `GITHUB_TOKEN`
-has only Contents read. The App token is minted only *after* all build work
+has only Contents read (plus Issues write in the separate failure-report job).
+The App token is minted only *after* all build work
 and is requested for the three named repositories with Contents write.
 Never put the private key in files, command output, or a workflow input.
 
 ## Check App access without publishing
 
 After this workflow is merged to official main, run **Game suite App access check (manual)**
-from the Actions tab on `main` and approve its `suite-release-live` environment request.
+from the Actions tab on `main`, choose the environment whose key to check
+(`suite-release-live` needs its reviewer approval; check `suite-release-weekly`
+after adding its copy of the key).
 This check works while `SUITE_RELEASES_ENABLED` remains `false`; it does not enable releases,
 build games, or publish tags, releases, assets, or a suite record.
 
@@ -51,10 +96,11 @@ the reported configuration/access problem before enabling live releases.
 
 ## Bootstrap and publication
 
-Use `bootstrap=true` and an explicitly reviewed canonical
-`bootstrap_floor` (for example `0.51.00`) **only** for the first record.
+Use `bootstrap=true` **only** for the first record (a manual run; scheduled
+runs never bootstrap). It builds all three products and allocates the version
+as above, so no floor is needed.
 Existing records reject bootstrap; absent records reject normal operation.
-The floor is not a reservation. Before bootstrap, inspect existing tags,
+Before bootstrap, inspect existing tags,
 releases and assets for a prior incomplete attempt. Do not overwrite/delete
 partial artifacts or automatically retry a failed write.
 
@@ -93,9 +139,9 @@ an unreviewed worktree or fall back to a previous record.
 ### GitHub release presentation and channel identity
 
 New MegaMek releases hosting a complete record are titled, for example,
-`Weekly suite 0.51.01`. New Lab/HQ product releases include the product
+`Weekly suite 0.51.00.2`. New Lab/HQ product releases include the product
 version and publishing suite, for example,
-`MekHQ 0.51.01 - Weekly suite 0.51.01`. Descriptions identify the channel,
+`MekHQ 0.51.00.2 - Weekly suite 0.51.00.2`. Descriptions identify the channel,
 link the exact complete record and each product archive, and list frozen sources.
 These labels apply to Weekly, Development and Milestone. The GitHub
 `prerelease=false` setting is unchanged; GitHub badges and version numbers do
@@ -111,15 +157,29 @@ Existing published releases are not relabeled by this change.
 
 ### Recovering from a non-portable published archive
 
-The first Weekly `0.51.01` contains case-only generated startup-script aliases
-such as `bin/MegaMek` and `bin/megamek`. The launcher correctly refuses these
-archives rather than choosing which file to overwrite.
-Do not replace the published assets or change their record hashes.
-Merge the shared packaging/verifier fix, then prepare a new Weekly with
-`bootstrap=false` and no bootstrap floor. The MegaMek source change rebuilds
-all three products. Historical bytes are attested read-only with their pinned
-contract; the new archives must pass portable-path validation before publication.
-Retry installation only after the corrected complete record is published.
+The first Weekly `0.51.01` (published October 2026) contained case-only
+generated startup-script aliases such as `bin/MegaMek` and `bin/megamek`, which
+the launcher correctly refuses. The packaging/verifier fix now rejects such
+archives before publication. Its releases and record were removed. No complete
+record exists, so the next live run must use `bootstrap=true`; it yields Weekly
+`0.51.00.2` (after the published `v0.51.0` and the `v0.51.00.1` Core Rules
+release). Scheduled runs never bootstrap: until that record exists, a scheduled run is
+blocked ("absent records reject normal operation") and opens the failure issue,
+so keep `SUITE_RELEASES_ENABLED` off until the bootstrap, then turn it on
+(which also starts the schedule).
+
+The `v0.51.01` tags and draft releases prepared outside the coordinator occupy
+that version, so a coordinator-run `0.51.01` is blocked until they are removed.
+Releases go through the coordinator so the launcher sees them; coordinate with
+the release manager to delete those drafts and tags (their notes can be copied
+to the coordinator's releases) before dispatching `0.51.01`. Afterwards the next
+Weekly becomes `0.51.01.1`.
+
+If a future published archive is found to be broken, do not replace its
+assets or change its record hashes. Merge the fix and run a manual live Weekly
+(or the next schedule) with `bootstrap=false`; the source change rebuilds the
+affected products, historical bytes are attested read-only with their pinned
+contract, and the launcher moves to the new record.
 
 ## Diagnosing failed dry runs
 
@@ -131,13 +191,17 @@ they are not full build logs. For other commands, diagnostics retain a bounded
 tail from each stream.
 
 A failed preparation is not a verified bootstrap: dry-run completion and
-publication must not be inferred from earlier successful steps. Check the
+publication must not be inferred from earlier successful steps. Start from the
+job summary and the `suite-state-*` artifact, then check the
 failed step and confirm the App-token/publication steps were skipped. Correct
 the reported cause before a reviewed retry; never disable verification or
 change the frozen commits to bypass a failure.
 
 Focused offline checks (fake GitHub/Gradle, no remote writes):
 `python3 -m unittest discover -s scripts -p 'test_suite_*.py'`.
+The **Game suite release tooling tests** workflow runs both suites on pull
+requests and pushes that touch the suite scripts, shared verifier, record
+fixtures or `game-suite-*` workflows.
 The shared archive and canonical-data regression suites (including external
 adapter task graphs) run with `python3 -m unittest discover -s gradle -p 'test_suite_*.py'`
 from MegaMek, with the Lab/HQ/mm-data sibling checkouts present. Merge the

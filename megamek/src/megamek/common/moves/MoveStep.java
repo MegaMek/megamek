@@ -3656,6 +3656,21 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * Returns {@code true} if this step starts from the hex the unit began its turn in. A TacOps edge descent (TO:AR p.20)
+     * can only start there: that is the only case the descent dialog and the server's edge dangle and climb-down
+     * handling recognise. Without this check, a Mek that walks to a cliff edge and then steps off is moved to the
+     * bottom as an ordinary walk.
+     *
+     * @param src the hex this step starts from
+     *
+     * @return {@code true} if {@code src} is the unit's turn-start hex on this step's board
+     */
+    private boolean isFromTurnStartHex(Coords src) {
+        Entity entity = getEntity();
+        return (entity.getBoardId() == boardId) && src.equals(entity.getPosition());
+    }
+
+    /**
      * Is movement possible from a previous position to this one?
      * <p>
      * This function does not comment on whether an overall movement path is possible, just whether the <em>current</em>
@@ -3958,8 +3973,8 @@ public class MoveStep implements Serializable {
             // (descent > maxDown) when leaping is OFF, and ready()'s clipToPossible() would
             // strip it before the server saw the path. Use canClimb (1 arm) not canDangle
             // (2 arms) so one-arm climb-down still works.
-            boolean canEdgeDescend = climbingEnabled && climbMode
-                                     && ClimbingHelper.canClimb(entity, isProne());
+            boolean isFromTurnStartHex = isFromTurnStartHex(src);
+            boolean canEdgeDescend = canUseClimbing && isFromTurnStartHex;
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 
@@ -3970,6 +3985,11 @@ public class MoveStep implements Serializable {
                 boolean allowUp = canUseClimbing && (elevationUp > 0);
                 boolean allowDown = canEdgeDescend && (elevationDown > 0);
                 if (!allowUp && !allowDown) {
+                    if (canUseClimbing && (elevationDown > 0) && !isFromTurnStartHex) {
+                        LOGGER.debug("[Climbing] {}: {}-level drop from {} refused - an edge descent must start "
+                                     + "from the hex the unit began its turn in", entity.getDisplayName(),
+                                     elevationDown, src);
+                    }
                     return false;
                 }
                 if (allowUp) {

@@ -80,11 +80,19 @@ public class TacOpsClimbingMovementTest extends GameBoardTestCase {
               hex 0102 0 "bldg_elev:5;building:2:80;bldg_cf:80" ""
               end""");
 
-        // Mek on top of a 4-level drop. Used by the edge descent preview cost tests.
+        // Issue #9268: a Mek starting on a level-3 cliff top beside a level -1 canyon floor.
         initializeBoard("BOARD_EDGE_DROP_4", """
               size 1 2
-              hex 0101 4 "" ""
-              hex 0102 0 "" ""
+              hex 0101 3 "" ""
+              hex 0102 -1 "" ""
+              end""");
+
+        // Issue #9268: the same 4-level drop, but one hex of cliff top away from the start.
+        initializeBoard("BOARD_WALK_THEN_DROP_4", """
+              size 1 3
+              hex 0101 3 "" ""
+              hex 0102 3 "" ""
+              hex 0103 -1 "" ""
               end""");
     }
 
@@ -203,6 +211,60 @@ public class TacOpsClimbingMovementTest extends GameBoardTestCase {
 
         assertTrue(movePath.isMoveLegal(),
               "Climb Mode OFF must not regress normal movement — 2-level hills stay legal.");
+    }
+
+    // -----------------------------------------------------------------------
+    // Issue #9268: with Climbing on and Leaping off, a Mek that walked to a
+    // cliff edge could step off it as an ordinary walk. An edge descent may
+    // only start from the hex the Mek began its turn in.
+    // -----------------------------------------------------------------------
+
+    private void setTacOpsLeaping(boolean enabled) {
+        getGame().getOptions().getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING).setValue(enabled);
+    }
+
+    @Test
+    void walkingToEdgeThenSteppingOffIsIllegalWithoutLeaping() {
+        setBoard("BOARD_WALK_THEN_DROP_4");
+        enableTacOpsClimbing();
+        setTacOpsLeaping(false);
+
+        MovePath movePath = getMovePathFor(createClimbableMek(), 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+
+        assertFalse(movePath.isMoveLegal(),
+              "A Mek that walked to the edge must not walk down a 4-level drop when Leaping is off.");
+    }
+
+    @Test
+    void walkingToEdgeThenSteppingOffIsLegalWithLeaping() {
+        setBoard("BOARD_WALK_THEN_DROP_4");
+        enableTacOpsClimbing();
+        setTacOpsLeaping(true);
+
+        MovePath movePath = getMovePathFor(createClimbableMek(), 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+
+        assertTrue(movePath.isMoveLegal(), "With Leaping on, the Mek may leap down from the edge it walked to.");
+    }
+
+    @Test
+    void edgeDescentFromTurnStartHexStaysLegal() {
+        setBoard("BOARD_EDGE_DROP_4");
+        enableTacOpsClimbing();
+        setTacOpsLeaping(false);
+
+        MovePath movePath = getMovePathFor(createClimbableMek(), 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+
+        assertTrue(movePath.isMoveLegal(),
+              "Stepping off the edge from the turn-start hex must stay legal so the server can turn it "
+                    + "into a dangle or climb-down.");
     }
 
     // -----------------------------------------------------------------------

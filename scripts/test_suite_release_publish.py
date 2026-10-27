@@ -22,18 +22,27 @@ class TransactionTests(unittest.TestCase):
         self.commits = {repo: chr(97 + i) * 40
                         for i, repo in enumerate((*REPOS.values(), "mm-data"))}
         self.inventory = dict(commits=self.commits.copy(), previous=None, membership="weekly",
-                              floor="0.51.00", tags={r: [] for r in REPOS.values()},
+                              requestedVersion=None, tags={r: [] for r in REPOS.values()},
                               releases={r: [] for r in REPOS.values()})
+        self.inventory["tags"]["megameklab"] = ["v0.51.00"]
+        self.inventory["releases"]["megameklab"] = ["v0.51.00"]
         self.archives = {}
         self.events = []
         self.reads = []
-        self.tags = {r: {} for r in REPOS.values()}
-        self.releases = {r: [] for r in REPOS.values()}
+        self.seed_base()
         self.blobs = {}
         for product in REPOS:
-            path = self.root / f"{product}-0.51.01.tar.gz"
+            path = self.root / f"{product}-0.51.00.1.tar.gz"
             path.write_bytes(product.encode())
             self.archives[product] = path
+
+    def seed_base(self):
+        """A published ordinary release: the first Weekly is its .1 revision."""
+        self.tags = {r: {} for r in REPOS.values()}
+        self.releases = {r: [] for r in REPOS.values()}
+        self.tags["megameklab"]["v0.51.00"] = "0" * 40
+        self.releases["megameklab"].append(dict(id=50, tag_name="v0.51.00", draft=False,
+                                                prerelease=False, name="base", body="", assets=[]))
 
     def get(self, endpoint):
         self.reads.append(endpoint)
@@ -92,7 +101,7 @@ class TransactionTests(unittest.TestCase):
         self.assertEqual([r["products"][p]["commit"] for p, r in
                           ((p, record) for p in REPOS)],
                          [self.commits[repo] for repo in REPOS.values()])
-        self.assertEqual(self.events[-1], ("upload", "megamek", "suite-record-0.51.01.json"))
+        self.assertEqual(self.events[-1], ("upload", "megamek", "suite-record-0.51.00.1.json"))
         self.assertEqual(len([e for e in self.events if e[0] == "upload"]), 4)
         self.assertLess(self.events.index(("validate",)), len(self.events) - 1)
         self.assertEqual(json.loads(self.blobs["megamek", self.releases["megamek"][0]
@@ -101,13 +110,12 @@ class TransactionTests(unittest.TestCase):
     def test_tag_and_release_movement_have_no_writes(self):
         for kind in ("tag", "release"):
             with self.subTest(kind=kind):
-                self.tags = {r: {} for r in REPOS.values()}
-                self.releases = {r: [] for r in REPOS.values()}
+                self.seed_base()
                 self.events.clear()
                 if kind == "tag":
-                    self.tags["mekhq"]["v0.51.01"] = self.commits["mekhq"]
+                    self.tags["mekhq"]["v0.51.00.1"] = self.commits["mekhq"]
                 else:
-                    self.releases["mekhq"].append(dict(id=5, tag_name="v0.51.01",
+                    self.releases["mekhq"].append(dict(id=5, tag_name="v0.51.00.1",
                                                        draft=True, assets=[]))
                 with self.assertRaises(UnsafeInventory):
                     self.execute()
@@ -125,6 +133,8 @@ class TransactionTests(unittest.TestCase):
 
     def select_membership(self, membership):
         self.inventory["membership"] = membership
+        self.inventory["requestedVersion"] = {"weekly": None, "development": "0.51.01",
+                                              "milestone": "0.52.00"}[membership]
         version = plan(self.inventory)["versionCandidate"]
         for product in REPOS:
             path = self.root / f"{product}-{version}.tar.gz"
@@ -208,7 +218,7 @@ class TransactionTests(unittest.TestCase):
     def prepare_noop(self):
         previous = self.execute()
         self.inventory["previous"] = copy.deepcopy(previous)
-        self.inventory["floor"] = previous["version"]
+        self.inventory["requestedVersion"] = None
         self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
         self.inventory["releases"] = {
             repo: [entry["tag_name"] for entry in entries]
@@ -265,20 +275,22 @@ class TransactionTests(unittest.TestCase):
             publish.publish(self.inventory, self.archives, getter=self.get,
                             fetch=self.fetch, writes=self, attest=lambda r, p: None,
                             validate=reject, bootstrap=True)
-        self.assertEqual(self.releases, {r: [] for r in REPOS.values()})
+        self.assertEqual(self.releases["megamek"], [])
+        self.assertEqual(self.releases["mekhq"], [])
+        self.assertEqual([r["tag_name"] for r in self.releases["megameklab"]], ["v0.51.00"])
         self.assertEqual(self.events, [])
 
     def prepare_reuse(self):
         previous = self.execute()
         self.inventory["previous"] = copy.deepcopy(previous)
-        self.inventory["floor"] = previous["version"]
+        self.inventory["requestedVersion"] = None
         self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
         self.inventory["releases"] = {
             repo: [entry["tag_name"] for entry in entries]
             for repo, entries in self.releases.items()}
         self.commits["mekhq"] = "f" * 40
         self.inventory["commits"]["mekhq"] = self.commits["mekhq"]
-        path = self.root / "MekHQ-0.51.02.tar.gz"
+        path = self.root / "MekHQ-0.51.00.2.tar.gz"
         path.write_bytes(b"new MekHQ")
         self.archives["MekHQ"] = path
         self.events.clear()
@@ -295,15 +307,15 @@ class TransactionTests(unittest.TestCase):
             self.assertEqual(record["products"][product], previous["products"][product])
             self.assertEqual(record["products"][product]["asset"]["sha256"],
                              hashlib.sha256(product.encode()).hexdigest())
-        self.assertEqual(record["products"]["MekHQ"]["version"], "0.51.02")
+        self.assertEqual(record["products"]["MekHQ"]["version"], "0.51.00.2")
         self.assertEqual([e[:2] for e in self.events if e[0] in ("tag", "release")],
                          [("tag", "mekhq"), ("release", "mekhq"),
                           ("tag", "megamek"), ("release", "megamek")])
         self.assertEqual([e for e in self.events if e[0] == "upload"],
-                         [("upload", "mekhq", "MekHQ-0.51.02.tar.gz"),
-                          ("upload", "megamek", "suite-record-0.51.02.json")])
-        self.assertEqual(self.events[-1], ("upload", "megamek", "suite-record-0.51.02.json"))
-        host = next(r for r in self.releases["megamek"] if r["tag_name"] == "v0.51.02")
+                         [("upload", "mekhq", "MekHQ-0.51.00.2.tar.gz"),
+                          ("upload", "megamek", "suite-record-0.51.00.2.json")])
+        self.assertEqual(self.events[-1], ("upload", "megamek", "suite-record-0.51.00.2.json"))
+        host = next(r for r in self.releases["megamek"] if r["tag_name"] == "v0.51.00.2")
         self.assertNotEqual(host["id"], record["products"]["MegaMek"]["releaseId"])
         self.assertEqual(json.loads(self.blobs["megamek", host["assets"][0]["id"]]), record)
         self.assert_release_presentation(record, "megamek", record["tag"])
@@ -320,7 +332,7 @@ class TransactionTests(unittest.TestCase):
                 prior = self.execute()
                 prior_releases = copy.deepcopy(self.releases)
                 self.inventory["previous"] = copy.deepcopy(prior)
-                self.inventory["floor"] = prior["version"]
+                self.inventory["requestedVersion"] = version
                 self.inventory["membership"] = membership
                 self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
                 self.inventory["releases"] = {
@@ -348,10 +360,10 @@ class TransactionTests(unittest.TestCase):
                 if host:
                     self.prepare_reuse()
                     repo = "megamek"
-                    version = "v0.51.02"
+                    version = "v0.51.00.2"
                 else:
                     repo = "megamek"
-                    version = "v0.51.01"
+                    version = "v0.51.00.1"
                 for index in range(100):
                     tag = f"unrelated-{index}"
                     self.tags[repo][tag] = self.commits[repo]

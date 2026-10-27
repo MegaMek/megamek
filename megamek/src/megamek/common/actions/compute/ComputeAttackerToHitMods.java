@@ -224,8 +224,8 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTaserFeedback"));
         }
 
-        // If a unit is suffering from electromagnetic interference, they get a blanket +2. Sucks to be them.
-        if (attacker.isSufferingEMI()) {
+        // A unit left suffering electromagnetic interference by a nuclear strike gets +2 (IO:AE p.166)
+        if (takesUnitEmiModifier(game, attacker)) {
             toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
         }
 
@@ -372,6 +372,26 @@ public class ComputeAttackerToHitMods {
         }
 
         return toHit;
+    }
+
+    /**
+     * Whether the attacker's own electromagnetic interference, left by a nuclear strike, adds +2 to hit (IO:AE p.166).
+     * Planetary EMI already adds the same +2 in the environmental modifiers, so a unit under both takes +2 once, not
+     * +4 (HammerGS, 2026-10-26). Planetary EMI exempts conventional infantry and the unit's own EMI does not, so a
+     * nuked foot platoon on an EMI planet still takes the +2.
+     *
+     * @param game     the game
+     * @param attacker the attacking unit
+     *
+     * @return {@code true} if the attacker takes the +2 for its own EMI
+     */
+    static boolean takesUnitEmiModifier(Game game, Entity attacker) {
+        if (!attacker.isSufferingEMI()) {
+            return false;
+        }
+        boolean planetaryEmiApplies = game.getPlanetaryConditions().getEMI().isEMI()
+              && !attacker.isConventionalInfantry();
+        return !planetaryEmiApplies;
     }
 
     /**

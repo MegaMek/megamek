@@ -414,7 +414,7 @@ class GeneralEntityReadout implements EntityReadout {
 
             @Override
             public String toHTML() {
-                return "<A HREF=" + linkUrl + ">" + displaySource + "</A>";
+                return "<A " + HyperLinkLine.hrefAttribute(linkUrl) + ">" + displaySource + "</A>";
             }
 
             @Override

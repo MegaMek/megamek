@@ -522,8 +522,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 boolean fellWhileDescending = false;
                 for (int i = 1; i <= levelsToDescend; i++) {
                     PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    // The +1 climbing modifier is not applied to the climbing roll itself (TO:AR p.20)
                     psr.append(new PilotingRollData(entity.getId(),
-                                                    ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                    0,
                                                     "climbing down (level " + i + " of " + levelsToDescend + ")"));
                     if (climbableArms == 1) {
                         psr.append(new PilotingRollData(entity.getId(),
@@ -671,8 +672,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 boolean fellWhileDescending = false;
                 for (int i = 1; i <= levelsToDescend; i++) {
                     PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    // The +1 climbing modifier is not applied to the climbing roll itself (TO:AR p.20)
                     psr.append(new PilotingRollData(entity.getId(),
-                                                    ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                    0,
                                                     "climbing down (level " + i + " of " + levelsToDescend + ")"));
                     if (climbableArms == 1) {
                         psr.append(new PilotingRollData(entity.getId(),
@@ -4875,8 +4877,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 for (int levelClimbed = 1; levelClimbed <= levelsThisTurn; levelClimbed++) {
                     int overallLevel = levelsAlreadyClimbed + levelClimbed;
                     rollTarget = entity.getBasePilotingRoll(moveType);
+                    // The +1 climbing modifier is not applied to the climbing roll itself (TO:AR p.20)
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                                                           ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                           0,
                                                            "climbing (level " + overallLevel + " of " + overallClimbHeight + ")"));
                     if (climbableArms == 1) {
                         rollTarget.append(new PilotingRollData(entity.getId(),

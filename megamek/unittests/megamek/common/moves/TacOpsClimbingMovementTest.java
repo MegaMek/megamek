@@ -482,4 +482,54 @@ public class TacOpsClimbingMovementTest extends GameBoardTestCase {
     // stacking checks rely on). The dangling-doesn't-violate test above is the
     // climbing-specific assertion we need; the underlying stacking rule is
     // covered elsewhere in the test suite.
+
+    // -----------------------------------------------------------------------
+    // Edge descent preview cost. Stepping off a drop too high to walk down,
+    // with Leaping off, opens the descent dialog, which sets the real cost.
+    // The step used to show the walking price (1 for the hex + 1 per level,
+    // 5 MP for a 4-level drop); it now shows one level of climbing.
+    // -----------------------------------------------------------------------
+
+    @Test
+    void edgeDescentIsPricedAsOneClimbingLevelWithTwoHands() {
+        setBoard("BOARD_EDGE_DROP_4");
+        enableTacOpsClimbing();
+
+        MovePath movePath = getMovePathFor(createClimbableMek(), 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+
+        assertTrue(movePath.isMoveLegal(), "Stepping off the edge from the turn-start hex stays legal.");
+        assertEquals(ClimbingHelper.MP_COST_TWO_HANDS, movePath.getLastStep().getMp(),
+              "The step costs one level of two-handed climbing, not the 5 MP walking price.");
+    }
+
+    @Test
+    void edgeDescentIsPricedAsOneClimbingLevelWithOneHand() {
+        setBoard("BOARD_EDGE_DROP_4");
+        enableTacOpsClimbing();
+        Mek mek = createClimbableMek();
+        mek.setCritical(Mek.LOC_RIGHT_ARM, 3, null);
+
+        MovePath movePath = getMovePathFor(mek, 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+
+        assertTrue(movePath.isMoveLegal(), "Stepping off the edge from the turn-start hex stays legal.");
+        assertEquals(ClimbingHelper.MP_COST_ONE_HAND, movePath.getLastStep().getMp(),
+              "The step costs one level of one-handed climbing, not the 5 MP walking price.");
+    }
+
+    @Test
+    void edgeDescentWithLeapingStillCostsALeap() {
+        setBoard("BOARD_EDGE_DROP_4");
+        enableTacOpsClimbing();
+        getGame().getOptions().getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING).setValue(true);
+
+        MovePath movePath = getMovePathFor(createClimbableMek(), 0, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+
+        assertEquals(4, movePath.getLastStep().getMp(), "A leap always costs 4 MP (TO:AR p.20).");
+    }
 }

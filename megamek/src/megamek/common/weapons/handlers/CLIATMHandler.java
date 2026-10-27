@@ -57,7 +57,6 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
 import megamek.common.units.ConvInfantry;
@@ -297,8 +296,7 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         // Affects streak too.
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI()) {
+        if (isClusterRollUnderEMI()) {
             nMissilesModifier -= 2;
         }
 

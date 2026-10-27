@@ -78,7 +78,6 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.AtmosphericTaint;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
@@ -2316,6 +2315,18 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
     }
 
+    /**
+     * Electromagnetic interference costs 2 on the cluster roll, whether it covers the whole map or the attacker
+     * suffers it after a nuclear strike (IO:AE p.166). Under both at once it is the same effect and still costs 2
+     * (HammerGS, 2026-10-26).
+     *
+     * @return {@code true} if this attack's cluster roll takes the EMI penalty
+     */
+    protected boolean isClusterRollUnderEMI() {
+        return game.getPlanetaryConditions().getEMI().isEMI()
+              || ((attackingEntity != null) && attackingEntity.isSufferingEMI());
+    }
+
     protected int getClusterModifiers(boolean clusterRangePenalty) {
         int nMissilesModifier = getSalvoBonus();
 
@@ -2350,8 +2361,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI()) {
+        if (isClusterRollUnderEMI()) {
             nMissilesModifier -= 2;
         }
 

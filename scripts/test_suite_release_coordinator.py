@@ -98,7 +98,7 @@ class CoordinatorTests(unittest.TestCase):
         workflow = (Path(__file__).resolve().parents[1] /
                     ".github/workflows/game-suite-release.yml").read_text()
         self.assertIn("workflow_dispatch:", workflow)
-        self.assertNotIn("schedule:", workflow)
+        self.assertIn('schedule:\n    - cron: "0 6 * * 2"', workflow)
         self.assertIn("default: true", workflow)
         self.assertIn("suite-release-live", workflow)
         self.assertIn("SUITE_RELEASES_ENABLED", workflow)
@@ -108,11 +108,62 @@ class CoordinatorTests(unittest.TestCase):
         self.assertNotIn("steps.prepare.outputs.changed", workflow)
         self.assertLess(workflow.index("id: prepare"), workflow.index("id: app"))
         self.assertEqual(3, workflow.count("TMPDIR: ${{ runner.temp }}"))
+        # A scheduled run is always a live, non-bootstrap Weekly in its own unattended environment.
+        for scheduled in (
+                "github.event_name == 'schedule' && 'suite-release-weekly' || "
+                "(inputs.dry_run && 'suite-release-dry-run' || 'suite-release-live')",
+                "MEMBERSHIP: ${{ github.event_name == 'schedule' && 'weekly' || inputs.membership }}",
+                "DRY_RUN: ${{ github.event_name == 'schedule' && 'false' || inputs.dry_run }}",
+                "BOOTSTRAP: ${{ github.event_name == 'schedule' && 'false' || inputs.bootstrap }}",
+                "github.repository == 'MegaMek/megamek' && vars.SUITE_RELEASES_ENABLED == 'true'"):
+            self.assertIn(scheduled, workflow)
+        # Step conditions must read the resolved values; inputs are empty on scheduled runs.
+        self.assertNotIn("${{ inputs.dry_run }}", workflow)
+        self.assertNotIn("!inputs.dry_run", workflow)
+        self.assertNotIn("if: ${{ inputs.", workflow)
+        report = workflow[workflow.index("report-scheduled-failure:"):]
+        self.assertIn("failure() && github.event_name == 'schedule'", report)
+        self.assertIn("issues: write", report)
+        self.assertNotIn("issues: write", workflow[:workflow.index("report-scheduled-failure:")])
+
+    def test_tooling_tests_run_in_ci(self):
+        workflow = (Path(__file__).resolve().parents[1] /
+                    ".github/workflows/game-suite-release-tests.yml").read_text()
+        for required in ("pull_request:", "discover -s scripts -p 'test_suite_*.py'",
+                         "discover -s gradle -p 'test_suite_*.py'", "contents: read"):
+            self.assertIn(required, workflow)
+
+    def test_job_summary_reports_plan_and_result_only_inside_actions(self):
+        proposal = coordinator.prepare("milestone", False, None, self.root, self.state,
+                                       discover=self.discover, builder=self.builder)
+        with patch.dict(os.environ, {}, clear=True):
+            coordinator.step_summary(["ignored"])
+        summary = self.root / "summary.md"
+        with patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": str(summary)}):
+            coordinator.step_summary(coordinator.prepared_summary(proposal, self.state))
+        text = summary.read_text()
+        self.assertIn(f"## Milestone suite {proposal['versionCandidate']}", text)
+        seal = json.loads((self.state / "seal.json").read_text())
+        for product in REPOS:
+            self.assertIn(f"| {product} | {self.record['products'][product]['version']} |", text)
+            self.assertIn(seal["archives"][product], text)
+        for repo, sha in proposal["frozenCommits"].items():
+            self.assertIn(f"https://github.com/MegaMek/{repo}/commit/{sha}", text)
+
+    def test_blocked_run_is_reported_in_job_summary(self):
+        summary = self.root / "summary.md"
+        argv = ["suite_release_coordinator.py", "finish", "--sources", str(self.root),
+                "--state", str(self.root / "missing")]
+        with patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": str(summary)}), \
+                patch("sys.argv", argv), patch("sys.stderr"):
+            self.assertEqual(2, coordinator.main())
+        self.assertIn("**BLOCKED during finish:**", summary.read_text())
 
     def test_app_check_workflow_is_manual_protected_and_nonpublishing(self):
         workflow = (Path(__file__).resolve().parents[1] /
                     ".github/workflows/game-suite-app-check.yml").read_text()
         for required in ("workflow_dispatch:", "contents: read", "suite-release-live",
+                         "suite-release-weekly", "environment: ${{ inputs.environment }}",
                          "group: game-suite-release-global", "cancel-in-progress: false",
                          "timeout-minutes: 5", "SUITE_RELEASE_APP_ID",
                          "SUITE_RELEASE_APP_PRIVATE_KEY", "actions/create-github-app-token@v3",

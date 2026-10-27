@@ -68,6 +68,32 @@ def prepare(membership, bootstrap, floor, sources, state,
     return proposal
 
 
+def step_summary(lines):
+    """Append Markdown to the GitHub job summary; silent outside Actions."""
+    target = os.environ.get("GITHUB_STEP_SUMMARY")
+    if target:
+        with Path(target).open("a", encoding="utf-8") as output:
+            output.write("\n".join(lines) + "\n\n")
+
+
+def prepared_summary(proposal, state):
+    result = parse_json((state / "build_result.json").read_bytes())
+    seal = parse_json((state / "seal.json").read_bytes())
+    commits = proposal["frozenCommits"]
+    lines = [f"## {proposal['membership'].capitalize()} suite {proposal['versionCandidate']}", "",
+             "| Product | Version | Archive | SHA-256 |", "| --- | --- | --- | --- |"]
+    for product in REPOS:
+        origin = "built" if product in proposal["buildCandidates"] else "reused"
+        lines.append(f"| {product} | {result['productVersions'][product]} | {origin} | "
+                     f"`{seal['archives'][product]}` |")
+    lines += ["", "Frozen sources: " + ", ".join(
+        f"[{repo}@{sha[:10]}](https://github.com/MegaMek/{repo}/commit/{sha})"
+        for repo, sha in commits.items())]
+    if proposal["weeklyNoopCandidate"]:
+        lines += ["", "Nothing changed since the previous Weekly; no new record will be published."]
+    return lines
+
+
 def verify_noop(inventory, paths, *, getter=gh_get, fetch=download_asset):
     previous = inventory["previous"]
     if not plan(inventory)["weeklyNoopCandidate"] or previous is None:
@@ -138,13 +164,17 @@ def main():
             proposal = prepare(args.membership, args.bootstrap, args.bootstrap_floor,
                                args.sources, args.state)
             print("PREPARED: " + json.dumps(proposal))
+            step_summary(prepared_summary(proposal, args.state))
         else:
             if args.membership or args.bootstrap_floor:
                 raise UnsafeInventory("finish reads sealed membership and floor")
-            print(finish(args.state, args.sources, args.bootstrap, args.publish))
+            outcome = finish(args.state, args.sources, args.bootstrap, args.publish)
+            print(outcome)
+            step_summary([f"**Result:** `{outcome}`"])
         return 0
     except (UnsafeInventory, ValueError, OSError, KeyError, TypeError) as error:
         print(f"BLOCKED: {error}", file=sys.stderr)
+        step_summary([f"**BLOCKED during {args.phase}:**", "", "```", str(error), "```"])
         return 2
 
 

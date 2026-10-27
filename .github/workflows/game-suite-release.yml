@@ -1,6 +1,10 @@
-name: Game suite release (manual guarded)
+name: Game suite release
 
 on:
+  # Weekly every Tuesday 06:00 UTC (Monday night in the Americas); always membership weekly, live.
+  schedule:
+    - cron: "0 6 * * 2"
+  # Manual runs: Milestone, Development, or a corrective Weekly. Live manual runs need reviewer approval.
   workflow_dispatch:
     inputs:
       membership:
@@ -33,13 +37,19 @@ concurrency:
 
 jobs:
   suite:
+    # Forks never run the schedule; SUITE_RELEASES_ENABLED != true pauses it without failing.
+    if: ${{ github.event_name != 'schedule' || (github.repository == 'MegaMek/megamek' && vars.SUITE_RELEASES_ENABLED == 'true') }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
-    environment: ${{ inputs.dry_run && 'suite-release-dry-run' || 'suite-release-live' }}
+    # Scheduled Weekly publishes unattended; every manual live run waits for a reviewer.
+    environment: ${{ github.event_name == 'schedule' && 'suite-release-weekly' || (inputs.dry_run && 'suite-release-dry-run' || 'suite-release-live') }}
+    env:
+      MEMBERSHIP: ${{ github.event_name == 'schedule' && 'weekly' || inputs.membership }}
+      DRY_RUN: ${{ github.event_name == 'schedule' && 'false' || inputs.dry_run }}
+      BOOTSTRAP: ${{ github.event_name == 'schedule' && 'false' || inputs.bootstrap }}
     steps:
       - name: Gate live operation before checkout
         env:
-          DRY_RUN: ${{ inputs.dry_run }}
           ENABLED: ${{ vars.SUITE_RELEASES_ENABLED }}
           APP_ID: ${{ vars.SUITE_RELEASE_APP_ID }}
           APP_KEY_PRESENT: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY != '' }}
@@ -78,8 +88,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           # Pinned worktrees and builds exceed the ~7.8 GB RAM-backed /tmp on Ubuntu 26.04+.
           TMPDIR: ${{ runner.temp }}
-          MEMBERSHIP: ${{ inputs.membership }}
-          BOOTSTRAP: ${{ inputs.bootstrap }}
           BOOTSTRAP_FLOOR: ${{ inputs.bootstrap_floor }}
         run: |
           args=(--membership "$MEMBERSHIP" --sources sources --state suite-state)
@@ -91,18 +99,17 @@ jobs:
           python3 scripts/suite_release_coordinator.py prepare "${args[@]}"
           echo "noop=$(python3 -c 'import json; d=json.load(open("suite-state/inventory.json")); from sys import path; path.insert(0,"scripts"); from suite_release_plan import plan; print("true" if plan(d)["weeklyNoopCandidate"] else "false")')" >> "$GITHUB_OUTPUT"
       - name: Complete dry-run or verified Weekly no-op without write token
-        if: ${{ inputs.dry_run || steps.prepare.outputs.noop == 'true' }}
+        if: ${{ env.DRY_RUN == 'true' || steps.prepare.outputs.noop == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TMPDIR: ${{ runner.temp }}
-          BOOTSTRAP: ${{ inputs.bootstrap }}
         run: |
           args=(--sources sources --state suite-state)
           if [[ "$BOOTSTRAP" == "true" ]]; then args+=(--bootstrap); fi
-          if [[ "${{ inputs.dry_run }}" != "true" ]]; then args+=(--publish); fi
+          if [[ "$DRY_RUN" != "true" ]]; then args+=(--publish); fi
           python3 scripts/suite_release_coordinator.py finish "${args[@]}"
       - name: Mint narrowly scoped App token after successful builds
-        if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}
+        if: ${{ env.DRY_RUN != 'true' && steps.prepare.outputs.noop == 'false' }}
         id: app
         uses: actions/create-github-app-token@v3
         with:
@@ -112,12 +119,42 @@ jobs:
           repositories: megamek,megameklab,mekhq
           permission-contents: write
       - name: Recheck remote inventory and publish once, record last
-        if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}
+        if: ${{ env.DRY_RUN != 'true' && steps.prepare.outputs.noop == 'false' }}
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           TMPDIR: ${{ runner.temp }}
-          BOOTSTRAP: ${{ inputs.bootstrap }}
         run: |
           args=(--sources sources --state suite-state --publish)
           if [[ "$BOOTSTRAP" == "true" ]]; then args+=(--bootstrap); fi
           python3 scripts/suite_release_coordinator.py finish "${args[@]}"
+      - name: Keep the plan and seal for diagnosis
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: suite-state-${{ env.MEMBERSHIP }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: suite-state/*.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  report-scheduled-failure:
+    needs: suite
+    if: ${{ failure() && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the Weekly failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Scheduled Weekly suite release failed"
+          body="Scheduled Weekly suite release failed: $RUN_URL"$'\n\n'"Check the job summary and the suite-state artifact. See docs/game-suite-release-operations.md before re-running; a failure after a tag or release write needs manual reconciliation."
+          existing=$(gh issue list --state open --search "\"$title\" in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n 1)
+          if [[ -n "$existing" ]]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi

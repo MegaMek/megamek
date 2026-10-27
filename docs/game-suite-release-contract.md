@@ -4,9 +4,10 @@ This document describes the suite build input and release-record format. They
 let future release jobs give each changed product its own version and check a proposed
 record describing a complete set of three game downloads.
 **These Gradle tasks do not publish a record or a release.** The separate
-manual coordinator workflow can publish after a protected live approval;
-see [game-suite release operations](game-suite-release-operations.md) for setup and recovery.
-There is no schedule, version reservation, or launcher change here.
+coordinator workflow publishes: a scheduled Weekly runs unattended, and manual
+live runs need a protected approval. See
+[game-suite release operations](game-suite-release-operations.md) for setup and recovery.
+These Gradle tasks add no schedule, version reservation, or launcher change.
 
 ## Implemented in this PR
 

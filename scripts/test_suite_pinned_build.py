@@ -28,9 +28,10 @@ class PinnedBuildTests(unittest.TestCase):
                         for product, repo in pinned.REPOS.items()}
         self.commits["mm-data"] = self.record["mmData"]["commit"]
         self.inventory = dict(commits=self.commits, previous=None, membership="weekly",
-                              floor=self.record["version"],
+                              requestedVersion=None,
                               tags={repo: [] for repo in pinned.REPOS.values()},
-                              releases={repo: [] for repo in pinned.REPOS.values()})
+                              releases={repo: [self.record["tag"]]
+                                        for repo in pinned.REPOS.values()})
         self.calls = []
 
     def fake(self, command, **kwargs):
@@ -177,7 +178,6 @@ class PinnedBuildTests(unittest.TestCase):
             item["asset"]["size"] = 5
             item["asset"]["sha256"] = hashlib.sha256(b"prior").hexdigest()
             prior[product] = path
-        self.inventory["floor"] = self.record["version"]
         seen = []
         def attest(record, paths, **kwargs):
             seen.append((record, dict(paths)))
@@ -218,6 +218,7 @@ class PinnedBuildTests(unittest.TestCase):
     def test_record_only_reuses_all_verified_archives_without_gradle_build(self):
         self.inventory["previous"] = self.record
         self.inventory["membership"] = "development"
+        self.inventory["requestedVersion"] = "0.51.101"
         prior = {}
         for product, item in self.record["products"].items():
             path = self.root / item["asset"]["name"]

@@ -12,7 +12,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java-distribution: [ temurin ]
-        java-version: [ 21 ]
+        java-version: [ 25 ]
       fail-fast: false
 
     steps:

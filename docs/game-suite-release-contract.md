@@ -4,9 +4,10 @@ This document describes the suite build input and release-record format. They
 let future release jobs give each changed product its own version and check a proposed
 record describing a complete set of three game downloads.
 **These Gradle tasks do not publish a record or a release.** The separate
-manual coordinator workflow can publish after a protected live approval;
-see [game-suite release operations](game-suite-release-operations.md) for setup and recovery.
-There is no schedule, version reservation, or launcher change here.
+coordinator workflow publishes: a scheduled Weekly runs unattended, and manual
+live runs need a protected approval. See
+[game-suite release operations](game-suite-release-operations.md) for setup and recovery.
+These Gradle tasks add no schedule, version reservation, or launcher change.
 
 ## Implemented in this PR
 
@@ -18,17 +19,20 @@ its subprojects and the packaged `Version.properties` used by `new Version()`.
 It does not edit the tracked source file. `:megamek:verifySuiteVersion` compares
 the processed resource to the effective project version (excluding the
 optional `-extraVersion` suffix); `:megamek:processResources` creates the
-packaged file. The input accepts only canonical three-component decimal
-versions: major has no leading zeros; minor and patch use two digits for
-0–99 and no leading zeros above 99. Each component must fit in a Java
-signed 32-bit integer (0–2147483647). Thus `0.51.01`, `0.51.02`,
-`0.51.100` are distinct, while `0.51.1` and `0.51.001` are *not*
-alternate allocatable slots. Without the input, the existing source-based
-version and optional historic fourth-component revision are unchanged.
+packaged file. The input accepts only canonical decimal versions
+`major.minor.patch[.revision]`: major and revision have no leading zeros
+(revision is 1 or more); minor and patch use two digits for 0–99 and no
+leading zeros above 99. Each component must fit in a Java signed 32-bit
+integer (0–2147483647). Thus `0.51.01`, `0.51.02`, `0.51.100` and the Weekly
+`0.51.00.2` are distinct, while `0.51.1`, `0.51.001` and `0.51.00.02` are
+*not* alternate allocatable slots. A missing revision orders as 0, so
+`0.51.00` < `0.51.00.2` < `0.51.01`. Without the input, the existing
+source-based version and optional fourth-component revision are unchanged.
 In suite mode the effective MegaMek version is `suiteMegaMekVersion`, defaulting
-to `suiteReleaseVersion` for all-equal builds. With the input, a source revision is suppressed, including in the packaged
-resource. The existing `extraVersion` build suffix remains available and
-is not part of the release record version.
+to `suiteReleaseVersion` for all-equal builds. With the input, the source
+revision is replaced by the input's revision (omitted for three-part versions),
+including in the packaged resource. The existing `extraVersion` build suffix
+remains available and is not part of the release record version.
 
 ### MegaMek suite product archive (local preparation only)
 
@@ -171,9 +175,12 @@ from the newer suite's Lab/HQ sources.
 The other product-build repositories must produce full archives at their assigned product
 versions from explicitly pinned source commits and an mm-data commit. Unchanged
 product archives can instead be reused without republishing them. A coordinating
-release job must reserve the next unused numeric version across the suite,
-treating unpadded aliases as the same number and leaving the optional fourth
-component to historical special point releases. It must check the real tags
+release job allocates versions across all three repositories, treating unpadded
+aliases (`v0.51.0`) as the same number. A Weekly is the newest **published**
+three-part release (drafts excluded) plus the next unused revision, e.g.
+`0.51.00.2` after `v0.51.0` and `v0.51.00.1`. Development and Milestone use an
+explicitly requested, unused three-part version newer than every published
+release (e.g. `0.51.01`). It must check the real tags
 and GitHub release IDs, inspect each uploaded asset's ID and name, and verify
 its SHA-256 and byte size against the downloaded bytes.
 

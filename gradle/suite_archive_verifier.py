@@ -368,8 +368,10 @@ def jar_version(path, product):
                 require(match is not None and match.group(1) not in props,
                         "ambiguous Version.properties")
                 props[match.group(1)] = match.group(2)
-            require(not props.get("revision", "").strip(), "point-release JAR revision")
-            return ".".join(props.get(key, "") for key in ("major", "minor", "patch"))
+            version = ".".join(props.get(key, "") for key in ("major", "minor", "patch"))
+            # A Weekly's revision is part of its version; the caller compares the whole string.
+            revision = props.get("revision", "").strip()
+            return version + "." + revision if revision else version
         # Manifest lines may fold; only Implementation-Version matters.
         lines = content.decode("utf-8").replace("\r\n ", "").splitlines()
         versions = [line.split(": ", 1)[1] for line in lines

@@ -11312,6 +11312,8 @@ public class TWGameManager extends AbstractGameManager {
                 resolveUnjam(entity);
             }
         }
+        // Clear the unjam actions (and anything else)
+        game.clearActions(true);
     }
 
     void resolveBoobyTraps() {

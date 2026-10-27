@@ -19,7 +19,9 @@ from pathlib import Path
 REPOS = {"MegaMek": "megamek", "MegaMekLab": "megameklab", "MekHQ": "mekhq"}
 SOURCES = (*REPOS.values(), "mm-data")
 SHA = re.compile(r"[0-9a-f]{40}\Z")
-VERSION = re.compile(r"(0|[1-9][0-9]*)\.([0-9]+)\.([0-9]+)\Z")
+# major.minor.patch for Development/Milestone; Weekly adds a fourth revision (0.51.00.2).
+VERSION = re.compile(r"(0|[1-9][0-9]*)\.([0-9]+)\.([0-9]+)(?:\.([1-9][0-9]*))?\Z")
+TAG = re.compile(r"v([0-9]+)\.([0-9]+)\.([0-9]+)(?:\.([0-9]+))?\Z")
 MAX = 2147483647
 MAX_RECORD_BYTES = 1024 * 1024
 CHUNK_BYTES = 1024 * 1024
@@ -76,36 +78,48 @@ def parse_json(data):
     return json.loads(data, object_pairs_hook=unique_object)
 
 
-def numbers(value, allow_revision=False):
+def numbers(value):
+    """(major, minor, patch, revision); revision 0 means a three-component version."""
     if not isinstance(value, str):
         raise UnsafeInventory("version is not a string")
-    parts = value.split(".")
-    if allow_revision and len(parts) == 4 and parts[3].isdigit():
-        parts = parts[:3]
-    match = VERSION.fullmatch(".".join(parts))
+    match = VERSION.fullmatch(value)
     if not match:
         raise UnsafeInventory(f"invalid numeric version: {value}")
-    result = tuple(map(int, match.groups()))
+    result = tuple(int(n or 0) for n in match.groups())
     if any(n > MAX for n in result):
         raise UnsafeInventory("version exceeds Java integer range")
     return result
 
 
 def padded(parts):
-    return f"{parts[0]}.{parts[1]:02d}.{parts[2]:02d}"
+    base = f"{parts[0]}.{parts[1]:02d}.{parts[2]:02d}"
+    return base + (f".{parts[3]}" if len(parts) > 3 and parts[3] else "")
 
 
 def canonical(value):
     return padded(numbers(value)) == value
 
 
-def reserve(tags, releases, floor, membership="weekly"):
-    """Treat aliases and legacy fourth-component tags/releases as occupied slots."""
-    if not canonical(floor):
-        raise UnsafeInventory("floor must be a canonical padded version")
+def tag_numbers(tag):
+    """Numeric identity of a historical tag (v0.51.0 == v0.51.00); None if not a version tag."""
+    match = TAG.fullmatch(tag)
+    if match is None:
+        return None
+    result = tuple(int(n or 0) for n in match.groups())
+    return result if all(n <= MAX for n in result) else None
+
+
+def reserve(tags, releases, membership="weekly", requested=None):
+    """Weekly: latest published release plus the next free revision; others: explicit version.
+
+    Weekly 0.51.00.2 follows published 0.51.00 (or 0.51.0) and occupied 0.51.00.1. A
+    Development or Milestone version is chosen by a maintainer and must be newer than
+    every published release and unused by any tag or release in the three repositories.
+    """
     if membership not in ("weekly", "milestone", "development"):
         raise UnsafeInventory("unknown membership")
-    ceiling = numbers(floor)
+    occupied = set()
+    published = set()
     for repo in REPOS.values():
         if (repo not in tags or not isinstance(tags[repo], list)
                 or repo not in releases or not isinstance(releases[repo], list)):
@@ -113,15 +127,29 @@ def reserve(tags, releases, floor, membership="weekly"):
         for tag in tags[repo] + releases[repo]:
             if not isinstance(tag, str):
                 raise UnsafeInventory("invalid tag")
-            if tag.startswith("v") and re.fullmatch(r"v[0-9]+(?:\.[0-9]+){2,3}", tag):
-                ceiling = max(ceiling, numbers(tag[1:], allow_revision=True))
-    if membership == "milestone" or ceiling[2] == MAX:
-        if ceiling[1] == MAX:
-            if ceiling[0] == MAX:
-                raise UnsafeInventory("version space exhausted")
-            return padded((ceiling[0] + 1, 0, 0))
-        return padded((ceiling[0], ceiling[1] + 1, 0))
-    return padded((ceiling[0], ceiling[1], ceiling[2] + 1))
+        occupied.update(n for tag in tags[repo] + releases[repo]
+                        if (n := tag_numbers(tag)) is not None)
+        published.update(n for tag in releases[repo] if (n := tag_numbers(tag)) is not None)
+    if membership == "weekly":
+        if requested is not None:
+            raise UnsafeInventory("Weekly versions are allocated, not requested")
+        bases = [n for n in published if n[3] == 0]
+        if not bases:
+            raise UnsafeInventory("no published release to base a Weekly on")
+        base = max(bases)
+        revision = max(n[3] for n in occupied if n[:3] == base[:3]) + 1
+        if revision > MAX:
+            raise UnsafeInventory("Weekly revision space exhausted")
+        return padded((*base[:3], revision))
+    if requested is None or not canonical(requested) or numbers(requested)[3]:
+        raise UnsafeInventory(
+            f"{membership.capitalize()} requires an explicit canonical major.minor.patch version")
+    wanted = numbers(requested)
+    if wanted in occupied:
+        raise UnsafeInventory(f"version {requested} is already tagged or released")
+    if published and wanted <= max(published):
+        raise UnsafeInventory(f"version {requested} is not newer than the latest published release")
+    return requested
 
 
 def validate_previous(record):
@@ -202,14 +230,12 @@ def select(commits, previous, membership):
 
 def plan(inventory):
     if not isinstance(inventory, dict) or set(inventory) != {
-            "commits", "tags", "releases", "previous", "membership", "floor"}:
+            "commits", "tags", "releases", "previous", "membership", "requestedVersion"}:
         raise UnsafeInventory("inventory fields missing or unknown")
     previous = inventory["previous"]
     changed, candidate = select(inventory["commits"], previous, inventory["membership"])
-    if previous is not None and numbers(inventory["floor"]) < numbers(previous["version"]):
-        raise UnsafeInventory("floor predates previous record")
-    version = reserve(inventory["tags"], inventory["releases"], inventory["floor"],
-                      inventory["membership"])
+    version = reserve(inventory["tags"], inventory["releases"], inventory["membership"],
+                      inventory["requestedVersion"])
     if previous is not None and numbers(version) <= numbers(previous["version"]):
         raise UnsafeInventory("suite version is not monotonic")
     return {
@@ -227,8 +253,8 @@ def plan(inventory):
 def gh_get(endpoint, runner=subprocess.run):
     # Only GET endpoints are accepted. No API write or arbitrary CLI command.
     match = re.fullmatch(r"repos/MegaMek/([a-z-]+)/"
-                         r"(commits/(?:main|v[0-9]+\.[0-9]+\.[0-9]+)"
-                         r"|git/ref/tags/v[0-9]+\.[0-9]+\.[0-9]+"
+                         r"(commits/(?:main|v[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?)"
+                         r"|git/ref/tags/v[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?"
                          r"|(?:tags|releases)\?per_page=100&page=[1-9][0-9]*)",
                          endpoint)
     if (match is None or match[1] not in SOURCES
@@ -307,7 +333,7 @@ def complete_record(releases, fetch=download_asset, allow_missing=False):
             if not asset["name"].startswith("suite-record-"):
                 continue
             name = asset["name"]
-            if not re.fullmatch(r"suite-record-[0-9]+\.[0-9]+\.[0-9]+\.json", name):
+            if not re.fullmatch(r"suite-record-[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?\.json", name):
                 raise UnsafeInventory("malformed complete-record asset name")
             if type(asset.get("id")) is not int or asset["id"] <= 0 or (
                     type(asset.get("size")) is not int) or asset["size"] <= 0 or (
@@ -401,15 +427,9 @@ def release_details(getter=gh_get):
 
 
 def discovered_inventory(membership, getter=gh_get, fetch=download_asset,
-                         bootstrap=False, bootstrap_floor=None, attest=None, retain=None):
+                         bootstrap=False, requested_version=None, attest=None, retain=None):
     """Remote preflight, including archive attestation; still no publication authority."""
     details = release_details(getter)
-    if bootstrap and bootstrap_floor is None:
-        raise UnsafeInventory("bootstrap requires an explicit canonical floor")
-    if not bootstrap and bootstrap_floor is not None:
-        raise UnsafeInventory("bootstrap floor requires explicit bootstrap")
-    if bootstrap and not canonical(bootstrap_floor):
-        raise UnsafeInventory("bootstrap floor must be canonical")
     previous = complete_record(details["megamek"], fetch, allow_missing=bootstrap)
     if bootstrap and previous is not None:
         raise UnsafeInventory("bootstrap refused: complete record already exists")
@@ -418,8 +438,7 @@ def discovered_inventory(membership, getter=gh_get, fetch=download_asset,
             from suite_archive_attestation import attest_archives
             attest = attest_archives
         check_product_assets(previous, details, fetch, attest, retain)
-    inventory = freeze_and_inventory(
-        membership, bootstrap_floor if bootstrap else previous["version"], getter)
+    inventory = freeze_and_inventory(membership, requested_version, getter)
     if any(inventory["releases"][repo] != [
             tag for entry in details[repo] if (tag := published_tag(entry)) is not None]
            for repo in REPOS.values()):
@@ -455,7 +474,7 @@ def release_inventory(getter=gh_get):
     return {"tags": tags, "releases": releases}
 
 
-def freeze_and_inventory(membership, floor, getter=gh_get):
+def freeze_and_inventory(membership, requested_version, getter=gh_get):
     """Capture main once; previous is null until separately attested."""
     commits = {}
     for repo in SOURCES:
@@ -465,7 +484,7 @@ def freeze_and_inventory(membership, floor, getter=gh_get):
             raise UnsafeInventory(f"invalid main HEAD for {repo}")
         commits[repo] = sha
     return {"commits": commits, **release_inventory(getter), "previous": None,
-            "membership": membership, "floor": floor}
+            "membership": membership, "requestedVersion": requested_version}
 
 
 def main():
@@ -473,19 +492,17 @@ def main():
     parser.add_argument("--inventory", type=Path, help="offline JSON inventory (never authoritative)")
     parser.add_argument("--membership", choices=("weekly", "milestone", "development"),
                         default="weekly")
-    parser.add_argument("--floor", default="0.51.00",
-                        help="canonical version floor, not a version reservation")
+    parser.add_argument("--version", dest="requested_version",
+                        help="explicit major.minor.patch for Development or Milestone")
     parser.add_argument("--bootstrap", action="store_true",
-                        help="read-only first-record candidate; requires --bootstrap-floor")
-    parser.add_argument("--bootstrap-floor",
-                        help="explicit canonical floor for read-only bootstrap candidate")
+                        help="read-only first-record candidate")
     args = parser.parse_args()
     try:
-        if args.inventory and (args.bootstrap or args.bootstrap_floor is not None):
-            raise UnsafeInventory("bootstrap options require remote discovery")
+        if args.inventory and (args.bootstrap or args.requested_version is not None):
+            raise UnsafeInventory("bootstrap and version options require remote discovery")
         inventory = (parse_json(args.inventory.read_bytes()) if args.inventory
                      else discovered_inventory(args.membership, bootstrap=args.bootstrap,
-                                               bootstrap_floor=args.bootstrap_floor))
+                                               requested_version=args.requested_version))
         print(json.dumps(plan(inventory), indent=2))
         # Deliberately nonzero: an unverified plan must never look like a release.
         print("BLOCKED: archive attestation, source-ref checks and publication are not implemented",

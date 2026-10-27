@@ -102,6 +102,13 @@ public class ObjectiveMarker extends GroundObject {
     private int controllingPlayerId = NO_CONTROLLER;
     // the pre-set lobby placement position; null when the marker has no pre-set position
     private Coords lobbyPosition = null;
+    /**
+     * Whether this point existed when the game started (from a scenario file, or a designation that came back from
+     * an earlier reset), as opposed to one placed during the game in the Victory Setup phase or by a game master.
+     * Only these return to the lobby on a reset. A marker from a save written before this existed reads
+     * {@code false}.
+     */
+    private boolean presentAtGameStart = false;
 
     // how this point is fought over and what it is worth; never null via the getter
     private ObjectiveScoringScheme scoringScheme = new ObjectiveScoringScheme();
@@ -350,6 +357,18 @@ public class ObjectiveMarker extends GroundObject {
 
     public void setLobbyPosition(@Nullable Coords lobbyPosition) {
         this.lobbyPosition = lobbyPosition;
+    }
+
+    /**
+     * @return {@code true} when this point existed when the game started, so a reset to the lobby keeps it;
+     *       {@code false} when it was placed during the game and a reset clears it
+     */
+    public boolean isPresentAtGameStart() {
+        return presentAtGameStart;
+    }
+
+    public void setPresentAtGameStart(boolean presentAtGameStart) {
+        this.presentAtGameStart = presentAtGameStart;
     }
 
     /**

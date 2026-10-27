@@ -84,6 +84,28 @@ class SuiteRecordValidatorTest {
     }
 
     @Test
+    void weeklyRevisionVersionsOrderAfterTheirBaseRelease() throws IOException {
+        String good = Files.readString(COMPLETE).replace("\r\n", "\n");
+        Path weekly = temp.resolve("weekly.json");
+        Files.writeString(weekly, good.replace("0.51.100", "0.51.99.3"));
+        assertDoesNotThrow(() -> SuiteRecordValidator.validate(weekly));
+        Path reusedWeekly = temp.resolve("reused-weekly.json");
+        Files.writeString(reusedWeekly, good.replace("0.51.99", "0.51.99.2"));
+        assertDoesNotThrow(() -> SuiteRecordValidator.validate(reusedWeekly));
+        String[] bad = {
+              good.replace("0.51.100", "0.51.99.0"),
+              good.replace("0.51.100", "0.51.99.03"),
+              good.replace("0.51.100", "0.51.99.3.1"),
+              good.replace("0.51.99", "0.51.100.1"),
+        };
+        for (int i = 0; i < bad.length; i++) {
+            Path file = temp.resolve("bad-weekly-" + i + ".json");
+            Files.writeString(file, bad[i]);
+            assertThrows(IllegalArgumentException.class, () -> SuiteRecordValidator.validate(file));
+        }
+    }
+
+    @Test
     void versionComponentsMustFitJavaIntForSuiteAndProducts() throws IOException {
         String good = Files.readString(COMPLETE).replace("\r\n", "\n");
         String[] tooLarge = {"2147483648.51.100", "0.2147483648.100", "0.51.2147483648"};

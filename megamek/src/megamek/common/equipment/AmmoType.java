@@ -1157,17 +1157,17 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           rulesRefs(SourceBookCode.TM, 208));
 
-    private static final MunitionMutator CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
+    private static final MunitionMutator CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR = new MunitionMutator(
           "Precision",
           (5.0 / 3),
           Munitions.M_PRECISION,
           new TechAdvancement(TechBase.CLAN)
-                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false),
-          rulesRefs(SourceBookCode.CORE, 190));
+          rulesRefs(SourceBookCode.IO_AE, 90));
 
     private static final MunitionMutator CLAN_IMPROVED_TRACER_MUNITION_MUTATOR = new MunitionMutator("Tracer",
           1,
@@ -3568,7 +3568,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CASELESS_MUNITION_MUTATOR);
         munitions.add(FLAK_MUNITION_MUTATOR);
         munitions.add(CLAN_IMPROVED_FLECHETTE_MUNITION_MUTATOR);
-        munitions.add(CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR_UNOFFICIAL);
+        munitions.add(CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR);
         munitions.add(CLAN_IMPROVED_TRACER_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanImprovedAcAmmo, munitions);
 

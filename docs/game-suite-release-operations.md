@@ -142,11 +142,17 @@ Existing published releases are not relabeled by this change.
 The first Weekly `0.51.01` (published October 2026) contained case-only
 generated startup-script aliases such as `bin/MegaMek` and `bin/megamek`, which
 the launcher correctly refuses. The packaging/verifier fix now rejects such
-archives before publication. The `0.51.01` releases, record and leftover tags
-were removed, so no complete record exists and the next live run must again use
+archives before publication. Its releases and record were removed; `0.51.01` is
+now reserved for the upcoming manually prepared release, whose `v0.51.01` tags
+must stay. No complete record exists, so the next live run must again use
 `bootstrap=true` with floor `0.51.01`; version allocation then yields `0.51.02`.
+Run that bootstrap only **after** `0.51.01` is released, so the first Weekly
+does not appear ahead of it. Suite versions are always three-part
+(`X.YY.ZZ`); four-part tags such as `v0.51.00.1` only occupy version slots.
 Scheduled runs never bootstrap: until that record exists, a scheduled run is
-blocked ("absent records reject normal operation") and opens the failure issue.
+blocked ("absent records reject normal operation") and opens the failure issue,
+so keep `SUITE_RELEASES_ENABLED` off until `0.51.01` is released, then turn
+it on for the bootstrap (which also starts the schedule).
 
 If a future published archive is found to be broken, do not replace its
 assets or change its record hashes. Merge the fix and run a manual live Weekly

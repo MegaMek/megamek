@@ -372,8 +372,9 @@ class GeneralEntityReadout implements EntityReadout {
             if (book.isPresent()) {
                 SourceBook sourceBook = book.get();
                 String displaySource = sourceBookDisplayText(source, sourceBook);
-                if ((sourceBook.getMul_url() != null) && !sourceBook.getMul_url().isBlank()) {
-                    return new HyperLinkLine(sourceLabel, sourceBook.getMul_url(), displaySource);
+                String linkUrl = sourceBook.getLinkUrl();
+                if (linkUrl != null) {
+                    return new HyperLinkLine(sourceLabel, linkUrl, displaySource);
                 } else {
                     source = displaySource;
                 }
@@ -400,7 +401,8 @@ class GeneralEntityReadout implements EntityReadout {
 
     private ViewElement sourceBookDisplayElement(String sourceName, SourceBook sourceBook) {
         String displaySource = sourceBookDisplayText(sourceName, sourceBook);
-        if ((sourceBook.getMul_url() == null) || sourceBook.getMul_url().isBlank()) {
+        String linkUrl = sourceBook.getLinkUrl();
+        if (linkUrl == null) {
             return new PlainElement(displaySource);
         }
 
@@ -412,7 +414,7 @@ class GeneralEntityReadout implements EntityReadout {
 
             @Override
             public String toHTML() {
-                return "<A HREF=" + sourceBook.getMul_url() + ">" + displaySource + "</A>";
+                return "<A " + HyperLinkLine.hrefAttribute(linkUrl) + ">" + displaySource + "</A>";
             }
 
             @Override

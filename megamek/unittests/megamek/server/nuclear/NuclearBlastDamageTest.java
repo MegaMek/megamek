@@ -34,6 +34,7 @@ package megamek.server.nuclear;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -53,11 +54,13 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
+import megamek.common.units.InfantryCompartment;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
@@ -156,6 +159,25 @@ class NuclearBlastDamageTest {
 
         assertTrue(atlas.isDoomed() || atlas.isDestroyed(), "annihilated at Ground Zero");
         assertFalse(atlas.isSalvage(), "nothing a nuke destroys can be salvaged (IO:AE p.168)");
+    }
+
+    @Test
+    void troopsKilledWithTheirCarrierCannotBeSalvaged() throws Exception {
+        // The Elementals die with the Bulldog and go straight to the graveyard; they are still unsalvageable
+        // (IO:AE p.168)
+        Entity bulldog = placeUnit("Bulldog Medium Tank.blk", GROUND_ZERO);
+        bulldog.addTransporter(new InfantryCompartment(10.0));
+        Entity elementals = placeUnit("Elemental BA [Laser] (Sqd5).blk", GROUND_ZERO);
+        bulldog.load(elementals, false);
+        elementals.setTransportId(bulldog.getId());
+
+        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO,
+              NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M), new Vector<Report>());
+
+        assertTrue(elementals.isDestroyed(), "killed with the carrier");
+        assertNull(game.getEntity(elementals.getId()), "already in the graveyard");
+        assertFalse(elementals.isSalvage());
+        assertEquals(IEntityRemovalConditions.REMOVE_DEVASTATED, elementals.getRemovalCondition());
     }
 
     @Test

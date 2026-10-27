@@ -33,7 +33,6 @@
 package megamek.server.nuclear;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +42,7 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
@@ -82,7 +82,7 @@ public class NuclearDetonationResolver {
      */
     public int resolve(Coords position, NuclearBlastProfile profile, Vector<Report> vDesc) {
         long startNanos = System.nanoTime();
-        Set<Integer> standingBefore = new HashSet<>();
+        Set<Integer> standingBefore = new LinkedHashSet<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (!entity.isDestroyed() && !entity.isDoomed()) {
                 standingBefore.add(entity.getId());
@@ -305,12 +305,21 @@ public class NuclearDetonationResolver {
 
         // Nothing a nuclear weapon destroys can be salvaged (IO:AE p.168).
         int unitsDestroyed = 0;
-        for (Entity entity : game.getEntitiesVector()) {
-            if (standingBefore.contains(entity.getId()) && (entity.isDestroyed() || entity.isDoomed())) {
-                entity.setSalvage(false);
-                LOGGER.info("[Nukes] {} destroyed by the detonation: unsalvageable", entity.getDisplayName());
-                unitsDestroyed++;
+        // A unit carried by a destroyed transport goes straight to the graveyard, so look up every unit that was
+        // standing, not only the ones still in play
+        for (int unitId : standingBefore) {
+            Entity entity = game.getEntityFromAllSources(unitId);
+            if ((entity == null) || !(entity.isDestroyed() || entity.isDoomed())) {
+                continue;
             }
+            entity.setSalvage(false);
+            boolean inGraveyard = game.getEntity(unitId) == null;
+            if (inGraveyard && (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)) {
+                entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
+            }
+            LOGGER.info("[Nukes] {} destroyed by the detonation: unsalvageable{}", entity.getDisplayName(),
+                  inGraveyard ? " (already in the graveyard)" : "");
+            unitsDestroyed++;
         }
         LOGGER.info("[Nukes] {} unit(s) struck by the blast, {} destroyed and marked unsalvageable",
               blastedUnitsVec.size(), unitsDestroyed);

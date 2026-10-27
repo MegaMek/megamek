@@ -71,6 +71,7 @@ import megamek.common.weapons.DamageType;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 import megamek.server.nuclear.NuclearBlastProfile;
+import megamek.server.nuclear.NuclearSecondaryEffects;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -935,7 +936,7 @@ public class AreaEffectHelper {
         // Since the effects are unit-dependent, we'll just define it in the
         // entity.
         if (!entity.isDestroyed() && (blastDistance <= profile.secondaryRadius())) {
-            gameManager.applySecondaryNuclearEffects(entity, coords, vPhaseReport);
+            new NuclearSecondaryEffects(gameManager).apply(entity, coords, vPhaseReport);
         }
 
     }

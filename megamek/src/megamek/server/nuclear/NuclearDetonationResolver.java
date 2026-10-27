@@ -292,7 +292,7 @@ public class NuclearDetonationResolver {
             // Actually do secondary effects against it.
             // Since the effects are unit-dependant, we'll just define it in the
             // entity.
-            gameManager.applySecondaryNuclearEffects(entity, position, vDesc);
+            new NuclearSecondaryEffects(gameManager).apply(entity, position, vDesc);
         }
 
         LOGGER.info("[Nukes] Detonation at hex {} resolved in {} ms; {} changed hexes sent in one update",

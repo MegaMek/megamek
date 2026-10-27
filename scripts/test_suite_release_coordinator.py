@@ -107,6 +107,7 @@ class CoordinatorTests(unittest.TestCase):
         self.assertIn("steps.prepare.outputs.noop == 'false'", workflow)
         self.assertNotIn("steps.prepare.outputs.changed", workflow)
         self.assertLess(workflow.index("id: prepare"), workflow.index("id: app"))
+        self.assertEqual(3, workflow.count("TMPDIR: ${{ runner.temp }}"))
 
     def test_app_check_workflow_is_manual_protected_and_nonpublishing(self):
         workflow = (Path(__file__).resolve().parents[1] /

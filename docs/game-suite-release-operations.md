@@ -3,7 +3,9 @@
 The coordinator and suite archive tooling require Python 3.10+; the manual
 workflow installs 3.11. For local suite Gradle builds/verification, use
 `-PsuitePythonExecutable=/absolute/path/to/python` when `python` on Windows
-or `python3` elsewhere is missing or too old.
+or `python3` elsewhere is missing or too old. The workflow sets `TMPDIR` to the
+runner's temporary directory on the root disk: the frozen worktrees and builds
+exceed the RAM-backed `/tmp` (about 7.8 GB) on Ubuntu 26.04 runners.
 
 `.github/workflows/game-suite-release.yml` is **manual only**. No Tuesday
 schedule is enabled and Nightlies are independent. Dispatch with membership

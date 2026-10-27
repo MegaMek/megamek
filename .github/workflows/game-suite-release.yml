@@ -76,6 +76,8 @@ jobs:
         id: prepare
         env:
           GH_TOKEN: ${{ github.token }}
+          # Pinned worktrees and builds exceed the ~7.8 GB RAM-backed /tmp on Ubuntu 26.04+.
+          TMPDIR: ${{ runner.temp }}
           MEMBERSHIP: ${{ inputs.membership }}
           BOOTSTRAP: ${{ inputs.bootstrap }}
           BOOTSTRAP_FLOOR: ${{ inputs.bootstrap_floor }}
@@ -92,6 +94,7 @@ jobs:
         if: ${{ inputs.dry_run || steps.prepare.outputs.noop == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          TMPDIR: ${{ runner.temp }}
           BOOTSTRAP: ${{ inputs.bootstrap }}
         run: |
           args=(--sources sources --state suite-state)
@@ -112,6 +115,7 @@ jobs:
         if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
+          TMPDIR: ${{ runner.temp }}
           BOOTSTRAP: ${{ inputs.bootstrap }}
         run: |
           args=(--sources sources --state suite-state --publish)

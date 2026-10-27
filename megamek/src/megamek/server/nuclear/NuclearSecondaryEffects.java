@@ -292,13 +292,15 @@ public class NuclearSecondaryEffects {
     }
 
     /**
-     * Unarmored infantry outside buildings are killed on a 5-6 and lose 50% on a 7-10. Armored infantry and infantry
-     * inside buildings lose 50% on a 5-6 and 25% on a 7-10 (IO:AE p.166). Casualties round up: 28 troopers in flak
-     * armor lose 14 on a 5-6.
+     * Unarmored infantry (damage divisor 1) outside buildings are killed on a 5-6 and lose 50% on a 7-10. Armored
+     * infantry and infantry inside buildings lose 50% on a 5-6 and 25% on a 7-10 (IO:AE p.166). Casualties round up:
+     * 28 troopers in flak armor lose 14 on a 5-6.
      */
     private void applyInfantryCasualties(Infantry infantry, boolean severe, boolean insideBuilding,
           Vector<Report> vDesc) {
-        boolean armored = (infantry instanceof ConvInfantry convInfantry) && convInfantry.hasArmor();
+        // Armored means a damage divisor above 1: fatigues are an armor kit with divisor 1 and count as unarmored
+        // (HammerGS, 2026-10-26)
+        boolean armored = (infantry instanceof ConvInfantry convInfantry) && (convInfantry.calcDamageDivisor() > 1.0);
         boolean protectedColumn = armored || insideBuilding;
         if (severe && !protectedColumn) {
             LOGGER.info("[Nukes] {} is unarmored infantry outside a building: killed", infantry.getDisplayName());

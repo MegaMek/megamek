@@ -132,7 +132,7 @@ class NuclearSecondaryEffectsTest {
         ConvInfantry platoon = (ConvInfantry) placeUnit("Foot Platoon (AFFS) (Laser 3067+).blk");
         platoon.setArmorKit(null);
         platoon.setArmorEncumbering(false);
-        assertFalse(platoon.hasArmor());
+        assertEquals(1.0, platoon.calcDamageDivisor());
         return platoon;
     }
 
@@ -266,9 +266,22 @@ class NuclearSecondaryEffectsTest {
     }
 
     @Test
+    void infantryInFatiguesCountsAsUnarmored() throws Exception {
+        // Fatigues are an armor kit with damage divisor 1, so the platoon is unarmored (HammerGS, 2026-10-26)
+        ConvInfantry platoon = (ConvInfantry) placeUnarmoredPlatoon();
+        platoon.setArmorKit(EquipmentType.get("Fatigues"));
+        assertTrue(platoon.hasArmor(), "the platoon wears a kit");
+        assertEquals(1.0, platoon.calcDamageDivisor());
+
+        applyWithRoll(platoon, 5);
+
+        assertTrue(platoon.isDoomed() || platoon.isDestroyed(), "killed on a 5-6 like any unarmored platoon");
+    }
+
+    @Test
     void armoredInfantryLosesHalfOnTheSevereRow() throws Exception {
         Entity cavalry = placeUnit("Fast Recon Cavalry Point.blk");
-        assertTrue(((ConvInfantry) cavalry).hasArmor(), "the point wears Clan armor kits");
+        assertTrue(((ConvInfantry) cavalry).calcDamageDivisor() > 1.0, "the point wears Clan armor kits");
         int troopers = cavalry.getInternal(ConvInfantry.LOC_INFANTRY);
 
         applyWithRoll(cavalry, 5);

@@ -19,12 +19,12 @@ on:
         required: true
         default: true
       bootstrap:
-        description: First complete record only; requires canonical bootstrap floor
+        description: First complete record only (no prior suite record exists)
         type: boolean
         required: true
         default: false
-      bootstrap_floor:
-        description: Canonical floor for first record only (e.g. 0.51.00)
+      version:
+        description: Development/Milestone version, e.g. 0.51.01 (leave empty for Weekly, which is allocated)
         type: string
         required: false
 
@@ -88,14 +88,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           # Pinned worktrees and builds exceed the ~7.8 GB RAM-backed /tmp on Ubuntu 26.04+.
           TMPDIR: ${{ runner.temp }}
-          BOOTSTRAP_FLOOR: ${{ inputs.bootstrap_floor }}
+          VERSION: ${{ github.event_name != 'schedule' && inputs.version || '' }}
         run: |
           args=(--membership "$MEMBERSHIP" --sources sources --state suite-state)
-          if [[ "$BOOTSTRAP" == "true" ]]; then args+=(--bootstrap --bootstrap-floor "$BOOTSTRAP_FLOOR"); fi
-          if [[ "$BOOTSTRAP" != "true" && -n "$BOOTSTRAP_FLOOR" ]]; then
-            echo "::error::Bootstrap floor requires bootstrap=true"
-            exit 1
-          fi
+          if [[ "$BOOTSTRAP" == "true" ]]; then args+=(--bootstrap); fi
+          if [[ -n "$VERSION" ]]; then args+=(--version "$VERSION"); fi
           python3 scripts/suite_release_coordinator.py prepare "${args[@]}"
           echo "noop=$(python3 -c 'import json; d=json.load(open("suite-state/inventory.json")); from sys import path; path.insert(0,"scripts"); from suite_release_plan import plan; print("true" if plan(d)["weeklyNoopCandidate"] else "false")')" >> "$GITHUB_OUTPUT"
       - name: Complete dry-run or verified Weekly no-op without write token

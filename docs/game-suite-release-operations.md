@@ -20,6 +20,23 @@ exceed the RAM-backed `/tmp` (about 7.8 GB) on Ubuntu 26.04 runners.
   default and uses `suite-release-dry-run`; a manual live run uses
   `suite-release-live` and waits for a required reviewer.
 
+## Version numbers
+
+- **Weekly** versions are allocated automatically: the newest *published*
+  three-part release across the three repositories (draft releases are
+  ignored) plus the next unused fourth-component revision. After `v0.51.0`
+  and `v0.51.00.1`, the next Weekly is `0.51.00.2`, then `0.51.00.3`, and so
+  on. Leave the `version` input empty; it is rejected for Weekly.
+- **Development and Milestone** releases (the regular X.YY.ZZ releases, such as
+  the quarterly `0.51.01`) are dispatched manually with an explicit `version`.
+  It must be canonical three-part, unused by any tag or release (including
+  drafts), and newer than every published release. Once it is published, the
+  following Weekly becomes `0.51.01.1`.
+
+The ordering is `0.51.00` < `0.51.00.2` < `0.51.01` < `0.51.01.1`, which matches
+MegaMek's `Version` and the launcher. The packaged `Version.properties` carries
+the Weekly number as `revision`.
+
 A dry run performs
 remote-byte preflight, frozen-source pinned builds and archive verification,
 but creates **no** tags, releases, assets, or record. A verified unchanged
@@ -79,10 +96,11 @@ the reported configuration/access problem before enabling live releases.
 
 ## Bootstrap and publication
 
-Use `bootstrap=true` and an explicitly reviewed canonical
-`bootstrap_floor` (for example `0.51.00`) **only** for the first record.
+Use `bootstrap=true` **only** for the first record (a manual run; scheduled
+runs never bootstrap). It builds all three products and allocates the version
+as above, so no floor is needed.
 Existing records reject bootstrap; absent records reject normal operation.
-The floor is not a reservation. Before bootstrap, inspect existing tags,
+Before bootstrap, inspect existing tags,
 releases and assets for a prior incomplete attempt. Do not overwrite/delete
 partial artifacts or automatically retry a failed write.
 
@@ -121,9 +139,9 @@ an unreviewed worktree or fall back to a previous record.
 ### GitHub release presentation and channel identity
 
 New MegaMek releases hosting a complete record are titled, for example,
-`Weekly suite 0.51.01`. New Lab/HQ product releases include the product
+`Weekly suite 0.51.00.2`. New Lab/HQ product releases include the product
 version and publishing suite, for example,
-`MekHQ 0.51.01 - Weekly suite 0.51.01`. Descriptions identify the channel,
+`MekHQ 0.51.00.2 - Weekly suite 0.51.00.2`. Descriptions identify the channel,
 link the exact complete record and each product archive, and list frozen sources.
 These labels apply to Weekly, Development and Milestone. The GitHub
 `prerelease=false` setting is unchanged; GitHub badges and version numbers do
@@ -142,17 +160,20 @@ Existing published releases are not relabeled by this change.
 The first Weekly `0.51.01` (published October 2026) contained case-only
 generated startup-script aliases such as `bin/MegaMek` and `bin/megamek`, which
 the launcher correctly refuses. The packaging/verifier fix now rejects such
-archives before publication. Its releases and record were removed; `0.51.01` is
-now reserved for the upcoming manually prepared release, whose `v0.51.01` tags
-must stay. No complete record exists, so the next live run must again use
-`bootstrap=true` with floor `0.51.01`; version allocation then yields `0.51.02`.
-Run that bootstrap only **after** `0.51.01` is released, so the first Weekly
-does not appear ahead of it. Suite versions are always three-part
-(`X.YY.ZZ`); four-part tags such as `v0.51.00.1` only occupy version slots.
-Scheduled runs never bootstrap: until that record exists, a scheduled run is
+archives before publication. Its releases and record were removed. No complete
+record exists, so the next live run must use `bootstrap=true`; it yields Weekly
+`0.51.00.2` (after the published `v0.51.0` and the `v0.51.00.1` Core Rules
+release). Scheduled runs never bootstrap: until that record exists, a scheduled run is
 blocked ("absent records reject normal operation") and opens the failure issue,
-so keep `SUITE_RELEASES_ENABLED` off until `0.51.01` is released, then turn
-it on for the bootstrap (which also starts the schedule).
+so keep `SUITE_RELEASES_ENABLED` off until the bootstrap, then turn it on
+(which also starts the schedule).
+
+The `v0.51.01` tags and draft releases prepared outside the coordinator occupy
+that version, so a coordinator-run `0.51.01` is blocked until they are removed.
+Releases go through the coordinator so the launcher sees them; coordinate with
+the release manager to delete those drafts and tags (their notes can be copied
+to the coordinator's releases) before dispatching `0.51.01`. Afterwards the next
+Weekly becomes `0.51.01.1`.
 
 If a future published archive is found to be broken, do not replace its
 assets or change its record hashes. Merge the fix and run a manual live Weekly

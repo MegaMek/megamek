@@ -25,13 +25,14 @@ class CoordinatorTests(unittest.TestCase):
                         for p, repo in REPOS.items()}
         self.commits["mm-data"] = self.record["mmData"]["commit"]
         self.inventory = dict(commits=self.commits.copy(), previous=self.record,
-                              floor=self.record["version"], membership="milestone",
+                              requestedVersion="0.52.00", membership="milestone",
                               tags={repo: [] for repo in REPOS.values()},
-                              releases={repo: [] for repo in REPOS.values()})
+                              releases={repo: [self.record["tag"]] for repo in REPOS.values()})
         self.calls = []
 
     def discover(self, membership, **kwargs):
         self.assertEqual(membership, "milestone")
+        self.assertEqual(kwargs["requested_version"], "0.52.00")
         self.assertIn("retain", kwargs)
         self.assertIn("attest", kwargs)
         return self.inventory
@@ -49,7 +50,7 @@ class CoordinatorTests(unittest.TestCase):
                     archives=paths)
 
     def test_record_only_dry_and_live_bindings(self):
-        coordinator.prepare("milestone", False, None, self.root, self.state,
+        coordinator.prepare("milestone", False, "0.52.00", self.root, self.state,
                             discover=self.discover, builder=self.builder)
         def publisher(inventory, result, sources, **kwargs):
             self.calls.append((inventory, result, kwargs))
@@ -84,6 +85,7 @@ class CoordinatorTests(unittest.TestCase):
 
     def test_weekly_noop_does_not_call_publisher(self):
         self.inventory["membership"] = "weekly"
+        self.inventory["requestedVersion"] = None
         self.inventory["previous"]["membership"] = "weekly"
         def discover(membership, **kwargs):
             return self.inventory
@@ -115,8 +117,12 @@ class CoordinatorTests(unittest.TestCase):
                 "MEMBERSHIP: ${{ github.event_name == 'schedule' && 'weekly' || inputs.membership }}",
                 "DRY_RUN: ${{ github.event_name == 'schedule' && 'false' || inputs.dry_run }}",
                 "BOOTSTRAP: ${{ github.event_name == 'schedule' && 'false' || inputs.bootstrap }}",
-                "github.repository == 'MegaMek/megamek' && vars.SUITE_RELEASES_ENABLED == 'true'"):
+                "github.repository == 'MegaMek/megamek' && vars.SUITE_RELEASES_ENABLED == 'true'",
+                # Weekly versions are allocated; only manual Development/Milestone runs name one.
+                "VERSION: ${{ github.event_name != 'schedule' && inputs.version || '' }}",
+                'if [[ -n "$VERSION" ]]; then args+=(--version "$VERSION"); fi'):
             self.assertIn(scheduled, workflow)
+        self.assertNotIn("bootstrap_floor", workflow)
         # Step conditions must read the resolved values; inputs are empty on scheduled runs.
         self.assertNotIn("${{ inputs.dry_run }}", workflow)
         self.assertNotIn("!inputs.dry_run", workflow)
@@ -134,7 +140,7 @@ class CoordinatorTests(unittest.TestCase):
             self.assertIn(required, workflow)
 
     def test_job_summary_reports_plan_and_result_only_inside_actions(self):
-        proposal = coordinator.prepare("milestone", False, None, self.root, self.state,
+        proposal = coordinator.prepare("milestone", False, "0.52.00", self.root, self.state,
                                        discover=self.discover, builder=self.builder)
         with patch.dict(os.environ, {}, clear=True):
             coordinator.step_summary(["ignored"])

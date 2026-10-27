@@ -15,15 +15,16 @@ allprojects {
 }
 
 ['suiteReleaseVersion', 'suiteMegaMekVersion', 'suiteMegaMekLabVersion', 'suiteMekHQVersion'].each { name ->
-    if (!hasProperty(name)) {
+    // Qualify with project: inside a closure, a bare hasProperty() inspects the closure itself.
+    if (!project.hasProperty(name)) {
         return
     }
-    if (name != 'suiteReleaseVersion' && !hasProperty('suiteReleaseVersion')) {
+    if (name != 'suiteReleaseVersion' && !project.hasProperty('suiteReleaseVersion')) {
         throw new GradleException("${name} requires suiteReleaseVersion")
     }
-    def requested = property(name).toString()
-    if (!(requested ==~ /(?:0|[1-9][0-9]*)\.(?:[0-9]{2}|[1-9][0-9]{2,})\.(?:[0-9]{2}|[1-9][0-9]{2,})/)) {
-        throw new GradleException("${name} must be canonical padded major.minor.patch (e.g. 0.51.01); got ${requested}")
+    def requested = project.property(name).toString()
+    if (!(requested ==~ /(?:0|[1-9][0-9]*)\.(?:[0-9]{2}|[1-9][0-9]{2,})\.(?:[0-9]{2}|[1-9][0-9]{2,})(?:\.[1-9][0-9]*)?/)) {
+        throw new GradleException("${name} must be canonical padded major.minor.patch[.revision] (e.g. 0.51.01 or 0.51.00.2); got ${requested}")
     }
     requested.split(/\./).each { component ->
         try {
@@ -37,9 +38,16 @@ if (hasProperty('suiteReleaseVersion')) {
     def versions = ['suiteMegaMekVersion', 'suiteMegaMekLabVersion', 'suiteMekHQVersion']
             .collect { (findProperty(it) ?: property('suiteReleaseVersion')).toString() }
     versions.add(property('suiteReleaseVersion').toString())
-    def numeric = versions.collect { it.split(/\./).collect { part -> Integer.parseInt(part) } }
+    // A missing revision is 0, so 0.51.00 < 0.51.00.2 < 0.51.01.
+    def numeric = versions.collect { value ->
+        def parts = value.split(/\./).collect { part -> Integer.parseInt(part) }
+        while (parts.size() < 4) {
+            parts.add(0)
+        }
+        parts
+    }
     if ((0..2).any { i ->
-        def different = (0..2).find { j -> numeric[i][j] != numeric[i + 1][j] }
+        def different = (0..3).find { j -> numeric[i][j] != numeric[i + 1][j] }
         different != null && numeric[i][different] > numeric[i + 1][different]
     }) {
         throw new GradleException('Suite product versions must satisfy MegaMek <= MegaMekLab <= MekHQ <= suite')
@@ -52,8 +60,8 @@ subprojects {
     versionProperties.load(rootProject.file("megamek/resources/Version.properties").newDataInputStream())
     def processedVersion = String.format("%d.%02d.%02d", Integer.parseInt(versionProperties.getProperty("major")), Integer.parseInt(versionProperties.getProperty("minor")), Integer.parseInt(versionProperties.getProperty("patch")))
 
-    // A suite build supplies an ordinary, canonical three-component version without changing tracked sources.
-    // Do not inherit the historic point-release revision from Version.properties in that case.
+    // A suite build supplies its canonical version (with a Weekly revision such as 0.51.00.2) without changing
+    // tracked sources. Do not inherit the historic point-release revision from Version.properties in that case.
     def suiteVersion = rootProject.findProperty('suiteReleaseVersion')
     if (suiteVersion != null) {
         suiteVersion = (rootProject.findProperty('suiteMegaMekVersion') ?: suiteVersion).toString()

@@ -34,7 +34,7 @@ def save(path, value):
         output.write("\n")
 
 
-def prepare(membership, bootstrap, floor, sources, state,
+def prepare(membership, bootstrap, version, sources, state,
             *, discover=discovered_inventory, builder=build):
     if state.exists():
         raise UnsafeInventory("state directory already exists")
@@ -51,7 +51,7 @@ def prepare(membership, bootstrap, floor, sources, state,
             for repo in commits:
                 clean(Path(temp) / repo, commits[repo], subprocess.run)
 
-    inventory = discover(membership, bootstrap=bootstrap, bootstrap_floor=floor,
+    inventory = discover(membership, bootstrap=bootstrap, requested_version=version,
                          retain=prior_dir, attest=attest_previous)
     proposal = plan(inventory)
     save(state / "inventory.json", inventory)
@@ -152,7 +152,7 @@ def main():
     parser.add_argument("phase", choices=("prepare", "finish"))
     parser.add_argument("--membership", choices=("weekly", "milestone", "development"))
     parser.add_argument("--bootstrap", action="store_true")
-    parser.add_argument("--bootstrap-floor")
+    parser.add_argument("--version", help="explicit major.minor.patch for Development or Milestone")
     parser.add_argument("--sources", type=Path, required=True)
     parser.add_argument("--state", type=Path, required=True)
     parser.add_argument("--publish", action="store_true")
@@ -161,13 +161,13 @@ def main():
         if args.phase == "prepare":
             if args.publish or args.membership is None:
                 raise UnsafeInventory("prepare requires membership and forbids publish")
-            proposal = prepare(args.membership, args.bootstrap, args.bootstrap_floor,
+            proposal = prepare(args.membership, args.bootstrap, args.version or None,
                                args.sources, args.state)
             print("PREPARED: " + json.dumps(proposal))
             step_summary(prepared_summary(proposal, args.state))
         else:
-            if args.membership or args.bootstrap_floor:
-                raise UnsafeInventory("finish reads sealed membership and floor")
+            if args.membership or args.version:
+                raise UnsafeInventory("finish reads sealed membership and version")
             outcome = finish(args.state, args.sources, args.bootstrap, args.publish)
             print(outcome)
             step_summary([f"**Result:** `{outcome}`"])

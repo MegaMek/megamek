@@ -16,6 +16,7 @@
 package megamek.release;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,7 +37,7 @@ public final class SuiteRecordValidator {
           .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
     private static final Pattern VERSION = Pattern.compile("(?:0|[1-9][0-9]*)\\."
           + "(?:[0-9]{2}|[1-9][0-9]{2,})\\."
-          + "(?:[0-9]{2}|[1-9][0-9]{2,})");
+          + "(?:[0-9]{2}|[1-9][0-9]{2,})(?:\\.[1-9][0-9]*)?");
     private static final Pattern LAUNCHER_VERSION = Pattern.compile("(?:0|[1-9][0-9]*)\\."
           + "(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)");
     private static final Pattern COMMIT = Pattern.compile("[0-9a-f]{40}");
@@ -122,11 +123,14 @@ public final class SuiteRecordValidator {
         match(data.get("commit"), COMMIT, "mmData.commit");
     }
 
+    /** Orders major.minor.patch[.revision]; a missing revision sorts before any revision. */
     private static int compareVersions(String left, String right) {
         String[] a = left.split("\\.");
         String[] b = right.split("\\.");
-        for (int i = 0; i < a.length; i++) {
-            int comparison = Integer.compare(Integer.parseInt(a[i]), Integer.parseInt(b[i]));
+        for (int i = 0; i < 4; i++) {
+            // Components are already validated as decimal digits; BigInteger cannot overflow.
+            int comparison = (i < a.length ? new BigInteger(a[i]) : BigInteger.ZERO)
+                  .compareTo(i < b.length ? new BigInteger(b[i]) : BigInteger.ZERO);
             if (comparison != 0) {
                 return comparison;
             }

@@ -43,16 +43,22 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
+
 import megamek.common.CriticalSlot;
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
 import megamek.common.board.Coords;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
@@ -101,6 +107,21 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
               size 1 2
               hex 0101 0 "water:2" ""
               hex 0102 3 "" ""
+              end""");
+
+        // Issue #9268: a Mek starting on a level-3 cliff top beside a level -1 canyon floor.
+        initializeBoard("BOARD_EDGE_DROP_4", """
+              size 1 2
+              hex 0101 3 "" ""
+              hex 0102 -1 "" ""
+              end""");
+
+        // Issue #9268: the same 4-level drop, but one hex of cliff top away from the start.
+        initializeBoard("BOARD_WALK_THEN_DROP_4", """
+              size 1 3
+              hex 0101 3 "" ""
+              hex 0102 3 "" ""
+              hex 0103 -1 "" ""
               end""");
     }
 
@@ -619,6 +640,63 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
               "Mek arrives at building roof (BLDG_ELEV).");
         assertFalse(mek.isClimbing(),
               "Climb completes — flag clears.");
+    }
+
+    // -----------------------------------------------------------------------
+    // Issue #9268: with Climbing on and Leaping off, a Mek that walked to a
+    // cliff edge and stepped off was walked to the bottom. These send the path
+    // through the real movement packet, as a client does.
+    // -----------------------------------------------------------------------
+
+    /**
+     * Sends {@code steps} for a fresh two-armed Mek through the server's movement packet, with TacOps Climbing on and
+     * TacOps Leaping off, and returns the Mek after the server has processed it.
+     */
+    private Mek sendClimbingMoveWithoutLeaping(String board, MoveStepType... steps) throws Exception {
+        setBoard(board);
+        enableTacOpsClimbing();
+        getGame().getOptions().getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING).setValue(false);
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        MovePath movePath = getMovePathFor(mek, 0, EntityMovementMode.BIPED, steps);
+
+        getGame().setPhase(GamePhase.MOVEMENT);
+        getGame().setTurnVector(List.of(new SpecificEntityTurn(player.getId(), mek.getId())));
+        getGame().setTurnIndex(0, player.getId());
+        gameManager.handlePacket(player.getId(), new Packet(PacketCommand.ENTITY_MOVE, mek.getId(), movePath));
+        return mek;
+    }
+
+    @Test
+    void walkingToEdgeThenSteppingOffStopsAtTheEdgeWithoutLeaping() throws Exception {
+        Mek mek = sendClimbingMoveWithoutLeaping("BOARD_WALK_THEN_DROP_4",
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+
+        assertEquals(new Coords(0, 1), mek.getPosition(),
+              "The Mek walks to the edge but must not walk down the 4-level drop.");
+        assertEquals(0, mek.getElevation(), "The Mek stays standing on the cliff top.");
+        assertFalse(mek.isClimbing(), "Nothing about this move is a climb.");
+    }
+
+    @Test
+    void edgeDescentFromTurnStartHexStillDanglesWithoutLeaping() throws Exception {
+        Mek mek = sendClimbingMoveWithoutLeaping("BOARD_EDGE_DROP_4",
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+
+        assertEquals(new Coords(0, 1), mek.getPosition(), "The dangling Mek moves into the lower hex.");
+        assertEquals(2, mek.getElevation(),
+              "Cliff top at level 3, less the 2 dangle levels, is elevation 2 above the level -1 floor.");
+        assertTrue(mek.isDangling(), "Stepping off from the turn-start hex is still a dangle.");
     }
 
     @Test

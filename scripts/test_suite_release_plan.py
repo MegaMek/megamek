@@ -101,8 +101,8 @@ class PlanTests(unittest.TestCase):
         self.inventory = {
             "commits": self.commits, "previous": self.old,
             "tags": {repo: ["v0.51.100"] for repo in release.REPOS.values()},
-            "releases": {repo: [] for repo in release.REPOS.values()},
-            "membership": "weekly", "floor": "0.51.100",
+            "releases": {repo: ["v0.51.100"] for repo in release.REPOS.values()},
+            "membership": "weekly", "requestedVersion": None,
         }
 
     def test_dependency_closure_and_reuse(self):
@@ -120,31 +120,52 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(release.select(self.commits, self.old, "weekly"),
                          (list(release.REPOS), False))
 
-    def test_alias_and_fourth_component_reservations(self):
+    def test_weekly_revision_and_explicit_version_allocation(self):
         tags = {repo: [] for repo in release.REPOS.values()}
-        tags["megamek"] = ["v0.51.101.1"]
-        tags["mekhq"] = ["v0.51.0102", "v0.51.9", "unrelated"]
         releases = {repo: [] for repo in release.REPOS.values()}
-        self.assertEqual(release.reserve(tags, releases, "0.51.100"), "0.51.103")
-        releases["megameklab"] = ["v0.51.104"]
-        self.assertEqual(release.reserve(tags, releases, "0.51.103"), "0.51.105")
-        tags["megamek"] = ["v0.51.2147483647"]
-        self.assertEqual(release.reserve(tags, releases, "0.51.100"), "0.52.00")
-        self.assertEqual(release.reserve(tags, releases, "0.51.100", "milestone"), "0.52.00")
-        tags["megamek"] = ["v0.51.103"]
-        self.assertEqual(release.reserve(tags, releases, "0.51.100", "milestone"), "0.52.00")
-        tags["megamek"] = ["v0.52.00"]
-        self.assertEqual(release.reserve(tags, releases, "0.51.100", "milestone"), "0.53.00")
+        # Mirrors MegaMek history: unpadded v0.51.0, a .1 point release, an unpublished v0.51.01.
+        releases["megamek"] = ["v0.51.00.1", "v0.51.0", "v0.50.12", "v0.49.19.1"]
+        releases["mekhq"] = ["v0.50.06-fix", "0.49.19.1"]
+        tags["megamek"] = ["v42.2", "v0.51.01", "v0.51.00.1", "v0.51.0", "unrelated"]
+        tags["mekhq"] = ["v.045.1", "v0.51.01"]
+        self.assertEqual(release.reserve(tags, releases), "0.51.00.2")
+        tags["megameklab"] = ["v0.51.00.4"]
+        self.assertEqual(release.reserve(tags, releases), "0.51.00.5")
+        with self.assertRaisesRegex(release.UnsafeInventory, "allocated"):
+            release.reserve(tags, releases, "weekly", "0.51.00.6")
+        for version, error in (("0.51.01", "already tagged"), ("0.51.00", "already tagged"),
+                               ("0.50.13", "not newer"), ("0.51.2", "explicit canonical"),
+                               ("0.51.02.1", "explicit canonical"), (None, "explicit canonical")):
+            with self.subTest(version=version), self.assertRaisesRegex(
+                    release.UnsafeInventory, error):
+                release.reserve(tags, releases, "development", version)
+        self.assertEqual(release.reserve(tags, releases, "development", "0.51.02"), "0.51.02")
+        self.assertEqual(release.reserve(tags, releases, "milestone", "0.52.00"), "0.52.00")
+        releases["megamek"].append("v0.51.01")
+        self.assertEqual(release.reserve(tags, releases), "0.51.01.1")
+        empty = {repo: [] for repo in release.REPOS.values()}
+        with self.assertRaisesRegex(release.UnsafeInventory, "no published release"):
+            release.reserve(tags, empty)
+
+    def test_four_component_ordering(self):
+        self.assertLess(release.numbers("0.51.00"), release.numbers("0.51.00.2"))
+        self.assertLess(release.numbers("0.51.00.9"), release.numbers("0.51.01"))
+        self.assertLess(release.numbers("0.51.01"), release.numbers("0.51.01.1"))
+        self.assertTrue(release.canonical("0.51.00.2"))
+        for value in ("0.51.00.0", "0.51.00.02", "0.51.0.2", "0.51.00.2.1"):
+            with self.subTest(value=value):
+                self.assertFalse(release.VERSION.fullmatch(value) and release.canonical(value))
 
     def test_provisional_not_success_or_noop(self):
         self.old["membership"] = "weekly"
         result = release.plan(self.inventory)
         self.assertEqual(result["status"], "PROVISIONAL_NONPUBLISHING")
         self.assertTrue(result["weeklyNoopCandidate"])
-        self.assertEqual(result["versionCandidate"], "0.51.101")
+        self.assertEqual(result["versionCandidate"], "0.51.100.1")
         self.assertEqual(result["reuseCandidates"], list(release.REPOS))
-        self.inventory["floor"] = "0.51.01"
-        with self.assertRaises(release.UnsafeInventory):
+        # A Weekly based on an older published release cannot follow a newer record.
+        self.inventory["releases"] = {repo: ["v0.51.99"] for repo in release.REPOS.values()}
+        with self.assertRaisesRegex(release.UnsafeInventory, "monotonic"):
             release.plan(self.inventory)
 
     def test_malformed_record_and_snapshot_fail_closed(self):
@@ -199,11 +220,13 @@ class PlanTests(unittest.TestCase):
                 return [{"id": 1, "tag_name": "v0.51.102", "draft": False, "assets": []}]
             raise AssertionError("unexpected page")
 
-        snapshot = release.freeze_and_inventory("development", "0.51.100", fake_get)
+        snapshot = release.freeze_and_inventory("development", "0.51.103", fake_get)
         self.assertEqual(len(snapshot["commits"]), 4)
         self.assertEqual(release.plan(snapshot)["versionCandidate"], "0.51.103")
+        weekly = release.freeze_and_inventory("weekly", None, fake_get)
+        self.assertEqual(release.plan(weekly)["versionCandidate"], "0.51.102.1")
         with self.assertRaises(release.UnsafeInventory):
-            release.freeze_and_inventory("weekly", "0.51.100",
+            release.freeze_and_inventory("weekly", None,
                                          lambda endpoint: {"sha": "bad"})
 
     def test_exact_ref_getter_whitelist(self):
@@ -327,6 +350,7 @@ class PlanTests(unittest.TestCase):
 
     def test_explicit_remote_bootstrap_is_only_a_full_build_candidate(self):
         details = {repo: [] for repo in release.REPOS.values()}
+        details["megamek"].append({"id": 5, "tag_name": "v0.51.0", "draft": False, "assets": []})
         calls = []
 
         def getter(endpoint):
@@ -334,29 +358,29 @@ class PlanTests(unittest.TestCase):
             if endpoint.endswith("/commits/main"):
                 return {"sha": "a" * 40}
             if "/tags?" in endpoint:
-                return [{"name": "v0.51.01"}]
+                return [{"name": "v0.51.01"}, {"name": "v0.51.0"}]
             if "/releases?" in endpoint:
                 return details[endpoint.split("/")[2]]
             self.fail(endpoint)
 
         with self.assertRaisesRegex(release.UnsafeInventory, "bootstrap"):
             release.discovered_inventory("weekly", getter)
-        with self.assertRaisesRegex(release.UnsafeInventory, "floor"):
-            release.discovered_inventory("weekly", getter, bootstrap=True)
-        with self.assertRaisesRegex(release.UnsafeInventory, "canonical"):
-            release.discovered_inventory("weekly", getter, bootstrap=True,
-                                         bootstrap_floor="0.51.1")
-        snapshot = release.discovered_inventory(
-            "weekly", getter, bootstrap=True, bootstrap_floor="0.51.00")
+        snapshot = release.discovered_inventory("weekly", getter, bootstrap=True)
         candidate = release.plan(snapshot)
         self.assertIsNone(snapshot["previous"])
         self.assertEqual(candidate["buildCandidates"], list(release.REPOS))
         self.assertEqual(candidate["reuseCandidates"], [])
         self.assertFalse(candidate["weeklyNoopCandidate"])
-        self.assertEqual(candidate["versionCandidate"], "0.51.02")
+        # The unpublished v0.51.01 tag is not a Weekly base; published v0.51.0 is.
+        self.assertEqual(candidate["versionCandidate"], "0.51.00.1")
         self.assertEqual(candidate["status"], "PROVISIONAL_NONPUBLISHING")
-        with self.assertRaisesRegex(release.UnsafeInventory, "requires explicit bootstrap"):
-            release.discovered_inventory("weekly", getter, bootstrap_floor="0.51.00")
+        development = release.discovered_inventory(
+            "development", getter, bootstrap=True, requested_version="0.51.02")
+        self.assertEqual(release.plan(development)["versionCandidate"], "0.51.02")
+        taken = release.discovered_inventory(
+            "development", getter, bootstrap=True, requested_version="0.51.01")
+        with self.assertRaisesRegex(release.UnsafeInventory, "already tagged"):
+            release.plan(taken)
         record = copy.deepcopy(self.old)
         raw = json.dumps(record).encode()
         details["megamek"].append({
@@ -369,8 +393,7 @@ class PlanTests(unittest.TestCase):
             destination.write_bytes(raw)
 
         with self.assertRaisesRegex(release.UnsafeInventory, "already exists"):
-            release.discovered_inventory("weekly", getter, fetch, bootstrap=True,
-                                         bootstrap_floor="0.51.00")
+            release.discovered_inventory("weekly", getter, fetch, bootstrap=True)
 
     def test_streamed_download_and_chunked_verification(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -494,7 +517,7 @@ class PlanTests(unittest.TestCase):
                     (retained / record["products"][product]["asset"]["name"]).read_bytes(),
                     product.encode())
         self.assertEqual(inventory["previous"], record)
-        self.assertEqual(inventory["floor"], record["version"])
+        self.assertEqual(inventory["requestedVersion"], None)
         self.assertNotIn(None, inventory["releases"]["megamek"])
         self.assertEqual(release.plan(inventory)["status"], "PROVISIONAL_NONPUBLISHING")
         details["megameklab"][0]["tag_name"] = "v0.51.99"

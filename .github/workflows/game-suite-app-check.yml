@@ -2,6 +2,13 @@ name: Game suite App access check (manual)
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment whose App key to check
+        required: true
+        type: choice
+        options: [suite-release-live, suite-release-weekly]
+        default: suite-release-live
 
 permissions:
   contents: read
@@ -14,7 +21,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment: suite-release-live
+    environment: ${{ inputs.environment }}
     steps:
       - name: Check App configuration
         env:

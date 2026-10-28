@@ -41,6 +41,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,6 +73,15 @@ public final class Forces implements Serializable {
     @Serial
     private static final long serialVersionUID = -1382468145554363945L;
 
+    /**
+     * The order top-level forces are listed in: each owner's forces together, then by the position set with the up/down
+     * moves, then by id. Forces sharing a position (all forces of a save made before positions were stored) keep their
+     * old id order. The lobby tree, the in-game force display and unit list saves all list top-level forces this way.
+     */
+    public static final Comparator<Force> TOP_LEVEL_ORDER = Comparator.comparingInt(Force::getOwnerId)
+          .thenComparingInt(Force::getPosition)
+          .thenComparingInt(Force::getId);
+
     private final HashMap<Integer, Force> forces = new HashMap<>();
     private transient IGame game;
 
@@ -89,7 +99,11 @@ public final class Forces implements Serializable {
         }
 
         final int newId = newId();
-        forces.put(newId, new Force(force.getName(), newId, force.getCamouflage().clone(), owner));
+        Force newForce = new Force(force.getName(), newId, force.getCamouflage().clone(), owner);
+        newForce.setPosition(nextPosition(owner.getId()));
+        forces.put(newId, newForce);
+        LOGGER.info("[ForceOrder] Created top-level force {} (id {}) for {} at position {}", newForce.getName(), newId,
+              owner.getName(), newForce.getPosition());
         return newId;
     }
 
@@ -130,6 +144,60 @@ public final class Forces implements Serializable {
     /** Returns a List of the top-level forces. */
     public List<Force> getTopLevelForces() {
         return forces.values().stream().filter(Force::isTopLevel).collect(toList());
+    }
+
+    /** Returns the given owner's top-level forces in {@link #TOP_LEVEL_ORDER}. */
+    private List<Force> topLevelForcesOf(int ownerId) {
+        List<Force> result = new ArrayList<>();
+        for (Force force : forces.values()) {
+            if (force.isTopLevel() && (force.getOwnerId() == ownerId)) {
+                result.add(force);
+            }
+        }
+        result.sort(TOP_LEVEL_ORDER);
+        return result;
+    }
+
+    /**
+     * Describes the given owner's top-level forces in the order they are listed, for the log: "[Command Lance (0),
+     * 1st Battalion (1)]", each name with its position.
+     */
+    public String topLevelOrderDescription(int ownerId) {
+        List<String> entries = new ArrayList<>();
+        for (Force force : topLevelForcesOf(ownerId)) {
+            entries.add(force.getName() + " (" + force.getPosition() + ")");
+        }
+        return entries.toString();
+    }
+
+    /**
+     * Logs each owner's top-level order, for checking from the log that a game save or load kept it (issue #9321).
+     *
+     * @param event what just happened, such as "Saving game" or "Loaded saved game"
+     */
+    public void logTopLevelOrder(String event) {
+        Set<Integer> ownerIds = new TreeSet<>();
+        for (Force force : forces.values()) {
+            if (force.isTopLevel()) {
+                ownerIds.add(force.getOwnerId());
+            }
+        }
+        if (ownerIds.isEmpty()) {
+            LOGGER.info("[ForceOrder] {}: no top-level forces", event);
+        }
+        for (int ownerId : ownerIds) {
+            LOGGER.info("[ForceOrder] {}: top-level order of player {} is {}", event, ownerId,
+                  topLevelOrderDescription(ownerId));
+        }
+    }
+
+    /** Returns the position that lists a new top-level force of the given owner after all of the owner's others. */
+    private int nextPosition(int ownerId) {
+        int result = 0;
+        for (Force force : topLevelForcesOf(ownerId)) {
+            result = Math.max(result, force.getPosition() + 1);
+        }
+        return result;
     }
 
     /**
@@ -697,9 +765,11 @@ public final class Forces implements Serializable {
             Force oldParent = getForce(force.getParentId());
             oldParent.removeSubForce(force.getId());
             result.add(oldParent);
-            // Set to top-level
+            // Set to top-level, listed after the owner's other top-level forces
+            force.setPosition(nextPosition(force.getOwnerId()));
             force.setParent(Force.NO_FORCE);
             result.add(force);
+            LOGGER.info("[ForceOrder] Promoted {} to top-level at position {}", force.getName(), force.getPosition());
         }
         return result;
     }
@@ -772,9 +842,9 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Returns the given units in the order the lobby's force tree shows them: top-level forces in id order, and within
-     * each force its own units first, then its sub forces, depth first. Units outside any force come last, in their
-     * given order.
+     * Returns the given units in the order the lobby's force tree shows them: top-level forces in
+     * {@link #TOP_LEVEL_ORDER}, and within each force its own units first, then its sub forces, depth first. Units
+     * outside any force come last, in their given order.
      * <p>
      * A unit list file keeps no explicit order, so loading one rebuilds the forces and their units in the order the
      * units appear in the file. Saving in this order lets that rebuild reproduce the tree as it was arranged (issue
@@ -793,7 +863,7 @@ public final class Forces implements Serializable {
         }
 
         List<Force> topLevelForces = new ArrayList<>(getTopLevelForces());
-        topLevelForces.sort(Comparator.comparingInt(Force::getId));
+        topLevelForces.sort(TOP_LEVEL_ORDER);
 
         List<T> result = new ArrayList<>();
         for (Force topLevelForce : topLevelForces) {
@@ -856,10 +926,13 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Moves up the given sub force in the list of subForces of its parent if possible. Returns true when an actual
-     * change occurred.
+     * Moves up the given force by one position if possible: a sub force within the list of subForces of its parent, a
+     * top-level force among its owner's top-level forces. Returns the forces that changed, empty if nothing moved.
      */
     public ArrayList<Force> moveUp(Force subForce) {
+        if (contains(subForce) && subForce.isTopLevel()) {
+            return moveTopLevel(subForce, -1);
+        }
         ArrayList<Force> result = new ArrayList<>();
         if (contains(subForce) && !subForce.isTopLevel()) {
             Force parent = getForce(subForce.getParentId());
@@ -871,10 +944,13 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Moves down the given sub force in the list of subForces of its parent if possible. Returns true when an actual
-     * change occurred.
+     * Moves down the given force by one position if possible: a sub force within the list of subForces of its parent, a
+     * top-level force among its owner's top-level forces. Returns the forces that changed, empty if nothing moved.
      */
     public ArrayList<Force> moveDown(Force subForce) {
+        if (contains(subForce) && subForce.isTopLevel()) {
+            return moveTopLevel(subForce, 1);
+        }
         ArrayList<Force> result = new ArrayList<>();
         if (contains(subForce) && !subForce.isTopLevel()) {
             Force parent = getForce(subForce.getParentId());
@@ -882,6 +958,34 @@ public final class Forces implements Serializable {
                 result.add(parent);
             }
         }
+        return result;
+    }
+
+    /**
+     * Moves a top-level force one place up (step -1) or down (step 1) among its owner's top-level forces. The owner's
+     * forces are first numbered 0, 1, 2... in their current order, so forces that share a position (an old save) can
+     * be moved too. Returns every force whose position changed, so that all of them reach the server.
+     */
+    private ArrayList<Force> moveTopLevel(Force force, int step) {
+        ArrayList<Force> result = new ArrayList<>();
+        List<Force> ownerForces = topLevelForcesOf(force.getOwnerId());
+        int index = ownerForces.indexOf(force);
+        int target = index + step;
+        if ((index < 0) || (target < 0) || (target >= ownerForces.size())) {
+            LOGGER.info("[ForceOrder] {} not moved {}: it is already at that end of {}", force.getName(),
+                  (step < 0) ? "up" : "down", topLevelOrderDescription(force.getOwnerId()));
+            return result;
+        }
+        Collections.swap(ownerForces, index, target);
+        for (int position = 0; position < ownerForces.size(); position++) {
+            Force ownerForce = ownerForces.get(position);
+            if (ownerForce.getPosition() != position) {
+                ownerForce.setPosition(position);
+                result.add(ownerForce);
+            }
+        }
+        LOGGER.info("[ForceOrder] Moved {} {}; order now {}; {} force(s) changed", force.getName(),
+              (step < 0) ? "up" : "down", topLevelOrderDescription(force.getOwnerId()), result.size());
         return result;
     }
 }

@@ -120,11 +120,23 @@ class CoordinatorTests(unittest.TestCase):
             noop=lambda *a, **k: self.record))
 
     def test_other_megamek_change_is_built_from_main(self):
+        self.inventory["membership"] = "weekly"
+        self.inventory["requestedVersion"] = None
+        self.inventory["previous"]["membership"] = "weekly"
+        bumped = "a" * 40
+        self.inventory["commits"]["megamek"] = bumped
+        proposal = coordinator.prepare("weekly", False, None, self.root, self.state,
+                                       discover=lambda membership, **kwargs: self.inventory,
+                                       builder=self.builder, differ=lambda *args: False)
+        self.assertEqual(proposal["frozenCommits"]["megamek"], bumped)
+        self.assertEqual(proposal["buildCandidates"], list(REPOS))
+
+    def test_milestone_builds_a_version_only_megamek_change_from_main(self):
         bumped = "a" * 40
         self.inventory["commits"]["megamek"] = bumped
         proposal = coordinator.prepare("milestone", False, "0.52.00", self.root, self.state,
                                        discover=self.discover, builder=self.builder,
-                                       differ=lambda *args: False)
+                                       differ=lambda *args: self.fail("differ called"))
         self.assertEqual(proposal["frozenCommits"]["megamek"], bumped)
         self.assertEqual(proposal["buildCandidates"], list(REPOS))
 
@@ -237,7 +249,7 @@ class VersionOnlyChangeTests(unittest.TestCase):
     def setUp(self):
         if not shutil.which("git"):
             self.skipTest("Git is required to compare MegaMek commits")
-        self.temp = temple.TemporaryDirectory()
+        self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.sources = Path(self.temp.name)
         self.repo = self.sources / "megamek"

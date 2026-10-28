@@ -176,8 +176,13 @@ jobs:
                 >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
+            if (( attempt == 3 )); then break; fi
             git fetch --quiet origin main
-            git rebase --quiet FETCH_HEAD
+            if ! git rebase --quiet FETCH_HEAD; then
+              git rebase --abort
+              echo "::error::Version.properties also changed on megamek main; the commit no longer applies"
+              break
+            fi
           done
           echo "::error::Could not push the Version.properties commit to megamek main"
           exit 1

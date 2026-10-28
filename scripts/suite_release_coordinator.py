@@ -40,11 +40,11 @@ def save(path, value):
 def settings_without_version(text):
     """Version.properties entries other than the version itself; None if not plain key=value lines."""
     result = {}
-    for line in text.splines():
+    for line in text.splitlines():
         stripped = line.strip()
         if not stripped or stripped[0] in "#!":
             continue
-        if "=" not in stripped or stripped.ends with("\\"):
+        if "=" not in stripped or stripped.endswith("\\"):
             return None
         key, value = (part.strip() for part in stripped.split("=", 1))
         if key not in VERSION_KEYS:
@@ -53,11 +53,11 @@ def settings_without_version(text):
 
 
 def version_only_change(sources, old, new, runner=subprocess.run):
-    """True when MegaMek at new differs from old only in the version lines of Version.properties.
+    """True when MegaMek at new differs from old only in the comments and version lines of Version.properties.
 
     Such a commit is what the release workflow pushes after a publication; the packaged
-    Version.properties is rewritten from the suite version anyway, so the bytes built from old
-    are what new would produce.
+    Version.properties takes its version from the suite version anyway, so new would build a
+    MegaMek with the same settings and code as old.
     """
     def git(*args):
         return run(["git", "-C", str(Path(sources) / "megamek"), *args], runner)
@@ -65,16 +65,20 @@ def version_only_change(sources, old, new, runner=subprocess.run):
         git("merge-base", "--is-ancestor", old, new)
     except UnsafeInventory:
         return False
-    if git("diff", "--name-only", "--no-renames", old, new, "--").splines() != [VERSION_FILE]:
+    if git("diff", "--name-only", "--no-renames", old, new, "--").splitlines() != [VERSION_FILE]:
         return False
     before = settings_without_version(git("show", f"{old}:{VERSION_FILE}"))
     return before is not None and before == settings_without_version(git("show", f"{new}:{VERSION_FILE}"))
 
 
 def pin_version_only_megamek(inventory, sources, differ=version_only_change):
-    """Freeze MegaMek at the previous record's commit when main has only moved its version lines."""
+    """Freeze MegaMek at the previous record's commit when main has only moved its version lines.
+
+    Weekly only: a Milestone or Development release always builds MegaMek from main rather than
+    reusing an archive that carries an older Weekly version.
+    """
     previous = inventory["previous"]
-    if previous is None:
+    if previous is None or inventory["membership"] != "weekly":
         return inventory
     old = previous["products"]["MegaMek"]["commit"]
     new = inventory["commits"]["megamek"]

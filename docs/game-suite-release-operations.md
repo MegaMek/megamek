@@ -48,11 +48,14 @@ commits that one file as the App bot with `[skip ci]` and pushes to `main`. The
 same task can be run by hand to fix the file.
 
 Allocation never reads this file: Weekly versions still come from published
-releases and tags. A MegaMek `main` whose only difference from the previous
-record is in the non-comment version lines of `Version.properties` is treated as
-unchanged. `prepare` freezes MegaMek at the previous record's commit, so that
-commit alone never makes the next Weekly a release. Any other change to the
-file, such as `notes` or `splashTag`, still counts as a MegaMek change.
+releases and tags. For a Weekly, a MegaMek `main` whose only difference from the
+previous record is in the comments and version lines of `Version.properties` is
+treated as unchanged. `prepare` freezes MegaMek at the previous record's commit,
+so that commit alone never makes the next Weekly a release. Any other change to
+the file, such as `notes` or `splashTag`, still counts as a MegaMek change. A
+Milestone or Development release never does this: if MegaMek `main` has moved at
+all, MegaMek is built from it rather than reusing an archive that carries an
+older Weekly version.
 
 If a version-commit step fails, the release is still complete and needs no
 reconciliation; only the commit is missing. Do not re-dispatch to get it: a

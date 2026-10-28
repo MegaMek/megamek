@@ -124,6 +124,63 @@ jobs:
           args=(--sources sources --state suite-state --publish)
           if [[ "$BOOTSTRAP" == "true" ]]; then args+=(--bootstrap); fi
           python3 scripts/suite_release_coordinator.py finish "${args[@]}"
+      # The release is complete at this point. The steps below only record its version in the tracked
+      # Version.properties on main; prepare treats a version-only MegaMek change as unchanged, so this
+      # commit never makes the next Weekly a release on its own.
+      - name: Rewrite Version.properties on current main to the published version
+        if: ${{ env.DRY_RUN != 'true' && steps.prepare.outputs.noop == 'false' }}
+        id: bump
+        working-directory: sources/megamek
+        run: |
+          version="$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["versionCandidate"])' \
+            ../../suite-state/build_result.json)"
+          git fetch --quiet origin main
+          git switch --quiet --detach FETCH_HEAD
+          ./gradlew --no-daemon :megamek:setVersionProperties -PnewVersion="$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if git diff --quiet -- megamek/resources/Version.properties; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Version.properties on megamek main already reads $version." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Mint megamek-only App token for the version commit
+        if: ${{ steps.bump.outputs.changed == 'true' }}
+        id: bump-app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek
+          permission-contents: write
+      - name: Commit and push the version to megamek main
+        if: ${{ steps.bump.outputs.changed == 'true' }}
+        working-directory: sources/megamek
+        env:
+          TOKEN: ${{ steps.bump-app.outputs.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          GIT_AUTHOR_NAME: ${{ steps.bump-app.outputs.app-slug }}[bot]
+          GIT_AUTHOR_EMAIL: ${{ steps.bump-app.outputs.app-slug }}[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: ${{ steps.bump-app.outputs.app-slug }}[bot]
+          GIT_COMMITTER_EMAIL: ${{ steps.bump-app.outputs.app-slug }}[bot]@users.noreply.github.com
+        run: |
+          git commit --quiet -m "Set Version.properties to $VERSION after the suite release [skip ci]" \
+            -- megamek/resources/Version.properties
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          echo "::add-mask::$auth"
+          # main may move while this runs; replay the one-file commit onto it, a few times at most.
+          for attempt in 1 2 3; do
+            if git -c "http.https://github.com/.extraheader=$auth" push --quiet origin HEAD:refs/heads/main; then
+              echo "Version.properties on megamek main set to $VERSION ($(git rev-parse --short HEAD))." \
+                >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            git fetch --quiet origin main
+            git rebase --quiet FETCH_HEAD
+          done
+          echo "::error::Could not push the Version.properties commit to megamek main"
+          exit 1
       - name: Keep the plan and seal for diagnosis
         if: ${{ always() }}
         uses: actions/upload-artifact@v7
@@ -148,7 +205,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           title="Scheduled Weekly suite release failed"
-          body="Scheduled Weekly suite release failed: $RUN_URL"$'\n\n'"Check the job summary and the suite-state artifact. See docs/game-suite-release-operations.md before re-running; a failure after a tag or release write needs manual reconciliation."
+          body="Scheduled Weekly suite release failed: $RUN_URL"$'\n\n'"Check the job summary and the suite-state artifact. See docs/game-suite-release-operations.md before re-running; a failure after a tag or release write needs manual reconciliation. A failure in the Version.properties commit steps leaves a complete release; only that commit is missing."
           existing=$(gh issue list --state open --search "\"$title\" in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n 1)
           if [[ -n "$existing" ]]; then
             gh issue comment "$existing" --body "$body"

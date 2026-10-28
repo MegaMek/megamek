@@ -15,9 +15,12 @@ from suite_release_plan import (
     download_asset, gh_get, parse_json, plan, release_details, release_inventory,
 )
 from suite_pinned_build import build
-from suite_pinned_build import clean, stage
+from suite_pinned_build import clean, run, stage
 from suite_archive_attestation import attest_archives
 from suite_release_publish import GitHubWrites, exact_asset, publish_approved
+
+VERSION_FILE = "megamek/resources/Version.properties"
+VERSION_KEYS = {"major", "minor", "patch", "revision"}
 
 
 def digest(path):
@@ -34,8 +37,54 @@ def save(path, value):
         output.write("\n")
 
 
+def settings_without_version(text):
+    """Version.properties entries other than the version itself; None if not plain key=value lines."""
+    result = {}
+    for line in text.splines():
+        stripped = line.strip()
+        if not stripped or stripped[0] in "#!":
+            continue
+        if "=" not in stripped or stripped.ends with("\\"):
+            return None
+        key, value = (part.strip() for part in stripped.split("=", 1))
+        if key not in VERSION_KEYS:
+            result[key] = value
+    return result
+
+
+def version_only_change(sources, old, new, runner=subprocess.run):
+    """True when MegaMek at new differs from old only in the version lines of Version.properties.
+
+    Such a commit is what the release workflow pushes after a publication; the packaged
+    Version.properties is rewritten from the suite version anyway, so the bytes built from old
+    are what new would produce.
+    """
+    def git(*args):
+        return run(["git", "-C", str(Path(sources) / "megamek"), *args], runner)
+    try:
+        git("merge-base", "--is-ancestor", old, new)
+    except UnsafeInventory:
+        return False
+    if git("diff", "--name-only", "--no-renames", old, new, "--").splines() != [VERSION_FILE]:
+        return False
+    before = settings_without_version(git("show", f"{old}:{VERSION_FILE}"))
+    return before is not None and before == settings_without_version(git("show", f"{new}:{VERSION_FILE}"))
+
+
+def pin_version_only_megamek(inventory, sources, differ=version_only_change):
+    """Freeze MegaMek at the previous record's commit when main has only moved its version lines."""
+    previous = inventory["previous"]
+    if previous is None:
+        return inventory
+    old = previous["products"]["MegaMek"]["commit"]
+    new = inventory["commits"]["megamek"]
+    if old != new and differ(sources, old, new):
+        inventory["commits"]["megamek"] = old
+    return inventory
+
+
 def prepare(membership, bootstrap, version, sources, state,
-            *, discover=discovered_inventory, builder=build):
+            *, discover=discovered_inventory, builder=build, differ=version_only_change):
     if state.exists():
         raise UnsafeInventory("state directory already exists")
     state.mkdir()
@@ -53,6 +102,7 @@ def prepare(membership, bootstrap, version, sources, state,
 
     inventory = discover(membership, bootstrap=bootstrap, requested_version=version,
                          retain=prior_dir, attest=attest_previous)
+    inventory = pin_version_only_megamek(inventory, sources, differ)
     proposal = plan(inventory)
     save(state / "inventory.json", inventory)
     prior = ({product: prior_dir / inventory["previous"]["products"][product]["asset"]["name"]

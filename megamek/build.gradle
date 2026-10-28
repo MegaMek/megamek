@@ -206,6 +206,54 @@ tasks.register('verifySuiteVersion') {
     }
 }
 
+// Rewrites the tracked Version.properties in place, keeping its comments. The suite release workflow runs this on
+// main after a live publication so the source tree reports the version that was just released. The build reads
+// Version.properties while configuring, so the new version applies from the next Gradle invocation onwards.
+tasks.register('setVersionProperties') {
+    description = 'Rewrites resources/Version.properties to -PnewVersion, e.g. 0.51.01 or (with a revision) 0.51.00.2.'
+    group = 'release'
+    def target = file('resources/Version.properties')
+    def requested = project.findProperty('newVersion')?.toString()
+    doLast {
+        def match = (requested ?: '') =~ /^(0|[1-9]\d*)\.(\d{2}|[1-9]\d{2,})\.(\d{2}|[1-9]\d{2,})(?:\.([1-9]\d*))?$/
+        if (!match.matches()) {
+            throw new GradleException('Supply a canonical -PnewVersion such as 0.51.01 or 0.51.00.2')
+        }
+        def revision = match.group(4)
+        def text = target.getText('UTF-8')
+        def eol = text.contains('\r\n') ? '\r\n' : '\n'
+        def lines = text.split(/\r?\n/, -1).toList()
+        [major: match.group(1), minor: match.group(2), patch: match.group(3)].each { key, value ->
+            if (lines.count { it ==~ /${key}=.*/ } != 1) {
+                throw new GradleException("Expected exactly one ${key}= line in ${target}")
+            }
+            lines[lines.findIndexOf { it ==~ /${key}=.*/ }] = "${key}=${value}".toString()
+        }
+        if (lines.count { it ==~ /\s*revision=.*/ } > 1) {
+            throw new GradleException("Expected at most one revision= line in ${target}")
+        }
+        def active = lines.findIndexOf { it ==~ /\s*revision=.*/ }
+        if (revision != null) {
+            // Reuse the active line, else the commented-out example, else place it straight after patch.
+            def slot = active >= 0 ? active : lines.findIndexOf { it ==~ /#\s*revision=.*/ }
+            if (slot >= 0) {
+                lines[slot] = "revision=${revision}".toString()
+            } else {
+                lines.add(lines.findIndexOf { it ==~ /patch=.*/ } + 1, "revision=${revision}".toString())
+            }
+        } else if (active >= 0) {
+            lines[active] = "#${lines[active].trim()}".toString()
+        }
+        def updated = lines.join(eol)
+        if (updated == text) {
+            logger.lifecycle("${target.name} already reads ${requested}")
+            return
+        }
+        target.setText(updated, 'UTF-8')
+        logger.lifecycle("${target.name} set to ${requested}")
+    }
+}
+
 tasks.register('validateSuiteRecord', JavaExec) {
     description = 'Validates a complete suite record: -PsuiteRecordFile=path/to/record.json'
     group = 'verification'

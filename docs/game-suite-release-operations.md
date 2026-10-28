@@ -37,6 +37,29 @@ The ordering is `0.51.00` < `0.51.00.2` < `0.51.01` < `0.51.01.1`, which matches
 MegaMek's `Version` and the launcher. The packaged `Version.properties` carries
 the Weekly number as `revision`.
 
+After every live publication (Weekly, Milestone or Development, but not a dry
+run or a verified no-op) the workflow records the released version in the
+tracked `megamek/resources/Version.properties` on megamek `main`. That keeps
+local and nightly builds of all three products reporting the current version.
+It runs `./gradlew :megamek:setVersionProperties -PnewVersion=<version>` on
+current `main`, which rewrites only `major`, `minor`, `patch` and `revision`
+(setting `revision` for a Weekly and commenting it out otherwise). It then
+commits that one file as the App bot with `[skip ci]` and pushes to `main`. The
+same task can be run by hand to fix the file.
+
+Allocation never reads this file: Weekly versions still come from published
+releases and tags. A MegaMek `main` whose only difference from the previous
+record is in the non-comment version lines of `Version.properties` is treated as
+unchanged. `prepare` freezes MegaMek at the previous record's commit, so that
+commit alone never makes the next Weekly a release. Any other change to the
+file, such as `notes` or `splashTag`, still counts as a MegaMek change.
+
+If a version-commit step fails, the release is still complete and needs no
+reconciliation; only the commit is missing. Do not re-dispatch to get it: a
+re-run Weekly is a verified no-op that skips the commit, and a re-run Milestone
+or Development would publish another release. Instead run the task locally and
+merge the result through a normal pull request.
+
 A dry run performs
 remote-byte preflight, frozen-source pinned builds and archive verification,
 but creates **no** tags, releases, assets, or record. A verified unchanged
@@ -72,6 +95,10 @@ The dry-run environment is
 has only Contents read (plus Issues write in the separate failure-report job).
 The App token is minted only *after* all build work
 and is requested for the three named repositories with Contents write.
+After publication a second token, requested for `MegaMek/megamek` alone, pushes
+the `Version.properties` commit to `main`. If `main` is protected by a branch
+rule or ruleset, the App must be allowed to bypass it for direct pushes, or that
+step fails after an otherwise complete release.
 Never put the private key in files, command output, or a workflow input.
 
 ## Check App access without publishing

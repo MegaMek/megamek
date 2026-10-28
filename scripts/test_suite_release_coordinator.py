@@ -96,6 +96,43 @@ class CoordinatorTests(unittest.TestCase):
             publisher=lambda *a, **k: self.fail("publisher called"),
             noop=lambda *a, **k: self.record))
 
+    def test_version_only_megamek_change_keeps_a_weekly_noop(self):
+        self.inventory["membership"] = "weekly"
+        self.inventory["requestedVersion"] = None
+        self.inventory["previous"]["membership"] = "weekly"
+        bumped = "a" * 40
+        self.assertNotEqual(bumped, self.commits["megamek"])
+        self.inventory["commits"]["megamek"] = bumped
+        asked = []
+        def differ(sources, old, new):
+            asked.append((sources, old, new))
+            return True
+        proposal = coordinator.prepare("weekly", False, None, self.root, self.state,
+                                       discover=lambda membership, **kwargs: self.inventory,
+                                       builder=self.builder, differ=differ)
+        self.assertEqual(asked, [(self.root, self.commits["megamek"], bumped)])
+        self.assertTrue(proposal["weeklyNoopCandidate"])
+        saved = json.loads((self.state / "inventory.json").read_text())
+        self.assertEqual(saved["commits"]["megamek"], self.commits["megamek"])
+        self.assertIn("VERIFIED_WEEKLY_NOOP", coordinator.finish(
+            self.state, self.root, False, True,
+            publisher=lambda *a, **k: self.fail("publisher called"),
+            noop=lambda *a, **k: self.record))
+
+    def test_other_megamek_change_is_built_from_main(self):
+        bumped = "a" * 40
+        self.inventory["commits"]["megamek"] = bumped
+        proposal = coordinator.prepare("milestone", False, "0.52.00", self.root, self.state,
+                                       discover=self.discover, builder=self.builder,
+                                       differ=lambda *args: False)
+        self.assertEqual(proposal["frozenCommits"]["megamek"], bumped)
+        self.assertEqual(proposal["buildCandidates"], list(REPOS))
+
+    def test_unchanged_megamek_never_consults_git(self):
+        coordinator.prepare("milestone", False, "0.52.00", self.root, self.state,
+                            discover=self.discover, builder=self.builder,
+                            differ=lambda *args: self.fail("differ called"))
+
     def test_workflow_shape(self):
         workflow = (Path(__file__).resolve().parents[1] /
                     ".github/workflows/game-suite-release.yml").read_text()
@@ -127,6 +164,12 @@ class CoordinatorTests(unittest.TestCase):
         self.assertNotIn("${{ inputs.dry_run }}", workflow)
         self.assertNotIn("!inputs.dry_run", workflow)
         self.assertNotIn("if: ${{ inputs.", workflow)
+        # The Version.properties commit follows publication, with its own megamek-only token.
+        publish = workflow.index("Recheck remote inventory and publish once")
+        self.assertLess(publish, workflow.index(":megamek:setVersionProperties"))
+        self.assertLess(publish, workflow.index("id: bump-app"))
+        self.assertIn("repositories: megamek\n", workflow)
+        self.assertIn("push --quiet origin HEAD:refs/heads/main", workflow)
         report = workflow[workflow.index("report-scheduled-failure:"):]
         self.assertIn("failure() && github.event_name == 'schedule'", report)
         self.assertIn("issues: write", report)
@@ -186,6 +229,60 @@ class CoordinatorTests(unittest.TestCase):
         requests = [line.strip() for line in workflow.splitlines() if "gh api " in line]
         self.assertEqual(len(requests), 2)
         self.assertTrue(all("gh api --method GET " in line for line in requests))
+
+
+class VersionOnlyChangeTests(unittest.TestCase):
+    PROPERTIES = "# header\nmajor=0\nminor=51\npatch=01\n#revision=1\n# notes=Example\n"
+
+    def setUp(self):
+        if not shutil.which("git"):
+            self.skipTest("Git is required to compare MegaMek commits")
+        self.temp = temple.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.sources = Path(self.temp.name)
+        self.repo = self.sources / "megamek"
+        (self.repo / "megamek/resources").mkdir(parents=True)
+        self.git("init", "--quiet")
+        (self.repo / "README").write_text("readme\n")
+        self.base = self.commit(self.PROPERTIES)
+
+    def git(self, *args):
+        return subprocess.run(["git", "-C", str(self.repo), "-c", "user.name=Test",
+                               "-c", "user.email=test@example.com", "-c", "commit.gpgsign=false", *args],
+                              check=True, capture_output=True, text=True).stdout.strip()
+
+    def commit(self, properties):
+        (self.repo / coordinator.VERSION_FILE).write_text(properties)
+        self.git("add", "--all")
+        self.git("commit", "--quiet", "--allow-empty", "-m", "change")
+        return self.git("rev-parse", "HEAD")
+
+    def test_version_lines_only(self):
+        bumped = self.commit(self.PROPERTIES.replace("patch=01\n#revision=1", "patch=00\nrevision=2"))
+        self.assertTrue(coordinator.version_only_change(self.sources, self.base, bumped))
+
+    def test_comment_edits_count_as_version_only(self):
+        edited = self.commit(self.PROPERTIES.replace("# header", "# reworded header"))
+        self.assertTrue(coordinator.version_only_change(self.sources, self.base, edited))
+
+    def test_build_note_is_a_real_change(self):
+        noted = self.commit(self.PROPERTIES.replace("# notes=Example", "notes=Example"))
+        self.assertFalse(coordinator.version_only_change(self.sources, self.base, noted))
+
+    def test_other_files_are_a_real_change(self):
+        (self.repo / "README").write_text("changed\n")
+        changed = self.commit(self.PROPERTIES.replace("patch=01", "patch=02"))
+        self.assertFalse(coordinator.version_only_change(self.sources, self.base, changed))
+
+    def test_non_descendant_is_a_real_change(self):
+        bumped = self.commit(self.PROPERTIES.replace("patch=01", "patch=02"))
+        self.assertFalse(coordinator.version_only_change(self.sources, bumped, self.base))
+
+    def test_unparseable_properties_are_a_real_change(self):
+        for text in ("major=0\nminor=51\npatch=01\nnotes: colon\n",
+                     "major=0\nminor=51\npatch=01\nnotes=wrapped \\\n  line\n"):
+            with self.subTest(text=text):
+                self.assertIsNone(coordinator.settings_without_version(text))
 
 
 class AppAccessCheckTests(unittest.TestCase):

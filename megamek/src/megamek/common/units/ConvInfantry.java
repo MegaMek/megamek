@@ -2876,6 +2876,13 @@ public class ConvInfantry extends Infantry {
         this.pheromoneImpaired = impaired;
     }
 
+    @Override
+    public void clearGameState() {
+        super.clearGameState();
+        // Pheromone impairment only lasts for the remainder of the scenario
+        pheromoneImpaired = false;
+    }
+
     /**
      * Standard and motorized SCUBA only differ in base movement, so they both use INF_UMU. If the motion_type contains
      * the string "motorized", the movement is set here instead.

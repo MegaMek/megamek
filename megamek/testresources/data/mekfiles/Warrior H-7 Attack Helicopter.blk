@@ -1,0 +1,164 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-e32e-7053-85ce-1348db5f5195
+</UUID>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Warrior Attack Helicopter
+</Name>
+
+<Model>
+H-7
+</Model>
+
+<mul id:>
+3513
+</mul id:>
+
+<year>
+2957
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+5
+</armor_tech_level>
+
+<armor>
+6
+5
+5
+6
+2
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-4
+IS Ammo AC/2
+</Body Equipment>
+
+<Front Equipment>
+SRM 4
+Autocannon/2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<capabilities>
+<p>The Warrior's primary weapon in its base configuration is a centerline-mounted SarLon Autocannon/2, a system with a range profile that allows the helicopter to engage targets while staying well out of the reach of most return fire. The cannon lacks the raw stopping power to destroy hardened targets quickly, but its reach means that even BattleMechs cannot afford to ignore the sustained harassment. Supporting the autocannon is a TharHes four-tube SRM-4, which provides a short-range punch during close strafing runs that the AC/2 alone cannot deliver.</p><p>The N&D Handsfree targeting and tracking system sets the Warrior apart from most contemporary helicopters. Rather than requiring a pilot to manipulate a complex control panel, the Handsfree uses a helmet-integrated targeting display that mates reticle-mounted crosshairs to the pilot's line of sight. The system enables natural, intuitive target acquisition at combat speeds, though it remains considerably simpler than a BattleMech neurohelmet.</p><p>Unlike most helicopters, the Warrior uses dual counter-rotating rotors on a single mast, eliminating the need for an anti-torque tail rotor. The tail incorporates a ducted fan instead, providing additional thrust and contributing to the Warrior's impressive top speed. Despite these advantages, the design carries the inherent fragility common to all VTOL craft. The helicopter performs best when exploiting its speed to stay out of concentrated fire. Once cornered or slowed, it becomes acutely vulnerable to damage that a heavier ground vehicle would absorb without difficulty.</p>
+</capabilities>
+
+<overview>
+<p>Developed by Lockheed/CBM Corporation on Furillo and introduced in 2957, the Warrior Attack Helicopter grew from a limited Lyran design into one of the most widely distributed light attack VTOLs in the Inner Sphere. Fast and capable at harassment and reconnaissance, the Warrior established itself across every Successor State and several Periphery realms over the course of the Succession Wars, finding a home in mercenary commands, state militaries, and air cavalry units that valued its reliability and ease of maintenance. Lockheed/CBM continued developing the platform across multiple generations, producing fusion-powered and specialized variants that extended the design's service life well into the Republic era and beyond.</p>
+</overview>
+
+<deployment>
+<p>The H-7 spread beyond the Lyran Commonwealth within years of its introduction, finding operators in every Successor State and across the Periphery. House Davion's Ceti Hussars and the Free Worlds Guards maintained substantial numbers, as did the Capellan Home Guard. Smaller mercenary outfits built entire air cavalry companies around the design. During the Fourth Succession War, Warriors supporting Davion airmobile operations demonstrated the design's effectiveness across varied terrain types. Despite its age, the H-7 continued to see service well into the Jihad period wherever maintenance pipelines remained intact.</p>
+</deployment>
+
+<history>
+<p>The Warrior's story is one of institutional stubbornness meeting eventual vindication. When Lockheed/CBM Corporation offered the H-7 to the Lyran Commonwealth Armed Forces in 2957, the reception was cold. The LCAF's senior officer class, deeply invested in the prestige of BattleMech command, dismissed VTOL craft as impractical toys unsuitable for serious combined-arms warfare. Initial procurement orders fell far short of what Lockheed/CBM had projected, and the design's comparatively thin armor and perceived fragility seemed to confirm those prejudices for officers who had never bothered to learn helicopter tactics.</p><p>The rehabilitation of the Warrior's reputation came through the operators who had no institutional prejudices to overcome. Mercenary commands and Periphery air cavalry units discovered that the Warrior's targeting system and high-speed strafing profile made it a genuine tactical asset when used correctly. These operators passed word through the mercenary circuit, and demand from outside the Commonwealth eventually embarrassed the LCAF into broader adoption. By the late twenty-ninth century, the Warrior had found its way into the armored forces of every Succession State and several Periphery realms, from House Davion's Ceti Hussars to the Free Worlds Guards and the Capellan Home Guard.</p><p>The Warrior's battlefield value was demonstrated clearly during the Fourth Succession War. When Hanse Davion launched his broad offensive against the Capellan Confederation, airmobile units equipped with Warriors served as critical force multipliers, providing speed and fire support that conventional ground forces could not replicate. Smaller mercenary-only units built entirely around helicopter assets, such as Laws Flight, made names for themselves defending difficult terrain against superior armored opposition.</p><p>Persistent criticism of the SarLon AC/2's lack of punch led Lockheed/CBM to develop two responses. The H-7A paired a machine gun with an upgraded autocannon, trading the SRM launcher for close-range firepower. The H-7C abandoned the SarLon entirely, substituting a long-range missile battery for standoff bombardment. Neither variant fully silenced critics, and the question of fundamental firepower remained an ongoing conversation within the Warrior operator community.</p><p>In 3048, Lockheed/CBM's Sandpiper research team began serious development work on a fusion-powered successor. The Clan Invasion paused that effort, diverting resources to more urgent priorities. The post-Tukayyid stabilization allowed work to resume, and the H-8 entered service in 3054. The new engine lightened the airframe and reduced the acoustic signature that had made early Warriors detectable at range. Redesigned with longer-range missiles and streak-guided short-range launchers, the H-8 offered genuinely improved sustained engagement capability. Supply disruptions during the Sarna March and the FedCom Civil War forced Lockheed/CBM to source armor through alternate channels at various points during production.</p><p>The H-8's combat record during the FedCom Civil War exceeded designer expectations and generated the backorders needed to justify further development. The H-9 emerged from that demand, replacing the H-8's missile suite with a rotary autocannon for commanders who wanted concentrated direct fire over sustained range engagement. The H-10 took a different path entirely, stripping most offensive armament to incorporate a five-ton infantry bay, producing an airmobile transport configured for battle armor rather than independent attack operations.</p><p>The Republic era brought the H-7F, a deliberate return to the original non-fusion chassis updated for stealth hunting. Equipped with a high-rate-of-fire ultra autocannon and a TAG system, the variant was designed specifically to locate and mark stealth VTOLs for indirect fire, filling a capability gap that the fusion-powered variants were not optimized to address.</p><p>The appearance of the HX-9 experimental prototype in Kell Hound livery on Arc-Royal during the Jihad introduced a complication that Lockheed/CBM was ill-prepared to manage. The prototype's modifications, including vehicular stealth armor, an extralight fusion plant, and a hyper-velocity autocannon, appeared to be of Capellan origin, adapted to the familiar Warrior airframe by parties whose identity Lockheed/CBM was still working to establish. The connection to Tengo Aerospace and the subsequent legal disputes would define Lockheed/CBM's relations with the Capellan industrial sphere for years.</p>
+</history>
+
+<manufacturer>
+Lockheed/CBM Corporation
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Omni
+ARMOR:Longanecker
+COMMUNICATIONS:Xilex
+TARGETING:N&D
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:50 ICE
+ARMOR:PlastiSteel
+COMMUNICATIONS:2000
+TARGETING:Handsfree
+</systemModels>
+
+<source>
+TR:3039
+</source>
+
+<published>
+RS:3039u,RSFP:Battlefield
+</published>
+
+<tonnage>
+21.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

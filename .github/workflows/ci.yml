@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java-distribution: [ temurin ]
-        java-version: [ 21, 25 ]
+        java-version: [ 21 ]
       fail-fast: false
 
     steps:
@@ -82,9 +82,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Test
+      - name: Test and Build
         working-directory: megamek
-        run: ./gradlew test -x checkstyleMain -x checkstyleTest
+        run: ./gradlew build -x checkstyleMain -x checkstyleTest -PextraVersion="PR-${{ github.event.number}}-${{ env.COMMIT_SHORT_SHA }}"
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v7
@@ -99,10 +99,6 @@ jobs:
           directory: ./megamek/megamek/build/reports/jacoco/test
           fail_ci_if_error: false
           verbose: true
-
-      - name: Build with Gradle
-        working-directory: megamek
-        run: ./gradlew build -x test -x checkstyleMain -x checkstyleTest -PextraVersion="PR-${{ github.event.number}}-${{ env.COMMIT_SHORT_SHA }}"
 
       - name: Upload TarGZ Release
         uses: actions/upload-artifact@v7

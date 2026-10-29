@@ -1017,6 +1017,31 @@ class PrincessTest {
     }
 
     @Test
+    void testCalcAmmoSplitsSharedShotsBetweenLaunchers() throws LocationFullException {
+        // Issue 9376: two launchers sharing two shots have one shot each, so each should be as careful as a lone
+        // launcher down to its last shot, not fire as though both shots were its own
+        BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        when(mockBehavior.getHyperAggressionIndex()).thenReturn(5);
+        when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
+        Mek loneLauncherMek = new BipedMek();
+        Mounted<?> loneBin = loneLauncherMek.addEquipment(mockAC5AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> loneLauncher = loneLauncherMek.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
+        loneBin.setShotsLeft(1);
+
+        Mek twinLauncherMek = new BipedMek();
+        Mounted<?> sharedBin = twinLauncherMek.addEquipment(mockAC5AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> firstLauncher = twinLauncherMek.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> secondLauncher = twinLauncherMek.addEquipment(mockAC5, Mek.LOC_LEFT_TORSO);
+        sharedBin.setShotsLeft(2);
+
+        double loneThreshold = mockPrincess.calcAmmoConservation(loneLauncherMek).get((WeaponMounted) loneLauncher);
+        Map<WeaponMounted, Double> twinThresholds = mockPrincess.calcAmmoConservation(twinLauncherMek);
+        assertEquals(loneThreshold, twinThresholds.get((WeaponMounted) firstLauncher), 0.0001);
+        assertEquals(loneThreshold, twinThresholds.get((WeaponMounted) secondLauncher), 0.0001);
+    }
+
+    @Test
     void testCalcAmmoForMaxAggressionLevel() throws LocationFullException {
         // Expected toHitThresholds should equate to a TN of 12, 12, and 10 for ammo
         // values

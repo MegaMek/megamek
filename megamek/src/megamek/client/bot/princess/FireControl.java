@@ -3577,6 +3577,8 @@ public class FireControl {
             info.getAction().setAmmoId(ammoCarrier.getEquipmentNum(mountedAmmo));
             info.getAction().setAmmoMunitionType(mountedAmmo.getType().getMunitionType());
             info.getAction().setAmmoCarrier(ammoCarrier.getId());
+            // Later steps, such as picking aimed and called shots, read the shot's ammo
+            info.setAmmo(mountedAmmo);
 
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                   ammoCarrier.getEquipmentNum(mountedAmmo), ammoCarrier.getId(),

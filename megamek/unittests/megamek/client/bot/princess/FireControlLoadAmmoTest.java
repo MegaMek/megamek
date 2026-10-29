@@ -141,6 +141,7 @@ class FireControlLoadAmmoTest {
         assertSame(standard, firstLauncher.getLinkedAmmo());
         assertSame(tandemCharge, secondLauncher.getLinkedAmmo(), "Dead-Fire needs a 14 and should be passed over");
         verify(secondShot.getAction()).setAmmoId(shooter.getEquipmentNum(tandemCharge));
+        verify(secondShot).setAmmo(tandemCharge);
     }
 
     @Test

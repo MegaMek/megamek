@@ -24435,7 +24435,8 @@ public class TWGameManager extends AbstractGameManager {
     private void dropCargo(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
         boolean cargoDropped = false;
 
-        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+        for (ICarryable carriedObject : entity.getDistinctCarriedObjects()) {
+            ICarryable cargo = CarriedUnitRelinker.currentInstanceOf(game, carriedObject);
             // if the cargo was dropped but not destroyed.
             if (!damageCargo(false, entity, cargo)) {
                 Report r = new Report(6722);
@@ -24445,7 +24446,11 @@ public class TWGameManager extends AbstractGameManager {
                 vPhaseReport.add(r);
 
                 if (cargo instanceof Entity carriedEntity) {
-                    unloadUnit(entity, carriedEntity, coords, entity.getFacing(), entity.getElevation());
+                    if (!unloadUnit(entity, carriedEntity, coords, entity.getFacing(), entity.getElevation())) {
+                        LOGGER.error("{} could not drop {} in a fall: none of its transporters holds that unit",
+                              entity.getShortName(),
+                              carriedEntity.getShortName());
+                    }
                 } else {
                     entity.dropCarriedObject(cargo, false);
                     if (game.getBoard().contains(coords)) {
@@ -26721,6 +26726,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         game.setEntity(entity.getId(), entity);
+        CarriedUnitRelinker.relinkAfterUpdate(game, entity);
         entityUpdate(entity.getId());
         if (entity.isPartOfFighterSquadron()) {
             // Update the stats of any Squadrons that the new units are part of
@@ -26964,6 +26970,7 @@ public class TWGameManager extends AbstractGameManager {
             // Only update entities that existed; senderCanUpdateEntity handles the permission check
             if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
                 game.setEntity(entity.getId(), entity);
+                CarriedUnitRelinker.relinkAfterUpdate(game, entity);
 
                 // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)
                 List<Entity> c3affected = C3Util.wireC3(game, entity);

@@ -24439,14 +24439,11 @@ public class TWGameManager extends AbstractGameManager {
             ICarryable cargo = CarriedUnitRelinker.currentInstanceOf(game, carriedObject);
             // if the cargo was dropped but not destroyed.
             if (!damageCargo(false, entity, cargo)) {
-                Report r = new Report(6722);
-                r.indent();
-                r.subject = entity.getId();
-                r.add(cargo.generalName());
-                vPhaseReport.add(r);
-
+                boolean cargoUnloaded = true;
                 if (cargo instanceof Entity carriedEntity) {
-                    if (!unloadUnit(entity, carriedEntity, coords, entity.getFacing(), entity.getElevation())) {
+                    cargoUnloaded = unloadUnit(entity, carriedEntity, coords, entity.getFacing(),
+                          entity.getElevation());
+                    if (!cargoUnloaded) {
                         LOGGER.error("{} could not drop {} in a fall: none of its transporters holds that unit",
                               entity.getShortName(),
                               carriedEntity.getShortName());
@@ -24457,6 +24454,14 @@ public class TWGameManager extends AbstractGameManager {
                         game.placeGroundObject(coords, cargo);
                         cargoDropped = true;
                     }
+                }
+
+                if (cargoUnloaded) {
+                    Report r = new Report(6722);
+                    r.indent();
+                    r.subject = entity.getId();
+                    r.add(cargo.generalName());
+                    vPhaseReport.add(r);
                 }
             } else {
                 // cargo was destroyed by the fall

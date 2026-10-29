@@ -40,6 +40,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.Enumeration;
@@ -51,6 +53,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
@@ -59,6 +62,7 @@ import megamek.common.loaders.MekFileParser;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.InfantryCompartment;
 import megamek.common.units.Tank;
@@ -72,6 +76,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
@@ -286,5 +291,93 @@ class NuclearBlastDamageTest {
         blast(NuclearWeaponType.DAVY_CROCKETT_M);
 
         Mockito.verify(gameManager).crashVTOLorWiGE((Tank) cobra);
+    }
+
+    private int[] damages(NuclearWeaponType weaponType) {
+        return NuclearBlastProfile.groundBurst(weaponType).blastDamageByDistance();
+    }
+
+    private Coords protectingHex(Coords unitHex, int height, NuclearWeaponType weaponType) {
+        return new NuclearBlastDamage(gameManager).protectingHex(unitHex, height, GROUND_ZERO, damages(weaponType));
+    }
+
+    @Test
+    void hillTallerThanTheUnitProtectsIt() {
+        // A Mek (2 levels tall, top at level 1) behind a level 3 hill 9 hexes from a Davy Crockett, which deals 55
+        // there: less than the hill's Terrain Factor of 200 (IO:AE p.165; HammerGS, 2026-10-28)
+        game.getBoard().getHex(hexNorth(9)).setLevel(3);
+
+        assertEquals(hexNorth(9), protectingHex(hexNorth(10), 1, NuclearWeaponType.DAVY_CROCKETT_M));
+    }
+
+    @Test
+    void hillMustBeTallerThanTheUnit() {
+        // A level 1 hill is not taller than a Mek standing at level 0, but it is taller than a tank
+        game.getBoard().getHex(hexNorth(9)).setLevel(1);
+
+        assertNull(protectingHex(hexNorth(10), 1, NuclearWeaponType.DAVY_CROCKETT_M), "a Mek is as tall as the hill");
+        assertEquals(hexNorth(9), protectingHex(hexNorth(10), 0, NuclearWeaponType.DAVY_CROCKETT_M),
+              "a tank is shorter");
+    }
+
+    @Test
+    void hillThatTakesTwoHundredDoesNotProtect() {
+        // An Alamo deals 1,000 - 9 x 23 = 793 at the hill, far above its Terrain Factor of 200
+        game.getBoard().getHex(hexNorth(9)).setLevel(3);
+
+        assertNull(protectingHex(hexNorth(10), 1, NuclearWeaponType.ALAMO));
+    }
+
+    @Test
+    void hillOnTheFarSideDoesNotProtect() {
+        // The hill must stand between the unit and Ground Zero
+        game.getBoard().getHex(hexNorth(11)).setLevel(3);
+
+        assertNull(protectingHex(hexNorth(10), 1, NuclearWeaponType.DAVY_CROCKETT_M));
+    }
+
+    @Test
+    void standingBuildingProtectsButACollapsedOneDoesNot() {
+        // The CF 80, 2-level building 8 hexes north rises above a Mek standing right behind it
+        assertEquals(BUILDING_HEX, protectingHex(hexNorth(9), 1, NuclearWeaponType.DAVY_CROCKETT_M));
+
+        game.getBoard().getBuildingAt(BUILDING_HEX).setCurrentCF(0, BUILDING_HEX);
+
+        assertNull(protectingHex(hexNorth(9), 1, NuclearWeaponType.DAVY_CROCKETT_M), "a fallen building is no cover");
+    }
+
+    private Vector<Integer> blastWithRoll(NuclearWeaponType weaponType, int value) {
+        Roll roll = mock(Roll.class);
+        when(roll.getIntValue()).thenReturn(value);
+        when(roll.getReport()).thenReturn(String.valueOf(value));
+        try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            compute.when(() -> Compute.rollD6(2)).thenReturn(roll);
+            return blast(weaponType);
+        }
+    }
+
+    @Test
+    void unitThatMakesItsHidingRollTakesNoBlastDamage() throws Exception {
+        game.getBoard().getHex(hexNorth(9)).setLevel(3);
+        Entity atlas = placeUnit("Atlas AS7-D.mtf", hexNorth(10));
+        int armorBefore = atlas.getTotalArmor();
+
+        Vector<Integer> blastedUnits = blastWithRoll(NuclearWeaponType.DAVY_CROCKETT_M, 12);
+
+        assertFalse(blastedUnits.contains(atlas.getId()), "protected units are not struck");
+        assertEquals(armorBefore, atlas.getTotalArmor(), "no blast damage");
+    }
+
+    @Test
+    void unitThatFailsItsHidingRollTakesTheBlast() throws Exception {
+        game.getBoard().getHex(hexNorth(9)).setLevel(3);
+        Entity atlas = placeUnit("Atlas AS7-D.mtf", hexNorth(10));
+        int armorBefore = atlas.getTotalArmor();
+
+        Vector<Integer> blastedUnits = blastWithRoll(NuclearWeaponType.DAVY_CROCKETT_M, 3);
+
+        assertTrue(blastedUnits.contains(atlas.getId()), "a failed roll leaves the unit in the blast");
+        assertTrue(atlas.getTotalArmor() < armorBefore, "and it takes the damage");
+        assertFalse(atlas.isProne(), "the hiding roll itself never knocks it down");
     }
 }

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -46,6 +47,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
@@ -55,6 +57,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.MekWarrior;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
+import megamek.common.units.Terrains;
 import megamek.common.weapons.DamageType;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
@@ -76,6 +79,13 @@ class NuclearBlastDamage {
     static final int MAXIMUM_BLAST_HEAT = 15;
     /** An airborne unit that fails its roll falls this many altitudes per point of failure (IO:AE p.165). */
     static final int ALTITUDES_LOST_PER_POINT = 2;
+    /** A unit hiding behind protecting terrain rolls Piloting at +4 (IO:AE p.165). */
+    static final int PROTECTION_ROLL_MODIFIER = 4;
+    /**
+     * A hill withstands a blast that deals less than this at its hex: the Terrain Factor of Clear or Rough ground
+     * (TO:AR Terrain Factor and Conversion Table; HammerGS, 2026-10-28).
+     */
+    static final int HILL_TERRAIN_FACTOR = 200;
     private static final int BOARD_ID = 0;
 
     private final TWGameManager gameManager;
@@ -128,7 +138,7 @@ class NuclearBlastDamage {
             if (!isInBlastHeight(entity, profile)) {
                 continue;
             }
-            if ((range > 0) && isSheltered(entity, entityPosition, entity.relHeight(), groundZero, vDesc)) {
+            if ((range > 0) && isProtected(entity, entityPosition, entity.relHeight(), groundZero, damages, vDesc)) {
                 continue;
             }
             int damage = damageAfterBuilding(entity, entityPosition, damages[range], buildingStrengthBefore, vDesc);
@@ -359,7 +369,7 @@ class NuclearBlastDamage {
             return;
         }
         int height = (transporter == null) ? entity.relHeight() : transporter.relHeight();
-        if (isSheltered(entity, entityPosition, height, groundZero, vDesc)) {
+        if (isProtected(entity, entityPosition, height, groundZero, damages, vDesc)) {
             return;
         }
         blastedUnits.add(entity.getId());
@@ -369,24 +379,89 @@ class NuclearBlastDamage {
     }
 
     /**
-     * The shelter roll: a unit behind a taller hex toward Ground Zero escapes the blast on 9+ on 2d6. Reports either
-     * outcome. Unchanged from before IO:AE; the Protecting Terrain rule (IO:AE p.165) replaces it in a later change.
+     * Protecting terrain (IO:AE p.165): a unit next to a hill or building that stands between it and Ground Zero,
+     * is taller than the unit, and withstands the blast at its own hex, may roll Piloting at +4. On a success the unit
+     * takes no blast damage; secondary effects still apply. Infantry roll their anti-Mek skill, which MegaMek keeps as
+     * their piloting skill. A failed roll only leaves the unit unprotected (HammerGS, 2026-10-28). Example: an Atlas
+     * behind a level 3 hill 10 hexes from a Davy Crockett rolls against its piloting + 4.
      *
-     * @return {@code true} if the unit escapes the blast
+     * @return {@code true} if the unit escapes the blast damage
      */
-    private boolean isSheltered(Entity entity, Coords entityPosition, int height, Coords groundZero,
+    private boolean isProtected(Entity entity, Coords entityPosition, int height, Coords groundZero, int[] damages,
           Vector<Report> vDesc) {
-        if (!gameManager.canShelter(entityPosition, BOARD_ID, groundZero, height)) {
+        Coords coverHex = protectingHex(entityPosition, height, groundZero, damages);
+        if (coverHex == null) {
+            LOGGER.info("[Nukes] {} at hex {}: no taller hill or standing building between it and Ground Zero",
+                  entity.getDisplayName(), entityPosition.getBoardNum());
             return false;
         }
-        boolean sheltered = Compute.d6(2) >= 9;
-        LOGGER.info("[Nukes] {} at hex {} rolls for shelter from the blast: {}", entity.getDisplayName(),
-              entityPosition.getBoardNum(), sheltered ? "sheltered" : "not sheltered");
-        Report report = new Report(sheltered ? 6545 : 6546);
-        report.addDesc(entity);
+        PilotingRollData target = entity.getBasePilotingRoll();
+        target.addModifier(PROTECTION_ROLL_MODIFIER, "hiding from the nuclear blast");
+        Roll roll = Compute.rollD6(2);
+        boolean isProtected = roll.getIntValue() >= target.getValue();
+        Report report = new Report(6558);
         report.subject = entity.getId();
+        report.indent(2);
+        report.addDesc(entity);
+        report.add(coverHex.getBoardNum());
+        report.add(target.getValueAsString());
+        report.add(roll);
+        report.choose(isProtected);
         vDesc.addElement(report);
-        return sheltered;
+        LOGGER.info("[Nukes] {} at hex {} hides behind hex {}: needs {} ({}), rolls {}: {}", entity.getDisplayName(),
+              entityPosition.getBoardNum(), coverHex.getBoardNum(), target.getValueAsString(), target.getDesc(),
+              roll.getIntValue(), isProtected ? "protected from the blast damage" : "not protected");
+        return isProtected;
+    }
+
+    /**
+     * Finds the hex that can protect a unit: a hex next to it on the line to Ground Zero (either one, where the line
+     * runs between two hexes) holding a standing building taller than the unit, or a hill taller than the unit whose
+     * hex takes less than {@link #HILL_TERRAIN_FACTOR}.
+     *
+     * @param height the unit's height above its hex
+     *
+     * @return the protecting hex, or {@code null} if there is none
+     */
+    Coords protectingHex(Coords entityPosition, int height, Coords groundZero, int[] damages) {
+        Hex unitHex = game.getBoard(BOARD_ID).getHex(entityPosition);
+        if (unitHex == null) {
+            return null;
+        }
+        int unitTop = unitHex.getLevel() + height;
+        for (Coords coords : Coords.intervening(entityPosition, groundZero)) {
+            int distanceFromUnit = entityPosition.distance(coords);
+            if (distanceFromUnit == 0) {
+                continue;
+            }
+            if (distanceFromUnit > 1) {
+                break;
+            }
+            Hex hex = game.getBoard(BOARD_ID).getHex(coords);
+            if (hex == null) {
+                continue;
+            }
+            IBuilding building = game.getBoard(BOARD_ID).getBuildingAt(coords);
+            boolean standingBuilding = hex.containsTerrain(Terrains.BUILDING) && (building != null)
+                  && (building.getCurrentCF(coords) > 0);
+            if (standingBuilding && (hex.ceiling() > unitTop)) {
+                LOGGER.info("[Nukes] Hex {} protects hex {}: building {} rises to level {}, above level {}",
+                      coords.getBoardNum(), entityPosition.getBoardNum(), building.getName(), hex.ceiling(), unitTop);
+                return coords;
+            }
+            if (hex.floor() > unitTop) {
+                int distanceFromGroundZero = groundZero.distance(coords);
+                int damage = (distanceFromGroundZero < damages.length) ? damages[distanceFromGroundZero] : 0;
+                if (damage < HILL_TERRAIN_FACTOR) {
+                    LOGGER.info("[Nukes] Hex {} protects hex {}: a level {} hill above level {} that holds against {}",
+                          coords.getBoardNum(), entityPosition.getBoardNum(), hex.floor(), unitTop, damage);
+                    return coords;
+                }
+                LOGGER.info("[Nukes] Hex {} cannot protect hex {}: the hill takes {}, at least its Terrain Factor {}",
+                      coords.getBoardNum(), entityPosition.getBoardNum(), damage, HILL_TERRAIN_FACTOR);
+            }
+        }
+        return null;
     }
 
     /**

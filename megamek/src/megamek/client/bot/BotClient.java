@@ -42,13 +42,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -146,15 +146,18 @@ public abstract class BotClient extends Client {
     int lastCalculatedTurnIndex = -1;
     int calculatedTurnsThisPhase = 0;
 
-    /** The unit this bot last sent a move for, and the turn index it was sent on, so a refusal can be traced. */
-    private int lastMovedEntityId = Entity.NONE;
-    private int lastMovedTurnIndex = -1;
+    /**
+     * The unit this bot last sent a move for, and the turn index it was sent on, so a refusal can be traced. Written
+     * on the calc thread and read on the turn-change listener thread.
+     */
+    private volatile int lastMovedEntityId = Entity.NONE;
+    private volatile int lastMovedTurnIndex = -1;
 
     /**
      * Units whose move the server refused this phase. The bot leaves them out when it picks a unit to move, so a
-     * restarted turn cannot pick the same refused unit again, and each unit can restart a turn at most once.
+     * restarted turn cannot pick the same refused unit again, and each unit can restart a turn at most once. Changed on the turn-change listener thread and read on the calc thread.
      */
-    private final Set<Integer> refusedEntityIds = new HashSet<>();
+    private final Set<Integer> refusedEntityIds = ConcurrentHashMap.newKeySet();
 
     /** Test seam for the spawn decision: would a turn-change event at this turn index spawn a calc? */
     boolean shouldSpawnForTest(int turnIndex) {

@@ -51,7 +51,9 @@ import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.VTOL;
+import megamek.server.Server;
 import megamek.utils.ServerFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -66,6 +68,8 @@ class RefusedMoveResendsTurnTest extends GameBoardTestCase {
     private static final int REFUSED_ENTITY_ID = 1;
     private static final int TURN_ENTITY_ID = 2;
 
+    private Server server;
+
     static {
         initializeBoard("REFUSED_MOVE_CLEAR", """
               size 1 1
@@ -73,12 +77,19 @@ class RefusedMoveResendsTurnTest extends GameBoardTestCase {
               end""");
     }
 
+    @AfterEach
+    void tearDown() {
+        if (server != null) {
+            server.die();
+        }
+    }
+
     @Test
     void aRefusedMoveResendsTheTurnToItsSender() throws Exception {
         setBoard("REFUSED_MOVE_CLEAR");
         TWGameManager gameManager = spy(new TWGameManager());
         gameManager.setGame(getGame());
-        ServerFactory.createServer(gameManager);
+        server = ServerFactory.createServer(gameManager);
         Player player = new Player(PLAYER_ID, "Test");
         getGame().addPlayer(PLAYER_ID, player);
 

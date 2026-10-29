@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,7 +49,8 @@ public interface IHonorUtil {
      * @param targetId The target to be checked.
      * @param playerId The ID of the player owning the target.
      *
-     * @return TRUE if the unit is on the broken units list without being on the honor less enemies list.
+     * @return {@code true} if the unit is crippled or surrendered (manually shut down) and its owner is not on the
+     *       dishonored enemies list.
      */
     boolean isEnemyBroken(int targetId, int playerId, boolean forcedWithdrawal);
 
@@ -70,8 +71,9 @@ public interface IHonorUtil {
     void setEnemyDishonored(int playerId);
 
     /**
-     * Checks the given {@link Targetable} to see if it should be counted as broken:<br> Forced Withdrawal is turned
-     * on<br> Given unit is Crippled<br>
+     * Checks the given {@link Targetable} to see if it should be counted as broken. With Forced Withdrawal turned on, a
+     * crippled unit stays broken for the rest of the game, and a manually shut down unit counts as surrendered (and so
+     * broken) for as long as it stays shut down.
      *
      * @param target           The unit to be checked.
      * @param forcedWithdrawal Set TRUE if the Forced Withdrawal rule is in effect.

@@ -140,6 +140,7 @@ public class NuclearDetonationResolver {
 
         terrainEffects.clearGroundZero(position, changedHexes);
         terrainEffects.damageTerrain(position, profile, changedHexes);
+        new NuclearFires(gameManager).startFires(position, profile, changedHexes, vDesc);
 
         gameManager.sendChangedHexes(changedHexes, 0);
 

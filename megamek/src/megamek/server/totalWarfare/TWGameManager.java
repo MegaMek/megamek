@@ -32947,13 +32947,17 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Cycle through entities on team and collect all the airborne VTOL/WIGE vehicles Only vehicles can be affected by
-     * Blowing Sand (TO:AR 6th Ed. pg. 60)
+     * Blowing Sand (TO:AR 6th Ed. pg. 60). Units that have not entered the map, or are off board, are not in the sand.
      *
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOLForSand(Team team) {
         Vector<Integer> units = new Vector<>();
         for (Entity entity : game.getEntitiesVector()) {
+            // An undeployed unit has no position, so isAirborneVTOLorWIGE() falls back to its lobby elevation
+            if (!entity.isDeployed() || entity.isOffBoard()) {
+                continue;
+            }
             for (Player player : team.players()) {
                 if (entity.getOwner().equals(player)) {
                     if (entity.isAirborneVTOLorWIGE() && !(entity instanceof LandAirMek)) {

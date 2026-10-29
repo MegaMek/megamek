@@ -4584,9 +4584,13 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if ((turn == null) || !turn.isValid(connectionId, entity, game)) {
-                LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}",
+                LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}; "
+                            + "resending the turn so the sender can act again",
                       connectionId,
                       entity.getShortName());
+                // Without this the sender believes its turn is over while the server still waits on it
+                send(connectionId, packetHelper.createTurnListPacket());
+                send(connectionId, packetHelper.createTurnIndexPacket(connectionId));
                 return;
             }
 

@@ -285,6 +285,30 @@ class PrincessTest {
         assertEquals(secondUndeployed, mockPrincess.getEntityToMove());
     }
 
+    /** Issue #9390: a unit whose move the server refused is not picked again in the same phase. */
+    @Test
+    void testGetEntityToMoveSkipsAUnitTheServerRefused() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
+
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(1);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+
+        Entity refused = mockUndeployedUnit("Refused");
+        Entity nextUndeployed = mockUndeployedUnit("Next");
+        when(game.getEntity(1)).thenReturn(refused);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(refused, nextUndeployed));
+        when(mockPrincess.isRefusedThisPhase(refused)).thenReturn(true);
+
+        assertEquals(nextUndeployed, mockPrincess.getEntityToMove());
+    }
+
     private static Entity mockUndeployedUnit(String name) {
         Entity unit = mock(Entity.class);
         when(unit.isDone()).thenReturn(false);

@@ -4422,25 +4422,38 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     return;
                 }
 
+                cargo = CarriedUnitRelinker.currentInstanceOf(getGame(), cargo);
                 entity.dropCarriedObject(cargo, isLastStep);
+                boolean cargoUnloaded = true;
                 if (cargo instanceof Entity carriedEntity) {
-                    gameManager.unloadUnit(entity,
-                                           carriedEntity,
-                                           step.getPosition(),
-                                           step.getFacing(),
-                                           step.getElevation());
+                    cargoUnloaded = gameManager.unloadUnit(entity,
+                          carriedEntity,
+                          step.getPosition(),
+                          step.getFacing(),
+                          step.getElevation());
+                    if (cargoUnloaded) {
+                        logger.info("{} dropped {} at {}",
+                              entity.getShortName(),
+                              carriedEntity.getShortName(),
+                              step.getPosition().toFriendlyString());
+                    } else {
+                        logger.error("{} could not drop {} at {}: none of its transporters holds that unit",
+                              entity.getShortName(),
+                              carriedEntity.getShortName(),
+                              step.getPosition().toFriendlyString());
+                    }
                 }
 
 
                 boolean cargoDestroyed = false;
 
-                if (!isLastStep) {
+                if (cargoUnloaded && !isLastStep) {
                     cargoDestroyed = gameManager.damageCargo(step.isFlying() || step.isJumping(), entity, cargo);
                 }
 
                 // note that this should not be moved into the "!isLastStep" block above as cargo may be either
                 // unloaded peacefully or dumped on the move
-                if (!cargoDestroyed) {
+                if (cargoUnloaded && !cargoDestroyed) {
                     if (cargo instanceof GroundObject) {
                         getGame().placeGroundObject(step.getPosition(), cargo);
                     }

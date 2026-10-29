@@ -32,21 +32,15 @@
  */
 package megamek.server.nuclear;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
-import megamek.common.units.IBuilding;
-import megamek.common.units.Terrain;
-import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -56,9 +50,6 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class NuclearDetonationResolver {
     private static final MMLogger LOGGER = MMLogger.create(NuclearDetonationResolver.class);
-    /** Marks a kind of terrain damage that reached no ring at all, for the log. */
-    private static final int NO_RING = -1;
-
 
     private final TWGameManager gameManager;
     private final Game game;
@@ -110,37 +101,8 @@ public class NuclearDetonationResolver {
               + "secondary radius {}, crater depth {}, crater radius {}", position.getBoardNum(),
               profile.impactDamage(), profile.damageReduction(), profile.blastRadius(), profile.secondaryRadius(),
               profile.craterDepth(), craterRadius);
-        List<String> craterDepths = new ArrayList<>();
-        for (int range = 0; range < craterRadius; range++) {
-            // The crater is 1 level shallower for every 2 hexes from Ground Zero (IO:AE p.164).
-            int curDepth = profile.craterDepthAt(range);
-            craterDepths.add(String.valueOf(curDepth));
-            // Get the set of hexes at this range.
-            List<Coords> hexSet = position.allAtDistance(range);
-
-            // Iterate through the hexes.
-            for (Coords myHexCoords : hexSet) {
-                // ignore out of bounds coordinates
-                if (!game.getBoard().contains(myHexCoords)) {
-                    continue;
-                }
-
-                Hex myHex = game.getBoard().getHex(myHexCoords);
-                // In each hex, first, sink the terrain if necessary.
-                myHex.setLevel((myHex.getLevel() - curDepth));
-
-                // Then, remove ANY terrains here.
-                // I mean ALL of them; they're all just gone.
-                // No ruins, no water, no rough, no nothing.
-                if (myHex.containsTerrain(Terrains.WATER)) {
-                    myHex.setLevel(myHex.floor());
-                }
-                myHex.removeAllTerrains();
-                myHex.clearExits();
-
-                changedHexes.add(myHexCoords);
-            }
-        }
+        NuclearTerrainEffects terrainEffects = new NuclearTerrainEffects(gameManager);
+        terrainEffects.crater(position, profile, changedHexes);
 
         // This is technically part of cratering, but...
         // Now we destroy all the units inside the cratering range.
@@ -176,100 +138,10 @@ public class NuclearDetonationResolver {
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 
-        // The Ground Zero hex is stripped bare, unless a building strong enough to withstand the impact still
-        // stands there (IO:AE p.164); the blast above has already destroyed any weaker one.
-        IBuilding groundZeroBuilding = game.getBoard().getBuildingAt(position);
-        if ((groundZeroBuilding == null) || (groundZeroBuilding.getCurrentCF(position) <= 0)) {
-            Hex gzHex = game.getBoard().getHex(position);
-            if (gzHex.containsTerrain(Terrains.WATER)) {
-                gzHex.setLevel(gzHex.floor());
-            }
-            gzHex.removeAllTerrains();
-            changedHexes.add(position);
-        } else {
-            LOGGER.info("[Nukes] The building at Ground Zero {} survives with CF {}", position.getBoardNum(),
-                  groundZeroBuilding.getCurrentCF(position));
-        }
-
-        // Next, for whatever's left, do terrain effects
-        // such as clearing, roughing, and boiling off water.
-        // Each ring takes the blast damage for its own distance from Ground Zero (IO:AE p.165).
-        int lastRoughRing = NO_RING;
-        int lastThinnedRing = NO_RING;
-        for (int x = craterRadius; profile.damageAt(x) >= NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE; x++) {
-            int damageAtRange = profile.damageAt(x);
-            if (damageAtRange >= 200) {
-                lastRoughRing = x;
-            } else {
-                lastThinnedRing = x;
-            }
-            // Damage terrain as necessary.
-            // Get all the hexes, and then iterate through them.
-            List<Coords> hexSet = position.allAtDistance(x);
-
-            // Iterate through the hexes.
-            for (Coords myHexCoords : hexSet) {
-                // ignore out of bounds coordinates
-                if (!game.getBoard().contains(myHexCoords)) {
-                    continue;
-                }
-
-                Hex myHex = game.getBoard().getHex(myHexCoords);
-
-                // For each 3000 damage, water level is reduced by 1.
-                if ((damageAtRange >= 3000) && (myHex.containsTerrain(Terrains.WATER))) {
-                    int numCleared = damageAtRange / 3000;
-                    int oldLevel = myHex.terrainLevel(Terrains.WATER);
-                    myHex.removeTerrain(Terrains.WATER);
-                    if (oldLevel > numCleared) {
-                        myHex.setLevel(myHex.getLevel() - numCleared);
-                        myHex.addTerrain(new Terrain(Terrains.WATER, oldLevel - numCleared));
-                    } else {
-                        myHex.setLevel(myHex.getLevel() - oldLevel);
-                    }
-                }
-
-                // ANY non-water hex that takes 200 becomes rough.
-                if ((damageAtRange >= 200) && (!myHex.containsTerrain(Terrains.WATER))) {
-                    myHex.removeAllTerrains();
-                    myHex.clearExits();
-                    myHex.addTerrain(new Terrain(Terrains.ROUGH, 1));
-                } else if ((damageAtRange >= 20) &&
-                      ((myHex.containsTerrain(Terrains.WOODS)) ||
-                            (myHex.containsTerrain(Terrains.JUNGLE)))) {
-                    // Each 20 clears woods by 1 level.
-                    int numCleared = damageAtRange / 20;
-                    int terrainType = (myHex.containsTerrain(Terrains.WOODS) ? Terrains.WOODS : Terrains.JUNGLE);
-                    int oldLevel = myHex.terrainLevel(terrainType);
-                    int oldEl = myHex.terrainLevel(Terrains.FOLIAGE_ELEV);
-                    myHex.removeTerrain(terrainType);
-                    if (oldLevel > numCleared) {
-                        myHex.addTerrain(new Terrain(terrainType, oldLevel - numCleared));
-                        if (oldEl != 1) {
-                            myHex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV,
-                                  oldLevel - numCleared == 3 ? 3 : 2));
-                        }
-                    } else {
-                        myHex.removeTerrain(Terrains.FOLIAGE_ELEV);
-                    }
-                }
-
-                changedHexes.add(myHexCoords);
-            }
-        }
+        terrainEffects.clearGroundZero(position, changedHexes);
+        terrainEffects.damageTerrain(position, profile, changedHexes);
 
         gameManager.sendChangedHexes(changedHexes, 0);
-
-        int lastRing = craterRadius;
-        while (profile.damageAt(lastRing) >= NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE) {
-            lastRing++;
-        }
-        LOGGER.info("[Nukes] Crater: {}", craterDepths.isEmpty()
-              ? "none"
-              : "rings 0-" + (craterRadius - 1) + " lowered " + String.join(", ", craterDepths) + " level(s)");
-        LOGGER.info("[Nukes] Terrain: dry hexes rough out to ring {}, woods and jungle thinned out to ring {}, "
-              + "stops at ring {} ({} damage is below {})", ringOrNone(lastRoughRing), ringOrNone(lastThinnedRing),
-              lastRing, profile.damageAt(lastRing), NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE);
 
         // Lastly, do secondary effects.
         NuclearSecondaryEffects secondaryEffects = new NuclearSecondaryEffects(gameManager);
@@ -324,9 +196,5 @@ public class NuclearDetonationResolver {
         LOGGER.info("[Nukes] {} unit(s) struck by the blast, {} destroyed and marked unsalvageable",
               blastedUnitsVec.size(), unitsDestroyed);
         return unitsDestroyed;
-    }
-
-    private static String ringOrNone(int ring) {
-        return (ring == NO_RING) ? "none" : String.valueOf(ring);
     }
 }

@@ -80,6 +80,7 @@ class NuclearDetonationResolverTest {
         gameManager = Mockito.spy(new TWGameManager());
         Mockito.doNothing().when(gameManager).send(any(Packet.class));
         Mockito.doNothing().when(gameManager).sendChangedHex(any(Coords.class), anyInt());
+        Mockito.doNothing().when(gameManager).sendChangedBuildings(any());
         gameManager.getGame().addPlayer(0, new Player(0, "Test"));
 
         Hex[] hexes = new Hex[BOARD_SIZE * BOARD_SIZE];
@@ -152,6 +153,35 @@ class NuclearDetonationResolverTest {
         assertNull(board.getBuildingAt(coordsAt(3)), "the building is gone from the board");
         assertFalse(hexAt(3).containsTerrain(Terrains.BUILDING), "no building terrain is left");
         assertEquals(3, hexAt(3).terrainLevel(Terrains.RUBBLE), "heavy rubble");
+    }
+
+    @Test
+    void woodsReducedBelowLightBecomeRough() {
+        // Davy Crockett: 10 hexes takes 50, which clears 2 levels; light woods there become Rough (IO:AE p.165).
+        // 16 hexes takes 20, one level: heavy woods there become light woods.
+        hexAt(10).addTerrain(new Terrain(Terrains.WOODS, 1));
+        hexAt(16).addTerrain(new Terrain(Terrains.WOODS, 2));
+
+        detonate(NuclearWeaponType.DAVY_CROCKETT_M);
+
+        assertFalse(hexAt(10).containsTerrain(Terrains.WOODS), "the light woods are gone");
+        assertTrue(hexAt(10).containsTerrain(Terrains.ROUGH), "and the hex is Rough");
+        assertEquals(1, hexAt(16).terrainLevel(Terrains.WOODS), "heavy woods thinned to light");
+        assertFalse(hexAt(16).containsTerrain(Terrains.ROUGH), "woods still standing are not Rough");
+    }
+
+    @Test
+    void buildingThatSurvivesTwoHundredKeepsItsHex() {
+        // Alamo at 30 hexes: 1,000 - 30 x 23 = 310. A CF 400 building survives it and the hex keeps the
+        // building instead of turning Rough (HammerGS, 2026-10-28).
+        placeBuilding(coordsAt(30), 4, 400, 2);
+
+        detonate(NuclearWeaponType.ALAMO);
+
+        assertEquals(90, board.getBuildingAt(coordsAt(30)).getCurrentCF(coordsAt(30)), "400 - 310 CF left");
+        assertTrue(hexAt(30).containsTerrain(Terrains.BUILDING), "the building still stands");
+        assertFalse(hexAt(30).containsTerrain(Terrains.ROUGH), "the hex did not turn Rough");
+        assertTrue(hexAt(31).containsTerrain(Terrains.ROUGH), "the open hex beside it did");
     }
 
     @Test

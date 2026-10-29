@@ -169,6 +169,7 @@ class NuclearTerrainEffects {
         int craterRadius = profile.craterRadius();
         int lastRoughRing = NO_RING;
         int lastThinnedRing = NO_RING;
+        int woodsTurnedRough = 0;
         for (int x = craterRadius; profile.damageAt(x) >= NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE; x++) {
             int damageAtRange = profile.damageAt(x);
             if (damageAtRange >= 200) {
@@ -202,8 +203,12 @@ class NuclearTerrainEffects {
                     }
                 }
 
-                // ANY non-water hex that takes 200 becomes rough.
+                // ANY non-water hex that takes 200 becomes rough, unless a building there survived the blast
+                // (HammerGS, 2026-10-28); only Advanced Buildings are that strong.
                 if ((damageAtRange >= 200) && (!myHex.containsTerrain(Terrains.WATER))) {
+                    if (isStandingBuilding(myHexCoords, damageAtRange)) {
+                        continue;
+                    }
                     myHex.removeAllTerrains();
                     myHex.clearExits();
                     myHex.addTerrain(new Terrain(Terrains.ROUGH, 1));
@@ -223,7 +228,10 @@ class NuclearTerrainEffects {
                                   oldLevel - numCleared == 3 ? 3 : 2));
                         }
                     } else {
+                        // Woods or jungle reduced below Light become Rough (IO:AE p.165)
                         myHex.removeTerrain(Terrains.FOLIAGE_ELEV);
+                        myHex.addTerrain(new Terrain(Terrains.ROUGH, 1));
+                        woodsTurnedRough++;
                     }
                 }
 
@@ -238,6 +246,20 @@ class NuclearTerrainEffects {
         LOGGER.info("[Nukes] Terrain: dry hexes rough out to ring {}, woods and jungle thinned out to ring {}, "
               + "stops at ring {} ({} damage is below {})", ringOrNone(lastRoughRing), ringOrNone(lastThinnedRing),
               lastRing, profile.damageAt(lastRing), NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE);
+        LOGGER.info("[Nukes] Terrain: {} woods or jungle hex(es) reduced below Light became Rough", woodsTurnedRough);
+    }
+
+    /**
+     * @return {@code true} if a building still stands in the hex after the blast, so the hex keeps it
+     */
+    private boolean isStandingBuilding(Coords coords, int damage) {
+        IBuilding building = game.getBoard().getBuildingAt(coords);
+        if ((building == null) || (building.getCurrentCF(coords) <= 0)) {
+            return false;
+        }
+        LOGGER.info("[Nukes] Building {} at hex {} survived {} damage with CF {}: the hex keeps it instead of turning "
+              + "Rough", building.getName(), coords.getBoardNum(), damage, building.getCurrentCF(coords));
+        return true;
     }
 
     private static String ringOrNone(int ring) {

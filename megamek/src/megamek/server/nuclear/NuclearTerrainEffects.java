@@ -35,10 +35,13 @@ package megamek.server.nuclear;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
@@ -53,15 +56,20 @@ class NuclearTerrainEffects {
     private static final MMLogger LOGGER = MMLogger.create(NuclearTerrainEffects.class);
     /** Marks a kind of terrain damage that reached no ring at all, for the log. */
     private static final int NO_RING = -1;
+    /** Rubble left in a crater hex that held no building. */
+    static final int ORDINARY_RUBBLE = 1;
 
+    private final TWGameManager gameManager;
     private final Game game;
 
     NuclearTerrainEffects(TWGameManager gameManager) {
+        this.gameManager = gameManager;
         this.game = gameManager.getGame();
     }
 
     /**
-     * Sinks the crater hexes and strips them bare.
+     * Sinks the crater hexes and replaces everything in them with rubble (IO:AE p.164). A building in the crater
+     * collapses into its own kind of rubble; every other crater hex gets ordinary rubble (HammerGS, 2026-10-28).
      *
      * @param groundZero   the Ground Zero hex
      * @param profile      the detonation's numbers
@@ -84,18 +92,18 @@ class NuclearTerrainEffects {
                     continue;
                 }
 
+                int rubbleLevel = collapseCraterBuilding(myHexCoords);
                 Hex myHex = game.getBoard().getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
                 myHex.setLevel((myHex.getLevel() - curDepth));
 
-                // Then, remove ANY terrains here.
-                // I mean ALL of them; they're all just gone.
-                // No ruins, no water, no rough, no nothing.
+                // Then everything here is gone, and rubble is all that is left.
                 if (myHex.containsTerrain(Terrains.WATER)) {
                     myHex.setLevel(myHex.floor());
                 }
                 myHex.removeAllTerrains();
                 myHex.clearExits();
+                myHex.addTerrain(new Terrain(Terrains.RUBBLE, rubbleLevel));
 
                 changedHexes.add(myHexCoords);
             }
@@ -103,6 +111,28 @@ class NuclearTerrainEffects {
         LOGGER.info("[Nukes] Crater: {}", craterDepths.isEmpty()
               ? "none"
               : "rings 0-" + (craterRadius - 1) + " lowered " + String.join(", ", craterDepths) + " level(s)");
+    }
+
+    /**
+     * Takes a building in a crater hex off the board for the server and every client, the way a collapse does. The
+     * units inside are not dropped or damaged here: the crater destroys them.
+     *
+     * @return the rubble the hex keeps: the building's own kind, or ordinary rubble if no building stood there
+     */
+    private int collapseCraterBuilding(Coords coords) {
+        IBuilding building = game.getBoard().getBuildingAt(coords);
+        if (building == null) {
+            return ORDINARY_RUBBLE;
+        }
+        int rubbleLevel = building.getBuildingType().getTypeValue();
+        building.setCurrentCF(0, coords);
+        building.setPhaseCF(0, coords);
+        gameManager.send(new Packet(PacketCommand.BLDG_COLLAPSE, new Vector<>(List.of(coords)),
+              building.getBoardId()));
+        game.getBoard().collapseBuilding(coords);
+        LOGGER.info("[Nukes] Building {} at hex {} is in the crater: collapsed, leaves rubble level {}",
+              building.getName(), coords.getBoardNum(), rubbleLevel);
+        return rubbleLevel;
     }
 
     /**

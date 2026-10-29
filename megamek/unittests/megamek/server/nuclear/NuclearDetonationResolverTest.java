@@ -33,6 +33,8 @@
 package megamek.server.nuclear;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -49,6 +51,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.net.packets.Packet;
+import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
@@ -95,7 +98,26 @@ class NuclearDetonationResolverTest {
 
     /** A hex straight "north" of Ground Zero, so its distance is exactly {@code distance}. */
     private Hex hexAt(int distance) {
-        return board.getHex(GROUND_ZERO.getX(), GROUND_ZERO.getY() - distance);
+        return board.getHex(coordsAt(distance));
+    }
+
+    private static Coords coordsAt(int distance) {
+        return new Coords(GROUND_ZERO.getX(), GROUND_ZERO.getY() - distance);
+    }
+
+    /** Rebuilds the board with one building hex, so the board registers the building. */
+    private void placeBuilding(Coords coords, int buildingType, int constructionFactor, int height) {
+        Hex[] hexes = new Hex[BOARD_SIZE * BOARD_SIZE];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex(0);
+        }
+        Hex buildingHex = hexes[(coords.getY() * BOARD_SIZE) + coords.getX()];
+        buildingHex.addTerrain(new Terrain(Terrains.BUILDING, buildingType));
+        buildingHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
+        buildingHex.addTerrain(new Terrain(Terrains.BLDG_CF, constructionFactor));
+        board = new Board();
+        board.newData(BOARD_SIZE, BOARD_SIZE, hexes, null);
+        gameManager.getGame().setBoard(board);
     }
 
     @Test
@@ -107,6 +129,29 @@ class NuclearDetonationResolverTest {
         for (int distance = 0; distance < expectedLevels.length; distance++) {
             assertEquals(expectedLevels[distance], hexAt(distance).getLevel(), "level at " + distance + " hexes");
         }
+    }
+
+    @Test
+    void craterHexesBecomeOrdinaryRubble() {
+        // IO:AE p.164: everything in the crater is annihilated and replaced by rubble. The Santa Ana crater ends
+        // after 5 hexes.
+        detonate(NuclearWeaponType.SANTA_ANA);
+
+        assertEquals(NuclearTerrainEffects.ORDINARY_RUBBLE, hexAt(5).terrainLevel(Terrains.RUBBLE),
+              "the crater's edge is ordinary rubble");
+        assertFalse(hexAt(6).containsTerrain(Terrains.RUBBLE), "6 hexes is past the crater");
+    }
+
+    @Test
+    void buildingInTheCraterLeavesItsOwnRubble() {
+        // A Heavy building 3 hexes from a Santa Ana collapses into heavy rubble (HammerGS, 2026-10-28)
+        placeBuilding(coordsAt(3), 3, 90, 2);
+
+        detonate(NuclearWeaponType.SANTA_ANA);
+
+        assertNull(board.getBuildingAt(coordsAt(3)), "the building is gone from the board");
+        assertFalse(hexAt(3).containsTerrain(Terrains.BUILDING), "no building terrain is left");
+        assertEquals(3, hexAt(3).terrainLevel(Terrains.RUBBLE), "heavy rubble");
     }
 
     @Test

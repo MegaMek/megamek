@@ -70,7 +70,8 @@ public class HonorUtil implements IHonorUtil {
                 LOGGER.info("{} is manually shut down; treating it as surrendered.", entity.getDisplayName());
             }
         } else if (surrenderedEnemies.remove(entity.getId())) {
-            LOGGER.info("{} is no longer manually shut down; its surrender has ended.", entity.getDisplayName());
+            String reason = forcedWithdrawal ? "it started up again" : "Forced Withdrawal is off";
+            LOGGER.info("{} is no longer treated as surrendered: {}.", entity.getDisplayName(), reason);
         }
     }
 

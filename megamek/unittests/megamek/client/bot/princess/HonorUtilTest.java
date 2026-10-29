@@ -112,6 +112,26 @@ class HonorUtilTest {
     }
 
     @Test
+    void pirateGivesNoQuarterForSurrender() {
+        honorUtil.setIAmAPirate(true);
+        when(enemy.isManualShutdown()).thenReturn(true);
+
+        honorUtil.checkEnemyBroken(enemy, true);
+
+        assertFalse(honorUtil.isEnemyBroken(ENTITY_ID, OWNER_ID, true));
+    }
+
+    @Test
+    void surrenderEndsWhenForcedWithdrawalIsTurnedOff() {
+        when(enemy.isManualShutdown()).thenReturn(true);
+        honorUtil.checkEnemyBroken(enemy, true);
+
+        honorUtil.checkEnemyBroken(enemy, false);
+
+        assertFalse(honorUtil.isEnemyBroken(ENTITY_ID, OWNER_ID, false));
+    }
+
+    @Test
     void crippledEnemyStaysBrokenAfterStartingUp() {
         when(enemy.isCrippled()).thenReturn(true);
         when(enemy.isManualShutdown()).thenReturn(true);

@@ -49,7 +49,7 @@ public interface IHonorUtil {
      * @param targetId The target to be checked.
      * @param playerId The ID of the player owning the target.
      *
-     * @return TRUE if the unit is crippled or surrendered (manually shut down) and its owner is not on the dishonored
+     * @return {@code true} if the unit is crippled or surrendered (manually shut down) and its owner is not on the dishonored
      *       enemies list.
      */
     boolean isEnemyBroken(int targetId, int playerId, boolean forcedWithdrawal);

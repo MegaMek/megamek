@@ -442,20 +442,20 @@ public class Compute {
     }
 
     /**
-     * Rounds odds from {@link #oddsAbove(int, boolean)} to a whole percentage for display. A roll that can still fail
-     * never shows as 100%. For example, a target number of 3 rolled with Natural Aptitude is 99.54%, which shows as 99%
-     * rather than 100%.
+     * Rounds odds from {@link #oddsAbove(int, boolean)} down to one decimal place for display. Rounding down means a
+     * roll that can still fail never shows as 100%. For example, a target number of 3 rolled with Natural Aptitude is
+     * 99.54%, which shows as 99.5% rather than 100%.
+     *
+     * <p>One decimal place, not two, because the 2d6 odds are stored to one decimal place: 8 or more is stored as
+     * 41.6, so two places would show a false 41.60.</p>
      *
      * @param odds the odds of success, from 0 to 100
      *
-     * @return the odds as a whole percentage, capped at 99 unless the roll cannot fail
+     * @return the odds rounded down to one decimal place
      */
-    public static int oddsAsDisplayPercent(double odds) {
-        long rounded = Math.round(odds);
-        if ((odds < 100.0) && (rounded >= 100)) {
-            return 99;
-        }
-        return (int) rounded;
+    public static double oddsAsDisplayPercent(double odds) {
+        // The tiny nudge stops a stored 97.2 from flooring to 97.1 when 97.2 * 10 lands just under 972
+        return Math.floor((odds * 10.0) + 1.0e-9) / 10.0;
     }
 
     /**

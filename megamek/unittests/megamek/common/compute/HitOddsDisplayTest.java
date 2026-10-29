@@ -43,38 +43,47 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for the to-hit odds shown in the weapon panel (issue #9332). A target number of 3 is 97% on 2d6, and 99.54% for
- * a gunner with Natural Aptitude, who rolls 3d6 and keeps the best two. The display used to round that 99.54% up to
- * 100%, so a gunner who could still miss looked certain to hit.
+ * Tests for the to-hit odds shown in the weapon panel (issue #9332). A target number of 3 is 97.2% on 2d6, and 99.54%
+ * for a gunner with Natural Aptitude, who rolls 3d6 and keeps the best two. The display used to round that 99.54% up to
+ * 100%, so a gunner who could still miss looked certain to hit. It now rounds down to one decimal place.
  */
 class HitOddsDisplayTest {
 
+    private static final double EXACT = 0.0;
+
     @Test
-    @DisplayName("A target number of 3 shows 97% on 2d6")
+    @DisplayName("A target number of 3 shows 97.2% on 2d6")
     void targetNumberThreeOnTwoDice() {
-        assertEquals(97, Compute.oddsAsDisplayPercent(Compute.oddsAbove(3, false)));
+        assertEquals(97.2, Compute.oddsAsDisplayPercent(Compute.oddsAbove(3, false)), EXACT);
     }
 
     @Test
-    @DisplayName("A target number of 3 with Natural Aptitude shows 99%, never 100%")
+    @DisplayName("A target number of 3 with Natural Aptitude shows 99.5%, never 100%")
     void targetNumberThreeWithNaturalAptitudeIsNotCertain() {
-        assertEquals(99, Compute.oddsAsDisplayPercent(Compute.oddsAbove(3, true)));
+        assertEquals(99.5, Compute.oddsAsDisplayPercent(Compute.oddsAbove(3, true)), EXACT);
     }
 
     @Test
     @DisplayName("A roll that cannot fail still shows 100%")
     void certainRollShowsOneHundred() {
-        assertEquals(100, Compute.oddsAsDisplayPercent(Compute.oddsAbove(2, false)));
-        assertEquals(100, Compute.oddsAsDisplayPercent(Compute.oddsAbove(2, true)));
+        assertEquals(100.0, Compute.oddsAsDisplayPercent(Compute.oddsAbove(2, false)), EXACT);
+        assertEquals(100.0, Compute.oddsAsDisplayPercent(Compute.oddsAbove(2, true)), EXACT);
     }
 
     @Test
-    @DisplayName("Ordinary odds round to the nearest whole percent")
-    void ordinaryOddsRound() {
-        assertEquals(42, Compute.oddsAsDisplayPercent(Compute.oddsAbove(8, false)));
-        assertEquals(98, Compute.oddsAsDisplayPercent(Compute.oddsAbove(4, true)));
-        assertEquals(3, Compute.oddsAsDisplayPercent(Compute.oddsAbove(12, false)));
-        assertEquals(0, Compute.oddsAsDisplayPercent(Compute.oddsAbove(13, false)));
+    @DisplayName("Every 2d6 and Natural Aptitude odds value rounds down to one decimal place")
+    void everyOddsValueRoundsDown() {
+        double[] twoDice = { 97.2, 91.6, 83.3, 72.2, 58.3, 41.6, 27.7, 16.6, 8.3, 2.7 };
+        double[] naturalAptitude = { 99.5, 98.1, 94.9, 89.3, 80.5, 68.0, 52.3, 35.6, 19.9, 7.4 };
+        for (int targetNumber = 3; targetNumber <= 12; targetNumber++) {
+            assertEquals(twoDice[targetNumber - 3],
+                  Compute.oddsAsDisplayPercent(Compute.oddsAbove(targetNumber, false)), EXACT,
+                  "2d6, target number " + targetNumber);
+            assertEquals(naturalAptitude[targetNumber - 3],
+                  Compute.oddsAsDisplayPercent(Compute.oddsAbove(targetNumber, true)), EXACT,
+                  "Natural Aptitude, target number " + targetNumber);
+        }
+        assertEquals(0.0, Compute.oddsAsDisplayPercent(Compute.oddsAbove(13, false)), EXACT);
     }
 
     @Test

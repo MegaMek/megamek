@@ -442,6 +442,23 @@ public class Compute {
     }
 
     /**
+     * Rounds odds from {@link #oddsAbove(int, boolean)} to a whole percentage for display. A roll that can still fail
+     * never shows as 100%. For example, a target number of 3 rolled with Natural Aptitude is 99.54%, which shows as 99%
+     * rather than 100%.
+     *
+     * @param odds the odds of success, from 0 to 100
+     *
+     * @return the odds as a whole percentage, capped at 99 unless the roll cannot fail
+     */
+    public static int oddsAsDisplayPercent(double odds) {
+        long rounded = Math.round(odds);
+        if ((odds < 100.0) && (rounded >= 100)) {
+            return 99;
+        }
+        return (int) rounded;
+    }
+
+    /**
      * Returns an entity if the specified entity would cause a stacking violation entering a hex, or returns null if it
      * would not. The returned entity is the entity causing the violation.
      * <p>

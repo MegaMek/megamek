@@ -796,11 +796,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         String txt = switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE, TargetRoll.AUTOMATIC_FAIL -> String.format("To Hit: (0%%) %s", toHit.getDesc());
             case TargetRoll.AUTOMATIC_SUCCESS -> String.format("To Hit: (100%%) %s", toHit.getDesc());
-            default -> String.format("<font color=\"%s\">To Hit: <b>%2d (%2.0f%%)</b></font> = %s",
+            default -> String.format("<font color=\"%s\">To Hit: <b>%2d (%2d%%)</b></font> = %s%s",
                   GUIPreferences.hexColor(GUIP.getUnitToolTipHighlightColor()),
                   toHit.getValue(),
-                  Compute.oddsAbove(toHit.getValue(), natAptGunnery),
-                  toHit.getDesc());
+                  Compute.oddsAsDisplayPercent(Compute.oddsAbove(toHit.getValue(), natAptGunnery)),
+                  toHit.getDesc(),
+                  natAptGunnery ? " " + Messages.getString("MekDisplay.NaturalAptitudeRoll") : "");
         };
 
         toHitText.setText(UnitToolTip.wrapWithHTML(txt));

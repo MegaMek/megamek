@@ -1319,6 +1319,11 @@ public class FireControl {
         ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(
               game, shooter, target, weaponType, environmentalAmmoType, toHit, isArtilleryIndirect);
 
+        // Sanity check to make sure princess doesn't think about impossible shots.
+        if (toHit.getValue() > 12) {
+            toHit.addModifier(TargetRoll.IMPOSSIBLE, "Impossible shot");
+        }
+
         return toHit;
     }
 

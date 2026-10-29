@@ -6388,6 +6388,21 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     @Override
+    public void clearGameState() {
+        super.clearGameState();
+        setCoolingFlawActive(false);
+        stalled = false;
+        stalledThisTurn = false;
+        // Emergency coolant system use builds up over the rounds of a game, like MASC
+        nCoolantSystemLevel = 0;
+        bCoolantWentUp = false;
+        bUsedCoolantSystem = false;
+        // Fortifying and rubble clearing in progress refer to hexes of the last game's map
+        cancelFortify();
+        cancelClearingRubble();
+    }
+
+    @Override
     public boolean isStalled() {
         return stalled;
     }

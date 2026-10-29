@@ -1377,9 +1377,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         //   1. Direct: path is a single FORWARDS into an adjacent edge hex (the original case
         //      — climb mode toggled, leaping enabled, planner produced the direct step).
         //   2. Routed-around: path's FINAL hex is adjacent to entity start AND a 3+ level
-        //      edge, but the planner couldn't make the direct step legal (e.g. leaping OFF,
-        //      no climb mode) and routed around. The player still clicked the cliff hex
-        //      intending to descend; we trigger the dialog and let them pick descent or cancel.
+        //      edge, but the planner couldn't make the direct step legal and routed around.
+        //      The player still clicked the cliff hex intending to descend; we trigger the
+        //      dialog and let them pick descent or cancel.
+        // Both need climb mode on. In Move Thru mode the step is a plain move - a leap with
+        // Leaping on, otherwise illegal - so offering climbing choices there would contradict
+        // the greyed-out step the player is looking at.
         //
         // Re-fetch the last step rather than reusing the cached hasLastStep / cmd.getLastStep()
         // from above — the start-climbing dialog block can cancel and call cmd.removeLastStep(),
@@ -1394,9 +1397,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         long forwardStepCount = (cmd != null) ? cmd.getStepVector().stream()
                                                    .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
         // Edge dangle: walking movement only — jumping uses jump jets to clear the drop
-        // safely (no dangle needed). Climb mode is NOT required: per TO:AR p.20, dangle is
-        // initiated by stepping off a 3+ level edge with two functional arms, and players
-        // shouldn't have to know to toggle climb mode first to get the descent prompt.
+        // safely (no dangle needed).
         boolean isWalkingNotJumping = edgeHasLastStep
                                       && (edgeLastStep.getMovementType(true) != EntityMovementType.MOVE_JUMP);
         // Routed-around case: planner used 2+ FORWARDS steps to reach an adjacent hex —
@@ -1416,7 +1417,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // a concurrent path-rebuild could race with the modal dialog.
             Coords stepPos = edgeLastStep.getPosition();
             int levelDiff = ClimbingHelper.getEdgeDropHeight(currentEntity, stepPos, game);
-            if (ClimbingHelper.isAtEdge(currentEntity, stepPos, game)) {
+            boolean isAtEdge = ClimbingHelper.isAtEdge(currentEntity, stepPos, game);
+            boolean isClimbModeOn = edgeLastStep.climbMode();
+            if (isAtEdge && !isClimbModeOn) {
+                LOGGER.debug("[Climbing] {}: no descent dialog - Move Thru mode, so stepping off the edge is a "
+                             + "plain move", edgeMek.getDisplayName());
+            }
+            if (isAtEdge && isClimbModeOn) {
                 // Build descent options dialog
                 int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN, levelDiff);
                 List<ClimbingChoiceDialog.ClimbingOption> descentOptions = new java.util.ArrayList<>();
@@ -1443,9 +1450,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 int edgeMaxAffordable = edgeAvailableMP / edgeClimbCostPerLevel;
                 int edgeMaxDescend = Math.min(levelDiff, edgeMaxAffordable);
                 int edgeBasePiloting = edgeMek.getCrew().getPiloting();
-                int edgeArms = ClimbingHelper.countClimbableArms(edgeMek);
-                int edgePsrTarget = edgeBasePiloting + ClimbingHelper.CLIMBING_PSR_MODIFIER
-                                    + ((edgeArms == 1) ? ClimbingHelper.ONE_ARM_PSR_MODIFIER : 0);
+                int edgePsrTarget = edgeBasePiloting + ClimbingHelper.getClimbingRollModifier(edgeMek);
                 for (int i = 1; i <= edgeMaxDescend; i++) {
                     int cost = i * edgeClimbCostPerLevel;
                     String baseLabel = (i == 1)
@@ -1467,15 +1472,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                                                ClimbingChoiceDialog.ClimbingActionType.DROP));
                 }
 
-                // Move as Calculated — commit whatever the path planner already drew (a
-                // routed walk-around for the routed case, the direct leaping step for the
-                // direct case). Lets the player accept the visible path without reading
-                // it as a climb. Distinct from Cancel: this option auto-commits via ready();
-                // Cancel leaves the dialog dismissed so the player can keep editing.
-                descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
-                                                                           Messages.getString(
-                                                                                   "MovementDisplay.ClimbingDialog.walkAsCalculatedOption"),
-                                                                           ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED));
+                // Move as Calculated - commit the routed walk-around the path planner already
+                // drew. Lets the player accept the visible path without reading it as a climb.
+                // Distinct from Cancel: this option auto-commits via ready(); Cancel leaves the
+                // dialog dismissed so the player can keep editing.
+                // Only offered for the routed walk-around. A direct step off the edge in climb
+                // mode is read by the server as a dangle (refused, losing the turn, for a Mek
+                // without two climbing hands), which the options above already cover.
+                if (isRoutedAround) {
+                    descentOptions.add(new ClimbingChoiceDialog.ClimbingOption(0, 0,
+                                                                               Messages.getString(
+                                                                                       "MovementDisplay.ClimbingDialog.walkAsCalculatedOption"),
+                                                                               ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED));
+                } else {
+                    LOGGER.debug("[Climbing] {}: Move as Calculated not offered - the plotted path steps "
+                                 + "straight off the edge, which the server would treat as a dangle",
+                                 edgeMek.getDisplayName());
+                }
 
                 // Cancel - the unit is at the cliff top, not yet on the face,
                 // so "Cling" is the wrong mental model. This option just aborts the descent.
@@ -1539,10 +1552,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 } else if (chosen != null
                            && chosen.type() == ClimbingChoiceDialog.ClimbingActionType.WALK_AS_CALCULATED) {
-                    // Commit the existing plotted path as-is — the routed walk-around for
-                    // the routed case, the direct leaping step for the direct case. The
-                    // path is already attached to cmd; just commit it the same way the
-                    // other branches do.
+                    // Commit the existing plotted path as-is - the routed walk-around (the
+                    // option is only offered for that case). The path is already attached to
+                    // cmd; just commit it the same way the other branches do.
                     LOGGER.debug("[CLIMB-TRACE] Move as Calculated chosen: routed={}, "
                                  + "cmd.length={}", isRoutedAround, cmd.length());
                     clientgui.addToast(ToastLevel.INFO,
@@ -4493,10 +4505,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Calculate PSR info for climbing
         int basePiloting = mek.getCrew().getPiloting();
-        int climbableArms = ClimbingHelper.countClimbableArms(mek);
-        int climbPsrMod = ClimbingHelper.CLIMBING_PSR_MODIFIER
-                          + ((climbableArms == 1) ? ClimbingHelper.ONE_ARM_PSR_MODIFIER : 0);
-        int climbPsrTarget = basePiloting + climbPsrMod;
+        int climbPsrTarget = basePiloting + ClimbingHelper.getClimbingRollModifier(mek);
 
         // Build climbing options
         List<ClimbingChoiceDialog.ClimbingOption> climbingOptions = new ArrayList<>();

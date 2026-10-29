@@ -1068,6 +1068,18 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
+     * Clears the state this equipment builds up during a game that must not carry over into the next one. Called from
+     * {@link Entity#clearGameState()}; subclasses that add such state should override this and call super.
+     */
+    public void clearGameState() {
+        setUsedThisRound(false);
+        resetJam();
+        // Without this, an ammo dump under way when the last game ended would continue in the next
+        m_bPendingDump = false;
+        m_bDumping = false;
+    }
+
+    /**
      * Used for equipment that can vary in size. This is not used for equipment for which size is computed by outside
      * factors such as unit weight or targeting computer-linked weapons, but for equipment that comes in various
      * weights, lengths, or capacities. The meaning of the size varies according to the equipment. For robotic control

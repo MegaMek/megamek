@@ -1,0 +1,160 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-e326-74de-8b26-e3e4e58f06b8
+</UUID>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Vedette Medium Tank
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+3395
+</mul id:>
+
+<year>
+2943
+</year>
+
+<type>
+IS Level 1
+</type>
+
+<role>
+Brawler
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+1
+</armor_tech_level>
+
+<armor>
+20
+18
+18
+20
+20
+</armor>
+
+<Body Equipment>
+IS Ammo MG - Full
+IS Ammo AC/5
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+</Turret Equipment>
+
+<capabilities>
+<p>The Vedette's greatest tactical asset is its Locom-Pack 250 InterComBust combustion engine, which drives the fifty-ton tracked hull to a maximum speed of 86 km/h. This is an exceptional performance figure for a medium vehicle, allowing formations to reposition rapidly, advance through flanking lanes, and disengage before heavier opponents can concentrate fire. The turret-mounted Armstrong J11 Autocannon provides reliable medium-range anti-armor capability, identical to the weapon fitted to the SHD-2H Shadow Hawk, while a Scatter Gun Light Machine Gun in a bow ball turret handles infantry and unprotected vehicles. Six tons of ProtecTech 6 armor provides adequate crew protection without the weight penalty of heavier configurations.</p><p>The design's most significant limitation is its single anti-vehicle weapon. Individual Vedettes cannot reliably penetrate well-armored opponents, and the platform depends on massed formation fire to compensate for this shortcoming. A lone Vedette facing a heavy tank or assault BattleMech is poorly positioned to survive. New Earth Trading Company production models use ComStar-sourced Rover communications and Test-2 targeting systems, providing a consistent edge in electronics reliability over vehicles using locally produced alternatives. Licensed variants from other manufacturers typically substitute local electronics, with some reduction in overall system performance.</p>
+</capabilities>
+
+<overview>
+<p>The Vedette Medium Tank has stood as the measuring stick for combat vehicles across the Inner Sphere for over two centuries. Introduced in 2943 by the New Earth Trading Company, the design's practical combination of high speed, adequate protection, and reliable firepower proved so broadly appealing that demand quickly overwhelmed NETC's manufacturing capacity. Licenses were extended to producers across the Inner Sphere and Periphery, and the Vedette spread to become one of the most widely built and operated fighting vehicles in recorded history. No single variant stands as the pinnacle of tank design, but the accumulated weight of parts availability, trained technicians, and institutional knowledge surrounding the Vedette ensures that any force operating it can maintain it in the field. It is the foundation against which all other medium combat vehicles are still measured.</p>
+</overview>
+
+<deployment>
+<p>The standard Vedette serves as the workhorse of vehicle formations across the Inner Sphere, deployed in cavalry and dragoon roles where its high top speed allows rapid response and repositioning. Its most effective doctrine emphasizes pack tactics: multiple Vedettes concentrating fire on a single target from different angles to overcome the individual firepower limitation. The design is a staple of convoy escort, flank security, and fast pursuit operations. It serves in virtually every House army and most mercenary armor battalions, and its presence in garrison and line formations is so common that military planners routinely assume its availability when designing combined arms operations. The standard variant remains in production across more factories and in greater numbers than any other configuration.</p>
+</deployment>
+
+<history>
+<p>The origins of the Vedette Medium Tank trace to the early Succession Wars, when the New Earth Trading Company sought to produce an affordable, maintainable medium combat vehicle for Inner Sphere militaries left poorly supplied after the collapse of the Star League Defense Force. Some analysts have noted that the design resembles the SLDF's own Cavalry tank, examples of which were reportedly found in the Helm Memory Core cache as late as 3028, though whether NETC's designers worked from recovered records or arrived at similar solutions independently remains unresolved. Regardless of its origins, the design that entered service in 2943 immediately proved its worth across the Inner Sphere's ongoing conflicts.</p><p>NETC's production alone could not meet demand. Within years of the Vedette's introduction, the company had licensed the design to Quikscell Company on Layover, Hellespont Industrials on Sian, Benson and Bjorn on Spittal, Pinard Protectorates Limited on Perdition, the United Outworlders Corporation on Mitchella, and Vandenberg Mechanized Industries on Pinard. The only meaningful distinction among producers was that NETC's own factories used ComStar-designed electronics, giving New Earth vehicles a modest edge in communications consistency. Additional manufacturers eventually joined the network, including Bordello Military Goods on Antwerp and, in later eras, Vengeance Industries in the Haven Star Cluster, serving the mercenary and pirate markets of the deep Periphery.</p><p>The Succession Wars entrenched the Vedette as the backbone of armored vehicle forces across the Inner Sphere. Its presence in virtually every House army and mercenary command created a self-reinforcing cycle: technicians trained on it, replacement parts stockpiled everywhere, and unit commanders built their tactics around its capabilities. The 3030 campaign on Drozan demonstrated this character. A Capellan Vedette battalion pursued by a Canopian BattleMech company maintained continuous cannon fire while retreating at flank speed, disabling or destroying three heavy 'Mechs before exhausting their ammunition. The engagement kept the Canopian force out of action for three months and became a widely studied example of combined arms vehicle doctrine.</p><p>The design's commercial history grew complicated in the later third millennium. NETC's discovery in 3066 that Hellespont Industrials had concealed billions of C-bills in undeclared royalties triggered a major legal dispute. Hellespont had by then developed its own advanced variants, competing directly with NETC rather than simply filling quota contracts. Both companies introduced ferro-fibrous armor, upgraded autocannons, and specialized weapons packages in the 3050s and 3060s, revitalizing commercial interest and drawing buyers who might otherwise have moved to newer designs entirely.</p><p>The Jihad reshaped the Vedette's production sphere. NETC's New Earth facilities came under Word of Blake Protectorate control, and the Blakists developed the fuel cell-powered Cell variant for their Protectorate Militia. When the Blakist state collapsed, the Cell design migrated to surviving manufacturers across the Inner Sphere. Quikscell, Hellespont, and Vengeance Industries all adopted it for their own product lines. The design's adaptability to diverse manufacturing contexts, one of its original strengths, drove its spread through informal channels as well as formal production contracts.</p><p>The Dark Age saw continued evolution. Arcturan Arms on Arcturus developed the V7 and V9 configurations for Lyran and later Clan customers, incorporating fuel cell engines and modern weapons while retaining the fundamental tracked performance that had always defined the design. The ilClan era Armor Vedette brought the hull to perhaps its most capable configuration yet, pairing heavy ferro-fibrous protection with an Ultra Autocannon/10 in a package that far exceeded the 2943 original's combat potential while remaining recognizably derived from it. The Vedette's longevity reflects a reality of Inner Sphere warfare: a design that is everywhere, trains everyone, and never becomes scarce enough to phase out is more durable than any amount of technical sophistication.</p>
+</history>
+
+<manufacturer>
+Quikscell Company|New Earth Trading Company|Hellespont Industrials|Benson and Bjorn|Bordello Military Goods, Inc.|Pinard Protectorates Limited|United Outworlders Corporation|Vandenberg Mechanized Industries|Vengeance Industries
+</manufacturer>
+
+<primaryFactory>
+Layover|New Earth|Sian|Spittal|Antwerp|Perdition|Mitchella|Pinard|Haven Star Cluster
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Locom-Pack
+ARMOR:ProtecTech
+COMMUNICATIONS:ComStar
+TARGETING:ComStar
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:250 InterComBust
+ARMOR:6
+COMMUNICATIONS:Rover
+TARGETING:Test-2
+</systemModels>
+
+<source>
+TR:3039
+</source>
+
+<published>
+RS:3039u,RSFP:Battlefield
+</published>
+
+<tonnage>
+50.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

@@ -53,15 +53,38 @@ import org.junit.jupiter.api.Test;
 class ClientCommandDialogArgumentsTest {
 
     private static final String KICKED_PLAYER = "2";
+    private static final String PASSWORD = "password";
 
     /** @return the chat command split the way the server splits it, for parsing */
     private static String[] asTheServerSplitsIt(String chatCommand) {
         return chatCommand.split("\\s+");
     }
 
+    /**
+     * Finds an argument by its name, so the tests do not depend on the order {@link KickCommand} lists them in.
+     *
+     * @param definitions  The command's argument definitions
+     * @param argumentName The name of the argument wanted
+     *
+     * @return The argument with that name
+     */
+    private static Argument<?> argumentNamed(List<Argument<?>> definitions, String argumentName) {
+        for (Argument<?> argument : definitions) {
+            if (argument.getName().equals(argumentName)) {
+                return argument;
+            }
+        }
+        throw new IllegalStateException("KickCommand has no argument named " + argumentName);
+    }
+
+    /** @return the Kick command's optional server password argument */
+    private static Argument<?> kickPasswordArgument() {
+        return argumentNamed(new KickCommand(null, null).defineArguments(), PASSWORD);
+    }
+
     @Test
     void aBlankFieldIsLeftOut() {
-        Argument<?> password = new KickCommand(null, null).defineArguments().get(1);
+        Argument<?> password = kickPasswordArgument();
 
         assertEquals("", ClientCommandDialog.namedArgumentUnlessBlank(password, ""));
         assertEquals("", ClientCommandDialog.namedArgumentUnlessBlank(password, "   "));
@@ -69,7 +92,7 @@ class ClientCommandDialogArgumentsTest {
 
     @Test
     void aFilledFieldIsSentByName() {
-        Argument<?> password = new KickCommand(null, null).defineArguments().get(1);
+        Argument<?> password = kickPasswordArgument();
 
         assertEquals("password=secret", ClientCommandDialog.namedArgumentUnlessBlank(password, "secret"));
     }
@@ -78,7 +101,7 @@ class ClientCommandDialogArgumentsTest {
     void aKickWithNoPasswordNowParses() {
         List<Argument<?>> definitions = new KickCommand(null, null).defineArguments();
         String chatCommand = "/kick playerID=" + KICKED_PLAYER + " "
-              + ClientCommandDialog.namedArgumentUnlessBlank(definitions.get(1), "");
+              + ClientCommandDialog.namedArgumentUnlessBlank(argumentNamed(definitions, PASSWORD), "");
 
         Arguments parsed = ArgumentsParser.parse(asTheServerSplitsIt(chatCommand), definitions);
 

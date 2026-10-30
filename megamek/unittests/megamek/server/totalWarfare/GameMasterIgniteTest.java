@@ -44,6 +44,7 @@ import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,6 +69,8 @@ class GameMasterIgniteTest {
         Mockito.doNothing().when(gameManager).sendChangedHex(any(Coords.class), anyInt());
         game = gameManager.getGame();
         game.setBoard(new Board(1, 1, new Hex()));
+        // every test here is about the option being off; set it rather than lean on today's default
+        game.getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE).setValue(false);
     }
 
     private boolean hexIsOnFire() {

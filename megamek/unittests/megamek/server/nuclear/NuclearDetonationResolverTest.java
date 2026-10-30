@@ -144,6 +144,25 @@ class NuclearDetonationResolverTest {
     }
 
     @Test
+    void groundZeroOfACraterIsRubble() {
+        // Ground Zero is the deepest hex of the crater and keeps its rubble (HammerGS, 2026-10-29)
+        detonate(NuclearWeaponType.SANTA_ANA);
+
+        assertEquals(NuclearTerrainEffects.ORDINARY_RUBBLE, hexAt(0).terrainLevel(Terrains.RUBBLE));
+    }
+
+    @Test
+    void groundZeroWithoutACraterIsStrippedBare() {
+        // A Davy Crockett makes no crater: its Ground Zero is cleared, not turned to rubble
+        hexAt(0).addTerrain(new Terrain(Terrains.WOODS, 1));
+
+        detonate(NuclearWeaponType.DAVY_CROCKETT_M);
+
+        assertFalse(hexAt(0).containsTerrain(Terrains.WOODS), "the woods are gone");
+        assertFalse(hexAt(0).containsTerrain(Terrains.RUBBLE), "and no rubble is left");
+    }
+
+    @Test
     void buildingInTheCraterLeavesItsOwnRubble() {
         // A Heavy building 3 hexes from a Santa Ana collapses into heavy rubble (HammerGS, 2026-10-28)
         placeBuilding(coordsAt(3), 3, 90, 2);

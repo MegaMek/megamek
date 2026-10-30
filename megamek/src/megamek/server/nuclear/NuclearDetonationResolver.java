@@ -138,7 +138,7 @@ public class NuclearDetonationResolver {
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 
-        terrainEffects.clearGroundZero(position, changedHexes);
+        terrainEffects.clearGroundZero(position, profile, changedHexes);
         terrainEffects.damageTerrain(position, profile, changedHexes);
         new NuclearFires(gameManager).startFires(position, profile, changedHexes, vDesc);
 

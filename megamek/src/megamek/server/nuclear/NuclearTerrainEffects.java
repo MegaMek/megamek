@@ -137,12 +137,18 @@ class NuclearTerrainEffects {
 
     /**
      * Strips the Ground Zero hex bare, unless a building strong enough to withstand the impact still stands there
-     * (IO:AE p.164); the blast has already destroyed any weaker one.
+     * (IO:AE p.164); the blast has already destroyed any weaker one. A weapon that craters leaves Ground Zero as the
+     * crater's rubble instead (HammerGS, 2026-10-29).
      *
      * @param groundZero   the Ground Zero hex
+     * @param profile      the detonation's numbers
      * @param changedHexes filled with the Ground Zero hex if it changes
      */
-    void clearGroundZero(Coords groundZero, Set<Coords> changedHexes) {
+    void clearGroundZero(Coords groundZero, NuclearBlastProfile profile, Set<Coords> changedHexes) {
+        if (profile.craterRadius() > 0) {
+            LOGGER.info("[Nukes] Ground Zero {} is in the crater: it keeps the crater's rubble", groundZero.getBoardNum());
+            return;
+        }
         IBuilding groundZeroBuilding = game.getBoard().getBuildingAt(groundZero);
         if ((groundZeroBuilding == null) || (groundZeroBuilding.getCurrentCF(groundZero) <= 0)) {
             Hex gzHex = game.getBoard().getHex(groundZero);

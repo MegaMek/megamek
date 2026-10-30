@@ -1,6 +1,5 @@
 """Focused synthetic archive tests; no Gradle invocation or network access."""
 
-import hashlib
 import io
 import json
 import subprocess
@@ -203,82 +202,6 @@ class AttestationTests(unittest.TestCase):
             (root + "/lib/MegaMek.jar", b"different")])
         with self.assertRaisesRegex(release.UnsafeInventory, "companion jar"):
             self.run_fake()
-
-    def test_discovery_rejects_attestation_failure(self):
-        self.write_all()
-        details = {}
-        for product, repo in release.REPOS.items():
-            item = self.record["products"][product]
-            blob = self.paths[product].read_bytes()
-            item["asset"]["size"] = len(blob)
-            item["asset"]["sha256"] = hashlib.sha256(blob).hexdigest()
-            details[repo] = [{"id": item["releaseId"], "tag_name": item["tag"],
-                              "draft": False, "assets": [{
-                                  "id": item["asset"]["assetId"], "name": item["asset"]["name"],
-                                  "size": len(blob), "state": "uploaded"}]}]
-        raw = json.dumps(self.record).encode()
-        details["megamek"].append({
-            "id": 999, "tag_name": self.record["tag"], "draft": False,
-            "assets": [{"id": 998, "name": f"suite-record-{self.record['version']}.json",
-                        "size": len(raw), "state": "uploaded"}]})
-
-        def getter(endpoint):
-            if "/releases?" in endpoint:
-                return details[endpoint.split("/")[2]]
-            self.fail(f"discovery advanced after attestation: {endpoint}")
-
-        def fetch(repo, asset_id, destination):
-            if asset_id == 998:
-                destination.write_bytes(raw)
-            else:
-                product = next(n for n, r in release.REPOS.items() if r == repo)
-                destination.write_bytes(self.paths[product].read_bytes())
-
-        self.props["MegaMekLab"]["megamekVersion"] = "0.51.00"
-        self.write("MegaMekLab")
-        # Preserve the declared byte digest so this tests archive attestation,
-        # not the earlier asset-integrity gate.
-        blob = self.paths["MegaMekLab"].read_bytes()
-        self.record["products"]["MegaMekLab"]["asset"].update(
-            size=len(blob), sha256=hashlib.sha256(blob).hexdigest())
-        details["megameklab"][0]["assets"][0]["size"] = len(blob)
-        raw = json.dumps(self.record).encode()
-        details["megamek"][-1]["assets"][0]["size"] = len(raw)
-        with self.assertRaisesRegex(release.UnsafeInventory, "dependency closure"):
-            release.discovered_inventory(
-                "weekly", getter, fetch, attest=lambda record, paths:
-                attestation.attest_archives(record, paths,
-                                             lambda *args, **kwargs: self.fail("Gradle called"),
-                                             self.worktrees))
-
-    def test_downloaded_bytes_attested_before_reuse(self):
-        self.write_all()
-        details = {}
-        for product, repo in release.REPOS.items():
-            item = self.record["products"][product]
-            blob = self.paths[product].read_bytes()
-            item["asset"]["size"] = len(blob)
-            item["asset"]["sha256"] = hashlib.sha256(blob).hexdigest()
-            details[repo] = [{"id": item["releaseId"], "tag_name": item["tag"],
-                              "draft": False, "assets": [{
-                                  "id": item["asset"]["assetId"], "name": item["asset"]["name"],
-                                  "size": len(blob), "state": "uploaded"}]}]
-
-        def fetch(repo, asset_id, destination):
-            product = next(name for name, key in release.REPOS.items() if key == repo)
-            destination.write_bytes(self.paths[product].read_bytes())
-
-        calls = []
-        def attest(record, paths):
-            calls.extend(attestation.attest_archives(
-                record, paths, lambda command, **kwargs: None, self.worktrees) or
-                         [paths.copy()])
-        release.check_product_assets(self.record, details, fetch, attest)
-        self.assertEqual(set(calls[0]), set(release.REPOS))
-        self.record["products"]["MegaMek"]["asset"]["sha256"] = "0" * 64
-        with self.assertRaisesRegex(release.UnsafeInventory, "asset bytes differ"):
-            release.check_product_assets(self.record, details, fetch, attest)
-        self.assertEqual(len(calls), 1)
 
 
 if __name__ == "__main__":

@@ -339,10 +339,11 @@ spotless {
     // checkout that has no origin/main to ratchet against.
     enforceCheck = false
 
-    // Until the whole tree has been formatted once, only look at files that differ from origin/main. Pass
+    // Until the whole tree has been formatted once, only look at files that differ from origin/main (or
+    // -PspotlessRatchetFrom=<ref>, which CI sets to the PR's target branch). Pass
     // -PspotlessFullTree to format everything (used for the one-time reformat and to measure it).
     if (!project.hasProperty('spotlessFullTree')) {
-        ratchetFrom 'origin/main'
+        ratchetFrom project.findProperty('spotlessRatchetFrom') ?: 'origin/main'
     }
 
     java {

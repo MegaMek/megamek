@@ -35,6 +35,8 @@ package megamek.client.bot;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -153,6 +155,57 @@ class BotClientTest {
         assertFalse(bot.shouldSpawnForTest(0), "a duplicate event for the same turn index must not");
         // The killer case: another player's event delivered our NEXT turn. Old guard skipped it.
         assertTrue(bot.shouldSpawnForTest(1), "a new turn index must spawn whoever's event carried it");
+    }
+
+    /**
+     * Issue #9390: when the server refuses a move it resends the same turn index naming the bot as the previous
+     * player. That one event must restart the turn, the refused unit must be left out afterwards, and the same unit
+     * must never restart the turn twice.
+     */
+    @Test
+    void aRefusedMoveRestartsTheTurnOncePerUnit() {
+        RecordingBotClient bot = new RecordingBotClient();
+        bot.setLocalPlayerNumber(4);
+        Entity refusedUnit = mock(Entity.class);
+        when(refusedUnit.getId()).thenReturn(86);
+        int turnIndex = 3;
+        bot.getGame().setTurnIndex(turnIndex, 0);
+
+        bot.lastCalculatedTurnIndex = turnIndex;
+        bot.moveEntity(86, null);
+
+        assertFalse(bot.isRefusedTurnRestart(turnIndex, 3, false),
+              "another player's event is not a refusal of our move");
+        assertFalse(bot.isRefusedTurnRestart(turnIndex, 4, true),
+              "duplicate events are normal in a simultaneous phase");
+        assertTrue(bot.isRefusedTurnRestart(turnIndex, 4, false), "the same turn handed back to us is a refusal");
+
+        bot.startRefusedTurnOver();
+
+        assertTrue(bot.shouldSpawnForTest(turnIndex), "a refused turn is calculated again");
+        assertTrue(bot.isRefusedThisPhase(refusedUnit), "the refused unit is left out for the rest of the phase");
+        bot.lastCalculatedTurnIndex = turnIndex;
+        assertFalse(bot.isRefusedTurnRestart(turnIndex, 4, false),
+              "the same refused unit never restarts the turn twice");
+    }
+
+    /** A move sent on an earlier turn that reaches the server late is not a refusal of the current turn. */
+    @Test
+    void aLateMoveFromAnEarlierTurnDoesNotRestart() {
+        RecordingBotClient bot = new RecordingBotClient();
+        bot.setLocalPlayerNumber(4);
+        int sentOnTurnIndex = 3;
+        int currentTurnIndex = sentOnTurnIndex + 1;
+        bot.getGame().setTurnIndex(sentOnTurnIndex, 0);
+
+        bot.moveEntity(86, null);
+        bot.lastCalculatedTurnIndex = sentOnTurnIndex;
+        assertTrue(bot.isRefusedTurnRestart(sentOnTurnIndex, 4, false),
+              "control: handed back on the turn it was sent, the move would restart");
+
+        bot.lastCalculatedTurnIndex = currentTurnIndex;
+        assertFalse(bot.isRefusedTurnRestart(currentTurnIndex, 4, false),
+              "the move was sent on an earlier turn, not the current one");
     }
 
     /**

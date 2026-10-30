@@ -42,6 +42,7 @@ Fixes #
 - [ ] Every file in the diff has a deliberate change (no stray formatting, no unrelated files)
 - [ ] Tests added or updated, if this implements a rule or changes game state
 - [ ] Javadoc literals use `{@code true}` / `{@code null}` rather than bare or quoted text
+- [ ] Bug fix: I checked whether it is also needed on `main` or the current `releases/` branch, and opened a separate PR there if so
 - [ ] Dev team only: if AI tools were used, the **AI Assisted Development** label is applied, and I can
       explain and have verified the result
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.server.commands;
 
+import megamek.common.Player;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -44,6 +46,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @since February 19, 2003, 12:16 PM
  */
 public class SkipCommand extends ServerCommand {
+
+    private static final MMLogger LOGGER = MMLogger.create(SkipCommand.class);
 
     private final TWGameManager gameManager;
 
@@ -65,13 +69,35 @@ public class SkipCommand extends ServerCommand {
             return;
         }
 
-        if (gameManager.isTurnSkippable()) {
+        if (canSkip(server.getPlayer(connId))) {
             server.sendServerChat(server.getPlayer(connId).getName()
                   + " has issued the skip command...");
             gameManager.skipCurrentTurn();
         } else {
-            server.sendServerChat("/skip : skip failed.");
+            server.sendServerChat("/skip : skip failed. Only the turn of a disconnected player, or one with nothing "
+                  + "to move, can be skipped, unless you are the Game Master.");
         }
+    }
+
+    /**
+     * Whether this player may skip the current turn. Anybody may skip a turn that is stuck - its player has
+     * disconnected or has nothing to move. The Game Master may skip any turn: the Skip Current Turn button is theirs
+     * for running the game, not only for unsticking it.
+     *
+     * @param player The player issuing the command
+     *
+     * @return {@code true} when the current turn may be skipped by this player
+     */
+    boolean canSkip(Player player) {
+        if (gameManager.isTurnSkippable()) {
+            LOGGER.info("[Skip] the current turn is stuck, so it may be skipped");
+            return true;
+        }
+        boolean isGameMaster = (player != null) && player.isGameMaster();
+        boolean hasTurn = gameManager.getGame().getTurn() != null;
+        LOGGER.info("[Skip] the current turn is not stuck; issuer is Game Master: {}, a turn is running: {}",
+              isGameMaster, hasTurn);
+        return isGameMaster && hasTurn;
     }
 
 }

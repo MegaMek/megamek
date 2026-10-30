@@ -63,7 +63,7 @@ class SkipCommandTest {
         return new SkipCommand(Mockito.mock(Server.class), gameManager);
     }
 
-    private static Player playerWhoIsGameMaster(boolean holdsTheRole) {
+    private static Player playerWithGameMasterRole(boolean holdsTheRole) {
         Player player = new Player(0, "Issuer");
         player.setGameMaster(holdsTheRole);
         return player;
@@ -71,19 +71,19 @@ class SkipCommandTest {
 
     @Test
     void aGameMasterMaySkipALivePlayersTurn() {
-        assertTrue(commandDuringATurn(false).canSkip(playerWhoIsGameMaster(true)),
+        assertTrue(commandDuringATurn(false).canSkip(playerWithGameMasterRole(true)),
               "the Game Master runs the game, so the Skip Current Turn button must work for them on any turn");
     }
 
     @Test
     void anOrdinaryPlayerMayNotSkipALivePlayersTurn() {
-        assertFalse(commandDuringATurn(false).canSkip(playerWhoIsGameMaster(false)),
+        assertFalse(commandDuringATurn(false).canSkip(playerWithGameMasterRole(false)),
               "skipping somebody who is still playing would let any player take their turn away");
     }
 
     @Test
     void anyPlayerMaySkipAStuckTurn() {
-        assertTrue(commandDuringATurn(true).canSkip(playerWhoIsGameMaster(false)),
+        assertTrue(commandDuringATurn(true).canSkip(playerWithGameMasterRole(false)),
               "a disconnected player's turn must be skippable by anybody, or the game hangs");
     }
 
@@ -93,6 +93,6 @@ class SkipCommandTest {
         Mockito.when(gameManager.getGame()).thenReturn(Mockito.mock(Game.class));
         SkipCommand command = new SkipCommand(Mockito.mock(Server.class), gameManager);
 
-        assertFalse(command.canSkip(playerWhoIsGameMaster(true)), "between turns there is nothing to skip");
+        assertFalse(command.canSkip(playerWithGameMasterRole(true)), "between turns there is nothing to skip");
     }
 }

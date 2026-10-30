@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from suite_release_plan import REPOS, UnsafeInventory, failure_detail, validate_previous, valid_sha
+from suite_release_plan import REPOS, UnsafeInventory, failure_detail, validate_record, valid_sha
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "gradle"))
 import suite_archive_verifier as shared
 
@@ -30,7 +30,7 @@ def attest_archives(record, paths, runner=subprocess.run, worktrees=WORKTREES, *
     worktrees must contain the approved verifier code and pinned mm-data checkout.
     This function does not check out sources, build archives or write remotely.
     """
-    validate_previous(record)
+    validate_record(record)
     if set(paths) != set(REPOS) or set(worktrees) != set(REPOS):
         raise UnsafeInventory("missing archive or verifier worktree")
     items = record["products"]

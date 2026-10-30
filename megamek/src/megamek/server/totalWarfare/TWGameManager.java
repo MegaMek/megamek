@@ -25498,7 +25498,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param hexCoords the coordinates of the hex to set on fire
      * @param fireLevel the level of fire, see Terrains
-     * @param reports   the report to add the result to, or {@code null}
+     * @param reports   the list of reports to add the result to, or {@code null}
      */
     public void igniteByGameMaster(Coords hexCoords, int fireLevel, Vector<Report> reports) {
         ignite(hexCoords, 0, fireLevel, reports, true);

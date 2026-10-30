@@ -55,18 +55,36 @@ def main_version(getter):
     return properties_line(text), text, data["sha"]
 
 
-def branches(line, dry_run, *, getter=gh_get, writes=None):
+def core_versions(line, getter, fetch):
+    """Versions of the published Core records on ``line``, oldest first."""
+    records = complete_records(release_details(getter)["megamek"], fetch)
+    return [r["version"] for r in records
+            if r["channel"] == "core" and numbers(r["version"])[:3] == numbers(line)[:3]]
+
+
+def branches(line, dry_run, *, getter=gh_get, fetch=download_asset, writes=None):
     """Create releases/<line> from main in all four repositories; existing branches are kept."""
     require_line(line)
     name = f"releases/{line}"
     current, _, _ = main_version(getter)
     existing = {repo: name in release_branches(repo, getter) for repo in SOURCES}
-    if current != line and not all(existing.values()):
-        raise UnsafeInventory(f"main is on line {current}, not {line}; check the line to cut")
+    if current != line:
+        # Only a rerun of a cut that already published Core on this line may find main moved on.
+        if not all(existing.values()) or not core_versions(line, getter, fetch):
+            raise UnsafeInventory(f"main is on line {current}, not {line}; check the line to cut")
     newest = release_branches("megamek", getter)
     if newest and numbers(newest[-1].removeprefix("releases/")) > numbers(line):
         raise UnsafeInventory(f"{newest[-1]} is newer than {name}")
     heads = freeze("main", getter)
+    if not all(existing.values()):
+        # Finishing a partial cut: every kept branch must still match main, or the four branches
+        # would come from different snapshots.
+        moved = [repo for repo in SOURCES
+                 if existing[repo] and branch_head(repo, name, getter) != heads[repo]]
+        if moved:
+            raise UnsafeInventory(
+                f"{name} exists in {', '.join(moved)} at a commit that is no longer main; "
+                f"delete the partial {name} branches and rerun the cut")
     report = []
     for repo in SOURCES:
         if existing[repo]:
@@ -98,9 +116,7 @@ def bump(line, dry_run, *, getter=gh_get, fetch=download_asset, writes=None):
         return [f"main is already on line {current}; nothing to do"]
     if current != line:
         raise UnsafeInventory(f"main is on line {current}, older than {line}")
-    records = complete_records(release_details(getter)["megamek"], fetch)
-    core = [r["version"] for r in records
-            if r["channel"] == "core" and numbers(r["version"])[:3] == numbers(line)[:3]]
+    core = core_versions(line, getter, fetch)
     if not core:
         if dry_run:
             return [f"would move main from {line} to {following} after Core {line} publishes"]

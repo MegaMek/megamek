@@ -12,7 +12,8 @@ class CutTests(unittest.TestCase):
         self.fake = support.FakeGitHub(line="0.51.02")
 
     def branches(self, line="0.51.02", dry_run=False):
-        return cut.branches(line, dry_run, getter=self.fake.get, writes=self.fake)
+        return cut.branches(line, dry_run, getter=self.fake.get, fetch=self.fake.fetch,
+                            writes=self.fake)
 
     def bump(self, line="0.51.02", dry_run=False):
         return cut.bump(line, dry_run, getter=self.fake.get, fetch=self.fake.fetch,
@@ -40,6 +41,34 @@ class CutTests(unittest.TestCase):
                 self.branches(line)
         self.fake.set_branch("releases/0.51.05", support.SHA)
         with self.assertRaisesRegex(release.UnsafeInventory, "newer"):
+            self.branches()
+        self.assertEqual(self.fake.writes, [])
+
+    def test_partial_cut_rerun_refuses_branches_behind_main(self):
+        self.branches()
+        del self.fake.heads[("mm-data", "releases/0.51.02")]
+        self.fake.heads[("megameklab", "main")] = "f" * 40
+        self.fake.writes.clear()
+        with self.assertRaisesRegex(release.UnsafeInventory, "megameklab.*no longer main"):
+            self.branches()
+        self.assertEqual(self.fake.writes, [])
+
+    def test_rerun_after_main_moved_needs_a_core_release_of_the_line(self):
+        self.branches()
+        self.fake.add_suite("experimental", "0.51.02.5", support.SHA)
+        self.fake.add_suite("core", "0.51.02.6", support.SHA)
+        self.bump()
+        self.fake.writes.clear()
+        self.assertEqual(sum("kept" in line for line in self.branches()), 4)
+        self.assertEqual(self.fake.writes, [])
+
+    def test_stale_cut_is_refused_when_main_moved_without_core(self):
+        self.branches()
+        self.fake.add_suite("experimental", "0.51.02.5", support.SHA)
+        moved = {repo: support.sha(f"{repo}-0.51.03") for repo in release.SOURCES}
+        self.fake.set_branch("main", moved, "0.51.03")
+        self.fake.writes.clear()
+        with self.assertRaisesRegex(release.UnsafeInventory, "main is on line 0.51.03"):
             self.branches()
         self.assertEqual(self.fake.writes, [])
 

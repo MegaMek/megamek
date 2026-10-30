@@ -35,8 +35,9 @@ Example:
 3. A Core hotfix on `releases/0.51.02` publishes `0.51.02.34`. The next
    Experimental from `main` is `0.51.03.1`.
 
-A tag occupies its number even if the release around it failed, so a retry
-after a partial failure moves to the next number instead of reusing it.
+A tag or release occupies its number even if the publication around it
+failed, so a retry after a partial failure moves to the next number. If you
+delete the partial tags and releases first, the retry reuses the number.
 
 ## The four procedures
 
@@ -57,11 +58,14 @@ after a partial failure moves to the next number instead of reusing it.
 4. The next Experimental (scheduled or manual) builds `main` on the new line
    and publishes `<new line>.1`.
 
-Cut Core refuses a line that is not `main`'s current line, or when a newer
-`releases/` branch already exists. While a `releases/<line>` branch exists for
+Cut Core refuses a line that is not `main`'s current line (unless a Core
+release on that line was already published, which makes it a rerun), or when a
+newer `releases/` branch already exists. While a `releases/<line>` branch exists for
 `main`'s line, Experimental refuses to run until `main` moves on. If the bump
 step failed, rerun Cut Core with the same line: it keeps the branches, and
-since nothing changed it does not publish again but completes the bump.
+since nothing changed it does not publish again but completes the bump. If
+branch creation stopped partway and `main` has moved since, the rerun refuses
+to mix snapshots: delete the partial `releases/<line>` branches and rerun.
 
 ### Patching a Core release (hotfix)
 
@@ -165,8 +169,10 @@ not build, tag or publish anything, and works while releases are disabled.
   written. Fix the cause on the branch and rerun.
 - **Failed during publication**: some tags, releases or archives may exist
   without a record. The suite is not published and the launcher ignores it.
-  Inspect the three repositories, delete the incomplete tags and releases of
-  that version if you want, and rerun. The rerun takes the next build number.
+  Inspect the three repositories and rerun. If you leave the incomplete tags
+  and releases, the rerun takes the next build number. If you delete them in
+  all three repositories first (drafts included), the rerun reuses the same
+  number.
 - **Broken published build**: do not replace its assets. Fix it on the
   branch and publish a new build; the launcher moves to the newest record of
   its channel.

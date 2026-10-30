@@ -3131,7 +3131,8 @@ public class Princess extends BotClient {
                     // A unit that cannot walk on (a tractor towing trailers) deploys in the deployment phase; the
                     // server rejects it here, which wasted the movement turn
                     if ((deployEntity != null) && !deployEntity.isDone() && !deployEntity.isOffBoard()
-                          && !isRefusedThisPhase(deployEntity) && canWalkOnThisRound(deployEntity)) {
+                          && !deployEntity.isTransported() && !isRefusedThisPhase(deployEntity)
+                          && canWalkOnThisRound(deployEntity)) {
                         LOGGER.info("Choosing {} to deploy during the movement phase.", deployEntity.getDisplayName());
                         return deployEntity;
                     }
@@ -3139,7 +3140,8 @@ public class Princess extends BotClient {
             }
 
             for (final Entity entity : getEntitiesOwned()) {
-                if (entity.isDone() || entity.isOffBoard() || isRefusedThisPhase(entity)) {
+                // A carried unit enters with its transport; the server refuses a move for it
+                if (entity.isDone() || entity.isOffBoard() || entity.isTransported() || isRefusedThisPhase(entity)) {
                     continue;
                 }
                 if (((entity.getPosition() == null) || !entity.isDeployed()) && canWalkOnThisRound(entity)) {

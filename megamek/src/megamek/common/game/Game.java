@@ -2299,7 +2299,8 @@ public final class Game extends AbstractGame implements Serializable,
     /**
      * Determines if the indicated entity is stranded on transport that can't move.
      * <p>
-     * According to Randall Bills, the "minimum move" rule allow stranded units to dismount at the start of the turn.
+     * According to Randall Bills, the "minimum move" rule allows stranded units to dismount at the start of the turn.
+     * A unit aboard a transport that has not deployed yet is not stranded.
      *
      * @param entity the <code>Entity</code> that may be stranded
      * @return <code>true</code> if the entity is stranded <code>false</code>
@@ -2314,6 +2315,11 @@ public final class Game extends AbstractGame implements Serializable,
 
             // aero units don't count here
             if (transport instanceof Aero) {
+                return false;
+            }
+
+            // A transport that has not entered the map yet carries its units in with it
+            if (!transport.isDeployed()) {
                 return false;
             }
 

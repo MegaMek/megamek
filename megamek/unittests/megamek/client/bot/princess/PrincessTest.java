@@ -353,6 +353,52 @@ class PrincessTest {
     }
 
     @Test
+    void testGetEntityToMoveDoesNotWalkOnTheFirstDeployableUnitWhenItIsCarried() {
+        // Issue #9389: battle armor riding a VTOL enters with the VTOL. Picking it for a walk-on made the server refuse
+        // the move, and the game hung
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+
+        Entity battleArmor = mockUndeployedUnit("Purifier Adaptive Battle Armor");
+        when(battleArmor.isTransported()).thenReturn(true);
+        Entity vtol = mockUndeployedUnit("Pinto Attack VTOL");
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(86);
+        when(game.getEntity(86)).thenReturn(battleArmor);
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(battleArmor, vtol));
+
+        assertEquals(vtol, mockPrincess.getEntityToMove());
+    }
+
+    @Test
+    void testGetEntityToMoveDoesNotWalkOnACarriedUnit() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity battleArmor = mockUndeployedUnit("Purifier Adaptive Battle Armor");
+        when(battleArmor.isTransported()).thenReturn(true);
+        Entity vtol = mockUndeployedUnit("Pinto Attack VTOL");
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(battleArmor, vtol));
+
+        assertEquals(vtol, mockPrincess.getEntityToMove());
+    }
+
+    @Test
     void testGetEntityToMoveSkipsAnUndeployedUnitThatIsNotDeployingThisRound() {
         // The regular move picker must not choose a unit that cannot walk on: the server would still accept its path
         // if it carries a DEPLOY step, and walk on a tractor or a unit due in a later round

@@ -25486,6 +25486,25 @@ public class TWGameManager extends AbstractGameManager {
      * @param fireLevel - The level of fire, see Terrains
      */
     public void ignite(Coords c, int boardId, int fireLevel, Vector<Report> vReport) {
+        ignite(c, boardId, fireLevel, vReport, false);
+    }
+
+    /**
+     * Sets a hex on fire because the Game Master placed the fire there. The TacOps start-fire game option decides
+     * whether attacks and other events can start fires; it does not stop a Game Master who chose to put one down, so
+     * it is not checked here. Planetary conditions that make fire impossible, such as a vacuum, still apply.
+     *
+     * <p>Whether the fire spreads afterward is still up to the game options, as for any other fire.</p>
+     *
+     * @param c         the coordinates of the hex to set on fire
+     * @param fireLevel the level of fire, see Terrains
+     * @param vReport   the report to add the result to, or {@code null}
+     */
+    public void igniteByGameMaster(Coords c, int fireLevel, Vector<Report> vReport) {
+        ignite(c, 0, fireLevel, vReport, true);
+    }
+
+    private void ignite(Coords c, int boardId, int fireLevel, Vector<Report> vReport, boolean ignoreStartFireOption) {
         // you can't start fires in some planetary conditions!
         if (game.getPlanetaryConditions().cannotStartFire() != null) {
             if (vReport != null) {
@@ -25498,7 +25517,8 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
+        if (!ignoreStartFireOption
+              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
             if (vReport != null) {
                 Report r = new Report(3008);
                 r.indent(2);

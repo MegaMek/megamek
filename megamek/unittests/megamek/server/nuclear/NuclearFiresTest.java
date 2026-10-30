@@ -221,6 +221,32 @@ class NuclearFiresTest {
     }
 
     @Test
+    void buildingDestroyedByTheBlastDoesNotBurn() {
+        // A building at CF 0 waits on the map until the detonation resolves; it no longer burns (HammerGS, 2026-10-29)
+        Hex[] hexes = new Hex[BOARD_SIZE * BOARD_SIZE];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex(0);
+        }
+        Coords standing = hexNorth(10);
+        Coords destroyed = hexNorth(12);
+        for (Coords coords : new Coords[] { standing, destroyed }) {
+            Hex buildingHex = hexes[(coords.getY() * BOARD_SIZE) + coords.getX()];
+            buildingHex.addTerrain(new Terrain(Terrains.BUILDING, 2));
+            buildingHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, 2));
+            buildingHex.addTerrain(new Terrain(Terrains.BLDG_CF, 40));
+        }
+        board = new Board();
+        board.newData(BOARD_SIZE, BOARD_SIZE, hexes, null);
+        game.setBoard(board);
+        board.getBuildingAt(destroyed).setCurrentCF(0, destroyed);
+
+        startFiresWithRoll(12);
+
+        assertTrue(isBurning(10), "the standing building burns");
+        assertFalse(isBurning(12), "the destroyed one does not");
+    }
+
+    @Test
     void unitInTheBlastAreaIsSetAflame() throws Exception {
         // A clear hex with a unit in it rolls too (modifier 0); the unit burns, the clear hex does not
         Entity atlas = placeUnit("Atlas AS7-D.mtf", hexNorth(15));

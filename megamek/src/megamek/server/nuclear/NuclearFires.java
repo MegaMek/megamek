@@ -49,6 +49,7 @@ import megamek.common.enums.BuildingType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
@@ -132,7 +133,7 @@ class NuclearFires {
                 if ((hex == null) || hex.containsTerrain(Terrains.WATER)) {
                     continue;
                 }
-                boolean flammable = hasFlammableTerrain(hex) && !hex.containsTerrain(Terrains.FIRE);
+                boolean flammable = canBurn(board, coords, hex) && !hex.containsTerrain(Terrains.FIRE);
                 boolean inBlastArea = distance < damages.length;
                 List<Entity> units = inBlastArea ? unitsByHex.getOrDefault(coords, List.of()) : List.of();
                 if (!flammable && units.isEmpty()) {
@@ -212,13 +213,40 @@ class NuclearFires {
      * @return {@code true} if the hex holds terrain that can burn; hardened buildings do not (IO:AE p.165)
      */
     static boolean hasFlammableTerrain(Hex hex) {
-        if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)
+        return hasFlammableGroundCover(hex) || hasFlammableBuilding(hex);
+    }
+
+    private static boolean hasFlammableGroundCover(Hex hex) {
+        return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)
               || hex.containsTerrain(Terrains.FIELDS) || hex.containsTerrain(Terrains.INDUSTRIAL)
-              || hex.containsTerrain(Terrains.FUEL_TANK)) {
-            return true;
-        }
+              || hex.containsTerrain(Terrains.FUEL_TANK);
+    }
+
+    private static boolean hasFlammableBuilding(Hex hex) {
         return hex.containsTerrain(Terrains.BUILDING)
               && (hex.terrainLevel(Terrains.BUILDING) != BuildingType.HARDENED.getTypeValue());
+    }
+
+    /**
+     * A building the blast brought down to CF 0 is still on the map while the fires roll, since it collapses after the
+     * detonation resolves; it no longer counts as something that can burn (HammerGS, 2026-10-29).
+     *
+     * @return {@code true} if the hex holds terrain that can catch fire
+     */
+    private boolean canBurn(Board board, Coords coords, Hex hex) {
+        if (hasFlammableGroundCover(hex)) {
+            return true;
+        }
+        if (!hasFlammableBuilding(hex)) {
+            return false;
+        }
+        IBuilding building = board.getBuildingAt(coords);
+        if ((building == null) || (building.getCurrentCF(coords) <= 0)) {
+            LOGGER.info("[Nukes] Hex {}: the building there was destroyed by the blast and does not burn",
+                  coords.getBoardNum());
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -444,16 +444,19 @@ class NuclearBlastDamage {
             IBuilding building = game.getBoard(BOARD_ID).getBuildingAt(coords);
             boolean standingBuilding = hex.containsTerrain(Terrains.BUILDING) && (building != null)
                   && (building.getCurrentCF(coords) > 0);
-            if (standingBuilding && (hex.ceiling() > unitTop)) {
+            // The same height test as line of sight: the hex level plus the building's height (LosEffects)
+            int buildingHeight = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex.terrainLevel(Terrains.BLDG_ELEV) : 0;
+            int buildingTop = hex.getLevel() + buildingHeight;
+            if (standingBuilding && (buildingTop > unitTop)) {
                 LOGGER.info("[Nukes] Hex {} protects hex {}: building {} rises to level {}, above level {}",
-                      coords.getBoardNum(), entityPosition.getBoardNum(), building.getName(), hex.ceiling(), unitTop);
+                      coords.getBoardNum(), entityPosition.getBoardNum(), building.getName(), buildingTop, unitTop);
                 return coords;
             }
             if (hex.floor() > unitTop) {
                 int distanceFromGroundZero = groundZero.distance(coords);
                 int damage = (distanceFromGroundZero < damages.length) ? damages[distanceFromGroundZero] : 0;
                 if (damage < HILL_TERRAIN_FACTOR) {
-                    LOGGER.info("[Nukes] Hex {} protects hex {}: a level {} hill above level {} that holds against {}",
+                    LOGGER.info("[Nukes] Hex {} protects hex {}: ground at level {}, above the unit's top at level {}, holds against {}",
                           coords.getBoardNum(), entityPosition.getBoardNum(), hex.floor(), unitTop, damage);
                     return coords;
                 }

@@ -346,6 +346,16 @@ class NuclearBlastDamageTest {
         assertNull(protectingHex(hexNorth(9), 1, NuclearWeaponType.DAVY_CROCKETT_M), "a fallen building is no cover");
     }
 
+    @Test
+    void dryGroundBesideASubmergedUnitIsCover() {
+        // Normal line of sight: a hex next to the unit blocks when it is higher than the unit's top (LosEffects). A Mek
+        // in depth 2 water has its top at level -1, so the level 0 bank beside it counts (HammerGS, 2026-10-29)
+        Hex pool = game.getBoard().getHex(hexNorth(10));
+        pool.addTerrain(new Terrain(Terrains.WATER, 2));
+
+        assertEquals(hexNorth(9), protectingHex(hexNorth(10), -1, NuclearWeaponType.DAVY_CROCKETT_M));
+    }
+
     private Vector<Integer> blastWithRoll(NuclearWeaponType weaponType, int value) {
         Roll roll = mock(Roll.class);
         when(roll.getIntValue()).thenReturn(value);

@@ -78,7 +78,7 @@ public class NuclearStrikeCommand extends ClientServerCommand {
                     NuclearWeaponType.class,
                     NuclearWeaponType.DAVY_CROCKETT_M),
               new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID")),
-              new OptionalIntegerArgument("round", Messages.getString("NuclearStrike.cmd.round"), 1,
+              new OptionalIntegerArgument("round", Messages.getString("NuclearStrike.cmd.round"), 0,
                     Integer.MAX_VALUE)
         );
     }

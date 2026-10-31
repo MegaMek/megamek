@@ -54,15 +54,18 @@ public record ScheduledNuke(Coords groundZero, NuclearBlastProfile profile, @Nul
     /**
      * The earliest round a strike ordered now can detonate in. Strikes go off at the end of the weapons attack phase,
      * so one ordered before that phase is over can still go off this round; one ordered later waits for the next.
+     * Rounds count from 0, and a scenario that starts with its units deployed plays a full round 0: a strike dropped in
+     * its movement phase goes off at the end of its weapons phase. Should a round have no weapons phase, the strike
+     * goes off in the next one that does.
      *
-     * @param roundCount the current round
+     * @param roundCount the current round; -1 in the lobby before the first round
      * @param phase      the current phase
      *
-     * @return the earliest detonation round, never before round 1
+     * @return the earliest detonation round, never before round 0
      */
     public static int earliestDetonationRound(int roundCount, GamePhase phase) {
         boolean weaponsPhaseStillToCome = phase.ordinal() <= GamePhase.FIRING.ordinal();
-        return Math.max(1, weaponsPhaseStillToCome ? roundCount : roundCount + 1);
+        return Math.max(0, weaponsPhaseStillToCome ? roundCount : roundCount + 1);
     }
 
     /**

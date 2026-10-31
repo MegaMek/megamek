@@ -634,8 +634,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     if (allShotsHit()) {
                         numWeaponsHit = numWeapons;
                     } else {
-                        numWeaponsHit = Compute.missilesHit(numWeapons,
-                              ((Aero) attackingEntity).getClusterMods());
+                        numWeaponsHit = Compute.missilesHit(numWeapons, getSquadronClusterModifier());
                     }
                     if (usesClusterTable()) {
                         // remove the last reports because they showed the
@@ -773,8 +772,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (attackingEntity.isCapitalFighter()) {
                 bSalvo = false;
                 if (numWeapons > 1) {
-                    numWeaponsHit = Compute.missilesHit(numWeapons,
-                          ((IAero) attackingEntity).getClusterMods());
+                    numWeaponsHit = Compute.missilesHit(numWeapons, getSquadronClusterModifier());
                     if (pdBayEngaged || amsBayEngaged) {
                         // Point Defenses engage standard (cluster) missiles
                         int counterAV;
@@ -2334,6 +2332,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean isClusterRollUnderEMI() {
         return game.getPlanetaryConditions().getEMI().isEMI()
               || ((attackingEntity != null) && attackingEntity.isSufferingEMI());
+    }
+
+    /**
+     * The modifier on a fighter squadron's roll for how many of its weapons hit: the squadron's own modifiers, less 2
+     * under electromagnetic interference (IO:AE p.166).
+     *
+     * @return the modifier for the squadron's weapons-hit roll
+     */
+    protected int getSquadronClusterModifier() {
+        int modifier = ((IAero) attackingEntity).getClusterMods();
+        if (isClusterRollUnderEMI()) {
+            modifier -= 2;
+        }
+        return modifier;
     }
 
     protected int getClusterModifiers(boolean clusterRangePenalty) {

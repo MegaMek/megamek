@@ -230,6 +230,22 @@ class NuclearSpaceHitTest {
     }
 
     @Test
+    void everyUnitInTheDetonationHexSuffersEmi() throws Exception {
+        Aero aegis = placeShip("Aegis Heavy Cruiser (2843).blk");
+        Aero escort = placeShip("Union (3055).blk");
+        Aero distantShip = placeShip("Union (3055).blk");
+        distantShip.setPosition(new Coords(2, 2));
+
+        // Even a missed special critical leaves the hex flooded with interference
+        Vector<Report> reports = resolveWithRoll(aegis, nuclearHit(NuclearWeaponType.ALAMO), 2);
+
+        assertTrue(aegis.isSufferingEMI(), "the target");
+        assertTrue(escort.isSufferingEMI(), "a ship sharing the target's hex");
+        assertFalse(distantShip.isSufferingEMI(), "a ship in another hex");
+        assertEquals(2, countReports(reports, 6565));
+    }
+
+    @Test
     void nuclearDamageThroughArmorIsHalvedIntoTheStructure() throws Exception {
         Aero union = placeShip("Union (3055).blk");
         int noseArmor = union.getArmor(Aero.LOC_NOSE);

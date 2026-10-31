@@ -116,6 +116,11 @@ public class ComputeAeroAttackerToHitMods {
             toHit.addModifier(attacker.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
         }
 
+        // A unit left suffering electromagnetic interference by a nuclear strike gets +2 (IO:AE p.166)
+        if (ComputeAttackerToHitMods.takesUnitEmiModifier(game, attacker)) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
+        }
+
         // Secondary targets modifier, if this is not a iNarc Nemesis confused attack
         // Also does not apply to attacks that are intrinsically multi-target (altitude bombing and strafing)
         if (!isNemesisConfused && weaponType != null && !weaponType.hasFlag(WeaponType.F_ALT_BOMB) && !isStrafing) {

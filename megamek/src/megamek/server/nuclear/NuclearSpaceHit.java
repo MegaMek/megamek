@@ -52,7 +52,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * been applied, armor first and halved into the structural integrity as usual. Each nuclear missile that hit then
  * rolls its own special critical hit: an unmodified 2d6 roll at or above the weapon's critical hit target puts ten
  * times the weapon's capital damage straight into the structural integrity, never halved. A unit that survives makes
- * a Control Roll at +4.
+ * a Control Roll at +4, and every unit in the hex suffers electromagnetic interference for the rest of the scenario.
  */
 public class NuclearSpaceHit {
     private static final MMLogger LOGGER = MMLogger.create(NuclearSpaceHit.class);
@@ -81,8 +81,8 @@ public class NuclearSpaceHit {
     }
 
     /**
-     * Rolls the special critical hit for every nuclear warhead in the hit, then queues the +4 Control Roll if the unit
-     * survived.
+     * Rolls the special critical hit for every nuclear warhead in the hit, leaves every unit in the hex suffering
+     * electromagnetic interference, then queues the +4 Control Roll if the unit survived.
      *
      * @param aero  the unit hit
      * @param hit   the hit, which lists its nuclear warheads
@@ -115,6 +115,8 @@ public class NuclearSpaceHit {
             }
         }
 
+        applyDetonationHexEmi(aero, vDesc);
+
         if (isGone(aero)) {
             LOGGER.info("[Nukes] {} did not survive the nuclear hit: no Control Roll", aero.getDisplayName());
         } else {
@@ -124,6 +126,37 @@ public class NuclearSpaceHit {
                   CONTROL_ROLL_MODIFIER);
         }
         return new SpecialCriticalResult(structureDamaged, avoidedWithEdge);
+    }
+
+    /**
+     * Every unit in the hex where a nuclear weapon detonates in space suffers electromagnetic interference for the rest
+     * of the scenario (IO:AE p.166). The target is in that hex, so this includes it and anything sharing its hex.
+     *
+     * @param target the unit the weapon hit
+     * @param vDesc  the report the results are added to
+     */
+    void applyDetonationHexEmi(Entity target, Vector<Report> vDesc) {
+        if (target.getPosition() == null) {
+            LOGGER.warn("[Nukes] {} has no position: no detonation hex for electromagnetic interference",
+                  target.getDisplayName());
+            return;
+        }
+        for (Entity entity : gameManager.getGame()
+              .getEntitiesVector(target.getPosition(), target.getBoardId(), true)) {
+            if (entity.isSufferingEMI()) {
+                LOGGER.info("[Nukes] {} in detonation hex {} already suffers electromagnetic interference",
+                      entity.getDisplayName(), target.getPosition().getBoardNum());
+                continue;
+            }
+            entity.setEMI(true);
+            Report report = new Report(6565);
+            report.subject = entity.getId();
+            report.indent(3);
+            report.addDesc(entity);
+            vDesc.add(report);
+            LOGGER.info("[Nukes] {} in detonation hex {} suffers electromagnetic interference for the rest of the "
+                  + "scenario", entity.getDisplayName(), target.getPosition().getBoardNum());
+        }
     }
 
     /**

@@ -46,6 +46,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.EMI;
+import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
@@ -117,6 +118,31 @@ class EmiClusterPenaltyTest {
 
         assertTrue(handler.isClusterRollUnderEMI());
         assertEquals(clearModifier - 2, handler.getClusterModifiers(false));
+    }
+
+    @Test
+    void fighterUnderInterferenceLosesTwoOnItsWeaponsHitRoll() throws Exception {
+        TWGameManager gameManager = new TWGameManager();
+        Game fighterGame = gameManager.getGame();
+        fighterGame.addPlayer(0, new Player(0, "Attacker"));
+        AeroSpaceFighter fighter = new AeroSpaceFighter();
+        fighter.setGame(fighterGame);
+        fighter.setId(1);
+        fighter.setCrew(new Crew(CrewType.SINGLE));
+        fighter.setOwner(fighterGame.getPlayer(0));
+        Mounted<?> laser = fighter.addEquipment((WeaponType) EquipmentType.get("ISLargeLaser"),
+              AeroSpaceFighter.LOC_NOSE);
+        fighterGame.addEntity(fighter);
+        fighter.setPosition(new Coords(1, 1));
+        WeaponAttackAction attack = new WeaponAttackAction(fighter.getId(), fighter.getId(),
+              fighter.getEquipmentNum(laser));
+        EnergyWeaponHandler fighterHandler = new EnergyWeaponHandler(new ToHitData(), attack, fighterGame,
+              gameManager);
+        int clearModifier = fighterHandler.getSquadronClusterModifier();
+
+        fighter.setEMI(true);
+
+        assertEquals(clearModifier - 2, fighterHandler.getSquadronClusterModifier());
     }
 
     @Test

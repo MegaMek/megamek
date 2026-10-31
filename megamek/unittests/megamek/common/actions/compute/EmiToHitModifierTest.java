@@ -32,14 +32,22 @@
  */
 package megamek.common.actions.compute;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.EnumSet;
+
+import megamek.common.ToHitData;
+import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.EMI;
+import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -80,6 +88,25 @@ class EmiToHitModifierTest {
         mek.setEMI(true);
 
         assertFalse(ComputeAttackerToHitMods.takesUnitEmiModifier(game, mek));
+    }
+
+    @Test
+    void nukedFighterTakesTheModifierOnItsAttacks() {
+        AeroSpaceFighter fighter = new AeroSpaceFighter();
+        fighter.setGame(game);
+        AeroSpaceFighter target = new AeroSpaceFighter();
+        target.setGame(game);
+        int clearModifier = aeroAttackModifier(fighter, target);
+
+        fighter.setEMI(true);
+
+        assertEquals(clearModifier + 2, aeroAttackModifier(fighter, target));
+    }
+
+    private int aeroAttackModifier(Entity attacker, Entity target) {
+        return ComputeAeroAttackerToHitMods.compileAeroAttackerToHitMods(game, attacker, target,
+              Targetable.TYPE_ENTITY, new ToHitData(), Entity.LOC_NONE, AimingMode.NONE, 0, null, null, null,
+              EnumSet.noneOf(AmmoType.Munitions.class), false, false, false, false, false).getValue();
     }
 
     @Test

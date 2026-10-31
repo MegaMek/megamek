@@ -825,8 +825,7 @@ public class CLIATMHandler extends ATMHandler {
                     if (attackingEntity.isCapitalFighter()) {
                         bSalvo = true;
                         if (numWeapons > 1) {
-                            numWeaponsHit = Compute.missilesHit(numWeapons,
-                                  ((Aero) attackingEntity).getClusterMods());
+                            numWeaponsHit = Compute.missilesHit(numWeapons, getSquadronClusterModifier());
                             report = new Report(3325);
                             report.subject = subjectId;
                             report.add(numWeaponsHit);

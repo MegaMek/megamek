@@ -15,6 +15,7 @@ import argparse
 import base64
 import io
 import json
+import os
 import re
 import subprocess
 import sys
@@ -303,8 +304,13 @@ def gh_get(endpoint, runner=subprocess.run):
             or (repo == "mm-data" and not path.startswith(("git/ref/heads/", "git/matching-refs/")))
             or (tag is not None and not canonical(tag))):
         raise UnsafeInventory("unapproved read-only API endpoint")
+    options = {}
+    public_token = os.environ.get("SUITE_PUBLIC_GH_TOKEN")
+    if repo == "mm-data" and public_token:
+        # The App is not installed on mm-data, so read its public branches with this token.
+        options["env"] = {**os.environ, "GH_TOKEN": public_token}
     try:
-        result = runner(["gh", "api", endpoint], capture_output=True, check=True)
+        result = runner(["gh", "api", endpoint], capture_output=True, check=True, **options)
     except (OSError, subprocess.CalledProcessError) as error:
         raise UnsafeInventory(f"gh API GET {endpoint} failed: {failure_detail(error)}") from None
     return parse_json(result.stdout)

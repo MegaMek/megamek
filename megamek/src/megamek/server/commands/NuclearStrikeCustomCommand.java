@@ -77,7 +77,7 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
               new IntegerArgument("radius", Messages.getString("Gamemaster.cmd.nukeCommand.radius"), 1, 1000),
               new IntegerArgument("depth", Messages.getString("Gamemaster.cmd.nukeCommand.depth"), 0, 9),
               new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID")),
-              new OptionalIntegerArgument("round", Messages.getString("NuclearStrike.cmd.round"), 1,
+              new OptionalIntegerArgument("round", Messages.getString("NuclearStrike.cmd.round"), 0,
                     Integer.MAX_VALUE)
         );
     }

@@ -96,7 +96,19 @@ class ScheduledNukeRoundTest {
         assertEquals(3, ScheduledNuke.earliestDetonationRound(3, GamePhase.FIRING));
         assertEquals(4, ScheduledNuke.earliestDetonationRound(3, GamePhase.PHYSICAL));
         assertEquals(4, ScheduledNuke.earliestDetonationRound(3, GamePhase.END));
-        assertEquals(1, ScheduledNuke.earliestDetonationRound(0, GamePhase.LOUNGE), "there is no weapons phase in round 0");
+        assertEquals(0, ScheduledNuke.earliestDetonationRound(-1, GamePhase.LOUNGE), "the lobby comes before round 0");
+    }
+
+    @Test
+    void strikeDroppedInRoundZeroMovementGoesOffThatRound() {
+        // A scenario with its units deployed plays round 0 in full (HammerGS, 2026-10-30)
+        assertEquals(0, ScheduledNuke.earliestDetonationRound(0, GamePhase.MOVEMENT));
+
+        gameManager.addScheduledNuke(strikeOnRound(0));
+        game.setRoundCount(0);
+        gameManager.resolveScheduledNukes();
+
+        assertTrue(game.getScheduledNukes().isEmpty(), "it goes off in round 0's weapons phase");
     }
 
     @Test

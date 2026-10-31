@@ -1668,7 +1668,7 @@ class BasicPathRankerTest {
         final Entity me = mock(BipedMek.class);
         final Game mockGame = mock(Game.class);
         when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
-        when(mockPrincess.getBehaviorSettings().getPriorityUnitTargets()).thenReturn(Set.of(76));
+        when(mockPrincess.getPriorityUnitTargets()).thenReturn(Set.of(76));
         final BasicPathRanker testRanker = new BasicPathRanker(mockPrincess);
         doReturn(List.of(pilot, enemyMek)).when(mockPrincess).getEnemyEntities();
 

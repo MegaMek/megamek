@@ -2955,8 +2955,9 @@ public class TWGameManager extends AbstractGameManager {
             // We don't use the hashmap for individual initiative, so can ignore it here
             TurnOrdered.rollInitiative(game.getEntitiesVector(), false, new HashMap<>());
         } else {
+            // Every team's aptitude goes into one map, then all teams roll once
+            Map<Team, Integer> initiativeAptitude = new HashMap<>();
             for (Team team : game.getTeams()) {
-                Map<Team, Integer> initiativeAptitude = new HashMap<>();
                 boolean commanderHasCombatSense = false;
                 boolean commanderHasCombatParalysis = false;
 
@@ -2979,13 +2980,13 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     initiativeAptitude.put(team, TEAM_HAS_NO_INITIATIVE_APTITUDE);
                 }
-
-                // Roll for initiative on the teams.
-                TurnOrdered.rollInitiative(game.getTeams(),
-                      game.getOptions().booleanOption(INIT_INITIATIVE_STREAK_COMPENSATION) &&
-                            !game.shouldDeployThisRound(),
-                      initiativeAptitude);
             }
+
+            // Roll for initiative on the teams.
+            TurnOrdered.rollInitiative(game.getTeams(),
+                  game.getOptions().booleanOption(INIT_INITIATIVE_STREAK_COMPENSATION) &&
+                        !game.shouldDeployThisRound(),
+                  initiativeAptitude);
         }
 
         transmitAllPlayerUpdates();

@@ -152,9 +152,12 @@ public class ProbabilityCalculator {
             case 4 -> Tank.LOC_LEFT;
             default -> Tank.LOC_FRONT;
         };
-        boolean isSideShot = (facingSide == Tank.LOC_RIGHT) || (facingSide == Tank.LOC_LEFT);
         // a 5 and a 9, four rolls in 36 each, fall away from the facing side
-        int onFive = isSideShot ? Tank.LOC_FRONT : Tank.LOC_LEFT;
+        int onFive = switch (facingSide) {
+            case Tank.LOC_RIGHT, Tank.LOC_LEFT -> Tank.LOC_FRONT;
+            case Tank.LOC_REAR -> Tank.LOC_LEFT;
+            default -> Tank.LOC_RIGHT;
+        };
         int onNine = switch (facingSide) {
             case Tank.LOC_RIGHT, Tank.LOC_LEFT -> Tank.LOC_REAR;
             case Tank.LOC_REAR -> Tank.LOC_RIGHT;

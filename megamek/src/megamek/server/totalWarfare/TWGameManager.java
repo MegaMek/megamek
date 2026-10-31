@@ -152,6 +152,8 @@ import megamek.server.UnitOwnershipRules.OwnershipVerdict;
 import megamek.server.commands.*;
 import megamek.server.nuclear.NuclearBlastProfile;
 import megamek.server.nuclear.NuclearDetonationResolver;
+import megamek.server.nuclear.NuclearSpaceHit;
+import megamek.server.nuclear.NuclearSpaceHit.SpecialCriticalOutcome;
 import megamek.server.nuclear.NuclearStrikeNotifications;
 import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.props.OrbitalBombardment;
@@ -22658,68 +22660,13 @@ public class TWGameManager extends AbstractGameManager {
 
         // check for nuclear critical
         if (nukeS2S) {
-            // add a control roll
-            PilotingRollData nukePSR = new PilotingRollData(a.getId(), 4, "Nuclear attack", false);
-            game.addControlRoll(nukePSR);
-
-            Report.addNewline(vDesc);
-            // need some kind of report
-            Roll diceRoll = Compute.rollD6(2);
-            r = new Report(9145);
-            r.subject = a.getId();
-            r.indent(3);
-            r.add(capitalMissile);
-            r.add(diceRoll);
-            vDesc.add(r);
-
-            if (diceRoll.getIntValue() >= capitalMissile) {
-                // Allow a reroll with edge
-                if (a.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT) && a.getCrew().hasEdgeRemaining()) {
-                    a.getCrew().decreaseEdge();
-                    r = new Report(9148);
-                    r.subject = a.getId();
-                    r.indent(3);
-                    r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
-                    vDesc.add(r);
-                    // Reroll
-                    Roll diceRoll2 = Compute.rollD6(2);
-                    // and report the new results
-                    r = new Report(9149);
-                    r.subject = a.getId();
-                    r.indent(3);
-                    r.add(capitalMissile);
-                    r.add(diceRoll2);
-                    r.choose(diceRoll2.getIntValue() >= capitalMissile);
-                    vDesc.add(r);
-
-                    if (diceRoll2.getIntValue() < capitalMissile) {
-                        // We might be vaporized by the damage itself, but no additional effect
-                        return;
-                    }
-                }
-                a.setSI(a.getSI() - (damage_orig * 10));
-                a.damageThisPhase += (damage_orig * 10);
-                r = new Report(9146);
-                r.subject = a.getId();
-                r.add((damage_orig * 10));
-                r.indent(4);
-                r.add(Math.max(a.getSI(), 0));
-                vDesc.addElement(r);
-                if (a.getSI() <= 0) {
-                    // No auto-ejection chance here. Nuke would vaporize the pilot.
-                    vDesc.addAll(destroyEntity(a, "Structural Integrity Collapse"));
-                    a.setSI(0);
-                    if (hit.getAttackerId() != Entity.NONE) {
-                        creditKill(a, game.getEntity(hit.getAttackerId()));
-                    }
-                } else if (!critSI) {
-                    critSI = true;
-                }
-            } else {
-                r = new Report(9147);
-                r.subject = a.getId();
-                r.indent(4);
-                vDesc.addElement(r);
+            SpecialCriticalOutcome outcome = new NuclearSpaceHit(this).resolveSpecialCritical(a, hit, damage_orig,
+                  vDesc);
+            if (outcome == SpecialCriticalOutcome.AVOIDED_WITH_EDGE) {
+                return;
+            }
+            if ((outcome == SpecialCriticalOutcome.STRUCTURE_DAMAGED) && (a.getSI() > 0)) {
+                critSI = true;
             }
         }
 

@@ -4830,8 +4830,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (cockpitStatus == COCKPIT_OFF) {
             return false;
         }
-        if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS,
-              Mek.LOC_HEAD) > 0) {
+        if (EnhancedImagingSensors.areDamaged(this)) {
             return false;
         }
         return super.hasActiveEiCockpit();

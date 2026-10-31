@@ -69,21 +69,9 @@ class EngineTests(unittest.TestCase):
 
     def test_build_never_holds_a_write_token(self):
         prepare = self.steps["prepare"]
-        self.assertIn("GH_TOKEN: ${{ inputs.dry_run && github.token || steps.read_app.outputs.token }}",
-                      prepare)
-        # The App is not installed on mm-data; its public branches use the workflow token.
-        self.assertIn("SUITE_PUBLIC_GH_TOKEN: ${{ github.token }}", prepare)
+        self.assertIn("GH_TOKEN: ${{ github.token }}", prepare)
         self.assertNotIn("--publish", prepare)
         self.assertEqual(3, self.workflow.count("TMPDIR: ${{ runner.temp }}"))
-
-    def test_live_discovery_sees_drafts_with_a_read_only_token(self):
-        # The publish recheck lists releases with the App token, which sees drafts.
-        read_app = self.steps["read_app"]
-        self.assertIn("if: ${{ !inputs.dry_run }}\n", read_app)
-        self.assertIn("repositories: megamek,megameklab,mekhq\n", read_app)
-        self.assertIn("permission-contents: read", read_app)
-        self.assertNotIn("write", read_app)
-        self.assertLess(self.position("id: read_app"), self.position("id: prepare"))
 
     def test_publish_token_is_minted_after_the_build_for_three_repositories(self):
         app = self.steps["app"]
@@ -113,7 +101,7 @@ class EngineTests(unittest.TestCase):
             self.assertIn(f"inputs.dry_run && github.token || steps.{token}.outputs.token",
                           self.steps[step])
             self.assertIn("--dry-run", self.steps[step])
-        self.assertEqual(4, self.workflow.count("actions/create-github-app-token@v3"))
+        self.assertEqual(3, self.workflow.count("actions/create-github-app-token@v3"))
         self.assertEqual(3, self.workflow.count("permission-contents: write"))
 
     def test_cut_dry_run_rehearses_main(self):

@@ -4,8 +4,10 @@
 Experimental builds the four repositories' ``main`` branches. Core builds the newest
 ``releases/<line>`` branch, which must exist in all four. The release line
 (``major.minor.patch``) comes from MegaMek's ``Version.properties`` at the frozen commit; the
-fourth component is the next build number not yet used on that line by any tag or release of
-the three game repositories. MegaMek, MegaMekLab and MekHQ always share that version.
+fourth component is the next build number not yet used on that line by any tag or published
+release of the three game repositories. Draft releases do not reserve a number; publication
+refuses a candidate whose tag a draft already holds. MegaMek, MegaMekLab and MekHQ always share
+that version.
 
 The inventory is deliberately not an authority for publication: built archive bytes,
 embedded identities and product release IDs are verified separately.
@@ -15,7 +17,6 @@ import argparse
 import base64
 import io
 import json
-import os
 import re
 import subprocess
 import sys
@@ -153,7 +154,7 @@ def properties_line(text):
 
 
 def reserve(tags, releases, line):
-    """The next build number on ``line`` unused by any tag or release in the three repositories.
+    """The next build number on ``line`` unused by any tag or published release (drafts excluded).
 
     Release line 0.51.01 with tags v0.51.01 and v0.51.01.1 allocates 0.51.01.2. Numerically
     equal spellings (v0.51.1.1) occupy the same build.
@@ -304,13 +305,8 @@ def gh_get(endpoint, runner=subprocess.run):
             or (repo == "mm-data" and not path.startswith(("git/ref/heads/", "git/matching-refs/")))
             or (tag is not None and not canonical(tag))):
         raise UnsafeInventory("unapproved read-only API endpoint")
-    options = {}
-    public_token = os.environ.get("SUITE_PUBLIC_GH_TOKEN")
-    if repo == "mm-data" and public_token:
-        # The App is not installed on mm-data, so read its public branches with this token.
-        options["env"] = {**os.environ, "GH_TOKEN": public_token}
     try:
-        result = runner(["gh", "api", endpoint], capture_output=True, check=True, **options)
+        result = runner(["gh", "api", endpoint], capture_output=True, check=True)
     except (OSError, subprocess.CalledProcessError) as error:
         raise UnsafeInventory(f"gh API GET {endpoint} failed: {failure_detail(error)}") from None
     return parse_json(result.stdout)
@@ -361,11 +357,22 @@ def published_tag(entry):
 
 
 def release_tag(entry):
-    """Tag name of any release, including drafts, which also occupy their version."""
+    """Tag name of any release, including a draft; validates the entry either way."""
     published_tag(entry)
     if not isinstance(entry.get("tag_name"), str):
         raise UnsafeInventory("incomplete release response")
     return entry["tag_name"]
+
+
+def published_release_tags(entries):
+    """Tags of the published releases among ``entries``, in order.
+
+    Drafts are left out: only tokens with write access can list them, so the read-only build
+    and the publish recheck would otherwise see different inventories. Publication still
+    refuses a suite tag held by any release, drafts included.
+    """
+    tags = [release_tag(entry) for entry in entries]  # Validates drafts too.
+    return [tag for tag, entry in zip(tags, entries) if not entry["draft"]]
 
 
 def complete_records(releases, fetch=download_asset):
@@ -436,7 +443,7 @@ def release_details(getter=gh_get):
 
 
 def release_inventory(getter=gh_get):
-    """Every tag and release tag (drafts included) of the three game repositories."""
+    """Every tag and published release tag of the three game repositories."""
     tags = {}
     releases = {}
     for repo in REPOS.values():
@@ -454,7 +461,7 @@ def release_inventory(getter=gh_get):
                         raise UnsafeInventory(f"invalid tags for {repo}")
                     target.extend(e["name"] for e in entries)
                 else:
-                    target.extend(release_tag(e) for e in entries)
+                    target.extend(published_release_tags(entries))
                 if len(entries) < 100:
                     break
                 page += 1
@@ -529,7 +536,7 @@ def discovered_inventory(channel, branch=None, rehearsal=False, getter=gh_get,
         "line": line, "commits": commits,
         **release_inventory(getter), "previous": latest(records, channel),
     }
-    if any(inventory["releases"][repo] != [release_tag(entry) for entry in details[repo]]
+    if any(inventory["releases"][repo] != published_release_tags(details[repo])
            for repo in REPOS.values()):
         raise UnsafeInventory("release inventory moved during discovery")
     plan(inventory)

@@ -2,11 +2,9 @@
 
 import copy
 import json
-import os
 import subprocess
 import unittest
 from pathlib import Path
-from unittest import mock
 
 import suite_release_plan as release
 import suite_test_support as support
@@ -229,24 +227,6 @@ class GetTests(unittest.TestCase):
             with self.subTest(endpoint=endpoint), self.assertRaises(release.UnsafeInventory):
                 release.gh_get(endpoint, runner=ok)
 
-    def test_only_mm_data_reads_use_the_public_token(self):
-        seen = {}
-
-        def runner(command, **kwargs):
-            seen[command[2]] = (kwargs.get("env") or {}).get("GH_TOKEN")
-            return subprocess.CompletedProcess(command, 0, stdout=b"{}")
-
-        data = "repos/MegaMek/mm-data/git/ref/heads/main"
-        game = "repos/MegaMek/megamek/releases?per_page=100&page=1"
-        with mock.patch.dict(os.environ, {"GH_TOKEN": "app", "SUITE_PUBLIC_GH_TOKEN": "public"}):
-            release.gh_get(data, runner=runner)
-            release.gh_get(game, runner=runner)
-        self.assertEqual("public", seen[data])
-        self.assertIsNone(seen[game])
-        with mock.patch.dict(os.environ, {"SUITE_PUBLIC_GH_TOKEN": ""}):
-            release.gh_get(data, runner=runner)
-        self.assertIsNone(seen[data])
-
 
 class DiscoveryTests(unittest.TestCase):
     def setUp(self):
@@ -310,10 +290,16 @@ class DiscoveryTests(unittest.TestCase):
         with self.assertRaises(release.UnsafeInventory):
             release.complete_records(self.fake.releases["megamek"], self.fake.fetch)
 
-    def test_drafts_occupy_their_version(self):
+    def test_drafts_are_left_out_of_the_inventory(self):
+        # Only write tokens can list drafts, so they never take part in version allocation.
+        before = release.plan(self.discover("experimental"))["versionCandidate"]
         self.fake.releases["mekhq"].append({"id": 5, "tag_name": "v0.51.02.7", "draft": True})
-        self.assertEqual(release.plan(self.discover("experimental"))["versionCandidate"],
-                         "0.51.02.8")
+        inventory = self.discover("experimental")
+        self.assertNotIn("v0.51.02.7", inventory["releases"]["mekhq"])
+        self.assertEqual(before, release.plan(inventory)["versionCandidate"])
+        self.fake.releases["mekhq"].append({"id": 6, "tag_name": "v0.51.02.8", "draft": "no"})
+        with self.assertRaises(release.UnsafeInventory):
+            self.discover("experimental")
 
 
 if __name__ == "__main__":

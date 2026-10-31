@@ -1879,6 +1879,9 @@ public class Princess extends BotClient {
                       ammoConservation);
                 if ((plan != null) && (plan.getExpectedDamage() > 0)) {
                     getFireControl(shooter).loadAmmo(shooter, plan);
+                }
+                // loading ammo drops any shot that no bin has shots left for
+                if ((plan != null) && !plan.isEmpty() && (plan.getExpectedDamage() > 0)) {
                     plan.sortPlan();
 
                     // Log info and debug at different levels
@@ -2208,7 +2211,13 @@ public class Princess extends BotClient {
                     }
                     ammoCount += ammoCounts.get(ammoType);
                 }
-                msg.append(" has ").append(ammoCount).append(" shots left");
+                // Launchers that share a pool each get their part of it, or ten launchers on ten shots would each
+                // fire as if all ten were theirs
+                final int sharingLaunchers = countLaunchersSharingAmmo(shooter, weaponType, ammoCounts.keySet());
+                final int pooledShots = ammoCount;
+                ammoCount = (pooledShots + sharingLaunchers - 1) / sharingLaunchers;
+                msg.append(" has ").append(pooledShots).append(" shots left, shared by ").append(sharingLaunchers)
+                      .append(" launchers: ").append(ammoCount).append(" each");
                 // Desired behavior, with 7 / 3 / 1 rounds left:
                 // At min aggro (0 of 10), fire on TN 10, 9, 7
                 // At normal aggro (5 of 10), fire on 12, 11, 10
@@ -2224,6 +2233,48 @@ public class Princess extends BotClient {
         } finally {
             LOGGER.debug(msg.toString());
         }
+    }
+
+    /**
+     * Counts the ammo-using weapons on the shooter that can fire the same ammo as the given weapon, the weapon itself
+     * included.
+     *
+     * @param shooter    the unit whose weapons are counted
+     * @param weaponType the weapon whose ammo is being shared
+     * @param ammoTypes  the ammo types the shooter carries
+     *
+     * @return how many launchers draw on that ammo, at least 1
+     */
+    private static int countLaunchersSharingAmmo(final Entity shooter, final WeaponType weaponType,
+          final Set<AmmoType> ammoTypes) {
+        final List<AmmoType> usableAmmoTypes = new ArrayList<>();
+        for (final AmmoType ammoType : ammoTypes) {
+            if (AmmoType.isAmmoValid(ammoType, weaponType)) {
+                usableAmmoTypes.add(ammoType);
+            }
+        }
+        int launchers = 0;
+        for (final WeaponMounted otherWeapon : shooter.getWeaponList()) {
+            final WeaponType otherWeaponType = otherWeapon.getType();
+            final boolean isReloadable = (otherWeaponType instanceof AmmoWeapon)
+                  && !otherWeaponType.hasFlag(WeaponType.F_ONE_SHOT);
+            if (isReloadable && firesAnyOf(otherWeaponType, usableAmmoTypes)) {
+                launchers++;
+            }
+        }
+        return Math.max(1, launchers);
+    }
+
+    /**
+     * @return {@code true} if the weapon can fire at least one of the given ammo types
+     */
+    private static boolean firesAnyOf(final WeaponType weaponType, final List<AmmoType> ammoTypes) {
+        for (final AmmoType ammoType : ammoTypes) {
+            if (AmmoType.isAmmoValid(ammoType, weaponType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -3080,6 +3131,7 @@ public class Princess extends BotClient {
                     // A unit that cannot walk on (a tractor towing trailers) deploys in the deployment phase; the
                     // server rejects it here, which wasted the movement turn
                     if ((deployEntity != null) && !deployEntity.isDone() && !deployEntity.isOffBoard()
+                          && !deployEntity.isTransported() && !isRefusedThisPhase(deployEntity)
                           && canWalkOnThisRound(deployEntity)) {
                         LOGGER.info("Choosing {} to deploy during the movement phase.", deployEntity.getDisplayName());
                         return deployEntity;
@@ -3088,7 +3140,8 @@ public class Princess extends BotClient {
             }
 
             for (final Entity entity : getEntitiesOwned()) {
-                if (entity.isDone() || entity.isOffBoard()) {
+                // A carried unit enters with its transport; the server refuses a move for it
+                if (entity.isDone() || entity.isOffBoard() || entity.isTransported() || isRefusedThisPhase(entity)) {
                     continue;
                 }
                 if (((entity.getPosition() == null) || !entity.isDeployed()) && canWalkOnThisRound(entity)) {
@@ -3108,6 +3161,11 @@ public class Princess extends BotClient {
 
             if (entity.isDone()) {
                 msg.append("has already moved this phase");
+                continue;
+            }
+
+            if (isRefusedThisPhase(entity)) {
+                msg.append("had its move refused by the server this phase.");
                 continue;
             }
 

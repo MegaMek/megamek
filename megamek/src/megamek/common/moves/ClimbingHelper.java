@@ -58,7 +58,10 @@ public final class ClimbingHelper {
     /** MP cost per level when climbing with one functional hand. */
     public static final int MP_COST_ONE_HAND = 3;
 
-    /** PSR modifier applied to all piloting rolls while climbing. */
+    /**
+     * Rules value (TO:AR p.20): +1 to piloting rolls made while climbing, but not to the climbing roll itself. Not
+     * applied anywhere yet; the climbing roll uses {@link #getClimbingRollModifier(Mek)} instead.
+     */
     public static final int CLIMBING_PSR_MODIFIER = 1;
 
     /** Additional PSR modifier when climbing with only one functional arm. */
@@ -336,6 +339,19 @@ public final class ClimbingHelper {
      */
     public static int getClimbingMPCostPerLevel(Mek mek) {
         return (countClimbableArms(mek) >= 2) ? MP_COST_TWO_HANDS : MP_COST_ONE_HAND;
+    }
+
+    /**
+     * Returns the modifier for the Piloting Skill Roll made for each level climbed up or down (TO:AR p.20). The
+     * {@link #CLIMBING_PSR_MODIFIER} does not apply to this roll ("but not the climbing roll itself"); only the
+     * {@link #ONE_ARM_PSR_MODIFIER} does, when a single arm is climbing.
+     *
+     * @param mek the climbing Mek
+     *
+     * @return {@code 2} when the Mek climbs with one arm, otherwise {@code 0}
+     */
+    public static int getClimbingRollModifier(Mek mek) {
+        return (countClimbableArms(mek) == 1) ? ONE_ARM_PSR_MODIFIER : 0;
     }
 
     /**

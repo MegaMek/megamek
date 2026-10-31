@@ -1289,16 +1289,13 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         for (Coords buildingCoords : getCoordsList()) {
             Hex targetHex = board.getHex(buildingCoords);
             if (targetHex != null) {
-                // Remove any existing building at this hex
+                // Remove any existing building at this hex. It must leave the server's building list too, the same as
+                // the clients drop it on the remove packet; a building left in the list still claims this hex after this
+                // building collapses, and any check that targets its hexes then finds no building there.
                 Optional<IBuilding> existingBuilding = getGame().getBuildingAt(buildingCoords, boardId);
                 if (existingBuilding.isPresent() && !existingBuilding.get().equals(this)) {
                     removedBuildings.add(existingBuilding.get());
-                    targetHex.removeTerrain(Terrains.BUILDING);
-                    targetHex.removeTerrain(Terrains.BLDG_CF);
-                    targetHex.removeTerrain(Terrains.BLDG_ELEV);
-                    targetHex.removeTerrain(Terrains.BLDG_CLASS);
-                    targetHex.removeTerrain(Terrains.BLDG_ARMOR);
-                    targetHex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
+                    board.removeBuilding(existingBuilding.get());
                 }
 
                 // Add building terrain with the building type

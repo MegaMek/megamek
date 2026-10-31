@@ -3147,6 +3147,23 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
     }
 
     @Override
+    public void clearGameState() {
+        super.clearGameState();
+        // Back to the flight mode and altitude every aerospace unit starts a game with
+        setMovementMode(isSpheroid() ? EntityMovementMode.SPHEROID : EntityMovementMode.AERODYNE);
+        setAltitude(5);
+        setCurrentVelocity(0);
+        setNextVelocity(0);
+        outControl = false;
+        outCtrlHeat = false;
+        randomMove = false;
+        rolled = false;
+        // The round refers to the last game; engines that are still destroyed count as lost before this game starts,
+        // and repaired ones as not lost at all
+        enginesLostRound = (engineHits >= getMaxEngineHits()) ? 0 : Integer.MAX_VALUE;
+    }
+
+    @Override
     public boolean isFlyingOff() {
         return flyingOff != OffBoardDirection.NONE;
     }

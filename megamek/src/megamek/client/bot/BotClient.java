@@ -46,7 +46,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -144,9 +146,69 @@ public abstract class BotClient extends Client {
     int lastCalculatedTurnIndex = -1;
     int calculatedTurnsThisPhase = 0;
 
+    /**
+     * The unit this bot last sent a move for, and the turn index it was sent on, so a refusal can be traced. Written
+     * on the calc thread and read on the turn-change listener thread.
+     */
+    private volatile int lastMovedEntityId = Entity.NONE;
+    private volatile int lastMovedTurnIndex = -1;
+
+    /**
+     * Units whose move the server refused this phase. The bot leaves them out when it picks a unit to move, so a
+     * restarted turn cannot pick the same refused unit again, and each unit can restart a turn at most once. Changed on the turn-change listener thread and read on the calc thread.
+     */
+    private final Set<Integer> refusedEntityIds = ConcurrentHashMap.newKeySet();
+
     /** Test seam for the spawn decision: would a turn-change event at this turn index spawn a calc? */
     boolean shouldSpawnForTest(int turnIndex) {
         return turnIndex != lastCalculatedTurnIndex;
+    }
+
+    /**
+     * Whether a turn-change event is the server handing back a turn it refused. The server resends the same turn
+     * index, naming this bot as the previous player, when it rejects the bot's move. Only a move this bot sent on
+     * that same turn index counts, and only once per unit, so a unit that keeps being refused cannot loop.
+     *
+     * @param turnIndex         the turn index of the event
+     * @param previousPlayerId  the previous player id the event carries
+     * @param simultaneousPhase whether the current phase is simultaneous, where duplicate events are normal
+     *
+     * @return {@code true} when the bot should start this turn over
+     */
+    boolean isRefusedTurnRestart(int turnIndex, int previousPlayerId, boolean simultaneousPhase) {
+        return (turnIndex == lastCalculatedTurnIndex)
+              && !simultaneousPhase
+              && (previousPlayerId == localPlayerNumber)
+              && (lastMovedTurnIndex == turnIndex)
+              && (lastMovedEntityId != Entity.NONE)
+              && !refusedEntityIds.contains(lastMovedEntityId);
+    }
+
+    /**
+     * Records the refused unit and clears the turn dedupe, so the next spawn check calculates this turn again.
+     */
+    void startRefusedTurnOver() {
+        refusedEntityIds.add(lastMovedEntityId);
+        LOGGER.warn("[TurnRestart] {}: the server refused the move for entity ID {} on turn {}; "
+                    + "starting the turn over without it",
+              getName(), lastMovedEntityId, lastMovedTurnIndex);
+        lastCalculatedTurnIndex = -1;
+    }
+
+    /**
+     * @param entity the unit to check
+     *
+     * @return {@code true} if the server refused a move for this unit earlier in this phase
+     */
+    public boolean isRefusedThisPhase(@Nullable Entity entity) {
+        return (entity != null) && refusedEntityIds.contains(entity.getId());
+    }
+
+    @Override
+    public void moveEntity(int id, MovePath md) {
+        lastMovedEntityId = id;
+        lastMovedTurnIndex = game.getTurnIndex();
+        super.moveEntity(id, md);
     }
 
     // Let bots remember whether they've rerolled an initiative roll this round
@@ -225,6 +287,11 @@ public abstract class BotClient extends Client {
                 // verbatim by this very log line ("myTurn true ... -> skipping") after ~50 corrupted
                 // benchmark games. A turn the server says is ours is ours.
                 boolean myTurn = isMyTurn();
+                // The one exception: the server refused our move and handed the same turn back
+                if (myTurn && isRefusedTurnRestart(game.getTurnIndex(), e.getPreviousPlayerId(),
+                      getGame().getPhase().isSimultaneous(getGame()))) {
+                    startRefusedTurnOver();
+                }
                 boolean alreadySpawnedForThisTurn = (game.getTurnIndex() == lastCalculatedTurnIndex);
                 LOGGER.info("{}: turn change - phase {}, turnIndex {}, prevPlayer {}, me {}, "
                             + "myTurn {}, alreadySpawnedForThisTurn {} -> {}",
@@ -264,6 +331,9 @@ public abstract class BotClient extends Client {
                 LOGGER.info("{}: phase change {} -> {}, resetting lastCalculatedTurnIndex (was {})",
                       getName(), e.getOldPhase(), e.getNewPhase(), lastCalculatedTurnIndex);
                 lastCalculatedTurnIndex = -1;
+                refusedEntityIds.clear();
+                lastMovedEntityId = Entity.NONE;
+                lastMovedTurnIndex = -1;
                 rerolledInitiative = false;
                 if (!getGame().getPhase().isLounge()) {
                     requestedTrains.clear();

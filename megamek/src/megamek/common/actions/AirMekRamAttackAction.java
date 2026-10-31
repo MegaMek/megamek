@@ -37,6 +37,7 @@ import java.io.Serial;
 import java.util.ListIterator;
 
 import megamek.common.Hex;
+import megamek.common.Messages;
 import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
@@ -296,7 +297,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         // water partial cover?
         if ((targetEntity.height() > 0) && (targetEntity.getElevation() == -1)
               && (targHex.terrainLevel(Terrains.WATER) == targetEntity.height())) {
-            toHit.addModifier(1, "target has partial cover");
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTargetHasPartialCover"));
         }
 
         // target immobile

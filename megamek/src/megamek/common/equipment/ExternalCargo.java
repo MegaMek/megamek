@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -254,6 +254,23 @@ public abstract class ExternalCargo implements Transporter {
             }
         }
         return carried;
+    }
+
+    /**
+     * Swaps any carried copy of the given unit for the given instance. A unit carried here is stored as an object, so
+     * when the game replaces that unit with a new copy (a lobby edit arrives from a client), this transporter would
+     * otherwise keep the old one, and unloading it would place a copy the game no longer tracks.
+     *
+     * @param carriedUnit the game's current instance of a unit this transporter may carry
+     */
+    public void relinkCarriedUnit(Entity carriedUnit) {
+        for (List<ICarryable> carryables : carriedObjects.values()) {
+            for (int index = 0; index < carryables.size(); index++) {
+                if (carriedUnit.equals(carryables.get(index))) {
+                    carryables.set(index, carriedUnit);
+                }
+            }
+        }
     }
 
     /**

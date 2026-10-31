@@ -1,23 +1,16 @@
 #!/usr/bin/env python3
-"""Manual suite release driver. Prepare with read token; finish with scoped App token."""
+"""Suite release driver. Prepare with a read token; finish with the scoped App token."""
 
 import argparse
 import hashlib
 import json
 import os
-import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
-from suite_release_plan import (
-    REPOS, UnsafeInventory, check_product_assets, discovered_inventory,
-    download_asset, gh_get, parse_json, plan, release_details, release_inventory,
-)
+from suite_release_plan import CHANNELS, REPOS, UnsafeInventory, discovered_inventory, parse_json, plan
 from suite_pinned_build import build
-from suite_pinned_build import clean, stage
-from suite_archive_attestation import attest_archives
-from suite_release_publish import GitHubWrites, exact_asset, publish_approved
+from suite_release_publish import GitHubWrites, publish_approved
 
 
 def digest(path):
@@ -34,30 +27,19 @@ def save(path, value):
         output.write("\n")
 
 
-def prepare(membership, bootstrap, floor, sources, state,
-            *, discover=discovered_inventory, builder=build):
+def prepare(channel, branch, rehearsal, sources, state, *, discover=discovered_inventory,
+            builder=build):
+    """Freeze, plan and (unless nothing changed) build. Never writes remotely."""
     if state.exists():
         raise UnsafeInventory("state directory already exists")
     state.mkdir()
-    prior_dir = state / "prior"
-    def attest_previous(record, paths):
-        commits = {repo: record["products"][product]["commit"]
-                   for product, repo in REPOS.items()}
-        commits["mm-data"] = record["mmData"]["commit"]
-        with tempfile.TemporaryDirectory(prefix="suite-prior-verifiers-") as temp:
-            worktrees = stage(sources, commits, Path(temp), subprocess.run)
-            # Historical bytes use their pinned verifier contract, not a new installation contract.
-            attest_archives(record, paths, worktrees=worktrees, portable=False)
-            for repo in commits:
-                clean(Path(temp) / repo, commits[repo], subprocess.run)
-
-    inventory = discover(membership, bootstrap=bootstrap, bootstrap_floor=floor,
-                         retain=prior_dir, attest=attest_previous)
+    inventory = discover(channel, branch, rehearsal)
     proposal = plan(inventory)
     save(state / "inventory.json", inventory)
-    prior = ({product: prior_dir / inventory["previous"]["products"][product]["asset"]["name"]
-              for product in REPOS} if inventory["previous"] else {})
-    result = builder(inventory, sources, prior, state / "archives", bootstrap=bootstrap)
+    if proposal["noop"]:
+        save(state / "seal.json", {"inventory": digest(state / "inventory.json")})
+        return proposal
+    result = builder(inventory, sources, state / "archives")
     save(state / "build_result.json", result)
     # Bind both immutable inputs and resulting archive bytes for finish.
     save(state / "seal.json", {
@@ -68,83 +50,107 @@ def prepare(membership, bootstrap, floor, sources, state,
     return proposal
 
 
-def verify_noop(inventory, paths, *, getter=gh_get, fetch=download_asset):
-    previous = inventory["previous"]
-    if not plan(inventory)["weeklyNoopCandidate"] or previous is None:
-        raise UnsafeInventory("not a verified Weekly no-op candidate")
-    fresh = release_inventory(getter)
-    if any(fresh[key] != inventory[key] for key in ("tags", "releases")):
-        raise UnsafeInventory("remote release inventory moved after build")
-    details = release_details(getter)
-    from suite_release_plan import complete_record
-    if complete_record(details["megamek"], fetch) != previous:
-        raise UnsafeInventory("latest complete record moved after build")
-    check_product_assets(previous, details, fetch)
-    import tempfile
-    with tempfile.TemporaryDirectory() as directory:
-        for product, repo in REPOS.items():
-            exact_asset(previous["products"][product], details[repo], repo,
-                        fetch, Path(directory), getter)
-    for product in REPOS:
-        item = previous["products"][product]["asset"]
-        if digest(paths[product]) != item["sha256"]:
-            raise UnsafeInventory("local reused archive moved after build")
-    return previous
+def step_summary(lines):
+    """Append Markdown to the GitHub job summary; silent outside Actions."""
+    target = os.environ.get("GITHUB_STEP_SUMMARY")
+    if target:
+        with Path(target).open("a", encoding="utf-8") as output:
+            output.write("\n".join(lines) + "\n\n")
 
 
-def finish(state, sources, bootstrap, publish, *, publisher=publish_approved,
-           noop=verify_noop):
+def step_outputs(values):
+    """Expose values to later workflow steps; silent outside Actions."""
+    target = os.environ.get("GITHUB_OUTPUT")
+    if target:
+        with Path(target).open("a", encoding="utf-8") as output:
+            for key, value in values.items():
+                output.write(f"{key}={value}\n")
+
+
+def prepared_summary(proposal, state):
+    title = "Core" if proposal["channel"] == "core" else "Experimental"
+    if proposal["rehearsal"]:
+        title += " cut rehearsal"
+    commits = proposal["frozenCommits"]
+    lines = [f"## {title} {proposal['versionCandidate']} from `{proposal['branch']}`", ""]
+    if proposal["noop"]:
+        lines.append(f"Nothing changed since {proposal['previousTag']}; nothing was built "
+                     "and nothing will be published.")
+    else:
+        seal = parse_json((state / "seal.json").read_bytes())
+        lines += ["| Product | SHA-256 |", "| --- | --- |"]
+        lines += [f"| {product} | `{seal['archives'][product]}` |" for product in REPOS]
+        lines += ["", "Previous release in this channel: "
+                  + (proposal["previousTag"] or "none")]
+    lines += ["", "Frozen sources: " + ", ".join(
+        f"[{repo}@{sha[:10]}](https://github.com/MegaMek/{repo}/commit/{sha})"
+        for repo, sha in commits.items())]
+    return lines
+
+
+def finish(state, sources, publish, *, publisher=publish_approved):
     inventory_path = state / "inventory.json"
-    build_path = state / "build_result.json"
     seal = parse_json((state / "seal.json").read_bytes())
-    if digest(inventory_path) != seal["inventory"] or digest(build_path) != seal["build"]:
-        raise UnsafeInventory("sealed inventory or build result changed")
+    if digest(inventory_path) != seal["inventory"]:
+        raise UnsafeInventory("sealed inventory changed")
     inventory = parse_json(inventory_path.read_bytes())
+    proposal = plan(inventory)
+    if proposal["noop"]:
+        return f"NOOP (nothing changed since {proposal['previousTag']}; nothing published)"
+    build_path = state / "build_result.json"
+    if digest(build_path) != seal["build"]:
+        raise UnsafeInventory("sealed build result changed")
     result = parse_json(build_path.read_bytes())
-    if bootstrap != (inventory["previous"] is None):
-        raise UnsafeInventory("bootstrap intent differs from prepared inventory")
     if set(result.get("archives", {})) != set(REPOS) or set(seal["archives"]) != set(REPOS):
         raise UnsafeInventory("missing sealed archives")
     for product in REPOS:
         path = Path(result["archives"][product])
         if not path.is_file() or digest(path) != seal["archives"][product]:
             raise UnsafeInventory("sealed archive changed")
-    proposal = plan(inventory)
-    if proposal["weeklyNoopCandidate"]:
-        noop(inventory, result["archives"])
-        return ("DRY_RUN_VERIFIED_WEEKLY_NOOP" if not publish else
-                "VERIFIED_WEEKLY_NOOP") + " (no new record or writes)"
     if not publish:
         # A dry run never calls the publisher, even if a write token is present.
-        return "DRY_RUN_ONLY (pinned archives built; no release or record published)"
-    publisher(inventory, result, sources, bootstrap=bootstrap, writes=GitHubWrites())
-    return "PUBLISHED_COMPLETE_RECORD"
+        return "DRY_RUN_ONLY (archives built and verified; nothing published)"
+    if proposal["rehearsal"]:
+        raise UnsafeInventory("a cut rehearsal never publishes")
+    publisher(inventory, result, sources, writes=GitHubWrites())
+    return f"PUBLISHED {proposal['channel']} {proposal['versionCandidate']}"
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("phase", choices=("prepare", "finish"))
-    parser.add_argument("--membership", choices=("weekly", "milestone", "development"))
-    parser.add_argument("--bootstrap", action="store_true")
-    parser.add_argument("--bootstrap-floor")
+    parser.add_argument("--channel", choices=CHANNELS)
+    parser.add_argument("--branch", help="Core only: build this releases/<line> branch "
+                        "instead of the newest one")
+    parser.add_argument("--rehearsal", action="store_true",
+                        help="Core cut dry run: build main as if it were the new Core line")
     parser.add_argument("--sources", type=Path, required=True)
     parser.add_argument("--state", type=Path, required=True)
     parser.add_argument("--publish", action="store_true")
     args = parser.parse_args()
     try:
         if args.phase == "prepare":
-            if args.publish or args.membership is None:
-                raise UnsafeInventory("prepare requires membership and forbids publish")
-            proposal = prepare(args.membership, args.bootstrap, args.bootstrap_floor,
+            if args.publish or args.channel is None:
+                raise UnsafeInventory("prepare requires a channel and forbids publish")
+            if args.channel == "experimental" and (args.branch or args.rehearsal):
+                raise UnsafeInventory("Experimental always builds main")
+            proposal = prepare(args.channel, args.branch or None, args.rehearsal,
                                args.sources, args.state)
             print("PREPARED: " + json.dumps(proposal))
+            step_outputs({"noop": str(proposal["noop"]).lower(),
+                          "version": proposal["versionCandidate"],
+                          "branch": proposal["branch"]})
+            step_summary(prepared_summary(proposal, args.state))
         else:
-            if args.membership or args.bootstrap_floor:
-                raise UnsafeInventory("finish reads sealed membership and floor")
-            print(finish(args.state, args.sources, args.bootstrap, args.publish))
+            if args.channel or args.branch or args.rehearsal:
+                raise UnsafeInventory("finish reads the sealed channel and branch")
+            outcome = finish(args.state, args.sources, args.publish)
+            print(outcome)
+            step_summary([f"**Result:** `{outcome}`"])
         return 0
     except (UnsafeInventory, ValueError, OSError, KeyError, TypeError) as error:
         print(f"BLOCKED: {error}", file=sys.stderr)
+        step_summary([f"**BLOCKED during {args.phase}:**", "", "```", str(error), "```"])
         return 2
 
 

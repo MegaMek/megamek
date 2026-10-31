@@ -32,7 +32,12 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -548,8 +553,8 @@ public class AvailabilityPanel {
         if (record != null) {
             for (String factionCode : record.getIncludedFactions()) {
                 List<Object> rowData = new ArrayList<>();
-                String baseAbbr = factionCode.split("\\.")[0];
-                ImageIcon factionIcon = RAT_GENERATOR.getFactionLogo(0, baseAbbr, Color.WHITE);
+                // Use the full code: a command may have its own icon, and one without inherits its parent's
+                ImageIcon factionIcon = RATGenerator.getFactionLogo(0, factionCode, Color.WHITE);
                 if (factionIcon != null) {
                     factionIcon = new ImageIcon(ImageUtil.getScaledImage(factionIcon.getImage(), ICON_SIZE, ICON_SIZE));
                 }

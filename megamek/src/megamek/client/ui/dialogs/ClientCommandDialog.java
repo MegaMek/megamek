@@ -464,10 +464,10 @@ public class ClientCommandDialog extends JDialog {
 
             if (component instanceof JSpinner) {
                 args[i] = argument.getName() + "=" + ((JSpinner) component).getValue().toString();
-            } else if (component instanceof JPasswordField) {
-                args[i] = argument.getName() + "=" + new String(((JPasswordField) component).getPassword());
-            } else if (component instanceof JTextField) {
-                args[i] = argument.getName() + "=" + ((JTextField) component).getText();
+            } else if (component instanceof JPasswordField passwordField) {
+                args[i] = namedArgumentUnlessBlank(argument, new String(passwordField.getPassword()));
+            } else if (component instanceof JTextField textField) {
+                args[i] = namedArgumentUnlessBlank(argument, textField.getText());
             } else if (component instanceof JCheckBox) {
                 args[i] = argument.getName() + "=" + (((JCheckBox) component).isSelected());
             } else if (component instanceof JComboBox) {
@@ -505,5 +505,25 @@ public class ClientCommandDialog extends JDialog {
         // the command is on its way and the dialog has nothing more to say; leaving it open over the board only hides
         // the result the gamemaster wants to see
         dispose();
+    }
+
+    /**
+     * Builds the "argumentName=argumentValue" form of a typed-in argument, or nothing when the field was left blank.
+     *
+     * <p>A blank field must be left out rather than sent as "argumentName=": the server splits each argument on "=",
+     * and "password=" splits into the name alone, which it then reads as a positional argument following named ones
+     * and refuses the whole command. Left out, the argument falls back to its default, which for an optional one such
+     * as the server password of the Kick Player dialog is "none given".</p>
+     *
+     * @param argument The argument the field belongs to
+     * @param value    What was typed into the field
+     *
+     * @return The named argument, or an empty string when the field was blank
+     */
+    static String namedArgumentUnlessBlank(Argument<?> argument, String value) {
+        if (value.isBlank()) {
+            return "";
+        }
+        return argument.getName() + "=" + value;
     }
 }

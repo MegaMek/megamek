@@ -1157,17 +1157,17 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           rulesRefs(SourceBookCode.TM, 208));
 
-    private static final MunitionMutator CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
+    private static final MunitionMutator CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR = new MunitionMutator(
           "Precision",
           (5.0 / 3),
           Munitions.M_PRECISION,
           new TechAdvancement(TechBase.CLAN)
-                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false),
-          rulesRefs(SourceBookCode.CORE, 190));
+          rulesRefs(SourceBookCode.IO_AE, 90));
 
     private static final MunitionMutator CLAN_IMPROVED_TRACER_MUNITION_MUTATOR = new MunitionMutator("Tracer",
           1,
@@ -1399,6 +1399,18 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          rulesRefs(SourceBookCode.IO_AE, 159));
+
+    // IO:AE 3rd printing: Clan ratings C/XEEE (p.159); damage and radius identical to the Inner Sphere round (p.160)
+    private static final MunitionMutator CLAN_FUEL_AIR_MUNITION_MUTATOR = new MunitionMutator("Fuel-Air", "FA",
+          1,
+          Munitions.M_FAE,
+          new TechAdvancement(TechBase.CLAN)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
+                .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           rulesRefs(SourceBookCode.IO_AE, 159));
 
@@ -3556,7 +3568,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CASELESS_MUNITION_MUTATOR);
         munitions.add(FLAK_MUNITION_MUTATOR);
         munitions.add(CLAN_IMPROVED_FLECHETTE_MUNITION_MUTATOR);
-        munitions.add(CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR_UNOFFICIAL);
+        munitions.add(CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR);
         munitions.add(CLAN_IMPROVED_TRACER_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanImprovedAcAmmo, munitions);
 
@@ -3589,7 +3601,6 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for Clan Arrow IV launchers.
         munitions.clear();
         // TODO - Implement them.
-        // TODO: Fuel-Air Mutators (See IO 165)
         // TODO: Thunder-Active-IV (See IO 165)
         munitions.add(CLAN_ADA_MUNITION_MUTATOR);
         munitions.add(CLAN_CLUSTER_MUNITION_MUTATOR_FOR_ARROW);
@@ -3600,6 +3611,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_SMOKE_MUNITION_MUTATOR_FOR_ARROW_IV);
         munitions.add(CLAN_THUNDER_FASCAM_MUNITION_MUTATOR);
         munitions.add(CLAN_THUNDER_VIBRABOMB_IV_MUNITION_MUTATOR);
+        munitions.add(CLAN_FUEL_AIR_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanArrowAmmos, munitions);
 
         // create the munition types for clan vehicular grenade launchers

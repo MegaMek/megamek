@@ -46,7 +46,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -144,9 +146,69 @@ public abstract class BotClient extends Client {
     int lastCalculatedTurnIndex = -1;
     int calculatedTurnsThisPhase = 0;
 
+    /**
+     * The unit this bot last sent a move for, and the turn index it was sent on, so a refusal can be traced. Written
+     * on the calc thread and read on the turn-change listener thread.
+     */
+    private volatile int lastMovedEntityId = Entity.NONE;
+    private volatile int lastMovedTurnIndex = -1;
+
+    /**
+     * Units whose move the server refused this phase. The bot leaves them out when it picks a unit to move, so a
+     * restarted turn cannot pick the same refused unit again, and each unit can restart a turn at most once. Changed on the turn-change listener thread and read on the calc thread.
+     */
+    private final Set<Integer> refusedEntityIds = ConcurrentHashMap.newKeySet();
+
     /** Test seam for the spawn decision: would a turn-change event at this turn index spawn a calc? */
     boolean shouldSpawnForTest(int turnIndex) {
         return turnIndex != lastCalculatedTurnIndex;
+    }
+
+    /**
+     * Whether a turn-change event is the server handing back a turn it refused. The server resends the same turn
+     * index, naming this bot as the previous player, when it rejects the bot's move. Only a move this bot sent on
+     * that same turn index counts, and only once per unit, so a unit that keeps being refused cannot loop.
+     *
+     * @param turnIndex         the turn index of the event
+     * @param previousPlayerId  the previous player id the event carries
+     * @param simultaneousPhase whether the current phase is simultaneous, where duplicate events are normal
+     *
+     * @return {@code true} when the bot should start this turn over
+     */
+    boolean isRefusedTurnRestart(int turnIndex, int previousPlayerId, boolean simultaneousPhase) {
+        return (turnIndex == lastCalculatedTurnIndex)
+              && !simultaneousPhase
+              && (previousPlayerId == localPlayerNumber)
+              && (lastMovedTurnIndex == turnIndex)
+              && (lastMovedEntityId != Entity.NONE)
+              && !refusedEntityIds.contains(lastMovedEntityId);
+    }
+
+    /**
+     * Records the refused unit and clears the turn dedupe, so the next spawn check calculates this turn again.
+     */
+    void startRefusedTurnOver() {
+        refusedEntityIds.add(lastMovedEntityId);
+        LOGGER.warn("[TurnRestart] {}: the server refused the move for entity ID {} on turn {}; "
+                    + "starting the turn over without it",
+              getName(), lastMovedEntityId, lastMovedTurnIndex);
+        lastCalculatedTurnIndex = -1;
+    }
+
+    /**
+     * @param entity the unit to check
+     *
+     * @return {@code true} if the server refused a move for this unit earlier in this phase
+     */
+    public boolean isRefusedThisPhase(@Nullable Entity entity) {
+        return (entity != null) && refusedEntityIds.contains(entity.getId());
+    }
+
+    @Override
+    public void moveEntity(int id, MovePath md) {
+        lastMovedEntityId = id;
+        lastMovedTurnIndex = game.getTurnIndex();
+        super.moveEntity(id, md);
     }
 
     // Let bots remember whether they've rerolled an initiative roll this round
@@ -225,6 +287,11 @@ public abstract class BotClient extends Client {
                 // verbatim by this very log line ("myTurn true ... -> skipping") after ~50 corrupted
                 // benchmark games. A turn the server says is ours is ours.
                 boolean myTurn = isMyTurn();
+                // The one exception: the server refused our move and handed the same turn back
+                if (myTurn && isRefusedTurnRestart(game.getTurnIndex(), e.getPreviousPlayerId(),
+                      getGame().getPhase().isSimultaneous(getGame()))) {
+                    startRefusedTurnOver();
+                }
                 boolean alreadySpawnedForThisTurn = (game.getTurnIndex() == lastCalculatedTurnIndex);
                 LOGGER.info("{}: turn change - phase {}, turnIndex {}, prevPlayer {}, me {}, "
                             + "myTurn {}, alreadySpawnedForThisTurn {} -> {}",
@@ -264,6 +331,9 @@ public abstract class BotClient extends Client {
                 LOGGER.info("{}: phase change {} -> {}, resetting lastCalculatedTurnIndex (was {})",
                       getName(), e.getOldPhase(), e.getNewPhase(), lastCalculatedTurnIndex);
                 lastCalculatedTurnIndex = -1;
+                refusedEntityIds.clear();
+                lastMovedEntityId = Entity.NONE;
+                lastMovedTurnIndex = -1;
                 rerolledInitiative = false;
                 if (!getGame().getPhase().isLounge()) {
                     requestedTrains.clear();
@@ -763,10 +833,11 @@ public abstract class BotClient extends Client {
                     // intentional fallthrough: all reports must click "done", otherwise the game
                     // never moves on.
                 case INITIATIVE_REPORT:
-                    // Let bots use Tactical Genius
+                    // Let bots use Tactical Genius. END_REPORT falls through to here, but the server only accepts a
+                    // reroll in the Initiative Report phase, so only decide then.
                     DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - start", getName(),
                           phase);
-                    boolean rerollInitiative = decideToRerollInitiative();
+                    boolean rerollInitiative = phase.isInitiativeReport() && decideToRerollInitiative();
                     DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - finished, reroll={}",
                           getName(), phase, rerollInitiative);
                     if (rerollInitiative) {
@@ -1332,7 +1403,8 @@ public abstract class BotClient extends Client {
         // edge,
         // even when considering terrain destruction
         // attempt to deploy in the biggest area this unit can access instead
-        if (highestFitness < -10) {
+        // (a unit that cannot move accesses no area, so the size of one says nothing about the hex)
+        if ((highestFitness < -10) && !cannotMove(deployed_ent)) {
             for (RankedCoords rc : validCoords) {
                 rc.fitness += getClusterTracker().getBoardClusterSize(deployed_ent, rc.coords, false);
             }
@@ -1350,6 +1422,18 @@ public abstract class BotClient extends Client {
     }
 
     /**
+     * Whether a unit can neither walk nor jump, such as a building or an emplacement. Deployment scores built on where a
+     * unit can go from a hex, such as edge access or open paths around it, mean nothing for such a unit.
+     *
+     * @param entity the unit being deployed
+     *
+     * @return {@code true} if the unit has no walking or jumping movement
+     */
+    protected static boolean cannotMove(Entity entity) {
+        return (entity.getWalkMP() == 0) && (entity.getAnyTypeMaxJumpMP() == 0);
+    }
+
+    /**
      * Determines if the given entity has reasonable access to the "opposite" edge of the board from its current
      * position. Returns 0 if this can be accomplished without destroying any terrain, -50 if this can be accomplished
      * but terrain must be destroyed, -100 if this cannot be accomplished at all
@@ -1357,6 +1441,10 @@ public abstract class BotClient extends Client {
     private int calculateEdgeAccessFitness(Entity entity, Board board) {
         // Flying units can always get anywhere
         if (entity.isAirborne() || entity instanceof VTOL) {
+            return 0;
+        }
+        // A unit that cannot move is never going anywhere, from any hex
+        if (cannotMove(entity)) {
             return 0;
         }
 

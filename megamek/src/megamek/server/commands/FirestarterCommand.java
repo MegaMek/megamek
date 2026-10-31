@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -96,7 +96,7 @@ public class FirestarterCommand extends GamemasterServerCommand {
         try {
             Hex hex = gameManager.getGame().getBoard().getHex(coords);
             Objects.requireNonNull(hex, "Hex not found.");
-            gameManager.ignite(coords, fireType, gameManager.getMainPhaseReport());
+            gameManager.igniteByGameMaster(coords, fireType, gameManager.getMainPhaseReport());
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to ignite hex: " + e.getMessage());
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,8 +44,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import megamek.common.Player;
+import megamek.common.Team;
 import megamek.common.actions.EntityAction;
 import megamek.common.game.IGame;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.interfaces.PlanetaryConditionsUsing;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -123,6 +125,20 @@ public record GameManagerPacketHelper(AbstractGameManager gameManager) {
      */
     public Packet createTurnIndexPacket(int previousPlayerId) {
         return new Packet(PacketCommand.TURN, game().getTurnIndex(), previousPlayerId);
+    }
+
+    /**
+     * @return A packet containing every team's initiative roll, keyed by player id. A player update only carries the
+     *       player's roll for ordering within their team; the team roll that decides who wins initiative is not in it.
+     */
+    public Packet createTeamInitiativePacket() {
+        HashMap<Integer, InitiativeRoll> teamRollsByPlayerId = new HashMap<>();
+        for (Team team : game().getTeams()) {
+            for (Player player : team.players()) {
+                teamRollsByPlayerId.put(player.getId(), new InitiativeRoll(team.getInitiative()));
+            }
+        }
+        return new Packet(PacketCommand.TEAM_INITIATIVE, teamRollsByPlayerId);
     }
 
     private IGame game() {

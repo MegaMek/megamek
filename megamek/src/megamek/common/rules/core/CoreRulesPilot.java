@@ -47,8 +47,11 @@ import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPilot;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.logging.MMLogger;
 
 public class CoreRulesPilot extends RulesPilot {
+    private static final MMLogger LOGGER = MMLogger.create(CoreRulesPilot.class);
 
     /**
      * Helper tool to roll the pilot con checks
@@ -137,9 +140,17 @@ public class CoreRulesPilot extends RulesPilot {
     @Override
     public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness,
           GamePhase phase) {
+        if (!usesEndOfPhaseConsciousnessRolls(e)) {
+            LOGGER.debug("[ConsciousnessRoll] {}: not a Mek in Mek or AirMek mode, rolling immediately per "
+                  + "Total Warfare", e.getShortName());
+            return super.pilotHits(e, totalHits, damage, crewPos, toughness, phase);
+        }
+
         Vector<Report> vDesc = new Vector<>();
 
         if (!phase.isMovement()) {
+            LOGGER.debug("[ConsciousnessRoll] {}: crew slot {} hit in {} phase, roll deferred to end of phase",
+                  e.getShortName(), crewPos, phase);
             Report r = new Report(3902);
             r.indent(2);
             r.subject = e.getId();
@@ -157,6 +168,19 @@ public class CoreRulesPilot extends RulesPilot {
         vDesc = (rollPilotHits(e, totalHits, crewPos, toughness));
 
         return vDesc;
+    }
+
+    /**
+     * Core Rules covers only Meks, so only a Mek gets its consciousness roll at the end of the phase. A LandAirMek
+     * counts as a Mek in Mek and AirMek mode but as an aerospace fighter in fighter mode. Every other unit rolls
+     * immediately under Total Warfare.
+     *
+     * @param entity the unit whose crew took a hit
+     *
+     * @return {@code true} if the Core end-of-phase timing applies to this unit
+     */
+    private boolean usesEndOfPhaseConsciousnessRolls(Entity entity) {
+        return (entity instanceof Mek) && !entity.isAero();
     }
 
     /**

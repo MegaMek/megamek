@@ -114,9 +114,9 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
      * deploy yet are stranded rather than delayed.
      */
     private final JButton reinforceFromFileButton =
-          new JButton(Messages.getString("CommonMenuBar.fileUnitsReinforce"));
+          new JButton(Messages.getString("GameMasterPlayerSetupDialog.reinforceFromFile"));
     private final JButton reinforceFromGeneratorButton =
-          new JButton(Messages.getString("CommonMenuBar.fileUnitsReinforceRAT"));
+          new JButton(Messages.getString("GameMasterPlayerSetupDialog.reinforceFromGenerator"));
 
 
     /** One player offered in the chooser, named rather than numbered. */

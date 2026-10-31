@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,30 +35,38 @@ package megamek.client.bot.princess.commands;
 import java.util.List;
 
 import megamek.client.bot.Messages;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
+import megamek.server.commands.arguments.OptionalIntegerArgument;
 import megamek.server.commands.arguments.UnitArgument;
 
 /**
- * Command to set a priority target unit for the bot.
+ * Command to set a priority target unit for the bot, optionally with a target priority from 1 (shoot first) to 5.
+ * Without one the unit gets the default, 3, which is how this command always behaved.
  *
  * @author Luana Coppio
  */
 public class PriorityTargetCommand implements ChatCommand {
     private static final String UNIT_ID = "unitID";
+    private static final String PRIORITY = "priority";
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              new UnitArgument(UNIT_ID, Messages.getString("Princess.command.priorityTarget.unitID"))
+              new UnitArgument(UNIT_ID, Messages.getString("Princess.command.priorityTarget.unitID")),
+              new OptionalIntegerArgument(PRIORITY, Messages.getString("Princess.command.priorityTarget.priority"),
+                    BehaviorSettings.HIGHEST_TARGET_PRIORITY, BehaviorSettings.LOWEST_TARGET_PRIORITY)
         );
     }
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        UnitArgument unitArg = arguments.get(UNIT_ID, UnitArgument.class);
-        princess.getBehaviorSettings().addPriorityUnit(unitArg.getValue());
-        princess.sendChat(Messages.getString("Princess.command.priorityTarget.success"));
+        int unitId = arguments.get(UNIT_ID, UnitArgument.class).getValue();
+        int priority = arguments.get(PRIORITY, OptionalIntegerArgument.class).getValue()
+              .orElse(BehaviorSettings.DEFAULT_TARGET_PRIORITY);
+        princess.getBehaviorSettings().setPriorityUnit(unitId, priority);
+        princess.sendChat(Messages.getString("Princess.command.priorityTarget.success", unitId, priority));
     }
 }

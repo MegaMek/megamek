@@ -1,0 +1,184 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-ebe2-7d45-b348-f7f79619e0b7
+</UUID>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Burke II Superheavy Tank
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+7328
+</mul id:>
+
+<year>
+2776
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<quirks>
+trailer_hitch
+distracting
+obsolete:2787
+prototype
+</quirks>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+7
+</armor_tech_level>
+
+<armor>
+22
+14
+14
+14
+14
+11
+18
+</armor>
+
+<Body Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo LRM-5
+</Body Equipment>
+
+<Front Equipment>
+LRM 5
+LRM 5
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+</Turret Equipment>
+
+<capabilities>
+<p>The Burke II mounts four class-20 autocannons in its main turret, delivering firepower that doubles even the most heavily armed standard combat vehicles and is capable of reducing most BattleMech chassis to wreckage through sheer volume of fire. A pair of front-mounted LRM-5 launchers provides supplemental long-range engagement capability, though in practice the autocannons' overwhelming close-range firepower made the missiles secondary to the crew's tactical priorities. The prototypes' crews reportedly fired the launchers infrequently, preferring to hold position and wait for opponents to close into autocannon range.</p><p>A 280-rated fusion engine moves the superheavy hull at modest speed for a vehicle of its class. Ferro-fibrous armor distributed across the massive frame, with the heaviest concentration in the frontal arc and turret, provides substantial protection. The Burke II's fundamental tactical limitation mirrors its greatest strength: the four autocannons demand that opponents close to effective range, but the vehicle lacks the mobility to force that engagement against a determined enemy who chooses to maintain distance. The design carried notable quirks including Distracting capability, Prototype status, and Trailer Hitch and Rumble Seat fittings.</p>
+</capabilities>
+
+<overview>
+<p>The Burke II Superheavy Tank is a one-hundred-forty-ton experimental tracked vehicle designed by Leopard Armor on Terra during the Amaris Civil War. Amaris forces occupying Terra, impressed by the standard Burke's defensive capabilities, directed Leopard Armor to design and prototype a vehicle even more formidable than the original. The result outmassed even the Behemoth, the largest standard tank then in production. Only two prototypes were ever completed, both pressed directly into combat against SLDF forces during the recapture of Terra. The destruction of both prototypes and the production facilities in the same engagement ended any prospect of further development, leaving the Burke II as a single-incident footnote in Amaris Civil War history rather than a production design with lasting legacy.</p>
+</overview>
+
+<deployment>
+<p>The Burke II existed only as two experimental prototypes and never entered organized deployment. Both vehicles were committed to a single defensive engagement near Munich during the SLDF's recapture of Terra, using terrain masking from airport infrastructure to offset their size and limited mobility. The engagement demonstrated the concept's viability as an ambush platform but ended with the destruction of both prototypes and the production facilities, foreclosing any further development or tactical evaluation. No deployment doctrine was developed for the type, and it left no successors.</p>
+</deployment>
+
+<history>
+<p>The Burke II's history is brief and concentrated in a single campaign. Rim Worlds forces occupying Terra had developed a deep appreciation for the Burke's defensive performance and directed Leopard Armor engineers to develop a larger and more powerful successor. Project Supervisor Mathias Gustasson began formal design work in August 2776, scaling the Burke concept to a superheavy platform and replacing the particle cannons with four class-20 autocannons. The design retained the aesthetic approach of the original Burke while dramatically increasing both its mass and firepower.</p><p>Only two frames were completed before operational necessity demanded their immediate deployment. Both prototypes were committed to the Amaris defense of Europe, operating from the tarmac of a decommissioned airport near Munich where port infrastructure provided concealment for vehicles of their extraordinary size. Using the facility's heavy walls to mask their movement, the crews ambushed SLDF armor columns crossing open ground and reportedly performed well in the role, demonstrating that the concept of a superheavy vehicle armed with multiple class-20 autocannons had practical merit.</p><p>The defense ultimately failed when one prototype exhausted its ammunition supply and an SLDF 'Mech lance arrived to overwhelm it. The second prototype was destroyed in the engagement that followed. When SLDF forces secured the Leopard Armor facilities, the production molds and tooling needed to build additional Burke IIs were destroyed along with surviving documentation. No attempt to recreate the design has been made in the centuries since, and the vehicle remains a historical curiosity rather than an ancestor to any subsequent production line.</p>
+</history>
+
+<manufacturer>
+Leopard Armor
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:N/A
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:280 Fusion
+ARMOR:Unknown Ferro-Fibrous
+JUMP_JET:N/A
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemModels>
+
+<source>
+XTR:Gunslingers
+</source>
+
+<published>
+XTR:Gunslingers
+</published>
+
+<tonnage>
+140.0
+</tonnage>
+

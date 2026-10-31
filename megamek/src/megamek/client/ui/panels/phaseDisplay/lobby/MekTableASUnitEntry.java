@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,9 +44,9 @@ import static megamek.common.alphaStrike.BattleForceSUA.LECM;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -94,7 +94,7 @@ public class MekTableASUnitEntry {
         result.append("<B>").append(element.getName()).append("</B></FONT>");
 
         // ID
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+        if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
             result.append(UIUtil.fontHTML(uiGray()));
             result.append(" [ID: ").append(element.getId()).append("]</FONT>");
         }

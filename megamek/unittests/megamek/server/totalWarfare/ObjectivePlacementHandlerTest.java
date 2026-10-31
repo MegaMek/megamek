@@ -169,8 +169,8 @@ class ObjectivePlacementHandlerTest {
         Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
         when(game.getPlayer(0)).thenReturn(alice);
         when(game.getPlayer(1)).thenReturn(bob);
-        ObjectiveMarker aliceMarker = markerFor(alice, null);
-        ObjectiveMarker bobMarker = markerFor(bob, null);
+        ObjectiveMarker aliceMarker = presentAtGameStart(markerFor(alice, null));
+        ObjectiveMarker bobMarker = presentAtGameStart(markerFor(bob, null));
         groundMap.put(new Coords(2, 2), new ArrayList<>(List.of(aliceMarker)));
         groundMap.put(new Coords(7, 7), new ArrayList<>(List.of(bobMarker)));
 
@@ -188,6 +188,7 @@ class ObjectivePlacementHandlerTest {
         ObjectiveMarker orphanedMarker = new ObjectiveMarker();
         orphanedMarker.setName("Objective");
         orphanedMarker.setOwnerId(99);
+        orphanedMarker.setPresentAtGameStart(true);
         groundMap.put(new Coords(3, 3), new ArrayList<>(List.of(orphanedMarker)));
 
         handler.returnObjectivesToLobby();
@@ -213,7 +214,7 @@ class ObjectivePlacementHandlerTest {
     void testResetForgetsWhoHeldEachPoint() {
         when(game.getPlayer(alice.getId())).thenReturn(alice);
         Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
-        ObjectiveMarker marker = markerFor(alice, null);
+        ObjectiveMarker marker = presentAtGameStart(markerFor(alice, null));
         marker.setController(1, ObjectiveMarker.NO_CONTROLLER);
         groundMap.put(new Coords(2, 2), new ArrayList<>(List.of(marker)));
 
@@ -223,6 +224,94 @@ class ObjectivePlacementHandlerTest {
         // with the zone already held before anyone has stood in it
         assertEquals(ObjectiveMarker.NO_CONTROLLER, marker.getControllingTeam());
         assertEquals(ObjectiveMarker.NO_CONTROLLER, marker.getControllingPlayerId());
+    }
+
+    @Test
+    void testGameStartMarksEveryObjectiveThatAlreadyExists() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        ObjectiveMarker scenarioMarker = markerFor(bob, null);
+        groundMap.put(new Coords(3, 3), new ArrayList<>(List.of(scenarioMarker)));
+        ObjectiveMarker designatedMarker = markerFor(alice, new Coords(5, 5));
+        ObjectiveMarker unplacedMarker = markerFor(alice, null);
+        alice.getGroundObjectsToPlace().add(designatedMarker);
+        alice.getGroundObjectsToPlace().add(unplacedMarker);
+
+        handler.placeLobbyObjectives();
+
+        assertTrue(scenarioMarker.isPresentAtGameStart());
+        assertTrue(designatedMarker.isPresentAtGameStart());
+        // still waiting to be placed by hand in the Deploy Minefields phase, but it came with the game
+        assertTrue(unplacedMarker.isPresentAtGameStart());
+    }
+
+    @Test
+    void testTheClientsAreSentTheScenarioPointsAlreadyMarked() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        ObjectiveMarker scenarioMarker = markerFor(bob, null);
+        groundMap.put(new Coords(3, 3), new ArrayList<>(List.of(scenarioMarker)));
+        List<Boolean> markedWhenSent = new ArrayList<>();
+        doAnswer(invocation -> {
+            markedWhenSent.add(scenarioMarker.isPresentAtGameStart());
+            return null;
+        }).when(gameManager).sendGroundObjectUpdate();
+
+        handler.placeLobbyObjectives();
+
+        // a Victory Setup Done sends the client's copy of the board back, so an unmarked copy would undo the mark
+        assertEquals(List.of(true), markedWhenSent);
+    }
+
+    @Test
+    void testMarkingAPointStillToPlaceUpdatesThePlayers() {
+        installRealGroundObjectMap();
+        boardContainingEverything();
+        alice.getGroundObjectsToPlace().add(markerFor(alice, null));
+
+        handler.placeLobbyObjectives();
+
+        verify(gameManager).transmitAllPlayerUpdates();
+        verify(gameManager, never()).sendGroundObjectUpdate();
+    }
+
+    @Test
+    void testResetClearsAPointPlacedDuringTheGameAndKeepsTheScenarioPoint() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        when(game.getPlayer(0)).thenReturn(alice);
+        when(game.getPlayer(1)).thenReturn(bob);
+        ObjectiveMarker scenarioMarker = markerFor(bob, null);
+        groundMap.put(new Coords(3, 3), new ArrayList<>(List.of(scenarioMarker)));
+        handler.placeLobbyObjectives();
+        // placed afterwards, in the Victory Setup phase
+        ObjectiveMarker victorySetupMarker = markerFor(alice, null);
+        groundMap.put(new Coords(8, 8), new ArrayList<>(List.of(victorySetupMarker)));
+
+        handler.returnObjectivesToLobby();
+
+        assertTrue(bob.getGroundObjectsToPlace().contains(scenarioMarker));
+        assertEquals(new Coords(3, 3), scenarioMarker.getLobbyPosition());
+        assertTrue(alice.getGroundObjectsToPlace().isEmpty());
+    }
+
+    @Test
+    void testAScenarioPointKeepsComingBackAfterRepeatedResets() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        when(game.getPlayer(1)).thenReturn(bob);
+        ObjectiveMarker scenarioMarker = markerFor(bob, null);
+        groundMap.put(new Coords(3, 3), new ArrayList<>(List.of(scenarioMarker)));
+        handler.placeLobbyObjectives();
+        handler.returnObjectivesToLobby();
+        // the reset wipes the board; the next start places the returned designation again
+        groundMap.clear();
+        handler.placeLobbyObjectives();
+
+        handler.returnObjectivesToLobby();
+
+        assertTrue(bob.getGroundObjectsToPlace().contains(scenarioMarker));
+        assertEquals(new Coords(3, 3), scenarioMarker.getLobbyPosition());
     }
 
     @Test
@@ -320,6 +409,11 @@ class ObjectivePlacementHandlerTest {
         marker.setName("Objective");
         marker.setOwnerId(owner.getId());
         marker.setLobbyPosition(lobbyPosition);
+        return marker;
+    }
+
+    private ObjectiveMarker presentAtGameStart(ObjectiveMarker marker) {
+        marker.setPresentAtGameStart(true);
         return marker;
     }
 

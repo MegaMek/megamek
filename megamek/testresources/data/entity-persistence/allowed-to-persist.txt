@@ -1,0 +1,569 @@
+# Entity and equipment fields that may keep their value from one battle into the next.
+#
+# Read by EntityPersistenceRegressionTest. Every non-static, non-transient field of the checked Entity and Mounted
+# classes that is NOT listed here must be reset by Entity.clearGameState, which MekHQ calls between scenarios. The test
+# changes each such field, runs clearGameState, and fails if the change survives.
+#
+# Format: <DeclaringClass>.<field>  <CATEGORY>  <reason>
+#
+#   KEEP        Design, configuration, damage, crew or a player's preference: carrying it over is intended.
+#   GAME_RESET  Battle state that MegaMek itself resets when the next game starts or before it is next used (for
+#               example in Entity.newRound, the server's per-phase reset, or when the unit is added to a game).
+#   KNOWN_LEAK  Battle state that does carry over today and should be reset. Fix it, then delete the line.
+#
+# Adding a field to one of these classes? Reset it in clearGameState() if it only means something during a battle,
+# otherwise list it here with the reason it may persist.
+
+# ---------------------------------------------------------------------------------------------------------------------
+# TurnOrdered
+# ---------------------------------------------------------------------------------------------------------------------
+TurnOrdered.initiative                          GAME_RESET  rerolled by the server every round
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Entity
+# ---------------------------------------------------------------------------------------------------------------------
+Entity.isC3ecmAffected                          KNOWN_LEAK  C3 ECM state from the last battle
+Entity.id                                       KEEP        game id kept by MekHQ, reused by the server
+Entity.camouflage                               KEEP        configuration
+Entity.externalId                               KEEP        MekHQ unit id
+Entity.unitFileUUID                             KEEP        design
+Entity.refitFromUUID                            KEEP        design
+Entity.weight                                   KEEP        design
+Entity.omni                                     KEEP        design
+Entity.chassis                                  KEEP        design
+Entity.model                                    KEEP        design
+Entity.clanChassisName                          KEEP        design
+Entity.mulId                                    KEEP        design
+Entity.year                                     KEEP        design
+Entity.techLevel                                KEEP        design
+Entity.compositeTechLevel                       KEEP        design
+Entity.structuralTechRating                     KEEP        design
+Entity.armorTechRating                          KEEP        design
+Entity.engineTechRating                         KEEP        design
+Entity.baseChassisFireConWeight                 KEEP        design
+Entity.originalBuildYear                        KEEP        design
+Entity.engine                                   KEEP        design
+Entity.mixedTech                                KEEP        design
+Entity.designValid                              KEEP        design
+Entity.useManualBV                              KEEP        configuration
+Entity.manualBV                                 KEEP        configuration
+Entity.initialBV                                GAME_RESET  recalculated by the server when the game starts
+Entity.displayName                              KEEP        display name, regenerated when the owner is set
+Entity.shortName                                KEEP        display name
+Entity.duplicateMarker                          KEEP        display name bookkeeping
+Entity.ownerId                                  KEEP        the player the unit belongs to, set again for each game
+Entity.traitorId                                KNOWN_LEAK  set when the unit changes sides during a battle
+Entity.targetBay                                KNOWN_LEAK  bay chosen for loading during the last battle
+Entity.startingPos                              KNOWN_LEAK  per-unit deployment zone from the last lobby
+Entity.startingOffset                           KNOWN_LEAK  per-unit deployment zone from the last lobby
+Entity.startingWidth                            KNOWN_LEAK  per-unit deployment zone from the last lobby
+Entity.startingAnyNWx                           KNOWN_LEAK  per-unit deployment zone from the last lobby
+Entity.startingAnyNWy                           KNOWN_LEAK  per-unit deployment zone from the last lobby
+Entity.startingAnySEx                           KNOWN_LEAK  per-unit deployment zone from the last lobby
+Entity.startingAnySEy                           KNOWN_LEAK  per-unit deployment zone from the last lobby
+Entity.crew                                     KEEP        crew, managed by MekHQ
+Entity.nCrew                                    KEEP        configuration
+Entity.nPassenger                               KEEP        configuration
+Entity.nMarines                                 KEEP        configuration
+Entity.quirks                                   KEEP        design
+Entity.partReps                                 KEEP        damage, managed by MekHQ repairs
+Entity.startupThisPhase                         GAME_RESET  reset by the server every phase
+Entity.boardId                                  GAME_RESET  set when the unit deploys
+Entity.sec_facing                               GAME_RESET  reset by Mek and Tank newRound; others never twist
+Entity.twistedPhase                             GAME_RESET  cleared by Entity.newRound
+Entity.walkMP                                   KEEP        design
+Entity.jumpMP                                   KEEP        design
+Entity.climbing                                 KNOWN_LEAK  climbing a building when the last battle ended
+Entity.dangling                                 KNOWN_LEAK  dangling from a building when the last battle ended
+Entity.climbingLevelsChosen                     GAME_RESET  reset by Entity.newRound
+Entity.findingClub                              GAME_RESET  reset by Entity.newRound
+Entity.armsFlipped                              GAME_RESET  reset by Entity.newRound
+Entity.unjammingRAC                             GAME_RESET  reset by Entity.newRound
+Entity.selfDestructing                          KNOWN_LEAK  self-destruct left unresolved by the last battle
+Entity.selfDestructInitiated                    KNOWN_LEAK  self-destruct left unresolved by the last battle
+Entity.boobyTrapInitiated                       KNOWN_LEAK  booby trap left unresolved by the last battle
+Entity.selfDestructedThisTurn                   GAME_RESET  reset by Entity.newRound
+Entity.pendingAbandon                           KNOWN_LEAK  abandonment left unresolved by the last battle
+Entity.abandonmentAnnouncedRound                KNOWN_LEAK  round number from the last battle
+Entity.hasExternalSearchlight                   KEEP        equipment; the server also sets it from the quirk
+Entity.searchlightOverride                      KEEP        player setting
+Entity.illuminated                              GAME_RESET  reset by the server every phase
+Entity.usedSearchlight                          GAME_RESET  reset by the server every phase
+Entity.eiShutdown                               KEEP        never changed by game code
+Entity.canUnstickByJumping                      KNOWN_LEAK  swamp state from the last battle
+Entity.taggedBy                                 GAME_RESET  reset by Entity.newRound
+Entity.layingMines                              GAME_RESET  reset by Entity.newRound
+Entity._isEMId                                  KNOWN_LEAK  EMI from the last battle
+Entity.hardenedArmorDamaged                     KEEP        damage
+Entity.locationBlownOff                         KEEP        damage
+Entity.locationBlownOffThisPhase                GAME_RESET  cleared when damage is applied every phase
+Entity.armorType                                KEEP        design
+Entity.armorTechLevel                           KEEP        design
+Entity.isJumpingNow                             GAME_RESET  reset by Entity.newRound and newPhase
+Entity.isJumpingWithMechanicalBoosters          GAME_RESET  reset by Entity.newRound
+Entity.convertingNow                            GAME_RESET  reset by Entity.newRound
+Entity.previousMovementMode                     KNOWN_LEAK  LAM conversion state from the last battle
+Entity.displacementAttack                       GAME_RESET  cleared by Entity.newRound
+Entity.heatFromExternal                         GAME_RESET  reset by the heat phase
+Entity.coolFromExternal                         GAME_RESET  reset by the heat phase
+Entity.heatBreakdown                            GAME_RESET  rebuilt by the heat phase
+Entity.delta_distance                           GAME_RESET  reset by Entity.newRound
+Entity.gamemasterTargetModifier                 GAME_RESET  reset by Entity.newRound
+Entity.forcedWithdrawalOrder                    KEEP        bot behaviour setting
+Entity.lanceRole                                KEEP        force role, managed by MekHQ
+Entity.mpUsed                                   KNOWN_LEAK  copied into mpUsedLastRound by the next newRound
+Entity.moved                                    KNOWN_LEAK  copied into movedLastRound by the next newRound
+Entity.movedLastRound                           GAME_RESET  overwritten by Entity.newRound
+Entity.movedBackwards                           GAME_RESET  reset by Entity.newRound
+Entity.isPowerReverse                           GAME_RESET  reset by Entity.newRound
+Entity.wigeLiftoffHover                         GAME_RESET  reset by Entity.newRound
+Entity.mpUsedLastRound                          GAME_RESET  overwritten by Entity.newRound
+Entity.gotPavementOrRoadBonus                   GAME_RESET  reset by Entity.newRound
+Entity.wigeBonus                                GAME_RESET  reset by Entity.newRound
+Entity.inReverse                                GAME_RESET  reset by Entity.newRound
+Entity.struck                                   GAME_RESET  reset by Entity.newRound
+Entity.fell                                     GAME_RESET  reset by Entity.newRound
+Entity.exposure                                 KNOWN_LEAK  location exposure from the last battle
+Entity.armor                                    KEEP        damage
+Entity.internal                                 KEEP        damage
+Entity.orig_armor                               KEEP        design
+Entity.orig_internal                            KEEP        design
+Entity.damageThisPhase                          GAME_RESET  reset by the server every phase
+Entity.damageThisRound                          GAME_RESET  reset by Entity.newRound
+Entity.engineHitsThisPhase                      GAME_RESET  reset by the server every phase
+Entity.rolledForEngineExplosion                 GAME_RESET  reset by the server every phase
+Entity.reportedVDNIFeedbackThisPhase            GAME_RESET  reset by the server every phase
+Entity.baVDNINeedsFeedbackMessage               GAME_RESET  reset by the server every phase
+Entity.dodging                                  GAME_RESET  reset by the server every phase
+Entity.reckless                                 KNOWN_LEAK  movement setting from the last battle
+Entity.spotting                                 GAME_RESET  reset by Entity.newRound
+Entity.clearingMinefield                        GAME_RESET  reset by Entity.newRound
+Entity.clearingWoods                            GAME_RESET  reset by Entity.newRound
+Entity.vectors                                  KNOWN_LEAK  space movement vectors from the last battle
+Entity.recoveryTurn                             KNOWN_LEAK  fighter recovery countdown from the last battle
+Entity.passedThroughFacing                      GAME_RESET  reset by Entity.newRound
+Entity.passedThroughBoardId                     KNOWN_LEAK  board id from the last battle
+Entity.invalidSourceBuildReasons                KEEP        design
+Entity.playerPickedPassThrough                  GAME_RESET  cleared by Entity.newRound
+Entity.ramming                                  KNOWN_LEAK  ramming flag from the last battle
+Entity.tmTracker                                KEEP        never changed by game code
+Entity.c3NetIdString                            KEEP        C3 configuration
+Entity.c3Master                                 GAME_RESET  rewired from the C3 UUIDs when the unit is added to a game
+Entity.c3CompanyMasterIndex                     GAME_RESET  rewired from the C3 UUIDs when the unit is added to a game
+Entity.c3UUID                                   KEEP        C3 configuration, managed by MekHQ
+Entity.c3MasterIsUUID                           KEEP        C3 configuration, managed by MekHQ
+Entity.c3iUUIDs                                 KEEP        C3 configuration, managed by MekHQ
+Entity.NC3UUIDs                                 KEEP        C3 configuration, managed by MekHQ
+Entity.variableRangeTargetingMode               KEEP        player setting
+Entity.pendingVariableRangeTargetingMode        GAME_RESET  applied by Entity.newRound
+Entity.structureType                            KEEP        design
+Entity.structureTechLevel                       KEEP        design
+Entity.source                                   KEEP        design
+Entity.published                                KEEP        design
+Entity.techFaction                              KEEP        design
+Entity.tsempHitsThisTurn                        GAME_RESET  reset by Entity.newRound
+Entity.tsempEffect                              GAME_RESET  cleared by Entity.newRound
+Entity.asewAffectedTurns                        KNOWN_LEAK  ASEW countdown from the last battle
+Entity.firedTsempThisTurn                       GAME_RESET  reset by Entity.newRound
+Entity.hasFiredTsemp                            KNOWN_LEAK  never set back to false
+Entity.equipmentList                            KEEP        equipment
+Entity.weaponList                               KEEP        equipment
+Entity.weaponBayList                            KEEP        equipment
+Entity.weaponGroupList                          KEEP        equipment
+Entity.totalWeaponList                          KEEP        equipment
+Entity.ammoList                                 KEEP        equipment
+Entity.bombList                                 KEEP        equipment
+Entity.miscList                                 KEEP        equipment
+Entity.failedEquipmentList                      KEEP        design
+Entity.m_lNarcedBy                              KEEP        no longer used; Narc state lives in the pod lists
+Entity.m_lPendingNarc                           KEEP        no longer used; Narc state lives in the pod lists
+Entity.crits                                    KEEP        design and damage
+Entity.movementMode                             KEEP        design; clearGameState resets it for aerospace units
+Entity.madePointblankShot                       GAME_RESET  reset by Entity.newRound
+Entity.hiddenActivationPhase                    KNOWN_LEAK  only matters while hidden, which clearGameState clears
+Entity.transports                               KEEP        configuration; clearGameState empties their contents
+Entity.omniPodTransports                        KEEP        configuration
+Entity.pickedUpMekWarriors                      GAME_RESET  cleared by the server when the unit is added to a game
+Entity.loadedThisTurn                           GAME_RESET  reset by Entity.newRound
+Entity.loadedKeepers                            KNOWN_LEAK  loading bookkeeping from the last battle
+Entity.salvageable                              KNOWN_LEAK  salvage flag from the last battle
+Entity.unitNumber                               GAME_RESET  assigned by the server to ProtoMeks when added
+Entity.everSeenByEnemy                          KNOWN_LEAK  double-blind display state from the last battle
+Entity.visibleToEnemy                           GAME_RESET  recomputed by the server's visibility update
+Entity.detectedByEnemy                          GAME_RESET  recomputed by the server's visibility update
+Entity.entitySeenBy                             GAME_RESET  recomputed by the server's visibility update
+Entity.entityDetectedBy                         GAME_RESET  recomputed by the server's visibility update
+Entity.sensorContacts                           GAME_RESET  rebuilt by the sensor check
+Entity.firingSolutions                          GAME_RESET  rebuilt by the sensor check
+Entity.altitude                                 KNOWN_LEAK  clearGameState only resets it for aerospace units
+Entity.hitBySwarmsEntity                        GAME_RESET  cleared by Entity.newRound
+Entity.hitBySwarmsWeapon                        GAME_RESET  cleared by Entity.newRound
+Entity.canon                                    KEEP        design
+Entity.assaultDropInProgress                    KNOWN_LEAK  Entity.newRound only clears a finished drop
+Entity.climbMode                                GAME_RESET  reset by Entity.newRound
+Entity.lastTargetDisplayName                    KNOWN_LEAK  display only
+Entity.spotTargetId                             GAME_RESET  reset by Entity.newRound
+Entity.reconCameraSpotTargetId                  GAME_RESET  reset by Entity.newRound
+Entity.hasTriedReconCameraSpot                  GAME_RESET  reset by Entity.newRound
+Entity.reconCameraViewerIds                     GAME_RESET  cleared by Entity.newRound
+Entity.reconCameraSpotterNames                  GAME_RESET  cleared by Entity.newRound
+Entity.pendingScan                              GAME_RESET  cleared by Entity.newRound
+Entity.bankedScans                              KNOWN_LEAK  scan objective readings from the last battle
+Entity.bankedScansRedeemed                      KNOWN_LEAK  scan objective state from the last battle
+Entity.designatedScanTarget                     KNOWN_LEAK  scan objective state from the last battle
+Entity.taintedAtmosphereExposureTurns           KEEP        never changed by game code
+Entity.isCommander                              KEEP        set by MekHQ for each battle
+Entity.isCarefulStanding                        GAME_RESET  reset by the server every phase
+Entity.turnWasInterrupted                       GAME_RESET  reset by Entity.newRound and every phase
+Entity.sensors                                  KEEP        equipment
+Entity.activeSensor                             GAME_RESET  set from nextSensor by Entity.newRound
+Entity.nextSensor                               KEEP        sensor choice; MekHQ resets it unless custom
+Entity.customSensorChoice                       KEEP        player setting
+Entity.sensorCheck                              GAME_RESET  rerolled by Entity.newRound
+Entity.ghostTargetRoll                          GAME_RESET  rerolled by Entity.newRound
+Entity.ghostTargetOverride                      GAME_RESET  rerolled by Entity.newRound
+Entity.ghostTargetDefensiveBonus                GAME_RESET  reset by Entity.newRound
+Entity.ghostTargetOffensiveBonus                GAME_RESET  reset by Entity.newRound
+Entity.heatSinkCoolantFailureFactor             KEEP        only Meks use it, and clearGameState resets it for them
+Entity.taserShutdownRounds                      KNOWN_LEAK  countdown from the last battle
+Entity.shutdownByBATaser                        KNOWN_LEAK  countdown from the last battle
+Entity.taserFeedBackRounds                      KNOWN_LEAK  countdown from the last battle
+Entity.taserInterference                        KNOWN_LEAK  countdown from the last battle
+Entity.taserInterferenceRounds                  KNOWN_LEAK  countdown from the last battle
+Entity.taserInterferenceHeat                    KNOWN_LEAK  countdown from the last battle
+Entity.empInterferenceRounds                    KNOWN_LEAK  countdown from the last battle
+Entity.empInterferenceHeat                      KNOWN_LEAK  countdown from the last battle
+Entity.empShutdownRounds                        KNOWN_LEAK  countdown from the last battle
+Entity.magneticPulseState                       KNOWN_LEAK  countdown from the last battle
+Entity.fluff                                    KEEP        design
+Entity.armorTonnage                             KEEP        design
+Entity.newC3NetIdString                         KNOWN_LEAK  pending C3 network change from the last battle
+Entity.military                                 KEEP        design
+Entity.hasDamagedRHS                            KNOWN_LEAK  damage with no MekHQ repair that clears it
+Entity.attackedByThisTurn                       GAME_RESET  cleared by Entity.newRound
+Entity.groundAttackedByThisTurn                 GAME_RESET  cleared by Entity.newRound
+Entity.weaponSortOrder                          KEEP        player preference
+Entity.customWeaponOrder                        KEEP        player preference
+Entity.weaponOrderChanged                       KEEP        player preference
+Entity.forceString                              KEEP        set by MekHQ for each battle
+Entity.forceId                                  KEEP        reassigned when the unit is added to a game's forces
+Entity.braceLocation                            KNOWN_LEAK  brace from the last battle
+Entity.role                                     KEEP        design
+Entity.forceGeneratorAvailability               KEEP        design
+Entity.missionRoles                             KEEP        design
+Entity.incomingGuidedAttacks                    GAME_RESET  cleared by Entity.newRound
+Entity.endOfTurnCargoInteraction                GAME_RESET  reset by Entity.newRound
+Entity.icon                                     KEEP        configuration
+Entity.hasFleeZone                              KNOWN_LEAK  set by MegaMek scenarios, which MekHQ does not use
+Entity.fleeZone                                 KNOWN_LEAK  set by MegaMek scenarios, which MekHQ does not use
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Mek
+# ---------------------------------------------------------------------------------------------------------------------
+Mek.rearArmor                                   KEEP        damage
+Mek.orig_rearArmor                              KEEP        design
+Mek.rearHardenedArmorDamaged                    KEEP        damage
+Mek.armorDamagedThisTurn                        GAME_RESET  cleared by Mek.newRound
+Mek.autoEject                                   KEEP        player setting
+Mek.condEjectAmmo                               KEEP        player setting
+Mek.condEjectEngine                             KEEP        player setting
+Mek.condEjectCTDest                             KEEP        player setting
+Mek.condEjectHeadshot                           KEEP        player setting
+Mek.cockpitStatus                               KEEP        player's cockpit setting
+Mek.cockpitStatusNextRound                      KEEP        player's cockpit setting
+Mek.jumpType                                    KEEP        design
+Mek.gyroType                                    KEEP        design
+Mek.cockpitType                                 KEEP        design
+Mek.cowlArmor                                   KEEP        damage
+Mek.hasLaserHeatSinks                           KEEP        design
+Mek.grappledThisRound                           GAME_RESET  reset by Mek.newRound
+Mek.shouldDieAtEndOfTurnBecauseOfWater          GAME_RESET  recomputed by Mek.newRound
+Mek.justMovedIntoIndustrialKillingWater         KNOWN_LEAK  movement state from the last battle
+Mek.checkForCrit                                GAME_RESET  reset by Mek.newRound
+Mek.levelsFallen                                GAME_RESET  reset by Mek.newRound
+Mek.fullHeadEject                               KEEP        design
+Mek.frankenMek                                  KEEP        design
+Mek.frankenMekStructureTonnage                  KEEP        design
+Mek.frankenMekStructureType                     KEEP        design
+Mek.frankenMekStructureTechLevel                KEEP        design
+Mek.frankenMekLocationSources                   KEEP        design
+Mek.frankenMekStructureInitialized              KEEP        design
+Mek.riscHeatSinkKit                             KEEP        design
+Mek.clanCaseOptOutLocations                     KEEP        design
+Mek.dicDisabled                                 KNOWN_LEAK  damage with no MekHQ repair that clears it
+Mek.bDamagedCoolantSystem                       KNOWN_LEAK  damage with no MekHQ repair that clears it
+Mek.nCoolantSystemMOS                           KNOWN_LEAK  last coolant check result from the last battle
+Mek.originalMovementMode                        KEEP        design
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Tank, SupportTank, VTOL
+# ---------------------------------------------------------------------------------------------------------------------
+Tank.m_bHasNoTurret                             KEEP        design
+Tank.m_bTurretLocked                            KEEP        damage, cleared by MekHQ's turret lock repair
+Tank.m_bTurretEverJammed                        KNOWN_LEAK  turret jam history from the last battle
+Tank.m_bHasNoDualTurret                         KEEP        design
+Tank.m_bDualTurretLocked                        KEEP        damage, cleared by MekHQ's turret lock repair
+Tank.m_bDualTurretEverJammed                    KNOWN_LEAK  turret jam history from the last battle
+Tank.m_nTurretOffset                            KNOWN_LEAK  turret rotation from the last battle
+Tank.m_nDualTurretOffset                        KNOWN_LEAK  turret rotation from the last battle
+Tank.crashedThisTurn                            GAME_RESET  reset by Tank.newRound
+Tank.immobilized                                KEEP        damage, cleared by MekHQ's motive system repair
+Tank.markForImmobilize                          KEEP        damage, cleared by MekHQ's motive system repair
+Tank.m_bBackedIntoHullDown                      KNOWN_LEAK  movement state from the last battle
+Tank.motivePenalty                              KEEP        damage, cleared by MekHQ's motive system repair
+Tank.motiveDamage                               KEEP        damage, cleared by MekHQ's motive system repair
+Tank.minorMovementDamage                        KEEP        damage, cleared by MekHQ's motive system repair
+Tank.moderateMovementDamage                     KEEP        damage, cleared by MekHQ's motive system repair
+Tank.heavyMovementDamage                        KEEP        damage, cleared by MekHQ's motive system repair
+Tank.engineHit                                  KEEP        damage, cleared by MekHQ's engine repair
+Tank.hasSponsons                                KEEP        design
+Tank.hasPintle                                  KEEP        design
+Tank.sensorHits                                 KEEP        damage
+Tank.stabiliserHits                             KEEP        damage
+Tank.driverHit                                  KEEP        crew damage, managed by MekHQ
+Tank.commanderHit                               KEEP        crew damage, managed by MekHQ
+Tank.usingConsoleCommander                      KEEP        managed by MekHQ
+Tank.extraCrewSeats                             KEEP        design
+Tank.potCrit                                    GAME_RESET  overwritten before each use during damage resolution
+Tank.overThresh                                 GAME_RESET  overwritten before each use during damage resolution
+Tank.driverHitPS                                KNOWN_LEAK  per-phase crew hit flag from the last battle
+Tank.commanderHitPS                             KNOWN_LEAK  per-phase crew hit flag from the last battle
+Tank.crewHitPS                                  KNOWN_LEAK  per-phase crew hit flag from the last battle
+Tank.baseChassisTurretWeight                    KEEP        design
+Tank.baseChassisTurret2Weight                   KEEP        design
+Tank.baseChassisSponsonPintleWeight             KEEP        design
+Tank.trailer                                    KEEP        design
+Tank.hasNoControlSystems                        KEEP        design
+Tank.fuelType                                   KEEP        design
+SupportTank.barRating                           KEEP        design
+SupportTank.fuelTonnage                         KEEP        design
+VTOL.extBombChoices                             KEEP        bomb loadout, managed by MekHQ
+VTOL.bombTarget                                 KNOWN_LEAK  bombing target from the last battle
+VTOL.strafingCoords                             KNOWN_LEAK  strafing hexes from the last battle
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Infantry, ConvInfantry, BattleArmor
+# ---------------------------------------------------------------------------------------------------------------------
+Infantry.squadCount                             KEEP        design
+Infantry.squadSize                              KEEP        design
+Infantry.originalTrooperCount                   KEEP        design
+Infantry.troopersShooting                       GAME_RESET  overwritten before each attack
+Infantry.activeTroopers                         KEEP        damage
+Infantry.turnsLayingExplosives                  GAME_RESET  abandoned by Infantry.newRound when not in a structure hex
+Infantry.isTakingCover                          GAME_RESET  reset by Infantry.newRound
+Infantry.isCallingSupport                       KNOWN_LEAK  support call from the last battle
+ConvInfantry.primaryWeapon                      KEEP        design
+ConvInfantry.primaryName                        KEEP        design
+ConvInfantry.secondaryWeapon                    KEEP        design
+ConvInfantry.secondName                         KEEP        design
+ConvInfantry.secondaryWeaponsPerSquad           KEEP        design
+ConvInfantry.impEnergyWeaponsDisabledRounds     KNOWN_LEAK  countdown from the last battle
+ConvInfantry.disposableName                     KEEP        design
+ConvInfantry.mount                              KEEP        design
+ConvInfantry.customArmorName                    KEEP        design
+ConvInfantry.customArmorDamageDivisor           KEEP        design
+ConvInfantry.encumbering                        KEEP        design
+ConvInfantry.spaceSuit                          KEEP        design
+ConvInfantry.dest                               KEEP        design
+ConvInfantry.sneak_camo                         KEEP        design
+ConvInfantry.sneak_ir                           KEEP        design
+ConvInfantry.sneak_ecm                          KEEP        design
+ConvInfantry.infSpecs                           KEEP        design
+ConvInfantry.lastFirefightCoords                KNOWN_LEAK  firefight tracking from the last battle
+ConvInfantry.lastFirefightRound                 KNOWN_LEAK  firefight tracking from the last battle
+ConvInfantry.consecutiveFirefightTurns          KNOWN_LEAK  firefight tracking from the last battle
+ConvInfantry.infernoSrms                        KEEP        design
+ConvInfantry.isMicrolite                        KEEP        design
+ConvInfantry.prostheticEnhancement1             KEEP        design
+ConvInfantry.prostheticEnhancement1Count        KEEP        design
+ConvInfantry.prostheticEnhancement2             KEEP        design
+ConvInfantry.prostheticEnhancement2Count        KEEP        design
+ConvInfantry.extraneousPair1                    KEEP        design
+ConvInfantry.extraneousPair2                    KEEP        design
+ConvInfantry.bridgeBuildTurns                   KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeBuildRequiredTurns           KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeTargetCoords                 KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeExits                        KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeType                         KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeBuildPoints                  KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeBuildTroopersSnapshot        KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeDismantleTurns               KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeDismantleRequiredTurns       KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeBuildPaused                  KNOWN_LEAK  bridge building left from the last battle
+ConvInfantry.bridgeBuildIsRepair                KNOWN_LEAK  bridge building left from the last battle
+BattleArmor.troopersShooting                    GAME_RESET  overwritten before each attack
+BattleArmor.improvedMagneticPulseDisabledTroopers KNOWN_LEAK  countdown from the last battle
+BattleArmor.improvedMagneticPulseDisabledRounds KNOWN_LEAK  countdown from the last battle
+BattleArmor.myCost                              KEEP        design
+BattleArmor.weightClass                         KEEP        design
+BattleArmor.chassisType                         KEEP        design
+BattleArmor.isInitialized                       KEEP        design
+BattleArmor.isStealthy                          KEEP        design
+BattleArmor.isMimetic                           KEEP        design
+BattleArmor.hasCamoSystem                       KEEP        design
+BattleArmor.shortStealthMod                     KEEP        design
+BattleArmor.mediumStealthMod                    KEEP        design
+BattleArmor.longStealthMod                      KEEP        design
+BattleArmor.stealthName                         KEEP        design
+BattleArmor.camoName                            KEEP        design
+BattleArmor.turretSize                          KEEP        design
+BattleArmor.modularTurret                       KEEP        design
+BattleArmor.exoskeleton                         KEEP        design
+BattleArmor.clanExoWithoutHarJel                KEEP        design
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ProtoMek
+# ---------------------------------------------------------------------------------------------------------------------
+ProtoMek.pilotDamageTaken                       KEEP        damage
+ProtoMek.hasNoMainGun                           KEEP        design
+ProtoMek.grappledThisRound                      GAME_RESET  reset by ProtoMek.newRound
+ProtoMek.edpCharged                             KNOWN_LEAK  electric discharge armor charge from the last battle
+ProtoMek.edpChargeTurns                         KNOWN_LEAK  electric discharge armor charge from the last battle
+ProtoMek.jumpType                               KEEP        design
+ProtoMek.isQuad                                 KEEP        design
+ProtoMek.isGlider                               KEEP        design
+ProtoMek.interfaceCockpit                       KEEP        design
+ProtoMek.wingHits                               KEEP        damage
+ProtoMek.engineHit                              KEEP        damage
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Aero, SmallCraft
+# ---------------------------------------------------------------------------------------------------------------------
+Aero.sensorHits                                 KEEP        damage
+Aero.fcsHits                                    KEEP        damage
+Aero.engineHits                                 KEEP        damage
+Aero.avionicsHits                               KEEP        damage
+Aero.cicHits                                    KEEP        damage
+Aero.fuelTankHit                                KEEP        damage
+Aero.gearHit                                    KEEP        damage
+Aero.structIntegrity                            KEEP        damage
+Aero.orig_structIntegrity                       KEEP        design
+Aero.damThresh                                  KEEP        derived from armor
+Aero.potCriticalSlot                            GAME_RESET  overwritten before each use during damage resolution
+Aero.ignoredCrewHits                            KNOWN_LEAK  crew hit bookkeeping from the last battle
+Aero.cockpitType                                KEEP        design
+Aero.autoEject                                  KEEP        player setting
+Aero.condEjectAmmo                              KEEP        player setting
+Aero.condEjectFuel                              KEEP        player setting
+Aero.condEjectSIDest                            KEEP        player setting
+Aero.ejecting                                   KNOWN_LEAK  ejection from the last battle
+Aero.straightMoves                              KNOWN_LEAK  movement state from the last battle
+Aero.altLoss                                    KNOWN_LEAK  altitude loss from the last battle
+Aero.flyingOff                                  GAME_RESET  reset by Aero.newRound
+Aero.exitAltitude                               GAME_RESET  cleared when the unit deploys
+Aero.altLossThisRound                           GAME_RESET  reset by Aero.newRound
+Aero.spheroid                                   KEEP        design
+Aero.heatSinksOriginal                          KEEP        design
+Aero.heatSinks                                  KEEP        damage
+Aero.heatType                                   KEEP        design
+Aero.inactiveSinks                              GAME_RESET  set from inactiveSinksNextRound by Aero.newRound
+Aero.inactiveSinksNextRound                     KEEP        player's heat sink setting
+Aero.podHeatSinks                               KEEP        design
+Aero.maxIntBombPoints                           KEEP        design
+Aero.maxExtBombPoints                           KEEP        design
+Aero.intBombChoices                             KEEP        bomb loadout, managed by MekHQ
+Aero.extBombChoices                             KEEP        bomb loadout, managed by MekHQ
+Aero.usedInternalBombs                          GAME_RESET  reset by Aero.newRound
+Aero.fuel                                       KEEP        design
+Aero.currentFuel                                KEEP        refuelled by MekHQ
+Aero.lifeSupport                                KEEP        damage
+Aero.leftThrustHits                             KEEP        damage
+Aero.rightThrustHits                            KEEP        damage
+Aero.accLast                                    KNOWN_LEAK  movement state from the last battle
+Aero.failedManeuver                             GAME_RESET  reset by Aero.newRound
+Aero.accDecNow                                  GAME_RESET  reset by Aero.newRound
+Aero.criticalThreshold                          GAME_RESET  reset by Aero.newRound
+Aero.vstol                                      KEEP        design
+Aero.capitalArmor                               KEEP        damage
+Aero.capitalArmor_orig                          KEEP        design
+Aero.fatalThresh                                KEEP        design
+Aero.currentDamage                              GAME_RESET  reset by the server at the end of each round
+Aero.wingsHit                                   KEEP        damage
+Aero.weaponGroups                               KEEP        configuration
+Aero.whoFirst                                   GAME_RESET  rerolled by Aero.newRound
+Aero.eccmRoll                                   GAME_RESET  rerolled by Aero.newRound
+Aero.escapeCraftList                            KNOWN_LEAK  escape craft launched in the last battle
+Aero.marines                                    KEEP        crew, managed by MekHQ
+Aero.designType                                 KEEP        design
+SmallCraft.nOfficers                            KEEP        configuration
+SmallCraft.nGunners                             KEEP        configuration
+SmallCraft.nBattleArmor                         KEEP        configuration
+SmallCraft.nOtherPassenger                      KEEP        configuration
+SmallCraft.nOtherCrew                           KEEP        configuration
+SmallCraft.passengers                           KEEP        configuration
+SmallCraft.escapePods                           KEEP        design
+SmallCraft.lifeBoats                            KEEP        design
+SmallCraft.escapePodsLaunched                   KNOWN_LEAK  escape pods launched in the last battle
+SmallCraft.lifeBoatsLaunched                    KNOWN_LEAK  lifeboats launched in the last battle
+SmallCraft.craneOperations                      KNOWN_LEAK  crane operations from the last battle
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Mounted and its subclasses
+# ---------------------------------------------------------------------------------------------------------------------
+Mounted.destroyed                               KEEP        damage
+Mounted.hit                                     KEEP        damage
+Mounted.missing                                 KEEP        damage
+Mounted.useless                                 KEEP        damage
+Mounted.fired                                   KEEP        used one-shot weapons, reloaded by MekHQ
+Mounted.tsempDowntime                           KNOWN_LEAK  TSEMP recharge from the last battle
+Mounted.rapidFire                               KEEP        player setting
+Mounted.hotLoaded                               KEEP        player setting
+Mounted.repairable                              KEEP        damage
+Mounted.autocannonHit                           KNOWN_LEAK  attack bookkeeping from the last battle
+Mounted.AMSused                                 GAME_RESET  reset by Mounted.newRound
+Mounted.mekTurretMounted                        KEEP        design
+Mounted.sponsonTurretMounted                    KEEP        design
+Mounted.pintleTurretMounted                     KEEP        design
+Mounted.facing                                  KNOWN_LEAK  turret facing from the last battle
+Mounted.directionalMountFacing                  KNOWN_LEAK  facing chosen in the last battle
+Mounted.directionalMountLocked                  KNOWN_LEAK  facing lock from the last battle
+Mounted.directionalMountFlippedPhase            GAME_RESET  cleared by Mounted.newRound
+Mounted.chargeState                             KNOWN_LEAK  bombast laser charge from the last battle
+Mounted.mode                                    KEEP        player setting
+Mounted.pendingMode                             GAME_RESET  applied by Mounted.newRound
+Mounted.modeSwitchable                          KEEP        design
+Mounted.location                                KEEP        design
+Mounted.rearMounted                             KEEP        design
+Mounted.linked                                  KEEP        configuration
+Mounted.linkedBy                                KEEP        configuration
+Mounted.crossLinkedBy                           KEEP        configuration
+Mounted.linkedBayId                             KEEP        design
+Mounted.entity                                  KEEP        the unit this equipment is mounted on
+Mounted.quirks                                  KEEP        design
+Mounted.typeName                                KEEP        design
+Mounted.size                                    KEEP        design
+Mounted.shotsLeft                               KEEP        ammunition, managed by MekHQ
+Mounted.originalShots                           KEEP        design
+Mounted.weaponGroup                             KEEP        design
+Mounted.numWeapons                              KEEP        design
+Mounted.byShot                                  KEEP        design
+Mounted.bSplit                                  KEEP        design
+Mounted.nFoundCrits                             KEEP        design
+Mounted.secondLocation                          KEEP        design
+Mounted.bombMounted                             KEEP        design
+Mounted.isInternalBomb                          KEEP        design
+Mounted.missingForTrooper                       KEEP        damage
+Mounted.armorValue                              KEEP        design
+Mounted.baseDamageAbsorptionRate                KEEP        design
+Mounted.baseDamageCapacity                      KEEP        design
+Mounted.damageTaken                             KEEP        never changed; MiscMounted has its own
+Mounted.switchedReason                          KNOWN_LEAK  bot diagnostics from the last battle
+Mounted.baMountLoc                              KEEP        design
+Mounted.isDWPMounted                            KEEP        design
+Mounted.isAPMMounted                            KEEP        design
+Mounted.omniPodMounted                          KEEP        design
+Mounted.armoredComponent                        KEEP        design
+Mounted.called                                  GAME_RESET  reset by Mounted.newRound
+Mounted.squadSupportWeapon                      KEEP        design
+WeaponMounted.bayWeapons                        KEEP        design
+WeaponMounted.bayAmmo                           KEEP        design
+WeaponMounted.disposableWeapon                  KEEP        design
+AmmoMounted.halfLoadAmmo                        KEEP        player setting
+MiscMounted.baseDamageAbsorptionRate            KEEP        design
+MiscMounted.baseDamageCapacity                  KEEP        design
+MiscMounted.damageTaken                         KNOWN_LEAK  damage with no MekHQ repair that clears it
+MiscMounted.mineType                            KEEP        player setting
+MiscMounted.vibraSetting                        KEEP        player setting
+MiscMounted.empSetting                          KEEP        player setting
+MiscMounted.bridgeLayerState                    KEEP        damage; clearGameState clears its deployment
+InfantryWeaponMounted.typeName                  KEEP        design

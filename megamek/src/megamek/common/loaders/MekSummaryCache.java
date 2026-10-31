@@ -962,6 +962,7 @@ public class MekSummaryCache {
 
         ms.setTechLevel(e.getStaticTechLevel().toString());
         ms.setTechLevelCode(e.getStaticTechLevel().ordinal());
+        ms.setTechRating(e.getTechRating());
         ms.setTechBase(e.getTechBaseDescription());
 
         ms.setFailedToLoadEquipment(e.getFailedEquipment().hasNext());

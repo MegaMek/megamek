@@ -1,0 +1,34 @@
+name: Game suite release - Cut Core
+
+# Starts a new Core line: creates releases/<line> from main in megamek, megameklab, mekhq and
+# mm-data, publishes its first Core release, then moves MegaMek main to the next line.
+# Safe to rerun after a failure; finished steps are skipped. Live runs wait for reviewer approval.
+on:
+  workflow_dispatch:
+    inputs:
+      line:
+        description: Line to cut, as in MegaMek Version.properties on main (for example 0.51.02)
+        type: string
+        required: true
+      dry_run:
+        description: Rehearse only (builds main as the new line); creates and publishes nothing
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: game-suite-release-global
+  cancel-in-progress: false
+
+jobs:
+  cut:
+    uses: ./.github/workflows/game-suite-release-engine.yml
+    with:
+      channel: core
+      cut_line: ${{ inputs.line }}
+      dry_run: ${{ inputs.dry_run }}
+      environment: ${{ inputs.dry_run && 'suite-release-dry-run' || 'suite-release-live' }}
+    secrets: inherit

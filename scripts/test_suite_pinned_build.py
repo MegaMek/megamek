@@ -1,7 +1,5 @@
 """Offline fake-runner coverage; never invokes Git or Gradle."""
 
-import json
-import hashlib
 import subprocess
 import tempfile
 import unittest
@@ -9,6 +7,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 import suite_pinned_build as pinned
+import suite_release_plan as release
+import suite_test_support as support
 from suite_release_plan import UnsafeInventory
 
 
@@ -22,16 +22,14 @@ class PinnedBuildTests(unittest.TestCase):
         for repo in pinned.SOURCES:
             (self.sources / repo / ".git").mkdir(parents=True)
         self.output = self.root / "result"
-        self.record = json.loads((Path(__file__).resolve().parents[1] /
-                                  "megamek/testresources/suite-records/complete.json").read_text())
-        self.commits = {repo: self.record["products"][product]["commit"]
-                        for product, repo in pinned.REPOS.items()}
-        self.commits["mm-data"] = self.record["mmData"]["commit"]
-        self.inventory = dict(commits=self.commits, previous=None, membership="weekly",
-                              floor=self.record["version"],
-                              tags={repo: [] for repo in pinned.REPOS.values()},
-                              releases={repo: [] for repo in pinned.REPOS.values()})
+        self.github = support.FakeGitHub(line="0.51.02")
+        self.inventory = self.discover("experimental", "main")
+        self.commits = self.inventory["commits"]
         self.calls = []
+
+    def discover(self, channel, branch, rehearsal=False):
+        return release.discovered_inventory(channel, branch, rehearsal,
+                                            getter=self.github.get, fetch=self.github.fetch)
 
     def fake(self, command, **kwargs):
         self.calls.append((command, kwargs))
@@ -41,7 +39,6 @@ class PinnedBuildTests(unittest.TestCase):
             (Path(command[-1]) / "gradlew.bat").touch()
         if any(command[1] == tasks[1] for tasks in pinned.TASKS.values()):
             product = next(p for p, tasks in pinned.TASKS.items() if tasks[1] in command)
-            repo = pinned.REPOS[product]
             version = next(flag.split("=", 1)[1] for flag in command
                            if flag.startswith("-PsuiteReleaseVersion="))
             # Model the Gradle project output independently of the builder's lookup.
@@ -72,45 +69,120 @@ class PinnedBuildTests(unittest.TestCase):
         return meta, {product + ".jar": b"jar", "lib/MegaMek.jar": b"jar",
                       "lib/MegaMekLab.jar": b"jar"}
 
-    def test_bootstrap_exact_shas_order_and_flags(self):
-        with patch.object(pinned, "archive_identity", side_effect=self.identity):
-            result = pinned.build(self.inventory, self.sources, {}, self.output,
-                                  bootstrap=True, runner=self.fake)
+    def build(self, inventory=None, runner=None, identity=None):
+        with patch.object(pinned, "archive_identity", side_effect=identity or self.identity):
+            return pinned.build(inventory or self.inventory, self.sources, self.output,
+                                runner=runner or self.fake)
+
+    def gradle_calls(self):
+        return [c for c, _ in self.calls if c[0].endswith(("gradlew", "gradlew.bat"))]
+
+    def test_builds_all_three_from_exact_shas_in_order(self):
+        result = self.build()
+        self.assertEqual(result["versionCandidate"], "0.51.02.1")
+        self.assertEqual(set(result["productVersions"].values()), {"0.51.02.1"})
         self.assertEqual(list(result["archives"]), list(pinned.REPOS))
         self.assertEqual(len([c for c, _ in self.calls if c[:2] == ["git", "clone"]]), 4)
         checkouts = [c for c, _ in self.calls if "checkout" in c]
-        self.assertEqual([c[-1] for c in checkouts], list(self.commits.values()))
+        self.assertEqual([c[-1] for c in checkouts], [self.commits[r] for r in pinned.SOURCES])
         self.assertTrue(all("--detach" in c and "main" not in c for c in checkouts))
-        gradle = [c for c, _ in self.calls if c[0].endswith(("gradlew", "gradlew.bat"))]
+        ancestry = [c for c, _ in self.calls if "merge-base" in c]
+        self.assertEqual({c[-1] for c in ancestry}, {"refs/remotes/origin/main"})
+        gradle = self.gradle_calls()
         self.assertEqual([c[1] for c in gradle],
                          [task for tasks in pinned.TASKS.values() for task in tasks])
         for command in gradle:
             self.assertNotIn("--offline", command)
             self.assertIn("--no-daemon", command)
-            for key, sha in (("suiteMegaMekCommit", self.commits["megamek"]),
-                             ("suiteMegaMekLabCommit", self.commits["megameklab"]),
-                             ("suiteMekHQCommit", self.commits["mekhq"]),
-                             ("suiteMmDataCommit", self.commits["mm-data"])):
-                self.assertIn(f"-P{key}={sha}", command)
+            self.assertIn("-PsuiteReleaseVersion=0.51.02.1", command)
+            for key, repo in (("suiteMegaMekCommit", "megamek"),
+                              ("suiteMegaMekLabCommit", "megameklab"),
+                              ("suiteMekHQCommit", "mekhq"), ("suiteMmDataCommit", "mm-data")):
+                self.assertIn(f"-P{key}={self.commits[repo]}", command)
+        # MegaMek has no companions; MekHQ consumes both archives built earlier in this run.
+        self.assertFalse(any("ArchiveFile=" in flag and "suiteArchiveFile" not in flag
+                             for flag in gradle[0]))
         self.assertTrue(any(c.startswith("-PsuiteMegaMekArchiveFile=") for c in gradle[-1]))
         self.assertTrue(any(c.startswith("-PsuiteMegaMekLabArchiveFile=") for c in gradle[-1]))
-        hq_verify = next((c, kw) for c, kw in self.calls
-                         if c[1] == pinned.TASKS["MekHQ"][2])
-        hq_archive = next(Path(flag.split("=", 1)[1]) for flag in hq_verify[0]
+        hq_verify = next(c for c in gradle if c[1] == pinned.TASKS["MekHQ"][2])
+        hq_archive = next(Path(flag.split("=", 1)[1]) for flag in hq_verify
                           if flag.startswith("-PsuiteArchiveFile="))
         self.assertEqual(hq_archive.parent.parts[-3:], ("MekHQ", "build", "distributions"))
-        self.assertEqual(hq_archive.parent.parent.parent.parent.name, "mekhq")
         self.assertEqual((self.output / hq_archive.name).read_bytes(), b"fake archive")
+
+    def test_core_build_checks_ancestry_against_its_release_branch(self):
+        branch = {repo: support.sha("core" + repo) for repo in pinned.SOURCES}
+        self.github.set_branch("releases/0.51.02", branch, "0.51.02")
+        self.inventory = self.discover("core", None)
+        self.commits = self.inventory["commits"]
+        self.assertEqual(self.build()["versionCandidate"], "0.51.02.1")
+        ancestry = {c[-1] for c, _ in self.calls if "merge-base" in c}
+        self.assertEqual(ancestry, {"refs/remotes/origin/releases/0.51.02"})
+        checkouts = [c[-1] for c, _ in self.calls if "checkout" in c]
+        self.assertEqual(checkouts, [branch[r] for r in pinned.SOURCES])
+
+    def test_noop_and_unsafe_inventories_fail_before_clone(self):
+        self.github.add_suite("experimental", "0.51.02.4", support.SHA)
+        noop = self.discover("experimental", "main")
+        unsafe = [dict(self.inventory, commits=dict(self.commits, megamek="main")),
+                  dict(self.inventory, branch="feature/x"), noop]
+        for inventory in unsafe:
+            with self.subTest(inventory=inventory["branch"]), self.assertRaises(UnsafeInventory):
+                self.build(inventory)
+            self.assertFalse(self.calls)
+
+    def test_existing_output_is_never_reused(self):
+        self.output.mkdir()
+        with self.assertRaisesRegex(UnsafeInventory, "output directory"):
+            self.build()
+        self.assertFalse(self.calls)
+
+    def test_wrong_remote_and_dirty_stage_block_build(self):
+        for fault in ("remote", "dirty"):
+            self.calls.clear()
+
+            def runner(command, **kwargs):
+                response = self.fake(command, **kwargs)
+                if fault == "remote" and "get-url" in command:
+                    return subprocess.CompletedProcess(command, 0,
+                                                       stdout="https://evil.invalid/repo")
+                if fault == "dirty" and "status" in command:
+                    return subprocess.CompletedProcess(command, 0, stdout="?? unknown")
+                return response
+
+            with self.subTest(fault=fault), self.assertRaises(UnsafeInventory):
+                self.build(runner=runner)
+            self.assertFalse(self.gradle_calls())
+
+    def test_identity_mismatches_block_the_build(self):
+        def wrong_commit(path, product, version):
+            meta, jars = self.identity(path, product, version)
+            meta["mmDataCommit"] = "f" * 40
+            return meta, jars
+
+        def wrong_companion(path, product, version):
+            meta, jars = self.identity(path, product, version)
+            if product == "MekHQ":
+                jars["lib/MegaMek.jar"] = b"other"
+            return meta, jars
+
+        for identity, message in ((wrong_commit, "identity mismatch: MegaMek"),
+                                  (wrong_companion, "companion mismatch: MekHQ")):
+            with self.subTest(message=message), self.assertRaisesRegex(UnsafeInventory, message):
+                self.build(identity=identity)
+            self.assertFalse(self.output.exists())
 
     def test_dependency_resolution_failure_stops_pinned_build(self):
         directory = self.root / "megamek"
         directory.mkdir()
         (directory / "gradlew").touch()
         (directory / "gradlew.bat").touch()
+
         def unavailable(command, **kwargs):
             self.assertNotIn("--offline", command)
             raise subprocess.CalledProcessError(
                 1, command, stderr="Could not resolve dependency: repository unavailable")
+
         with self.assertRaisesRegex(
                 UnsafeInventory,
                 "MegaMek :megamek:test failed: .*Could not resolve dependency"):
@@ -140,96 +212,6 @@ class PinnedBuildTests(unittest.TestCase):
         self.assertIn("Missing pinned data.", str(caught.exception))
         self.assertEqual(len(calls), 1)
 
-    def test_fail_closed_before_clone(self):
-        for change in ({"previous": None}, {"commits": {"megamek": "main"}}):
-            with self.subTest(change=change):
-                self.calls.clear()
-                inventory = dict(self.inventory, **change)
-                with self.assertRaises(UnsafeInventory):
-                    pinned.build(inventory, self.sources, {}, self.output, runner=self.fake)
-                self.assertFalse(self.calls)
 
-    def test_wrong_remote_and_dirty_stage_block_build(self):
-        for fault in ("remote", "dirty"):
-            self.calls.clear()
-            def runner(command, **kwargs):
-                response = self.fake(command, **kwargs)
-                if fault == "remote" and "get-url" in command:
-                    return subprocess.CompletedProcess(command, 0, stdout="https://evil.invalid/repo")
-                if fault == "dirty" and "status" in command:
-                    return subprocess.CompletedProcess(command, 0, stdout="?? unknown")
-                return response
-            with self.subTest(fault=fault), self.assertRaises(UnsafeInventory):
-                pinned.build(self.inventory, self.sources, {}, self.output,
-                             bootstrap=True, runner=runner)
-            self.assertFalse(any(c[0].endswith(("gradlew", "gradlew.bat"))
-                                 for c, _ in self.calls))
-
-    def test_hq_only_reuses_verified_companions_and_own_versions(self):
-        self.inventory["previous"] = self.record
-        self.commits["mekhq"] = "f" * 40
-        self.inventory["commits"] = self.commits
-        prior = {}
-        for product in pinned.REPOS:
-            item = self.record["products"][product]
-            path = self.root / item["asset"]["name"]
-            path.write_bytes(b"prior")
-            item["asset"]["size"] = 5
-            item["asset"]["sha256"] = hashlib.sha256(b"prior").hexdigest()
-            prior[product] = path
-        self.inventory["floor"] = self.record["version"]
-        seen = []
-        def attest(record, paths, **kwargs):
-            seen.append((record, dict(paths)))
-            self.assertFalse(any(c[0].endswith(("gradlew", "gradlew.bat"))
-                                 for c, _ in self.calls))
-        def identity(path, product, version):
-            meta, jars = self.identity(path, product, version)
-            meta["megamekVersion"] = self.record["products"]["MegaMek"]["version"]
-            meta["megameklabVersion"] = self.record["products"]["MegaMekLab"]["version"]
-            return meta, jars
-        with patch.object(pinned, "archive_identity", side_effect=identity):
-            result = pinned.build(self.inventory, self.sources, prior, self.output,
-                                  runner=self.fake, attest=attest)
-        gradle = [c for c, _ in self.calls if c[0].endswith(("gradlew", "gradlew.bat"))]
-        self.assertEqual([c[1] for c in gradle], list(pinned.TASKS["MekHQ"]))
-        self.assertEqual(len(seen), 1)
-        self.assertEqual(result["productVersions"]["MegaMek"],
-                         self.record["products"]["MegaMek"]["version"])
-        self.assertEqual(result["productVersions"]["MekHQ"], result["versionCandidate"])
-        for command in gradle:
-            self.assertIn(f"-PsuiteMegaMekArchiveFile={prior['MegaMek']}", command)
-            self.assertIn(f"-PsuiteMegaMekLabArchiveFile={prior['MegaMekLab']}", command)
-        self.assertEqual((self.output / prior["MegaMek"].name).read_bytes(), b"prior")
-
-    def test_prior_digest_tamper_blocks_staging(self):
-        self.inventory["previous"] = self.record
-        self.commits["mekhq"] = "f" * 40
-        self.inventory["commits"] = self.commits
-        prior = {}
-        for product, item in self.record["products"].items():
-            path = self.root / item["asset"]["name"]
-            path.write_bytes(b"wrong")
-            prior[product] = path
-        with self.assertRaisesRegex(UnsafeInventory, "prior archive"):
-            pinned.build(self.inventory, self.sources, prior, self.output, runner=self.fake)
-        self.assertFalse(self.calls)
-
-    def test_record_only_reuses_all_verified_archives_without_gradle_build(self):
-        self.inventory["previous"] = self.record
-        self.inventory["membership"] = "development"
-        prior = {}
-        for product, item in self.record["products"].items():
-            path = self.root / item["asset"]["name"]
-            path.write_bytes(product.encode())
-            item["asset"]["size"] = len(product)
-            item["asset"]["sha256"] = hashlib.sha256(product.encode()).hexdigest()
-            prior[product] = path
-        seen = []
-        result = pinned.build(self.inventory, self.sources, prior, self.output,
-                              runner=self.fake,
-                              attest=lambda r, p, **kw: seen.append(dict(p)))
-        self.assertEqual(len(seen), 1)
-        self.assertEqual(set(result["archives"]), set(pinned.REPOS))
-        self.assertFalse(any(c[0].endswith(("gradlew", "gradlew.bat"))
-                             for c, _ in self.calls))
+if __name__ == "__main__":
+    unittest.main()

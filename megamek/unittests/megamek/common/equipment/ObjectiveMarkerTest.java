@@ -73,6 +73,8 @@ class ObjectiveMarkerTest {
         assertFalse(marker.canBePickedUp(true));
         assertFalse(marker.canBePickedUp(false));
         assertFalse(marker.isDestroyed());
+        // a new point is one placed during the game, which a reset to the lobby clears
+        assertFalse(marker.isPresentAtGameStart());
     }
 
     @Test
@@ -150,6 +152,7 @@ class ObjectiveMarkerTest {
         marker.setInvulnerable(true);
         marker.setController(4, ObjectiveMarker.NO_CONTROLLER);
         marker.setLobbyPosition(new Coords(7, 9));
+        marker.setPresentAtGameStart(true);
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteStream)) {
@@ -178,6 +181,9 @@ class ObjectiveMarkerTest {
         assertEquals(4, restoredMarker.getControllingTeam());
         assertEquals(ObjectiveMarker.NO_CONTROLLER, restoredMarker.getControllingPlayerId());
         assertEquals(new Coords(7, 9), restoredMarker.getLobbyPosition());
+        // the Victory Setup phase sends the board back as serialized markers, so losing this would turn a
+        // scenario's points into ones the next reset clears
+        assertTrue(restoredMarker.isPresentAtGameStart());
     }
 
     @Test

@@ -1,0 +1,157 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-a288-7d7f-a635-6cf21746820c
+</UUID>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+IS Standard Battle Armor
+</Name>
+
+<Model>
+[Laser](Sqd4)
+</Model>
+
+<mul id:>
+1629
+</mul id:>
+
+<year>
+3052
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBASmallLaser:RA
+BABattleClaw:LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<slotless_equipment>
+BAJumpJet
+</slotless_equipment>
+
+<capabilities>
+<p>The small laser configuration gives the IS Standard a versatile energy weapon requiring no ammunition resupply. The right-arm modular mount carries a single small laser capable of threatening light vehicles and conventional infantry at moderate range. The left-arm battle claw allows anti-BattleMech attacks and OmniMech transport capability. Standard armor protection and ninety-meter jump capability remain unchanged from other configurations. The laser loadout's greatest advantage is sustained engagement capability, as troopers need not worry about ammunition depletion during extended operations or prolonged patrols far from supply lines. Its primary weakness is limited damage output, insufficient to threaten heavily armored targets through direct fire alone.</p>
+</capabilities>
+
+<overview>
+<p>Developed by the New Avalon Institute of Science in the early 3050s, the Inner Sphere Standard was the first mass-produced battle armor fielded by the Great Houses. The medium-weight suit was reverse-engineered from captured Clan Elemental technology, giving Inner Sphere commanders their first viable counter to Clan powered infantry. Though inferior to its Clan counterpart in almost every measurable respect, the IS Standard proved reliable, affordable, and easy to manufacture across multiple production lines. Its widespread adoption reshaped Inner Sphere infantry doctrine, and the design served as the foundation for numerous successor suits developed by individual Great Houses and their defense contractors.</p>
+</overview>
+
+<deployment>
+<p>Small laser-equipped squads of four were among the most widely deployed IS Standard configurations across the Great Houses. The energy weapon's independence from ammunition supply chains made it popular with commands operating on extended deployments. Infantry platoons built around laser squads maintained combat effectiveness longer in the field than those dependent on ballistic resupply.</p>
+</deployment>
+
+<history>
+<p>The Inner Sphere Standard battle armor traces its origins to the desperate months following Operation REVIVAL. When Clan forces struck the Inner Sphere in 3049, no Great House possessed powered infantry technology capable of matching the fearsome Elemental suits deployed by Clan warriors. Inner Sphere engineers initially had no battlefield salvage to study and were forced to consult fragmentary Star League records of early power armor programs like the Nighthawk. Early prototypes based on this limited data performed poorly in combat simulations.</p><p>The first battlefield victories against the Clans changed everything. Captured Elemental suits gave researchers at the New Avalon Institute of Science the breakthrough they needed. NAIS produced the first functional copies in 3050, and these early suits were immediately shipped to Federated Commonwealth units on the Clan front and select mercenary commands including the Gray Death Legion. Dubbed “gorilla suits” by the troops who wore them, these initial production models carried only half the armor of a Clan Elemental, lacked jump capability, and mounted a single modular weapon. Their performance against Clan opponents was mixed, but they proved that the Inner Sphere could field its own powered infantry.</p><p>Simultaneously, engineers in the Draconis Combine, Free Worlds League, and Capellan Confederation produced their own battle armor designs. That these independent programs yielded functionally identical suits has long been attributed to corporate espionage and illegal technology transfers across interstellar borders. Regardless of the cause, the rapid proliferation of manufacturing capacity across every major power transformed infantry warfare within just a few years.</p><p>Continuous refinement of the chassis corrected many early shortcomings. By the Battle of Tukayyid in 3052, the final production model incorporated compact jump jets, giving troopers the mobility to keep pace with BattleMech formations. Inner Sphere technological limitations still prevented the suit from matching the Elemental in raw capability, particularly the inability to combine jump capability with missile armament. These trade-offs were accepted as the cost of fielding powered infantry at scale.</p><p>The IS Standard’s greatest strength proved to be its accessibility. Manufacturers across every Great House produced the suit, and falling prices made it attractive to mercenary commands, private security firms, and even police forces. House Davion eventually transitioned its production lines entirely to the Cavalier, a cosmetically redesigned variant intended to boost AFFC morale following the Lyran secession. The Raiden served a similar purpose for the Draconis Combine. Despite these faction-specific replacements, IS Standard production continued in every other realm. The suit remained the most widely available battle armor design through the Jihad and well into the Dark Age.</p><p>By the thirty-second century, the IS Standard had become ubiquitous. Numerous manufacturers offered the suit to any buyer willing to place a bulk order, and several modernization programs extended the design’s combat relevance. Combine engineers developed a variant stripping the jump jets in favor of increased missile firepower, while Andurien workshops produced a field refit mimicking the capabilities of newer specialized designs. A further modernization leveraged advanced armor to incorporate magnetic clamps and improved jump capability. These ongoing updates ensured that the oldest Inner Sphere battle armor design remained competitive in a crowded market, decades after its initial fielding.</p>
+</history>
+
+<manufacturer>
+Albion Advanced Technologies and Products|Ceres Metals Industries|Corean Enterprises - MacAdams-Suharno|Cosby BattleMech and Myomer Research Firm|Defiance Industries|Free Worlds Defence Industries|HDF Manufacturing|Hellespont Industrials|Irian BattleMechs Unlimited|Kali Yama Weapons Industries Inc.|Luthien Armor Works|Tanadi Computers|TharHes Industries
+</manufacturer>
+
+<primaryFactory>
+New Avalon|Capella|Stewart|Vega|Hesperus II|Gibson|Falsterbo|Sian|Irian|Kalidasa|Luthien|Hachiman|Tharkad
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemModels>
+
+<source>
+TR:3058U
+</source>
+
+<published>
+RS:3058Uu-C,RSFP:MERCS
+</published>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

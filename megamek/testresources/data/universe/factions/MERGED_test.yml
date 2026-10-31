@@ -25,9 +25,9 @@ yearsActive:
   - start: 2807
 tags:
   - CLAN
-logo: base_logo.png
-logoChanges:
-  3080: era_logo.png
+icon: base_icon.png
+iconChanges:
+  3080: era_icon.png
 background: base_background.png
 backgroundChanges:
   3080: era_background.png

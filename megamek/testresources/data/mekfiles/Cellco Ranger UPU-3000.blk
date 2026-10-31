@@ -1,0 +1,187 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-eadf-700b-aece-62f18cdb6b58
+</UUID>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Cellco Ranger
+</Name>
+
+<Model>
+UPU-3000
+</Model>
+
+<mul id:>
+3915
+</mul id:>
+
+<year>
+3022
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<quirks>
+easy_maintain
+</quirks>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+LiquidCargoBay:0.869:1:1::-1:0
+troopspace:1.0
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+49
+</armor_type>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<armor_tech_level>
+1
+</armor_tech_level>
+
+<armor>
+11
+7
+7
+7
+6
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+Armored Chassis
+</Body Equipment>
+
+<Front Equipment>
+Tank Sprayer
+HHSearchlight
+HHSearchlight
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Tank Sprayer
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+HHSearchlight
+</Turret Equipment>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<capabilities>
+<p>The Cellco Ranger UPU-3000 is a compact tracked vehicle driven by a natural gas-fueled internal combustion engine capable of reaching a top speed of approximately 54 kilometers per hour, with an operational range exceeding 660 kilometers on a single fill. These modest performance figures suit its law enforcement role well, where reliability and low running costs outweigh the need for speed. BAR 8-rated armor across the hull provides adequate protection against the small arms and improvised weapons commonly encountered in riot suppression and corporate security work.</p><p>The primary armament is a turret-mounted machine gun supplied by a full ton of ammunition, providing effective firepower against unarmored personnel and light opposition at close range. Two sprayers, one mounted at the front and one at the rear, allow deployment of water or other liquids for crowd dispersal and fire suppression. The vehicle carries nearly a ton of sprayer fluid for sustained riot response operations. An infantry compartment accommodates up to a ton of personnel, who exit through a rear hatch. Three searchlights, two forward-facing and one turret-mounted, extend operational utility into night conditions. The Easy to Maintain quirk keeps repair costs and downtime low across the vehicle's service life.</p>
+</capabilities>
+
+<overview>
+<p>The Cellco Ranger UPU-3000 is a 17-ton tracked urban pacification vehicle produced by the Quikscell Company for law enforcement and corporate security applications in the Lyran Commonwealth and Federated Suns. Introduced near the close of the Third Succession War in 3022, the vehicle carries the UPU designation (Urban Pacification Unit) reflecting its primary niche in dense city environments where maintaining order demands a rugged, easily maintained platform. Common in police forces, corporate security organizations, and military police units across Lyran and Davion-aligned worlds, the Ranger has established itself as a practical and affordable tool for internal security work spanning multiple Inner Sphere states.</p>
+</overview>
+
+<deployment>
+<p>The UPU-3000 serves as a standard law enforcement and corporate security vehicle across the Lyran Commonwealth and Federated Suns. It is most commonly assigned to urban garrison and riot suppression duties, perimeter security at industrial and government facilities, and military police work in rear-area installations. Its infantry compartment allows a small security team to respond directly to incidents, while the combination of sprayers and machine gun gives commanders flexible options for crowd control and direct defense. Units operating at remote postings particularly value the vehicle's extended range and minimal maintenance requirements.</p>
+</deployment>
+
+<history>
+<p>The Cellco Ranger traces its origins to a Lyran Commonwealth program during the later decades of the Third Succession War, when military planners sought an affordable tracked carrier to supplement flagging transport capacity. Quikscell Company, drawing on its experience with civilian and light utility vehicles, produced the Ranger as a low-cost option intended for frontline personnel movement. Early military evaluations found the design unable to absorb the punishment of active combat zones, as its construction prioritized economy over military survivability. Rather than abandon the project, the Commonwealth redirected it toward law enforcement and internal security, where its limitations posed less risk and its strengths, particularly its long range and easy upkeep, offered genuine value.</p><p>Under the UPU-3000 designation, the Ranger was adopted by police forces and corporate security organizations across Lyran-held worlds through the 3020s. Quikscell expanded the platform in 3027 with a Mobile Headquarters variant adding command and communications equipment, and again in 3031 with an Armored Car variant offering heavier protection for high-risk convoy work. By the time of the Federated Commonwealth's formation, the Ranger had crossed the old factional boundary and become a common sight in Davion-aligned cities as well, its practical reputation traveling ahead of it.</p><p>When Clan Jade Falcon established its Occupation Zone during the Clan Invasion, the Falcons encountered Cellco Rangers in the cities of conquered worlds. Recognizing the vehicle's utility for internal policing, the Jade Falcons arranged for Quikscell's facility on Pandora to produce a modified version. The resulting Ranger C replaced the standard machine gun with an anti-personnel Gauss rifle, creating a more lethal urban patrol platform suited to the Falcons' occupation requirements. This Clan version remained in production through the Falcon's shifting territorial fortunes well into the Dark Age period. The Ranger's enduring appeal across multiple factions and eras is proof of the fundamental usefulness of its design concept, which also inspired the Free Worlds League's later Raptor RRV.</p>
+</history>
+
+<manufacturer>
+Quikscell Company
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:N/A
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:ICE (Natural Gas)
+ARMOR:Unknown
+JUMP_JET:N/A
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemModels>
+
+<source>
+TR:VAr
+</source>
+
+<tonnage>
+17.0
+</tonnage>
+
+<fuel>
+0.5
+</fuel>
+
+<fuelType>
+NATURAL_GAS
+</fuelType>
+

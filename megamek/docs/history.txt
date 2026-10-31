@@ -1,6 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.51.01
+This file is no longer updated. From 0.51.01 on, the changes in each release are listed in
+its release notes: https://github.com/MegaMek/megamek/releases
 
 0.51.00.1-MegaMek Core Rules Release (2026-08-14 2300 UTC)
 ## What's Changed

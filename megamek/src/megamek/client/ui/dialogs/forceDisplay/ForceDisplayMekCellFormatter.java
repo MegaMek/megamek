@@ -45,7 +45,7 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.List;
 
-import megamek.MegaMek;
+import megamek.SuiteOptions;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -256,7 +256,7 @@ class ForceDisplayMekCellFormatter {
 
         // Tonnage
         if (GUIP.getForceDisplayBtnTonnage()) {
-            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+            NumberFormat formatter = NumberFormat.getNumberInstance(SuiteOptions.getNumberFormatLocale());
             String tonnage = formatter.format(entity.getWeight());
             tonnage += "t";
             result.append(formatCell(tonnage, 40));

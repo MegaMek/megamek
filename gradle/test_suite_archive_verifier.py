@@ -366,6 +366,15 @@ class SuiteArchiveTests(unittest.TestCase):
         with self.assertRaisesRegex(verifier.VerificationError, "companion JAR differs"):
             self.check("MekHQ", external=True)
 
+    def test_megamek_jar_version_includes_weekly_revision(self):
+        path = self.base / "weekly.jar"
+        for content, expected in ((b"major=0\nminor=51\npatch=00\nrevision=2\n", "0.51.00.2"),
+                                  (b"major=0\nminor=51\npatch=01\nrevision=\n", "0.51.01"),
+                                  (b"major=0\nminor=51\npatch=01\n# revision=1\n", "0.51.01")):
+            with self.subTest(expected=expected):
+                path.write_bytes(zipped({"Version.properties": content}))
+                self.assertEqual(expected, verifier.jar_version(path, "MegaMek"))
+
     def test_packaged_runtime_and_built_source_jar(self):
         for product in verifier.PRODUCTS:
             with self.subTest(product=product):

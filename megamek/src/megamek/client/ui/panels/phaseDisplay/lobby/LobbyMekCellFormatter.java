@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 
 import jakarta.annotation.Nullable;
-import megamek.MegaMek;
+import megamek.SuiteOptions;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -394,7 +394,7 @@ class LobbyMekCellFormatter {
         result.append("<B>").append(entity.getShortNameRaw()).append("</B></FONT>");
 
         // ID
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+        if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
             result.append(UIUtil.fontHTML(uiGray()));
             result.append(" [ID: ").append(entity.getId()).append("]</FONT>");
         }
@@ -411,7 +411,7 @@ class LobbyMekCellFormatter {
             // Assets have no weight; show what they are instead of a "0 Tons" reading.
             result.append(Messages.getString("ChatLounge.BFSAsset"));
         } else {
-            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+            NumberFormat formatter = NumberFormat.getNumberInstance(SuiteOptions.getNumberFormatLocale());
             result.append(formatter.format(entity.getWeight()));
             result.append(Messages.getString("ChatLounge.Tons"));
         }
@@ -670,7 +670,7 @@ class LobbyMekCellFormatter {
                       .append(loader.getChassis());
             }
 
-            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
                 result.append(" [").append(entity.getTransportId()).append("]");
             }
             result.append("</I></FONT>");
@@ -703,7 +703,7 @@ class LobbyMekCellFormatter {
                 }
             }
 
-            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
                 result.append(" [").append(entity.getTransportId()).append("]");
             }
             result.append("</I></FONT>");
@@ -833,7 +833,7 @@ class LobbyMekCellFormatter {
               && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";
-            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
                 value += UIUtil.fontHTML(uiGray());
                 value += MessageFormat.format("[{0}] </FONT>", entity.getId());
             }
@@ -877,7 +877,7 @@ class LobbyMekCellFormatter {
 
         // Signs before the unit name
         // ID
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+        if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
             result.append(UIUtil.fontHTML(uiGray()));
             result.append(MessageFormat.format("[{0}] </FONT>", entity.getId()));
         }
@@ -1040,7 +1040,7 @@ class LobbyMekCellFormatter {
             if (loader != null) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>(");
                 result.append(loader.getChassis());
-                if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+                if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
                     result.append(" [").append(entity.getTransportId()).append("]");
                 }
                 result.append(")</I></FONT>");
@@ -1228,7 +1228,7 @@ class LobbyMekCellFormatter {
         result.append("<B>").append(force.getName()).append("</B></FONT>");
 
         // ID
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+        if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
             result.append(fontHTML(uiGray()));
             result.append(" [").append(force.getId()).append("]</FONT>");
         }

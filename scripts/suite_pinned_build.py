@@ -2,7 +2,6 @@
 """Nonpublishing build of a frozen suite inventory. No floating refs."""
 
 import argparse
-import hashlib
 import json
 import os
 import shutil
@@ -11,9 +10,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-from suite_archive_attestation import archive_identity, attest_archives
-from suite_release_plan import (REPOS, SOURCES, UnsafeInventory, failure_detail,
-                                parse_json, plan, validate_previous)
+from suite_archive_attestation import archive_identity
+from suite_release_plan import (REPOS, SOURCES, UnsafeInventory, branch_line, failure_detail,
+                                parse_json, plan)
 
 TASKS = {
     "MegaMek": (":megamek:test", ":megamek:buildMegaMekPackage",
@@ -37,16 +36,18 @@ def official(repo):
     return f"https://github.com/MegaMek/{repo}.git"
 
 
-def inspect_source(path, repo, sha, runner):
+def inspect_source(path, repo, sha, runner, branch="main"):
     if not (path / ".git").exists():
         raise UnsafeInventory(f"missing Git checkout: {repo}")
+    if branch != "main" and branch_line(branch) is None:
+        raise UnsafeInventory(f"unexpected source branch: {branch}")
     remote = run(["git", "-C", str(path), "remote", "get-url", "origin"], runner)
     if remote not in (official(repo), official(repo)[:-4],
                       f"git@github.com:MegaMek/{repo}.git"):
         raise UnsafeInventory(f"nonofficial origin: {repo}")
-    # Local origin/main is a provenance check, not a build input or checkout target.
+    # The local remote-tracking branch is a provenance check, not a build input or checkout target.
     run(["git", "-C", str(path), "merge-base", "--is-ancestor", sha,
-         "refs/remotes/origin/main"], runner)
+         f"refs/remotes/origin/{branch}"], runner)
     if run(["git", "-C", str(path), "rev-parse", f"{sha}^{{commit}}"], runner) != sha:
         raise UnsafeInventory(f"unavailable frozen commit: {repo}")
 
@@ -59,9 +60,9 @@ def clean(path, sha, runner):
         raise UnsafeInventory(f"dirty staged checkout: {path.name}")
 
 
-def stage(sources, commits, parent, runner):
+def stage(sources, commits, parent, runner, *, branch="main"):
     for repo in SOURCES:
-        inspect_source(Path(sources) / repo, repo, commits[repo], runner)
+        inspect_source(Path(sources) / repo, repo, commits[repo], runner, branch)
     for repo in SOURCES:
         dest = parent / repo
         # No fetch, branch checkout, or network operation. Clone copies only Git objects.
@@ -105,78 +106,50 @@ def gradle(product, task, worktrees, properties, runner):
         raise UnsafeInventory(f"{product} {task} failed: {error}") from None
 
 
-def build(inventory, sources, prior_paths, output, *, bootstrap=False,
-          runner=subprocess.run, attest=attest_archives):
+def build(inventory, sources, output, *, runner=subprocess.run):
+    """Build, test and verify all three products from the frozen commits."""
     proposal = plan(inventory)
-    previous = inventory["previous"]
-    if bootstrap:
-        if previous is not None or prior_paths:
-            raise UnsafeInventory("bootstrap requires no prior record or archives")
-    elif previous is None or set(prior_paths) != set(REPOS):
-        raise UnsafeInventory("verified prior record and three archives required (or bootstrap)")
-    if previous is not None:
-        validate_previous(previous)
+    if proposal["noop"]:
+        raise UnsafeInventory("nothing changed since the previous release; nothing to build")
     if output.exists():
         raise UnsafeInventory("output directory must not exist")
     commits = proposal["frozenCommits"]
-    changed = proposal["buildCandidates"]
-    if not changed and not proposal["weeklyNoopCandidate"] and previous is None:
-        raise UnsafeInventory("first record must build all products")
     version = proposal["versionCandidate"]
-    versions = {product: version if product in changed else
-                previous["products"][product]["version"] for product in REPOS}
-    # Do not allow archive paths within the temporary stage; preserve originals.
-    paths = {product: Path(path).resolve(strict=True) for product, path in prior_paths.items()}
-    if previous is not None:
-        for product, path in paths.items():
-            expected = previous["products"][product]["asset"]
-            if path.name != expected["name"] or not path.is_file() or path.stat().st_size != expected["size"]:
-                raise UnsafeInventory(f"prior archive identity mismatch: {product}")
-            digest = hashlib.sha256()
-            with path.open("rb") as stream:
-                while chunk := stream.read(1024 * 1024):
-                    digest.update(chunk)
-            if digest.hexdigest() != expected["sha256"]:
-                raise UnsafeInventory(f"prior archive digest mismatch: {product}")
+    versions = {product: version for product in REPOS}
+    paths = {}
     with tempfile.TemporaryDirectory(prefix="suite-pinned-") as temporary:
         root = Path(temporary)
-        worktrees = stage(sources, commits, root, runner)
-        if previous is not None:
-            attest(previous, paths, runner=runner, worktrees=worktrees)
-        for product in changed:
-            repo = REPOS[product]
+        worktrees = stage(sources, commits, root, runner, branch=inventory["branch"])
+        for product, repo in REPOS.items():
             for source in SOURCES:
                 clean(root / source, commits[source], runner)
-            # Downstream producers consume the exact newly built or verified reused bytes.
-            companions = {name: paths[name] for name in REPOS
-                          if name != product and name in paths and
-                          list(REPOS).index(name) < list(REPOS).index(product)}
-            companion_flags = {name: path for name, path in companions.items()}
-            common = flags(version, versions, commits, companions=companion_flags)
+            # Downstream producers consume the exact bytes built earlier in this run.
+            companions = dict(paths)
+            common = flags(version, versions, commits, companions=companions)
             gradle(product, TASKS[product][0], worktrees, common, runner)
             gradle(product, TASKS[product][1], worktrees, common, runner)
             archive = root / repo / PROJECT_DIRS[product] / "build" / "distributions" / (
-                f"{product}-{versions[product]}.tar.gz")
+                f"{product}-{version}.tar.gz")
             if not archive.is_file() or archive.is_symlink() or archive.stat().st_size == 0:
                 raise UnsafeInventory(f"missing produced archive: {product}")
             gradle(product, TASKS[product][2], worktrees,
-                   flags(version, versions, commits, archive.resolve(), companion_flags), runner)
-            metadata, jars = archive_identity(archive, product, versions[product])
+                   flags(version, versions, commits, archive.resolve(), companions), runner)
+            metadata, jars = archive_identity(archive, product, version)
             own = {"MegaMek": "megamekCommit", "MegaMekLab": "megameklabCommit",
                    "MekHQ": "mekhqCommit"}[product]
             if (metadata.get("schemaVersion") != "1"
                     or metadata.get("product") != product
-                    or metadata.get("version") != versions[product]
+                    or metadata.get("version") != version
                     or metadata.get(own) != commits[repo]
                     or metadata.get("mmDataCommit") != commits["mm-data"]
                     or metadata.get("minimumJavaVersion") != "21"):
                 raise UnsafeInventory(f"built archive identity mismatch: {product}")
             for companion, path in companions.items():
-                companion_meta, companion_jars = archive_identity(path, companion, versions[companion])
+                companion_meta, companion_jars = archive_identity(path, companion, version)
                 key = {"MegaMek": "megamekCommit", "MegaMekLab": "megameklabCommit"}[companion]
                 if (metadata.get(key) != companion_meta[key]
                         or metadata.get("megamekVersion" if companion == "MegaMek"
-                                        else "megameklabVersion") != versions[companion]
+                                        else "megameklabVersion") != version
                         or jars.get("lib/" + companion + ".jar") != companion_jars.get(companion + ".jar")):
                     raise UnsafeInventory(f"built archive companion mismatch: {product}")
             paths[product] = archive.resolve()
@@ -185,7 +158,7 @@ def build(inventory, sources, prior_paths, output, *, bootstrap=False,
         output.mkdir(parents=True)
         results = {}
         for product in REPOS:
-            destination = output / f"{product}-{versions[product]}.tar.gz"
+            destination = output / f"{product}-{version}.tar.gz"
             shutil.copyfile(paths[product], destination)
             results[product] = str(destination.resolve())
         return {"status": "OFFLINE_NONPUBLISHING", "versionCandidate": version,
@@ -199,16 +172,10 @@ def main():
                         help="directory of four local official Git mirrors")
     parser.add_argument("--output", type=Path, required=True,
                         help="new directory for the three resulting archives")
-    parser.add_argument("--bootstrap", action="store_true")
-    for product in REPOS:
-        parser.add_argument("--prior-" + REPOS[product], type=Path)
     args = parser.parse_args()
     try:
         inventory = parse_json(args.inventory.read_bytes())
-        prior = {product: getattr(args, "prior_" + repo) for product, repo in REPOS.items()
-                 if getattr(args, "prior_" + repo) is not None}
-        print(json.dumps(build(inventory, args.sources, prior, args.output,
-                               bootstrap=args.bootstrap), indent=2))
+        print(json.dumps(build(inventory, args.sources, args.output), indent=2))
         return 0
     except (UnsafeInventory, ValueError, OSError) as error:
         print(f"BLOCKED: {error}", file=sys.stderr)

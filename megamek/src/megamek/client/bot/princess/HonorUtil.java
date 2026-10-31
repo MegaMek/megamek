@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,20 +39,39 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
+import megamek.logging.MMLogger;
 
 /**
  * @author Deric Page (deric dot page at usa dot net)
  * @since 9/5/14 2:53 PM
  */
 public class HonorUtil implements IHonorUtil {
+    private static final MMLogger LOGGER = MMLogger.create(HonorUtil.class);
 
     private final Set<Integer> dishonoredEnemies = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> brokenEnemies = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    /**
+     * Enemy units that are manually shut down, the in-universe sign of surrender. Unlike {@link #brokenEnemies} this
+     * is live: a unit leaves it as soon as it starts up again.
+     */
+    private final Set<Integer> surrenderedEnemies = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private boolean iAmAPirate = false;
 
     private void checkEnemyBroken(Entity entity, boolean forcedWithdrawal) {
         if (forcedWithdrawal && entity.isCrippled()) {
             brokenEnemies.add(entity.getId());
+        }
+        checkEnemySurrendered(entity, forcedWithdrawal);
+    }
+
+    private void checkEnemySurrendered(Entity entity, boolean forcedWithdrawal) {
+        if (forcedWithdrawal && entity.isManualShutdown()) {
+            if (surrenderedEnemies.add(entity.getId())) {
+                LOGGER.info("{} is manually shut down; treating it as surrendered.", entity.getDisplayName());
+            }
+        } else if (surrenderedEnemies.remove(entity.getId())) {
+            String reason = forcedWithdrawal ? "it started up again" : "Forced Withdrawal is off";
+            LOGGER.info("{} is no longer treated as surrendered: {}.", entity.getDisplayName(), reason);
         }
     }
 
@@ -65,7 +84,8 @@ public class HonorUtil implements IHonorUtil {
 
     @Override
     public boolean isEnemyBroken(int entityId, int playerId, boolean forcedWithdrawal) {
-        return brokenEnemies.contains(entityId) && !isEnemyDishonored(playerId);
+        boolean isBroken = brokenEnemies.contains(entityId) || surrenderedEnemies.contains(entityId);
+        return isBroken && !isEnemyDishonored(playerId);
     }
 
     @Override

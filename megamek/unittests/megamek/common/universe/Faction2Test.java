@@ -35,11 +35,15 @@ package megamek.common.universe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.client.ratgenerator.FactionRecord;
 import org.junit.jupiter.api.Test;
 
@@ -141,18 +145,41 @@ class Faction2Test {
     }
 
     @Test
-    void logoAndBackgroundResolveByYear() {
+    void iconAndBackgroundResolveByYear() {
         Factions2 testFactions = getTestFactions2();
         Faction2 mergedFaction = testFactions.getFaction("MRG").orElseThrow();
         // No-arg getters return the base value.
-        assertEquals("base_logo.png", mergedFaction.getLogo());
+        assertEquals("base_icon.png", mergedFaction.getIcon());
         assertEquals("base_background.png", mergedFaction.getBackground());
         // Before the change year, the year-aware getters fall back to the base value.
-        assertEquals("base_logo.png", mergedFaction.getLogo(3050));
+        assertEquals("base_icon.png", mergedFaction.getIcon(3050));
         assertEquals("base_background.png", mergedFaction.getBackground(3050));
         // From the change year onward, the era value applies.
-        assertEquals("era_logo.png", mergedFaction.getLogo(3080));
-        assertEquals("era_logo.png", mergedFaction.getLogo(3200));
+        assertEquals("era_icon.png", mergedFaction.getIcon(3080));
+        assertEquals("era_icon.png", mergedFaction.getIcon(3200));
         assertEquals("era_background.png", mergedFaction.getBackground(3200));
+    }
+
+    @Test
+    void legacyLogoFieldsAreReadSeparatelyFromIcons() throws IOException {
+        Faction2 faction = new ObjectMapper(new YAMLFactory()).readValue("""
+              key: OLD
+              name: Old Faction
+              logo: Periphery/Aurigan Coalition.png
+              logoChanges:
+                3080: Periphery/Aurigan Directorate.png
+              icon: logo_aurigan_coalition.png
+              """, Faction2.class);
+
+        assertEquals("logo_aurigan_coalition.png", faction.getIcon(3080));
+        assertEquals("Periphery/Aurigan Coalition.png", faction.getLegacyLogo(3079));
+        assertEquals("Periphery/Aurigan Directorate.png", faction.getLegacyLogo(3080));
+    }
+
+    @Test
+    void factionWithoutLegacyLogoHasNone() {
+        Faction2 mergedFaction = getTestFactions2().getFaction("MRG").orElseThrow();
+
+        assertNull(mergedFaction.getLegacyLogo(3080));
     }
 }

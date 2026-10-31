@@ -491,7 +491,7 @@ class LobbyMekPopup {
     }
 
     static String idString(Game game, int id) {
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+        if (PreferenceManager.getClientPreferences().getLobbyShowUnitId()) {
             return " <FONT" + UIUtil.colorString(UIUtil.uiGray()) + ">[" + id + "]</FONT>";
         } else {
             return "";

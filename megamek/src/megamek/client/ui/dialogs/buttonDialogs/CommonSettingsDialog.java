@@ -2564,6 +2564,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         String userFilesChooserTitle = Messages.getString("CommonSettingsDialog.userDir.chooser.title");
         JButton userFilesChooser = applicationIconButton("btnUserDirChooser", 0xE2C8, userFilesChooserTitle);
         userFilesChooser.addActionListener(e -> fileChooseUserDir(userDir, getFrame()));
+        if (CLIENT_PREFERENCES.isUserDirOverridden()) {
+            String overridden = Messages.getString("CommonSettingsDialog.userDir.launcherOverride");
+            userDir.setEnabled(false);
+            userDir.setToolTipText(overridden);
+            userFilesChooser.setEnabled(false);
+            userFilesChooser.setToolTipText(overridden);
+        }
         JButton userFilesHelp = createUserFilesHelpButton();
         row = new ArrayList<>();
         row.add(userDirLabel);

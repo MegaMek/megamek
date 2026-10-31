@@ -40,7 +40,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import jakarta.xml.bind.JAXBContext;
@@ -141,7 +140,7 @@ public class EntityVerifier implements MekSummaryCache.Listener {
     }
 
     public boolean checkEntity(Entity entity, String fileString, boolean verbose, int ammoTechLvl, boolean failsOnly) {
-        final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        final NumberFormat numberFormat = NumberFormat.getNumberInstance();
         boolean retVal = false;
         TestEntity testEntity = TestEntity.getEntityVerifier(entity);
         String message;
@@ -210,7 +209,7 @@ public class EntityVerifier implements MekSummaryCache.Listener {
         MekSummary[] ms = mekSummaryCache.getAllMeks();
 
         logger.info("""
-                    
+
                     Mek Options: {}
                     Protomek Options: {}
                     Tank Options: {}
@@ -322,9 +321,9 @@ public class EntityVerifier implements MekSummaryCache.Listener {
                     logger.error("""
                           Error: Invalid argument.
                           Usage:
-                          
+
                           EntityVerifier [flags]
-                          
+
                           Valid Flags:
                               -file <FILENAME> Specify a file to validate,
                                               else the data directory is checked

@@ -1,29 +1,42 @@
 #!/usr/bin/env python3
-"""Read-only, provisional suite release planning. Never publish from this module.
+"""Read-only suite release planning for the Core and Experimental channels. Never publishes.
 
-The inventory is deliberately not an authority for publication: remote archive
-bytes, embedded identities and product release IDs must be verified separately.
+Experimental builds the four repositories' ``main`` branches. Core builds the newest
+``releases/<line>`` branch, which must exist in all four. The release line
+(``major.minor.patch``) comes from MegaMek's ``Version.properties`` at the frozen commit; the
+fourth component is the next build number not yet used on that line by any tag or published
+release of the three game repositories. Draft releases do not reserve a number; publication
+refuses a candidate whose tag a draft already holds. MegaMek, MegaMekLab and MekHQ always share
+that version.
+
+The inventory is deliberately not an authority for publication: built archive bytes,
+embedded identities and product release IDs are verified separately.
 """
 
 import argparse
-import hashlib
+import base64
+import io
 import json
 import re
 import subprocess
 import sys
 import tempfile
-import io
-import shutil
 from pathlib import Path
 
 REPOS = {"MegaMek": "megamek", "MegaMekLab": "megameklab", "MekHQ": "mekhq"}
 SOURCES = (*REPOS.values(), "mm-data")
+CHANNELS = ("core", "experimental")
+SCHEMA_VERSION = 2
 SHA = re.compile(r"[0-9a-f]{40}\Z")
-VERSION = re.compile(r"(0|[1-9][0-9]*)\.([0-9]+)\.([0-9]+)\Z")
+# major.minor.patch[.build]; the unpadded build number is 1 or more (0.51.01.1).
+VERSION = re.compile(r"(0|[1-9][0-9]*)\.([0-9]+)\.([0-9]+)(?:\.([1-9][0-9]*))?\Z")
+TAG = re.compile(r"v([0-9]+)\.([0-9]+)\.([0-9]+)(?:\.([0-9]+))?\Z")
+RELEASE_BRANCH = re.compile(r"releases/(.+)\Z")
 MAX = 2147483647
 MAX_RECORD_BYTES = 1024 * 1024
 CHUNK_BYTES = 1024 * 1024
 MAX_DOWNLOAD_BYTES = 4 * 1024**3
+VERSION_PROPERTIES = "megamek/resources/Version.properties"
 
 
 class UnsafeInventory(ValueError):
@@ -76,36 +89,80 @@ def parse_json(data):
     return json.loads(data, object_pairs_hook=unique_object)
 
 
-def numbers(value, allow_revision=False):
+def numbers(value):
+    """(major, minor, patch, build); build 0 means a three-component version."""
     if not isinstance(value, str):
         raise UnsafeInventory("version is not a string")
-    parts = value.split(".")
-    if allow_revision and len(parts) == 4 and parts[3].isdigit():
-        parts = parts[:3]
-    match = VERSION.fullmatch(".".join(parts))
+    match = VERSION.fullmatch(value)
     if not match:
         raise UnsafeInventory(f"invalid numeric version: {value}")
-    result = tuple(map(int, match.groups()))
+    result = tuple(int(n or 0) for n in match.groups())
     if any(n > MAX for n in result):
         raise UnsafeInventory("version exceeds Java integer range")
     return result
 
 
 def padded(parts):
-    return f"{parts[0]}.{parts[1]:02d}.{parts[2]:02d}"
+    base = f"{parts[0]}.{parts[1]:02d}.{parts[2]:02d}"
+    return base + (f".{parts[3]}" if len(parts) > 3 and parts[3] else "")
 
 
 def canonical(value):
     return padded(numbers(value)) == value
 
 
-def reserve(tags, releases, floor, membership="weekly"):
-    """Treat aliases and legacy fourth-component tags/releases as occupied slots."""
-    if not canonical(floor):
-        raise UnsafeInventory("floor must be a canonical padded version")
-    if membership not in ("weekly", "milestone", "development"):
-        raise UnsafeInventory("unknown membership")
-    ceiling = numbers(floor)
+def tag_numbers(tag):
+    """Numeric identity of a historical tag (v0.51.0 == v0.51.00); None if not a version tag."""
+    match = TAG.fullmatch(tag)
+    if match is None:
+        return None
+    result = tuple(int(n or 0) for n in match.groups())
+    return result if all(n <= MAX for n in result) else None
+
+
+def canonical_line(value):
+    """``value`` when it is a canonical three-component line such as 0.51.01, otherwise None."""
+    try:
+        return value if canonical(value) and numbers(value)[3] == 0 else None
+    except UnsafeInventory:
+        return None
+
+
+def branch_line(branch):
+    """Line named by a Core branch such as ``releases/0.51.01``; None for any other name."""
+    match = RELEASE_BRANCH.fullmatch(branch) if isinstance(branch, str) else None
+    return canonical_line(match[1]) if match else None
+
+
+def properties_line(text):
+    """Release line from the major, minor and patch entries of Version.properties."""
+    values = {}
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith(("#", "!")):
+            continue
+        key, separator, value = line.partition("=")
+        if separator:
+            values[key.strip()] = value.strip()
+    try:
+        parts = tuple(int(values[key]) for key in ("major", "minor", "patch"))
+    except (KeyError, ValueError):
+        raise UnsafeInventory("Version.properties lacks numeric major, minor and patch") from None
+    if any(part < 0 or part > MAX for part in parts):
+        raise UnsafeInventory("Version.properties component outside Java integer range")
+    return padded(parts)
+
+
+def reserve(tags, releases, line):
+    """The next build number on ``line`` unused by any tag or published release (drafts excluded).
+
+    Release line 0.51.01 with tags v0.51.01 and v0.51.01.1 allocates 0.51.01.2. Numerically
+    equal spellings (v0.51.1.1) occupy the same build.
+    """
+    if canonical_line(line) is None:
+        raise UnsafeInventory(f"invalid release line: {line}")
+    base = numbers(line)[:3]
+    occupied = set()
     for repo in REPOS.values():
         if (repo not in tags or not isinstance(tags[repo], list)
                 or repo not in releases or not isinstance(releases[repo], list)):
@@ -113,48 +170,47 @@ def reserve(tags, releases, floor, membership="weekly"):
         for tag in tags[repo] + releases[repo]:
             if not isinstance(tag, str):
                 raise UnsafeInventory("invalid tag")
-            if tag.startswith("v") and re.fullmatch(r"v[0-9]+(?:\.[0-9]+){2,3}", tag):
-                ceiling = max(ceiling, numbers(tag[1:], allow_revision=True))
-    if membership == "milestone" or ceiling[2] == MAX:
-        if ceiling[1] == MAX:
-            if ceiling[0] == MAX:
-                raise UnsafeInventory("version space exhausted")
-            return padded((ceiling[0] + 1, 0, 0))
-        return padded((ceiling[0], ceiling[1] + 1, 0))
-    return padded((ceiling[0], ceiling[1], ceiling[2] + 1))
+            if (parts := tag_numbers(tag)) is not None:
+                occupied.add(parts)
+    build = max((parts[3] for parts in occupied if parts[:3] == base), default=0) + 1
+    if build > MAX:
+        raise UnsafeInventory("build number space exhausted")
+    return padded((*base, build))
 
 
-def validate_previous(record):
-    """Minimal strict schema-1 checks for selection; not an archive attestation."""
-    if not isinstance(record, dict) or set(record) - {"schemaVersion", "version", "membership",
-                                                       "tag", "products", "mmData",
-                                                       "minimumLauncherVersion"}:
+def valid_sha(value):
+    return isinstance(value, str) and SHA.fullmatch(value) is not None
+
+
+def validate_record(record):
+    """Strict schema-2 checks of a complete suite record; not an archive attestation."""
+    required = {"schemaVersion", "version", "channel", "tag", "products", "mmData"}
+    if (not isinstance(record, dict) or not required <= set(record)
+            or set(record) - required - {"minimumLauncherVersion"}):
         raise UnsafeInventory("unexpected record keys")
-    if type(record.get("schemaVersion")) is not int or record["schemaVersion"] != 1:
+    if type(record["schemaVersion"]) is not int or record["schemaVersion"] != SCHEMA_VERSION:
         raise UnsafeInventory("invalid schema")
-    version = record.get("version")
-    if not canonical(version) or record.get("tag") != "v" + version:
+    version = record["version"]
+    if not canonical(version) or numbers(version)[3] == 0 or record["tag"] != "v" + version:
         raise UnsafeInventory("invalid suite version or tag")
-    if record.get("membership") not in ("weekly", "milestone", "development"):
-        raise UnsafeInventory("invalid membership")
+    if record["channel"] not in CHANNELS:
+        raise UnsafeInventory("invalid channel")
     if "minimumLauncherVersion" in record:
         value = record["minimumLauncherVersion"]
         if not isinstance(value, str) or not re.fullmatch(r"(0|[1-9][0-9]*)"
                                                          r"(?:\.(0|[1-9][0-9]*)){2}", value):
             raise UnsafeInventory("invalid launcher version")
-    products = record.get("products")
+    products = record["products"]
     if not isinstance(products, dict) or set(products) != set(REPOS):
         raise UnsafeInventory("invalid products")
-    previous_versions = []
     for name, repo in REPOS.items():
         item = products[name]
         if not isinstance(item, dict) or set(item) != {
                 "repository", "commit", "version", "tag", "releaseId", "asset"}:
             raise UnsafeInventory(f"invalid {name} keys")
-        pv = item["version"]
         if (item["repository"] != f"https://github.com/MegaMek/{repo}"
-                or not valid_sha(item["commit"]) or not canonical(pv)
-                or item["tag"] != "v" + pv or numbers(pv) > numbers(version)
+                or not valid_sha(item["commit"]) or item["version"] != version
+                or item["tag"] != record["tag"]
                 or type(item["releaseId"]) is not int or item["releaseId"] <= 0
                 or item["releaseId"] > 2**63 - 1):
             raise UnsafeInventory(f"invalid {name} identity")
@@ -162,80 +218,92 @@ def validate_previous(record):
         if (not isinstance(asset, dict) or set(asset) != {"assetId", "name", "sha256", "size"}
                 or type(asset["assetId"]) is not int or not 0 < asset["assetId"] <= 2**63 - 1
                 or type(asset["size"]) is not int or not 0 < asset["size"] <= 2**63 - 1
-                or asset["name"] != f"{name}-{pv}.tar.gz"
+                or asset["name"] != f"{name}-{version}.tar.gz"
                 or not isinstance(asset["sha256"], str)
                 or not re.fullmatch(r"[0-9a-f]{64}", asset["sha256"])):
             raise UnsafeInventory(f"invalid {name} asset")
-        previous_versions.append(numbers(pv))
-    if previous_versions != sorted(previous_versions):
-        raise UnsafeInventory("dependency versions out of order")
-    data = record.get("mmData")
+    data = record["mmData"]
     if not isinstance(data, dict) or set(data) != {"repository", "commit"} or (
             data["repository"] != "https://github.com/MegaMek/mm-data"
             or not valid_sha(data["commit"])):
         raise UnsafeInventory("invalid mm-data identity")
 
 
-def valid_sha(value):
-    return isinstance(value, str) and SHA.fullmatch(value) is not None
-
-
-def select(commits, previous, membership):
-    if set(commits) != set(SOURCES) or not all(valid_sha(v) for v in commits.values()):
-        raise UnsafeInventory("missing or invalid frozen source SHA")
-    if membership not in ("weekly", "milestone", "development"):
-        raise UnsafeInventory("invalid membership")
-    if previous is None:
-        return list(REPOS), False
-    validate_previous(previous)
-    old = previous["products"]
-    mm = (old["MegaMek"]["commit"] != commits["megamek"]
-          or previous["mmData"]["commit"] != commits["mm-data"])
-    lab = mm or old["MegaMekLab"]["commit"] != commits["megameklab"]
-    hq = lab or old["MekHQ"]["commit"] != commits["mekhq"]
-    changed = [name for name, flag in zip(REPOS, (mm, lab, hq)) if flag]
-    # Only a verified latest complete Weekly can be a real no-op. This is a
-    # candidate, never a publication decision.
-    candidate = not changed and membership == "weekly" and previous["membership"] == "weekly"
-    return changed, candidate
+def record_commits(record):
+    commits = {repo: record["products"][product]["commit"] for product, repo in REPOS.items()}
+    commits["mm-data"] = record["mmData"]["commit"]
+    return commits
 
 
 def plan(inventory):
+    """Validate a frozen inventory and propose the version; never a publication decision."""
     if not isinstance(inventory, dict) or set(inventory) != {
-            "commits", "tags", "releases", "previous", "membership", "floor"}:
+            "channel", "branch", "rehearsal", "line", "commits", "tags", "releases", "previous"}:
         raise UnsafeInventory("inventory fields missing or unknown")
+    channel = inventory["channel"]
+    branch = inventory["branch"]
+    rehearsal = inventory["rehearsal"]
+    line = inventory["line"]
+    commits = inventory["commits"]
+    if channel not in CHANNELS or type(rehearsal) is not bool:
+        raise UnsafeInventory("invalid channel or rehearsal flag")
+    if canonical_line(line) is None:
+        raise UnsafeInventory(f"invalid release line: {line}")
+    if (not isinstance(commits, dict) or set(commits) != set(SOURCES)
+            or not all(valid_sha(value) for value in commits.values())):
+        raise UnsafeInventory("missing or invalid frozen source SHA")
+    if channel == "experimental":
+        if branch != "main" or rehearsal:
+            raise UnsafeInventory("Experimental builds main")
+    elif rehearsal:
+        if branch != "main":
+            raise UnsafeInventory("a cut rehearsal builds main")
+    elif branch_line(branch) != line:
+        raise UnsafeInventory(f"Core branch {branch} must build its own line, "
+                              f"but Version.properties says {line}")
     previous = inventory["previous"]
-    changed, candidate = select(inventory["commits"], previous, inventory["membership"])
-    if previous is not None and numbers(inventory["floor"]) < numbers(previous["version"]):
-        raise UnsafeInventory("floor predates previous record")
-    version = reserve(inventory["tags"], inventory["releases"], inventory["floor"],
-                      inventory["membership"])
+    if previous is not None:
+        validate_record(previous)
+        if previous["channel"] != channel:
+            raise UnsafeInventory("previous record belongs to another channel")
+    version = reserve(inventory["tags"], inventory["releases"], line)
     if previous is not None and numbers(version) <= numbers(previous["version"]):
-        raise UnsafeInventory("suite version is not monotonic")
+        raise UnsafeInventory(f"{version} is not newer than the latest {channel} "
+                              f"release {previous['version']}")
     return {
         "status": "PROVISIONAL_NONPUBLISHING",
+        "channel": channel,
+        "branch": branch,
+        "rehearsal": rehearsal,
         "versionCandidate": version,
-        "membership": inventory["membership"],
-        "frozenCommits": inventory["commits"],
-        "buildCandidates": changed,
-        "reuseCandidates": [name for name in REPOS if name not in changed],
-        "weeklyNoopCandidate": candidate,
+        "previousTag": previous["tag"] if previous is not None else None,
+        "frozenCommits": commits,
+        # Nothing changed since this channel's latest release: publish nothing.
+        "noop": previous is not None and record_commits(previous) == commits,
         "warning": "No record or release is verified or published by this plan",
     }
 
 
+API = re.compile(
+    r"repos/MegaMek/(?P<repo>[a-z-]+)/(?P<path>"
+    r"git/ref/heads/(?P<branch>main|releases/[0-9]+\.[0-9]+\.[0-9]+)"
+    r"|git/matching-refs/heads/releases/\?per_page=100"
+    r"|contents/megamek/resources/Version\.properties\?ref=[0-9a-f]{40}"
+    r"|commits/v(?P<commit_tag>[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?)"
+    r"|git/ref/tags/v(?P<ref_tag>[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?)"
+    r"|(?:tags|releases)\?per_page=100&page=[1-9][0-9]*)\Z")
+
+
 def gh_get(endpoint, runner=subprocess.run):
     # Only GET endpoints are accepted. No API write or arbitrary CLI command.
-    match = re.fullmatch(r"repos/MegaMek/([a-z-]+)/"
-                         r"(commits/(?:main|v[0-9]+\.[0-9]+\.[0-9]+)"
-                         r"|git/ref/tags/v[0-9]+\.[0-9]+\.[0-9]+"
-                         r"|(?:tags|releases)\?per_page=100&page=[1-9][0-9]*)",
-                         endpoint)
-    if (match is None or match[1] not in SOURCES
-            or (match[1] == "mm-data" and match[2] != "commits/main")
-            or (match[2].startswith(("commits/v", "git/ref/tags/"))
-                and (match[1] not in REPOS.values()
-                     or not canonical(match[2].rsplit("/", 1)[-1][1:])))):
+    match = API.fullmatch(endpoint)
+    if match is None or match["repo"] not in SOURCES:
+        raise UnsafeInventory("unapproved read-only API endpoint")
+    path, repo, tag = match["path"], match["repo"], match["commit_tag"] or match["ref_tag"]
+    if ((match["branch"] not in (None, "main") and branch_line(match["branch"]) is None)
+            or (path.startswith("contents/") and repo != "megamek")
+            or (repo == "mm-data" and not path.startswith(("git/ref/heads/", "git/matching-refs/")))
+            or (tag is not None and not canonical(tag))):
         raise UnsafeInventory("unapproved read-only API endpoint")
     try:
         result = runner(["gh", "api", endpoint], capture_output=True, check=True)
@@ -276,6 +344,7 @@ def download_asset(repo, asset_id, destination, popen=subprocess.Popen):
 
 
 def published_tag(entry):
+    """Tag of a published release; None for a draft. Malformed entries fail closed."""
     if not isinstance(entry, dict) or type(entry.get("draft")) is not bool:
         raise UnsafeInventory("incomplete release response")
     if entry["draft"]:
@@ -287,11 +356,29 @@ def published_tag(entry):
     return entry["tag_name"]
 
 
-def complete_record(releases, fetch=download_asset, allow_missing=False):
-    """Read the latest *candidate* complete record; never interpret a partial as reusable.
+def release_tag(entry):
+    """Tag name of any release, including a draft; validates the entry either way."""
+    published_tag(entry)
+    if not isinstance(entry.get("tag_name"), str):
+        raise UnsafeInventory("incomplete release response")
+    return entry["tag_name"]
 
-    Release-list ordering is not a version ordering. A malformed record-shaped asset
-    is an error rather than a reason to fall back to an older record.
+
+def published_release_tags(entries):
+    """Tags of the published releases among ``entries``, in order.
+
+    Drafts are left out: only tokens with write access can list them, so the read-only build
+    and the publish recheck would otherwise see different inventories. Publication still
+    refuses a suite tag held by any release, drafts included.
+    """
+    tags = [release_tag(entry) for entry in entries]  # Validates drafts too.
+    return [tag for tag, entry in zip(tags, entries) if not entry["draft"]]
+
+
+def complete_records(releases, fetch=download_asset):
+    """Every complete record attached to a published MegaMek release, oldest first.
+
+    A malformed record-shaped asset is an error rather than a reason to ignore it.
     """
     if not isinstance(releases, list):
         raise UnsafeInventory("invalid MegaMek release list")
@@ -299,15 +386,14 @@ def complete_record(releases, fetch=download_asset, allow_missing=False):
     for release in releases:
         tag = published_tag(release)
         if tag is None:
-            # Drafts cannot be used as a previously published complete record.
             continue
         for asset in release["assets"]:
             if not isinstance(asset, dict) or not isinstance(asset.get("name"), str):
                 raise UnsafeInventory("incomplete release asset response")
-            if not asset["name"].startswith("suite-record-"):
-                continue
             name = asset["name"]
-            if not re.fullmatch(r"suite-record-[0-9]+\.[0-9]+\.[0-9]+\.json", name):
+            if not name.startswith("suite-record-"):
+                continue
+            if not re.fullmatch(r"suite-record-[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?\.json", name):
                 raise UnsafeInventory("malformed complete-record asset name")
             if type(asset.get("id")) is not int or asset["id"] <= 0 or (
                     type(asset.get("size")) is not int) or asset["size"] <= 0 or (
@@ -321,64 +407,20 @@ def complete_record(releases, fetch=download_asset, allow_missing=False):
                 if path.stat().st_size != asset["size"]:
                     raise UnsafeInventory("complete-record asset size mismatch")
                 record = parse_json(path.read_bytes())
-            validate_previous(record)
-            # A new suite release can reference an older MegaMek product release.
+            validate_record(record)
             if name != f"suite-record-{record['version']}.json" or tag != record["tag"]:
                 raise UnsafeInventory("record release identity mismatch")
             found.append(record)
-    if not found:
-        if allow_missing:
-            return None
-        raise UnsafeInventory("no complete record: first publication needs explicit bootstrap review")
-    versions = [numbers(r["version"]) for r in found]
+    versions = [numbers(record["version"]) for record in found]
     if len(set(versions)) != len(versions):
         raise UnsafeInventory("duplicate complete suite version")
-    return found[versions.index(max(versions))]
+    return sorted(found, key=lambda record: numbers(record["version"]))
 
 
-def check_product_assets(record, releases, fetch=download_asset, attest=None, retain=None):
-    """Check release/asset IDs and bytes; optionally attest all three retained archives."""
-    validate_previous(record)
-    with tempfile.TemporaryDirectory() as directory:
-        paths = {}
-        for product, repo in REPOS.items():
-            item = record["products"][product]
-            matches = [r for r in releases[repo] if r.get("id") == item["releaseId"]]
-            if len(matches) != 1 or matches[0].get("draft") is not False or (
-                    matches[0].get("tag_name") != item["tag"]):
-                raise UnsafeInventory(f"missing release identity for {product}")
-            assets = matches[0].get("assets")
-            if not isinstance(assets, list):
-                raise UnsafeInventory(f"missing assets for {product}")
-            expected = item["asset"]
-            matches = [a for a in assets if a.get("id") == expected["assetId"]]
-            if len(matches) != 1 or any(matches[0].get(k) != v for k, v in (
-                    ("name", expected["name"]), ("size", expected["size"]), ("state", "uploaded"))):
-                raise UnsafeInventory(f"missing asset identity for {product}")
-            if attest is not None and expected["size"] > 4 * 1024**3:
-                raise UnsafeInventory(f"archive exceeds attestation size limit: {product}")
-            path = Path(directory) / expected["name"]
-            fetch(repo, expected["assetId"], path)
-            digest = hashlib.sha256()
-            size = 0
-            with path.open("rb") as stream:
-                while chunk := stream.read(CHUNK_BYTES):
-                    size += len(chunk)
-                    if size > expected["size"]:
-                        raise UnsafeInventory(f"asset bytes differ for {product}")
-                    digest.update(chunk)
-            if size != expected["size"] or digest.hexdigest() != expected["sha256"]:
-                raise UnsafeInventory(f"asset bytes differ for {product}")
-            paths[product] = path
-        if attest is not None:
-            attest(record, paths)
-        if retain is not None:
-            target = Path(retain)
-            if target.exists():
-                raise UnsafeInventory("prior archive directory already exists")
-            target.mkdir()
-            for product, path in paths.items():
-                shutil.copyfile(path, target / path.name)
+def latest(records, channel):
+    """The newest complete record of ``channel``, or None."""
+    matching = [record for record in records if record["channel"] == channel]
+    return matching[-1] if matching else None
 
 
 def release_details(getter=gh_get):
@@ -391,7 +433,7 @@ def release_details(getter=gh_get):
             if not isinstance(batch, list) or len(batch) > 100:
                 raise UnsafeInventory("invalid release page")
             for entry in batch:
-                published_tag(entry)
+                release_tag(entry)
             entries.extend(batch)
             if len(batch) < 100:
                 break
@@ -400,97 +442,115 @@ def release_details(getter=gh_get):
     return result
 
 
-def discovered_inventory(membership, getter=gh_get, fetch=download_asset,
-                         bootstrap=False, bootstrap_floor=None, attest=None, retain=None):
-    """Remote preflight, including archive attestation; still no publication authority."""
-    details = release_details(getter)
-    if bootstrap and bootstrap_floor is None:
-        raise UnsafeInventory("bootstrap requires an explicit canonical floor")
-    if not bootstrap and bootstrap_floor is not None:
-        raise UnsafeInventory("bootstrap floor requires explicit bootstrap")
-    if bootstrap and not canonical(bootstrap_floor):
-        raise UnsafeInventory("bootstrap floor must be canonical")
-    previous = complete_record(details["megamek"], fetch, allow_missing=bootstrap)
-    if bootstrap and previous is not None:
-        raise UnsafeInventory("bootstrap refused: complete record already exists")
-    if previous is not None:
-        if attest is None:
-            from suite_archive_attestation import attest_archives
-            attest = attest_archives
-        check_product_assets(previous, details, fetch, attest, retain)
-    inventory = freeze_and_inventory(
-        membership, bootstrap_floor if bootstrap else previous["version"], getter)
-    if any(inventory["releases"][repo] != [
-            tag for entry in details[repo] if (tag := published_tag(entry)) is not None]
-           for repo in REPOS.values()):
-        raise UnsafeInventory("release inventory moved during discovery")
-    inventory["previous"] = previous
-    return inventory
-
-
 def release_inventory(getter=gh_get):
-    """Read tags and published releases without replacing frozen source commits."""
+    """Every tag and published release tag of the three game repositories."""
     tags = {}
     releases = {}
     for repo in REPOS.values():
         tags[repo] = []
         releases[repo] = []
-        for kind, target, field in (("tags", tags[repo], "name"),
-                                    ("releases", releases[repo], "tag_name")):
+        for kind, target in (("tags", tags[repo]), ("releases", releases[repo])):
             page = 1
             while True:
                 entries = getter(f"repos/MegaMek/{repo}/{kind}?per_page=100&page={page}")
                 if not isinstance(entries, list) or len(entries) > 100:
                     raise UnsafeInventory(f"invalid {kind} for {repo}")
                 if kind == "tags":
-                    if any(not isinstance(e, dict) or not isinstance(e.get(field), str)
+                    if any(not isinstance(e, dict) or not isinstance(e.get("name"), str)
                            for e in entries):
                         raise UnsafeInventory(f"invalid tags for {repo}")
-                    target.extend(e[field] for e in entries)
+                    target.extend(e["name"] for e in entries)
                 else:
-                    target.extend(tag for e in entries if (tag := published_tag(e)) is not None)
+                    target.extend(published_release_tags(entries))
                 if len(entries) < 100:
                     break
                 page += 1
     return {"tags": tags, "releases": releases}
 
 
-def freeze_and_inventory(membership, floor, getter=gh_get):
-    """Capture main once; previous is null until separately attested."""
-    commits = {}
-    for repo in SOURCES:
-        head = getter(f"repos/MegaMek/{repo}/commits/main")
-        sha = head.get("sha") if isinstance(head, dict) else None
-        if not valid_sha(sha):
-            raise UnsafeInventory(f"invalid main HEAD for {repo}")
-        commits[repo] = sha
-    return {"commits": commits, **release_inventory(getter), "previous": None,
-            "membership": membership, "floor": floor}
+def branch_head(repo, branch, getter=gh_get):
+    ref = getter(f"repos/MegaMek/{repo}/git/ref/heads/{branch}")
+    target = ref.get("object") if isinstance(ref, dict) else None
+    if (not isinstance(target, dict) or ref.get("ref") != f"refs/heads/{branch}"
+            or target.get("type") != "commit" or not valid_sha(target.get("sha"))):
+        raise UnsafeInventory(f"invalid {branch} head for {repo}")
+    return target["sha"]
+
+
+def freeze(branch, getter=gh_get):
+    """Capture the branch head of all four repositories once."""
+    return {repo: branch_head(repo, branch, getter) for repo in SOURCES}
+
+
+def release_branches(repo, getter=gh_get):
+    """Canonical ``releases/<line>`` branch names of a repository, oldest line first."""
+    refs = getter(f"repos/MegaMek/{repo}/git/matching-refs/heads/releases/?per_page=100")
+    if not isinstance(refs, list) or len(refs) >= 100:
+        raise UnsafeInventory(f"invalid or unexpectedly long release branch list for {repo}")
+    names = []
+    for ref in refs:
+        if not isinstance(ref, dict) or not isinstance(ref.get("ref"), str):
+            raise UnsafeInventory(f"invalid release branch entry for {repo}")
+        name = ref["ref"].removeprefix("refs/heads/")
+        if branch_line(name) is not None:
+            names.append(name)
+    return sorted(names, key=lambda name: numbers(branch_line(name)))
+
+
+def newest_release_branch(getter=gh_get):
+    branches = release_branches("megamek", getter)
+    if not branches:
+        raise UnsafeInventory("no releases/<line> branch exists; run the Core cut first")
+    return branches[-1]
+
+
+def version_line(megamek_sha, getter=gh_get):
+    """Release line of MegaMek's Version.properties at an exact commit."""
+    data = getter(f"repos/MegaMek/megamek/contents/{VERSION_PROPERTIES}?ref={megamek_sha}")
+    if (not isinstance(data, dict) or data.get("encoding") != "base64"
+            or not isinstance(data.get("content"), str)):
+        raise UnsafeInventory("unreadable Version.properties")
+    try:
+        text = base64.b64decode(data["content"], validate=False).decode("utf-8")
+    except (ValueError, UnicodeError):
+        raise UnsafeInventory("unreadable Version.properties") from None
+    return properties_line(text)
+
+
+def discovered_inventory(channel, branch=None, rehearsal=False, getter=gh_get,
+                         fetch=download_asset):
+    """Remote preflight of one channel; still no publication authority."""
+    if channel not in CHANNELS:
+        raise UnsafeInventory("unknown channel")
+    if branch is None:
+        branch = "main" if channel == "experimental" or rehearsal else newest_release_branch(getter)
+    details = release_details(getter)
+    records = complete_records(details["megamek"], fetch)
+    commits = freeze(branch, getter)
+    line = version_line(commits["megamek"], getter)
+    if channel == "experimental" and f"releases/{line}" in release_branches("megamek", getter):
+        raise UnsafeInventory(f"main is still on line {line}, which already has a Core branch; "
+                              "bump Version.properties on main first")
+    inventory = {
+        "channel": channel, "branch": branch, "rehearsal": rehearsal,
+        "line": line, "commits": commits,
+        **release_inventory(getter), "previous": latest(records, channel),
+    }
+    if any(inventory["releases"][repo] != published_release_tags(details[repo])
+           for repo in REPOS.values()):
+        raise UnsafeInventory("release inventory moved during discovery")
+    plan(inventory)
+    return inventory
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--inventory", type=Path, help="offline JSON inventory (never authoritative)")
-    parser.add_argument("--membership", choices=("weekly", "milestone", "development"),
-                        default="weekly")
-    parser.add_argument("--floor", default="0.51.00",
-                        help="canonical version floor, not a version reservation")
-    parser.add_argument("--bootstrap", action="store_true",
-                        help="read-only first-record candidate; requires --bootstrap-floor")
-    parser.add_argument("--bootstrap-floor",
-                        help="explicit canonical floor for read-only bootstrap candidate")
+    parser.add_argument("--channel", choices=CHANNELS, default="experimental")
+    parser.add_argument("--branch", help="override the channel's branch (Core only)")
     args = parser.parse_args()
     try:
-        if args.inventory and (args.bootstrap or args.bootstrap_floor is not None):
-            raise UnsafeInventory("bootstrap options require remote discovery")
-        inventory = (parse_json(args.inventory.read_bytes()) if args.inventory
-                     else discovered_inventory(args.membership, bootstrap=args.bootstrap,
-                                               bootstrap_floor=args.bootstrap_floor))
-        print(json.dumps(plan(inventory), indent=2))
-        # Deliberately nonzero: an unverified plan must never look like a release.
-        print("BLOCKED: archive attestation, source-ref checks and publication are not implemented",
-              file=sys.stderr)
-        return 2
+        print(json.dumps(plan(discovered_inventory(args.channel, args.branch)), indent=2))
+        return 0
     except (UnsafeInventory, ValueError, OSError, subprocess.CalledProcessError) as error:
         print(f"BLOCKED: {error}", file=sys.stderr)
         return 2

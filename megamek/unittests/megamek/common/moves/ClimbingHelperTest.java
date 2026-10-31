@@ -307,6 +307,30 @@ class ClimbingHelperTest {
     }
 
     @Nested
+    @DisplayName("Climbing Roll Modifier Tests")
+    class ClimbingRollModifierTests {
+
+        @Test
+        @DisplayName("Two functional hands add nothing to the climbing roll")
+        void twoHandsAddNothing() {
+            Mek mek = createFullyFunctionalMek(50);
+
+            assertEquals(0, ClimbingHelper.getClimbingRollModifier(mek),
+                  "The +1 climbing modifier is not applied to the climbing roll itself (TO:AR p.20)");
+        }
+
+        @Test
+        @DisplayName("One functional hand adds only the one-arm modifier")
+        void oneHandAddsOneArmModifier() {
+            Mek mek = createFullyFunctionalMek(50);
+            destroyActuator(mek, Mek.LOC_RIGHT_ARM, Mek.ACTUATOR_HAND);
+
+            assertEquals(ClimbingHelper.ONE_ARM_PSR_MODIFIER, ClimbingHelper.getClimbingRollModifier(mek),
+                  "Climbing with one arm adds +2 to the climbing roll");
+        }
+    }
+
+    @Nested
     @DisplayName("Climbing Impossible Reason Tests")
     class ClimbingImpossibleReasonTests {
 

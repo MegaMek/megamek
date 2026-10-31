@@ -1,0 +1,168 @@
+name: Game suite release engine
+
+# Reusable: called by the Experimental, Core and Cut Core workflows, which own the triggers,
+# the inputs and the global concurrency group. Never add concurrency here (callers would deadlock).
+on:
+  workflow_call:
+    inputs:
+      channel:
+        description: core or experimental
+        required: true
+        type: string
+      branch:
+        description: Core only; empty means the newest releases/<line> branch
+        required: false
+        type: string
+        default: ""
+      cut_line:
+        description: Core cut only; branch this line from main first and move main on afterwards
+        required: false
+        type: string
+        default: ""
+      dry_run:
+        description: Build and verify without any write
+        required: true
+        type: boolean
+      environment:
+        description: Deployment environment holding the App key
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    environment: ${{ inputs.environment }}
+    env:
+      CHANNEL: ${{ inputs.channel }}
+      BRANCH: ${{ inputs.branch }}
+      CUT_LINE: ${{ inputs.cut_line }}
+      DRY_RUN: ${{ inputs.dry_run }}
+    steps:
+      - name: Gate live operation before checkout
+        env:
+          ENABLED: ${{ vars.SUITE_RELEASES_ENABLED }}
+          APP_ID: ${{ vars.SUITE_RELEASE_APP_ID }}
+          APP_KEY_PRESENT: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY != '' }}
+        run: |
+          if [[ "$CHANNEL" != "core" && "$CHANNEL" != "experimental" ]]; then
+            echo "::error::Unknown channel $CHANNEL"
+            exit 1
+          fi
+          if [[ -n "$CUT_LINE" && ( "$CHANNEL" != "core" || -n "$BRANCH" ) ]]; then
+            echo "::error::A cut is always a Core release of the new branch"
+            exit 1
+          fi
+          if [[ "$DRY_RUN" != "true" && "$ENABLED" != "true" ]]; then
+            echo "::error::Live suite releases disabled (SUITE_RELEASES_ENABLED must be true)"
+            exit 1
+          fi
+          if [[ "$DRY_RUN" != "true" && ( -z "$APP_ID" || "$APP_KEY_PRESENT" != "true" ) ]]; then
+            echo "::error::Missing suite release App configuration"
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Mint branch-creation App token (Core cut)
+        if: ${{ inputs.cut_line != '' && !inputs.dry_run }}
+        id: cut_app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek,megameklab,mekhq,mm-data
+          permission-contents: write
+      - name: Create the Core branches from main
+        if: ${{ inputs.cut_line != '' }}
+        env:
+          GH_TOKEN: ${{ inputs.dry_run && github.token || steps.cut_app.outputs.token }}
+        run: |
+          args=(branches --line "$CUT_LINE")
+          if [[ "$DRY_RUN" == "true" ]]; then args+=(--dry-run); fi
+          python3 scripts/suite_release_cut.py "${args[@]}" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Verify tooling and clone four official sources with full history
+        run: |
+          gh --version
+          git --version
+          mkdir sources
+          for repo in megamek megameklab mekhq mm-data; do
+            git clone "https://github.com/MegaMek/$repo.git" "sources/$repo"
+          done
+      - name: Freeze sources, allocate the version and build
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # Pinned worktrees and builds exceed the ~7.8 GB RAM-backed /tmp on Ubuntu 26.04+.
+          TMPDIR: ${{ runner.temp }}
+        run: |
+          args=(--channel "$CHANNEL" --sources sources --state suite-state)
+          if [[ -n "$CUT_LINE" && "$DRY_RUN" == "true" ]]; then
+            # The branches do not exist in a dry run; rehearse by building main.
+            args+=(--rehearsal)
+          elif [[ -n "$CUT_LINE" ]]; then
+            args+=(--branch "releases/$CUT_LINE")
+          elif [[ -n "$BRANCH" ]]; then
+            args+=(--branch "$BRANCH")
+          fi
+          python3 scripts/suite_release_coordinator.py prepare "${args[@]}"
+      - name: Finish dry run or no-op without write token
+        if: ${{ inputs.dry_run || steps.prepare.outputs.noop == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TMPDIR: ${{ runner.temp }}
+        run: python3 scripts/suite_release_coordinator.py finish --sources sources --state suite-state
+      - name: Mint narrowly scoped App token after successful builds
+        if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}
+        id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek,megameklab,mekhq
+          permission-contents: write
+      - name: Recheck remote inventory and publish once, record last
+        if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          TMPDIR: ${{ runner.temp }}
+        run: python3 scripts/suite_release_coordinator.py finish --sources sources --state suite-state --publish
+      - name: Mint main-branch App token (Core cut)
+        if: ${{ inputs.cut_line != '' && !inputs.dry_run }}
+        id: bump_app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek
+          permission-contents: write
+      - name: Move main to the next line
+        if: ${{ inputs.cut_line != '' }}
+        env:
+          GH_TOKEN: ${{ inputs.dry_run && github.token || steps.bump_app.outputs.token }}
+        run: |
+          args=(bump --line "$CUT_LINE")
+          if [[ "$DRY_RUN" == "true" ]]; then args+=(--dry-run); fi
+          python3 scripts/suite_release_cut.py "${args[@]}" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Keep the plan and seal for diagnosis
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: suite-state-${{ inputs.channel }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: suite-state/*.json
+          if-no-files-found: ignore
+          retention-days: 30

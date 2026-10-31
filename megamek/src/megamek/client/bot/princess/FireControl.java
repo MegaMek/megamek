@@ -62,6 +62,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
@@ -119,7 +120,17 @@ public class FireControl {
     static final double COMMANDER_UTILITY = 0.5;
     static final double SUB_COMMANDER_UTILITY = 0.25;
     static final double STRATEGIC_TARGET_UTILITY = 0.5;
+    /** The fire bonus for a priority target at the default target priority, 3. */
     static final double PRIORITY_TARGET_UTILITY = 0.25;
+    /** How much each step of target priority away from 3 adds or takes off the bonus: 2 is +35%, 5 is +5%. */
+    static final double PRIORITY_TARGET_UTILITY_STEP = 0.10;
+    /**
+     * How far priority 1 sits above the enemy-commander bonus. A player marking a unit "shoot this first" outranks the
+     * bot's own preference for the enemy commander, C3 master or initiative leader (user decision, #9174).
+     */
+    static final double PRIORITY_ONE_MARGIN_OVER_COMMANDER = 0.05;
+    /** What {@link #calcDamageAllocationUtility} returns for a target already expected to be destroyed. */
+    private static final double ALREADY_DESTROYED_OVERKILL = 100;
 
     static final String TH_WOODS = "woods";
     static final String TH_SMOKE = "smoke";
@@ -273,6 +284,11 @@ public class FireControl {
     }
 
     protected final Princess owner;
+
+    // The most dangerous enemy's threat multiplier, worked out once per round and phase
+    private int threatCacheRound = -1;
+    private GamePhase threatCachePhase;
+    private double highestThreatCache = 1.0;
 
     /**
      * Constructor
@@ -1148,6 +1164,16 @@ public class FireControl {
                   || ((targetEntity != null) && Compute.isFlakToHitTarget(shooter, targetEntity));
             boolean isFlakMunition = !Collections.disjoint(munitionTypes, aaMunitions) || ammoType.countsAsFlak();
             boolean isArtilleryOnlyMunition = !Collections.disjoint(munitionTypes, ArtyOnlyMunitions);
+            // An Artillery Cannon may fire fuel-air at an airborne unit as a normal ballistic weapon (TO:AUE 6th
+            // printing, p.97); artillery weapons may fire only "F" damage type ordnance at it (TO:AR 6th printing,
+            // p.153), and fuel-air has none. Forum ruling of 14 June 2024:
+            // https://www.battletech.com/forums/index.php/topic,84169.msg1993664.html
+            if (isArtilleryOnlyMunition
+                  && munitionTypes.contains(AmmoType.Munitions.M_FAE)
+                  && !munitionTypes.contains(AmmoType.Munitions.M_FLECHETTE)
+                  && !weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
+                isArtilleryOnlyMunition = false;
+            }
             if (isFlakTarget && isFlakMunition) {
                 if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) {
                     toHit.addModifier(TH_WEAPON_FLAK_HAG);
@@ -1586,9 +1612,8 @@ public class FireControl {
         utility += KILL_UTILITY * firingPlan.getKillProbability();
         // Multiply the combined damage/crit/kill utility for a target by a log-scaled
         // factor based on the target's damage potential.
-        utility *= calcTargetPotentialDamageMultiplier(firingPlan.getTarget());
-        utility += TARGET_HP_FRACTION_DEALT_UTILITY
-              * calcDamageAllocationUtility(firingPlan.getTarget(), expectedDamage);
+        utility *= calcThreatMultiplier(firingPlan.getTarget());
+        utility += TARGET_HP_FRACTION_DEALT_UTILITY * calcOverkillFraction(firingPlan.getTarget(), expectedDamage);
         utility -= firingPlan.getExpectedFriendlyDamage();
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
@@ -1619,9 +1644,79 @@ public class FireControl {
 
         final int id = target.getId();
         if (owner.getPriorityUnitTargets().contains(id)) {
-            return PRIORITY_TARGET_UTILITY;
+            return priorityTargetUtility(owner.getTargetPriority(id));
         }
         return 0;
+    }
+
+    /**
+     * The threat factor an attack's score is multiplied by. A unit that can deal more damage is a bigger threat and a
+     * better target. A priority target counts as at least as big a threat as the most dangerous enemy on the board,
+     * so an unarmed truck in a convoy is not passed over for the armed escort beside it.
+     *
+     * @param target The target of the attack
+     *
+     * @return The multiplier, 1 for a target that deals no damage
+     */
+    double calcThreatMultiplier(final Targetable target) {
+        double ownThreat = calcTargetPotentialDamageMultiplier(target);
+        if (!isPriorityUnitTarget(target)) {
+            return ownThreat;
+        }
+        return Math.max(ownThreat, highestEnemyThreatMultiplier());
+    }
+
+    /**
+     * The share of the target's total HP the attack is expected to deal, which costs the attack score points when it
+     * is half or more (overkill), and 100 when the target is already expected to be destroyed. A priority target is
+     * meant to be destroyed, so it pays no overkill cost until damage already assigned to it is enough to destroy it.
+     *
+     * @param target         The target of the attack
+     * @param expectedDamage The damage the attack is expected to deal
+     *
+     * @return The overkill fraction used as a penalty
+     */
+    double calcOverkillFraction(final Targetable target, final double expectedDamage) {
+        double overkillFraction = calcDamageAllocationUtility(target, expectedDamage);
+        if (isPriorityUnitTarget(target) && (overkillFraction < ALREADY_DESTROYED_OVERKILL)) {
+            return 0;
+        }
+        return overkillFraction;
+    }
+
+    private boolean isPriorityUnitTarget(final Targetable target) {
+        return (target instanceof Entity) && owner.getPriorityUnitTargets().contains(target.getId());
+    }
+
+    /**
+     * @return The threat multiplier of the most dangerous enemy on the board, worked out once per round and phase
+     */
+    private double highestEnemyThreatMultiplier() {
+        Game game = owner.getGame();
+        if ((game.getRoundCount() == threatCacheRound) && (game.getPhase() == threatCachePhase)) {
+            return highestThreatCache;
+        }
+        double highestThreat = 1.0;
+        for (Entity enemy : owner.getEnemyEntities()) {
+            highestThreat = Math.max(highestThreat, calcTargetPotentialDamageMultiplier(enemy));
+        }
+        threatCacheRound = game.getRoundCount();
+        threatCachePhase = game.getPhase();
+        highestThreatCache = highestThreat;
+        return highestThreat;
+    }
+
+    /**
+     * @param targetPriority how keenly the bot goes for the target, 1 (shoot first) to 5
+     *
+     * @return the fire bonus for that target priority: 0.55, 0.35, 0.25, 0.15 or 0.05
+     */
+    static double priorityTargetUtility(int targetPriority) {
+        if (targetPriority <= BehaviorSettings.HIGHEST_TARGET_PRIORITY) {
+            return COMMANDER_UTILITY + PRIORITY_ONE_MARGIN_OVER_COMMANDER;
+        }
+        int stepsKeenerThanDefault = BehaviorSettings.DEFAULT_TARGET_PRIORITY - targetPriority;
+        return PRIORITY_TARGET_UTILITY + (stepsKeenerThanDefault * PRIORITY_TARGET_UTILITY_STEP);
     }
 
     protected double calcCivilianTargetDisutility(final Targetable target) {
@@ -1703,7 +1798,7 @@ public class FireControl {
         // Do not shoot at units we already expect to deal more than their total HP of
         // damage to!
         if (1.0 <= previousDamageFraction) {
-            return 100;
+            return ALREADY_DESTROYED_OVERKILL;
 
             // In cases that are not generally overkill (less than 50% of the target's total
             // HP in damage), target as normal (don't want to spread damage in these cases).
@@ -3277,6 +3372,7 @@ public class FireControl {
                   enemy,
                   ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
+            logTargetScore(shooter, enemy, plan, priorityTarget);
 
             if ((bestPlan == null)
                   || (plan.getUtility() > bestPlan.getUtility())) {
@@ -3284,8 +3380,33 @@ public class FireControl {
             }
         }
 
+        if (bestPlan != null) {
+            LOGGER.info("[FireScore] {} chooses {} (score {})", shooter.getDisplayName(),
+                  (bestPlan.getTarget() == null) ? "no target" : bestPlan.getTarget().getDisplayName(),
+                  String.format("%.1f", bestPlan.getUtility()));
+        }
         // Return the best overall plan.
         return bestPlan;
+    }
+
+    /**
+     * Logs the score of the best attack on one target, and the parts that set it, so the choice between targets can be
+     * read back after a game.
+     */
+    private void logTargetScore(Entity shooter, Targetable enemy, FiringPlan plan, boolean priorityTarget) {
+        // called for every enemy each shooter weighs; skip the formatting and the threat and overkill sums when the
+        // line would not be written anyway
+        if ((plan == null) || !LOGGER.isInfoEnabled()) {
+            return;
+        }
+        LOGGER.info("[FireScore] {} -> {}: score {}, expected damage {}, kill chance {}, threat x{}, overkill {}, {}",
+              shooter.getDisplayName(), enemy.getDisplayName(),
+              String.format("%.1f", plan.getUtility()),
+              String.format("%.1f", plan.getExpectedDamage()),
+              String.format("%.2f", plan.getKillProbability()),
+              String.format("%.2f", calcThreatMultiplier(enemy)),
+              String.format("%.2f", calcOverkillFraction(enemy, plan.getExpectedDamage())),
+              priorityTarget ? "priority " + owner.getTargetPriority(enemy.getId()) : "not a priority target");
     }
 
     /**
@@ -3396,7 +3517,9 @@ public class FireControl {
     }
 
     /**
-     * Makes sure ammo is loaded for each weapon
+     * Makes sure ammo is loaded for each weapon. Weapons that share a bin are never given more shots than it holds: a
+     * weapon whose bin is empty by the time it fires is reloaded by the server from any other bin, whatever that does
+     * to its chance to hit. A shot that no bin can supply with a chance worth the ammo is dropped from the plan.
      */
     void loadAmmo(final Entity shooter,
           final FiringPlan plan) {
@@ -3406,6 +3529,11 @@ public class FireControl {
         if (plan == null) {
             return;
         }
+
+        // Shots already promised from each bin to weapons earlier in the plan
+        final Map<AmmoMounted, Integer> shotsTaken = new HashMap<>();
+        final Map<WeaponMounted, Double> ammoConservation = owner.calcAmmoConservation(shooter);
+        final List<WeaponFireInfo> unsuppliedShots = new ArrayList<>();
 
         // Loading ammo for all my weapons.
         for (final WeaponFireInfo info : plan) {
@@ -3420,33 +3548,14 @@ public class FireControl {
                 continue;
             }
 
-            final AmmoMounted suggestedAmmo = info.getAmmo();
-            final AmmoMounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon, suggestedAmmo);
-
-            // if we didn't find preferred ammo after all, continue
+            final AmmoMounted mountedAmmo = chooseAmmo(shooter, info, shotsTaken,
+                  ammoConservation.getOrDefault(currentWeapon, 0.0));
             if (mountedAmmo == null) {
+                unsuppliedShots.add(info);
                 continue;
             }
 
-            // If the selected ammo would cause the shot to miss, skip loading it.
-            final WeaponAttackAction cloneWAA = new WeaponAttackAction(info.getAction());
-            cloneWAA.setAmmoId(mountedAmmo.getEntity().getEquipmentNum(mountedAmmo));
-            cloneWAA.setAmmoMunitionType(mountedAmmo.getType().getMunitionType());
-            cloneWAA.setAmmoCarrier(mountedAmmo.getEntity().getId());
-            if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue() > 12) {
-                LOGGER.warn(
-                      Messages.getString(
-                            "FireControl.LoadAmmo.CauseMiss",
-                            shooter.getDisplayName(),
-                            currentWeapon.getName(),
-                            mountedAmmo.getDesc()
-                      )
-                );
-                continue;
-            }
-
-            // if we found preferred ammo but can't apply it to the weapon, log it and
-            // continue.
+            // if we found ammo but can't apply it to the weapon, log it and continue.
             if (!shooter.loadWeapon(currentWeapon, mountedAmmo)) {
                 LOGGER.warn(
                       Messages.getString(
@@ -3458,20 +3567,125 @@ public class FireControl {
                 );
                 continue;
             }
+            shotsTaken.merge(mountedAmmo, shotsPerAttack(currentWeapon), Integer::sum);
 
             /* If everything looks okay, update the action with the new values
-             *  Don't replace the old action with the clone - the clone doesn't
+             *  Don't replace the old action with a clone - the clone doesn't
              *  consider that the weaponAttackAction might have been a subclass of WeaponAttackAction
              *  - like ArtilleryAttackAction. So instead update the changed values: */
-            info.getAction().setAmmoId(cloneWAA.getAmmoId());
-            info.getAction().setAmmoMunitionType(cloneWAA.getAmmoMunitionType());
-            info.getAction().setAmmoCarrier(cloneWAA.getAmmoCarrier());
-
             Entity ammoCarrier = mountedAmmo.getEntity();
+            info.getAction().setAmmoId(ammoCarrier.getEquipmentNum(mountedAmmo));
+            info.getAction().setAmmoMunitionType(mountedAmmo.getType().getMunitionType());
+            info.getAction().setAmmoCarrier(ammoCarrier.getId());
+            // Later steps, such as picking aimed and called shots, read the shot's ammo
+            info.setAmmo(mountedAmmo);
+
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                   ammoCarrier.getEquipmentNum(mountedAmmo), ammoCarrier.getId(),
                   mountedAmmo.getSwitchedReason());
         }
+        if (!unsuppliedShots.isEmpty()) {
+            LOGGER.info("{} has no ammo left worth firing for {} planned shots; dropping them",
+                  shooter.getDisplayName(), unsuppliedShots.size());
+            plan.removeAll(unsuppliedShots);
+        }
+    }
+
+    /**
+     * Picks the bin a weapon fires from. The preferred ammo is used if it has shots left and can hit at all; otherwise
+     * the ammo the plan scored the shot with; otherwise the easiest to hit with of the other bins that have shots left,
+     * as long as its chance to hit still clears the weapon's ammo conservation threshold, the same test the plan put
+     * the shot through.
+     *
+     * @param shooter        the unit firing
+     * @param info           the planned shot
+     * @param shotsTaken     shots already promised from each bin to weapons earlier in the plan
+     * @param toHitThreshold the chance to hit, from 0 to 1, the weapon's remaining ammo is worth spending on
+     *
+     * @return the bin to load, or {@code null} when no bin can supply this shot
+     */
+    private @Nullable AmmoMounted chooseAmmo(final Entity shooter, final WeaponFireInfo info,
+          final Map<AmmoMounted, Integer> shotsTaken, final double toHitThreshold) {
+        final WeaponMounted weapon = info.getWeapon();
+        final int shotsNeeded = shotsPerAttack(weapon);
+        final AmmoMounted plannedAmmo = (info.getAmmo() != null) ? info.getAmmo() : weapon.getLinkedAmmo();
+
+        final AmmoMounted preferredAmmo = getPreferredAmmo(shooter, info.getTarget(), weapon, info.getAmmo());
+        if (hasShotsLeft(preferredAmmo, shotsNeeded, shotsTaken)) {
+            if (toHitWith(info, preferredAmmo) <= 12) {
+                return preferredAmmo;
+            }
+            LOGGER.warn(
+                  Messages.getString(
+                        "FireControl.LoadAmmo.CauseMiss",
+                        shooter.getDisplayName(),
+                        weapon.getName(),
+                        preferredAmmo.getDesc()
+                  )
+            );
+        }
+
+        if (hasShotsLeft(plannedAmmo, shotsNeeded, shotsTaken)) {
+            return plannedAmmo;
+        }
+
+        AmmoMounted easiestAmmo = null;
+        int easiestToHit = Integer.MAX_VALUE;
+        for (final AmmoMounted otherAmmo : shooter.getAmmo()) {
+            if (!isSwitchableAmmo(shooter, weapon, otherAmmo) || !hasShotsLeft(otherAmmo, shotsNeeded, shotsTaken)) {
+                continue;
+            }
+            final int toHit = toHitWith(info, otherAmmo);
+            final boolean canHit = toHit <= 12;
+            final boolean isWorthTheAmmo = (Compute.oddsAbove(toHit) / 100.0) > toHitThreshold;
+            if (canHit && isWorthTheAmmo && (toHit < easiestToHit)) {
+                easiestAmmo = otherAmmo;
+                easiestToHit = toHit;
+            }
+        }
+        return easiestAmmo;
+    }
+
+    /**
+     * @return {@code true} if the bin still has the shots an attack needs, after the shots promised to other weapons
+     */
+    private static boolean hasShotsLeft(@Nullable final AmmoMounted ammo, final int shotsNeeded,
+          final Map<AmmoMounted, Integer> shotsTaken) {
+        if (ammo == null) {
+            return false;
+        }
+        return (ammo.getUsableShotsLeft() - shotsTaken.getOrDefault(ammo, 0)) >= shotsNeeded;
+    }
+
+    /**
+     * @return how many shots one attack with this weapon uses, such as two for an Ultra autocannon in Ultra mode
+     */
+    private static int shotsPerAttack(final WeaponMounted weapon) {
+        return Math.max(1, weapon.getCurrentShots());
+    }
+
+    /**
+     * @return the real to-hit number of the planned shot if it fired the given ammo
+     */
+    int toHitWith(final WeaponFireInfo info, final AmmoMounted ammo) {
+        final WeaponAttackAction cloneWAA = new WeaponAttackAction(info.getAction());
+        cloneWAA.setAmmoId(ammo.getEntity().getEquipmentNum(ammo));
+        cloneWAA.setAmmoMunitionType(ammo.getType().getMunitionType());
+        cloneWAA.setAmmoCarrier(ammo.getEntity().getId());
+        return cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue();
+    }
+
+    /**
+     * @return {@code true} if the weapon can be switched to this ammo: the right type, allowed by the weapon, and for
+     *       large craft in the weapon's own bay
+     */
+    private static boolean isSwitchableAmmo(final Entity shooter, final WeaponMounted weapon,
+          final AmmoMounted ammo) {
+        final boolean isRightAmmo = AmmoType.isAmmoValid(ammo, weapon.getType())
+              && AmmoType.canSwitchToAmmo(weapon, ammo.getType());
+        final boolean isInWeaponBay = !shooter.isLargeCraft()
+              || shooter.whichBay(shooter.getEquipmentNum(weapon)).ammoInBay(shooter.getEquipmentNum(ammo));
+        return isRightAmmo && isInWeaponBay;
     }
 
     AmmoMounted getClusterAmmo(final List<AmmoMounted> ammoList,
@@ -3565,14 +3779,9 @@ public class FireControl {
             if (preferredAmmo != null) {
                 validAmmo.add(preferredAmmo);
             }
-            for (final AmmoMounted a : ammo) {
-                if (AmmoType.isAmmoValid(a, weaponType)
-                      && AmmoType.canSwitchToAmmo(weapon, a.getType())
-                      && !a.equals(preferredAmmo)
-                      && (!shooter.isLargeCraft()
-                      || shooter.whichBay(shooter.getEquipmentNum(weapon))
-                      .ammoInBay(shooter.getEquipmentNum(a)))) {
-                    validAmmo.add(a);
+            for (final AmmoMounted candidateAmmo : ammo) {
+                if (isSwitchableAmmo(shooter, weapon, candidateAmmo) && !candidateAmmo.equals(preferredAmmo)) {
+                    validAmmo.add(candidateAmmo);
                 }
             }
 

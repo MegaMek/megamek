@@ -1,0 +1,56 @@
+name: Game suite release - Experimental
+
+on:
+  # Every Tuesday 05:00 UTC (Monday night in the Americas). Skips itself when nothing changed.
+  schedule:
+    - cron: "0 5 * * 2"
+  # An extra Experimental release now. Live manual runs wait for reviewer approval.
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build and verify only; publish nothing
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: game-suite-release-global
+  cancel-in-progress: false
+
+jobs:
+  release:
+    # Forks never run the schedule; SUITE_RELEASES_ENABLED != true pauses it without failing.
+    if: ${{ github.event_name != 'schedule' || (github.repository == 'MegaMek/megamek' && vars.SUITE_RELEASES_ENABLED == 'true') }}
+    uses: ./.github/workflows/game-suite-release-engine.yml
+    with:
+      channel: experimental
+      dry_run: ${{ github.event_name != 'schedule' && inputs.dry_run }}
+      # The schedule publishes unattended; every manual live run waits for a reviewer.
+      environment: ${{ github.event_name == 'schedule' && 'suite-release-weekly' || (inputs.dry_run && 'suite-release-dry-run' || 'suite-release-live') }}
+    secrets: inherit
+
+  report-scheduled-failure:
+    needs: release
+    if: ${{ failure() && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the Experimental failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Scheduled Experimental suite release failed"
+          body="Scheduled Experimental suite release failed: $RUN_URL"$'\n\n'"Check the job summary and the suite-state artifact, fix the cause, then run \"Game suite release - Experimental\" manually. See docs/game-suite-release-operations.md."
+          existing=$(gh issue list --state open --search "\"$title\" in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n 1)
+          if [[ -n "$existing" ]]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi

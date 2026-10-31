@@ -193,6 +193,23 @@ public class NuclearSecondaryEffects {
     }
 
     /**
+     * Under an air burst, units under water suffer no secondary effects (Alternative Environments Table, IO:AE p.167;
+     * HammerGS, 2026-10-30). A ground burst's underwater rules are not modelled yet.
+     *
+     * @param entity  the unit, or the carrier of a carried unit
+     * @param profile the detonation's numbers
+     *
+     * @return {@code true} if the water shields the unit from the secondary effects
+     */
+    static boolean isShieldedByWater(Entity entity, NuclearBlastProfile profile) {
+        if (!profile.isAirBurst() || !entity.isUnderwater()) {
+            return false;
+        }
+        LOGGER.info("[Nukes] {} is under water: no secondary effects from an air burst", entity.getDisplayName());
+        return true;
+    }
+
+    /**
      * The +2 goes to combat vehicles, Meks, battle armor and aerospace craft (IO:AE p.166). Support vehicles,
      * ProtoMeks, conventional infantry and gun emplacements roll without it: a Locust gets it, a support APC does not.
      *

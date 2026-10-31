@@ -97,9 +97,9 @@ public class NuclearDetonationResolver {
         vDesc.add(r);
 
         int craterRadius = profile.craterRadius();
-        LOGGER.info("[Nukes] Detonation at hex {}: impact {}, damage reduction {}/hex, blast radius {}, "
+        LOGGER.info("[Nukes] Detonation at hex {}: {} burst, impact {}, damage reduction {}/hex, blast radius {}, "
               + "secondary radius {}, crater depth {}, crater radius {}", position.getBoardNum(),
-              profile.impactDamage(), profile.damageReduction(), profile.blastRadius(), profile.secondaryRadius(),
+              profile.burstMode(), profile.impactDamage(), profile.damageReduction(), profile.blastRadius(), profile.secondaryRadius(),
               profile.craterDepth(), craterRadius);
         NuclearTerrainEffects terrainEffects = new NuclearTerrainEffects(gameManager);
         terrainEffects.crater(position, profile, changedHexes);
@@ -162,6 +162,9 @@ public class NuclearDetonationResolver {
                 continue;
             }
             if (!NuclearSecondaryEffects.isWithinSecondaryHeight(positioned, profile)) {
+                continue;
+            }
+            if (NuclearSecondaryEffects.isShieldedByWater(positioned, profile)) {
                 continue;
             }
             secondaryEffects.apply(entity, position, vDesc);

@@ -55,6 +55,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.enums.NuclearBurstMode;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
@@ -389,5 +390,68 @@ class NuclearBlastDamageTest {
         assertTrue(blastedUnits.contains(atlas.getId()), "a failed roll leaves the unit in the blast");
         assertTrue(atlas.getTotalArmor() < armorBefore, "and it takes the damage");
         assertFalse(atlas.isProne(), "the hiding roll itself never knocks it down");
+    }
+
+    /** A Davy Crockett's numbers set off as an air burst, so the same hill tests apply to both kinds of burst. */
+    private static final NuclearBlastProfile SMALL_AIR_BURST = NuclearBlastProfile.custom(100, 5, 40, 0,
+          NuclearBurstMode.AIR);
+
+    private Vector<Integer> blastWithRoll(NuclearBlastProfile profile, int value) {
+        Roll roll = mock(Roll.class);
+        when(roll.getIntValue()).thenReturn(value);
+        when(roll.getReport()).thenReturn(String.valueOf(value));
+        Vector<Integer> blastedUnits = new Vector<>();
+        try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            compute.when(() -> Compute.rollD6(2)).thenReturn(roll);
+            new NuclearBlastDamage(gameManager).apply(GROUND_ZERO, profile, new Vector<Report>(), blastedUnits);
+        }
+        return blastedUnits;
+    }
+
+    @Test
+    void hillGivesNoCoverFromAnAirBurst() throws Exception {
+        // The same hill and roll that protect the Atlas from a ground burst; an air burst comes down from above
+        // (IO:AE p.165)
+        game.getBoard().getHex(hexNorth(9)).setLevel(3);
+        Entity atlas = placeUnit("Atlas AS7-D.mtf", hexNorth(10));
+
+        Vector<Integer> blastedUnits = blastWithRoll(SMALL_AIR_BURST, 12);
+
+        assertTrue(blastedUnits.contains(atlas.getId()), "no hiding roll against an air burst");
+    }
+
+    @Test
+    void submergedUnitTakesAirBurstDamageDividedByDepthTimesTen() throws Exception {
+        // An Alamo air burst 10 hexes out deals 1,000 - 10 x 18 = 820; at depth 2 the Mek takes 820 / 20 = 41
+        // (Alternative Environments Table, IO:AE p.167)
+        game.getBoard().getHex(hexNorth(10)).addTerrain(new Terrain(Terrains.WATER, 2));
+        Entity atlas = placeUnit("Atlas AS7-D.mtf", hexNorth(10));
+        atlas.setElevation(-2);
+        int pointsBefore = atlas.getTotalArmor() + atlas.getTotalInternal();
+
+        blastWithRoll(NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO), 7);
+
+        assertEquals(41, pointsBefore - (atlas.getTotalArmor() + atlas.getTotalInternal()),
+              "armor and internal structure lost together");
+    }
+
+    @Test
+    void submergedDamageRoundsDown() {
+        assertEquals(41, NuclearBlastDamage.submergedDamage(820, 2));
+        assertEquals(0, NuclearBlastDamage.submergedDamage(9, 1));
+    }
+
+    @Test
+    void waterShieldsFromAirBurstSecondaryEffectsOnly() throws Exception {
+        game.getBoard().getHex(hexNorth(10)).addTerrain(new Terrain(Terrains.WATER, 2));
+        Entity submerged = placeUnit("Atlas AS7-D.mtf", hexNorth(10));
+        submerged.setElevation(-2);
+        Entity onLand = placeUnit("Atlas AS7-D.mtf", hexNorth(11));
+        NuclearBlastProfile airBurst = NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO);
+
+        assertTrue(NuclearSecondaryEffects.isShieldedByWater(submerged, airBurst));
+        assertFalse(NuclearSecondaryEffects.isShieldedByWater(onLand, airBurst));
+        assertFalse(NuclearSecondaryEffects.isShieldedByWater(submerged,
+              NuclearBlastProfile.groundBurst(NuclearWeaponType.ALAMO)), "a ground burst is not covered yet");
     }
 }

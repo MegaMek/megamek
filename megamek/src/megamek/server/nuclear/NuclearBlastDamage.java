@@ -138,10 +138,12 @@ class NuclearBlastDamage {
             if (!isInBlastHeight(entity, profile)) {
                 continue;
             }
-            if ((range > 0) && isProtected(entity, entityPosition, entity.relHeight(), groundZero, damages, vDesc)) {
+            if ((range > 0)
+                  && isProtected(entity, entityPosition, entity.relHeight(), groundZero, damages, profile, vDesc)) {
                 continue;
             }
             int damage = damageAfterBuilding(entity, entityPosition, damages[range], buildingStrengthBefore, vDesc);
+            damage = damageUnderwater(entity, damage, profile, vDesc);
             if ((range == 0) && isAnnihilatedAtGroundZero(entity, damage, vDesc)) {
                 blastedUnits.add(entity.getId());
                 continue;
@@ -156,7 +158,7 @@ class NuclearBlastDamage {
         }
 
         for (Entity entity : carriedUnits) {
-            damageCarriedUnit(entity, groundZero, damages, vDesc, blastedUnits);
+            damageCarriedUnit(entity, groundZero, damages, profile, vDesc, blastedUnits);
         }
 
         for (int unitId : blastedUnits) {
@@ -357,8 +359,8 @@ class NuclearBlastDamage {
     /**
      * A unit carried outside its transport, or whose transport is gone, takes the blast at the transport's hex.
      */
-    private void damageCarriedUnit(Entity entity, Coords groundZero, int[] damages, Vector<Report> vDesc,
-          Vector<Integer> blastedUnits) {
+    private void damageCarriedUnit(Entity entity, Coords groundZero, int[] damages, NuclearBlastProfile profile,
+          Vector<Report> vDesc, Vector<Integer> blastedUnits) {
         Entity transporter = game.getEntity(entity.getTransportId());
         if ((transporter != null) && !transporter.getExternalUnits().contains(entity)) {
             return;
@@ -369,7 +371,7 @@ class NuclearBlastDamage {
             return;
         }
         int height = (transporter == null) ? entity.relHeight() : transporter.relHeight();
-        if (isProtected(entity, entityPosition, height, groundZero, damages, vDesc)) {
+        if (isProtected(entity, entityPosition, height, groundZero, damages, profile, vDesc)) {
             return;
         }
         blastedUnits.add(entity.getId());
@@ -379,16 +381,63 @@ class NuclearBlastDamage {
     }
 
     /**
+     * Under an air burst, a submerged unit takes the blast damage divided by its depth times 10 (Alternative
+     * Environments Table, IO:AE p.167; HammerGS, 2026-10-30). A Mek standing in depth 2 water 10 hexes from an Alamo
+     * air burst takes 820 / 20 = 41. A ground burst is unchanged.
+     *
+     * @param damage the blast damage at the unit's hex
+     *
+     * @return the damage the unit takes
+     */
+    private int damageUnderwater(Entity entity, int damage, NuclearBlastProfile profile, Vector<Report> vDesc) {
+        if (!profile.isAirBurst() || (damage == 0) || !entity.isUnderwater()) {
+            return damage;
+        }
+        int depth = Math.max(1, -entity.getElevation());
+        int reducedDamage = submergedDamage(damage, depth);
+        Report report = new Report(6563);
+        report.subject = entity.getId();
+        report.indent(2);
+        report.addDesc(entity);
+        report.add(depth);
+        report.add(damage);
+        report.add(reducedDamage);
+        vDesc.addElement(report);
+        LOGGER.info("[Nukes] {} at depth {}: the water cuts the air burst's {} damage to {}", entity.getDisplayName(),
+              depth, damage, reducedDamage);
+        return reducedDamage;
+    }
+
+    /**
+     * @param damage the blast damage at the unit's hex
+     * @param depth  the unit's depth below the surface, at least 1
+     *
+     * @return the damage divided by depth times 10, rounded down
+     */
+    static int submergedDamage(int damage, int depth) {
+        return damage / (depth * 10);
+    }
+
+    /**
      * Protecting terrain (IO:AE p.165): a unit next to a hill or building that stands between it and Ground Zero,
      * is taller than the unit, and withstands the blast at its own hex, may roll Piloting at +4. On a success the unit
      * takes no blast damage; secondary effects still apply. Infantry roll their anti-Mek skill, which MegaMek keeps as
      * their piloting skill. A failed roll only leaves the unit unprotected (HammerGS, 2026-10-28). Example: an Atlas
      * behind a level 3 hill 10 hexes from a Davy Crockett rolls against its piloting + 4.
+     * <p>
+     * An air burst comes down from above, so no hill or building beside the unit shields it; only being inside a
+     * surviving building or under water does (IO:AE p.165), and those are handled by the damage itself.
+     * </p>
      *
      * @return {@code true} if the unit escapes the blast damage
      */
     private boolean isProtected(Entity entity, Coords entityPosition, int height, Coords groundZero, int[] damages,
-          Vector<Report> vDesc) {
+          NuclearBlastProfile profile, Vector<Report> vDesc) {
+        if (profile.isAirBurst()) {
+            LOGGER.info("[Nukes] {} at hex {}: air burst, so no hill or building beside it gives cover",
+                  entity.getDisplayName(), entityPosition.getBoardNum());
+            return false;
+        }
         Coords coverHex = protectingHex(entityPosition, height, groundZero, damages);
         if (coverHex == null) {
             LOGGER.info("[Nukes] {} at hex {}: no taller hill or standing building between it and Ground Zero",

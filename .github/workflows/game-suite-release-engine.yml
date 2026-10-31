@@ -101,10 +101,23 @@ jobs:
           for repo in megamek megameklab mekhq mm-data; do
             git clone "https://github.com/MegaMek/$repo.git" "sources/$repo"
           done
+      # Draft releases occupy versions but are only visible with repository access. Discovery must
+      # see what the publish recheck sees, or any draft blocks every live release.
+      - name: Mint read-only App token for release discovery
+        if: ${{ !inputs.dry_run }}
+        id: read_app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek,megameklab,mekhq
+          permission-contents: read
       - name: Freeze sources, allocate the version and build
         id: prepare
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ inputs.dry_run && github.token || steps.read_app.outputs.token }}
+          SUITE_PUBLIC_GH_TOKEN: ${{ github.token }}
           # Pinned worktrees and builds exceed the ~7.8 GB RAM-backed /tmp on Ubuntu 26.04+.
           TMPDIR: ${{ runner.temp }}
         run: |

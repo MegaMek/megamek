@@ -2,9 +2,11 @@
 
 import copy
 import json
+import os
 import subprocess
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import suite_release_plan as release
 import suite_test_support as support
@@ -226,6 +228,24 @@ class GetTests(unittest.TestCase):
         for endpoint in denied:
             with self.subTest(endpoint=endpoint), self.assertRaises(release.UnsafeInventory):
                 release.gh_get(endpoint, runner=ok)
+
+    def test_only_mm_data_reads_use_the_public_token(self):
+        seen = {}
+
+        def runner(command, **kwargs):
+            seen[command[2]] = (kwargs.get("env") or {}).get("GH_TOKEN")
+            return subprocess.CompletedProcess(command, 0, stdout=b"{}")
+
+        data = "repos/MegaMek/mm-data/git/ref/heads/main"
+        game = "repos/MegaMek/megamek/releases?per_page=100&page=1"
+        with mock.patch.dict(os.environ, {"GH_TOKEN": "app", "SUITE_PUBLIC_GH_TOKEN": "public"}):
+            release.gh_get(data, runner=runner)
+            release.gh_get(game, runner=runner)
+        self.assertEqual("public", seen[data])
+        self.assertIsNone(seen[game])
+        with mock.patch.dict(os.environ, {"SUITE_PUBLIC_GH_TOKEN": ""}):
+            release.gh_get(data, runner=runner)
+        self.assertIsNone(seen[data])
 
 
 class DiscoveryTests(unittest.TestCase):

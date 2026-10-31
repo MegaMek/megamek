@@ -442,7 +442,7 @@ public abstract class PathRanker implements IPathRanker {
         Entity closestCrew = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
         var ignoredTargets = owner.getBehaviorSettings().getIgnoredUnitTargets();
-        var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
+        var priorityTargets = getOwner().getPriorityUnitTargets();
         for (Entity enemy : enemies) {
             // For now, skip anything not on the same map
             if (!game.onTheSameBoard(me, enemy)) {

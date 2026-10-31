@@ -1,0 +1,28 @@
+name: Game suite release - Core
+
+# A new Core build (for example a hotfix) from the newest releases/<line> branch.
+# Live runs wait for reviewer approval.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build and verify only; publish nothing
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: game-suite-release-global
+  cancel-in-progress: false
+
+jobs:
+  release:
+    uses: ./.github/workflows/game-suite-release-engine.yml
+    with:
+      channel: core
+      dry_run: ${{ inputs.dry_run }}
+      environment: ${{ inputs.dry_run && 'suite-release-dry-run' || 'suite-release-live' }}
+    secrets: inherit

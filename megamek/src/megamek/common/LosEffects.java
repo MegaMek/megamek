@@ -1151,7 +1151,7 @@ public class LosEffects {
                     modifiers.addModifier(0, "target has 25% cover");
                 }
             } else {
-                modifiers.addModifier(1, "target has partial cover");
+                modifiers.addModifier(1, Messages.getString("WeaponAttackAction.AeTargetHasPartialCover"));
                 modifiers.setHitTable(ToHitData.HIT_PARTIAL_COVER);
             }
         }

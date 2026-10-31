@@ -113,6 +113,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     private boolean selectingClearWoodsHex = false;
 
     /**
+     * True once this client has opened the counter grapple turn it holds in a simultaneous physical phase. Stops a turn
+     * change from another player opening the same counter grapple dialog a second time.
+     */
+    private boolean counterGrappleStarted = false;
+
+    /**
      * This enumeration lists all the possible ActionCommands that can be carried out during the physical phase. Each
      * command has a string for the command plus a flag that determines what unit type it is appropriate for.
      *
@@ -577,6 +583,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for countering break grapple.
         if (turn instanceof CounterGrappleTurn) {
+            counterGrappleStarted = true;
             disableButtons();
             selectEntity(((CounterGrappleTurn) turn).getEntityNum());
             grapple(true);
@@ -2190,8 +2197,16 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
     }
 
+    /**
+     * @return {@code true} if this is a simultaneous phase and this client's pending turn is a counter grapple turn
+     */
+    private boolean isCounterGrapplePending() {
+        return game.getPhase().isSimultaneous(game)
+              && (clientgui.getClient().getMyTurn() instanceof CounterGrappleTurn);
+    }
+
     @Override
-    public void gameTurnChange(GameTurnChangeEvent e) {
+    public void gameTurnChange(GameTurnChangeEvent event) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -2209,8 +2224,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             } else {
                 String playerName;
 
-                if (e.getPlayer() != null) {
-                    playerName = e.getPlayer().getName();
+                if (event.getPlayer() != null) {
+                    playerName = event.getPlayer().getName();
                 } else {
                     playerName = "Unknown";
                 }
@@ -2225,15 +2240,27 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         // change
         // We want to ignore turns from other players and only listen to events we
         // generated
-        // Except on the first turn
+        // Except on the first turn, and except for a counter grapple turn: the server hands the
+        // grappled unit that turn when the grappler breaks the grapple, so the event comes from
+        // the grappler's player and would otherwise be ignored, leaving the phase waiting forever
+        boolean counterGrapplePending = isCounterGrapplePending();
+        if (!counterGrapplePending) {
+            counterGrappleStarted = false;
+        }
+        boolean startCounterGrapple = counterGrapplePending && !counterGrappleStarted;
+        if (startCounterGrapple) {
+            logger.info("[CounterGrapple] Opening counter grapple turn (turn change from player {})",
+                  event.getPreviousPlayerId());
+        }
         if (game.getPhase().isSimultaneous(game)
-              && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-              && (game.getTurnIndex() != 0)) {
+              && (event.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
+              && (game.getTurnIndex() != 0)
+              && !startCounterGrapple) {
             return;
         }
 
         if (clientgui.getClient().isMyTurn()) {
-            if (needsUnitSelectedForTurn()) {
+            if (startCounterGrapple || needsUnitSelectedForTurn()) {
                 beginMyTurn();
                 clientgui.bingMyTurn();
             }

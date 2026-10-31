@@ -350,6 +350,15 @@ public class Engine implements Serializable, ITechnology {
 
     /** @return True if this engine is a fusion engine. */
     public boolean isFusion() {
+        return isFusion(engineType);
+    }
+
+    /**
+     * @param engineType the engine type constant, such as {@link #XL_ENGINE}
+     *
+     * @return True if engines of this type are fusion engines
+     */
+    public static boolean isFusion(int engineType) {
         return (engineType != COMBUSTION_ENGINE) && (engineType != FISSION) && (engineType != FUEL_CELL)
               && (engineType != NONE) && (engineType != BATTERY) && (engineType != SOLAR)
               && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);

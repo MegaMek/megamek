@@ -1,12 +1,13 @@
-# Game-suite release record (schema version 1)
+# Game-suite release record (schema version 2)
 
 This document describes the suite build input and release-record format. They
 let future release jobs give each changed product its own version and check a proposed
 record describing a complete set of three game downloads.
 **These Gradle tasks do not publish a record or a release.** The separate
-manual coordinator workflow can publish after a protected live approval;
-see [game-suite release operations](game-suite-release-operations.md) for setup and recovery.
-There is no schedule, version reservation, or launcher change here.
+coordinator workflows publish: the scheduled Experimental build runs unattended,
+and manual live runs need a protected approval. See
+[game-suite release operations](game-suite-release-operations.md) for setup and recovery.
+These Gradle tasks add no schedule, version reservation, or launcher change.
 
 ## Implemented in this PR
 
@@ -18,17 +19,20 @@ its subprojects and the packaged `Version.properties` used by `new Version()`.
 It does not edit the tracked source file. `:megamek:verifySuiteVersion` compares
 the processed resource to the effective project version (excluding the
 optional `-extraVersion` suffix); `:megamek:processResources` creates the
-packaged file. The input accepts only canonical three-component decimal
-versions: major has no leading zeros; minor and patch use two digits for
-0–99 and no leading zeros above 99. Each component must fit in a Java
-signed 32-bit integer (0–2147483647). Thus `0.51.01`, `0.51.02`,
-`0.51.100` are distinct, while `0.51.1` and `0.51.001` are *not*
-alternate allocatable slots. Without the input, the existing source-based
-version and optional historic fourth-component revision are unchanged.
+packaged file. The input accepts only canonical decimal versions
+`major.minor.patch[.revision]`: major and revision have no leading zeros
+(revision is 1 or more); minor and patch use two digits for 0–99 and no
+leading zeros above 99. Each component must fit in a Java signed 32-bit
+integer (0–2147483647). Thus `0.51.01`, `0.51.02`, `0.51.100` and the build
+`0.51.00.2` are distinct, while `0.51.1`, `0.51.001` and `0.51.00.02` are
+*not* alternate allocatable slots. A missing revision orders as 0, so
+`0.51.00` < `0.51.00.2` < `0.51.01`. Without the input, the existing
+source-based version and optional fourth-component revision are unchanged.
 In suite mode the effective MegaMek version is `suiteMegaMekVersion`, defaulting
-to `suiteReleaseVersion` for all-equal builds. With the input, a source revision is suppressed, including in the packaged
-resource. The existing `extraVersion` build suffix remains available and
-is not part of the release record version.
+to `suiteReleaseVersion` for all-equal builds. With the input, the source
+revision is replaced by the input's revision (omitted for three-part versions),
+including in the packaged resource. The existing `extraVersion` build suffix
+remains available and is not part of the release record version.
 
 ### MegaMek suite product archive (local preparation only)
 
@@ -99,11 +103,9 @@ before payload parsing in both producer and external verification. The
 512 UTF-16-code-unit limit applies to the decoded raw entry name, including
 a directory's trailing slash, before normalization, matching the launcher.
 
-Read-only attestation of a previously published record uses that record's
-pinned verifier contract, while retaining bounded parsing, hashes, identities
-and dependency-closure checks. This lets a corrected suite supersede historical
-non-portable archives without modifying their bytes. Newly built or reused
-archives proposed for publication must satisfy the current portable-path checks.
+Every suite rebuilds all three archives; archives proposed for publication must
+satisfy the current portable-path, identity and dependency-closure checks.
+
 
 **Merge prerequisite:** land MegaMek's shared `gradle/` verifier, adapter
 and data rules before merging Lab or HQ changes that reference sibling
@@ -122,9 +124,10 @@ cover invalid and incomplete records. This checks internal shape and
 identity, **not** whether any commit, tag, download, size or digest exists
 remotely or matches the actual bytes.
 
-Schema version 1 has exactly these top-level keys: integer `schemaVersion: 1`,
-canonical `version`, `membership` (`weekly`, `development`, or `milestone`),
-`tag` (`v` followed by the version), `products`, and `mmData`. An optional
+Schema version 2 has exactly these top-level keys: integer `schemaVersion: 2`,
+canonical four-part `version` (for example `0.51.02.7`), `channel` (`core` or
+`experimental`), `tag` (`v` followed by the version), `products`, and `mmData`.
+The fourth component is an unpadded build counter starting at 1. An optional
 `minimumLauncherVersion` is allowed; its absence makes no promise about
 launcher compatibility. This is an independently versioned launcher version:
 three numeric components without leading zeroes (for example `0.14.5`), not
@@ -134,16 +137,14 @@ Each product has exactly `repository`, `commit`, `version`, `tag`,
 `releaseId`, and `asset`. Repositories are respectively
 `https://github.com/MegaMek/megamek`,
 `https://github.com/MegaMek/megameklab`, and
-`https://github.com/MegaMek/mekhq`; each product version may be older than the
-suite version (but never newer). Its tag is `v` plus its **own** version.
-The bundle versions must be ordered MegaMek ≤ MegaMekLab ≤ MekHQ ≤ suite:
-each newer dependency changes its consumer's distributable contents.
-`releaseId` identifies the product's GitHub Release
+`https://github.com/MegaMek/mekhq`. Every suite rebuilds all three products,
+so each product's version must equal the suite version and its tag must equal
+the suite tag. `releaseId` identifies the product's GitHub Release
 within that repository. `asset` has exactly `assetId`, `name`, `sha256`, and
 `size`. `assetId` identifies the download within its product release. Both
 IDs must be positive JSON integers representable as signed 64-bit values
 (not strings or decimals). Each name must be exactly
-`<Product>-<product version>.tar.gz`; digests are lowercase 64-character hexadecimal
+`<Product>-<version>.tar.gz`; digests are lowercase 64-character hexadecimal
 SHA-256, sizes are positive integer bytes.
 `mmData` has exactly `repository` (`https://github.com/MegaMek/mm-data`)
 and `commit`; all four commits are lowercase 40-character git SHA-1 IDs.
@@ -152,34 +153,25 @@ additional JSON documents are rejected. A record describes one downloadable
 asset per product and one pinned mm-data source commit; it contains no
 live URLs or floating branches.
 
-The top-level version/tag identify a new complete Weekly (or other suite)
-record, not three newly published artifacts. Allocate suite versions
-monotonically. Only advance a product version when its distributable contents
-change; reuse an unchanged release ID, asset ID, digest and bytes verbatim.
-Dependency closure matters: a Lab-only change advances Lab and MekHQ (the
-latter bundles the new Lab), but retains the existing MegaMek artifact and its
-version. Changes to MegaMek or mm-data advance every affected bundle.
-Validate the archived `suite-build.properties` and dependency jars against
-the actual asset bytes and source/data pins before reusing an asset; this JSON
-validator checks shape and relative versions, not dependency closure or
-remote asset identity. An older MegaMek archive can legitimately contain
-older, unrelated Lab/HQ pins; those are *not* claims that its bytes were built
-from the newer suite's Lab/HQ sources.
+The `channel` is authoritative: the launcher and website must use it, never
+GitHub's prerelease badge or the version number, to decide where a suite
+belongs. Schema 1 records (with `membership`) are no longer produced or
+accepted.
 
 ## Coordinator integration
 
-The other product-build repositories must produce full archives at their assigned product
-versions from explicitly pinned source commits and an mm-data commit. Unchanged
-product archives can instead be reused without republishing them. A coordinating
-release job must reserve the next unused numeric version across the suite,
-treating unpadded aliases as the same number and leaving the optional fourth
-component to historical special point releases. It must check the real tags
-and GitHub release IDs, inspect each uploaded asset's ID and name, and verify
-its SHA-256 and byte size against the downloaded bytes.
+The coordinator (`scripts/suite_release_*.py`, driven by the
+`game-suite-*` workflows) freezes one commit per repository from a single
+branch (`main` for Experimental, `releases/<line>` for Core), builds all
+three products from those commits, and allocates the version as the highest
+build number on the line across the three repositories' tags and releases
+(drafts included) plus one. It checks the real tags and GitHub release IDs,
+inspects each uploaded asset's ID and name, and verifies its SHA-256 and byte
+size against the built bytes.
 
-Only after all three product assets exist and pass those checks should the
+Only after all three product assets exist and pass those checks does the
 coordinator attach **one complete JSON record** to the MegaMek GitHub Release
 as its last publication step. A partial record or mutable "latest" pointer
-must not be published. The website and launcher can later use these records
+must not be published. The website and launcher use these records
 to find complete releases. Update this document alongside the validator,
 record example, and consumers if the format or publication rules change.

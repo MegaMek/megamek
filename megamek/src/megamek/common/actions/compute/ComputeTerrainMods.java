@@ -240,6 +240,7 @@ public class ComputeTerrainMods {
         // target in water?
         boolean targetInWater = (targetHex != null) && targetHex.containsTerrain(Terrains.WATER);
         boolean targetInWaterPartialCover = PartialCover.isInPartialWater(entityTarget, targetHex, targEl);
+        boolean addWaterPartial = (los.getTargetCover() == LosEffects.COVER_NONE) && targetInWaterPartialCover;
         if (targetInWaterPartialCover) {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
         }
@@ -273,6 +274,9 @@ public class ComputeTerrainMods {
                 toHit.setCoverLocSecondary(los.getCoverLocSecondary());
                 toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
                 toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());
+                if (addWaterPartial) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTargetHasPartialCoverWater"));
+                }
             }
         }
 

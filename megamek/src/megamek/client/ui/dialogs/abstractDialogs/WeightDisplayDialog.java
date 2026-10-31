@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -65,7 +65,7 @@ public class WeightDisplayDialog extends AbstractDialog {
     }
 
     public WeightDisplayDialog(final JFrame frame, final boolean modal, final Entity entity) {
-        super(frame, modal, "BVDisplayDialog", "BVDisplayDialog.title");
+        super(frame, modal, "WeightDisplayDialog", "WeightDisplayDialog.title");
         this.entity = Objects.requireNonNull(entity);
         initialize();
     }

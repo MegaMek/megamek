@@ -4587,9 +4587,13 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if ((turn == null) || !turn.isValid(connectionId, entity, game)) {
-                LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}",
+                LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}; "
+                            + "resending the turn so the sender can act again",
                       connectionId,
                       entity.getShortName());
+                // Without this the sender believes its turn is over while the server still waits on it
+                send(connectionId, packetHelper.createTurnListPacket());
+                send(connectionId, packetHelper.createTurnIndexPacket(connectionId));
                 return;
             }
 
@@ -11315,6 +11319,8 @@ public class TWGameManager extends AbstractGameManager {
                 resolveUnjam(entity);
             }
         }
+        // Clear the unjam actions (and anything else)
+        game.clearActions(true);
     }
 
     void resolveBoobyTraps() {
@@ -24183,23 +24189,33 @@ public class TWGameManager extends AbstractGameManager {
     private void dropCargo(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
         boolean cargoDropped = false;
 
-        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+        for (ICarryable carriedObject : entity.getDistinctCarriedObjects()) {
+            ICarryable cargo = CarriedUnitRelinker.currentInstanceOf(game, carriedObject);
             // if the cargo was dropped but not destroyed.
             if (!damageCargo(false, entity, cargo)) {
-                Report r = new Report(6722);
-                r.indent();
-                r.subject = entity.getId();
-                r.add(cargo.generalName());
-                vPhaseReport.add(r);
-
+                boolean cargoUnloaded = true;
                 if (cargo instanceof Entity carriedEntity) {
-                    unloadUnit(entity, carriedEntity, coords, entity.getFacing(), entity.getElevation());
+                    cargoUnloaded = unloadUnit(entity, carriedEntity, coords, entity.getFacing(),
+                          entity.getElevation());
+                    if (!cargoUnloaded) {
+                        LOGGER.error("{} could not drop {} in a fall: none of its transporters holds that unit",
+                              entity.getShortName(),
+                              carriedEntity.getShortName());
+                    }
                 } else {
                     entity.dropCarriedObject(cargo, false);
                     if (game.getBoard().contains(coords)) {
                         game.placeGroundObject(coords, cargo);
                         cargoDropped = true;
                     }
+                }
+
+                if (cargoUnloaded) {
+                    Report r = new Report(6722);
+                    r.indent();
+                    r.subject = entity.getId();
+                    r.add(cargo.generalName());
+                    vPhaseReport.add(r);
                 }
             } else {
                 // cargo was destroyed by the fall
@@ -25220,6 +25236,25 @@ public class TWGameManager extends AbstractGameManager {
      * @param fireLevel - The level of fire, see Terrains
      */
     public void ignite(Coords c, int boardId, int fireLevel, Vector<Report> vReport) {
+        ignite(c, boardId, fireLevel, vReport, false);
+    }
+
+    /**
+     * Sets a hex on fire because the Game Master placed the fire there. The TacOps start-fire game option decides
+     * whether attacks and other events can start fires; it does not stop a Game Master who chose to put one down, so
+     * it is not checked here. Planetary conditions that make fire impossible, such as a vacuum, still apply.
+     *
+     * <p>Whether the fire spreads afterward is still up to the game options, as for any other fire.</p>
+     *
+     * @param c         the coordinates of the hex to set on fire
+     * @param fireLevel the level of fire, see Terrains
+     * @param vReport   the report to add the result to, or {@code null}
+     */
+    public void igniteByGameMaster(Coords c, int fireLevel, Vector<Report> vReport) {
+        ignite(c, 0, fireLevel, vReport, true);
+    }
+
+    private void ignite(Coords c, int boardId, int fireLevel, Vector<Report> vReport, boolean ignoreStartFireOption) {
         // you can't start fires in some planetary conditions!
         if (game.getPlanetaryConditions().cannotStartFire() != null) {
             if (vReport != null) {
@@ -25232,7 +25267,8 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
+        if (!ignoreStartFireOption
+              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
             if (vReport != null) {
                 Report r = new Report(3008);
                 r.indent(2);
@@ -26469,6 +26505,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         game.setEntity(entity.getId(), entity);
+        CarriedUnitRelinker.relinkAfterUpdate(game, entity);
         entityUpdate(entity.getId());
         if (entity.isPartOfFighterSquadron()) {
             // Update the stats of any Squadrons that the new units are part of
@@ -26712,6 +26749,7 @@ public class TWGameManager extends AbstractGameManager {
             // Only update entities that existed; senderCanUpdateEntity handles the permission check
             if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
                 game.setEntity(entity.getId(), entity);
+                CarriedUnitRelinker.relinkAfterUpdate(game, entity);
 
                 // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)
                 List<Entity> c3affected = C3Util.wireC3(game, entity);
@@ -32714,13 +32752,17 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Cycle through entities on team and collect all the airborne VTOL/WIGE vehicles Only vehicles can be affected by
-     * Blowing Sand (TO:AR 6th Ed. pg. 60)
+     * Blowing Sand (TO:AR 6th Ed. pg. 60). Units that have not entered the map are not in the sand.
      *
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOLForSand(Team team) {
         Vector<Integer> units = new Vector<>();
         for (Entity entity : game.getEntitiesVector()) {
+            // An undeployed unit has no position, so isAirborneVTOLorWIGE() falls back to its lobby elevation
+            if (!entity.isDeployed()) {
+                continue;
+            }
             for (Player player : team.players()) {
                 if (entity.getOwner().equals(player)) {
                     if (entity.isAirborneVTOLorWIGE() && !(entity instanceof LandAirMek)) {

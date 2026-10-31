@@ -1,0 +1,87 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.50.12 on 2026-02-26
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot Platoon (DCMS)
+</Name>
+
+<Model>
+(Laser 2620+)
+</Model>
+
+<mul id:>
+1144
+</mul id:>
+
+<source>
+TW,TM
+</source>
+
+<year>
+2620
+</year>
+
+<originalBuildYear>
+2620
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+Draconis Combine Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+
+<notes>
+Intro date based on prototype date of DCMS armor kit. Magna laser rifle is standard DCMS laser weapon.
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+Laser Rifle (Magna)
+</Primary>
+
+# Fluff Date: 2026-03-18 15:07:44
+<overview>
+<p>The Combine's martial traditions extend beyond the BattleMech cockpit, and the Dictum Honorium demands that all citizens contribute their talents to the defense of House Kurita. Infantry soldiers of the DCMS embody that expectation on garrison worlds across the realm. Foot infantry are the cheapest troops the DCMS can field, and the Combine fields them in enormous numbers. Every military district maintains garrison formations whose sole purpose is holding ground that BattleMech regiments cannot occupy permanently. Slow and vulnerable in open terrain, these soldiers prove their worth through discipline and endurance, standing post on worlds across the Combine because the Dragon demands nothing less. Equipped with laser rifles that outrange and outpenetrate ballistic weapons at every engagement distance. The cost is significant: laser rifles are expensive to procure, and each soldier must carry additional power packs that add weight and logistical burden. Where the budget allows, they are worth every C-bill.</p>
+</overview>
+

@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java-distribution: [ temurin ]
-        java-version: [ 21, 25 ]
+        java-version: ${{ github.event_name == 'workflow_dispatch' && fromJSON('[21, 25]') || fromJSON('[21]') }}
       fail-fast: false
 
     name: Nightly MegaMek CI ${{ matrix.os }} on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}

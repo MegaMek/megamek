@@ -33,10 +33,13 @@
 
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -96,5 +99,82 @@ class SourceBooksTest {
 
         assertTrue(sourceBooks.isNonCanonBySource("TEST", ""));
         assertFalse(sourceBooks.loadSourceBook("TEST").orElseThrow().isCanon());
+    }
+
+    @Test
+    void sourcebookWithUnknownFieldStillLoads(@TempDir Path sourcebookDirectory) throws IOException {
+        Files.writeString(sourcebookDirectory.resolve("FUTURE.yaml"), """
+              title: Future Sourcebook
+              abbrev: FUTURE
+              canon: true
+              a_field_added_later: 42
+              """);
+        SourceBooks sourceBooks = new SourceBooks(sourcebookDirectory.toString());
+
+        SourceBook sourceBook = sourceBooks.loadSourceBook("FUTURE").orElseThrow();
+
+        assertEquals("Future Sourcebook", sourceBook.getTitle());
+        assertTrue(sourceBook.isCanon());
+    }
+
+    @Test
+    void publishedDateIsReadFromFile(@TempDir Path sourcebookDirectory) throws IOException {
+        Files.writeString(sourcebookDirectory.resolve("DATED.yaml"), """
+              title: 'Touring the Stars: Lone Star'
+              abbrev: TtS:LoneStar
+              published: 2016-02-10
+              """);
+        SourceBooks sourceBooks = new SourceBooks(sourcebookDirectory.toString());
+
+        assertEquals("2016-02-10", sourceBooks.loadSourceBook("DATED").orElseThrow().getPublished());
+    }
+
+    @Test
+    void publishedDateSurvivesSaveAndLoad(@TempDir Path sourcebookDirectory) throws IOException {
+        SourceBooks sourceBooks = new SourceBooks(sourcebookDirectory.toString());
+        SourceBook sourceBook = new SourceBook();
+        sourceBook.setTitle("Round Trip Sourcebook");
+        sourceBook.setAbbrev("ROUNDTRIP");
+        sourceBook.setPublished("1987-11");
+        sourceBooks.saveSourceBook("ROUNDTRIP", sourceBook);
+
+        assertEquals("1987-11", sourceBooks.loadSourceBook("ROUNDTRIP").orElseThrow().getPublished());
+    }
+
+    @Test
+    void linkUrlPrefersShopPage() {
+        SourceBook sourceBook = new SourceBook();
+        sourceBook.setUrl("https://store.example/book");
+        sourceBook.setMul_url("https://mul.example/book");
+
+        assertEquals("https://store.example/book", sourceBook.getLinkUrl());
+    }
+
+    @Test
+    void linkUrlFallsBackToMulPage() {
+        SourceBook sourceBook = new SourceBook();
+        sourceBook.setUrl(" ");
+        sourceBook.setMul_url("https://mul.example/book");
+
+        assertEquals("https://mul.example/book", sourceBook.getLinkUrl());
+    }
+
+    @Test
+    void linkUrlIsNullWithoutAnyLink() {
+        assertNull(new SourceBook().getLinkUrl());
+    }
+
+    @Test
+    void linkUrlIsNotWrittenToFile(@TempDir Path sourcebookDirectory) throws IOException {
+        SourceBooks sourceBooks = new SourceBooks(sourcebookDirectory.toString());
+        SourceBook sourceBook = new SourceBook();
+        sourceBook.setTitle("Linked Sourcebook");
+        sourceBook.setUrl("https://store.example/book");
+        sourceBooks.saveSourceBook("LINKED", sourceBook);
+
+        String saved = Files.readString(sourceBooks.sourceBookFile("LINKED").toPath());
+
+        assertTrue(saved.contains("https://store.example/book"));
+        assertFalse(saved.contains("linkUrl"));
     }
 }

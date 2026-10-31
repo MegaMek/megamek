@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,16 +32,23 @@
  */
 package megamek.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.annotation.Nullable;
 
 /**
  * This class is used to store information about an individual sourcebook such as TRO: 3039.
+ *
+ * <p>Unknown fields in a sourcebook file are ignored, so a field added to the data files later cannot stop an
+ * older client from loading the book.</p>
  */
 @SuppressWarnings("unused") // Methods used by Jackson during deserialization
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "id", "sku", "title", "abbrev", "image", "url", "ispublished", "canon", "description",
-                     "mul_url" })
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder({ "id", "sku", "title", "abbrev", "image", "url", "ispublished", "canon", "published",
+                     "description", "mul_url" })
 public class SourceBook {
 
     private String title;
@@ -52,6 +59,7 @@ public class SourceBook {
     private String url;
     private boolean ispublished = false;
     private boolean canon = false;
+    private String published;
     private String description;
     private String mul_url;
 
@@ -135,6 +143,33 @@ public class SourceBook {
 
     public void setCanon(boolean canon) {
         this.canon = canon;
+    }
+
+    /**
+     * @return The date this book was first published, as precise as is known: "2016", "2016-02" or "2016-02-10".
+     *       A reprint keeps the date of its first printing. {@code null} if unknown.
+     */
+    public @Nullable String getPublished() {
+        return published;
+    }
+
+    public void setPublished(String published) {
+        this.published = published;
+    }
+
+    /**
+     * @return The link to show for this book: the shop page if there is one, else the Master Unit List page.
+     *       {@code null} if the book has neither.
+     */
+    @JsonIgnore
+    public @Nullable String getLinkUrl() {
+        if ((url != null) && !url.isBlank()) {
+            return url;
+        }
+        if ((mul_url != null) && !mul_url.isBlank()) {
+            return mul_url;
+        }
+        return null;
     }
 
     /**

@@ -684,10 +684,16 @@ public abstract class Infantry extends Entity {
         return movementMode.isTrackedWheeledOrHover() || movementMode.isVTOL() || movementMode.isSubmarine();
     }
 
-    //FIXME: This is currently unused, but MekHQ should probably reset this flag so the unit can call support again
-    // in a later scenario
     public void setCanCallSupport(boolean b) {
         canCallSupport = b;
+    }
+
+    @Override
+    public void clearGameState() {
+        super.clearGameState();
+        // Support may be called once per game, so a unit that called it in the last game may call it again. Dug in and
+        // hitting the deck are already cleared by the setTransportId override when MekHQ unloads the unit.
+        canCallSupport = true;
     }
 
     /**

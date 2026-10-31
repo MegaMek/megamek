@@ -28,15 +28,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Validates a complete, immutable suite release record (contract version 1). This validates the
- * record's internal consistency, not the existence or contents of remote commits and assets.
+ * Validates a complete, immutable suite release record (contract version 2). This validates the
+ * record's internal consistency, not the existence or contents of remote commits and assets. MegaMek, MegaMekLab
+ * and MekHQ always share the suite's major.minor.patch.build version and tag.
  */
 public final class SuiteRecordValidator {
     private static final ObjectMapper MAPPER = new ObjectMapper()
           .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
     private static final Pattern VERSION = Pattern.compile("(?:0|[1-9][0-9]*)\\."
           + "(?:[0-9]{2}|[1-9][0-9]{2,})\\."
-          + "(?:[0-9]{2}|[1-9][0-9]{2,})");
+          + "(?:[0-9]{2}|[1-9][0-9]{2,})\\.[1-9][0-9]*");
+    private static final Set<String> CHANNELS = Set.of("core", "experimental");
     private static final Pattern LAUNCHER_VERSION = Pattern.compile("(?:0|[1-9][0-9]*)\\."
           + "(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)");
     private static final Pattern COMMIT = Pattern.compile("[0-9a-f]{40}");
@@ -62,10 +64,10 @@ public final class SuiteRecordValidator {
 
     /** Validates a parsed record; callers parsing themselves must enable duplicate detection. */
     public static void validate(JsonNode root) {
-        fields(root, "record", Set.of("schemaVersion", "version", "membership", "tag",
+        fields(root, "record", Set.of("schemaVersion", "version", "channel", "tag",
               "products", "mmData"), Set.of("minimumLauncherVersion"));
         if (!root.get("schemaVersion").isIntegralNumber() || !root.get("schemaVersion").canConvertToInt()
-              || root.get("schemaVersion").intValue() != 1) {
+              || root.get("schemaVersion").intValue() != 2) {
             throw new IllegalArgumentException("Unsupported schemaVersion");
         }
         String version = version(root.get("version"), "version");
@@ -73,8 +75,8 @@ public final class SuiteRecordValidator {
         if (!tag.equals("v" + version)) {
             throw new IllegalArgumentException("Suite tag must be v" + version);
         }
-        if (!Set.of("weekly", "development", "milestone").contains(text(root.get("membership"), "membership"))) {
-            throw new IllegalArgumentException("Unknown membership");
+        if (!CHANNELS.contains(text(root.get("channel"), "channel"))) {
+            throw new IllegalArgumentException("Unknown channel");
         }
         if (root.has("minimumLauncherVersion")) {
             match(root.get("minimumLauncherVersion"), LAUNCHER_VERSION, "minimumLauncherVersion");
@@ -93,9 +95,8 @@ public final class SuiteRecordValidator {
             }
             match(product.get("commit"), COMMIT, name + ".commit");
             String productVersion = version(product.get("version"), name + ".version");
-            if (compareVersions(productVersion, version) > 0
-                  || !text(product.get("tag"), name + ".tag").equals("v" + productVersion)) {
-                throw new IllegalArgumentException(name + " identity mismatch");
+            if (!productVersion.equals(version) || !text(product.get("tag"), name + ".tag").equals(tag)) {
+                throw new IllegalArgumentException(name + " version and tag must equal the suite's");
             }
             positiveLong(product.get("releaseId"), name + ".releaseId");
             JsonNode asset = product.get("asset");
@@ -108,30 +109,12 @@ public final class SuiteRecordValidator {
             match(asset.get("sha256"), SHA256, name + ".asset.sha256");
             positiveLong(asset.get("size"), name + ".asset.size");
         }
-        String gameVersion = products.get("MegaMek").get("version").textValue();
-        String labVersion = products.get("MegaMekLab").get("version").textValue();
-        String hqVersion = products.get("MekHQ").get("version").textValue();
-        if (compareVersions(gameVersion, labVersion) > 0 || compareVersions(labVersion, hqVersion) > 0) {
-            throw new IllegalArgumentException("Bundled product version cannot predate its dependency");
-        }
         JsonNode data = root.get("mmData");
         fields(data, "mmData", Set.of("repository", "commit"), Set.of());
         if (!text(data.get("repository"), "mmData.repository").equals("https://github.com/MegaMek/mm-data")) {
             throw new IllegalArgumentException("mmData repository mismatch");
         }
         match(data.get("commit"), COMMIT, "mmData.commit");
-    }
-
-    private static int compareVersions(String left, String right) {
-        String[] a = left.split("\\.");
-        String[] b = right.split("\\.");
-        for (int i = 0; i < a.length; i++) {
-            int comparison = Integer.compare(Integer.parseInt(a[i]), Integer.parseInt(b[i]));
-            if (comparison != 0) {
-                return comparison;
-            }
-        }
-        return 0;
     }
 
     private static String version(JsonNode value, String field) {

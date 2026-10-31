@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Guarded, single-attempt write phase. Not a workflow entry point.
 
-The caller must supply an approved, attested inventory and the three retained
-archives from the pinned nonpublishing build. A failure may leave product artifacts,
-but never a partial suite record; recovery requires a new human review.
+The caller must supply an approved inventory and the three archives from the pinned
+nonpublishing build. A failure may leave product tags and releases, but never a partial
+suite record; the next run allocates the next build number and starts over.
 """
 
 import hashlib
@@ -14,13 +14,16 @@ import tempfile
 from pathlib import Path
 
 from suite_release_plan import (
-    REPOS, SOURCES, UnsafeInventory, canonical, check_product_assets, complete_record,
-    download_asset, failure_detail,
-    gh_get, plan, release_details, release_inventory, validate_previous, valid_sha,
+    REPOS, SOURCES, UnsafeInventory, canonical, complete_records, download_asset,
+    failure_detail, gh_get, latest, parse_json, plan, release_details, release_inventory,
+    valid_sha, validate_record,
 )
 
 from suite_archive_attestation import attest_archives
 from suite_pinned_build import clean, run, stage
+
+# GitHub rejects release bodies over 125,000 characters; leave room for the suite header.
+NOTES_LIMIT = 100_000
 
 
 def sha_size(path):
@@ -35,32 +38,50 @@ def sha_size(path):
     return digest.hexdigest(), size
 
 
-def api(command, *, input_file=None, runner=subprocess.run):
+def api(command, *, payload=None, input_file=None, runner=subprocess.run):
     """Only fixed GitHub API write shapes; never retry a possibly successful POST."""
-    try:
+    with tempfile.TemporaryDirectory(prefix="suite-api-") as temporary:
+        if payload is not None:
+            # A file keeps long release bodies off the command line.
+            input_file = Path(temporary) / "payload.json"
+            input_file.write_text(json.dumps(payload), encoding="utf-8")
         args = ["gh", "api", *command]
         if input_file is not None:
             args += ["--input", str(input_file)]
-        result = runner(args, capture_output=True, check=True)
-        from suite_release_plan import parse_json
-        return parse_json(result.stdout)
-    except (OSError, subprocess.CalledProcessError) as error:
-        raise UnsafeInventory(f"write failed (do not retry): {failure_detail(error)}") from None
+        try:
+            result = runner(args, capture_output=True, check=True)
+        except (OSError, subprocess.CalledProcessError) as error:
+            raise UnsafeInventory(f"write failed (do not retry): {failure_detail(error)}") from None
+    return parse_json(result.stdout)
 
 
 class GitHubWrites:
+    def notes(self, repo, tag, sha, previous_tag):
+        """GitHub's generated notes (merged PRs) since ``previous_tag``. Writes nothing."""
+        payload = {"tag_name": tag, "target_commitish": sha}
+        if previous_tag is not None:
+            payload["previous_tag_name"] = previous_tag
+        result = api(["--method", "POST", f"repos/MegaMek/{repo}/releases/generate-notes"],
+                     payload=payload)
+        if not isinstance(result, dict) or not isinstance(result.get("body"), str):
+            raise UnsafeInventory("release notes response mismatch")
+        return result["body"]
+
     def tag(self, repo, tag, sha):
-        result = api(["--method", "POST", f"repos/MegaMek/{repo}/git/refs",
-                      "-f", f"ref=refs/tags/{tag}", "-f", f"sha={sha}"])
+        result = api(["--method", "POST", f"repos/MegaMek/{repo}/git/refs"],
+                     payload={"ref": f"refs/tags/{tag}", "sha": sha})
         if result.get("ref") != f"refs/tags/{tag}" or result.get("object", {}).get("sha") != sha:
             raise UnsafeInventory("tag creation response mismatch")
 
-    def release(self, repo, tag, sha, *, name, body):
-        result = api(["--method", "POST", f"repos/MegaMek/{repo}/releases",
-                      "-f", f"tag_name={tag}", "-f", f"target_commitish={sha}",
-                      "-F", "draft=false", "-F", "prerelease=false",
-                      "-f", f"name={name}", "-f", f"body={body}"])
+    def release(self, repo, tag, sha, *, name, body, prerelease):
+        result = api(["--method", "POST", f"repos/MegaMek/{repo}/releases"], payload={
+            "tag_name": tag, "target_commitish": sha, "name": name, "body": body,
+            "draft": False, "prerelease": prerelease,
+            # Only Core becomes the repository's "Latest" release.
+            "make_latest": "false" if prerelease else "true",
+        })
         if (result.get("tag_name") != tag or result.get("draft") is not False
+                or result.get("prerelease") is not prerelease
                 or result.get("name") != name or result.get("body") != body
                 or type(result.get("id")) is not int or result["id"] <= 0):
             raise UnsafeInventory("release creation response mismatch")
@@ -79,45 +100,42 @@ class GitHubWrites:
         return result["id"]
 
 
-def release_presentation(record, product=None):
-    channel = record["membership"].capitalize()
+def release_presentation(record, product, notes):
+    experimental = record["channel"] == "experimental"
     version = record["version"]
-    suite_name = f"{channel} suite {version}"
-    name = suite_name if product in (None, "MegaMek") else (
-        f"{product} {record['products'][product]['version']} - {suite_name}")
+    name = f"{product} {version}" + (" (Experimental)" if experimental else "")
     record_url = (f"https://github.com/MegaMek/megamek/releases/download/"
                   f"{record['tag']}/suite-record-{version}.json")
     lines = [
-        f"**Channel: {channel}**",
+        f"**Channel: {'Experimental' if experimental else 'Core'}**",
         "",
-        f"**Suite: {version}**",
+        ("Experimental builds come from the development branch. They have the newest "
+         "features and the newest bugs." if experimental else
+         "Core is the stable release line."),
         "",
-        f"The [complete suite record]({record_url}) is the authority for channel membership "
-        "and exact product downloads.",
-        "This suite is complete only when that record is available. It is uploaded last, "
-        "after all product archives have been verified.",
+        f"MegaMek, MegaMekLab and MekHQ {version} are released together. The "
+        f"[suite record]({record_url}) lists the exact downloads and is uploaded last, "
+        "after every archive has been verified.",
         "",
-        "## Included products",
-        "",
-        "| Product | Version | Download | Frozen source |",
-        "| --- | --- | --- | --- |",
+        "| Product | Download | Source |",
+        "| --- | --- | --- |",
     ]
     for included, item in record["products"].items():
         url = (f"{item['repository']}/releases/download/{item['tag']}/"
                f"{item['asset']['name']}")
         source = f"{item['repository']}/commit/{item['commit']}"
-        lines.append(f"| {included} | {item['version']} | [Download]({url}) | "
+        lines.append(f"| {included} | [{item['asset']['name']}]({url}) | "
                      f"[`{item['commit'][:12]}`]({source}) |")
     data = record["mmData"]
-    lines += [
-        "",
-        f"Frozen mm-data: [`{data['commit'][:12]}`]({data['repository']}/commit/{data['commit']}).",
-        "",
-        "Product archives may be reused by later suites, including other channels. "
-        "Use each suite's complete record, not an archive's original release title, "
-        "to determine membership.",
-    ]
-    return {"name": name, "body": "\n".join(lines) + "\n"}
+    lines += [f"| mm-data | | [`{data['commit'][:12]}`]({data['repository']}/commit/"
+              f"{data['commit']}) |"]
+    notes = notes.strip()
+    if len(notes) > NOTES_LIMIT:
+        notes = notes[:NOTES_LIMIT].rsplit("\n", 1)[0] + "\n\n(Release notes truncated.)"
+    if notes:
+        lines += ["", notes]
+    return {"name": name, "body": "\n".join(lines) + "\n",
+            "prerelease": experimental}
 
 
 def ref_commit(repo, tag, getter):
@@ -148,7 +166,7 @@ def require_tag_absent(repo, tag, getter):
                        for entry in entries)):
             raise UnsafeInventory("invalid tag page before publication")
         if any(entry["name"] == tag for entry in entries):
-            raise UnsafeInventory("publication collision; manual recovery required")
+            raise UnsafeInventory("publication collision; rerun to allocate the next build")
         if len(entries) < 100:
             return
         page += 1
@@ -176,122 +194,96 @@ def exact_asset(item, details, repo, fetch, directory, getter):
 
 
 def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
-            writes=None, attest=None, validate=None, bootstrap=False):
-    """Publish after successful pinned build, with no automatic retry or rollback.
+            writes=None, attest=None, validate=None):
+    """Publish after a successful pinned build, with no automatic retry or rollback.
 
     `validate` must run :megamek:validateSuiteRecord from the pinned MegaMek
-    checkout. The caller is responsible for establishing the approved pinned
-    archive attestation and for providing a scoped App token only to writes.
+    checkout. The caller is responsible for the pinned archive attestation and for
+    providing a scoped App token only to writes.
     """
     if writes is None or attest is None or validate is None:
         raise UnsafeInventory("missing write, archive attestation or record validator")
     proposal = plan(inventory)
+    if proposal["rehearsal"]:
+        raise UnsafeInventory("a cut rehearsal never publishes")
+    if proposal["noop"]:
+        raise UnsafeInventory("nothing changed since the previous release; no publication")
+    channel = proposal["channel"]
     previous = inventory["previous"]
-    changed = proposal["buildCandidates"]
-    if bootstrap != (previous is None) or (bootstrap and set(changed) != set(REPOS)):
-        raise UnsafeInventory("invalid bootstrap or prior record")
     if set(archives) != set(REPOS):
-        raise UnsafeInventory("three retained archives required")
+        raise UnsafeInventory("three archives required")
     version = proposal["versionCandidate"]
-    if not changed and proposal["weeklyNoopCandidate"]:
-        raise UnsafeInventory("weekly no-op: no publication; verify remotely")
+    tag = "v" + version
     paths = {p: Path(archives[p]).resolve(strict=True) for p in REPOS}
-    versions = {p: version if p in changed else previous["products"][p]["version"]
-                for p in REPOS}
     local = {}
     for product in REPOS:
-        if paths[product].name != f"{product}-{versions[product]}.tar.gz":
-            raise UnsafeInventory("wrong retained archive name")
-        digest, size = sha_size(paths[product])
-        if product not in changed and (digest, size) != (
-                previous["products"][product]["asset"]["sha256"],
-                previous["products"][product]["asset"]["size"]):
-            raise UnsafeInventory("reused archive differs")
-        local[product] = (digest, size)
-    # This callback must include the three independent external verifiers.
+        if paths[product].name != f"{product}-{version}.tar.gz":
+            raise UnsafeInventory("wrong archive name")
+        local[product] = sha_size(paths[product])
     provisional = {
-        "schemaVersion": 1, "version": version, "tag": "v" + version,
-        "membership": inventory["membership"],
-        "mmData": {"repository": "https://github.com/MegaMek/mm-data",
-                   "commit": inventory["commits"]["mm-data"]},
-        "products": {p: (previous["products"][p] if p not in changed else {
+        "schemaVersion": 2, "version": version, "channel": channel, "tag": tag,
+        "products": {p: {
             "repository": f"https://github.com/MegaMek/{REPOS[p]}",
             "commit": inventory["commits"][REPOS[p]], "version": version,
-            "tag": "v" + version, "releaseId": 1,
+            "tag": tag, "releaseId": 1,
             "asset": {"assetId": 1, "name": paths[p].name,
-                      "sha256": local[p][0], "size": local[p][1]}})
+                      "sha256": local[p][0], "size": local[p][1]}}
             for p in REPOS},
+        "mmData": {"repository": "https://github.com/MegaMek/mm-data",
+                   "commit": inventory["commits"]["mm-data"]},
     }
-    validate_previous(provisional)
+    validate_record(provisional)
+    # This callback must include the three independent external verifiers.
     attest(provisional, paths)
     fresh = release_inventory(getter)
     if any(fresh[key] != inventory[key] for key in ("tags", "releases")):
         raise UnsafeInventory("remote release inventory moved after build; no writes")
     details = release_details(getter)
-    remote_previous = complete_record(details["megamek"], fetch, allow_missing=bootstrap)
-    if remote_previous != previous:
-        raise UnsafeInventory("latest complete record moved after build")
+    if latest(complete_records(details["megamek"], fetch), channel) != previous:
+        raise UnsafeInventory(f"latest {channel} record moved after build")
     with tempfile.TemporaryDirectory() as temp:
         directory = Path(temp)
         preflight = directory / f"suite-record-{version}.json"
         preflight.write_text(json.dumps(provisional, indent=2) + "\n", encoding="utf-8")
         validate(preflight)
-        if previous is not None:
-            check_product_assets(previous, details, fetch)
-            for p, repo in REPOS.items():
-                exact_asset(previous["products"][p], details[repo], repo, fetch, directory, getter)
-        # A new suite tag must be absent everywhere, including draft releases.
+        # The suite tag must be absent everywhere, including draft releases.
         for repo in REPOS.values():
-            if "v" + version in fresh["tags"][repo] or any(
-                    r.get("tag_name") == "v" + version for r in details[repo]):
+            if tag in fresh["tags"][repo] or any(
+                    r.get("tag_name") == tag for r in details[repo]):
                 raise UnsafeInventory("suite version collision")
+        # Generated notes create nothing, so a failure here still leaves no trace.
+        previous_tag = proposal["previousTag"]
+        notes = {p: writes.notes(REPOS[p], tag, inventory["commits"][REPOS[p]], previous_tag)
+                 for p in REPOS}
         # No writes until the entire local and remote preflight has passed.
-        for product in changed:
-            repo = REPOS[product]
+        for product, repo in REPOS.items():
             item = provisional["products"][product]
-            require_tag_absent(repo, item["tag"], getter)
-            if any(r.get("tag_name") == item["tag"] for r in release_details(getter)[repo]):
-                raise UnsafeInventory("publication collision; manual recovery required")
-            writes.tag(repo, item["tag"], item["commit"])
-            if ref_commit(repo, item["tag"], getter) != item["commit"]:
+            require_tag_absent(repo, tag, getter)
+            if any(r.get("tag_name") == tag for r in release_details(getter)[repo]):
+                raise UnsafeInventory("publication collision; rerun to allocate the next build")
+            writes.tag(repo, tag, item["commit"])
+            if ref_commit(repo, tag, getter) != item["commit"]:
                 raise UnsafeInventory("created tag mismatch")
             item["releaseId"] = writes.release(
-                repo, item["tag"], item["commit"], **release_presentation(provisional, product))
+                repo, tag, item["commit"],
+                **release_presentation(provisional, product, notes[product]))
             item["asset"]["assetId"] = writes.upload(repo, item["releaseId"], paths[product])
-            current = release_details(getter)
-            exact_asset(item, current[repo], repo, fetch, directory, getter)
+            exact_asset(item, release_details(getter)[repo], repo, fetch, directory, getter)
         # Re-verify all three again before record publication.
         current = release_details(getter)
         for p, repo in REPOS.items():
             exact_asset(provisional["products"][p], current[repo], repo, fetch, directory, getter)
-        validate_previous(provisional)
+        validate_record(provisional)
         record_path = directory / f"suite-record-{version}.json"
         record_path.write_text(json.dumps(provisional, indent=2) + "\n", encoding="utf-8")
         validate(record_path)
         mm_id = provisional["products"]["MegaMek"]["releaseId"]
-        # A reused MegaMek product keeps its old release ID. A separate suite
-        # release at this version hosts only the complete record.
-        if "MegaMek" not in changed:
-            require_tag_absent("megamek", "v" + version, getter)
-            if any(r.get("tag_name") == "v" + version for r in
-                   release_details(getter)["megamek"]):
-                raise UnsafeInventory("suite host collision; manual recovery required")
-            writes.tag("megamek", "v" + version, inventory["commits"]["megamek"])
-            if ref_commit("megamek", "v" + version, getter) != inventory["commits"]["megamek"]:
-                raise UnsafeInventory("suite host tag mismatch")
-            mm_id = writes.release(
-                "megamek", "v" + version, inventory["commits"]["megamek"],
-                **release_presentation(provisional))
-            hosts = release_details(getter)["megamek"]
-            if len([r for r in hosts if r.get("id") == mm_id and
-                    r.get("tag_name") == "v" + version and r.get("draft") is False]) != 1:
-                raise UnsafeInventory("suite host release mismatch")
-        if ref_commit("megamek", "v" + version, getter) != inventory["commits"]["megamek"]:
+        if ref_commit("megamek", tag, getter) != inventory["commits"]["megamek"]:
             raise UnsafeInventory("record host ref changed; no record written")
         record_asset_id = writes.upload("megamek", mm_id, record_path)  # LAST remote write.
         hosts = release_details(getter)["megamek"]
         matches = [r for r in hosts if r.get("id") == mm_id and
-                   r.get("tag_name") == "v" + version and r.get("draft") is False]
+                   r.get("tag_name") == tag and r.get("draft") is False]
         if len(matches) != 1:
             raise UnsafeInventory("record host changed after upload; manual recovery required")
         assets = matches[0].get("assets")
@@ -307,25 +299,20 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
     return provisional
 
 
-def publish_approved(inventory, build_result, sources, *, bootstrap=False,
-                     getter=gh_get, fetch=download_asset, writes=None):
-    """Production binding: require a nonpublishing build result and pinned verifiers.
-
-    Approval of `inventory` and of the build inputs is external to this
-    function. The workflow must not call this on an unapproved plan.
-    """
+def publish_approved(inventory, build_result, sources, *, getter=gh_get,
+                     fetch=download_asset, writes=None):
+    """Production binding: require a nonpublishing build result and pinned verifiers."""
     proposal = plan(inventory)
+    version = proposal["versionCandidate"]
     if (not isinstance(build_result, dict)
             or build_result.get("status") != "OFFLINE_NONPUBLISHING"
-            or build_result.get("versionCandidate") != proposal["versionCandidate"]
+            or build_result.get("versionCandidate") != version
             or set(build_result.get("archives", {})) != set(REPOS)
-            or build_result.get("productVersions") != {
-                p: (proposal["versionCandidate"] if p in proposal["buildCandidates"]
-                    else inventory["previous"]["products"][p]["version"])
-                for p in REPOS}):
+            or build_result.get("productVersions") != {p: version for p in REPOS}):
         raise UnsafeInventory("missing or mismatched successful pinned-build result")
     with tempfile.TemporaryDirectory(prefix="suite-publish-verifiers-") as temporary:
-        worktrees = stage(sources, inventory["commits"], Path(temporary), subprocess.run)
+        worktrees = stage(sources, inventory["commits"], Path(temporary), subprocess.run,
+                          branch=inventory["branch"])
 
         def attest(record, paths):
             attest_archives(record, paths, worktrees=worktrees)
@@ -342,5 +329,4 @@ def publish_approved(inventory, build_result, sources, *, bootstrap=False,
                 clean(Path(temporary) / repo, inventory["commits"][repo], subprocess.run)
 
         return publish(inventory, build_result["archives"], getter=getter,
-                       fetch=fetch, writes=writes, attest=attest,
-                       validate=validate, bootstrap=bootstrap)
+                       fetch=fetch, writes=writes, attest=attest, validate=validate)

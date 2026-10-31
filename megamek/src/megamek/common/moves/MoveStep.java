@@ -3505,13 +3505,31 @@ public class MoveStep implements Serializable {
                                         && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                                         && (movementType != EntityMovementType.MOVE_VTOL_RUN)
                                         && (movementType != EntityMovementType.MOVE_VTOL_SPRINT);
-            boolean isClimbingMove = isMek
+            boolean canUseClimbing = isMek
                                      && climbMode
                                      && isWalkingMovement
-                                     && (isNewClimb || isContinuedClimb)
                                      && game.getOptions()
                                             .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
                                      && ClimbingHelper.canClimb(entity, prevStep.isProne());
+            boolean isClimbingMove = canUseClimbing && (isNewClimb || isContinuedClimb);
+            // Stepping off a drop too high to walk down (Leaping returned above) is an edge descent. The descent
+            // dialog and the server settle what it really costs, so price it as one level of climbing rather than
+            // as a walk. One level, the cheapest climb-down, costs no more than the old walk price of a 3+ level
+            // drop, so no step that showed the dialog before is pushed past walking MP now. Like a leap,
+            // it replaces the hex and terrain cost: the server bills an edge descent only per level descended.
+            boolean isCliffDrop = (nDestEl < nSrcEl)
+                                  && (deltaElevation > Game.rulesManager.getRulesTerrain()
+                                                                        .getMaxElevationChangeAllowed(srcHex,
+                                                                                                      destHex,
+                                                                                                      entity.getMaxElevationChange()));
+            boolean isEdgeDescent = canUseClimbing && isCliffDrop && !isClimbing;
+            if (isEdgeDescent) {
+                int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
+                mp = climbCostPerLevel;
+                LOGGER.debug("[Climbing] calcMovementCostFor: {}-level edge descent priced as one climbing level "
+                             + "({} MP); the descent dialog sets the real cost", deltaElevation, climbCostPerLevel);
+                return;
+            }
             if (isClimbingMove) {
                 int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
                 // Use player-chosen levels if set, otherwise full elevation delta
@@ -3635,6 +3653,21 @@ public class MoveStep implements Serializable {
      */
     private static boolean isWiGEVehicle(Entity entity) {
         return (entity instanceof Tank) && entity.getMovementMode().isWiGE();
+    }
+
+    /**
+     * Returns {@code true} if this step starts from the hex the unit began its turn in. A TacOps edge descent (TO:AR p.20)
+     * can only start there: that is the only case the descent dialog and the server's edge dangle and climb-down
+     * handling recognise. Without this check, a Mek that walks to a cliff edge and then steps off is moved to the
+     * bottom as an ordinary walk.
+     *
+     * @param src the hex this step starts from
+     *
+     * @return {@code true} if {@code src} is the unit's turn-start hex on this step's board
+     */
+    private boolean isFromTurnStartHex(Coords src) {
+        Entity entity = getEntity();
+        return (entity.getBoardId() == boardId) && src.equals(entity.getPosition());
     }
 
     /**
@@ -3940,8 +3973,8 @@ public class MoveStep implements Serializable {
             // (descent > maxDown) when leaping is OFF, and ready()'s clipToPossible() would
             // strip it before the server saw the path. Use canClimb (1 arm) not canDangle
             // (2 arms) so one-arm climb-down still works.
-            boolean canEdgeDescend = climbingEnabled && climbMode
-                                     && ClimbingHelper.canClimb(entity, isProne());
+            boolean isFromTurnStartHex = isFromTurnStartHex(src);
+            boolean canEdgeDescend = canUseClimbing && isFromTurnStartHex;
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 
@@ -3952,6 +3985,11 @@ public class MoveStep implements Serializable {
                 boolean allowUp = canUseClimbing && (elevationUp > 0);
                 boolean allowDown = canEdgeDescend && (elevationDown > 0);
                 if (!allowUp && !allowDown) {
+                    if (canUseClimbing && (elevationDown > 0) && !isFromTurnStartHex) {
+                        LOGGER.debug("[Climbing] {}: {}-level drop from {} refused - an edge descent must start "
+                                     + "from the hex the unit began its turn in", entity.getDisplayName(),
+                                     elevationDown, src);
+                    }
                     return false;
                 }
                 if (allowUp) {

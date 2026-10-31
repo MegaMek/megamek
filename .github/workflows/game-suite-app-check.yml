@@ -2,6 +2,13 @@ name: Game suite App access check (manual)
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment whose App key to check
+        required: true
+        type: choice
+        options: [suite-release-live, suite-release-weekly]
+        default: suite-release-live
 
 permissions:
   contents: read
@@ -14,7 +21,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment: suite-release-live
+    environment: ${{ inputs.environment }}
     steps:
       - name: Check App configuration
         env:
@@ -32,7 +39,7 @@ jobs:
           app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
           private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
           owner: MegaMek
-          repositories: megamek,megameklab,mekhq
+          repositories: megamek,megameklab,mekhq,mm-data
           permission-contents: write
       - name: Verify repository scope and read access
         env:
@@ -41,12 +48,12 @@ jobs:
           set -euo pipefail
           repositories=$(gh api --method GET 'installation/repositories?per_page=100' \
             --jq '[.repositories[].full_name] | sort | join(",")')
-          if [[ "$repositories" != "MegaMek/megamek,MegaMek/megameklab,MegaMek/mekhq" ]]; then
-            echo "::error::App token repository scope does not match the three suite repositories"
+          if [[ "$repositories" != "MegaMek/megamek,MegaMek/megameklab,MegaMek/mekhq,MegaMek/mm-data" ]]; then
+            echo "::error::App token repository scope does not match the four suite repositories (is the App installed on mm-data?)"
             exit 1
           fi
-          for repo in megamek megameklab mekhq; do
+          for repo in megamek megameklab mekhq mm-data; do
             gh api --method GET "repos/MegaMek/$repo/git/ref/heads/main" --silent
           done
           echo "App authentication and repository access verified. No releases were published."
-          echo "Verified release App credentials and access to all three suite repositories. No repository writes or game builds were performed." >> "$GITHUB_STEP_SUMMARY"
+          echo "Verified release App credentials and access to all four suite repositories. No repository writes or game builds were performed." >> "$GITHUB_STEP_SUMMARY"

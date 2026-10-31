@@ -4,8 +4,10 @@
 Experimental builds the four repositories' ``main`` branches. Core builds the newest
 ``releases/<line>`` branch, which must exist in all four. The release line
 (``major.minor.patch``) comes from MegaMek's ``Version.properties`` at the frozen commit; the
-fourth component is the next build number not yet used on that line by any tag or release of
-the three game repositories. MegaMek, MegaMekLab and MekHQ always share that version.
+fourth component is the next build number not yet used on that line by any tag or published
+release of the three game repositories. Draft releases do not reserve a number; publication
+refuses a candidate whose tag a draft already holds. MegaMek, MegaMekLab and MekHQ always share
+that version.
 
 The inventory is deliberately not an authority for publication: built archive bytes,
 embedded identities and product release IDs are verified separately.
@@ -152,7 +154,7 @@ def properties_line(text):
 
 
 def reserve(tags, releases, line):
-    """The next build number on ``line`` unused by any tag or release in the three repositories.
+    """The next build number on ``line`` unused by any tag or published release (drafts excluded).
 
     Release line 0.51.01 with tags v0.51.01 and v0.51.01.1 allocates 0.51.01.2. Numerically
     equal spellings (v0.51.1.1) occupy the same build.

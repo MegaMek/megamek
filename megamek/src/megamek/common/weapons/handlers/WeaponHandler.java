@@ -74,6 +74,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -1527,6 +1528,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
+     * @return the nuclear warheads this attack delivers, one per nuclear missile; empty for a conventional attack
+     */
+    protected List<NuclearWeaponType> getNuclearWarheads() {
+        return List.of();
+    }
+
+    /**
      * Handles potential damage to partial cover that absorbs a shot. The
      * <code>ToHitData</code> is checked to what if there is any damagable cover
      * to be hit, and if so which cover gets hit (there are two possibilities in some cases, such as 75% partial cover).
@@ -2034,6 +2042,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         hit.setCapital(weaponType.isCapital());
         hit.setBoxCars(roll.getIntValue() == 12);
         hit.setCapMisCritMod(getCapMisMod());
+        hit.setNuclearWarheads(getNuclearWarheads());
         hit.setFirstHit(firstHit);
         hit.setAttackerId(getAttackerId());
 

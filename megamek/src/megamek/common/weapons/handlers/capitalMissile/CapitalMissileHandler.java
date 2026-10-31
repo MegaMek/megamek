@@ -37,6 +37,7 @@ package megamek.common.weapons.handlers.capitalMissile;
 import static java.lang.Math.floor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -47,6 +48,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -464,6 +466,15 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
     protected int getCapMisMod() {
         AmmoType ammoType = ammo.getType();
         return getCritMod(ammoType);
+    }
+
+    @Override
+    protected List<NuclearWeaponType> getNuclearWarheads() {
+        NuclearWeaponType warhead = NuclearWeaponType.fromAmmo(ammo.getType());
+        if (warhead == null) {
+            return List.of();
+        }
+        return List.of(warhead);
     }
 
     /*

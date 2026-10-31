@@ -153,7 +153,7 @@ import megamek.server.commands.*;
 import megamek.server.nuclear.NuclearBlastProfile;
 import megamek.server.nuclear.NuclearDetonationResolver;
 import megamek.server.nuclear.NuclearSpaceHit;
-import megamek.server.nuclear.NuclearSpaceHit.SpecialCriticalOutcome;
+import megamek.server.nuclear.NuclearSpaceHit.SpecialCriticalResult;
 import megamek.server.nuclear.NuclearStrikeNotifications;
 import megamek.server.nuclear.ScheduledNuke;
 import megamek.server.props.OrbitalBombardment;
@@ -22660,12 +22660,11 @@ public class TWGameManager extends AbstractGameManager {
 
         // check for nuclear critical
         if (nukeS2S) {
-            SpecialCriticalOutcome outcome = new NuclearSpaceHit(this).resolveSpecialCritical(a, hit, damage_orig,
-                  vDesc);
-            if (outcome == SpecialCriticalOutcome.AVOIDED_WITH_EDGE) {
+            SpecialCriticalResult nuclearResult = new NuclearSpaceHit(this).resolve(a, hit, vDesc);
+            if (nuclearResult.avoidedWithEdge() && !nuclearResult.structureDamaged()) {
                 return;
             }
-            if ((outcome == SpecialCriticalOutcome.STRUCTURE_DAMAGED) && (a.getSI() > 0)) {
+            if (nuclearResult.structureDamaged() && (a.getSI() > 0)) {
                 critSI = true;
             }
         }

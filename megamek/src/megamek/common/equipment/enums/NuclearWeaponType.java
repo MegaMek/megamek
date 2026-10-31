@@ -32,7 +32,10 @@
  */
 package megamek.common.equipment.enums;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.Munitions;
 
 /**
  * The standard nuclear weapons, with the values of the Standard Nuclear Weaponry Table (IO:AE 3rd printing, p.164).
@@ -141,6 +144,32 @@ public enum NuclearWeaponType {
      */
     public int getCraterDepth() {
         return craterDepth;
+    }
+
+    /**
+     * Finds the nuclear weapon a piece of ammo carries.
+     *
+     * @param ammoType the ammo, which may be {@code null}
+     *
+     * @return the nuclear weapon, or {@code null} if the ammo is not a nuclear weapon
+     */
+    public static @Nullable NuclearWeaponType fromAmmo(@Nullable AmmoType ammoType) {
+        if (ammoType == null) {
+            return null;
+        }
+        if (ammoType.hasFlag(AmmoType.F_PEACEMAKER)) {
+            return PEACEMAKER;
+        }
+        if (ammoType.hasFlag(AmmoType.F_SANTA_ANNA)) {
+            return SANTA_ANA;
+        }
+        if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ALAMO) {
+            return ALAMO;
+        }
+        if (ammoType.getMunitionType().contains(Munitions.M_DAVY_CROCKETT_M)) {
+            return DAVY_CROCKETT_M;
+        }
+        return null;
     }
 
     /**

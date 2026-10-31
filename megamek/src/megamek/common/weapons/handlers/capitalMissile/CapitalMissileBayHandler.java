@@ -37,6 +37,8 @@ package megamek.common.weapons.handlers.capitalMissile;
 import static java.lang.Math.floor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -50,6 +52,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -73,6 +76,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
     @Serial
     private static final long serialVersionUID = -1618484541772117621L;
+
+    /** The nuclear warhead of each bay weapon that fired a nuclear missile in this attack. */
+    private List<NuclearWeaponType> nuclearWarheadsFired = new ArrayList<>();
     boolean advancedPD;
 
     /**
@@ -305,7 +311,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
     @Override
     protected int calcAttackValue() {
-
+        nuclearWarheadsFired = new ArrayList<>();
         double av = 0;
         double counterAV = calcCounterAV();
         int armor = 0;
@@ -356,6 +362,10 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
                 if (ammoType.hasFlag(AmmoType.F_NUCLEAR)) {
                     nukeS2S = true;
+                    NuclearWeaponType warhead = NuclearWeaponType.fromAmmo(ammoType);
+                    if (warhead != null) {
+                        nuclearWarheadsFired.add(warhead);
+                    }
                 }
 
                 current_av = updateAVForAmmo(current_av, ammoType, bayWType,
@@ -428,6 +438,14 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             armor = armor + curr_armor;
         }
         return armor;
+    }
+
+    @Override
+    protected List<NuclearWeaponType> getNuclearWarheads() {
+        if (nuclearWarheadsFired == null) {
+            return List.of();
+        }
+        return nuclearWarheadsFired;
     }
 
     @Override

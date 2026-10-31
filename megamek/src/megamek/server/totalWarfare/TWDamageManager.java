@@ -1583,8 +1583,9 @@ public class TWDamageManager implements IDamageManager {
             // divide damage in half
             // do not divide by half if it is an ammo explosion
             // Minimum SI damage is now 1 (per errata: https://bg.battletech.com/forums/index.php?topic=81913.0 )
+            // A nuclear hit halves into the SI like any other; only its special critical hit is never halved
+            // (IO:AE p.166)
             if (!ammoExplosion &&
-                  !nukeS2S &&
                   !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 damage = (int) Math.round(damage / 2.0);
                 critSI = true;
@@ -2099,6 +2100,7 @@ public class TWDamageManager implements IDamageManager {
         newHit.setGeneralDamageType(hit.getGeneralDamageType());
         newHit.setCapital(hit.isCapital());
         newHit.setCapMisCritMod(hit.getCapMisCritMod());
+        newHit.setNuclearWarheads(hit.getNuclearWarheads());
         newHit.setSingleAV(hit.getSingleAV());
         newHit.setAttackerId(hit.getAttackerId());
         reportVec.addAll(damageEntity(fighter,

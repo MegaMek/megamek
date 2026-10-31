@@ -34,8 +34,13 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
@@ -82,6 +87,7 @@ public class HitData {
     //need to keep track of the attack value for a single attack in the case of fighter squadrons
     //probably not the best place for this, but I don't want to add another parameter to damageEntity
     private int singleAV = -1;
+    private List<NuclearWeaponType> nuclearWarheads = new ArrayList<>();
     /**
      * Keeps track of the Entity originating this hit, if any
      */
@@ -290,6 +296,20 @@ public class HitData {
 
     public int getSingleAV() {
         return singleAV;
+    }
+
+    /**
+     * @return the nuclear warheads this hit delivers, one per nuclear missile; empty for a conventional hit
+     */
+    public List<NuclearWeaponType> getNuclearWarheads() {
+        return Collections.unmodifiableList(nuclearWarheads);
+    }
+
+    /**
+     * @param nuclearWarheads the nuclear warheads this hit delivers, one per nuclear missile
+     */
+    public void setNuclearWarheads(List<NuclearWeaponType> nuclearWarheads) {
+        this.nuclearWarheads = new ArrayList<>(nuclearWarheads);
     }
 
     public void setLocation(int location) {

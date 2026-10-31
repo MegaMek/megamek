@@ -71,6 +71,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.equipment.enums.NuclearBurstMode;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.logging.MMLogger;
 import megamek.server.nuclear.NuclearBlastProfile;
@@ -98,6 +99,7 @@ public class NuclearStrikeDialog extends JDialog {
     private final ClientGUI clientGUI;
     private final JTextField hexField = new JTextField(6);
     private final JComboBox<WarheadChoice> warheadChoice = new JComboBox<>();
+    private final JComboBox<BurstChoice> burstChoice = new JComboBox<>();
     private final JComboBox<PlayerChoice> playerChoice = new JComboBox<>();
     private final JPanel warheadCards = new JPanel(new CardLayout());
     private final JPanel statsPanel = new JPanel(new GridBagLayout());
@@ -253,6 +255,16 @@ public class NuclearStrikeDialog extends JDialog {
         choiceCell.weightx = 1;
         panel.add(warheadChoice, choiceCell);
 
+        panel.add(new JLabel(Messages.getString("NuclearStrike.dialog.burst")), cell(0, 1));
+        for (NuclearBurstMode burstMode : NuclearBurstMode.values()) {
+            burstChoice.addItem(new BurstChoice(burstMode));
+        }
+        burstChoice.addActionListener(event -> refreshFigures());
+        GridBagConstraints burstCell = cell(1, 1);
+        burstCell.fill = GridBagConstraints.HORIZONTAL;
+        burstCell.weightx = 1;
+        panel.add(burstChoice, burstCell);
+
         addStat(0, 0, "NuclearStrike.dialog.impact", impactValue);
         addStat(1, 0, "NuclearStrike.dialog.dropPerHex", dropValue);
         addStat(0, 1, "NuclearStrike.dialog.blastRadius", blastRadiusValue);
@@ -274,7 +286,7 @@ public class NuclearStrikeDialog extends JDialog {
         bookCard.add(sourceLabel);
         warheadCards.add(bookCard, BOOK_CARD);
         warheadCards.add(customCard(), CUSTOM_CARD);
-        panel.add(warheadCards, wideCell(1));
+        panel.add(warheadCards, wideCell(2));
         return panel;
     }
 
@@ -370,17 +382,41 @@ public class NuclearStrikeDialog extends JDialog {
         return (WarheadChoice) warheadChoice.getSelectedItem();
     }
 
+    private NuclearBurstMode selectedBurstMode() {
+        BurstChoice choice = (BurstChoice) burstChoice.getSelectedItem();
+        return (choice == null) ? NuclearBurstMode.GROUND : choice.burstMode();
+    }
+
     private NuclearBlastProfile selectedProfile() {
         NuclearWeaponType weaponType = selectedWarhead().weaponType();
         if (weaponType != null) {
-            return NuclearBlastProfile.groundBurst(weaponType);
+            return NuclearBlastProfile.of(weaponType, selectedBurstMode());
         }
         return NuclearBlastProfile.custom((int) impactSpinner.getValue(), (int) dropSpinner.getValue(),
-              (int) secondarySpinner.getValue(), (int) craterSpinner.getValue());
+              (int) secondarySpinner.getValue(), (int) craterSpinner.getValue(), selectedBurstMode());
+    }
+
+    /**
+     * Only the Alamo, Santa Ana and Peacemaker have air-burst figures (IO:AE p.164); a Davy Crockett is held to a
+     * ground burst. A custom device may be either, and an air burst has no crater to set.
+     */
+    private void refreshBurstChoice() {
+        NuclearWeaponType weaponType = selectedWarhead().weaponType();
+        boolean canAirBurst = (weaponType == null) || weaponType.canAirBurst();
+        if (!canAirBurst && selectedBurstMode().isAirBurst()) {
+            // Setting the item fires this refresh again; it then finds a ground burst and changes nothing
+            burstChoice.setSelectedIndex(NuclearBurstMode.GROUND.ordinal());
+        }
+        burstChoice.setEnabled(canAirBurst);
+        burstChoice.setToolTipText(canAirBurst
+              ? null
+              : Messages.getString("NuclearStrike.dialog.burstGroundOnly", weaponType.getDisplayName()));
+        craterSpinner.setEnabled(!selectedBurstMode().isAirBurst());
     }
 
     /** Shows the selected warhead's figures and how much of this map its blast reaches. */
     private void refreshFigures() {
+        refreshBurstChoice();
         boolean isCustom = selectedWarhead().weaponType() == null;
         ((CardLayout) warheadCards.getLayout()).show(warheadCards, isCustom ? CUSTOM_CARD : BOOK_CARD);
         NuclearBlastProfile profile = selectedProfile();
@@ -495,6 +531,9 @@ public class NuclearStrikeDialog extends JDialog {
                   .append(" radius=").append(secondarySpinner.getValue())
                   .append(" depth=").append(craterSpinner.getValue());
         }
+        if (selectedBurstMode().isAirBurst()) {
+            command.append(" burst=").append(NuclearBurstMode.AIR.name());
+        }
         command.append(" round=").append(roundSpinner.getValue());
         PlayerChoice firingPlayer = (PlayerChoice) playerChoice.getSelectedItem();
         if ((firingPlayer != null) && (firingPlayer.playerId() != Player.PLAYER_NONE)) {
@@ -513,6 +552,14 @@ public class NuclearStrikeDialog extends JDialog {
                   ? Messages.getString("NuclearStrike.dialog.custom")
                   : Messages.getString("NuclearStrike.dialog.weaponEntry", weaponType.getDisplayName(),
                   weaponType.getDelivery());
+        }
+    }
+
+    /** A burst mode in the list, shown in words. */
+    private record BurstChoice(NuclearBurstMode burstMode) {
+        @Override
+        public String toString() {
+            return Messages.getString("NuclearStrike.dialog.burst." + burstMode.name());
         }
     }
 

@@ -41,6 +41,7 @@ import megamek.common.Player;
 import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.NuclearBurstMode;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.event.player.GamePlayerStrategicActionEvent;
 import megamek.common.options.OptionsConstants;
@@ -79,7 +80,11 @@ public class NuclearStrikeCommand extends ClientServerCommand {
                     NuclearWeaponType.DAVY_CROCKETT_M),
               new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID")),
               new OptionalIntegerArgument("round", Messages.getString("NuclearStrike.cmd.round"), 1,
-                    Integer.MAX_VALUE)
+                    Integer.MAX_VALUE),
+              new EnumArgument<>("burst",
+                    Messages.getString("NuclearStrike.cmd.burst"),
+                    NuclearBurstMode.class,
+                    NuclearBurstMode.GROUND)
         );
     }
 
@@ -103,14 +108,23 @@ public class NuclearStrikeCommand extends ClientServerCommand {
         }
 
         var nukeType = (NuclearWeaponType) args.get("type").getValue();
+        var burstMode = (NuclearBurstMode) args.get("burst").getValue();
+        if (burstMode.isAirBurst() && !nukeType.canAirBurst()) {
+            logger.info("[Nukes] /ns refused for connection {}: {} cannot air-burst", connId, nukeType);
+            server.sendServerChat(connId,
+                  Messages.getString("NuclearStrike.cmd.noAirBurst", nukeType.getDisplayName()));
+            return;
+        }
         Coords groundZero = new Coords((int) args.get("x").getValue() - 1, (int) args.get("y").getValue() - 1);
         var playerID = (Optional<Integer>) args.get("playerID").getValue();
         int detonationRound = detonationRound(connId, (Optional<Integer>) args.get("round").getValue());
         if (detonationRound == ROUND_REFUSED) {
             return;
         }
-        ScheduledNuke nuke = new ScheduledNuke(groundZero, NuclearBlastProfile.groundBurst(nukeType), nukeType,
+        ScheduledNuke nuke = new ScheduledNuke(groundZero, NuclearBlastProfile.of(nukeType, burstMode), nukeType,
               firingPlayerId(connId, playerID), detonationRound);
+        logger.info("[Nukes] /ns from connection {}: {} {} burst at hex {}", connId, nukeType, burstMode,
+              groundZero.getBoardNum());
 
         var player = getGameManager().getGame().getPlayer(playerID.orElse(Player.PLAYER_NONE));
         if (player != null) {

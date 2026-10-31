@@ -41,6 +41,7 @@ import megamek.common.Player;
 import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.NuclearBurstMode;
 import megamek.common.event.player.GamePlayerStrategicActionEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -49,6 +50,7 @@ import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
+import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
 import megamek.server.nuclear.NuclearBlastProfile;
@@ -78,7 +80,11 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
               new IntegerArgument("depth", Messages.getString("Gamemaster.cmd.nukeCommand.depth"), 0, 9),
               new OptionalIntegerArgument("playerID", Messages.getString("Gamemaster.cmd.playerID")),
               new OptionalIntegerArgument("round", Messages.getString("NuclearStrike.cmd.round"), 1,
-                    Integer.MAX_VALUE)
+                    Integer.MAX_VALUE),
+              new EnumArgument<>("burst",
+                    Messages.getString("NuclearStrike.cmd.burst"),
+                    NuclearBurstMode.class,
+                    NuclearBurstMode.GROUND)
         );
     }
 
@@ -114,7 +120,8 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
               NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
                     (int) args.get("deg").getValue(),
                     (int) args.get("radius").getValue(),
-                    (int) args.get("depth").getValue()),
+                    (int) args.get("depth").getValue(),
+                    (NuclearBurstMode) args.get("burst").getValue()),
               null,
               firingPlayerId(connId, playerID),
               detonationRound);

@@ -123,4 +123,17 @@ class ScheduledNukeRoundTest {
         assertEquals(1, loadedGame.getScheduledNukes().size());
         assertEquals(strike, loadedGame.getScheduledNukes().getFirst(), "every part of the strike comes back");
     }
+
+    @Test
+    void waitingAirBurstIsSavedWithTheGame() {
+        ScheduledNuke strike = new ScheduledNuke(GROUND_ZERO, NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO),
+              NuclearWeaponType.ALAMO, GAME_MASTER, 5);
+        game.getScheduledNukes().add(strike);
+
+        String savedGame = SerializationHelper.getSaveGameXStream().toXML(game);
+        Game loadedGame = (Game) SerializationHelper.getLoadSaveGameXStream().fromXML(savedGame);
+
+        assertEquals(strike, loadedGame.getScheduledNukes().getFirst(), "it comes back as an air burst");
+        assertTrue(loadedGame.getScheduledNukes().getFirst().profile().isAirBurst());
+    }
 }

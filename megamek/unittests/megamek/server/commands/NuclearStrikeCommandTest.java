@@ -39,6 +39,7 @@ import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.enums.NuclearBurstMode;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -143,5 +144,31 @@ class NuclearStrikeCommandTest {
         assertEquals(new Coords(9, 11), nuke.groundZero(), "hex 1012");
         assertEquals(NuclearBlastProfile.custom(1000, 23, 85, 1), nuke.profile());
         assertEquals(null, nuke.weaponType(), "a custom device has no standard weapon");
+    }
+
+    @Test
+    void nuclearStrikeCanAirBurst() {
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=10", "y=12", "type=ALAMO", "burst=AIR" });
+
+        assertEquals(NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO), scheduledNuke().profile());
+    }
+
+    @Test
+    void davyCrockettAirBurstIsRefused() {
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=10", "y=12", "type=DAVY_CROCKETT_M", "burst=AIR" });
+
+        Mockito.verify(gameManager, Mockito.never()).addScheduledNuke(any(ScheduledNuke.class));
+    }
+
+    @Test
+    void customNuclearStrikeCanAirBurst() {
+        new NuclearStrikeCustomCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "nsc", "x=10", "y=12", "dmg=1000", "deg=18", "radius=114", "depth=1", "burst=AIR" });
+
+        NuclearBlastProfile profile = scheduledNuke().profile();
+        assertEquals(NuclearBurstMode.AIR, profile.burstMode());
+        assertEquals(0, profile.craterDepth(), "an air burst digs no crater");
     }
 }

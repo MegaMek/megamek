@@ -32,6 +32,7 @@
  */
 package megamek.server.nuclear;
 
+import megamek.common.equipment.enums.NuclearBurstMode;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.equipment.enums.NuclearWeaponType.BurstFigures;
 
@@ -44,15 +45,43 @@ import megamek.common.equipment.enums.NuclearWeaponType.BurstFigures;
  * @param blastRadius     hexes from Ground Zero in which blast damage applies
  * @param secondaryRadius hexes from Ground Zero in which secondary effects apply
  * @param craterDepth     levels the terrain is lowered at Ground Zero (0 for no crater)
+ * @param burstMode       ground burst or air burst; an air burst never makes a crater
  */
 public record NuclearBlastProfile(int impactDamage, int damageReduction, int blastRadius, int secondaryRadius,
-      int craterDepth) {
+      int craterDepth, NuclearBurstMode burstMode) {
 
     /**
      * Terrain damaged by less than this has no nuclear terrain effect (woods lose a level per 20 points, IO:AE
      * p.165).
      */
     public static final int MINIMUM_TERRAIN_DAMAGE = 20;
+
+    /**
+     * An air burst makes no crater (IO:AE p.164), whatever crater depth it was given. A profile read from a save made
+     * before burst modes existed has no mode and is a ground burst.
+     */
+    public NuclearBlastProfile {
+        if (burstMode == null) {
+            burstMode = NuclearBurstMode.GROUND;
+        }
+        if (burstMode.isAirBurst()) {
+            craterDepth = 0;
+        }
+    }
+
+    /**
+     * A ground-burst profile.
+     *
+     * @param impactDamage    standard-scale damage at Ground Zero
+     * @param damageReduction blast damage lost per hex from Ground Zero
+     * @param blastRadius     hexes from Ground Zero in which blast damage applies
+     * @param secondaryRadius hexes from Ground Zero in which secondary effects apply
+     * @param craterDepth     levels the terrain is lowered at Ground Zero (0 for no crater)
+     */
+    public NuclearBlastProfile(int impactDamage, int damageReduction, int blastRadius, int secondaryRadius,
+          int craterDepth) {
+        this(impactDamage, damageReduction, blastRadius, secondaryRadius, craterDepth, NuclearBurstMode.GROUND);
+    }
 
     /**
      * @param weaponType the standard nuclear weapon
@@ -69,8 +98,38 @@ public record NuclearBlastProfile(int impactDamage, int damageReduction, int bla
     }
 
     /**
-     * A profile from raw numbers, as entered with the GM nuke commands. With no blast radius given, the blast reaches
-     * as far as the damage lasts.
+     * @param weaponType the standard nuclear weapon; it must be able to air-burst
+     *
+     * @return the air-burst profile of that weapon, from the Standard Nuclear Weaponry Table (IO:AE p.164): no crater.
+     *       An Alamo air burst reaches 58 hexes and loses 18 a hex, against 43 and 23 for its ground burst
+     *
+     * @throws IllegalArgumentException if the weapon has no air-burst figures, as the Davy Crockett
+     */
+    public static NuclearBlastProfile airBurst(NuclearWeaponType weaponType) {
+        BurstFigures figures = weaponType.getAirBurst();
+        if (figures == null) {
+            throw new IllegalArgumentException(weaponType + " cannot air-burst");
+        }
+        return new NuclearBlastProfile(weaponType.getImpactDamage(),
+              figures.damageReduction(),
+              figures.blastRadius(),
+              figures.secondaryRadius(),
+              0,
+              NuclearBurstMode.AIR);
+    }
+
+    /**
+     * @param weaponType the standard nuclear weapon
+     * @param burstMode  ground burst or air burst; an air burst needs a weapon that can air-burst
+     *
+     * @return the weapon's profile for that kind of detonation
+     */
+    public static NuclearBlastProfile of(NuclearWeaponType weaponType, NuclearBurstMode burstMode) {
+        return burstMode.isAirBurst() ? airBurst(weaponType) : groundBurst(weaponType);
+    }
+
+    /**
+     * A ground-burst profile from raw numbers, as entered with the GM nuke commands.
      *
      * @param impactDamage    standard-scale damage at Ground Zero
      * @param damageReduction blast damage lost per hex; values below 1 are treated as 1
@@ -81,9 +140,33 @@ public record NuclearBlastProfile(int impactDamage, int damageReduction, int bla
      */
     public static NuclearBlastProfile custom(int impactDamage, int damageReduction, int secondaryRadius,
           int craterDepth) {
+        return custom(impactDamage, damageReduction, secondaryRadius, craterDepth, NuclearBurstMode.GROUND);
+    }
+
+    /**
+     * A profile from raw numbers, as entered with the GM nuke commands. With no blast radius given, the blast reaches
+     * as far as the damage lasts. The GM enters the air-burst figures for an air burst; its crater depth is ignored.
+     *
+     * @param impactDamage    standard-scale damage at Ground Zero
+     * @param damageReduction blast damage lost per hex; values below 1 are treated as 1
+     * @param secondaryRadius hexes in which secondary effects apply
+     * @param craterDepth     crater depth at Ground Zero
+     * @param burstMode       ground burst or air burst
+     *
+     * @return the profile
+     */
+    public static NuclearBlastProfile custom(int impactDamage, int damageReduction, int secondaryRadius,
+          int craterDepth, NuclearBurstMode burstMode) {
         int reduction = Math.max(1, damageReduction);
         return new NuclearBlastProfile(impactDamage, reduction, impactDamage / reduction, secondaryRadius,
-              craterDepth);
+              craterDepth, burstMode);
+    }
+
+    /**
+     * @return {@code true} if this detonation is an air burst
+     */
+    public boolean isAirBurst() {
+        return burstMode.isAirBurst();
     }
 
     /**

@@ -33,7 +33,11 @@
 package megamek.server.nuclear;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.equipment.enums.NuclearBurstMode;
 import megamek.common.equipment.enums.NuclearWeaponType;
 import org.junit.jupiter.api.Test;
 
@@ -151,5 +155,59 @@ class NuclearBlastProfileTest {
         assertEquals(9, NuclearBlastProfile.groundBurst(NuclearWeaponType.ALAMO).secondaryHeight());
         // A custom 5,000-point device is closest to the Alamo
         assertEquals(9, NuclearBlastProfile.custom(5_000, 50, 100, 0).secondaryHeight());
+    }
+
+    @Test
+    void alamoAirBurstUsesTheAirColumnsAndMakesNoCrater() {
+        // IO:AE p.164, Type II air burst: blast radius 58, reduction 18, secondary radius 114
+        NuclearBlastProfile profile = NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO);
+
+        assertTrue(profile.isAirBurst());
+        assertEquals(58, profile.blastRadius());
+        assertEquals(1_000 - (10 * 18), profile.damageAt(10));
+        assertEquals(114, profile.secondaryRadius());
+        assertEquals(0, profile.craterDepth());
+        assertEquals(0, profile.craterRadius());
+    }
+
+    @Test
+    void stukaExampleAirBurstFiguresMatch() {
+        // IO:AE p.166 worked example: an air-burst Alamo has a blast radius of 58 and a reduction of 18
+        NuclearBlastProfile profile = NuclearBlastProfile.of(NuclearWeaponType.ALAMO, NuclearBurstMode.AIR);
+
+        assertEquals(58, profile.blastRadius());
+        assertEquals(18, profile.damageReduction());
+    }
+
+    @Test
+    void groundBurstIsTheDefault() {
+        NuclearBlastProfile profile = NuclearBlastProfile.of(NuclearWeaponType.SANTA_ANA, NuclearBurstMode.GROUND);
+
+        assertFalse(profile.isAirBurst());
+        assertEquals(3, profile.craterDepth());
+        assertEquals(NuclearBurstMode.GROUND, new NuclearBlastProfile(100, 5, 20, 40, 0).burstMode());
+    }
+
+    @Test
+    void davyCrockettCannotAirBurst() {
+        assertThrows(IllegalArgumentException.class,
+              () -> NuclearBlastProfile.airBurst(NuclearWeaponType.DAVY_CROCKETT_M));
+    }
+
+    @Test
+    void customAirBurstIgnoresItsCraterDepth() {
+        NuclearBlastProfile profile = NuclearBlastProfile.custom(1_000, 18, 114, 1, NuclearBurstMode.AIR);
+
+        assertTrue(profile.isAirBurst());
+        assertEquals(0, profile.craterDepth());
+    }
+
+    @Test
+    void profileWithoutAModeIsAGroundBurst() {
+        // A save made before burst modes existed rebuilds the record with a null mode
+        NuclearBlastProfile profile = new NuclearBlastProfile(1_000, 23, 43, 85, 1, null);
+
+        assertEquals(NuclearBurstMode.GROUND, profile.burstMode());
+        assertEquals(1, profile.craterDepth());
     }
 }

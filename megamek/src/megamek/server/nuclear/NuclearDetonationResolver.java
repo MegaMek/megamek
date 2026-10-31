@@ -63,6 +63,19 @@ public class NuclearDetonationResolver {
     }
 
     /**
+     * The crater annihilates what is on the ground. Aircraft and flying VTOLs and WiGEs over it are not in it; the
+     * blast height decides whether the blast reaches them (HammerGS, 2026-10-30).
+     *
+     * @param entity the unit over a crater hex
+     *
+     * @return {@code true} if the unit is airborne and the crater does not destroy it
+     */
+    static boolean isAboveTheCrater(Entity entity) {
+        // isAirborne() is only true for aerospace units, so a flying VTOL or WiGE needs its own check
+        return entity.isAirborne() || entity.isAirborneVTOLorWIGE();
+    }
+
+    /**
      * Resolves a ground burst.
      *
      * @param position the Ground Zero hex
@@ -120,6 +133,13 @@ public class NuclearDetonationResolver {
 
             // If it's already destroyed...
             if (entity.isDestroyed()) {
+                continue;
+            }
+
+            if (isAboveTheCrater(entity)) {
+                LOGGER.info("[Nukes] {} at hex {} flies above the crater ({} hexes from Ground Zero): blast height "
+                      + "decides its fate instead", entity.getDisplayName(), entity.getPosition().getBoardNum(),
+                      position.distance(entity.getPosition()));
                 continue;
             }
 

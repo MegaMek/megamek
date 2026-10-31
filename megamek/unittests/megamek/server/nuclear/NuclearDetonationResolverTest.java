@@ -39,7 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Vector;
 
@@ -48,9 +51,13 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.enums.NuclearWeaponType;
+import megamek.common.loaders.MekFileParser;
 import megamek.common.net.packets.Packet;
+import megamek.common.rolls.Roll;
+import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.server.totalWarfare.TWGameManager;
@@ -58,6 +65,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
@@ -119,6 +127,39 @@ class NuclearDetonationResolverTest {
         board = new Board();
         board.newData(BOARD_SIZE, BOARD_SIZE, hexes, null);
         gameManager.getGame().setBoard(board);
+    }
+
+    private Entity placeUnit(String fileName, Coords coords) throws Exception {
+        Entity entity = new MekFileParser(new File("testresources/megamek/common/units/" + fileName)).getEntity();
+        entity.setId(gameManager.getGame().getNextEntityId());
+        gameManager.getGame().addEntity(entity);
+        entity.setOwner(gameManager.getGame().getPlayer(0));
+        entity.setPosition(coords);
+        entity.setDeployed(true);
+        return entity;
+    }
+
+    @Test
+    void craterSparesAFighterFlyingOverIt() throws Exception {
+        // A Cheetah at altitude 10 over Ground Zero is above the Santa Ana's blast height of 9 (HammerGS, 2026-10-30);
+        // the Atlas beneath it is in the crater
+        Mockito.doNothing().when(gameManager).entityUpdate(anyInt());
+        Entity cheetah = placeUnit("Cheetah F-11.blk", GROUND_ZERO);
+        cheetah.setAltitude(10);
+        Entity atlas = placeUnit("Atlas AS7-D.mtf", GROUND_ZERO);
+        // Every 2d6 roll is a 12, so the Cheetah's secondary effects roll does nothing
+        Roll roll = mock(Roll.class);
+        when(roll.getIntValue()).thenReturn(12);
+        when(roll.getReport()).thenReturn("12");
+
+        try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            compute.when(() -> Compute.rollD6(2)).thenReturn(roll);
+            detonate(NuclearWeaponType.SANTA_ANA);
+        }
+
+        assertTrue(NuclearDetonationResolver.isAboveTheCrater(cheetah));
+        assertFalse(cheetah.isDoomed() || cheetah.isDestroyed(), "the fighter flies above the crater");
+        assertTrue(atlas.isDoomed() || atlas.isDestroyed(), "the Mek is in it");
     }
 
     @Test

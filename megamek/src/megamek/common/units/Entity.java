@@ -17139,10 +17139,10 @@ public abstract class Entity extends TurnOrdered
     public int getLabTotalArmorPoints() {
         ArmorType armor = ArmorType.forEntity(this);
         if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-            return (int) Math.floor(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
+            return (int) Math.round(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
         } else {
             double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-            return (int) Math.floor(armorPerTon * armorTonnage);
+            return (int) Math.round(armorPerTon * armorTonnage);
         }
     }
 

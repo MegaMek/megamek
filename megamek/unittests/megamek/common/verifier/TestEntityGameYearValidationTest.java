@@ -32,8 +32,9 @@
  */
 package megamek.common.verifier;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -44,7 +45,6 @@ import megamek.common.equipment.MiscType;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -240,5 +240,34 @@ class TestEntityGameYearValidationTest {
         // Both should be skipped as retrofittable
         assertFalse(hasIncorrectIntro,
                 "Both DNI and EI should be skipped as retrofittable: " + buff);
+    }
+
+    // ========== Unlimited Game Year Tests ==========
+
+    @Test
+    void testEquipmentAfterGameYearIsIncorrect() throws Exception {
+        Mek mek = createTestMek(2500);
+        mek.addEquipment(EquipmentType.get("ISERPPC"), Mek.LOC_RIGHT_TORSO);
+
+        TestMek testEntity = createTestEntity(mek);
+        testEntity.setGameYear(2500); // Before the ER PPC intro (2740)
+
+        StringBuffer buff = new StringBuffer();
+        assertTrue(testEntity.hasIncorrectIntroYear(buff),
+                "ER PPC should be flagged when the game year is before its intro date");
+    }
+
+    @Test
+    void testMaxValueGameYearAllowsAllEquipment() throws Exception {
+        Mek mek = createTestMek(2500);
+        mek.addEquipment(EquipmentType.get("ISERPPC"), Mek.LOC_RIGHT_TORSO);
+
+        TestMek testEntity = createTestEntity(mek);
+        // Integer.MAX_VALUE means no year limit (e.g. MekHQ with "Limit Tech Purchases by Game Year" disabled)
+        testEntity.setGameYear(Integer.MAX_VALUE);
+
+        StringBuffer buff = new StringBuffer();
+        assertFalse(testEntity.hasIncorrectIntroYear(buff),
+                "No equipment should be flagged when the game year is unlimited: " + buff);
     }
 }

@@ -6896,8 +6896,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), but not once the sensors are damaged
+        if (hasEiCockpit() && !EnhancedImagingSensors.areDamaged(this)) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
@@ -7004,8 +7004,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), but not once the sensors are damaged
+        if (hasEiCockpit() && !EnhancedImagingSensors.areDamaged(this)) {
             return 1;
         }
 

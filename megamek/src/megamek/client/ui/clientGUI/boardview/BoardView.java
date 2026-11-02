@@ -1136,7 +1136,7 @@ public final class BoardView extends AbstractBoardView
                 int yRem = 0;
 
                 if (y == 0) {
-                    yRem = clipping.y % h;
+                    yRem = tileOffset(clipping.y, h);
                 }
 
                 x = 0;
@@ -1144,7 +1144,7 @@ public final class BoardView extends AbstractBoardView
                 while (x < (int) Math.floor(clipping.getWidth())) {
                     int xRem = 0;
                     if (x == 0) {
-                        xRem = clipping.x % w;
+                        xRem = tileOffset(clipping.x, w);
                     }
                     if ((xRem > 0) || (yRem > 0)) {
                         try {
@@ -1619,6 +1619,20 @@ public final class BoardView extends AbstractBoardView
                 }
             }
         }
+    }
+
+    /**
+     * Returns how far into a background tile the first tile of a clip area starts. The clip origin can be negative
+     * when the board is scrolled against an edge, so this uses {@link Math#floorMod(int, int)}: a plain {@code %} would
+     * return a negative offset and an invalid subimage request.
+     *
+     * @param clipStart the x or y origin of the clip area, which may be negative
+     * @param tileSize  the tile width or height
+     *
+     * @return the offset into the tile, from {@code 0} to {@code tileSize - 1}
+     */
+    static int tileOffset(int clipStart, int tileSize) {
+        return Math.floorMod(clipStart, tileSize);
     }
 
     /**

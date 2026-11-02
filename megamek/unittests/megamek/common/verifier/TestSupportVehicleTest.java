@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,6 +50,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.SupportTank;
 import megamek.common.util.RoundWeight;
 import megamek.common.verifier.TestSupportVehicle.ChassisModification;
@@ -215,19 +216,19 @@ class TestSupportVehicleTest {
 
         for (EntityMovementMode mode : svMovementModes) {
             for (boolean bool : List.of(true, false)) {
-                // TL A Bar 4 is invalid with or without Armoured Chassis
+                // TL A Bar 4 is invalid with or without Armored Chassis
                 tanks.add(
                       createValidSupportTank(
                             mode, 50.0, "BAR 4 Armor", TechRating.A, 5.0, 250, bool
                       )
                 );
-                // TL B Bar 6 is invalid with or without Armoured Chassis
+                // TL B Bar 6 is invalid with or without Armored Chassis
                 tanks.add(
                       createValidSupportTank(
                             mode, 50.0, "BAR 6 Armor", TechRating.B, 5.0, 250, bool
                       )
                 );
-                // TL C Bar 8-10 is invalid with or without Armoured Chassis
+                // TL C Bar 8-10 is invalid with or without Armored Chassis
                 tanks.add(
                       createValidSupportTank(
                             mode, 50.0, "BAR 8 Armor", TechRating.C, 5.0, 250, bool
@@ -375,19 +376,70 @@ class TestSupportVehicleTest {
               "NEXT_HALF_TON (ceiling) would incorrectly give 1.5 tons");
     }
 
-      @Test
-      @DisplayName("Support engine ratings are derived from unit mass and movement")
-      void testSupportVehicleEngineRatingIsDerivedFromUnit() {
-            SupportTank supportTank = new SupportTank();
-            supportTank.setWeight(20.0);
-            supportTank.setOriginalWalkMP(5);
-            Engine engine = new Engine(0, Engine.COMBUSTION_ENGINE, Engine.SUPPORT_VEE_ENGINE);
-            supportTank.setEngine(engine);
+    @Test
+    @DisplayName("Support engine ratings are derived from unit mass and movement")
+    void testSupportVehicleEngineRatingIsDerivedFromUnit() {
+        SupportTank supportTank = new SupportTank();
+        supportTank.setWeight(20.0);
+        supportTank.setOriginalWalkMP(5);
+        Engine engine = new Engine(0, Engine.COMBUSTION_ENGINE, Engine.SUPPORT_VEE_ENGINE);
+        supportTank.setEngine(engine);
 
-            assertEquals(0, engine.getRating());
-            assertEquals(100.0, engine.getRating(supportTank));
+        assertEquals(0, engine.getRating());
+        assertEquals(100.0, engine.getRating(supportTank));
 
-            MiscType masc = MiscType.createISMASC();
-            assertEquals(100_000.0, masc.getCost(supportTank, false, SupportTank.LOC_BODY, 0), 0.0001);
-      }
+        MiscType masc = MiscType.createISMASC();
+        assertEquals(100_000.0, masc.getCost(supportTank, false, SupportTank.LOC_BODY, 0), 0.0001);
+    }
+
+    @Test
+    void testMaxArmorFactor() {
+        SupportTank supportTank = new SupportTank();
+        supportTank.setMovementMode(EntityMovementMode.TRACKED);
+        supportTank.setWeight(3.0);
+        assertEquals(10, TestSupportVehicle.maxArmorFactor(supportTank));
+        supportTank.setWeight(3.5);
+        assertEquals(11, TestSupportVehicle.maxArmorFactor(supportTank));
+        supportTank.setWeight(4.0);
+        assertEquals(12, TestSupportVehicle.maxArmorFactor(supportTank));
+        supportTank.setWeight(4.5);
+        assertEquals(13, TestSupportVehicle.maxArmorFactor(supportTank));
+    }
+
+    @Test
+    void testArmorWeightPerPoint() {
+        SupportTank supportTank = new SupportTank();
+        ArmorType armorType = (ArmorType) EquipmentType.get("Bar 8 Armor");
+        supportTank.setArmorType(armorType.getArmorType());
+        supportTank.setBARRating(armorType.getBAR());
+        supportTank.setArmorTechRating(TechRating.F);
+        assertEquals(0.042, TestSupportVehicle.armorWeightPerPoint(supportTank));
+        armorType = (ArmorType) EquipmentType.get("Bar 9 Armor");
+        supportTank.setArmorType(armorType.getArmorType());
+        supportTank.setBARRating(armorType.getBAR());
+        assertEquals(0.047, TestSupportVehicle.armorWeightPerPoint(supportTank));
+    }
+
+    @Test
+    void testMaximumArmorTonnage() {
+        SupportTank supportTank = new SupportTank();
+        supportTank.setMovementMode(EntityMovementMode.TRACKED);
+        supportTank.setWeight(4.0);
+        ArmorType armorType = (ArmorType) EquipmentType.get("Bar 9 Armor");
+        supportTank.setArmorType(armorType.getArmorType());
+        supportTank.setBARRating(armorType.getBAR());
+        supportTank.setArmorTechRating(TechRating.F);
+        double weight =
+              TestSupportVehicle.maxArmorFactor(supportTank) * TestSupportVehicle.armorWeightPerPoint(supportTank);
+        double roundedUpWeight = TestEntity.ceil(weight,
+              supportTank.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT ?
+              Ceil.KILO : Ceil.HALF_TON);
+        assertEquals(0.564, roundedUpWeight);
+        supportTank.setArmorTonnage(roundedUpWeight);
+        // Check inverse: armor points from armor tonnage
+        assertEquals(12, supportTank.getLabTotalArmorPoints());
+        int raw = (int) (TestEntity.getRawArmorPoints(supportTank, supportTank.getLabArmorTonnage())
+              + TestEntity.getSIBonusArmorPoints(supportTank));
+        assertEquals(12, raw);
+    }
 }

@@ -1618,7 +1618,9 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     private boolean isIntroducedByValidationYear(int introDate, int margin) {
-        return getIntroYearValidationYears().stream().anyMatch(year -> introDate <= year + margin);
+        // Subtract the margin from the intro date rather than adding it to the year, so a year of
+        // Integer.MAX_VALUE (no year limit) cannot overflow
+        return getIntroYearValidationYears().stream().anyMatch(year -> introDate - margin <= year);
     }
 
     public boolean hasFailedEquipment(StringBuffer buff) {

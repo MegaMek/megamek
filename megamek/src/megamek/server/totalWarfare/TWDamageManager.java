@@ -3508,7 +3508,7 @@ public class TWDamageManager implements IDamageManager {
                         ||
                         (hit.getGeneralDamageType() == HitDamageType.DAMAGE_MISSILE))) {
                 tmpDamageHold = damage;
-                damage = Math.max(1, damage / 2);
+                damage = Game.rulesManager.getRulesArmor().ballisticReinforcedArmorReduction(damage);
                 report = new Report(6088);
                 report.subject = entityId;
                 report.indent(3);
@@ -3547,7 +3547,7 @@ public class TWDamageManager implements IDamageManager {
                 reportVec.addElement(report);
             } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitDamageType.DAMAGE_ENERGY || hit.getGeneralDamageType() == HitDamageType.DAMAGE_HEAT)) {
                 tmpDamageHold = damage;
-                damage = (int) Math.floor(((double) damage) / 2);
+                damage = Game.rulesManager.getRulesArmor().reflectiveArmorReduction(damage);
                 if (tmpDamageHold == 1) {
                     damage = 1;
                 }
@@ -3561,7 +3561,7 @@ public class TWDamageManager implements IDamageManager {
                         (hit.getGeneralDamageType() == HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) ||
                         areaSatArty)) {
                 tmpDamageHold = damage;
-                damage = (int) Math.floor(((double) damage) / 2);
+                damage = Game.rulesManager.getRulesArmor().reactiveArmorReduction(damage);
                 if (tmpDamageHold == 1) {
                     damage = 1;
                 }

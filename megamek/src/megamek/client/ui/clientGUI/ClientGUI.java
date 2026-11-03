@@ -34,17 +34,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.HeadlessException;
-import java.awt.Image;
-import java.awt.KeyboardFocusManager;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -59,6 +49,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -3397,7 +3388,6 @@ public class ClientGUI extends AbstractClientGUI
                           client.getGame(),
                           boardView,
                           ClientGUI.this,
-                          null,
                           boardId));
                     // A board arriving during the lounge (lobby-built battlefield) must not pop up the minimap;
                     // the boards are re-sent at game start (EXCHANGE), which shows it as usual.

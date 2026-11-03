@@ -33,22 +33,6 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
-import static megamek.common.LandingDirection.HORIZONTAL;
-import static megamek.common.LandingDirection.VERTICAL;
-import static megamek.common.bays.Bay.UNSET_BAY;
-import static megamek.common.equipment.MiscType.F_CHAFF_POD;
-import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.io.Serial;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Stream;
-import javax.swing.*;
-
 import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -137,6 +121,22 @@ import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.*;
 import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.io.Serial;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static megamek.common.LandingDirection.HORIZONTAL;
+import static megamek.common.LandingDirection.VERTICAL;
+import static megamek.common.bays.Bay.UNSET_BAY;
+import static megamek.common.equipment.MiscType.F_CHAFF_POD;
+import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
 public class MovementDisplay extends ActionPhaseDisplay {
 
@@ -947,7 +947,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               (hasJumpMP() &&
                     (!selectedUnit.isConventionalInfantry() ||
                           selectedUnit.getMovementMode().isJumpInfantry()) &&
-                    !(isLAM && ((LandAirMek) selectedUnit).getLAMType() == LandAirMek.LAM_STANDARD)) &&
+               (!isLAM || ((LandAirMek) selectedUnit).getConversionMode() == LandAirMek.CONV_MODE_MEK)) &&
               !(selectedUnit.isStuck() && !selectedUnit.canUnstickByJumping()));
 
         setSwimEnabled(!isAero &&

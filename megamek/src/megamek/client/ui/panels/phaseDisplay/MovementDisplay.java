@@ -4247,6 +4247,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
+        if (!currentEntity.isDeployed() || currentEntity.getPosition() == null) {
+            setModeConvertEnabled(false);
+            return;
+        }
+
         if (currentEntity instanceof LandAirMek) {
             boolean canConvert = false;
             for (int i = 0; i < 3; i++) {

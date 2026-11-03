@@ -62,10 +62,10 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
-import megamek.common.equipment.MiscType;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -1041,15 +1041,17 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         // When using entity-based path, compute the authoritative LOS result for the diagram
         Boolean entityLosBlocked = null;
         boolean entityDeadZone = false;
+        List<Coords> entitySelectedSplitHexes = List.of();
         if (useEntityPath) {
             LosEffects entityLos = LosEffects.calculateLOS(game, attackerEntity, targetEntity);
             entityLosBlocked = !entityLos.canSee();
             entityDeadZone = entityLos.isBlockedByDeadZone();
+            entitySelectedSplitHexes = entityLos.getSelectedSplitHexes();
         }
 
         updateHeightInfo();
         updateUnitLabels();
-        updateDiagram(entityLosBlocked, entityDeadZone);
+        updateDiagram(entityLosBlocked, entityDeadZone, entitySelectedSplitHexes);
         if (compareExpanded) {
             updateCompareTable();
         }
@@ -1141,7 +1143,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * @param entityDeadZone   true when the entity-based LOS result was blocked by a dead-zone shadow. Ignored when
      *                         {@code entityLosBlocked} is null.
      */
-    private void updateDiagram(Boolean entityLosBlocked, boolean entityDeadZone) {
+    private void updateDiagram(Boolean entityLosBlocked, boolean entityDeadZone,
+          List<Coords> entitySelectedSplitHexes) {
         if (!diagramExpanded || start == null || end == null) {
             return;
         }
@@ -1201,7 +1204,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         if (entityLosBlocked != null) {
             // Use pre-computed entity-based LOS result (matches fire phase)
             diagramData = LOSDiagramDataBuilder.buildWithLosResult(game, attackInfo,
-                  entityLosBlocked, entityDeadZone, attackerHullDown, targetHullDown,
+                  entityLosBlocked, entityDeadZone, entitySelectedSplitHexes,
+                  attackerHullDown, targetHullDown,
                   attackerType, targetType, attackerIsAlt, targetIsAlt,
                   attackerName, targetName, losRuleMode,
                   attackerHasMastMount, targetHasMastMount,

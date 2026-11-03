@@ -82,6 +82,7 @@ final class LOSDiagramDataBuilder {
         boolean losBlocked = !losEffects.canSee();
 
         return buildWithLosResult(game, attackInfo, losBlocked, losEffects.isBlockedByDeadZone(),
+              losEffects.getSelectedSplitHexes(),
               attackerIsHullDown, targetIsHullDown,
               attackerUnitType, targetUnitType,
               attackerAtAltitude, targetAtAltitude,
@@ -98,9 +99,10 @@ final class LOSDiagramDataBuilder {
      * the diagram uses to flag blockers; pick it from the active game options via
      * {@link LosRuleMode#fromGameOptions(Game)}. {@code deadZone} comes from the engine's
      * {@link LosEffects#isBlockedByDeadZone()} flag and drives the dead-zone hatch overlay.
+     * {@code selectedSplitHexes} identifies the split-path hexes selected by that LOS calculation.
      */
     public static LOSDiagramData buildWithLosResult(Game game, LosEffects.AttackInfo attackInfo,
-          boolean losBlocked, boolean deadZone,
+          boolean losBlocked, boolean deadZone, List<Coords> selectedSplitHexes,
           boolean attackerIsHullDown, boolean targetIsHullDown,
           DiagramUnitType attackerUnitType, DiagramUnitType targetUnitType,
           boolean attackerAtAltitude, boolean targetAtAltitude,
@@ -118,6 +120,7 @@ final class LOSDiagramDataBuilder {
 
         // Get the split-aware path to detect hex-edge LOS
         List<Coords> splitPath = Coords.intervening(attackPos, targetPos, true);
+        Set<Coords> selectedSplitHexSet = new HashSet<>(selectedSplitHexes);
 
         // Identify split hex pairs: hexes in the split path not in the normal path
         Set<Coords> splitHexCoords = new HashSet<>();
@@ -131,9 +134,31 @@ final class LOSDiagramDataBuilder {
         List<HexRow> hexPath = new ArrayList<>();
         for (int i = 0; i < normalPath.size(); i++) {
             Coords coords = normalPath.get(i);
-            Hex hex = board.getHex(coords);
+            // Check if this hex has a split alternate
+            boolean isSplitHex = false;
+            Coords splitAlternate = null;
+            if (i > 0 && i < normalPath.size() - 1) {
+                // Look for a split hex that would pair with this position
+                for (Coords splitCoord : splitHexCoords) {
+                    if (isAdjacentAlongPath(coords, splitCoord, attackPos, targetPos)) {
+                        isSplitHex = true;
+                        splitAlternate = splitCoord;
+                        break;
+                    }
+                }
+            }
+
+            Coords renderedCoords = coords;
+            if (splitAlternate != null && selectedSplitHexSet.contains(splitAlternate)) {
+                renderedCoords = splitAlternate;
+            }
+            Hex hex = board.getHex(renderedCoords);
             if (hex == null) {
-                continue;
+                renderedCoords = coords;
+                hex = board.getHex(renderedCoords);
+                if (hex == null) {
+                    continue;
+                }
             }
 
             int groundElevation = hex.getLevel();
@@ -153,7 +178,7 @@ final class LOSDiagramDataBuilder {
             // expressed in BMM LOS-level units (= silhouette top = hex + twHeight). Standard and Dead Zone
             // use the BMM adjacency rule (step function); Diagrammed uses a smooth linear interpolation.
             double losLineElevation = calculateLosLineElevation(
-                  attackInfo, coords, attackPos, targetPos, losRuleMode);
+                  attackInfo, renderedCoords, attackPos, targetPos, losRuleMode);
 
             // Solid terrain (ground + building) blocks LOS when its top reaches the line. The >=
             // matches BMM ("equal to or higher than") for Standard/Dead Zone and the engine's >=
@@ -161,25 +186,11 @@ final class LOSDiagramDataBuilder {
             // as intervening terrain.
             int solidTerrainHeight = groundElevation + buildingHeight;
             boolean blocksLos = solidTerrainHeight >= losLineElevation
-                  && !coords.equals(attackPos)
-                  && !coords.equals(targetPos);
-
-            // Check if this hex has a split alternate
-            boolean isSplitHex = false;
-            Coords splitAlternate = null;
-            if (i > 0 && i < normalPath.size() - 1) {
-                // Look for a split hex that would pair with this position
-                for (Coords splitCoord : splitHexCoords) {
-                    if (isAdjacentAlongPath(coords, splitCoord, attackPos, targetPos)) {
-                        isSplitHex = true;
-                        splitAlternate = splitCoord;
-                        break;
-                    }
-                }
-            }
+                  && !renderedCoords.equals(attackPos)
+                  && !renderedCoords.equals(targetPos);
 
             hexPath.add(new HexRow(
-                  coords,
+                  renderedCoords,
                   groundElevation,
                   buildingHeight,
                   woodsHeight,
@@ -193,7 +204,7 @@ final class LOSDiagramDataBuilder {
                   hasFire,
                   eruptingGeyser,
                   isSplitHex,
-                  splitAlternate,
+                  splitAlternate != null && splitAlternate.equals(renderedCoords) ? coords : splitAlternate,
                   blocksLos,
                   losLineElevation
             ));

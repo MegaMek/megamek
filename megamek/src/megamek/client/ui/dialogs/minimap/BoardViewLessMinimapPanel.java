@@ -40,7 +40,14 @@ import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOL_
 import static megamek.common.units.Terrains.BUILDING;
 import static megamek.common.units.Terrains.FUEL_TANK;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -53,7 +60,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -78,8 +86,6 @@ import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.ClientPreferences;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.units.*;
 
 /**
@@ -106,7 +112,6 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
     private int mSize = -1;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private static final int[] UNIT_SCALE = { 7, 8, 9, 11, 12, 14, 16 };
     private final int heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
 
@@ -270,7 +275,7 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
             }
             boardNeedsRedraw = false;
 
-            boardImage = MinimapPanel.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getStrategicViewTheme());
+            boardImage = MinimapPanel.getMinimapImageMaxZoom(board);
             size = Math.min(
                   boardImage.getHeight() / game.getBoard().getHeight(),
                   boardImage.getWidth() / game.getBoard().getWidth());

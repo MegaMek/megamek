@@ -61,7 +61,7 @@ import org.apache.commons.text.StringEscapeUtils;
 /** Owns the central scrollable settings content and an optional sticky help panel. */
 public class SettingsContentHost extends JPanel {
     private static final int SCROLL_SPEED = 16;
-    private static final int HOVER_HELP_DELAY_MS = 300;
+    private static final int HOVER_HELP_DELAY_MS = 200;
     private static final Pattern HTML_TAG_PATTERN = Pattern.compile("</?([A-Za-z][A-Za-z0-9]*)\\b[^<>]*>");
 
     private final JPanel contentPanel = new SettingsContentPanel();

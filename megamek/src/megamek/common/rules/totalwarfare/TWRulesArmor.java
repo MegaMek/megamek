@@ -168,4 +168,31 @@ public class TWRulesArmor extends RulesArmor {
         reportVec.addElement(report);
         return damage;
     }
+
+    /**
+     * {@inheritDoc}
+     * Round down. TO:AUE p.93
+     */
+    @Override
+    public int reflectiveArmorReduction(final int damage) {
+        return (int) Math.floor(((double) damage) / 2);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Round down. TO:AUE p.93
+     */
+    @Override
+    public int reactiveArmorReduction(final int damage) {
+        return (int) Math.floor(((double) damage) / 2);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Round down. TO:AUE p.93
+     */
+    @Override
+    public int ballisticReinforcedArmorReduction(final int damage) {
+        return Math.max(1, damage / 2);
+    }
 }

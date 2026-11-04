@@ -37,6 +37,10 @@ MAX_RECORD_BYTES = 1024 * 1024
 CHUNK_BYTES = 1024 * 1024
 MAX_DOWNLOAD_BYTES = 4 * 1024**3
 VERSION_PROPERTIES = "megamek/resources/Version.properties"
+_EOL = r"[ \t]*(?=\r?\n|\Z)"
+# The active fourth component, and the commented-out template line that stands in for it.
+REVISION = re.compile(rf"^[ \t]*revision[ \t]*=[ \t]*([^\r\n]*?){_EOL}", re.M)
+REVISION_TEMPLATE = re.compile(rf"^[ \t]*#[ \t]*revision[ \t]*=[ \t]*[0-9]*{_EOL}", re.M)
 
 
 class UnsafeInventory(ValueError):
@@ -151,6 +155,24 @@ def properties_line(text):
     if any(part < 0 or part > MAX for part in parts):
         raise UnsafeInventory("Version.properties component outside Java integer range")
     return padded(parts)
+
+
+def properties_revision(text):
+    """Active ``revision`` of Version.properties; 0 when it is absent, empty or commented out."""
+    values = REVISION.findall(text)
+    if len(values) > 1:
+        raise UnsafeInventory("Version.properties has more than one revision entry")
+    if not values or not values[0]:
+        return 0
+    if not values[0].isdigit() or int(values[0]) > MAX:
+        raise UnsafeInventory("Version.properties revision is not a valid number")
+    return int(values[0])
+
+
+def without_revision(text):
+    """Lines of Version.properties other than its revision lines, active or commented."""
+    return [line for line in text.splitlines()
+            if not REVISION.fullmatch(line) and not REVISION_TEMPLATE.fullmatch(line)]
 
 
 def reserve(tags, releases, line):
@@ -290,6 +312,7 @@ API = re.compile(
     r"|git/matching-refs/heads/releases/\?per_page=100"
     r"|contents/megamek/resources/Version\.properties\?ref=[0-9a-f]{40}"
     r"|commits/v(?P<commit_tag>[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?)"
+    r"|commits/(?P<commit_sha>[0-9a-f]{40})"
     r"|git/ref/tags/v(?P<ref_tag>[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?)"
     r"|(?:tags|releases)\?per_page=100&page=[1-9][0-9]*)\Z")
 
@@ -301,7 +324,7 @@ def gh_get(endpoint, runner=subprocess.run):
         raise UnsafeInventory("unapproved read-only API endpoint")
     path, repo, tag = match["path"], match["repo"], match["commit_tag"] or match["ref_tag"]
     if ((match["branch"] not in (None, "main") and branch_line(match["branch"]) is None)
-            or (path.startswith("contents/") and repo != "megamek")
+            or ((path.startswith("contents/") or match["commit_sha"]) and repo != "megamek")
             or (repo == "mm-data" and not path.startswith(("git/ref/heads/", "git/matching-refs/")))
             or (tag is not None and not canonical(tag))):
         raise UnsafeInventory("unapproved read-only API endpoint")
@@ -504,17 +527,42 @@ def newest_release_branch(getter=gh_get):
     return branches[-1]
 
 
-def version_line(megamek_sha, getter=gh_get):
-    """Release line of MegaMek's Version.properties at an exact commit."""
+def properties_text(megamek_sha, getter=gh_get):
+    """Text of MegaMek's Version.properties at an exact commit."""
     data = getter(f"repos/MegaMek/megamek/contents/{VERSION_PROPERTIES}?ref={megamek_sha}")
     if (not isinstance(data, dict) or data.get("encoding") != "base64"
             or not isinstance(data.get("content"), str)):
         raise UnsafeInventory("unreadable Version.properties")
     try:
-        text = base64.b64decode(data["content"], validate=False).decode("utf-8")
+        return base64.b64decode(data["content"], validate=False).decode("utf-8")
     except (ValueError, UnicodeError):
         raise UnsafeInventory("unreadable Version.properties") from None
-    return properties_line(text)
+
+
+def version_line(megamek_sha, getter=gh_get):
+    """Release line of MegaMek's Version.properties at an exact commit."""
+    return properties_line(properties_text(megamek_sha, getter))
+
+
+def settled(head, released, getter=gh_get):
+    """``released`` when MegaMek's ``head`` only restamps its revision on top of it, else ``head``.
+
+    Suite builds overwrite the packaged revision, so the stamp commit left after a release changes
+    nothing a build produces and must not make the next scheduled run publish again.
+    """
+    if head == released:
+        return head
+    commit = getter(f"repos/MegaMek/megamek/commits/{head}")
+    if not isinstance(commit, dict):
+        raise UnsafeInventory("invalid MegaMek commit")
+    parents = [p.get("sha") if isinstance(p, dict) else None for p in commit.get("parents") or []]
+    files = [f.get("filename") if isinstance(f, dict) else None for f in commit.get("files") or []]
+    if parents != [released] or files != [VERSION_PROPERTIES]:
+        return head
+    if without_revision(properties_text(head, getter)) != without_revision(
+            properties_text(released, getter)):
+        return head
+    return released
 
 
 def discovered_inventory(channel, branch=None, rehearsal=False, getter=gh_get,
@@ -526,7 +574,11 @@ def discovered_inventory(channel, branch=None, rehearsal=False, getter=gh_get,
         branch = "main" if channel == "experimental" or rehearsal else newest_release_branch(getter)
     details = release_details(getter)
     records = complete_records(details["megamek"], fetch)
+    previous = latest(records, channel)
     commits = freeze(branch, getter)
+    if previous is not None:
+        commits["megamek"] = settled(commits["megamek"], record_commits(previous)["megamek"],
+                                     getter)
     line = version_line(commits["megamek"], getter)
     if channel == "experimental" and f"releases/{line}" in release_branches("megamek", getter):
         raise UnsafeInventory(f"main is still on line {line}, which already has a Core branch; "
@@ -534,7 +586,7 @@ def discovered_inventory(channel, branch=None, rehearsal=False, getter=gh_get,
     inventory = {
         "channel": channel, "branch": branch, "rehearsal": rehearsal,
         "line": line, "commits": commits,
-        **release_inventory(getter), "previous": latest(records, channel),
+        **release_inventory(getter), "previous": previous,
     }
     if any(inventory["releases"][repo] != published_release_tags(details[repo])
            for repo in REPOS.values()):

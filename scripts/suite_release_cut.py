@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Core cut: branch the four repositories for a new Core line, then move main to the next line.
+"""Core cut and version upkeep: branch the four repositories for a new Core line, move main to
+the next line, and stamp a branch's Version.properties with the build it last released.
 
 ``branches`` creates ``releases/<line>`` from the current ``main`` heads of megamek, megameklab,
 mekhq and mm-data. ``bump`` runs after the first Core release of that line is published and
-moves MegaMek's ``Version.properties`` on ``main`` to the next patch line. Both steps are
-idempotent so a failed cut can simply be rerun. ``--dry-run`` only reports what would happen.
+moves MegaMek's ``Version.properties`` on ``main`` to the next patch line, clearing any revision.
+``stamp`` runs after every release and sets the branch's ``revision`` to the newest published
+build of its line, so development builds of that branch report the same version as the release
+and can open what it saved. All steps are idempotent so a failed run can simply be rerun.
+``--dry-run`` only reports what would happen.
 """
 
 import argparse
@@ -13,13 +17,15 @@ import re
 import sys
 
 from suite_release_plan import (
-    SOURCES, VERSION_PROPERTIES, UnsafeInventory, branch_head, canonical_line, complete_records,
-    download_asset, freeze, gh_get, numbers, padded, properties_line, release_branches,
-    release_details,
+    REVISION, REVISION_TEMPLATE, SOURCES, VERSION_PROPERTIES, UnsafeInventory, branch_head,
+    branch_line, canonical_line, complete_records, download_asset, freeze, gh_get, numbers,
+    padded, properties_line, properties_revision, release_branches, release_details,
+    without_revision,
 )
 from suite_release_publish import api
 
 PATCH = re.compile(r"^(\s*patch\s*=\s*)([0-9]+)(\s*)$", re.M)
+PATCH_LINE = re.compile(r"^[ \t]*patch[ \t]*=[^\r\n]*", re.M)
 
 
 class CutWrites:
@@ -29,9 +35,9 @@ class CutWrites:
         if result.get("ref") != f"refs/heads/{name}" or result.get("object", {}).get("sha") != sha:
             raise UnsafeInventory("branch creation response mismatch")
 
-    def version_file(self, text, blob, message):
+    def version_file(self, text, blob, message, branch="main"):
         result = api(["--method", "PUT", f"repos/MegaMek/megamek/contents/{VERSION_PROPERTIES}"],
-                     payload={"message": message, "branch": "main", "sha": blob,
+                     payload={"message": message, "branch": branch, "sha": blob,
                               "content": base64.b64encode(text.encode("utf-8")).decode("ascii")})
         if result.get("content", {}).get("path") != VERSION_PROPERTIES:
             raise UnsafeInventory("Version.properties update response mismatch")
@@ -44,15 +50,20 @@ def require_line(line):
     return line
 
 
-def main_version(getter):
-    """(line, text, blob SHA) of Version.properties at the current megamek main head."""
-    sha = branch_head("megamek", "main", getter)
+def branch_version(branch, getter):
+    """(line, text, blob SHA) of Version.properties at the current megamek ``branch`` head."""
+    sha = branch_head("megamek", branch, getter)
     data = getter(f"repos/MegaMek/megamek/contents/{VERSION_PROPERTIES}?ref={sha}")
     if (not isinstance(data, dict) or data.get("encoding") != "base64"
             or not isinstance(data.get("content"), str) or not isinstance(data.get("sha"), str)):
         raise UnsafeInventory("unreadable Version.properties")
     text = base64.b64decode(data["content"]).decode("utf-8")
     return properties_line(text), text, data["sha"]
+
+
+def main_version(getter):
+    """(line, text, blob SHA) of Version.properties at the current megamek main head."""
+    return branch_version("main", getter)
 
 
 def core_versions(line, getter, fetch):
@@ -107,6 +118,34 @@ def bumped(text):
     return PATCH.sub(lambda m: f"{m[1]}{int(m[2]) + 1:02d}{m[3]}", text, count=1)
 
 
+def cleared(text):
+    """Version.properties with an active revision commented out; the template line stays."""
+    properties_revision(text)
+    return REVISION.sub(lambda m: "#" + m[0].lstrip(), text)
+
+
+def stamped(text, revision):
+    """Version.properties carrying ``revision``, in place of the active or template line."""
+    if revision <= 0:
+        raise UnsafeInventory("a stamped revision must be 1 or more")
+    properties_revision(text)
+    line = f"revision={revision}"
+    if REVISION.search(text):
+        result = REVISION.sub(line, text, count=1)
+    elif len(REVISION_TEMPLATE.findall(text)) == 1:
+        result = REVISION_TEMPLATE.sub(line, text, count=1)
+    else:
+        patch = PATCH_LINE.search(text)
+        if patch is None or len(PATCH_LINE.findall(text)) != 1:
+            raise UnsafeInventory("Version.properties must contain exactly one patch entry")
+        newline = "\r\n" if "\r\n" in text else "\n"
+        result = text[:patch.end()] + newline + line + text[patch.end():]
+    if (properties_revision(result) != revision or properties_line(result) != properties_line(text)
+            or without_revision(result) != without_revision(text)):
+        raise UnsafeInventory("unexpected Version.properties after stamping the revision")
+    return result
+
+
 def bump(line, dry_run, *, getter=gh_get, fetch=download_asset, writes=None):
     """Move main from ``line`` to the next line once ``line`` has a Core release."""
     require_line(line)
@@ -121,8 +160,9 @@ def bump(line, dry_run, *, getter=gh_get, fetch=download_asset, writes=None):
         if dry_run:
             return [f"would move main from {line} to {following} after Core {line} publishes"]
         raise UnsafeInventory(f"no Core release on line {line} yet; main stays on {line}")
-    new_text = bumped(text)
-    if properties_line(new_text) != following:
+    # The new line has no build yet, so main must not keep the old line's revision.
+    new_text = cleared(bumped(text))
+    if properties_line(new_text) != following or properties_revision(new_text) != 0:
         raise UnsafeInventory("unexpected Version.properties after bump")
     if dry_run:
         return [f"would move main from {line} to {following}"]
@@ -132,16 +172,50 @@ def bump(line, dry_run, *, getter=gh_get, fetch=download_asset, writes=None):
     return [f"moved main from {line} to {following} ({(commit or '')[:10]})"]
 
 
+def stamp(branch, dry_run, *, getter=gh_get, fetch=download_asset, writes=None):
+    """Raise ``branch``'s revision to the newest published build of its line; never lowers it."""
+    if branch != "main" and branch_line(branch) is None:
+        raise UnsafeInventory(f"can only stamp main or a releases/<line> branch, not {branch}")
+    line, text, blob = branch_version(branch, getter)
+    records = complete_records(release_details(getter)["megamek"], fetch)
+    on_line = [r["version"] for r in records if numbers(r["version"])[:3] == numbers(line)[:3]]
+    if not on_line:
+        return [f"{branch} is on line {line}, which has no release yet; nothing to do"]
+    version = on_line[-1]
+    target = numbers(version)[3]
+    current = properties_revision(text)
+    if current >= target:
+        return [f"{branch} already carries revision {current} for {version}; nothing to do"]
+    new_text = stamped(text, target)
+    if dry_run:
+        return [f"would set {branch} revision {current} -> {target} to match {version}"]
+    commit = writes.version_file(new_text, blob, f"Set version to {version} after its release",
+                                 branch=branch)
+    if properties_revision(branch_version(branch, getter)[1]) != target:
+        raise UnsafeInventory(f"{branch} did not take revision {target}")
+    return [f"set {branch} revision {current} -> {target} to match {version} "
+            f"({(commit or '')[:10]})"]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("step", choices=("branches", "bump"))
-    parser.add_argument("--line", required=True, help="the line to cut, for example 0.51.02")
+    parser.add_argument("step", choices=("branches", "bump", "stamp"))
+    parser.add_argument("--line", help="branches/bump: the line to cut, for example 0.51.02")
+    parser.add_argument("--branch", help="stamp: main or the releases/<line> branch just built")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     try:
         writes = None if args.dry_run else CutWrites()
-        step = branches if args.step == "branches" else bump
-        for line in step(args.line, args.dry_run, writes=writes):
+        if args.step == "stamp":
+            if not args.branch or args.line:
+                raise UnsafeInventory("stamp takes --branch and no --line")
+            report = stamp(args.branch, args.dry_run, writes=writes)
+        else:
+            if not args.line or args.branch:
+                raise UnsafeInventory(f"{args.step} takes --line and no --branch")
+            step = branches if args.step == "branches" else bump
+            report = step(args.line, args.dry_run, writes=writes)
+        for line in report:
             print(line)
         return 0
     except (UnsafeInventory, ValueError, OSError, KeyError, TypeError) as error:

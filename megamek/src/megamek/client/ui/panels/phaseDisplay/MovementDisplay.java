@@ -947,7 +947,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
               (hasJumpMP() &&
                     (!selectedUnit.isConventionalInfantry() ||
                           selectedUnit.getMovementMode().isJumpInfantry()) &&
-                    !(isLAM && ((LandAirMek) selectedUnit).getLAMType() == LandAirMek.LAM_STANDARD)) &&
+               (!isLAM || ((LandAirMek) selectedUnit).getConversionMode() == LandAirMek.CONV_MODE_MEK)) &&
               !(selectedUnit.isStuck() && !selectedUnit.canUnstickByJumping()));
 
         setSwimEnabled(!isAero &&

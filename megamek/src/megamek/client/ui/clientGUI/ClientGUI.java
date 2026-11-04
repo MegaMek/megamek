@@ -1740,6 +1740,11 @@ public class ClientGUI extends AbstractClientGUI
             getPlayerListDialog().saveSettings();
         }
 
+        // Rounds in Air Dialog
+        if (getRoundsInAirDialog() != null) {
+            getRoundsInAirDialog().saveSettings();
+        }
+
         // Ruler display
         if ((ruler != null) && (ruler.getSize().width != 0) && (ruler.getSize().height != 0)) {
             GUIP.setRulerPosX(ruler.getLocation().x);
@@ -1760,6 +1765,9 @@ public class ClientGUI extends AbstractClientGUI
             SwingUtilities.invokeLater(this::die);
             return;
         }
+
+        // Capture window positions before anything is torn down.
+        saveSettings();
 
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;

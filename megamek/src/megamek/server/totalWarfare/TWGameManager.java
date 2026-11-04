@@ -27667,7 +27667,14 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Load the weapon.
-        shooter.loadWeapon(weaponMounted, selectedAmmo);
+        if (!shooter.loadWeapon(weaponMounted, selectedAmmo)) {
+            LOGGER.warn(
+                  "Failed to load ammo {} into weapon {} on {}",
+                  selectedAmmo.getShortName(),
+                  weaponMounted.getName(),
+                  shooter.getDisplayName());
+            return;
+        }
 
         // Report the change, if reason is provided and it's not already being used.
         if (reason != 0 && oldAmmo != selectedAmmo) {

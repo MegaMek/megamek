@@ -885,7 +885,7 @@ public class ComputeToHit {
         // Flat modifiers defined in AmmoType
         if (ammoType.getToHitModifier() != 0) {
             toHit.addModifier(ammoType.getToHitModifier(),
-                  ammoType.getSubMunitionName() + Messages.getString("WeaponAttackAction.AmmoMod"));
+                  ammoType.getSubMunitionName() + " " + Messages.getString("WeaponAttackAction.AmmoMod"));
         }
 
         // Missile Munitions

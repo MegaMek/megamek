@@ -47,33 +47,14 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.tree.TreePath;
 
@@ -82,6 +63,7 @@ import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.settings.CollapsibleSectionPanel;
 import megamek.client.ui.settings.SettingsHelpPanel;
+import megamek.client.ui.settings.SettingsHoverTestSupport;
 import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.util.UIUtil;
@@ -380,11 +362,7 @@ class GameOptionsPaneTest {
             movementTimer.setEditable(true);
             assertTrue(control.isEnabled());
 
-            MouseEvent enter = new MouseEvent(label, MouseEvent.MOUSE_ENTERED,
-                  System.currentTimeMillis(), 0, 0, 0, 0, false);
-            for (var listener : label.getMouseListeners()) {
-                listener.mouseEntered(enter);
-            }
+            SettingsHoverTestSupport.hoverAndSettle(label);
             JEditorPane helpText = findComponent(pane, JEditorPane.class);
             assertTrue(helpText.getText().contains("seconds"), helpText.getText());
             assertFalse(helpText.getText().contains("width=\"500\""), helpText.getText());
@@ -1313,11 +1291,7 @@ class GameOptionsPaneTest {
 
             JLabel ghostTargetModeLabel = ghostTargetMode.settingsLabel();
             assertTrue(ghostTargetModeLabel.getText().contains(IMPORTANT_SYMBOL), ghostTargetModeLabel.getText());
-            MouseEvent enter = new MouseEvent(ghostTargetModeLabel, MouseEvent.MOUSE_ENTERED,
-                  System.currentTimeMillis(), 0, 0, 0, 0, false);
-            for (var listener : ghostTargetModeLabel.getMouseListeners()) {
-                listener.mouseEntered(enter);
-            }
+            SettingsHoverTestSupport.hoverAndSettle(ghostTargetModeLabel);
             String detailsText = findComponent(pane, JEditorPane.class).getText();
             assertTrue(detailsText.contains("Area Effect uses the original MegaMek ECM bubble behavior"), detailsText);
             assertFalse(detailsText.contains("Legacy:"), detailsText);
@@ -1645,11 +1619,7 @@ class GameOptionsPaneTest {
             assertTrue(checkBox.getText().contains(IMPORTANT_SYMBOL));
             assertTrue(checkBox.getText().contains(LEGACY_SYMBOL));
 
-            MouseEvent enter = new MouseEvent(checkBox, MouseEvent.MOUSE_ENTERED,
-                  System.currentTimeMillis(), 0, 0, 0, 0, false);
-            for (var listener : checkBox.getMouseListeners()) {
-                listener.mouseEntered(enter);
-            }
+            SettingsHoverTestSupport.hoverAndSettle(checkBox);
             String detailsText = findComponent(pane, JEditorPane.class).getText();
             assertTrue(detailsText.contains("Gunnery Laser"), detailsText);
             assertTrue(detailsText.contains("Gunnery Missile"), detailsText);

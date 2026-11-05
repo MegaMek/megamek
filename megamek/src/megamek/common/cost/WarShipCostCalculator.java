@@ -33,9 +33,6 @@
 
 package megamek.common.cost;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
@@ -162,15 +159,14 @@ public class WarShipCostCalculator {
         }
 
         costs[costIdx] = -warShip.getPriceMultiplier(); // Negative indicates multiplier
-        double roundedCost = BigDecimal.valueOf(cost * warShip.getPriceMultiplier())
-              .setScale(2, RoundingMode.UP)
-              .doubleValue();
+        cost = Math.round(cost * warShip.getPriceMultiplier());
+
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
                                  "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
                                  "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
                                  "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
                                  "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, warShip, ignoreAmmo, systemNames, 21, roundedCost, costs);
-        return roundedCost;
+        CostCalculator.fillInReport(costReport, warShip, ignoreAmmo, systemNames, 21, cost, costs);
+        return cost;
     }
 }

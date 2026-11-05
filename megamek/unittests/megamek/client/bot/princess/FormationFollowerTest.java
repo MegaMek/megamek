@@ -127,6 +127,8 @@ class FormationFollowerTest {
         bot.setBot(true);
         game.addPlayer(1, bot);
         princess = spy(new Princess("Lyran Allies", UUID.randomUUID().toString(), 1));
+        // formations are unit orders, which only a bot that follows them (CASPAR) carries out
+        doReturn(true).when(princess).followsUnitOrders();
         doReturn(game).when(princess).getGame();
         doReturn(enemies).when(princess).getEnemyEntities();
         // most tests are of a lance on the march; the assembly tests below clear this

@@ -82,6 +82,7 @@ import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.OrderEligibility;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.preference.PreferenceManager;
@@ -361,8 +362,9 @@ class LobbyMekPopup {
     }
 
     /**
-     * Adds the Formation and Role menus for a lance with a bot's units in it, so they start the game in formation and
-     * knowing their job. Only the bot's units are ordered; a player's own units in the lance are left alone.
+     * Adds the Formation and Role menus for a lance with a CASPAR bot's units in it, so they start the game in formation
+     * and knowing their job. Only the bot's units are ordered; a player's own units in the lance are left alone.
+     * Princess bots take no unit orders, so their lances get no menus.
      */
     private static void addBotFormationMenu(ScalingPopup popup, ChatLounge lobby, Force force) {
         // decided by who owns the units, not the force: a lance a player builds and then hands to a bot still belongs
@@ -371,7 +373,7 @@ class LobbyMekPopup {
         List<Integer> unitIds = new ArrayList<>();
         for (int unitId : force.getEntities()) {
             Entity unit = lobby.game().getEntity(unitId);
-            if ((unit == null) || (unit.getOwner() == null) || !unit.getOwner().isBot()) {
+            if ((unit == null) || !OrderEligibility.takesUnitOrders(lobby.game(), unit.getOwner())) {
                 continue;
             }
             if (owner == null) {
@@ -382,7 +384,7 @@ class LobbyMekPopup {
             }
         }
         if (owner == null) {
-            logger.info("[BotOrders] lobby menus for {}: no Formation or Role, none of its own units is a bot's",
+            logger.info("[BotOrders] lobby menus for {}: no Formation or Role, none of its units is a CASPAR bot's",
                   force.getName());
             return;
         }
@@ -394,7 +396,7 @@ class LobbyMekPopup {
     }
 
     /**
-     * Adds a Bot facing item for units owned by a bot. It opens the turret-style facing dialog: the "when stopped"
+     * Adds a Bot facing item for units owned by a CASPAR bot. It opens the turret-style facing dialog: the "when stopped"
      * facing is the one each unit deploys in and holds whenever it stops, the "while moving" one it keeps on the move.
      * Auto leaves the choice to the bot, which deploys facing the enemy's deployment zone.
      */
@@ -405,7 +407,7 @@ class LobbyMekPopup {
         List<Entity> units = new ArrayList<>(selectedUnits);
         units.sort(Comparator.comparingInt(Entity::getId));
         for (Entity unit : units) {
-            if ((unit.getOwner() == null) || !unit.getOwner().isBot()) {
+            if (!OrderEligibility.takesUnitOrders(clientGui.getClient().getGame(), unit.getOwner())) {
                 return;
             }
         }

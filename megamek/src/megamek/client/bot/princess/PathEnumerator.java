@@ -452,11 +452,13 @@ public class PathEnumerator {
                       true);
                 break;
             case MoveToDestination:
-                // The hex the unit's moves are scored against: a formation unit's slot rather than its route's next
-                // waypoint. Aiming the long-range path at the waypoint while ranking by the slot left the unit no
-                // move that went to its slot (HammerGS's playtest, 2026-09-26).
-                Optional<Coords> activeWaypoint = getOwner().getUnitBehaviorTracker()
-                      .getActiveWaypoint(mover, getOwner());
+                // The hex the unit's moves are scored against: for a bot that follows unit orders, a formation unit's
+                // slot rather than its route's next waypoint. Aiming the long-range path at the waypoint while ranking
+                // by the slot left the unit no move that went to its slot (HammerGS's playtest, 2026-09-26). Princess's
+                // original waypoints aim at the next waypoint.
+                Optional<Coords> activeWaypoint = getOwner().followsUnitOrders()
+                      ? getOwner().getUnitBehaviorTracker().getActiveWaypoint(mover, getOwner())
+                      : getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover);
                 if (activeWaypoint.isPresent()) {
                     destinations.add(activeWaypoint.get());
                     logger.debug("[BotOrders] {} (ID {}): long-range path toward {}", mover.getDisplayName(),

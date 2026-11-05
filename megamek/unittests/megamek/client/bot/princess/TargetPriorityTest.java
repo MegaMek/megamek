@@ -36,6 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -55,6 +59,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.util.SerializationHelper;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Covers target priority on a bot's priority targets (#9174): how it is stored, that settings and saves made before it
@@ -194,7 +199,9 @@ class TargetPriorityTest {
     void theServerStoresThePriorityTheBotSends() throws Exception {
         Game game = new Game();
         game.addPlayer(BOT_PLAYER_ID, new Player(BOT_PLAYER_ID, BOT_NAME));
-        TWGameManager gameManager = new TWGameManager();
+        // the server passes the bot's settings and type on to every client; there is no server here to send through
+        TWGameManager gameManager = spy(new TWGameManager());
+        doNothing().when(gameManager).send(any(Packet.class));
         gameManager.setGame(game);
         Packet sent = new Packet(PacketCommand.PRINCESS_SETTINGS, settingsWith(PHOENIX_HAWK, 1), AIType.PRINCESS);
 
@@ -202,6 +209,29 @@ class TargetPriorityTest {
 
         BehaviorSettings stored = game.getBotSettings().get(BOT_NAME);
         assertEquals(1, stored.getTargetPriority(PHOENIX_HAWK));
+    }
+
+    /**
+     * Only CASPAR bots take unit orders, so every client must learn a bot's type when it reports, not only clients that
+     * connect afterwards: a player who joined before the bot would otherwise never be offered its orders.
+     */
+    @Test
+    void theServerTellsEveryClientTheBotsType() throws Exception {
+        Game game = new Game();
+        game.addPlayer(BOT_PLAYER_ID, new Player(BOT_PLAYER_ID, BOT_NAME));
+        TWGameManager gameManager = spy(new TWGameManager());
+        doNothing().when(gameManager).send(any(Packet.class));
+        gameManager.setGame(game);
+        Packet sent = new Packet(PacketCommand.PRINCESS_SETTINGS, settingsWith(PHOENIX_HAWK, 1), AIType.CASPAR);
+
+        gameManager.handlePacket(BOT_PLAYER_ID, throughTheNetworkFilter(sent));
+
+        ArgumentCaptor<Packet> broadcast = ArgumentCaptor.forClass(Packet.class);
+        verify(gameManager).send(broadcast.capture());
+        assertEquals(PacketCommand.PRINCESS_SETTINGS, broadcast.getValue().command());
+        @SuppressWarnings("unchecked")
+        Map<String, AIType> types = (Map<String, AIType>) throughTheNetworkFilter(broadcast.getValue()).getObject(1);
+        assertEquals(AIType.CASPAR, types.get(BOT_NAME));
     }
 
     @Test

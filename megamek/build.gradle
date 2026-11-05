@@ -307,6 +307,8 @@ jar {
         attributes "Class-Path": project.sourceSets.main.runtimeClasspath.files
                 .findAll { it.name.endsWith(".jar") }.collect { "lib/${it.name}" }.join(' ')
         attributes "Add-Opens": 'java.base/java.util java.base/java.util.concurrent'
+        // Tells the MegaMek Launcher to wait for the first window (see LauncherReadySignal)
+        attributes "MegaMek-Launcher-Ready": '1'
         attributes "Build-Date": LocalDateTime.now()
         attributes "Sealed": true
     }

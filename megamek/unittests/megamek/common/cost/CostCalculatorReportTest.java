@@ -62,7 +62,7 @@ class CostCalculatorReportTest {
 
         double returnedCost = CombatVehicleCostCalculator.calculateCost(tank, report, true);
 
-        assertEquals("N/A", report.result("Flotation Hull/Environmental Sealing multiplier"));
+        assertEquals("N/A", report.result("Flotation Hull/Environmental Sealing Multiplier"));
         assertEquals("x 1.2", report.result("Off-Road Multiplier"));
         assertReportTotalMatchesReturnedCost(returnedCost, report);
     }
@@ -151,7 +151,7 @@ class CostCalculatorReportTest {
 
         @Override
         public CalculationReport addResultLine(String type, String calculation, String result) {
-            if ("Total Cost:".equals(type)) {
+            if ("Total Cost (C-bills)".equals(type)) {
                 total = result;
             }
             return this;

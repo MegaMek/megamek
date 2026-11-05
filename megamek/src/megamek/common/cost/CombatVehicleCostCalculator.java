@@ -302,8 +302,7 @@ public class CombatVehicleCostCalculator {
         left.add("Omni Multiplier");
         left.add("Tonnage Multiplier");
         if (!tank.isSupportVehicle()) {
-
-            left.add("Flotation Hull/Environmental Sealing multiplier");
+            left.add("Flotation Hull/Environmental Sealing Multiplier");
             left.add("Off-Road Multiplier");
         }
         return left;

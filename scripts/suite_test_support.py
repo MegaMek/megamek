@@ -30,6 +30,7 @@ class FakeGitHub:
         self.tags = {repo: {} for repo in release.REPOS.values()}
         self.releases = {repo: [] for repo in release.REPOS.values()}
         self.assets = {}
+        self.commits = {}
         self.writes = []
         self.next_id = 1000
         self.get_log = []
@@ -78,8 +79,11 @@ class FakeGitHub:
             tag = path.removeprefix("git/ref/tags/")
             return {"ref": f"refs/tags/{tag}",
                     "object": {"type": "commit", "sha": self.tags[repo][tag]}}
-        if path.startswith("commits/"):
+        if path.startswith("commits/v"):
             return {"sha": self.tags[repo][path.removeprefix("commits/")]}
+        if path.startswith("commits/"):
+            commit = path.removeprefix("commits/")
+            return self.commits.get(commit, {"sha": commit, "parents": [], "files": []})
         kind, query = path.split("?")
         page = int(query.split("&page=")[1])
         items = ([{"name": name} for name in self.tags[repo]] if kind == "tags"
@@ -120,11 +124,14 @@ class FakeGitHub:
         self.writes.append(("branch", repo, name))
         self.heads[(repo, name)] = commit
 
-    def version_file(self, text, blob, message):
+    def version_file(self, text, blob, message, branch="main"):
         self.writes.append(("version_file", message))
-        head = sha(text)
-        self.heads[("megamek", "main")] = head
+        parent = self.heads[("megamek", branch)]
+        head = sha(parent + text)
+        self.heads[("megamek", branch)] = head
         self.props[head] = text
+        self.commits[head] = {"sha": head, "parents": [{"sha": parent}],
+                              "files": [{"filename": release.VERSION_PROPERTIES}]}
         return head
 
     # Fixtures.

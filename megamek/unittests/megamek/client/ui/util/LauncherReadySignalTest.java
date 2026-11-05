@@ -35,11 +35,17 @@ package megamek.client.ui.util;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.AWTEvent;
+import java.awt.event.AWTEventListener;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -64,6 +70,35 @@ class LauncherReadySignalTest {
         Path unreachable = temp.resolve("missing").resolve("ready");
 
         assertDoesNotThrow(() -> LauncherReadySignal.signal(unreachable.toString()));
+    }
+
+    @Test
+    void firstWindowOpenedCreatesTheFileAndRemovesTheListener() {
+        Path readyFile = temp.resolve("ready");
+        List<AWTEventListener> added = new ArrayList<>();
+        List<Long> masks = new ArrayList<>();
+        List<AWTEventListener> removed = new ArrayList<>();
+
+        LauncherReadySignal.listen(readyFile.toString(), (listener, mask) -> {
+            added.add(listener);
+            masks.add(mask);
+        }, removed::add);
+
+        assertEquals(1, added.size());
+        assertEquals(List.of(AWTEvent.WINDOW_EVENT_MASK), masks);
+        AWTEventListener listener = added.get(0);
+
+        listener.eventDispatched(event(WindowEvent.WINDOW_ACTIVATED));
+        assertFalse(Files.exists(readyFile), "only an opened window counts");
+        assertTrue(removed.isEmpty());
+
+        listener.eventDispatched(event(WindowEvent.WINDOW_OPENED));
+        assertTrue(Files.isRegularFile(readyFile));
+        assertEquals(List.of(listener), removed, "the listener removes itself");
+    }
+
+    private static AWTEvent event(int id) {
+        return new AWTEvent(new Object(), id) {};
     }
 
     @Test

@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import megamek.logging.MMLogger;
 
@@ -74,11 +76,19 @@ public final class LauncherReadySignal {
             return;
         }
         Toolkit toolkit = Toolkit.getDefaultToolkit();
-        toolkit.addAWTEventListener(new AWTEventListener() {
+        listen(readyFile, toolkit::addAWTEventListener, toolkit::removeAWTEventListener);
+    }
+
+    /**
+     * Registers, through {@code add}, a window-event listener that removes itself through {@code remove} and creates
+     * {@code readyFile} when the first window opens.
+     */
+    static void listen(String readyFile, BiConsumer<AWTEventListener, Long> add, Consumer<AWTEventListener> remove) {
+        add.accept(new AWTEventListener() {
             @Override
             public void eventDispatched(AWTEvent event) {
                 if (event.getID() == WindowEvent.WINDOW_OPENED) {
-                    toolkit.removeAWTEventListener(this);
+                    remove.accept(this);
                     signal(readyFile);
                 }
             }
@@ -90,7 +100,8 @@ public final class LauncherReadySignal {
         try {
             Files.createFile(Path.of(readyFile));
         } catch (IOException | RuntimeException exception) {
-            LOGGER.debug(exception, "Could not tell the launcher that the first window is on screen");
+            // Expected when the launcher has gone or the file exists; the launcher stops waiting on its own.
+            LOGGER.debug("Could not tell the launcher that the first window is on screen: {}", exception.toString());
         }
     }
 }

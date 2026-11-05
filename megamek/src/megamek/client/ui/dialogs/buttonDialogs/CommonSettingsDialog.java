@@ -739,8 +739,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                        optionPage(CommonSettingsPane.SETTINGS_MINIMAP,
                                   path(CommonSettingsPane.SETTINGS_MINIMAP),
                                   miniMap,
-                                  section(CommonSettingsPane.SETTINGS_MINIMAP + ".theme", 0),
-                                  section(CommonSettingsPane.SETTINGS_MINIMAP + ".display", 1)));
+                                  section(CommonSettingsPane.SETTINGS_MINIMAP + ".display", 0)));
 
         CommonSettingsPane.SectionedContent report = sectionedContent(getReportPanel(),
                                                                       CommonSettingsPane.SETTINGS_REPORT);

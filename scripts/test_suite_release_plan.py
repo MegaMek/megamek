@@ -205,6 +205,7 @@ class GetTests(unittest.TestCase):
             "repos/MegaMek/mekhq/git/matching-refs/heads/releases/?per_page=100",
             "repos/MegaMek/megamek/contents/megamek/resources/Version.properties?ref=" + "a" * 40,
             "repos/MegaMek/megameklab/commits/v0.51.02.3",
+            "repos/MegaMek/megamek/commits/" + "a" * 40,
             "repos/MegaMek/mekhq/git/ref/tags/v0.51.02.3",
             "repos/MegaMek/megamek/tags?per_page=100&page=2",
             "repos/MegaMek/megamek/releases?per_page=100&page=1",
@@ -218,6 +219,8 @@ class GetTests(unittest.TestCase):
             "repos/MegaMek/other/git/ref/heads/main",
             "repos/Other/megamek/git/ref/heads/main",
             "repos/MegaMek/megamek/commits/v0.51.2.3",
+            "repos/MegaMek/mekhq/commits/" + "a" * 40,
+            "repos/MegaMek/megamek/commits/" + "A" * 40,
             "repos/MegaMek/megamek/releases/generate-notes",
         ]
         ok = lambda command, **kwargs: subprocess.CompletedProcess(command, 0, stdout=b"{}")
@@ -251,6 +254,41 @@ class DiscoveryTests(unittest.TestCase):
         self.fake.set_branch("releases/0.51.02", support.SHA)
         with self.assertRaisesRegex(release.UnsafeInventory, "bump Version.properties"):
             self.discover("experimental")
+
+    def restamp(self, text, branch="main"):
+        return self.fake.version_file(text, None, "stamp", branch=branch)
+
+    def test_a_revision_stamp_on_the_released_commit_is_not_a_change(self):
+        self.fake.add_suite("experimental", "0.51.02.3", support.SHA)
+        stamped = self.restamp(support.properties("0.51.02") + "revision=3\n")
+        found = self.discover("experimental")
+        self.assertEqual(found["commits"], support.SHA)
+        self.assertTrue(release.plan(found)["noop"])
+        # Anything else in the stamp commit, or any commit after it, is a real change.
+        self.restamp(support.properties("0.51.02") + "revision=3\nnotes=hi\n")
+        self.assertFalse(release.plan(self.discover("experimental"))["noop"])
+        self.fake.heads[("megamek", "main")] = stamped
+        self.fake.commits[stamped]["files"].append({"filename": "readme.md"})
+        self.assertFalse(release.plan(self.discover("experimental"))["noop"])
+
+    def test_a_revision_stamp_after_other_changes_is_built_as_is(self):
+        self.fake.add_suite("experimental", "0.51.02.3", dict(support.SHA, megamek="e" * 40))
+        stamped = self.restamp(support.properties("0.51.02") + "revision=3\n")
+        found = self.discover("experimental")
+        self.assertEqual(found["commits"]["megamek"], stamped)
+        self.assertEqual(release.plan(found)["versionCandidate"], "0.51.02.4")
+
+    def test_revision_helpers(self):
+        self.assertEqual(release.properties_revision("patch=01\n#revision=1\n"), 0)
+        self.assertEqual(release.properties_revision("patch=01\nrevision=\n"), 0)
+        self.assertEqual(release.properties_revision("patch=01\r\n revision = 12 \r\n"), 12)
+        for text in ("revision=1\nrevision=2\n", "revision=x\n", "revision=-1\n"):
+            with self.subTest(text=text), self.assertRaises(release.UnsafeInventory):
+                release.properties_revision(text)
+        self.assertEqual(release.without_revision("a=1\n#revision=1\nb=2\n"),
+                         release.without_revision("a=1\nrevision=7\nb=2\n"))
+        self.assertNotEqual(release.without_revision("a=1\n# revision notes\n"),
+                            release.without_revision("a=1\n"))
 
     def test_core_uses_the_newest_release_branch_and_continues_its_counter(self):
         with self.assertRaisesRegex(release.UnsafeInventory, "Core cut first"):

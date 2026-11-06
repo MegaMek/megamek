@@ -52,6 +52,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.InfantryMount;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * @author Jay Lawson (Taharqa)
@@ -189,7 +190,8 @@ public class TestInfantry extends TestEntity {
         }
 
         if (inf.getSecondaryWeapon() != null) {
-            int secondaryCrew = inf.getSecondaryWeapon().getCrew();
+            InfantryWeapon secondaryWeapon = inf.getSecondaryWeapon();
+            int secondaryCrew = secondaryWeapon.getCrew();
             // Beast mounted infantry divide crew requirement in half, rounding up.
             if (inf.getMount() != null) {
                 secondaryCrew = secondaryCrew / 2 + secondaryCrew % 2;
@@ -205,6 +207,14 @@ public class TestInfantry extends TestEntity {
             secondaryCrew = Math.max(secondaryCrew, 1);
             if (secondaryCrew * inf.getSecondaryWeaponsPerSquad() > inf.getSquadSize()) {
                 buff.append("Secondary weapon crew requirement exceeds squad size.\n\n");
+                correct = false;
+            }
+
+            if (secondaryWeapon.is("Particle Cannon (Support)")
+                  && inf.getMovementMode() != EntityMovementMode.INF_MOTORIZED
+                  && inf.getMovementMode() != EntityMovementMode.TRACKED) {
+                buff.append("The Support Particle Canon may only be employed by Motorized/Mechanized (Tracked) ")
+                      .append("infantry platoons.\n\n");
                 correct = false;
             }
         }

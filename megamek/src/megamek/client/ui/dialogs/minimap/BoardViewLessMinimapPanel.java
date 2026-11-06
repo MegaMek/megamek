@@ -40,7 +40,14 @@ import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOL_
 import static megamek.common.units.Terrains.BUILDING;
 import static megamek.common.units.Terrains.FUEL_TANK;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -53,10 +60,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.overlay.IFF;
 import megamek.client.ui.clientGUI.overlay.OverlayPainter;
@@ -78,9 +89,8 @@ import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.ClientPreferences;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.units.*;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * This class is WIP, commiting just to have an artifact.
@@ -106,7 +116,6 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
     private int mSize = -1;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private static final int[] UNIT_SCALE = { 7, 8, 9, 11, 12, 14, 16 };
     private final int heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
 
@@ -218,6 +227,8 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
                 mSize = Math.max(5_000, mSize - 150);
             }
         });
+        // tooltips come from getToolTipText(MouseEvent), which needs the component registered
+        ToolTipManager.sharedInstance().registerComponent(this);
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -270,7 +281,7 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
             }
             boardNeedsRedraw = false;
 
-            boardImage = MinimapPanel.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getStrategicViewTheme());
+            boardImage = MinimapPanel.getMinimapImageMaxZoom(board);
             size = Math.min(
                   boardImage.getHeight() / game.getBoard().getHeight(),
                   boardImage.getWidth() / game.getBoard().getWidth());
@@ -636,6 +647,75 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
         int baseX = x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom];
         int baseY = (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin;
         return new int[] { baseX, baseY };
+    }
+
+    /**
+     * Shows the hex number under the mouse and the units the local player can see in that hex, with their IDs, so
+     * orders that take a hex number or a unit ID can be given without counting hexes.
+     */
+    @Override
+    public @Nullable String getToolTipText(MouseEvent event) {
+        Coords coords = coordsAt(event.getX(), event.getY());
+        if (coords == null) {
+            return null;
+        }
+        StringBuilder text = new StringBuilder("<html><b>")
+              .append(Messages.getString("Minimap.tooltip.hex", coords.getBoardNum()))
+              .append("</b>");
+        for (var inGameObject : game.getInGameObjects()) {
+            if (!(inGameObject instanceof Entity entity) || !coords.equals(entity.getPosition())) {
+                continue;
+            }
+            if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
+                text.append("<br>").append(Messages.getString("Minimap.tooltip.sensorReturn"));
+            } else if (!(game instanceof Game twGame)
+                  || EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(), twGame, entity)) {
+                // the ID as text, so MessageFormat does not group it into "1,234"
+                text.append("<br>").append(Messages.getString("Minimap.tooltip.unit",
+                      String.valueOf(entity.getId()),
+                      StringEscapeUtils.escapeHtml4(entity.getDisplayName())));
+            }
+        }
+        return text.append("</html>").toString();
+    }
+
+    /**
+     * Finds the board hex under a point of this panel.
+     *
+     * @param pixelX the x position in this panel
+     * @param pixelY the y position in this panel
+     *
+     * @return the hex under the point, or {@code null} when the point is not over the board
+     */
+    private @Nullable Coords coordsAt(int pixelX, int pixelY) {
+        var board = game.getBoard();
+        int columnWidth = HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom];
+        int roughX = Math.round((float) (pixelX - xOffset - leftMargin - HEX_SIDE[zoom]) / columnWidth);
+        int roughY = Math.round((((float) (pixelY - yOffset - topMargin) / HEX_SIDE_BY_COS30[zoom])
+              - 1 - Math.floorMod(roughX, 2)) / 2);
+
+        // the hex is the one whose center is nearest; the rough guess is off by at most one hex either way
+        Coords nearest = null;
+        long nearestDistance = Long.MAX_VALUE;
+        for (int x = roughX - 1; x <= roughX + 1; x++) {
+            for (int y = roughY - 1; y <= roughY + 1; y++) {
+                if ((x < 0) || (y < 0) || (x >= board.getWidth()) || (y >= board.getHeight())) {
+                    continue;
+                }
+                int[] center = projectToView(x, y);
+                long deltaX = pixelX - (center[0] + xOffset);
+                long deltaY = pixelY - (center[1] + yOffset);
+                long distance = (deltaX * deltaX) + (deltaY * deltaY);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearest = new Coords(x, y);
+                }
+            }
+        }
+        // past the board edge the nearest center is still an edge hex; no point inside a hex is farther from its
+        // center than one hex side
+        long maxDistance = (long) (HEX_SIDE[zoom] + 1) * (HEX_SIDE[zoom] + 1);
+        return (nearestDistance <= maxDistance) ? nearest : null;
     }
 
     public void addMovePath(List<UnitLocation> unitLocations, Entity entity) {

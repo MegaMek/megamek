@@ -102,6 +102,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private Consumer<ForceDescriptor> onExportMUL;
     private Consumer<FactionRecord> onFactionChanged;
+    /** Told whenever a selection or the choices a picker offers may have changed; see {@link #addSelectionListener}. */
+    private final List<Runnable> selectionListeners = new ArrayList<>();
     /**
      * Where a roll learns what lift the force already owns, asked at the moment of each Generate so it reflects the
      * ships brought by earlier rolls. Defaults to none.
@@ -1025,6 +1027,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         selectedFormation = formationName;
         logger.debug("[ChangeFormation] palette selection is now '{}'", formationName);
         refreshFormationMixSummary();
+        fireSelectionListeners();
     }
 
     /**
@@ -1817,6 +1820,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             logger.debug("[ForceGen][Fighters] Carried Fighter Complement greyed out: every transport percentage is"
                   + " 0 and unit type {} is not ships", unitTypeLabel(forceDesc.getUnitType()));
         }
+        fireSelectionListeners();
     }
 
     private static double percentageIn(@Nullable JTextField field) {
@@ -2147,6 +2151,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (changesFormationOffer(ev.getSource())) {
             refreshInlineFormationMixEditor();
         }
+        fireSelectionListeners();
     }
 
     /**
@@ -2358,6 +2363,218 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
     }
 
+    // region Host controls
+
+    /**
+     * The pickers a host can drive with controls of its own, such as MekHQ's Command Designer, which draws its own
+     * heads-up display over this view rather than showing it. The view keeps doing the work - which factions, unit
+     * types, sizes and ratings a selection offers, and generating the force - and the host only reads the choices and
+     * makes selections.
+     */
+    public enum Picker {
+        FACTION,
+        SUB_FACTION,
+        UNIT_TYPE,
+        FORMATION,
+        RATING,
+        WEIGHT_CLASS,
+        INFANTRY_CLASS,
+        EXPERIENCE,
+        FLAGS
+    }
+
+    /**
+     * One entry a picker offers.
+     *
+     * @param value the value to pass back to {@link #selectPickerValue}; {@code null} for the picker's Random or
+     *              combined entry
+     * @param label the text this view shows for the entry
+     */
+    public record PickerChoice(@Nullable Object value, String label) {
+    }
+
+    /** The transport shares the force is generated with, as percentages. */
+    public enum TransportShare {
+        DROPSHIP,
+        JUMPSHIP,
+        WARSHIP,
+        CARGO
+    }
+
+    /**
+     * Registers a listener told whenever a selection, or the choices a picker offers, may have changed: after any
+     * selection made here or through {@link #selectPickerValue}, after the year changes, and after a transport share
+     * changes what the fighter complement can do. A host redraws its own controls from the getters below.
+     *
+     * @param listener the listener
+     */
+    public void addSelectionListener(Runnable listener) {
+        selectionListeners.add(Objects.requireNonNull(listener));
+    }
+
+    private void fireSelectionListeners() {
+        for (Runnable listener : List.copyOf(selectionListeners)) {
+            listener.run();
+        }
+    }
+
+    private JComboBox<?> comboFor(Picker picker) {
+        return switch (picker) {
+            case FACTION -> cbFaction;
+            case SUB_FACTION -> cbSubFaction;
+            case UNIT_TYPE -> cbUnitType;
+            case FORMATION -> cbFormation;
+            case RATING -> cbRating;
+            case WEIGHT_CLASS -> cbWeightClass;
+            case INFANTRY_CLASS -> cbInfantryClass;
+            case EXPERIENCE -> cbExperience;
+            case FLAGS -> cbFlags;
+        };
+    }
+
+    /**
+     * @param picker the picker
+     *
+     * @return the entries the picker offers for the current selections, in order, each with the text this view shows
+     *       for it
+     */
+    public List<PickerChoice> getPickerChoices(Picker picker) {
+        JComboBox<?> combo = comboFor(picker);
+        List<PickerChoice> choices = new ArrayList<>(combo.getItemCount());
+        for (int index = 0; index < combo.getItemCount(); index++) {
+            Object item = combo.getItemAt(index);
+            choices.add(new PickerChoice(item, labelFor(combo, item)));
+        }
+        return choices;
+    }
+
+    /**
+     * The text a combo shows for an entry, read from its own renderer so the host shows exactly what this view would,
+     * including the Random and combined entries and the descriptions given to ratings and sizes.
+     */
+    @SuppressWarnings("unchecked")
+    private static String labelFor(JComboBox<?> combo, @Nullable Object item) {
+        ListCellRenderer<Object> renderer = (ListCellRenderer<Object>) combo.getRenderer();
+        Component rendered = renderer.getListCellRendererComponent(new JList<>(), item, -1, false, false);
+        if (rendered instanceof JLabel label) {
+            return label.getText();
+        }
+        return String.valueOf(item);
+    }
+
+    /**
+     * @param picker the picker
+     *
+     * @return the selected entry's value, or {@code null} for the Random or combined entry or nothing selected
+     */
+    public @Nullable Object getPickerSelection(Picker picker) {
+        return comboFor(picker).getSelectedItem();
+    }
+
+    /**
+     * Selects an entry exactly as the player picking it from this view's own combo would, so every choice that
+     * follows from it - the sizes a unit type offers, the ratings a size offers - is refreshed. The selection
+     * listeners are told afterwards.
+     *
+     * @param picker the picker
+     * @param value  one of the values {@link #getPickerChoices} returned, or {@code null} for the Random entry
+     */
+    public void selectPickerValue(Picker picker, @Nullable Object value) {
+        comboFor(picker).setSelectedItem(value);
+    }
+
+    /**
+     * @param picker the picker
+     *
+     * @return {@code true} if the picker applies to the current selections and offers something to choose: Target
+     *       Weight is not offered for conventional infantry, which picks an infantry class instead, and neither is it
+     *       offered for unit types that ignore weight
+     */
+    public boolean isPickerAvailable(Picker picker) {
+        JComboBox<?> combo = comboFor(picker);
+        return combo.isVisible() && combo.isEnabled() && (combo.getItemCount() > 0);
+    }
+
+    private JTextField fieldFor(TransportShare share) {
+        return switch (share) {
+            case DROPSHIP -> txtDropshipPct;
+            case JUMPSHIP -> txtJumpshipPct;
+            case WARSHIP -> txtWarshipPct;
+            case CARGO -> txtCargoPct;
+        };
+    }
+
+    /**
+     * @param share the transport share
+     *
+     * @return the share as the player entered it, as a percentage
+     */
+    public double getTransportPercent(TransportShare share) {
+        return percentageIn(fieldFor(share));
+    }
+
+    /**
+     * Sets a transport share, as a percentage, as though the player had typed it.
+     *
+     * @param share   the transport share
+     * @param percent the percentage, 100 being the whole force
+     */
+    public void setTransportPercent(TransportShare share, double percent) {
+        double clamped = Math.max(0.0, percent);
+        fieldFor(share).setText((clamped == Math.rint(clamped)) ? Long.toString((long) clamped)
+              : Double.toString(clamped));
+    }
+
+    /** @return {@code true} if the roll can have ships with fighter bays, so the fighter complement can be chosen */
+    public boolean isFighterComplementAvailable() {
+        return chkFighterComplement.isEnabled();
+    }
+
+    /** @return {@code true} if the carried fighter complement is ticked */
+    public boolean isFighterComplementSelected() {
+        return chkFighterComplement.isSelected();
+    }
+
+    /** @param selected {@code true} to generate the fighters the roll's ships carry */
+    public void setFighterComplementSelected(boolean selected) {
+        chkFighterComplement.setSelected(selected);
+        fireSelectionListeners();
+    }
+
+    /** @return {@code true} if detachments are generated with the force */
+    public boolean isDetachmentsSelected() {
+        return chkDetachments.isSelected();
+    }
+
+    /**
+     * Turns detachments on or off, as the player ticking the box would. Turning them off withdraws the aerospace and
+     * infantry formations, so the formation offer is refreshed.
+     *
+     * @param selected {@code true} to generate detachments
+     */
+    public void setDetachmentsSelected(boolean selected) {
+        chkDetachments.setSelected(selected);
+        refreshInlineFormationMixEditor();
+        fireSelectionListeners();
+    }
+
+    /** Opens the formation mix editor for the force the current selections describe, as its button does. */
+    public void openFormationMixEditor() {
+        showFormationMixDialog();
+    }
+
+    /** @return the formation the mix asks for, or {@code null} when it asks for none */
+    public @Nullable String getFormationMixRequest() {
+        return selectedFormation;
+    }
+
+    /** @return the year forces are generated for */
+    public int getCurrentYear() {
+        return currentYear;
+    }
+
+    // endregion Host controls
+
     /**
      * Makes the year text field read-only. Use this when an embedder anchors the year to an external value
      * (e.g. MekHQ's campaign year) and doesn't want the user editing it on this panel.
@@ -2507,6 +2724,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         forceDesc.setYear(currentYear);
         refreshFactions();
         refreshInlineFormationMixEditor();
+        fireSelectionListeners();
     }
 
     @Override

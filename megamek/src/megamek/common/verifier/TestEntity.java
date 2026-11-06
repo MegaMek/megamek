@@ -1128,7 +1128,7 @@ public abstract class TestEntity implements TestEntityOption {
         if (unit.isProtoMek()) {
             return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
         } else if (unit.isSupportVehicle()) {
-            return Math.floor(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
+            return Math.round(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
         } else {
             return armorTons * getArmorPointsPerTon(unit);
         }
@@ -1618,7 +1618,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     private boolean isIntroducedByValidationYear(int introDate, int margin) {
-        return getIntroYearValidationYears().stream().anyMatch(year -> introDate <= year + margin);
+        // Compare in long so a year of Integer.MAX_VALUE (no year limit) or an extreme configured margin cannot overflow
+        return getIntroYearValidationYears().stream().anyMatch(year -> (long) introDate <= (long) year + margin);
     }
 
     public boolean hasFailedEquipment(StringBuffer buff) {

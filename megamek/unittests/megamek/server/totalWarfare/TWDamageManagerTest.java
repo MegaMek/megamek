@@ -517,10 +517,10 @@ class TWDamageManagerTest {
         // Validate starting armor (25 points of BRA ~= 50 - (1x hits) points standard against some damage types)
         assertEquals(25, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
 
-        // Deal "39" points of damage (should fill 19 circles)
+        // Deal "37" points of damage (should fill 19 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitDamageType.DAMAGE_MISSILE);
-        DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 37);
         manager.damageEntity(damageInfo);
 
         assertEquals(6, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
@@ -724,10 +724,10 @@ class TWDamageManagerTest {
         // Validate starting armor
         assertEquals(35, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
 
-        // Deal "39" points of damage (should fill 19 circles)
+        // Deal "37" points of damage (should fill 19 circles [core])
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitDamageType.DAMAGE_MISSILE);
-        DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 37);
         manager.damageEntity(damageInfo);
 
         assertEquals(16, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
@@ -760,10 +760,10 @@ class TWDamageManagerTest {
         // Validate starting armor
         assertEquals(30, mek.getArmor(BipedMek.LOC_CENTER_TORSO));
 
-        // Deal "39" points of damage (should fill 19 circles)
+        // Deal "37" points of damage (should fill 19 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
         hit.setGeneralDamageType(HitDamageType.DAMAGE_ENERGY);
-        DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 37);
         manager.damageEntity(damageInfo);
 
         assertEquals(11, mek.getArmor(BipedMek.LOC_CENTER_TORSO));

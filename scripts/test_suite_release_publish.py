@@ -96,6 +96,18 @@ class PublishTests(unittest.TestCase):
             self.publish(inventory, archives)
         self.assertEqual(self.fake.writes, [])
 
+    def test_drafts_never_move_the_inventory_but_still_block_their_tag(self):
+        inventory, archives = self.prepare()
+        version = release.plan(inventory)["versionCandidate"]
+        # A draft is invisible to the read-only build but visible to the publish token.
+        self.fake.releases["mekhq"].append({"id": 900, "tag_name": "v" + version, "draft": True})
+        with self.assertRaisesRegex(release.UnsafeInventory, "suite version collision"):
+            self.publish(inventory, archives)
+        self.assertEqual(self.fake.writes, [])
+        self.fake.releases["mekhq"][-1]["tag_name"] = "v0.51.01"
+        record = self.publish(inventory, archives)
+        self.assertEqual(record["version"], version)
+
     def test_wrong_archives_block_before_any_write(self):
         inventory, archives = self.prepare()
         renamed = Path(archives["MekHQ"]).with_name("MekHQ-0.51.02.9.tar.gz")

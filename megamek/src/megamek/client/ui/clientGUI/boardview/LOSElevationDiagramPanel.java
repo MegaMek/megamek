@@ -529,6 +529,9 @@ class LOSElevationDiagramPanel extends JPanel {
         int yTop = metrics.topMargin;
         for (int i = 0; i < hexPath.size(); i++) {
             HexRow hex = hexPath.get(i);
+            if (hex.splitHex() && !hex.selectedSplitPath()) {
+                continue;
+            }
             int xLeft = metrics.leftMargin + (i * metrics.hexColumnWidth);
             int columnWidth = metrics.hexColumnWidth;
             int yGround = metrics.levelToY(hex.groundElevation());
@@ -555,6 +558,9 @@ class LOSElevationDiagramPanel extends JPanel {
     private void drawTerrain(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
         for (int i = 0; i < hexPath.size(); i++) {
             HexRow hex = hexPath.get(i);
+            if (hex.splitHex() && !hex.selectedSplitPath()) {
+                continue;
+            }
             int xLeft = metrics.leftMargin + (i * metrics.hexColumnWidth);
             int columnWidth = metrics.hexColumnWidth;
             int yGround = metrics.levelToY(hex.groundElevation());
@@ -1146,6 +1152,9 @@ class LOSElevationDiagramPanel extends JPanel {
 
         for (int i = 0; i < hexPath.size(); i++) {
             HexRow hex = hexPath.get(i);
+            if (hex.splitHex() && !hex.selectedSplitPath()) {
+                continue;
+            }
             int xLeft = metrics.leftMargin + (i * metrics.hexColumnWidth);
             int columnWidth = metrics.hexColumnWidth;
             int xCenter = xLeft + columnWidth / 2;

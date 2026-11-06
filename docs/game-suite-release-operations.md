@@ -39,6 +39,15 @@ A tag or release occupies its number even if the publication around it
 failed, so a retry after a partial failure moves to the next number. If you
 delete the partial tags and releases first, the retry reuses the number.
 
+After every release, the run commits the released build number to the
+`revision` entry of `Version.properties` on the branch it built (`main` for
+Experimental, `releases/<line>` for Core). Development builds of that branch
+then report the same version as the release, so they can open campaigns and
+other files saved by it. Moving `main` to the next line comments the revision
+out until that line's first release. This commit changes only the revision, so
+it alone does not count as a change: the next run stays a no-op. Do not edit
+the revision by hand; the stamp only raises it, never lowers it.
+
 ## The four procedures
 
 ### First Core release and the next Experimental
@@ -53,8 +62,9 @@ delete the partial tags and releases first, the retry reuses the number.
    - creates `releases/<line>` from `main` in all four repositories (a rerun keeps
      branches that already exist);
    - builds and publishes Core `<line>.N` from those branches;
+   - commits `revision=N` to `Version.properties` on `releases/<line>`;
    - commits the next line to `Version.properties` on `main` (for example
-     `0.51.01` → `0.51.02`).
+     `0.51.01` → `0.51.02`), with the revision commented out.
 4. The next Experimental (scheduled or manual) builds `main` on the new line
    and publishes `<new line>.1`.
 
@@ -114,6 +124,9 @@ Run **Game suite release - Experimental** with `dry_run=false` and approve the
    - creates the tag, release and archive in each repository;
    - uploads the suite record (`suite-record-<version>.json`) to the MegaMek
      release **last**.
+5. Mints a MegaMek-only write token and commits the released build number to
+   the built branch's `Version.properties` (see [Version numbers](#version-numbers)).
+   This also runs after a no-op, so rerunning repairs a stamp that failed.
 
 The suite is published only when its record exists; the launcher and website
 use the record's `channel`, not GitHub's prerelease badge. Later merges to the
@@ -144,16 +157,16 @@ step requests the narrowest token it needs:
 
 - branch creation: the four repositories;
 - publication: megamek, megameklab and mekhq;
-- moving `main`: megamek only.
+- stamping the released revision and moving `main`: megamek only.
 
 Repository rules must allow the App to:
 
 - create `releases/*` branches;
-- push the version commit to MegaMek `main` (add the App as a bypass actor on
-  the main-branch ruleset).
+- push the version commits to MegaMek `main` and `releases/*` (add the App as
+  a bypass actor on both rulesets).
 
 Protect `releases/*` like `main` (pull requests and CI), with the App as a
-bypass actor for branch creation. Never put the private key in files, command
+bypass actor for branch creation and the version commit. Never put the private key in files, command
 output or workflow inputs.
 
 ### Check App access without publishing

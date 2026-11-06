@@ -6896,8 +6896,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), but not once the sensors are damaged
+        if (hasEiCockpit() && !EnhancedImagingSensors.areDamaged(this)) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
@@ -7004,8 +7004,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), but not once the sensors are damaged
+        if (hasEiCockpit() && !EnhancedImagingSensors.areDamaged(this)) {
             return 1;
         }
 
@@ -17139,10 +17139,10 @@ public abstract class Entity extends TurnOrdered
     public int getLabTotalArmorPoints() {
         ArmorType armor = ArmorType.forEntity(this);
         if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-            return (int) Math.floor(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
+            return (int) Math.round(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
         } else {
             double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-            return (int) Math.floor(armorPerTon * armorTonnage);
+            return (int) Math.round(armorPerTon * armorTonnage);
         }
     }
 

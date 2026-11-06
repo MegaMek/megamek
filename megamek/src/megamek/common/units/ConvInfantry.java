@@ -227,7 +227,7 @@ public class ConvInfantry extends Infantry {
 
     @Override
     public boolean isMechanized() {
-        return isMounted() ? false : super.isMechanized();
+        return !isMounted() && super.isMechanized();
     }
 
     @Override
@@ -1152,6 +1152,11 @@ public class ConvInfantry extends Infantry {
                   && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                   && getMovementMode().isJumpOrLegInfantry()) {
                 mp += 1;
+            }
+
+            // Support Particle Cannon TM p.352
+            if (secondaryWeapon != null && secondaryWeapon.is("Particle Cannon (Support)")) {
+                mp = Math.min(mp, 2);
             }
 
             if (hasActiveFieldArtillery()) {

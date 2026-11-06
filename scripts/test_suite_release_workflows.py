@@ -67,6 +67,14 @@ class EngineTests(unittest.TestCase):
         self.assertIn("APP_KEY_PRESENT: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY != '' }}", gate)
         self.assertLess(self.position("Gate live operation"), self.position("actions/checkout"))
 
+    def test_disk_is_freed_before_the_sources_are_cloned(self):
+        free = self.steps["Free runner disk space"]
+        self.assertIn("sudo rm -rf /usr/share/dotnet", free)
+        # setup-java and setup-python install into the tool cache, so it must survive.
+        self.assertNotRegex(free, r"/opt/hostedtoolcache[\s\\]")
+        self.assertLess(self.position("Gate live operation"), self.position("Free runner disk space"))
+        self.assertLess(self.position("Free runner disk space"), self.position("mkdir sources"))
+
     def test_build_never_holds_a_write_token(self):
         prepare = self.steps["prepare"]
         self.assertIn("GH_TOKEN: ${{ github.token }}", prepare)
@@ -101,8 +109,21 @@ class EngineTests(unittest.TestCase):
             self.assertIn(f"inputs.dry_run && github.token || steps.{token}.outputs.token",
                           self.steps[step])
             self.assertIn("--dry-run", self.steps[step])
-        self.assertEqual(3, self.workflow.count("actions/create-github-app-token@v3"))
-        self.assertEqual(3, self.workflow.count("permission-contents: write"))
+        self.assertEqual(4, self.workflow.count("actions/create-github-app-token@v3"))
+        self.assertEqual(4, self.workflow.count("permission-contents: write"))
+
+    def test_stamp_follows_publication_with_a_megamek_only_token(self):
+        stamp_app = self.steps["stamp_app"]
+        self.assertIn("repositories: megamek\n", stamp_app)
+        self.assertIn("if: ${{ !inputs.dry_run }}", stamp_app)
+        stamp = self.steps["Stamp the released revision on the built branch"]
+        self.assertIn("inputs.dry_run && github.token || steps.stamp_app.outputs.token", stamp)
+        self.assertIn("STAMP_BRANCH: ${{ steps.prepare.outputs.branch }}", stamp)
+        self.assertIn("--dry-run", stamp)
+        self.assertIn("set -o pipefail", stamp)
+        self.assertNotIn("if: ", stamp.split("run: |")[0])
+        self.assertLess(self.position("--publish"), self.position("id: stamp_app"))
+        self.assertLess(self.position("Stamp the released revision"), self.position("id: bump_app"))
 
     def test_cut_dry_run_rehearses_main(self):
         prepare = self.steps["prepare"]

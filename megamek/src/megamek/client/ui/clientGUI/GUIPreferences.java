@@ -39,7 +39,6 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +51,6 @@ import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.PlayerColour;
-import megamek.common.Configuration;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.SensorFamily;
 import megamek.common.preference.IPreferenceStore;
@@ -4027,11 +4025,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static boolean isSupportedLookAndFeel(UIManager.LookAndFeelInfo lookAndFeelInfo) {
         return lookAndFeelInfo.getClassName().toLowerCase().contains("formdev");
-    }
-
-    public File[] getMinimapThemes() {
-        // List all .theme files inside the minimap themes folder
-        return Configuration.minimapThemesDir().listFiles((dir, name) -> name.endsWith(".theme"));
     }
 
     public boolean getDrawFacingArrowsOnMiniMap() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -65,6 +65,8 @@ public final class Force implements Serializable {
     private Camouflage camouflage;
     private int ownerId = -1;
     private int parent = NO_FORCE;
+    /** Where this force sits among its owner's top-level forces; unused while it is a sub force. */
+    private int position;
     private ArrayList<Integer> entities = new ArrayList<>();
     private ArrayList<Integer> subForces = new ArrayList<>();
 
@@ -167,6 +169,18 @@ public final class Force implements Serializable {
 
     public boolean isTopLevel() {
         return parent == NO_FORCE;
+    }
+
+    /**
+     * Returns where this force sits among its owner's top-level forces, lowest first. Forces with the same position,
+     * such as all forces of a save made before the order was stored, are listed by id.
+     */
+    public int getPosition() {
+        return position;
+    }
+
+    void setPosition(int newPosition) {
+        position = newPosition;
     }
 
     public int subForceCount() {
@@ -281,6 +295,7 @@ public final class Force implements Serializable {
         Force clone = new Force(name, id, camouflage.clone());
         clone.parent = parent;
         clone.ownerId = ownerId;
+        clone.position = position;
         clone.subForces = new ArrayList<>(subForces);
         clone.entities = new ArrayList<>(entities);
         return clone;
@@ -292,7 +307,7 @@ public final class Force implements Serializable {
         List<String> sf = subForces.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
         return name + ": [" + id + "]; Parent: " + parent + "; Entities: "
               + String.join(",", en) + "; Sub forces: " + String.join(",", sf)
-              + "; Owner: " + ownerId;
+              + "; Owner: " + ownerId + "; Position: " + position;
     }
 
     /** Moves up the given entityId by one position if possible. Returns true when an actual change occurred. */

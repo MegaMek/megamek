@@ -90,6 +90,7 @@ import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.OrderEligibility;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -219,9 +220,13 @@ public class BotCommandsPanel extends JPanel {
             // with one bot and nothing to choose between, the editor opens at once; its Choose units... narrows it
             List<Player> botPlayers = new ArrayList<>();
             for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-                if (hasOnBoardUnits(botPlayer)) {
+                if (takesUnitOrders(botPlayer)) {
                     botPlayers.add(botPlayer);
                 }
+            }
+            if (botPlayers.isEmpty()) {
+                showCasparOnlyNotice();
+                return;
             }
             if ((clientGUI != null) && (botPlayers.size() == 1)) {
                 List<BotOrdersMenuBuilder.OrderGroup> lances = ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst());
@@ -232,7 +237,13 @@ public class BotCommandsPanel extends JPanel {
             }
             showButtonPopup(moveOrder, this::createMoveOrderPopup);
         });
-        quickOrders.addActionListener(event -> showButtonPopup(quickOrders, this::createQuickOrdersPopup));
+        quickOrders.addActionListener(event -> {
+            if (!anyBotTakesUnitOrders()) {
+                showCasparOnlyNotice();
+                return;
+            }
+            showButtonPopup(quickOrders, this::createQuickOrdersPopup);
+        });
         targets.addActionListener(event -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
         setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
@@ -513,7 +524,7 @@ public class BotCommandsPanel extends JPanel {
                 groupItem.addActionListener(event -> openMoveOrder(botPlayer, group));
                 botMenu.add(groupItem);
             }
-        }, MOVE_ORDER_SCROLL_THRESHOLD, this::hasOnBoardUnits);
+        }, MOVE_ORDER_SCROLL_THRESHOLD, this::takesUnitOrders);
     }
 
     /**
@@ -521,7 +532,7 @@ public class BotCommandsPanel extends JPanel {
      */
     private JPopupMenu createQuickOrdersPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populateQuick(botMenu, botPlayer),
-              this::hasOnBoardUnits);
+              this::takesUnitOrders);
     }
 
     /**
@@ -578,6 +589,40 @@ public class BotCommandsPanel extends JPanel {
             }
         }
         return false;
+    }
+
+    /**
+     * @param botPlayer The bot to inspect
+     *
+     * @return {@code true} if the bot is a CASPAR bot, the only kind that follows unit orders, with at least one
+     *       on-board unit to give them to
+     */
+    private boolean takesUnitOrders(Player botPlayer) {
+        return (client.getGame() instanceof Game game) && OrderEligibility.takesUnitOrders(game, botPlayer)
+              && hasOnBoardUnits(botPlayer);
+    }
+
+    /**
+     * @return {@code true} if any bot under the player's command takes unit orders
+     */
+    private boolean anyBotTakesUnitOrders() {
+        for (Player botPlayer : getBotPlayersUnderYourCommand()) {
+            if (takesUnitOrders(botPlayer)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Tells the player that unit orders are for CASPAR bots only, when none of the bots they command is one.
+     */
+    private void showCasparOnlyNotice() {
+        String notice = Messages.getString("BotCommandPanel.Orders.casparOnly");
+        LOGGER.info("[BotOrders] {}", notice);
+        if (clientGUI != null) {
+            clientGUI.addToast(ToastLevel.INFO, notice);
+        }
     }
 
     /**

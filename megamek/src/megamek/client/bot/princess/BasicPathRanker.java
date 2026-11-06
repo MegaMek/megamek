@@ -1667,13 +1667,17 @@ public class BasicPathRanker extends PathRanker {
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition,
           boolean squareUpOnClosestEnemy) {
-        // A player's ordered facing replaces the bot's own point to face while the fire it expects - the closest
-        // enemy when squaring up, else the enemy median - still falls in the ordered facing's front arc.
-        Coords expectedThreat = (squareUpOnClosestEnemy || (enemyMedianPosition == null))
-              ? closestEnemyPosition : enemyMedianPosition;
-        int orderedFacing = getOwner().getUnitOrdersFollower().facingThatStandsFor(movingUnit,
-              getOwner().getUnitOrdersFollower().orderedFacing(movingUnit, path.getFinalCoords()),
-              path.getFinalCoords(), expectedThreat);
+        // For a bot that follows unit orders, a player's ordered facing replaces the bot's own point to face while the
+        // fire it expects - the closest enemy when squaring up, else the enemy median - still falls in the ordered
+        // facing's front arc.
+        int orderedFacing = UnitOrders.FACING_AUTO;
+        if (getOwner().followsUnitOrders()) {
+            Coords expectedThreat = (squareUpOnClosestEnemy || (enemyMedianPosition == null))
+                  ? closestEnemyPosition : enemyMedianPosition;
+            orderedFacing = getOwner().getUnitOrdersFollower().facingThatStandsFor(movingUnit,
+                  getOwner().getUnitOrdersFollower().orderedFacing(movingUnit, path.getFinalCoords()),
+                  path.getFinalCoords(), expectedThreat);
+        }
         if (orderedFacing != UnitOrders.FACING_AUTO) {
             // a unit stopping may leave the last sides to a torso twist or turret, free in the fire phase; one on its
             // way faces the route with its legs
@@ -1721,24 +1725,28 @@ public class BasicPathRanker extends PathRanker {
         if (behaviorType == BehaviorType.ForcedWithdrawal || behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToDestination(movingUnit, path.getFinalCoords(), path.getFinalBoardId(),
                   game);
-            // in a town, a move ending in cover wins a close call over one ending in the open
-            int coverDiscount = getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
-                  path.getFinalCoords());
-            if (newDistanceToHome > coverDiscount) {
-                newDistanceToHome -= coverDiscount;
-            }
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod;
+            // Princess's original waypoints add nothing to the distance; a bot that follows unit orders weighs these
+            double routeWeight = 1.0;
+            int backtrackSteps = 0;
+            if (getOwner().followsUnitOrders()) {
+                // in a town, a move ending in cover wins a close call over one ending in the open
+                int coverDiscount = getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
+                      path.getFinalCoords());
+                if (newDistanceToHome > coverDiscount) {
+                    newDistanceToHome -= coverDiscount;
+                }
 
-            // an Imperative route pulls harder than anything else the unit weighs (issue #7615)
-            double routeWeight = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner())
-                  .isPresent() ? getOwner().getUnitOrdersFollower().routeWeight(movingUnit) : 1.0;
-
-            // a unit on a route gets its movement bonus going forward, not in a loop that doubles back past it
-            Optional<Coords> routeTarget = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit,
-                  getOwner());
-            int backtrackSteps = routeTarget.map(target -> UnitOrdersFollower.backtrackSteps(path, target))
-                  .orElse(0);
+                Optional<Coords> routeTarget = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit,
+                      getOwner());
+                if (routeTarget.isPresent()) {
+                    // an Imperative route pulls harder than anything else the unit weighs (issue #7615)
+                    routeWeight = getOwner().getUnitOrdersFollower().routeWeight(movingUnit);
+                    // a unit on a route gets its movement bonus going forward, not in a loop that doubles back past it
+                    backtrackSteps = UnitOrdersFollower.backtrackSteps(path, routeTarget.get());
+                }
+            }
 
             // normally, we favor being closer to the edge we're trying to get to
             if (newDistanceToHome > 0) {
@@ -1968,7 +1976,9 @@ public class BasicPathRanker extends PathRanker {
 
         scores.put("ignoreDamageOutput", getOwner().getBehaviorSettings().isIgnoreDamageOutput() ? 1.0 : 0.0);
         // a unit on a player's route weighs the damage by the route's priority: Normal takes cover, Imperative pushes on
-        expectedDamageTaken *= getOwner().getUnitOrdersFollower().damageWeight(movingUnit);
+        if (getOwner().followsUnitOrders()) {
+            expectedDamageTaken *= getOwner().getUnitOrdersFollower().damageWeight(movingUnit);
+        }
         scores.put("damageExpectedTotal", expectedDamageTaken);
         scores.put("myAttackFiring", damageEstimate.firingDamage);
         scores.put("myAttackPhysical", damageEstimate.physicalDamage);
@@ -2114,9 +2124,11 @@ public class BasicPathRanker extends PathRanker {
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
-        // in a town: the movement points a move ending in cover counted as saving (0 elsewhere)
-        scores.put("townCover", (double) getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
-              pathCopy.getFinalCoords()));
+        // in a town: the movement points a move ending in cover counted as saving (0 elsewhere, and always 0 for
+        // Princess's original waypoints)
+        scores.put("townCover", getOwner().followsUnitOrders()
+              ? (double) getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit, pathCopy.getFinalCoords())
+              : 0.0);
 
         var formula = new StringBuilder(256);
         var crowdingToleranceFormula = new StringBuilder(64);

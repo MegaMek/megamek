@@ -89,8 +89,25 @@ class PriorityTargetUtilityTest {
     }
 
     @Test
+    void princessReadsEveryPriorityFromTheSettingsEvenForAnEnemyConvoy() {
+        // Princess keeps her original approach and knows nothing of convoys
+        Princess princess = mock(Princess.class);
+        doCallRealMethod().when(princess).getTargetPriority(anyInt());
+        UnitOrdersFollower follower = mock(UnitOrdersFollower.class);
+        when(follower.enemyConvoyUnitIds()).thenReturn(Set.of(SHERPA));
+        when(princess.getUnitOrdersFollower()).thenReturn(follower);
+        BehaviorSettings settings = new BehaviorSettings();
+        settings.setPriorityUnit(SHERPA, 5);
+        when(princess.getBehaviorSettings()).thenReturn(settings);
+
+        assertEquals(5, princess.getTargetPriority(SHERPA));
+    }
+
+    @Test
     void enemyConvoyUnitsArePriorityOneWhateverTheSettingsSay() {
         Princess princess = mock(Princess.class);
+        // convoys are part of unit orders, which only a bot that follows them (CASPAR) knows about
+        when(princess.followsUnitOrders()).thenReturn(true);
         doCallRealMethod().when(princess).getTargetPriority(anyInt());
         UnitOrdersFollower follower = mock(UnitOrdersFollower.class);
         when(follower.enemyConvoyUnitIds()).thenReturn(Set.of(SHERPA));

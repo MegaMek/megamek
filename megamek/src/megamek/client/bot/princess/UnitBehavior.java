@@ -269,10 +269,14 @@ public class UnitBehavior {
         return Optional.ofNullable(waypoints.peek());
     }
 
-    public boolean isDestinationValidForEntity(Entity entity, Coords destination, Princess owner) {
-        var value = owner.getClusterTracker().getDestinationCoords(entity, destination, true).isEmpty();
-        LOGGER.debug("Checking if destination is valid for entity {}: {} -> {}", entity.getId(), destination, value);
-        return value;
+    /**
+     * @return {@code true} when the unit cannot reach the destination, so a waypoint there should be dropped
+     */
+    public boolean isDestinationUnreachable(Entity entity, Coords destination, Princess owner) {
+        boolean isUnreachable = owner.getClusterTracker().getDestinationCoords(entity, destination, true).isEmpty();
+        LOGGER.debug("Checking if destination is unreachable for entity {}: {} -> {}", entity.getId(), destination,
+              isUnreachable);
+        return isUnreachable;
     }
 
     /**
@@ -283,8 +287,8 @@ public class UnitBehavior {
     public int addEntityWaypoint(Entity entity, List<Coords> waypoints, Princess owner) {
         var coords = new ArrayList<Coords>();
         for (var waypoint : waypoints) {
-            if (isDestinationValidForEntity(entity, waypoint, owner)) {
-                // just discard any invalid waypoint
+            if (isDestinationUnreachable(entity, waypoint, owner)) {
+                // just discard any unreachable waypoint
                 LOGGER.info("[BotOrders] {}: waypoint {} cannot be reached; not added", entity.getDisplayName(),
                       waypoint.toFriendlyString());
                 continue;
@@ -339,8 +343,8 @@ public class UnitBehavior {
     public int setEntityWaypoints(Entity entity, List<Coords> waypoints, Princess owner) {
         var deque = new ArrayDeque<Coords>();
         for (var waypoint : waypoints) {
-            if (isDestinationValidForEntity(entity, waypoint, owner)) {
-                // just discard any invalid waypoint
+            if (isDestinationUnreachable(entity, waypoint, owner)) {
+                // just discard any unreachable waypoint
                 LOGGER.info("[BotOrders] {}: waypoint {} cannot be reached; not set", entity.getDisplayName(),
                       waypoint.toFriendlyString());
                 continue;

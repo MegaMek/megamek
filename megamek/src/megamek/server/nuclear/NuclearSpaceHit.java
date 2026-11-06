@@ -101,6 +101,7 @@ public class NuclearSpaceHit {
         boolean structureDamaged = false;
         boolean avoidedWithEdge = false;
         for (NuclearWeaponType warhead : warheads) {
+            reportWarheadHit(aero, warhead, vDesc);
             if (isGone(aero)) {
                 LOGGER.info("[Nukes] {} is already destroyed: the {} warhead rolls no special critical hit",
                       aero.getDisplayName(), warhead.getDisplayName());
@@ -174,10 +175,11 @@ public class NuclearSpaceHit {
         AVOIDED_WITH_EDGE
     }
 
-    private RollOutcome rollSpecialCritical(Aero aero, HitData hit, NuclearWeaponType warhead, Vector<Report> vDesc) {
-        int criticalTarget = warhead.getCriticalHitTarget();
-        int criticalDamage = specialCriticalDamage(warhead);
-
+    /**
+     * Names the nuclear warhead that hit, even when the ordinary damage already destroyed the unit, so the game log
+     * always shows that the attack was nuclear.
+     */
+    private static void reportWarheadHit(Aero aero, NuclearWeaponType warhead, Vector<Report> vDesc) {
         Report.addNewline(vDesc);
         Report report = new Report(6564);
         report.subject = aero.getId();
@@ -185,9 +187,14 @@ public class NuclearSpaceHit {
         report.addDesc(aero);
         report.add(warhead.getDisplayName());
         vDesc.add(report);
+    }
+
+    private RollOutcome rollSpecialCritical(Aero aero, HitData hit, NuclearWeaponType warhead, Vector<Report> vDesc) {
+        int criticalTarget = warhead.getCriticalHitTarget();
+        int criticalDamage = specialCriticalDamage(warhead);
 
         Roll diceRoll = Compute.rollD6(2);
-        report = new Report(9145);
+        Report report = new Report(9145);
         report.subject = aero.getId();
         report.indent(3);
         report.add(criticalTarget);

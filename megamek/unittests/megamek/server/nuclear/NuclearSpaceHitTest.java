@@ -226,7 +226,20 @@ class NuclearSpaceHitTest {
               nuclearHit(NuclearWeaponType.SANTA_ANA, NuclearWeaponType.SANTA_ANA), 12);
 
         assertEquals(1, countReports(reports, 9145), "the second missile finds nothing left to hit");
+        assertEquals(2, countReports(reports, 6564), "the game log still names both warheads");
         assertEquals(1_000, union.damageThisPhase);
+    }
+
+    @Test
+    void warheadIsNamedWhenTheOrdinaryDamageAlreadyDestroyedTheShip() throws Exception {
+        Aero union = placeShip("Union (3055).blk");
+        union.setDoomed(true);
+
+        Vector<Report> reports = resolveWithRoll(union, nuclearHit(NuclearWeaponType.SANTA_ANA), 12);
+
+        assertEquals(1, countReports(reports, 6564), "the player still sees the attack was nuclear");
+        assertEquals(0, countReports(reports, 9145), "no special critical hit on a destroyed ship");
+        assertEquals(0, nuclearControlRolls(union));
     }
 
     @Test

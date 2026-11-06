@@ -829,7 +829,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         }
                     }
                 } else {
+                    // A single non-cluster weapon or a weapon bay applies its Attack Value in one block. The damage
+                    // per hit from calcDamagePerHit() is ground damage, and a bay's is the DAMAGE_VARIABLE marker.
                     bSalvo = false;
+                    nDamPerHit = attackValue;
                     nCluster = 1;
                 }
             }
@@ -1491,6 +1494,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 av = weaponType.getRoundExtAV();
             }
         }
+        av += getAttackValueBonus();
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -1500,6 +1504,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
         av = (int) Math.floor(getBracketingMultiplier() * av);
 
         return av;
+    }
+
+    /**
+     * A flat bonus added to this weapon's Attack Value before direct and glancing blows are applied. Handlers whose
+     * equipment raises the damage of a shot override this so the bonus also counts when the Attack Value is used.
+     *
+     * @return the bonus to the Attack Value, 0 by default
+     */
+    protected int getAttackValueBonus() {
+        return 0;
     }
 
     /**

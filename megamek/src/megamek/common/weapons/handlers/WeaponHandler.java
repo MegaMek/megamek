@@ -1510,7 +1510,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * A flat bonus added to this weapon's Attack Value before direct and glancing blows are applied. Handlers whose
      * equipment raises the damage of a shot override this so the bonus also counts when the Attack Value is used.
      *
-     * @return the bonus to the Attack Value, 0 by default
+     * @return the bonus to the Attack Value, {@code 0} by default
      */
     protected int getAttackValueBonus() {
         return 0;

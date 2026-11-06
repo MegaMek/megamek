@@ -86,9 +86,10 @@ public class PPCHandler extends EnergyWeaponHandler {
     }
 
     /**
-     * A charged PPC Capacitor adds 5 to the PPC's damage, and so to its Attack Value when the Attack Value is used.
+     * A charged PPC Capacitor adds {@code 5} to the PPC's damage, and so to its Attack Value when the Attack Value is
+     * used.
      *
-     * @return 5 with a charged capacitor, otherwise 0
+     * @return {@code 5} with a charged capacitor, otherwise {@code 0}
      */
     @Override
     protected int getAttackValueBonus() {

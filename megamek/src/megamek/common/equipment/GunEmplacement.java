@@ -69,6 +69,9 @@ import megamek.logging.MMLogger;
  * A building with weapons fitted and, optionally, a turret. Taharqa: I am completely re-writing this entity to bring it
  * up to code with TacOps rules GunEmplacements will not simply be the weapon loadouts that can be attached to
  * buildings. They will not be targetable in game, but will be destroyed if their building hex is reduced.
+ *
+ * @deprecated being deprecated in favor of {@link BuildingEntity}, which follows the TacOps rules but also includes
+ * a deployable building.
  */
 public class GunEmplacement extends Tank {
     @Serial

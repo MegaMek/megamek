@@ -237,6 +237,14 @@ Also capture the same with 1 client to see the per-connection cost. Commit the t
 `docs/networking/BASELINE-0.51.01.4.md` with JVM and machine. This table is what Phases
 2–6 are measured against.
 
+### Status (2026-11-07)
+
+PR 0 (characterization tests + harness), PR 1 (`NetStats` + connection hooks) and PR 2 (server/client
+wiring, pump counters, `/netstats`, phase summary) are written and green on the networking
+selection (93 tests). Remaining: full upstream suite run, commits, and the baseline capture. First
+numbers from `/netstats`: a lobby join is 26 packets / ~25 KB on the wire; `SENDING_MAP_SETTINGS`
+is sent twice per join at 6.6 KB each (71 KB raw) — a Phase 4 lead.
+
 ### Deliverables and order
 
 1. Branch hygiene: confirm the CRLF diff, create `upstream` tracking branch, start

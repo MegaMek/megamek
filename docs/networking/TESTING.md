@@ -20,7 +20,8 @@ From the repository root:
 gradlew.bat :megamek:test -x checkstyleMain ^
   --tests "megamek.common.net.*" ^
   --tests "megamek.server.net.*" ^
-  --tests "megamek.server.ServerPacketHandlingTest"
+  --tests "megamek.server.ServerPacketHandlingTest" ^
+  --tests "megamek.server.commands.NetStatsCommandTest"
 ```
 
 (`./gradlew` on Linux/macOS, same arguments.) The first run compiles the whole project and takes
@@ -46,14 +47,16 @@ surprise.
 | `megamek.common.net.connections.ConnectionNetStatsTest` | The hooks: send records count/raw/wire bytes matching what hit the stream, receive records the same payload bytes, timers only when enabled, nothing recorded on a failed unmarshal. |
 | `megamek.server.net.ServerHandshakeTest` | Version check first, exact-equality version comparison, greeting / illegal-version + close, name correction (`Alice` → `Alice.2`), ghost-seat takeover, handshake order not enforced, watchdog re-polling, game packets on the `Packet Pump` thread, chat bypassing the pump, pause/unpause buffering, lobby disconnect dropping the player. |
 | `megamek.server.net.InProcessHarnessTest` | Real server + two real `HeadlessClient`s agree on the lobby, chat crosses the full path, a leaving client is removed everywhere. |
+| `megamek.server.commands.NetStatsCommandTest` | `/netstats` output modes, `reset` and `timing` behaviour and their restriction to non-observers. |
+| `megamek.server.net.ServerNetStatsTest` | Accepted connections report into the server's registry, the pump records dispatches and queue depth, `/netstats` answers over chat, the phase summary is safe to call. |
 | `megamek.server.net.ServerInstanceLeakTest` | **Known defect, pinned:** a disconnect processed by an older `Server` is broadcast through the static `Server.getServerInstance()` to the newest server's clients, which remove their own player #0. Flip this test when lifecycle hardening fixes it. |
 | `megamek.server.ServerPacketHandlingTest` (upstream) | A throwing handler cannot kill the pump. |
 
 ## Known defects the tests encode
 
 `ServerInstanceLeakTest` asserts today's wrong behaviour on purpose. Because of it, two servers must
-never overlap in one test JVM: `InProcessHarness.close()` waits until the server has processed every
-disconnect (its lounge player list is empty) before calling `Server.die()`. If a harness test ever
+never overlap in one test JVM: `InProcessHarness.close()` waits until every server-side `Connection N`
+thread has exited (each disconnect runs to completion on its own) before calling `Server.die()`. If a harness test ever
 reports a client losing its own player, check for a server from an earlier test that was still
 winding down.
 

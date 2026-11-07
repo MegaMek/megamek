@@ -69,6 +69,7 @@ import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
+import megamek.common.net.stats.NetStats;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
 import megamek.common.units.UnitNameTracker;
@@ -83,6 +84,9 @@ public abstract class AbstractClient implements IClient {
     // Server connection information
     protected AbstractConnection connection;
     protected Thread connThread;
+
+    /** This client's network counters, kept apart from the server's when both run in one JVM */
+    private final NetStats netStats = new NetStats();
 
     protected String name;
     protected boolean connected = false;
@@ -146,6 +150,7 @@ public abstract class AbstractClient implements IClient {
     @Override
     public boolean connect() {
         connection = ConnectionFactory.getInstance().createClientConnection(host, port, 1);
+        connection.setNetStats(netStats);
         boolean result = connection.open();
         if (result) {
             connection.addConnectionListener(connectionListener);
@@ -158,6 +163,11 @@ public abstract class AbstractClient implements IClient {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    /** @return this client's network counters */
+    public NetStats getNetStats() {
+        return netStats;
     }
 
     /** Shuts down threads and sockets */

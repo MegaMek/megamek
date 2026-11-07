@@ -53,6 +53,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -66,6 +67,7 @@ import megamek.Version;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Player;
+import megamek.common.enums.GamePhase;
 import megamek.common.board.Board;
 import megamek.common.commandLine.AbstractCommandLineParser.ParseException;
 import megamek.common.equipment.Minefield;
@@ -82,12 +84,14 @@ import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
+import megamek.common.net.stats.NetStats;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.Roll;
 import megamek.common.util.EmailService;
 import megamek.common.util.SerializationHelper;
 import megamek.logging.MMLogger;
+import megamek.server.commands.NetStatsCommand;
 import megamek.server.commands.ServerCommand;
 
 /**
@@ -114,10 +118,17 @@ public class Server implements Runnable {
     public static class ReceivedPacket {
         private int connectionId;
         private Packet packet;
+        /** When this packet was received, for the pump's time-in-queue figure; 0 unless NetStats timing is on */
+        private final long receivedNanos = NetStats.now();
 
         public ReceivedPacket(int cid, Packet p) {
             setPacket(p);
             setConnectionId(cid);
+        }
+
+        /** @return nanoseconds this packet has been waiting since it was received, or 0 when not timed */
+        public long nanosSinceReceived() {
+            return NetStats.elapsedSince(receivedNanos);
         }
 
         public int getConnectionId() {
@@ -153,8 +164,14 @@ public class Server implements Runnable {
             while (!shouldStop) {
                 while (!packetQueue.isEmpty()) {
                     ReceivedPacket rp = packetQueue.poll();
+                    pumpDepth.decrementAndGet();
+                    long waited = rp.nanosSinceReceived();
+                    long started = NetStats.now();
                     synchronized (serverLock) {
                         handle(rp.getConnectionId(), rp.getPacket());
+                    }
+                    if (rp.getPacket() != null) {
+                        netStats.recordHandled(rp.getPacket().command(), waited, NetStats.elapsedSince(started));
                     }
                 }
 
@@ -178,6 +195,16 @@ public class Server implements Runnable {
     private final Map<Integer, ConnectionHandler> connectionHandlers = new ConcurrentHashMap<>();
 
     private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
+
+    /** Packets waiting in {@link #packetQueue}; kept separately because the queue's size() walks the whole queue */
+    private final AtomicInteger pumpDepth = new AtomicInteger();
+
+    /** This server's network counters; every accepted connection reports into it. See {@code /netstats}. */
+    private final NetStats netStats = new NetStats();
+
+    /** The counters as they stood at the last phase change, so the phase summary can report the difference */
+    private NetStats.Snapshot lastPhaseSnapshot = netStats.snapshot();
+    private final Object phaseSnapshotLock = new Object();
 
     private final boolean dedicated;
 
@@ -290,6 +317,7 @@ public class Server implements Runnable {
                     isPaused = false;
                     synchronized (packetQueue) {
                         packetQueue.addAll(pausedWaitingList);
+                        netStats.recordQueued(pumpDepth.addAndGet(pausedWaitingList.size()));
                         packetQueue.notifyAll();
                     }
                     pausedWaitingList.clear();
@@ -300,6 +328,7 @@ public class Server implements Runnable {
                     } else {
                         synchronized (packetQueue) {
                             packetQueue.add(rp);
+                            netStats.recordQueued(pumpDepth.incrementAndGet());
                             packetQueue.notifyAll();
                         }
                     }
@@ -432,6 +461,8 @@ public class Server implements Runnable {
         for (ServerCommand command : gameManager.getCommandList(this)) {
             registerCommand(command);
         }
+        // Transport diagnostics belong to the server, not to any one game type
+        registerCommand(new NetStatsCommand(this));
 
         packetPump = new PacketPump();
         packetPumpThread = new Thread(packetPump, "Packet Pump");
@@ -1152,6 +1183,28 @@ public class Server implements Runnable {
         connections.forEach(process);
     }
 
+    /** @return this server's network counters */
+    public NetStats getNetStats() {
+        return netStats;
+    }
+
+    /**
+     * Logs one line of network figures for the phase that just ended and starts a new window. Called by the game
+     * manager on every phase change; runs on whichever thread changed the phase and touches no game state.
+     *
+     * @param endedPhase the phase that has just ended
+     * @param newPhase   the phase that is starting
+     */
+    public void logNetStatsSummary(GamePhase endedPhase, GamePhase newPhase) {
+        NetStats.Snapshot now = netStats.snapshot();
+        NetStats.Snapshot window;
+        synchronized (phaseSnapshotLock) {
+            window = now.since(lastPhaseSnapshot);
+            lastPhaseSnapshot = now;
+        }
+        LOGGER.info(window.summaryLine(endedPhase + " -> " + newPhase, 5));
+    }
+
     /**
      * Returns a connection, indexed by id
      */
@@ -1484,6 +1537,7 @@ public class Server implements Runnable {
                     LOGGER.info(message);
 
                     AbstractConnection c = ConnectionFactory.getInstance().createServerConnection(s, id);
+                    c.setNetStats(netStats);
                     c.addConnectionListener(connectionListener);
                     c.open();
                     connectionsPending.add(c);

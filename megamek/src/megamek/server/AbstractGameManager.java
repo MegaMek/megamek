@@ -120,8 +120,13 @@ public abstract class AbstractGameManager implements IGameManager {
         }
         scriptedEventHelper.processScriptedEvents(TriggerSituation.PHASE_END);
 
-        getGame().setLastPhase(getGame().getPhase());
+        GamePhase endedPhase = getGame().getPhase();
+        getGame().setLastPhase(endedPhase);
         getGame().setPhase(newPhase);
+        // Network figures for the phase that just ended; reached through the static instance like send() is
+        if (Server.getServerInstance() != null) {
+            Server.getServerInstance().logNetStatsSummary(endedPhase, newPhase);
+        }
 
         scriptedEventHelper.processScriptedEvents(TriggerSituation.PHASE_START);
         if (getGame().getPhase().isVictory()) {

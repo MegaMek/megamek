@@ -35,6 +35,7 @@ package megamek.server.net;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -45,6 +46,8 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.stats.NetStats;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -132,6 +135,27 @@ class InProcessHarnessTest {
                   + "; events: " + aliceSaw;
             assertNotNull(alice.getGame().getPlayer(alicesNumber), "Alice must still see herself. " + diagnostics);
             assertEquals(1, alice.getGame().getPlayersList().size(), diagnostics);
+        }
+    }
+
+    @Test
+    void serverAndClientsKeepSeparateCounters() throws Exception {
+        try (InProcessHarness harness = new InProcessHarness()) {
+            HeadlessClient alice = harness.connect("Alice");
+            HeadlessClient bob = harness.connect("Bob");
+            harness.awaitPlayerListsInSync();
+            NetStats serverStats = harness.server().getNetStats();
+
+            assertEquals(1, alice.getNetStats().sent(PacketCommand.CLIENT_NAME));
+            assertEquals(1, bob.getNetStats().sent(PacketCommand.CLIENT_NAME));
+            assertEquals(2, serverStats.received(PacketCommand.CLIENT_NAME));
+            assertTrue(alice.getNetStats().received(PacketCommand.PLAYER_ADD) >= 1, "Alice was told about Bob");
+            assertEquals(0, alice.getNetStats().sent(PacketCommand.PLAYER_ADD), "clients never send PLAYER_ADD");
+            assertTrue(serverStats.sent(PacketCommand.PLAYER_ADD) >= 2);
+            assertEquals(0, serverStats.received(PacketCommand.PLAYER_ADD));
+            assertNotSame(alice.getNetStats(), bob.getNetStats());
+            assertNotSame(alice.getNetStats(), serverStats);
+            assertNotSame(NetStats.defaultInstance(), serverStats);
         }
     }
 

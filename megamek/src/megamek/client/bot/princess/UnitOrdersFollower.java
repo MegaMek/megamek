@@ -830,9 +830,9 @@ public class UnitOrdersFollower {
         }
         legsPlannedTo.remove(entity.getId());
         if (known != null) {
-            // a changed order: the lance assembles again at its new first waypoint before it marches, unless that
-            // leg is set to take its shape on the way. Every lance starts out assembling, so the first order needs
-            // nothing here
+            // a changed order: the lance assembles again at its new first waypoint before it marches. Every lance
+            // starts out assembling, so the first order needs nothing here. A leg set to take its shape on the way
+            // ends the assembly at once: see FormationMarch.isAssembling
             march.assembleAgain(entity);
         }
         String firstNavPoint = navLabel(entity, route.get(0));

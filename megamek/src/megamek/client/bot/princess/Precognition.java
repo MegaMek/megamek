@@ -446,33 +446,51 @@ public class Precognition implements Runnable {
     @Override
     public void run() {
         try {
-            // todo There's probably a better way to handle this than a loop that only exits
-            // on an error.
             while (!getDone().get()) {
-                if (!getEventsToProcess().isEmpty()) {
-                    processGameEvents();
-                    ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
-                          getGame().getEntitiesVector());
-                } else if (!getDirtyUnits().isEmpty()) {
-                    Integer entityId = getDirtyUnits().pollFirst();
-                    if (entityId != null) {
-                        Entity entity = getGame().getEntity(entityId);
-                        if ((entity != null) && isEntityOnMap(entity)) {
-                            unPause();
-                            // Entity toString() is only evaluated when DEBUG is enabled; see ensureUpToDate.
-                            LOGGER.debug("run = recalculating paths for {}", entity);
-                            getPathEnumerator().recalculateMovesFor(entity);
-                            LOGGER.debug("run = finished recalculating paths for {}", entity);
-                        }
-
-                    }
-                } else if (getWaitWhenDone().get()) {
-                    waitForUnpause(); // paused for a reason
-                } else {
-                    waitForUnpause(); // idling because there's nothing to do
+                try {
+                    runOnePass();
+                } catch (Exception exception) {
+                    // One failed pass must not end the thread. A movement turn waits for this thread to pause, so a
+                    // thread that died here froze the game with nothing in the log (issue #9476). The event or unit
+                    // that failed has already been taken off its queue, so the next pass moves on.
+                    LOGGER.error(exception, "Precognition pass failed for {}; carrying on", getOwner().getName());
                 }
             }
-        } catch (Exception ignored) {
+        } finally {
+            if (!getDone().get()) {
+                // Only an Error gets here. Mark the thread done so a movement turn stops waiting for it.
+                LOGGER.error("Precognition for " + getOwner().getName()
+                      + " stopped unexpectedly; movement turns will no longer wait for it");
+                getDone().set(true);
+            }
+        }
+    }
+
+    private void runOnePass() {
+        if (!getEventsToProcess().isEmpty()) {
+            processGameEvents();
+            // The packet handler changes the entity list under GAME_LOCK; reading it without the lock can throw
+            GAME_LOCK.lock();
+            try {
+                ecmInfo = ComputeECM.computeAllEntitiesECMInfo(getGame().getEntitiesVector());
+            } finally {
+                GAME_LOCK.unlock();
+            }
+        } else if (!getDirtyUnits().isEmpty()) {
+            Integer entityId = getDirtyUnits().pollFirst();
+            if (entityId != null) {
+                Entity entity = getGame().getEntity(entityId);
+                if ((entity != null) && isEntityOnMap(entity)) {
+                    unPause();
+                    // Entity toString() is only evaluated when DEBUG is enabled; see ensureUpToDate.
+                    LOGGER.debug("run = recalculating paths for {}", entity);
+                    getPathEnumerator().recalculateMovesFor(entity);
+                    LOGGER.debug("run = finished recalculating paths for {}", entity);
+                }
+            }
+        } else {
+            // Either paused for a move, or idle with nothing to do
+            waitForUnpause();
         }
     }
 

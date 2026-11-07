@@ -65,6 +65,7 @@ import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.dialogs.BotCommands.HexTargetPicker;
 import megamek.client.ui.util.FlatLafStyleBuilder;
 import megamek.client.ui.util.UIUtil;
@@ -98,6 +99,7 @@ public class NuclearStrikeDialog extends JDialog {
 
     private final ClientGUI clientGUI;
     private final JTextField hexField = new JTextField(6);
+    private final JComboBox<BoardChoice> boardChoice = new JComboBox<>();
     private final JComboBox<WarheadChoice> warheadChoice = new JComboBox<>();
     private final JComboBox<BurstChoice> burstChoice = new JComboBox<>();
     private final JComboBox<PlayerChoice> playerChoice = new JComboBox<>();
@@ -122,10 +124,12 @@ public class NuclearStrikeDialog extends JDialog {
     /**
      * @param clientGUI  the client GUI the dialog belongs to
      * @param groundZero the hex that was right-clicked, or {@code null} when opened from the Commands button
+     * @param boardId    the board that was right-clicked, or {@link Board#BOARD_NONE} for the board on screen
      */
-    public NuclearStrikeDialog(ClientGUI clientGUI, @Nullable Coords groundZero) {
+    public NuclearStrikeDialog(ClientGUI clientGUI, @Nullable Coords groundZero, int boardId) {
         super(clientGUI.getFrame(), Messages.getString("NuclearStrike.dialog.title"), false);
         this.clientGUI = clientGUI;
+        fillBoardChoice(boardId);
         earliestRound = ScheduledNuke.earliestDetonationRound(clientGUI.getClient().getGame().getRoundCount(),
               clientGUI.getClient().getGame().getPhase());
         roundSpinner = new JSpinner(new SpinnerNumberModel(earliestRound, earliestRound, Integer.MAX_VALUE, 1));
@@ -189,9 +193,45 @@ public class NuclearStrikeDialog extends JDialog {
         return constraints;
     }
 
+    /**
+     * Lists the boards a strike can land on, ground maps and low-altitude maps, and selects the one asked for. A board
+     * that is not in the list, such as a space map, leaves the first listed board selected.
+     *
+     * @param requestedBoardId the board to select, or {@link Board#BOARD_NONE} for the board on screen
+     */
+    private void fillBoardChoice(int requestedBoardId) {
+        int wantedBoardId = requestedBoardId;
+        if (wantedBoardId == Board.BOARD_NONE) {
+            wantedBoardId = clientGUI.getCurrentBoardView().map(IBoardView::getBoardId).orElse(0);
+        }
+        for (Board board : clientGUI.getClient().getGame().getBoards().values()) {
+            if (!(board.isGround() || board.isLowAltitude())) {
+                LOGGER.info("[Nukes] Strike dialog leaves out board {} ({} map): no strike can land there",
+                      board.getBoardId(), board.getBoardType());
+                continue;
+            }
+            BoardChoice choice = new BoardChoice(board.getBoardId(), Messages.getString(
+                  board.isGround() ? "NuclearStrike.dialog.boardGround" : "NuclearStrike.dialog.boardSky",
+                  board.getBoardId(), board.getBoardName()));
+            boardChoice.addItem(choice);
+            if (board.getBoardId() == wantedBoardId) {
+                boardChoice.setSelectedItem(choice);
+            }
+        }
+        LOGGER.info("[Nukes] Strike dialog opened on board {} (asked for {})", selectedBoardId(), requestedBoardId);
+        boardChoice.addActionListener(event -> refreshFigures());
+    }
+
     private JPanel groundZeroSection() {
         JPanel panel = section("NuclearStrike.dialog.groundZero");
-        panel.add(new JLabel(Messages.getString("NuclearStrike.dialog.hex")), cell(0, 0));
+        panel.add(new JLabel(Messages.getString("NuclearStrike.dialog.board")), cell(0, 0));
+        GridBagConstraints boardCell = cell(1, 0);
+        boardCell.gridwidth = 2;
+        boardCell.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(boardChoice, boardCell);
+        boardChoice.setEnabled(boardChoice.getItemCount() > 1);
+
+        panel.add(new JLabel(Messages.getString("NuclearStrike.dialog.hex")), cell(0, 1));
         new FlatLafStyleBuilder().font(UIManager.getFont("monospaced.font")).apply(hexField);
         hexField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -209,16 +249,16 @@ public class NuclearStrikeDialog extends JDialog {
                 refreshFigures();
             }
         });
-        panel.add(hexField, cell(1, 0));
+        panel.add(hexField, cell(1, 1));
         JButton pickButton = new JButton(Messages.getString("NuclearStrike.dialog.pick"));
         pickButton.addActionListener(event -> pickOnMap());
-        GridBagConstraints pickCell = cell(2, 0);
+        GridBagConstraints pickCell = cell(2, 1);
         pickCell.weightx = 1;
         panel.add(pickButton, pickCell);
 
-        panel.add(new JLabel(Messages.getString("NuclearStrike.dialog.round")), cell(0, 1));
+        panel.add(new JLabel(Messages.getString("NuclearStrike.dialog.round")), cell(0, 2));
         roundSpinner.setPreferredSize(UIUtil.scaleForGUI(80, 24));
-        panel.add(roundSpinner, cell(1, 1));
+        panel.add(roundSpinner, cell(1, 2));
         String earliestHelp = Messages.getString("NuclearStrike.dialog.roundHelp", earliestRound);
         roundSpinner.setToolTipText(earliestHelp);
         ((JSpinner.DefaultEditor) roundSpinner.getEditor()).getTextField().setToolTipText(earliestHelp);
@@ -227,7 +267,7 @@ public class NuclearStrikeDialog extends JDialog {
         int currentRound = clientGUI.getClient().getGame().getRoundCount();
         roundSpinner.addChangeListener(event -> countdownLabel.setText(roundsAhead(currentRound)));
         countdownLabel.setText(roundsAhead(currentRound));
-        panel.add(countdownLabel, cell(2, 1));
+        panel.add(countdownLabel, cell(2, 2));
         return panel;
     }
 
@@ -375,7 +415,13 @@ public class NuclearStrikeDialog extends JDialog {
     }
 
     private Board board() {
-        return clientGUI.getClient().getGame().getBoard(0);
+        return clientGUI.getClient().getGame().getBoard(selectedBoardId());
+    }
+
+    /** @return the board chosen in the list, or board 0 when the game has no ground or low-altitude map */
+    private int selectedBoardId() {
+        BoardChoice choice = (BoardChoice) boardChoice.getSelectedItem();
+        return (choice == null) ? 0 : choice.boardId();
     }
 
     private WarheadChoice selectedWarhead() {
@@ -493,14 +539,12 @@ public class NuclearStrikeDialog extends JDialog {
 
     /** Hides the dialog while the Game Master clicks Ground Zero on the board, then brings it back. */
     private void pickOnMap() {
-        BoardView boardView = clientGUI.getCurrentBoardView()
-              .filter(BoardView.class::isInstance)
-              .map(BoardView.class::cast)
-              .orElse(null);
+        BoardView boardView = clientGUI.getBoardView(selectedBoardId());
         if (boardView == null) {
-            LOGGER.info("[Nukes] Pick on map unavailable: no board view is showing");
+            LOGGER.info("[Nukes] Pick on map unavailable: no board view shows board {}", selectedBoardId());
             return;
         }
+        clientGUI.showBoardView(selectedBoardId());
         setVisible(false);
         HexTargetPicker picker = new HexTargetPicker(clientGUI, boardView,
               Messages.getString("NuclearStrike.dialog.pickPrompt"), true, 1, hexNumbers -> {
@@ -535,6 +579,7 @@ public class NuclearStrikeDialog extends JDialog {
             command.append(" burst=").append(NuclearBurstMode.AIR.name());
         }
         command.append(" round=").append(roundSpinner.getValue());
+        command.append(" board=").append(selectedBoardId());
         PlayerChoice firingPlayer = (PlayerChoice) playerChoice.getSelectedItem();
         if ((firingPlayer != null) && (firingPlayer.playerId() != Player.PLAYER_NONE)) {
             command.append(" playerID=").append(firingPlayer.playerId());
@@ -552,6 +597,14 @@ public class NuclearStrikeDialog extends JDialog {
                   ? Messages.getString("NuclearStrike.dialog.custom")
                   : Messages.getString("NuclearStrike.dialog.weaponEntry", weaponType.getDisplayName(),
                   weaponType.getDelivery());
+        }
+    }
+
+    /** A board in the list, shown as "Board 1: Sky (low altitude)". */
+    private record BoardChoice(int boardId, String label) {
+        @Override
+        public String toString() {
+            return label;
         }
     }
 

@@ -41,6 +41,7 @@ import java.util.Optional;
 
 import megamek.client.ui.Messages;
 import megamek.common.Player;
+import megamek.common.board.Board;
 import megamek.common.event.GameToastEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
@@ -143,6 +144,37 @@ public abstract class ClientServerCommand extends ServerCommand {
     /** The board a nuclear strike lands on when the command names none: the first board, as it always was. */
     protected static final int DEFAULT_BOARD_ID = 0;
 
+    /** Returned by {@link #strikeBoardId} when the board named cannot take a nuclear strike. */
+    protected static final int BOARD_REFUSED = Board.BOARD_NONE;
+
+    /**
+     * The board a nuclear strike lands on: the one named by the command's {@code board} argument, or else the first
+     * board. Only a ground map or a low-altitude map can take one; any other board is refused, with a message to the
+     * sender. Example: {@code /ns x=10 y=12 type=ALAMO board=1} lands on board 1 if that is a ground or sky map.
+     *
+     * @param connId the connection that sent the command
+     * @param args   the command's arguments
+     *
+     * @return the board id, or {@link #BOARD_REFUSED}
+     */
+    @SuppressWarnings("unchecked")
+    protected int strikeBoardId(int connId, Arguments args) {
+        Optional<Integer> requestedBoard = args.hasArg("board")
+              ? (Optional<Integer>) args.get("board").getValue()
+              : Optional.empty();
+        int boardId = requestedBoard.orElse(DEFAULT_BOARD_ID);
+        Board board = gameManager.getGame().getBoard(boardId);
+        if ((board == null) || !(board.isGround() || board.isLowAltitude())) {
+            logger.info("[Nukes] /{} from connection {} refused: board {} is {}", getName(), connId, boardId,
+                  (board == null) ? "not in the game" : "a " + board.getBoardType() + " map");
+            server.sendServerChat(connId, Messages.getString("NuclearStrike.cmd.badBoard", boardId));
+            return BOARD_REFUSED;
+        }
+        logger.info("[Nukes] /{} from connection {} aims at board {} ({}, {} map){}", getName(), connId, boardId,
+              board.getBoardName(), board.getBoardType(), requestedBoard.isEmpty() ? ", the default" : "");
+        return boardId;
+    }
+
     /** Returned by {@link #detonationRound} when the round asked for has already passed its weapons phase. */
     protected static final int ROUND_REFUSED = -1;
 
@@ -219,6 +251,17 @@ public abstract class ClientServerCommand extends ServerCommand {
     }
 
     protected boolean isOutsideOfBoard(int connId, Arguments args) {
+        return isOutsideOfBoard(connId, args, gameManager.getGame().getBoard().getBoardId());
+    }
+
+    /**
+     * @param connId  the connection that sent the command
+     * @param args    the command's arguments, holding the hex as {@code x} and {@code y}
+     * @param boardId the board the hex must be on
+     *
+     * @return {@code true}, with a message to the sender, if the hex is not on that board
+     */
+    protected boolean isOutsideOfBoard(int connId, Arguments args, int boardId) {
         if (!(args.hasArg("x") && args.hasArg("y"))) {
             // There is nothing to check, s out of excess of caution we return false.
             return true;
@@ -226,7 +269,7 @@ public abstract class ClientServerCommand extends ServerCommand {
 
         // is the hex on the board?
         if (!gameManager.getGame()
-              .getBoard()
+              .getBoard(boardId)
               .contains(((int) args.get("x").getValue()) - 1, ((int) args.get("y").getValue()) - 1)) {
             logger.info("[Commands] /{} from connection {} refused: hex {}, {} is not on the board", getName(), connId,
                   args.get("x").getValue(), args.get("y").getValue());

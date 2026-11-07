@@ -163,6 +163,63 @@ class NuclearStrikeCommandTest {
     }
 
     @Test
+    void nuclearStrikeLandsOnTheFirstBoardByDefault() {
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=10", "y=12", "type=ALAMO" });
+
+        assertEquals(0, scheduledNuke().boardId());
+    }
+
+    @Test
+    void nuclearStrikeLandsOnTheNamedSkyBoard() {
+        int skyBoardId = 1;
+        Board skyBoard = Board.getSkyBoard(20, 20);
+        skyBoard.setBoardId(skyBoardId);
+        game.setBoard(skyBoardId, skyBoard);
+
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=18", "y=19", "type=ALAMO", "burst=AIR", "board=1" });
+
+        ScheduledNuke nuke = scheduledNuke();
+        assertEquals(skyBoardId, nuke.boardId());
+        assertEquals(new Coords(17, 18), nuke.groundZero(), "hex 1819 is on the 20 x 20 sky map, not the 16 x 17 one");
+    }
+
+    @Test
+    void customNuclearStrikeLandsOnTheNamedBoard() {
+        int secondBoardId = 1;
+        Board secondBoard = new Board(16, 17);
+        secondBoard.setBoardId(secondBoardId);
+        game.setBoard(secondBoardId, secondBoard);
+
+        new NuclearStrikeCustomCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "nsc", "x=10", "y=12", "dmg=1000", "deg=23", "radius=85", "depth=1", "board=1" });
+
+        assertEquals(secondBoardId, scheduledNuke().boardId());
+    }
+
+    @Test
+    void nuclearStrikeOnABoardNotInTheGameIsRefused() {
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=10", "y=12", "type=ALAMO", "board=3" });
+
+        Mockito.verify(gameManager, Mockito.never()).addScheduledNuke(any(ScheduledNuke.class));
+    }
+
+    @Test
+    void nuclearStrikeOnASpaceBoardIsRefused() {
+        int spaceBoardId = 1;
+        Board spaceBoard = Board.getSpaceBoard(20, 20);
+        spaceBoard.setBoardId(spaceBoardId);
+        game.setBoard(spaceBoardId, spaceBoard);
+
+        new NuclearStrikeCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
+              new String[] { "ns", "x=10", "y=12", "type=ALAMO", "board=1" });
+
+        Mockito.verify(gameManager, Mockito.never()).addScheduledNuke(any(ScheduledNuke.class));
+    }
+
+    @Test
     void customNuclearStrikeCanAirBurst() {
         new NuclearStrikeCustomCommand(server, gameManager).run(GAME_MASTER_CONNECTION,
               new String[] { "nsc", "x=10", "y=12", "dmg=1000", "deg=18", "radius=114", "depth=1", "burst=AIR" });

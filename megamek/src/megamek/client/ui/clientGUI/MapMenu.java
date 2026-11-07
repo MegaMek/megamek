@@ -695,7 +695,8 @@ public class MapMenu extends JPopupMenu {
             // owner change. So the map menu only opens that dialog per unit, and otherwise offers the hex and board
             // tools; the old per-unit destroy, rescue and traitor submenus have moved into the dialog.
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
-            JMenu specialCommandsMenu = GameMasterCommandMenu.createSpecialCommandsMenu(gui, coords);
+            JMenu specialCommandsMenu = GameMasterCommandMenu.createSpecialCommandsMenu(gui, coords,
+                  boardLocation.boardId());
 
             // Ignoring targetability is deliberate: a gamemaster edits units rather than shooting at them, and an
             // Advanced Building reports itself untargetable because it is shot at as a hex rather than as a unit.

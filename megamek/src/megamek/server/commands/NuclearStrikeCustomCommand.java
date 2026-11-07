@@ -84,7 +84,9 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
               new EnumArgument<>("burst",
                     Messages.getString("NuclearStrike.cmd.burst"),
                     NuclearBurstMode.class,
-                    NuclearBurstMode.GROUND)
+                    NuclearBurstMode.GROUND),
+              new OptionalIntegerArgument("board", Messages.getString("NuclearStrike.cmd.board"), 0,
+                    Integer.MAX_VALUE)
         );
     }
 
@@ -106,7 +108,8 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
         logNuclearOptionCheckPassed(connId);
 
         // is the hex on the board?
-        if (isOutsideOfBoard(connId, args)) {
+        int boardId = strikeBoardId(connId, args);
+        if ((boardId == BOARD_REFUSED) || isOutsideOfBoard(connId, args, boardId)) {
             return;
         }
 
@@ -116,7 +119,7 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
         if (detonationRound == ROUND_REFUSED) {
             return;
         }
-        ScheduledNuke nuke = new ScheduledNuke(groundZero, DEFAULT_BOARD_ID,
+        ScheduledNuke nuke = new ScheduledNuke(groundZero, boardId,
               NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
                     (int) args.get("deg").getValue(),
                     (int) args.get("radius").getValue(),

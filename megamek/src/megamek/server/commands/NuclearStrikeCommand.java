@@ -84,7 +84,9 @@ public class NuclearStrikeCommand extends ClientServerCommand {
               new EnumArgument<>("burst",
                     Messages.getString("NuclearStrike.cmd.burst"),
                     NuclearBurstMode.class,
-                    NuclearBurstMode.GROUND)
+                    NuclearBurstMode.GROUND),
+              new OptionalIntegerArgument("board", Messages.getString("NuclearStrike.cmd.board"), 0,
+                    Integer.MAX_VALUE)
         );
     }
 
@@ -103,7 +105,8 @@ public class NuclearStrikeCommand extends ClientServerCommand {
         }
         logNuclearOptionCheckPassed(connId);
 
-        if (isOutsideOfBoard(connId, args)) {
+        int boardId = strikeBoardId(connId, args);
+        if ((boardId == BOARD_REFUSED) || isOutsideOfBoard(connId, args, boardId)) {
             return;
         }
 
@@ -121,10 +124,10 @@ public class NuclearStrikeCommand extends ClientServerCommand {
         if (detonationRound == ROUND_REFUSED) {
             return;
         }
-        ScheduledNuke nuke = new ScheduledNuke(groundZero, DEFAULT_BOARD_ID, NuclearBlastProfile.of(nukeType, burstMode), nukeType,
-              firingPlayerId(connId, playerID), detonationRound);
-        logger.info("[Nukes] /ns from connection {}: {} {} burst at hex {}", connId, nukeType, burstMode,
-              groundZero.getBoardNum());
+        ScheduledNuke nuke = new ScheduledNuke(groundZero, boardId, NuclearBlastProfile.of(nukeType, burstMode),
+              nukeType, firingPlayerId(connId, playerID), detonationRound);
+        logger.info("[Nukes] /ns from connection {}: {} {} burst at hex {} on board {}", connId, nukeType, burstMode,
+              groundZero.getBoardNum(), boardId);
 
         var player = getGameManager().getGame().getPlayer(playerID.orElse(Player.PLAYER_NONE));
         if (player != null) {

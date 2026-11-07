@@ -44,6 +44,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.GameMasterPlayerSetupDialog;
 import megamek.common.Player;
+import megamek.common.board.Board;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.commands.KickCommand;
@@ -178,7 +179,7 @@ public class GameCommandsMenu {
             popup.add(createClientActionItem("CommonMenuBar.fileUnitsReinforceRAT",
                   ClientGUI.FILE_UNITS_REINFORCE_RAT));
             popup.addSeparator();
-            popup.add(GameMasterCommandMenu.createSpecialCommandsMenu(clientGUI, null));
+            popup.add(GameMasterCommandMenu.createSpecialCommandsMenu(clientGUI, null, Board.BOARD_NONE));
         } else if (gameMaster != null) {
             LOGGER.debug("[GameCommands] {}: Game Master tools hidden - {} holds the role",
                   localPlayer.getName(), gameMaster.getName());

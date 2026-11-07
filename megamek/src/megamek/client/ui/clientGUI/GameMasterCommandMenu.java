@@ -86,10 +86,12 @@ public final class GameMasterCommandMenu {
      * @param clientGUI The client GUI the command dialogs are shown on
      * @param coords    The hex the commands should act on, or {@code null} when the menu is opened without a hex,
      *                  which limits it to the board-wide commands
+     * @param boardId   The board the hex is on, or {@link Board#BOARD_NONE} without a hex; the nuclear strike dialog
+     *                  opens on it
      *
      * @return The Game Master special commands menu
      */
-    public static JMenu createSpecialCommandsMenu(ClientGUI clientGUI, @Nullable Coords coords) {
+    public static JMenu createSpecialCommandsMenu(ClientGUI clientGUI, @Nullable Coords coords, int boardId) {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
         Board board = (coords == null) ? null : clientGUI.getClient().getGame().getBoard();
         for (ClientServerCommand command : commandsFor(coords, board)) {
@@ -102,7 +104,7 @@ public final class GameMasterCommandMenu {
         // hex, and from the Commands button it is aimed by typing or picking the hex, which reaches hexes off screen.
         menu.addSeparator();
         JMenuItem nuclearStrikeItem = new JMenuItem(Messages.getString("NuclearStrike.dialog.menu"));
-        nuclearStrikeItem.addActionListener(event -> new NuclearStrikeDialog(clientGUI, coords).setVisible(true));
+        nuclearStrikeItem.addActionListener(event -> new NuclearStrikeDialog(clientGUI, coords, boardId).setVisible(true));
         menu.add(nuclearStrikeItem);
         return menu;
     }

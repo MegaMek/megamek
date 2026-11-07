@@ -53,6 +53,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
 import megamek.common.Player;
@@ -331,6 +332,50 @@ class FormationFollowerTest {
         follower.advanceRoutes();
         assertEquals(List.of(eastWaypoint), leader.getUnitOrders().getRoute());
         assertFalse(follower.isAssembling(leader), "formed up, it marches");
+    }
+
+    /**
+     * A lance just given a one-waypoint route with a Wedge kept together on the leg there; the leader is far from the
+     * waypoint and the second unit is not yet in its place.
+     *
+     * @param arrivalFormation the formation to re-form in at the waypoint, or {@code null} to take the Wedge on the way
+     */
+    private List<BipedMek> lanceJustOrdered(UnitOrdersFollower follower, @Nullable WaypointFormation arrivalFormation) {
+        doReturn(follower).when(princess).getUnitOrdersFollower();
+        game.setPhase(GamePhase.MOVEMENT);
+        WaypointFormation wedge = new WaypointFormation(FormationShape.WEDGE, 2, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        UnitOrders route = UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT), List.of(new WaypointOrder(
+              UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0, wedge, true, arrivalFormation)));
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        leader.setUnitOrders(route.withFormation(keptTogether(0)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        second.setUnitOrders(route.withFormation(keptTogether(1)));
+        return List.of(leader, second);
+    }
+
+    @Test
+    void aLanceSetToTakeItsShapeOnTheWayFormsRoundItsLeaderNotAtTheFirstWaypoint() {
+        // QA playtest (#9449, 2026-11-06): a Wedge set to form on the way formed only at its waypoint, then waited
+        // there for its last unit before leaving the board
+        UnitOrdersFollower follower = new UnitOrdersFollower(princess);
+        BipedMek second = lanceJustOrdered(follower, null).get(1);
+
+        assertFalse(follower.isAssembling(second), "it forms up on the move");
+        Coords slot = follower.getFormationSlot(second).orElseThrow();
+        assertTrue(slot.distance(LEADER_HEX) <= 2, "its place is beside the leader on the move, not at " + slot);
+    }
+
+    @Test
+    void aLanceSetToFormAtTheWaypointStillAssemblesThere() {
+        UnitOrdersFollower follower = new UnitOrdersFollower(princess);
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 2, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        BipedMek second = lanceJustOrdered(follower, column).get(1);
+
+        assertTrue(follower.isAssembling(second));
+        Coords slot = follower.getFormationSlot(second).orElseThrow();
+        assertTrue(slot.distance(NORTH_WAYPOINT) <= 2, "it makes for its place at the waypoint, not " + slot);
     }
 
     @Test

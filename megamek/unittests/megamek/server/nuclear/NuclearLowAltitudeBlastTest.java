@@ -197,6 +197,36 @@ class NuclearLowAltitudeBlastTest {
     }
 
     @Test
+    void fighterInTheSecondaryRadiusSuffersEmi() throws Exception {
+        // 6 sky hexes out: beyond the blast (4) but inside the secondary radius (114 / 17 = 7), below height 9
+        Entity fighter = placeFighter(skyHexSouth(6), 9);
+        int armorBefore = fighter.getTotalArmor();
+
+        detonateOnTheGround();
+
+        assertEquals(armorBefore, fighter.getTotalArmor(), "no blast damage this far out");
+        assertTrue(fighter.isSufferingEMI(), "secondary effects reach it");
+    }
+
+    @Test
+    void fighterAboveSecondaryHeightEscapesTheSecondaryEffects() throws Exception {
+        Entity fighter = placeFighter(skyHexSouth(6), 10);
+
+        detonateOnTheGround();
+
+        assertFalse(fighter.isSufferingEMI(), "altitude 10 is above the Alamo's secondary effect height 9");
+    }
+
+    @Test
+    void fighterBeyondTheSkySecondaryRadiusEscapesTheSecondaryEffects() throws Exception {
+        Entity fighter = placeFighter(skyHexSouth(8), 4);
+
+        detonateOnTheGround();
+
+        assertFalse(fighter.isSufferingEMI(), "8 sky hexes out, beyond 7");
+    }
+
+    @Test
     void detonationOnTheSkyMapHitsFightersButLeavesTheMapAlone() throws Exception {
         Coords skyGroundZero = new Coords(12, 12);
         Entity fighter = placeFighter(skyGroundZero, 4);

@@ -132,18 +132,22 @@ public class NuclearDetonationResolver {
         }
 
         BoardLocation skyGroundZero = NuclearLowAltitudeBlast.lowAltitudeGroundZero(game, position, boardId);
-        if (skyGroundZero != null) {
+        NuclearLowAltitudeBlast lowAltitudeBlast = (skyGroundZero == null)
+              ? null
+              : new NuclearLowAltitudeBlast(gameManager, skyGroundZero.boardId());
+        if (lowAltitudeBlast != null) {
             Vector<Report> skyReports = new Vector<>();
-            new NuclearLowAltitudeBlast(gameManager, skyGroundZero.boardId()).apply(skyGroundZero.coords(), profile,
-                  skyReports, blastedUnitsVec);
+            lowAltitudeBlast.apply(skyGroundZero.coords(), profile, skyReports, blastedUnitsVec);
             Report.indentAll(skyReports, 2);
             vDesc.addAll(skyReports);
         }
 
-        if (detonatesOnLowAltitudeMap) {
-            LOGGER.info("[Nukes] Secondary effects on the low-altitude map are not resolved yet");
-        } else {
+        // Lastly, do secondary effects: on the ground map, then on the low-altitude map above it.
+        if (!detonatesOnLowAltitudeMap) {
             applyGroundSecondaryEffects(position, boardId, profile, vDesc);
+        }
+        if (lowAltitudeBlast != null) {
+            lowAltitudeBlast.applySecondaryEffects(skyGroundZero.coords(), profile, vDesc);
         }
 
         LOGGER.info("[Nukes] Detonation at hex {} resolved in {} ms; {} changed hexes sent in one update",

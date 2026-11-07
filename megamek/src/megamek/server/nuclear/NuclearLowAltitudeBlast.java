@@ -55,6 +55,7 @@ class NuclearLowAltitudeBlast {
     private final Game game;
     private final int skyBoardId;
     private final NuclearBlastDamage blastDamage;
+    private final NuclearSecondaryEffects secondaryEffects;
 
     /**
      * @param gameManager the game manager running the game the detonation happens in
@@ -64,6 +65,7 @@ class NuclearLowAltitudeBlast {
         this.game = gameManager.getGame();
         this.skyBoardId = skyBoardId;
         this.blastDamage = new NuclearBlastDamage(gameManager, skyBoardId);
+        this.secondaryEffects = new NuclearSecondaryEffects(gameManager);
     }
 
     /**
@@ -172,5 +174,66 @@ class NuclearLowAltitudeBlast {
         }
         blastedUnits.addAll(struckHere);
         LOGGER.info("[Nukes] Low-altitude blast struck {} unit(s)", struckHere.size());
+    }
+
+    /**
+     * Secondary effects on the Low-Altitude Map: every airborne unit within the secondary radius divided by 17 and at
+     * or below the Secondary Effect Height rolls on the Secondary Nuclear Effects Table and suffers EMI for the rest of
+     * the scenario (IO:AE p.165; HammerGS, 2026-11-06). A unit carried by an aircraft rolls at its carrier's hex and
+     * altitude. Example: an Alamo air burst reaches 114 / 17 = 7 hexes, up to altitude 9.
+     *
+     * @param skyGroundZero the detonation's hex on the Low-Altitude Map
+     * @param profile       the detonation's numbers
+     * @param vDesc         the report the results are added to
+     */
+    void applySecondaryEffects(Coords skyGroundZero, NuclearBlastProfile profile, Vector<Report> vDesc) {
+        int radius = profile.lowAltitudeSecondaryRadius();
+        int secondaryHeight = profile.secondaryHeight();
+        LOGGER.info("[Nukes] Low-altitude secondary effects on board {} at hex {}: radius {} hex(es) ({} / {}), "
+                    + "secondary effect height {}", skyBoardId, skyGroundZero.getBoardNum(), radius,
+              profile.secondaryRadius(), NuclearBlastProfile.GROUND_HEXES_PER_LOW_ALTITUDE_HEX, secondaryHeight);
+        Report header = new Report(6567, Report.PUBLIC);
+        header.indent(2);
+        header.add(radius);
+        header.add(skyGroundZero.getBoardNum());
+        header.add(secondaryHeight);
+        vDesc.addElement(header);
+
+        int unitsRolled = 0;
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.isDoomed() || entity.isDestroyed()) {
+                continue;
+            }
+            Entity positioned = (entity.getTransportId() == Entity.NONE)
+                  ? entity
+                  : game.getEntity(entity.getTransportId());
+            if ((positioned == null) || (positioned.getPosition() == null)
+                  || (positioned.getBoardId() != skyBoardId)) {
+                continue;
+            }
+            if (!positioned.isAirborne()) {
+                LOGGER.info("[Nukes] {} at hex {} of the low-altitude map is not airborne: no secondary effects",
+                      entity.getDisplayName(), positioned.getPosition().getBoardNum());
+                continue;
+            }
+            int distance = skyGroundZero.distance(positioned.getPosition());
+            if (distance > radius) {
+                LOGGER.info("[Nukes] {} at hex {} is {} hexes out, beyond the low-altitude secondary radius {}",
+                      entity.getDisplayName(), positioned.getPosition().getBoardNum(), distance, radius);
+                continue;
+            }
+            if (positioned.getAltitude() > secondaryHeight) {
+                LOGGER.info("[Nukes] {} at hex {} flies at altitude {}, above secondary effect height {}: out of "
+                      + "reach", entity.getDisplayName(), positioned.getPosition().getBoardNum(),
+                      positioned.getAltitude(), secondaryHeight);
+                continue;
+            }
+            LOGGER.info("[Nukes] {} at hex {}, altitude {}, {} hex(es) from the detonation: secondary effects",
+                  entity.getDisplayName(), positioned.getPosition().getBoardNum(), positioned.getAltitude(),
+                  distance);
+            secondaryEffects.apply(entity, skyGroundZero, vDesc);
+            unitsRolled++;
+        }
+        LOGGER.info("[Nukes] Low-altitude secondary effects reached {} unit(s)", unitsRolled);
     }
 }

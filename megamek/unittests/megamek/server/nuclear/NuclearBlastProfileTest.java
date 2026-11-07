@@ -255,6 +255,12 @@ class NuclearBlastProfileTest {
     }
 
     @Test
+    void secondaryRadiusOnTheLowAltitudeMapIsAlsoDividedBy17() {
+        // 114 / 17 = 6.7, rounded up to 7
+        assertEquals(7, NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO).lowAltitudeSecondaryRadius());
+    }
+
+    @Test
     void customDeviceUsesTheReductionTheGameMasterEntered() {
         // 1,000 / 20 matches no standard weapon, so there is no air-burst figure to borrow
         NuclearBlastProfile profile = NuclearBlastProfile.custom(1_000, 20, 85, 1);

@@ -252,6 +252,16 @@ public record NuclearBlastProfile(int impactDamage, int damageReduction, int bla
     }
 
     /**
+     * The secondary effect radius on the Low-Altitude Map: the secondary radius divided by 17, rounded up, as for the
+     * blast radius (HammerGS, 2026-11-06). An Alamo air burst's 114 hexes become 7 Low-Altitude Map hexes.
+     *
+     * @return the secondary effect radius in Low-Altitude Map hexes
+     */
+    public int lowAltitudeSecondaryRadius() {
+        return (int) Math.ceil(secondaryRadius / (double) GROUND_HEXES_PER_LOW_ALTITUDE_HEX);
+    }
+
+    /**
      * The Damage Reduction used on the Low-Altitude Map: the weapon's air-burst value, whatever the detonation type
      * (IO:AE p.166). A weapon with no air-burst figures, such as the Davy Crockett, and a custom device use their own
      * value. An Alamo ground burst uses the Alamo's air-burst 18, not its ground 23.

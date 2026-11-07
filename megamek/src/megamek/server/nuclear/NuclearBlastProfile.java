@@ -56,6 +56,15 @@ public record NuclearBlastProfile(int impactDamage, int damageReduction, int bla
      */
     public static final int MINIMUM_TERRAIN_DAMAGE = 20;
 
+    /** One Low-Altitude Map hex holds 17 ground hexes (IO:AE p.164, Standard Nuclear Weaponry Table footnote). */
+    public static final int GROUND_HEXES_PER_LOW_ALTITUDE_HEX = 17;
+
+    /** Low-Altitude Map distance is multiplied by 8.5 times the Damage Reduction (IO:AE p.166). */
+    public static final double LOW_ALTITUDE_DISTANCE_FACTOR = 8.5;
+
+    /** A unit in the detonation's own Low-Altitude Map hex counts as 0.5 hexes away (IO:AE p.166). */
+    public static final double LOW_ALTITUDE_MINIMUM_DISTANCE = 0.5;
+
     /**
      * An air burst makes no crater (IO:AE p.164), whatever crater depth it was given. A profile read from a save made
      * before burst modes existed has no mode and is a ground burst.
@@ -230,6 +239,56 @@ public record NuclearBlastProfile(int impactDamage, int damageReduction, int bla
             }
         }
         return closest;
+    }
+
+    /**
+     * The blast area on the Low-Altitude Map: the blast radius divided by 17, rounded up (IO:AE p.166). An Alamo air
+     * burst reaches 58 / 17 = 3.41, so 4 Low-Altitude Map hexes.
+     *
+     * @return the blast radius in Low-Altitude Map hexes
+     */
+    public int lowAltitudeRadius() {
+        return (int) Math.ceil(blastRadius / (double) GROUND_HEXES_PER_LOW_ALTITUDE_HEX);
+    }
+
+    /**
+     * The Damage Reduction used on the Low-Altitude Map: the weapon's air-burst value, whatever the detonation type
+     * (IO:AE p.166). A weapon with no air-burst figures, such as the Davy Crockett, and a custom device use their own
+     * value. An Alamo ground burst uses the Alamo's air-burst 18, not its ground 23.
+     *
+     * @return the Damage Reduction per Low-Altitude Map distance unit
+     */
+    public int lowAltitudeDamageReduction() {
+        if (isAirBurst()) {
+            return damageReduction;
+        }
+        for (NuclearWeaponType weaponType : NuclearWeaponType.values()) {
+            if (groundBurst(weaponType).equals(this)) {
+                BurstFigures airFigures = weaponType.getAirBurst();
+                return (airFigures == null) ? damageReduction : airFigures.damageReduction();
+            }
+        }
+        return damageReduction;
+    }
+
+    /**
+     * Blast damage to an airborne unit on the Low-Altitude Map (IO:AE p.166): Impact Damage minus the distance times
+     * 8.5 times the Damage Reduction, rounded up, with a unit in the detonation's own hex counted as 0.5 hexes away.
+     * An Alamo air burst 3 hexes from a Stuka deals 1,000 - (3 x 8.5 x 18 = 459) = 541; in its own hex it deals
+     * 1,000 - 77 = 923.
+     *
+     * @param distance Low-Altitude Map hexes from the detonation
+     *
+     * @return the blast damage, or 0 outside the Low-Altitude Map blast radius
+     */
+    public int lowAltitudeDamageAt(int distance) {
+        if ((distance < 0) || (distance > lowAltitudeRadius())) {
+            return 0;
+        }
+        double countedDistance = (distance == 0) ? LOW_ALTITUDE_MINIMUM_DISTANCE : distance;
+        int reduction = (int) Math.ceil(countedDistance * LOW_ALTITUDE_DISTANCE_FACTOR
+              * lowAltitudeDamageReduction());
+        return Math.max(0, impactDamage - reduction);
     }
 
     /**

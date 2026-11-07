@@ -37,6 +37,8 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Report;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
@@ -76,8 +78,11 @@ public class NuclearDetonationResolver {
     }
 
     /**
-     * Resolves a detonation on a ground map. Only the units, terrain and buildings on Ground Zero's board are touched:
-     * a nuke at 0606 on one ground map does not hit a Mek at 0606 on another.
+     * Resolves a detonation. Only the units, terrain and buildings on Ground Zero's board are touched: a nuke at 0606
+     * on one ground map does not hit a Mek at 0606 on another. When that ground map lies inside a Low-Altitude Map,
+     * the blast also sweeps the airborne units there, from the low-altitude hex that holds the ground map (IO:AE
+     * p.166). A detonation on a Low-Altitude Map itself makes no crater, terrain damage or fires; only the airborne
+     * units there are struck.
      *
      * @param position the Ground Zero hex
      * @param boardId  the board Ground Zero is on
@@ -111,11 +116,75 @@ public class NuclearDetonationResolver {
         r.add(position.getBoardNum(), true);
         vDesc.add(r);
 
+        Board board = game.getBoard(boardId);
+        boolean detonatesOnLowAltitudeMap = (board != null) && board.isLowAltitude();
         int craterRadius = profile.craterRadius();
         LOGGER.info("[Nukes] Detonation at hex {} on board {}: {} burst, impact {}, damage reduction {}/hex, blast "
               + "radius {}, secondary radius {}, crater depth {}, crater radius {}", position.getBoardNum(), boardId,
               profile.burstMode(), profile.impactDamage(), profile.damageReduction(), profile.blastRadius(), profile.secondaryRadius(),
               profile.craterDepth(), craterRadius);
+        Vector<Integer> blastedUnitsVec = new Vector<>();
+        if (detonatesOnLowAltitudeMap) {
+            LOGGER.info("[Nukes] Board {} is a low-altitude map: no crater, ground blast, terrain damage or fires",
+                  boardId);
+        } else {
+            resolveOnGroundMap(position, boardId, profile, changedHexes, blastedUnitsVec, vDesc);
+        }
+
+        BoardLocation skyGroundZero = NuclearLowAltitudeBlast.lowAltitudeGroundZero(game, position, boardId);
+        if (skyGroundZero != null) {
+            Vector<Report> skyReports = new Vector<>();
+            new NuclearLowAltitudeBlast(gameManager, skyGroundZero.boardId()).apply(skyGroundZero.coords(), profile,
+                  skyReports, blastedUnitsVec);
+            Report.indentAll(skyReports, 2);
+            vDesc.addAll(skyReports);
+        }
+
+        if (detonatesOnLowAltitudeMap) {
+            LOGGER.info("[Nukes] Secondary effects on the low-altitude map are not resolved yet");
+        } else {
+            applyGroundSecondaryEffects(position, boardId, profile, vDesc);
+        }
+
+        LOGGER.info("[Nukes] Detonation at hex {} resolved in {} ms; {} changed hexes sent in one update",
+              position.getBoardNum(), (System.nanoTime() - startNanos) / 1_000_000, changedHexes.size());
+
+        // All right. We're done.
+        r = new Report(1216, Report.PUBLIC);
+        r.indent();
+        r.newlines = 2;
+        vDesc.add(r);
+
+        // Nothing a nuclear weapon destroys can be salvaged (IO:AE p.168).
+        int unitsDestroyed = 0;
+        // A unit carried by a destroyed transport goes straight to the graveyard, so look up every unit that was
+        // standing, not only the ones still in play
+        for (int unitId : standingBefore) {
+            Entity entity = game.getEntityFromAllSources(unitId);
+            if ((entity == null) || !(entity.isDestroyed() || entity.isDoomed())) {
+                continue;
+            }
+            entity.setSalvage(false);
+            boolean inGraveyard = game.getEntity(unitId) == null;
+            if (inGraveyard && (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)) {
+                entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
+            }
+            LOGGER.info("[Nukes] {} destroyed by the detonation: unsalvageable{}", entity.getDisplayName(),
+                  inGraveyard ? " (already in the graveyard)" : "");
+            unitsDestroyed++;
+        }
+        LOGGER.info("[Nukes] {} unit(s) struck by the blast, {} destroyed and marked unsalvageable",
+              blastedUnitsVec.size(), unitsDestroyed);
+        return unitsDestroyed;
+    }
+
+    /**
+     * The ground map's share of a detonation: the crater and the units in it, the blast, the terrain damage and the
+     * fires, with every changed hex sent to the clients in one update.
+     */
+    private void resolveOnGroundMap(Coords position, int boardId, NuclearBlastProfile profile,
+          Set<Coords> changedHexes, Vector<Integer> blastedUnitsVec, Vector<Report> vDesc) {
+        int craterRadius = profile.craterRadius();
         NuclearTerrainEffects terrainEffects = new NuclearTerrainEffects(gameManager, boardId);
         terrainEffects.crater(position, profile, changedHexes);
 
@@ -160,7 +229,6 @@ public class NuclearDetonationResolver {
 
         // Then, do actual blast damage.
         Vector<Report> tmpV = new Vector<>();
-        Vector<Integer> blastedUnitsVec = new Vector<>();
 
         new NuclearBlastDamage(gameManager, boardId).apply(position, profile, tmpV, blastedUnitsVec);
         Report.indentAll(tmpV, 2);
@@ -171,8 +239,13 @@ public class NuclearDetonationResolver {
         new NuclearFires(gameManager, boardId).startFires(position, profile, changedHexes, vDesc);
 
         gameManager.sendChangedHexes(changedHexes, boardId);
+    }
 
-        // Lastly, do secondary effects.
+    /**
+     * Secondary effects for the units on the ground map, airborne ones included, out to the secondary radius.
+     */
+    private void applyGroundSecondaryEffects(Coords position, int boardId, NuclearBlastProfile profile,
+          Vector<Report> vDesc) {
         NuclearSecondaryEffects secondaryEffects = new NuclearSecondaryEffects(gameManager);
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.isDoomed() || entity.isDestroyed()) {
@@ -202,36 +275,5 @@ public class NuclearDetonationResolver {
             }
             secondaryEffects.apply(entity, position, vDesc);
         }
-
-        LOGGER.info("[Nukes] Detonation at hex {} resolved in {} ms; {} changed hexes sent in one update",
-              position.getBoardNum(), (System.nanoTime() - startNanos) / 1_000_000, changedHexes.size());
-
-        // All right. We're done.
-        r = new Report(1216, Report.PUBLIC);
-        r.indent();
-        r.newlines = 2;
-        vDesc.add(r);
-
-        // Nothing a nuclear weapon destroys can be salvaged (IO:AE p.168).
-        int unitsDestroyed = 0;
-        // A unit carried by a destroyed transport goes straight to the graveyard, so look up every unit that was
-        // standing, not only the ones still in play
-        for (int unitId : standingBefore) {
-            Entity entity = game.getEntityFromAllSources(unitId);
-            if ((entity == null) || !(entity.isDestroyed() || entity.isDoomed())) {
-                continue;
-            }
-            entity.setSalvage(false);
-            boolean inGraveyard = game.getEntity(unitId) == null;
-            if (inGraveyard && (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)) {
-                entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
-            }
-            LOGGER.info("[Nukes] {} destroyed by the detonation: unsalvageable{}", entity.getDisplayName(),
-                  inGraveyard ? " (already in the graveyard)" : "");
-            unitsDestroyed++;
-        }
-        LOGGER.info("[Nukes] {} unit(s) struck by the blast, {} destroyed and marked unsalvageable",
-              blastedUnitsVec.size(), unitsDestroyed);
-        return unitsDestroyed;
     }
 }

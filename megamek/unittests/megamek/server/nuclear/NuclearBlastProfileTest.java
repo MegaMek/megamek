@@ -210,4 +210,55 @@ class NuclearBlastProfileTest {
         assertEquals(NuclearBurstMode.GROUND, profile.burstMode());
         assertEquals(1, profile.craterDepth());
     }
+
+    @Test
+    void alamoAirBurstThreeLowAltitudeHexesFromAStukaDeals541() {
+        // IO:AE p.166: 58 / 17 = 3.41, rounded up to 4 hexes; 3 x 8.5 x 18 = 459, and 1,000 - 459 = 541
+        NuclearBlastProfile profile = NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO);
+
+        assertEquals(4, profile.lowAltitudeRadius());
+        assertEquals(541, profile.lowAltitudeDamageAt(3));
+    }
+
+    @Test
+    void sameLowAltitudeHexCountsAsHalfAHexAway() {
+        // 0.5 x 8.5 x 18 = 76.5, rounded up to 77
+        assertEquals(923, NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO).lowAltitudeDamageAt(0));
+    }
+
+    @Test
+    void lowAltitudeBlastStopsAtItsRadius() {
+        NuclearBlastProfile profile = NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO);
+
+        assertEquals(1_000 - 612, profile.lowAltitudeDamageAt(4), "4 x 8.5 x 18 = 612");
+        assertEquals(0, profile.lowAltitudeDamageAt(5), "beyond the 4-hex radius");
+    }
+
+    @Test
+    void groundBurstUsesItsOwnRadiusButTheAirBurstDamageReduction() {
+        // The radius follows the detonation type (43 / 17 rounds up to 3); the reduction is the air-burst 18
+        NuclearBlastProfile profile = NuclearBlastProfile.groundBurst(NuclearWeaponType.ALAMO);
+
+        assertEquals(3, profile.lowAltitudeRadius());
+        assertEquals(18, profile.lowAltitudeDamageReduction());
+        assertEquals(541, profile.lowAltitudeDamageAt(3));
+    }
+
+    @Test
+    void davyCrockettUsesItsGroundFigures() {
+        // No air-burst figures: 20 / 17 rounds up to 2 hexes, and 1 x 8.5 x 5 = 42.5 rounds up to 43
+        NuclearBlastProfile profile = NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M);
+
+        assertEquals(2, profile.lowAltitudeRadius());
+        assertEquals(5, profile.lowAltitudeDamageReduction());
+        assertEquals(57, profile.lowAltitudeDamageAt(1));
+    }
+
+    @Test
+    void customDeviceUsesTheReductionTheGameMasterEntered() {
+        // 1,000 / 20 matches no standard weapon, so there is no air-burst figure to borrow
+        NuclearBlastProfile profile = NuclearBlastProfile.custom(1_000, 20, 85, 1);
+
+        assertEquals(20, profile.lowAltitudeDamageReduction());
+    }
 }

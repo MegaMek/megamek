@@ -304,7 +304,7 @@ class NuclearBlastDamage {
      *
      * @return the damage dealt before the unit was destroyed
      */
-    private int applyClusters(Entity entity, int damage, int side, Coords groundZero, Vector<Report> vDesc) {
+    int applyClusters(Entity entity, int damage, int side, Coords groundZero, Vector<Report> vDesc) {
         Report report = new Report(6175);
         report.subject = entity.getId();
         report.indent(2);
@@ -341,7 +341,7 @@ class NuclearBlastDamage {
      * A unit that tracks heat gains 1 heat per 10 blast damage taken, up to 15 (IO:AE p.165). A Mek that takes 85
      * damage gains 8 heat.
      */
-    private void addBlastHeat(Entity entity, int damageTaken, Vector<Report> vDesc) {
+    void addBlastHeat(Entity entity, int damageTaken, Vector<Report> vDesc) {
         int heat = blastHeat(entity, damageTaken);
         if (heat == 0) {
             return;
@@ -538,7 +538,7 @@ class NuclearBlastDamage {
      * crashes, and an aerospace unit falls 2 altitudes per point of failure and crashes if that reaches the ground.
      * Units without a Piloting Skill, such as infantry, do not roll.
      */
-    private void rollToWithstandBlast(Entity entity, Vector<Report> vDesc) {
+    void rollToWithstandBlast(Entity entity, Vector<Report> vDesc) {
         // isAirborne() is only true for aerospace units, so a flying VTOL or WiGE needs its own check
         if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             rollAirborne(entity, vDesc);

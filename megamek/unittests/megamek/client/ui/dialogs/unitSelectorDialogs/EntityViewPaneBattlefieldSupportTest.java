@@ -34,13 +34,20 @@ package megamek.client.ui.dialogs.unitSelectorDialogs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Component;
+import java.awt.Container;
+import javax.swing.JEditorPane;
 import javax.swing.JTabbedPane;
 
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.battlefieldSupport.BattlefieldSupportAssetData;
+import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.HandheldWeapon;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -91,6 +98,59 @@ class EntityViewPaneBattlefieldSupportTest {
 
         JTabbedPane bfsTabs = assertInstanceOf(JTabbedPane.class, pane.getComponentAt(pane.indexOfTab("BFS")));
         assertTabTitles(bfsTabs, "Summary", "TRO", "BFS Card");
+    }
+
+    @Test
+    void hiddenTabShowsTheCurrentUnitWhenSelected() {
+        EntityViewPane pane = new EntityViewPane(null, null);
+        int troTab = pane.indexOfTab("TRO");
+
+        pane.updateDisplayedEntity(testMek("Zzqalpha"));
+        pane.updateDisplayedEntity(testMek("Zzqbeta"));
+        assertTrue(readoutText(pane.getComponentAt(0)).contains("Zzqbeta"));
+
+        pane.setSelectedIndex(troTab);
+        assertTrue(readoutText(pane.getComponentAt(troTab)).contains("Zzqbeta"));
+    }
+
+    @Test
+    void visibleTabFollowsEachNewUnit() {
+        EntityViewPane pane = new EntityViewPane(null, null);
+        int troTab = pane.indexOfTab("TRO");
+        pane.setSelectedIndex(troTab);
+
+        pane.updateDisplayedEntity(testMek("Zzqalpha"));
+        assertTrue(readoutText(pane.getComponentAt(troTab)).contains("Zzqalpha"));
+
+        pane.updateDisplayedEntity(testMek("Zzqbeta"));
+        assertTrue(readoutText(pane.getComponentAt(troTab)).contains("Zzqbeta"));
+
+        pane.setSelectedIndex(0);
+        assertTrue(readoutText(pane.getComponentAt(0)).contains("Zzqbeta"));
+    }
+
+    private static Mek testMek(String chassis) {
+        Mek mek = new BipedMek();
+        mek.setChassis(chassis);
+        mek.setModel("ZZ-1");
+        mek.setWeight(50);
+        mek.setEngine(new Engine(200, Engine.NORMAL_ENGINE, 0));
+        mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+        mek.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        return mek;
+    }
+
+    private static String readoutText(Component component) {
+        StringBuilder text = new StringBuilder();
+        if (component instanceof JEditorPane editorPane) {
+            text.append(editorPane.getText());
+        }
+        if (component instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                text.append(readoutText(child));
+            }
+        }
+        return text.toString();
     }
 
     private static void assertTabTitles(JTabbedPane pane, String... titles) {

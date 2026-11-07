@@ -205,8 +205,8 @@ class NetStatsTest {
 
         List<String> lines = stats.format(2);
 
-        // header + 2 rows + "other" + total
-        assertEquals(5, lines.size(), String.join("\n", lines));
+        // header + 2 rows + "other" + total + pump
+        assertEquals(6, lines.size(), String.join("\n", lines));
         assertTrue(lines.get(0).startsWith("command"));
         assertTrue(lines.get(1).startsWith("SENDING_ENTITIES"));
         assertTrue(lines.get(2).startsWith("PLAYER_READY"));
@@ -214,6 +214,83 @@ class NetStatsTest {
         assertTrue(lines.get(3).contains("(1 more commands)"));
         assertTrue(lines.get(4).startsWith("total: 3 packets, 2510 bytes on the wire, 1 flushes"));
         assertFalse(lines.get(4).contains("slowest flush"), "no timing column while timing is off");
+        assertEquals("pump: 0 handled, max depth 0", lines.get(5));
+    }
+
+    @Test
+    void pumpFiguresAreRecorded() {
+        stats.recordQueued(1);
+        stats.recordQueued(4);
+        stats.recordQueued(2);
+        stats.recordHandled(PacketCommand.PLAYER_READY, 5_000, 20_000);
+        stats.recordHandled(PacketCommand.PLAYER_READY, 1_000, 10_000);
+        stats.recordHandled(PacketCommand.ENTITY_UPDATE, 0, 0);
+
+        assertEquals(4, stats.pumpDepthMax(), "high-water mark of the queue");
+        assertEquals(2, stats.handled(PacketCommand.PLAYER_READY));
+        assertEquals(1, stats.handled(PacketCommand.ENTITY_UPDATE));
+        assertEquals(30_000, stats.handleNanos(PacketCommand.PLAYER_READY));
+        assertEquals(5_000, stats.pumpWaitMaxNanos());
+        Snapshot snapshot = stats.snapshot();
+        assertEquals(3, snapshot.totalHandled());
+        assertEquals(6_000, snapshot.pumpWaitNanos());
+
+        stats.reset();
+        assertEquals(0, stats.pumpDepthMax());
+        assertEquals(0, stats.handled(PacketCommand.PLAYER_READY));
+    }
+
+    @Test
+    void sinceGivesTheTrafficBetweenTwoSnapshots() {
+        stats.recordSent(PacketCommand.CHAT, 10, 10, 0);
+        stats.recordQueued(2);
+        stats.recordHandled(PacketCommand.CHAT, 0, 0);
+        Snapshot earlier = stats.snapshot();
+        stats.recordSent(PacketCommand.CHAT, 10, 30, 0);
+        stats.recordSent(PacketCommand.PLAYER_READY, 5, 5, 0);
+        stats.recordReceived(PacketCommand.PLAYER_READY, 7, 0);
+        stats.recordQueued(3);
+        stats.recordHandled(PacketCommand.PLAYER_READY, 0, 0);
+        stats.recordFlush(0);
+
+        Snapshot window = stats.snapshot().since(earlier);
+
+        assertEquals(3, window.totalPackets());
+        assertEquals(42, window.totalWireBytes());
+        assertEquals(1, window.totalHandled());
+        assertEquals(1, window.flushCount());
+        assertEquals(3, window.pumpDepthMax(), "maxima come from the later snapshot");
+        CommandStats chat = window.commands().get(PacketCommand.CHAT.ordinal());
+        assertEquals(1, chat.sent());
+        assertEquals(30, chat.wireBytesSent());
+        assertEquals(30, chat.maxWireBytesSent());
+        assertEquals(PacketCommand.CHAT, window.busiest().get(0).command());
+    }
+
+    @Test
+    void summaryLineNamesTheBusiestCommands() {
+        NetStats.setTimingEnabled(false);
+        stats.recordSent(PacketCommand.SENDING_ENTITIES, 5000, 2000, 0);
+        stats.recordSent(PacketCommand.CHAT, 10, 10, 0);
+        stats.recordSent(PacketCommand.CHAT, 10, 12, 0);
+        stats.recordQueued(2);
+
+        String line = stats.snapshot().summaryLine("MOVEMENT -> FIRING", 1);
+
+        assertEquals("netstats MOVEMENT -> FIRING: 3 packets, 2022 bytes on the wire; busiest: SENDING_ENTITIES "
+              + "2000/1; pump max depth 2", line);
+    }
+
+    @Test
+    void summaryLineAddsTimesWhenTimingIsOn() {
+        NetStats.setTimingEnabled(true);
+        stats.recordHandled(PacketCommand.CHAT, 1_500_000, 0);
+        stats.recordFlush(2_000_000);
+
+        String line = stats.snapshot().summaryLine("LOUNGE", 3);
+
+        assertTrue(line.endsWith("pump max depth 0, max wait 1.50 ms, slowest flush 2.00 ms"), line);
+        assertTrue(line.startsWith("netstats LOUNGE: 0 packets, 0 bytes on the wire; pump"), line);
     }
 
     @Test
@@ -226,7 +303,8 @@ class NetStatsTest {
 
         assertTrue(lines.get(0).contains("marsh-ms"));
         assertTrue(lines.get(1).contains("2.00"), lines.get(1));
-        assertTrue(lines.get(lines.size() - 1).contains("slowest flush 3.00 ms"), lines.get(lines.size() - 1));
+        assertTrue(lines.get(lines.size() - 2).contains("slowest flush 3.00 ms"), lines.get(lines.size() - 2));
+        assertTrue(lines.get(lines.size() - 1).endsWith("max wait 0.00 ms"), lines.get(lines.size() - 1));
     }
 
     @Test

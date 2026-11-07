@@ -66,7 +66,7 @@ public final class NetStats {
     /** Immutable per-command figures. Byte counts are of the frame payload (after compression) unless named raw. */
     public record CommandStats(PacketCommand command, long sent, long received, long rawBytesSent, long wireBytesSent,
           long wireBytesReceived, long maxWireBytesSent, long maxWireBytesReceived, long marshalNanos,
-          long unmarshalNanos, long writeNanos) {
+          long unmarshalNanos, long writeNanos, long handled, long handleNanos) {
 
         public long packets() {
             return sent + received;
@@ -75,11 +75,20 @@ public final class NetStats {
         public long wireBytes() {
             return wireBytesSent + wireBytesReceived;
         }
+
+        /** @return this minus an earlier reading of the same command; maxima are taken from this one */
+        public CommandStats since(CommandStats earlier) {
+            return new CommandStats(command, sent - earlier.sent, received - earlier.received,
+                  rawBytesSent - earlier.rawBytesSent, wireBytesSent - earlier.wireBytesSent,
+                  wireBytesReceived - earlier.wireBytesReceived, maxWireBytesSent, maxWireBytesReceived,
+                  marshalNanos - earlier.marshalNanos, unmarshalNanos - earlier.unmarshalNanos,
+                  writeNanos - earlier.writeNanos, handled - earlier.handled, handleNanos - earlier.handleNanos);
+        }
     }
 
     /** Immutable view of everything at one instant. */
     public record Snapshot(List<CommandStats> commands, long flushCount, long flushNanos, long maxFlushNanos,
-          boolean timing) {
+          long pumpDepthMax, long pumpWaitNanos, long pumpWaitMaxNanos, boolean timing) {
 
         public long totalPackets() {
             return commands.stream().mapToLong(CommandStats::packets).sum();
@@ -87,6 +96,46 @@ public final class NetStats {
 
         public long totalWireBytes() {
             return commands.stream().mapToLong(CommandStats::wireBytes).sum();
+        }
+
+        public long totalHandled() {
+            return commands.stream().mapToLong(CommandStats::handled).sum();
+        }
+
+        /** @return the traffic between an earlier snapshot and this one; maxima are taken from this one */
+        public Snapshot since(Snapshot earlier) {
+            List<CommandStats> delta = new ArrayList<>(commands.size());
+            for (int i = 0; i < commands.size(); i++) {
+                delta.add(commands.get(i).since(earlier.commands.get(i)));
+            }
+            return new Snapshot(List.copyOf(delta), flushCount - earlier.flushCount, flushNanos - earlier.flushNanos,
+                  maxFlushNanos, pumpDepthMax, pumpWaitNanos - earlier.pumpWaitNanos, pumpWaitMaxNanos, timing);
+        }
+
+        /**
+         * One line for a log: totals, the busiest few commands, and the pump figures when timing is on.
+         *
+         * @param label what the figures cover, e.g. the phase that just ended
+         * @param topN  how many commands to name
+         */
+        public String summaryLine(String label, int topN) {
+            StringBuilder line = new StringBuilder("netstats ").append(label).append(": ")
+                  .append(totalPackets()).append(" packets, ").append(totalWireBytes()).append(" bytes on the wire");
+            List<CommandStats> busiest = busiest();
+            if (!busiest.isEmpty()) {
+                line.append("; busiest:");
+                for (int i = 0; i < Math.min(topN, busiest.size()); i++) {
+                    CommandStats stats = busiest.get(i);
+                    line.append(i == 0 ? " " : ", ").append(stats.command()).append(' ').append(stats.wireBytes())
+                          .append('/').append(stats.packets());
+                }
+            }
+            line.append("; pump max depth ").append(pumpDepthMax);
+            if (timing) {
+                line.append(", max wait ").append(millis(pumpWaitMaxNanos)).append(" ms, slowest flush ")
+                      .append(millis(maxFlushNanos)).append(" ms");
+            }
+            return line.toString();
         }
 
         /** @return the commands that saw any traffic, busiest (by bytes on the wire) first */
@@ -113,9 +162,14 @@ public final class NetStats {
     private final LongAdder[] marshalNanos = adders();
     private final LongAdder[] unmarshalNanos = adders();
     private final LongAdder[] writeNanos = adders();
+    private final LongAdder[] handled = adders();
+    private final LongAdder[] handleNanos = adders();
     private final LongAdder flushCount = new LongAdder();
     private final LongAdder flushNanos = new LongAdder();
     private final LongAccumulator maxFlushNanos = new LongAccumulator(Math::max, 0);
+    private final LongAccumulator pumpDepthMax = new LongAccumulator(Math::max, 0);
+    private final LongAdder pumpWaitNanos = new LongAdder();
+    private final LongAccumulator pumpWaitMaxNanos = new LongAccumulator(Math::max, 0);
 
     public NetStats() {
     }
@@ -190,6 +244,45 @@ public final class NetStats {
         }
     }
 
+    /** Records a packet being queued for the server's packet pump, with the queue depth right after the add. */
+    public void recordQueued(int depth) {
+        pumpDepthMax.accumulate(depth);
+    }
+
+    /**
+     * Records a packet dispatched by the server's packet pump.
+     *
+     * @param waitNanos   time between queueing and dispatch, or 0 when not timed
+     * @param handleNanos time the handler took, or 0 when not timed
+     */
+    public void recordHandled(PacketCommand command, long waitNanos, long handleNanos) {
+        int index = command.ordinal();
+        handled[index].increment();
+        if (waitNanos > 0) {
+            pumpWaitNanos.add(waitNanos);
+            pumpWaitMaxNanos.accumulate(waitNanos);
+        }
+        if (handleNanos > 0) {
+            this.handleNanos[index].add(handleNanos);
+        }
+    }
+
+    public long handled(PacketCommand command) {
+        return handled[command.ordinal()].sum();
+    }
+
+    public long handleNanos(PacketCommand command) {
+        return handleNanos[command.ordinal()].sum();
+    }
+
+    public long pumpDepthMax() {
+        return pumpDepthMax.get();
+    }
+
+    public long pumpWaitMaxNanos() {
+        return pumpWaitMaxNanos.get();
+    }
+
     public long sent(PacketCommand command) {
         return sent[command.ordinal()].sum();
     }
@@ -237,10 +330,10 @@ public final class NetStats {
             commands.add(new CommandStats(COMMANDS[i], sent[i].sum(), received[i].sum(), rawBytesSent[i].sum(),
                   wireBytesSent[i].sum(), wireBytesReceived[i].sum(), maxWireBytesSent[i].get(),
                   maxWireBytesReceived[i].get(), marshalNanos[i].sum(), unmarshalNanos[i].sum(),
-                  writeNanos[i].sum()));
+                  writeNanos[i].sum(), handled[i].sum(), handleNanos[i].sum()));
         }
         return new Snapshot(List.copyOf(commands), flushCount.sum(), flushNanos.sum(), maxFlushNanos.get(),
-              timingEnabled);
+              pumpDepthMax.get(), pumpWaitNanos.sum(), pumpWaitMaxNanos.get(), timingEnabled);
     }
 
     /** Zeroes every counter. Events arriving concurrently may land on either side of the reset. */
@@ -256,10 +349,15 @@ public final class NetStats {
             marshalNanos[i].reset();
             unmarshalNanos[i].reset();
             writeNanos[i].reset();
+            handled[i].reset();
+            handleNanos[i].reset();
         }
         flushCount.reset();
         flushNanos.reset();
         maxFlushNanos.reset();
+        pumpDepthMax.reset();
+        pumpWaitNanos.reset();
+        pumpWaitMaxNanos.reset();
     }
 
     /**
@@ -276,19 +374,20 @@ public final class NetStats {
         List<String> lines = new ArrayList<>();
         List<CommandStats> busiest = snapshot.busiest();
         boolean timing = snapshot.timing();
-        lines.add(String.format("%-34s %7s %7s %10s %10s %9s %8s %8s %8s",
+        lines.add(String.format("%-34s %7s %7s %10s %10s %9s %8s %8s %8s %8s",
               "command", "sent", "recv", "bytes-out", "bytes-in", "raw-out", "max-out",
-              timing ? "marsh-ms" : "", timing ? "unmar-ms" : ""));
+              timing ? "marsh-ms" : "", timing ? "unmar-ms" : "", timing ? "handl-ms" : ""));
         long otherPackets = 0;
         long otherBytes = 0;
         int shown = 0;
         for (CommandStats stats : busiest) {
             if (shown < topN) {
-                lines.add(String.format("%-34s %7d %7d %10d %10d %9d %8d %8s %8s",
+                lines.add(String.format("%-34s %7d %7d %10d %10d %9d %8d %8s %8s %8s",
                       stats.command(), stats.sent(), stats.received(), stats.wireBytesSent(),
                       stats.wireBytesReceived(), stats.rawBytesSent(), stats.maxWireBytesSent(),
                       timing ? millis(stats.marshalNanos()) : "",
-                      timing ? millis(stats.unmarshalNanos()) : ""));
+                      timing ? millis(stats.unmarshalNanos()) : "",
+                      timing ? millis(stats.handleNanos()) : ""));
                 shown++;
             } else {
                 otherPackets += stats.packets();
@@ -302,6 +401,8 @@ public final class NetStats {
         lines.add(String.format("total: %d packets, %d bytes on the wire, %d flushes%s",
               snapshot.totalPackets(), snapshot.totalWireBytes(), snapshot.flushCount(),
               timing ? String.format(", slowest flush %s ms", millis(snapshot.maxFlushNanos())) : ""));
+        lines.add(String.format("pump: %d handled, max depth %d%s", snapshot.totalHandled(), snapshot.pumpDepthMax(),
+              timing ? String.format(", max wait %s ms", millis(snapshot.pumpWaitMaxNanos())) : ""));
         return lines;
     }
 

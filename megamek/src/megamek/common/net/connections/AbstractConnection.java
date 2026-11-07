@@ -53,6 +53,7 @@ import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.marshalling.PacketMarshaller;
 import megamek.common.net.marshalling.PacketMarshallerFactory;
 import megamek.common.net.packets.Packet;
+import megamek.common.net.stats.NetStats;
 import megamek.logging.MMLogger;
 
 /**
@@ -96,6 +97,9 @@ public abstract class AbstractConnection {
 
     /** Indicates the need to compress sent data */
     private boolean zipData = true;
+
+    /** Where this connection's packet and byte counters go; the JVM-wide default until the owner assigns one */
+    private volatile NetStats netStats = NetStats.defaultInstance();
 
     /**
      * Creates new client (connection from client to server) connection
@@ -251,8 +255,19 @@ public abstract class AbstractConnection {
         try {
             sendNetworkPacket(packet.data(), packet.isCompressed());
         } catch (Exception ex) {
-            LOGGER.error("", ex);
+            LOGGER.error(ex, "{} connection {} failed to write command {} ({} bytes)", getConnectionTypeText(),
+                  getId(), packet.getCommand(), (packet.data() == null) ? 0 : packet.data().length);
         }
+    }
+
+    /** @return the counters this connection reports to */
+    public NetStats getNetStats() {
+        return netStats;
+    }
+
+    /** Points this connection's counters at the given registry, e.g. the one owned by the server or the client. */
+    public void setNetStats(NetStats netStats) {
+        this.netStats = Objects.requireNonNull(netStats);
     }
 
     /** @return True if there are pending packets. */
@@ -368,12 +383,15 @@ public abstract class AbstractConnection {
             }
         } catch (Exception exception) {
             if (packet == null) {
-                LOGGER.error(exception, "{} had an error sending a null packet", getConnectionTypeText());
+                LOGGER.error(exception, "{} connection {} had an error sending a null packet",
+                      getConnectionTypeText(), getId());
             } else {
                 LOGGER.error(exception,
-                      "{} had an error sending command {}",
+                      "{} connection {} had an error sending command {} ({} bytes)",
                       getConnectionTypeText(),
-                      packet.getCommand().name());
+                      getId(),
+                      packet.getCommand().name(),
+                      (packet.data() == null) ? 0 : packet.data().length);
             }
             return false;
         }
@@ -388,15 +406,19 @@ public abstract class AbstractConnection {
         bytesReceived += data.length;
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         InputStream in = np.isCompressed() ? new GZIPInputStream(bis) : bis;
+        long started = NetStats.now();
         Packet packet = pm.unmarshall(in);
         if (packet != null) {
+            netStats.recordReceived(packet.command(), data.length, NetStats.elapsedSince(started));
             processConnectionEvent(new PacketReceivedEvent(this, packet));
         }
     }
 
     /** Processes a packet to be sent. */
     protected void processPacket(SendPacket packet) {
+        long started = NetStats.now();
         sendNow(packet);
+        netStats.recordWrite(packet.getCommand(), NetStats.elapsedSince(started));
     }
 
     /**

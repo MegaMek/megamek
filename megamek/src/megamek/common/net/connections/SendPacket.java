@@ -39,6 +39,8 @@ import java.util.zip.GZIPOutputStream;
 
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
+import megamek.common.net.stats.CountingOutputStream;
+import megamek.common.net.stats.NetStats;
 import megamek.logging.MMLogger;
 
 public class SendPacket implements INetworkPacket {
@@ -61,12 +63,16 @@ public class SendPacket implements INetworkPacket {
             } else {
                 out = bos;
             }
-            connection.marshaller.marshall(packet, out);
+            long started = NetStats.now();
+            CountingOutputStream rawBytes = new CountingOutputStream(out);
+            connection.marshaller.marshall(packet, rawBytes);
             out.close();
             data = bos.toByteArray();
             connection.addBytesSent(data.length);
+            connection.getNetStats().recordSent(command, rawBytes.count(), data.length,
+                  NetStats.elapsedSince(started));
         } catch (Exception ex) {
-            logger.error("", ex);
+            logger.error(ex, "Connection {} failed to marshall command {}", connection.getId(), command);
         }
     }
 

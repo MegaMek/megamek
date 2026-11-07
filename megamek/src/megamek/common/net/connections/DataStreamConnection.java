@@ -43,6 +43,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import megamek.common.net.enums.PacketReadState;
+import megamek.common.net.stats.NetStats;
 import megamek.logging.MMLogger;
 
 /**
@@ -137,9 +138,11 @@ public class DataStreamConnection extends AbstractConnection {
         try {
             // Flush the output stream, to ensure all packets are sent
             if (out != null) {
+                long started = NetStats.now();
                 synchronized (out) {
                     out.flush();
                 }
+                getNetStats().recordFlush(NetStats.elapsedSince(started));
             }
         } catch (SocketException ignored) {
             // The connection is broken. This can happen if the connection is closed while being written to, and

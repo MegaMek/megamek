@@ -129,6 +129,15 @@ final class InProcessHarness implements AutoCloseable {
         }
     }
 
+    /** @return how many server-side per-connection threads ("Connection 0", "Connection 1", ...) are still alive */
+    static long liveConnectionThreads() {
+        return Thread.getAllStackTraces().keySet().stream()
+              .filter(Thread::isAlive)
+              .map(Thread::getName)
+              .filter(name -> name.matches("Connection \\d+"))
+              .count();
+    }
+
     static boolean sameIdsAndNames(Game expected, Game actual) {
         List<Player> expectedPlayers = new ArrayList<>(expected.getPlayersList());
         List<Player> actualPlayers = new ArrayList<>(actual.getPlayersList());
@@ -156,12 +165,12 @@ final class InProcessHarness implements AutoCloseable {
         clients.clear();
         // Let the server finish processing every disconnect before it dies. Server.die() does not wait for its
         // connection threads, and AbstractGameManager.send() routes through the static Server.getServerInstance(),
-        // so a disconnect still being handled after the next Server is constructed sends PLAYER_REMOVE and chat to
-        // the wrong server's clients (see ServerInstanceLeakTest). In the lounge each processed disconnect removes
-        // its player, so an empty player list means the server is quiescent.
+        // so disconnect work still running after the next Server is constructed - PLAYER_REMOVE, chat, the reset of
+        // an emptied lobby - reaches the wrong server's clients (see ServerInstanceLeakTest). Each disconnect runs
+        // to completion on its own "Connection N" thread, so no such thread alive means the server is quiescent.
         try {
-            await(() -> server.getGame().getNoOfPlayers() == 0, "the server to process every disconnect",
-                  10, TimeUnit.SECONDS);
+            await(() -> liveConnectionThreads() == 0, "the server's connection threads to finish", 10,
+                  TimeUnit.SECONDS);
         } catch (InterruptedException interrupted) {
             Thread.currentThread().interrupt();
         } catch (AssertionError stillBusy) {

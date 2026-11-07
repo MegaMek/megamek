@@ -76,12 +76,17 @@ class NuclearFires {
      * it washes the fire off in water.
      */
     static final int SCENARIO_BURN_ROUNDS = 999;
-    private static final int BOARD_ID = 0;
 
     private final Game game;
+    private final int boardId;
 
-    NuclearFires(TWGameManager gameManager) {
+    /**
+     * @param gameManager the game manager running the game the detonation happens in
+     * @param boardId     the board Ground Zero is on; only its hexes and units can catch fire
+     */
+    NuclearFires(TWGameManager gameManager, int boardId) {
         this.game = gameManager.getGame();
+        this.boardId = boardId;
     }
 
     /**
@@ -116,7 +121,7 @@ class NuclearFires {
         int[] damages = profile.blastDamageByDistance();
         int craterRadius = profile.craterRadius();
         Map<Coords, List<Entity>> unitsByHex = unitsThatCanBurn(groundZero, damages.length);
-        Board board = game.getBoard(BOARD_ID);
+        Board board = game.getBoard(boardId);
         int blastHexesRolled = 0;
         int blastHexesIgnited = 0;
         int outerHexesRolled = 0;
@@ -193,6 +198,11 @@ class NuclearFires {
             if (entity.isDestroyed() || entity.isDoomed() || (entity.getPosition() == null)
                   || (entity.getTransportId() != Entity.NONE)
                   || (groundZero.distance(entity.getPosition()) >= blastAreaRings)) {
+                continue;
+            }
+            if (entity.getBoardId() != boardId) {
+                LOGGER.info("[Nukes] {} is on board {}, not the blast's board {}: no flash fire",
+                      entity.getDisplayName(), entity.getBoardId(), boardId);
                 continue;
             }
             if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {

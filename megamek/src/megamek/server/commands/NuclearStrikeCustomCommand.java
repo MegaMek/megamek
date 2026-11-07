@@ -116,7 +116,7 @@ public class NuclearStrikeCustomCommand extends ClientServerCommand {
         if (detonationRound == ROUND_REFUSED) {
             return;
         }
-        ScheduledNuke nuke = new ScheduledNuke(groundZero,
+        ScheduledNuke nuke = new ScheduledNuke(groundZero, DEFAULT_BOARD_ID,
               NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
                     (int) args.get("deg").getValue(),
                     (int) args.get("radius").getValue(),

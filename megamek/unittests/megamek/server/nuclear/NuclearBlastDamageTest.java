@@ -87,6 +87,8 @@ class NuclearBlastDamageTest {
     private static final String UNIT_FILES = "testresources/megamek/common/units/";
     private static final int BOARD_SIZE = 40;
     private static final Coords GROUND_ZERO = new Coords(20, 20);
+    /** The board every test's Ground Zero is on. */
+    private static final int GROUND_BOARD = 0;
     /** 8 hexes north of Ground Zero, where a Davy Crockett deals 100 - 8 x 5 = 60. */
     private static final Coords BUILDING_HEX = new Coords(20, 12);
     private static final int BUILDING_CF = 80;
@@ -150,7 +152,7 @@ class NuclearBlastDamageTest {
 
     private Vector<Integer> blast(NuclearWeaponType weaponType) {
         Vector<Integer> blastedUnits = new Vector<>();
-        new NuclearBlastDamage(gameManager).apply(GROUND_ZERO, NuclearBlastProfile.groundBurst(weaponType),
+        new NuclearBlastDamage(gameManager, GROUND_BOARD).apply(GROUND_ZERO, NuclearBlastProfile.groundBurst(weaponType),
               new Vector<Report>(), blastedUnits);
         return blastedUnits;
     }
@@ -160,7 +162,7 @@ class NuclearBlastDamageTest {
         // An Atlas's best location holds 47 armor, far below a Davy Crockett's 100 (IO:AE p.164)
         Entity atlas = placeUnit("Atlas AS7-D.mtf", GROUND_ZERO);
 
-        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO,
+        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO, GROUND_BOARD,
               NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M), new Vector<Report>());
 
         assertTrue(atlas.isDoomed() || atlas.isDestroyed(), "annihilated at Ground Zero");
@@ -177,13 +179,37 @@ class NuclearBlastDamageTest {
         bulldog.load(elementals, false);
         elementals.setTransportId(bulldog.getId());
 
-        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO,
+        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO, GROUND_BOARD,
               NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M), new Vector<Report>());
 
         assertTrue(elementals.isDestroyed(), "killed with the carrier");
         assertNull(game.getEntity(elementals.getId()), "already in the graveyard");
         assertFalse(elementals.isSalvage());
         assertEquals(IEntityRemovalConditions.REMOVE_DEVASTATED, elementals.getRemovalCondition());
+    }
+
+    @Test
+    void unitOnAnotherBoardIsUntouched() throws Exception {
+        // Two ground maps: a Davy Crockett at 2020 on the first does not reach an Atlas at 2020 on the second
+        int secondBoard = 1;
+        Hex[] hexes = new Hex[BOARD_SIZE * BOARD_SIZE];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex(0);
+        }
+        Board otherBoard = new Board();
+        otherBoard.newData(BOARD_SIZE, BOARD_SIZE, hexes, null);
+        otherBoard.setBoardId(secondBoard);
+        game.setBoard(secondBoard, otherBoard);
+        Entity atlas = placeUnit("Atlas AS7-D.mtf", GROUND_ZERO);
+        atlas.setBoardId(secondBoard);
+        int armorBefore = atlas.getTotalArmor();
+
+        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO, GROUND_BOARD,
+              NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M), new Vector<Report>());
+
+        assertFalse(atlas.isDoomed() || atlas.isDestroyed(), "not annihilated: it is on another board");
+        assertEquals(armorBefore, atlas.getTotalArmor(), "no blast damage");
+        assertFalse(atlas.infernos.isStillBurning(), "not set aflame");
     }
 
     @Test
@@ -299,7 +325,7 @@ class NuclearBlastDamageTest {
     }
 
     private Coords protectingHex(Coords unitHex, int height, NuclearWeaponType weaponType) {
-        return new NuclearBlastDamage(gameManager).protectingHex(unitHex, height, GROUND_ZERO, damages(weaponType));
+        return new NuclearBlastDamage(gameManager, GROUND_BOARD).protectingHex(unitHex, height, GROUND_ZERO, damages(weaponType));
     }
 
     @Test
@@ -403,7 +429,7 @@ class NuclearBlastDamageTest {
         Vector<Integer> blastedUnits = new Vector<>();
         try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
             compute.when(() -> Compute.rollD6(2)).thenReturn(roll);
-            new NuclearBlastDamage(gameManager).apply(GROUND_ZERO, profile, new Vector<Report>(), blastedUnits);
+            new NuclearBlastDamage(gameManager, GROUND_BOARD).apply(GROUND_ZERO, profile, new Vector<Report>(), blastedUnits);
         }
         return blastedUnits;
     }

@@ -900,7 +900,7 @@ public class AreaEffectHelper {
     public static void doNuclearExplosion(Entity entity, Coords coords, NuclearWeaponType nukeType,
           Vector<Report> vPhaseReport, TWGameManager gameManager) {
 
-        gameManager.drawNukeHitOnBoard(coords);
+        gameManager.drawNukeHitOnBoard(coords, entity.getBoardId());
 
         NuclearBlastProfile profile = NuclearBlastProfile.groundBurst(nukeType);
 

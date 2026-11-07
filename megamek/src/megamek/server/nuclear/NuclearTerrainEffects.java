@@ -38,8 +38,8 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Hex;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.IBuilding;
@@ -60,11 +60,15 @@ class NuclearTerrainEffects {
     static final int ORDINARY_RUBBLE = 1;
 
     private final TWGameManager gameManager;
-    private final Game game;
+    private final Board board;
 
-    NuclearTerrainEffects(TWGameManager gameManager) {
+    /**
+     * @param gameManager the game manager running the game the detonation happens in
+     * @param boardId     the board Ground Zero is on; only its terrain changes
+     */
+    NuclearTerrainEffects(TWGameManager gameManager, int boardId) {
         this.gameManager = gameManager;
-        this.game = gameManager.getGame();
+        this.board = gameManager.getGame().getBoard(boardId);
     }
 
     /**
@@ -88,12 +92,12 @@ class NuclearTerrainEffects {
             // Iterate through the hexes.
             for (Coords myHexCoords : hexSet) {
                 // ignore out of bounds coordinates
-                if (!game.getBoard().contains(myHexCoords)) {
+                if (!board.contains(myHexCoords)) {
                     continue;
                 }
 
                 int rubbleLevel = collapseCraterBuilding(myHexCoords);
-                Hex myHex = game.getBoard().getHex(myHexCoords);
+                Hex myHex = board.getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
                 myHex.setLevel((myHex.getLevel() - curDepth));
 
@@ -120,7 +124,7 @@ class NuclearTerrainEffects {
      * @return the rubble the hex keeps: the building's own kind, or ordinary rubble if no building stood there
      */
     private int collapseCraterBuilding(Coords coords) {
-        IBuilding building = game.getBoard().getBuildingAt(coords);
+        IBuilding building = board.getBuildingAt(coords);
         if (building == null) {
             return ORDINARY_RUBBLE;
         }
@@ -129,7 +133,7 @@ class NuclearTerrainEffects {
         building.setPhaseCF(0, coords);
         gameManager.send(new Packet(PacketCommand.BLDG_COLLAPSE, new Vector<>(List.of(coords)),
               building.getBoardId()));
-        game.getBoard().collapseBuilding(coords);
+        board.collapseBuilding(coords);
         LOGGER.info("[Nukes] Building {} at hex {} is in the crater: collapsed, leaves rubble level {}",
               building.getName(), coords.getBoardNum(), rubbleLevel);
         return rubbleLevel;
@@ -149,9 +153,9 @@ class NuclearTerrainEffects {
             LOGGER.info("[Nukes] Ground Zero {} is in the crater: it keeps the crater's rubble", groundZero.getBoardNum());
             return;
         }
-        IBuilding groundZeroBuilding = game.getBoard().getBuildingAt(groundZero);
+        IBuilding groundZeroBuilding = board.getBuildingAt(groundZero);
         if ((groundZeroBuilding == null) || (groundZeroBuilding.getCurrentCF(groundZero) <= 0)) {
-            Hex gzHex = game.getBoard().getHex(groundZero);
+            Hex gzHex = board.getHex(groundZero);
             if (gzHex.containsTerrain(Terrains.WATER)) {
                 gzHex.setLevel(gzHex.floor());
             }
@@ -190,11 +194,11 @@ class NuclearTerrainEffects {
             // Iterate through the hexes.
             for (Coords myHexCoords : hexSet) {
                 // ignore out of bounds coordinates
-                if (!game.getBoard().contains(myHexCoords)) {
+                if (!board.contains(myHexCoords)) {
                     continue;
                 }
 
-                Hex myHex = game.getBoard().getHex(myHexCoords);
+                Hex myHex = board.getHex(myHexCoords);
 
                 // For each 3000 damage, water level is reduced by 1.
                 if ((damageAtRange >= 3000) && (myHex.containsTerrain(Terrains.WATER))) {
@@ -259,7 +263,7 @@ class NuclearTerrainEffects {
      * @return {@code true} if a building still stands in the hex after the blast, so the hex keeps it
      */
     private boolean isStandingBuilding(Coords coords, int damage) {
-        IBuilding building = game.getBoard().getBuildingAt(coords);
+        IBuilding building = board.getBuildingAt(coords);
         if ((building == null) || (building.getCurrentCF(coords) <= 0)) {
             return false;
         }

@@ -450,13 +450,14 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                       vPhaseReport,
                       gameManager);
             } else {
-                gameManager.drawNukeHitOnBoard(finalPos);
+                gameManager.drawNukeHitOnBoard(finalPos, target.getBoardId());
                 gameManager.getGame().processGameEvent(
                       new GamePlayerStrategicActionEvent(gameManager,
                             new NukeDetonatedAction(attackingEntity.getId(),
                                   attackingEntity.getOwnerId(),
                                   AmmoType.Munitions.M_DAVY_CROCKETT_M)));
-                gameManager.doNuclearExplosion(finalPos, NuclearWeaponType.DAVY_CROCKETT_M, vPhaseReport);
+                gameManager.doNuclearExplosion(finalPos, target.getBoardId(), NuclearWeaponType.DAVY_CROCKETT_M,
+                      vPhaseReport);
             }
             return false;
         }

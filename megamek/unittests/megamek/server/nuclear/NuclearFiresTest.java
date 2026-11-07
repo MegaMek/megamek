@@ -73,6 +73,8 @@ import org.mockito.Mockito;
  * Zero less 5 a hex.
  */
 class NuclearFiresTest {
+    /** The board every test's Ground Zero is on. */
+    private static final int GROUND_BOARD = 0;
     private static final String UNIT_FILES = "testresources/megamek/common/units/";
     private static final int BOARD_SIZE = 81;
     private static final Coords GROUND_ZERO = new Coords(40, 40);
@@ -144,7 +146,7 @@ class NuclearFiresTest {
         Set<Coords> changedHexes = new LinkedHashSet<>();
         try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
             compute.when(() -> Compute.rollD6(2)).thenReturn(roll);
-            new NuclearFires(gameManager).startFires(GROUND_ZERO,
+            new NuclearFires(gameManager, GROUND_BOARD).startFires(GROUND_ZERO,
                   NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M), changedHexes,
                   new Vector<Report>());
         }

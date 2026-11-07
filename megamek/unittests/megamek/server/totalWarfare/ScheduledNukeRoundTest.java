@@ -61,6 +61,8 @@ import org.mockito.Mockito;
 class ScheduledNukeRoundTest {
     private static final int BOARD_SIZE = 30;
     private static final Coords GROUND_ZERO = new Coords(14, 14);
+    /** The board every test's Ground Zero is on. */
+    private static final int GROUND_BOARD = 0;
     private static final int GAME_MASTER = 0;
 
     private TWGameManager gameManager;
@@ -86,7 +88,7 @@ class ScheduledNukeRoundTest {
     }
 
     private ScheduledNuke strikeOnRound(int round) {
-        return new ScheduledNuke(GROUND_ZERO, NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M),
+        return new ScheduledNuke(GROUND_ZERO, GROUND_BOARD, NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M),
               NuclearWeaponType.DAVY_CROCKETT_M, GAME_MASTER, round);
     }
 
@@ -138,8 +140,8 @@ class ScheduledNukeRoundTest {
 
     @Test
     void waitingAirBurstIsSavedWithTheGame() {
-        ScheduledNuke strike = new ScheduledNuke(GROUND_ZERO, NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO),
-              NuclearWeaponType.ALAMO, GAME_MASTER, 5);
+        ScheduledNuke strike = new ScheduledNuke(GROUND_ZERO, GROUND_BOARD,
+              NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO), NuclearWeaponType.ALAMO, GAME_MASTER, 5);
         game.getScheduledNukes().add(strike);
 
         String savedGame = SerializationHelper.getSaveGameXStream().toXML(game);
@@ -147,5 +149,20 @@ class ScheduledNukeRoundTest {
 
         assertEquals(strike, loadedGame.getScheduledNukes().getFirst(), "it comes back as an air burst");
         assertTrue(loadedGame.getScheduledNukes().getFirst().profile().isAirBurst());
+    }
+
+    @Test
+    void waitingStrikeKeepsItsBoardThroughASave() {
+        int secondBoard = 1;
+        ScheduledNuke strike = new ScheduledNuke(GROUND_ZERO, secondBoard,
+              NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M), NuclearWeaponType.DAVY_CROCKETT_M,
+              GAME_MASTER, 5);
+        game.getScheduledNukes().add(strike);
+
+        String savedGame = SerializationHelper.getSaveGameXStream().toXML(game);
+        Game loadedGame = (Game) SerializationHelper.getLoadSaveGameXStream().fromXML(savedGame);
+
+        assertEquals(secondBoard, loadedGame.getScheduledNukes().getFirst().boardId(),
+              "the strike still lands on the second board");
     }
 }

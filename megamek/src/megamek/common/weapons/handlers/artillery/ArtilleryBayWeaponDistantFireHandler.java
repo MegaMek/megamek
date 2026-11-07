@@ -499,7 +499,8 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
                                 new NukeDetonatedAction(attackingEntity.getId(),
                                       attackingEntity.getOwnerId(),
                                       AmmoType.Munitions.M_DAVY_CROCKETT_M)));
-                    gameManager.doNuclearExplosion(targetPos, NuclearWeaponType.DAVY_CROCKETT_M, vPhaseReport);
+                    gameManager.doNuclearExplosion(targetPos, target.getBoardId(), NuclearWeaponType.DAVY_CROCKETT_M,
+                          vPhaseReport);
                     numWeaponsHit--;
                 }
             } else {
@@ -510,7 +511,8 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
                                 new NukeDetonatedAction(attackingEntity.getId(),
                                       attackingEntity.getOwnerId(),
                                       AmmoType.Munitions.M_DAVY_CROCKETT_M)));
-                    gameManager.doNuclearExplosion(c, NuclearWeaponType.DAVY_CROCKETT_M, vPhaseReport);
+                    gameManager.doNuclearExplosion(c, target.getBoardId(), NuclearWeaponType.DAVY_CROCKETT_M,
+                          vPhaseReport);
                 }
             }
             return false;

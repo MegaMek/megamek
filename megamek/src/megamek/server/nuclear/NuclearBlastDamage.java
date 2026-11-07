@@ -86,14 +86,19 @@ class NuclearBlastDamage {
      * (TO:AR Terrain Factor and Conversion Table; HammerGS, 2026-10-28).
      */
     static final int HILL_TERRAIN_FACTOR = 200;
-    private static final int BOARD_ID = 0;
 
     private final TWGameManager gameManager;
     private final Game game;
+    private final int boardId;
 
-    NuclearBlastDamage(TWGameManager gameManager) {
+    /**
+     * @param gameManager the game manager running the game the detonation happens in
+     * @param boardId     the board Ground Zero is on; units, buildings and cover on other boards are untouched
+     */
+    NuclearBlastDamage(TWGameManager gameManager, int boardId) {
         this.gameManager = gameManager;
         this.game = gameManager.getGame();
+        this.boardId = boardId;
     }
 
     /**
@@ -125,6 +130,11 @@ class NuclearBlastDamage {
                 if ((transport != null) && !transport.isAirborne()) {
                     carriedUnits.add(entity);
                 }
+                continue;
+            }
+            if (entity.getBoardId() != boardId) {
+                LOGGER.info("[Nukes] {} at hex {} is on board {}, not the blast's board {}: untouched",
+                      entity.getDisplayName(), entityPosition.getBoardNum(), entity.getBoardId(), boardId);
                 continue;
             }
             // An Advanced Building entity is the building at its hexes and was already damaged as a building
@@ -176,7 +186,7 @@ class NuclearBlastDamage {
      */
     private Map<Coords, Integer> damageBuildings(Coords groundZero, int[] damages, Vector<Report> vDesc) {
         Map<Coords, Integer> strengthBefore = new HashMap<>();
-        Enumeration<IBuilding> buildings = game.getBoard(BOARD_ID).getBuildings();
+        Enumeration<IBuilding> buildings = game.getBoard(boardId).getBuildings();
         while (buildings.hasMoreElements()) {
             IBuilding building = buildings.nextElement();
             Enumeration<Coords> buildingHexes = building.getCoords();
@@ -365,7 +375,13 @@ class NuclearBlastDamage {
         if ((transporter != null) && !transporter.getExternalUnits().contains(entity)) {
             return;
         }
-        Coords entityPosition = (transporter == null) ? entity.getPosition() : transporter.getPosition();
+        Entity positioned = (transporter == null) ? entity : transporter;
+        if (positioned.getBoardId() != boardId) {
+            LOGGER.info("[Nukes] {}, carried on board {}, is not on the blast's board {}: untouched",
+                  entity.getDisplayName(), positioned.getBoardId(), boardId);
+            return;
+        }
+        Coords entityPosition = positioned.getPosition();
         int range = groundZero.distance(entityPosition);
         if (range >= damages.length) {
             return;
@@ -473,7 +489,7 @@ class NuclearBlastDamage {
      * @return the protecting hex, or {@code null} if there is none
      */
     Coords protectingHex(Coords entityPosition, int height, Coords groundZero, int[] damages) {
-        Hex unitHex = game.getBoard(BOARD_ID).getHex(entityPosition);
+        Hex unitHex = game.getBoard(boardId).getHex(entityPosition);
         if (unitHex == null) {
             return null;
         }
@@ -486,11 +502,11 @@ class NuclearBlastDamage {
             if (distanceFromUnit > 1) {
                 break;
             }
-            Hex hex = game.getBoard(BOARD_ID).getHex(coords);
+            Hex hex = game.getBoard(boardId).getHex(coords);
             if (hex == null) {
                 continue;
             }
-            IBuilding building = game.getBoard(BOARD_ID).getBuildingAt(coords);
+            IBuilding building = game.getBoard(boardId).getBuildingAt(coords);
             boolean standingBuilding = hex.containsTerrain(Terrains.BUILDING) && (building != null)
                   && (building.getCurrentCF(coords) > 0);
             // The same height test as line of sight: the hex level plus the building's height (LosEffects)

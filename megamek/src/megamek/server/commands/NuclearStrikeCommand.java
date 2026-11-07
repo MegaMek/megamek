@@ -121,7 +121,7 @@ public class NuclearStrikeCommand extends ClientServerCommand {
         if (detonationRound == ROUND_REFUSED) {
             return;
         }
-        ScheduledNuke nuke = new ScheduledNuke(groundZero, NuclearBlastProfile.of(nukeType, burstMode), nukeType,
+        ScheduledNuke nuke = new ScheduledNuke(groundZero, DEFAULT_BOARD_ID, NuclearBlastProfile.of(nukeType, burstMode), nukeType,
               firingPlayerId(connId, playerID), detonationRound);
         logger.info("[Nukes] /ns from connection {}: {} {} burst at hex {}", connId, nukeType, burstMode,
               groundZero.getBoardNum());

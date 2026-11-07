@@ -148,7 +148,8 @@ public class NukeCommand extends ClientServerCommand {
                 Coords groundZero = new Coords((int) args.get("x").getValue() - 1,
                       (int) args.get("y").getValue() - 1);
                 NuclearWeaponType weaponType = TYPE_NUMBERS[typeOpt.orElseThrow()];
-                ScheduledNuke nuke = new ScheduledNuke(groundZero, NuclearBlastProfile.groundBurst(weaponType),
+                ScheduledNuke nuke = new ScheduledNuke(groundZero, DEFAULT_BOARD_ID,
+                      NuclearBlastProfile.groundBurst(weaponType),
                       weaponType, connId,
                       ScheduledNuke.earliestDetonationRound(gameManager.getGame().getRoundCount(),
                             gameManager.getGame().getPhase()));
@@ -169,7 +170,7 @@ public class NukeCommand extends ClientServerCommand {
             try {
                 Coords groundZero = new Coords((int) args.get("x").getValue() - 1,
                       (int) args.get("y").getValue() - 1);
-                ScheduledNuke nuke = new ScheduledNuke(groundZero,
+                ScheduledNuke nuke = new ScheduledNuke(groundZero, DEFAULT_BOARD_ID,
                       NuclearBlastProfile.custom((int) args.get("dmg").getValue(),
                             (int) args.get("deg").getValue(),
                             (int) args.get("radius").getValue(),

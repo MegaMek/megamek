@@ -140,6 +140,9 @@ public abstract class ClientServerCommand extends ServerCommand {
         }
     }
 
+    /** The board a nuclear strike lands on when the command names none: the first board, as it always was. */
+    protected static final int DEFAULT_BOARD_ID = 0;
+
     /** Returned by {@link #detonationRound} when the round asked for has already passed its weapons phase. */
     protected static final int ROUND_REFUSED = -1;
 

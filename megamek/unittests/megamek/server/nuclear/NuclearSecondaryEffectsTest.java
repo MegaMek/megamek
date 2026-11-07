@@ -75,6 +75,8 @@ import org.mockito.Mockito;
  * Real units rolling on the Secondary Nuclear Effects Table (IO:AE pp. 165-166).
  */
 class NuclearSecondaryEffectsTest {
+    /** The board every test's Ground Zero is on. */
+    private static final int GROUND_BOARD = 0;
     private static final String UNIT_FILES = "testresources/megamek/common/units/";
     private static final int BOARD_SIZE = 40;
     private static final Coords GROUND_ZERO = new Coords(20, 20);
@@ -363,7 +365,7 @@ class NuclearSecondaryEffectsTest {
         Roll roll = fixedRoll(11);
         try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
             compute.when(() -> Compute.rollD6(2)).thenReturn(roll);
-            new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO,
+            new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO, GROUND_BOARD,
                   NuclearBlastProfile.groundBurst(NuclearWeaponType.DAVY_CROCKETT_M), new Vector<Report>());
         }
 

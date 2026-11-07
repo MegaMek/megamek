@@ -72,6 +72,8 @@ import org.mockito.Mockito;
  * Runs real detonations on an empty board and checks what they do to the terrain (IO:AE 3rd printing, pp. 164-165).
  */
 class NuclearDetonationResolverTest {
+    /** The board every test's Ground Zero is on. */
+    private static final int GROUND_BOARD = 0;
     private static final int BOARD_SIZE = 81;
     private static final Coords GROUND_ZERO = new Coords(40, 40);
 
@@ -100,7 +102,7 @@ class NuclearDetonationResolverTest {
     }
 
     private void detonate(NuclearWeaponType weaponType) {
-        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO,
+        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO, GROUND_BOARD,
               NuclearBlastProfile.groundBurst(weaponType),
               new Vector<Report>());
     }

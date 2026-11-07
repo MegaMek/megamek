@@ -245,13 +245,14 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 gameManager.deliverArtilleryFlare(targetPos, target.getBoardId(), radius);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M)) {
-                gameManager.drawNukeHitOnBoard(targetPos);
+                gameManager.drawNukeHitOnBoard(targetPos, target.getBoardId());
                 gameManager.getGame().processGameEvent(
                       new GamePlayerStrategicActionEvent(gameManager,
                             new NukeDetonatedAction(attackingEntity.getId(),
                                   attackingEntity.getOwnerId(),
                                   AmmoType.Munitions.M_DAVY_CROCKETT_M)));
-                gameManager.doNuclearExplosion(targetPos, NuclearWeaponType.DAVY_CROCKETT_M, vPhaseReport);
+                gameManager.doNuclearExplosion(targetPos, target.getBoardId(), NuclearWeaponType.DAVY_CROCKETT_M,
+                      vPhaseReport);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
                 gameManager.deliverFASCAMMinefield(targetPos, attackingEntity.getOwner().getId(),

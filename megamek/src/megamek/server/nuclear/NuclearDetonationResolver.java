@@ -76,15 +76,17 @@ public class NuclearDetonationResolver {
     }
 
     /**
-     * Resolves a ground burst.
+     * Resolves a detonation on a ground map. Only the units, terrain and buildings on Ground Zero's board are touched:
+     * a nuke at 0606 on one ground map does not hit a Mek at 0606 on another.
      *
      * @param position the Ground Zero hex
+     * @param boardId  the board Ground Zero is on
      * @param profile  the detonation's damage, radii and crater depth
      * @param vDesc    a vector that contains the output report
      *
      * @return the number of units the detonation destroyed
      */
-    public int resolve(Coords position, NuclearBlastProfile profile, Vector<Report> vDesc) {
+    public int resolve(Coords position, int boardId, NuclearBlastProfile profile, Vector<Report> vDesc) {
         long startNanos = System.nanoTime();
         Set<Integer> standingBefore = new LinkedHashSet<>();
         for (Entity entity : game.getEntitiesVector()) {
@@ -110,11 +112,11 @@ public class NuclearDetonationResolver {
         vDesc.add(r);
 
         int craterRadius = profile.craterRadius();
-        LOGGER.info("[Nukes] Detonation at hex {}: {} burst, impact {}, damage reduction {}/hex, blast radius {}, "
-              + "secondary radius {}, crater depth {}, crater radius {}", position.getBoardNum(),
+        LOGGER.info("[Nukes] Detonation at hex {} on board {}: {} burst, impact {}, damage reduction {}/hex, blast "
+              + "radius {}, secondary radius {}, crater depth {}, crater radius {}", position.getBoardNum(), boardId,
               profile.burstMode(), profile.impactDamage(), profile.damageReduction(), profile.blastRadius(), profile.secondaryRadius(),
               profile.craterDepth(), craterRadius);
-        NuclearTerrainEffects terrainEffects = new NuclearTerrainEffects(gameManager);
+        NuclearTerrainEffects terrainEffects = new NuclearTerrainEffects(gameManager, boardId);
         terrainEffects.crater(position, profile, changedHexes);
 
         // This is technically part of cratering, but...
@@ -136,6 +138,12 @@ public class NuclearDetonationResolver {
                 continue;
             }
 
+            if (entity.getBoardId() != boardId) {
+                LOGGER.info("[Nukes] {} at hex {} is on board {}, not the crater's board {}: untouched",
+                      entity.getDisplayName(), entity.getPosition().getBoardNum(), entity.getBoardId(), boardId);
+                continue;
+            }
+
             if (isAboveTheCrater(entity)) {
                 LOGGER.info("[Nukes] {} at hex {} flies above the crater ({} hexes from Ground Zero): blast height "
                       + "decides its fate instead", entity.getDisplayName(), entity.getPosition().getBoardNum(),
@@ -154,15 +162,15 @@ public class NuclearDetonationResolver {
         Vector<Report> tmpV = new Vector<>();
         Vector<Integer> blastedUnitsVec = new Vector<>();
 
-        new NuclearBlastDamage(gameManager).apply(position, profile, tmpV, blastedUnitsVec);
+        new NuclearBlastDamage(gameManager, boardId).apply(position, profile, tmpV, blastedUnitsVec);
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 
         terrainEffects.clearGroundZero(position, profile, changedHexes);
         terrainEffects.damageTerrain(position, profile, changedHexes);
-        new NuclearFires(gameManager).startFires(position, profile, changedHexes, vDesc);
+        new NuclearFires(gameManager, boardId).startFires(position, profile, changedHexes, vDesc);
 
-        gameManager.sendChangedHexes(changedHexes, 0);
+        gameManager.sendChangedHexes(changedHexes, boardId);
 
         // Lastly, do secondary effects.
         NuclearSecondaryEffects secondaryEffects = new NuclearSecondaryEffects(gameManager);
@@ -176,6 +184,11 @@ public class NuclearDetonationResolver {
                   : game.getEntity(entity.getTransportId());
             // Off-board units have no position
             if ((positioned == null) || (positioned.getPosition() == null)) {
+                continue;
+            }
+            if (positioned.getBoardId() != boardId) {
+                LOGGER.info("[Nukes] {} is on board {}, not the blast's board {}: no secondary effects",
+                      entity.getDisplayName(), positioned.getBoardId(), boardId);
                 continue;
             }
             if (position.distance(positioned.getPosition()) > profile.secondaryRadius()) {

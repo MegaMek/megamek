@@ -20145,11 +20145,11 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void addScheduledNuke(ScheduledNuke nuke) {
         Player firingPlayer = game.getPlayer(nuke.firingPlayerId());
-        LOGGER.info("[Nukes] Scheduled for the end of the weapons phase of round {} at hex {}: {} {}, fired by {}",
-              nuke.detonationRound(), nuke.groundZero().getBoardNum(), nuke.warheadName(), nuke.profile(),
-              (firingPlayer == null) ? "nobody" : firingPlayer.getName());
+        LOGGER.info("[Nukes] Scheduled for the end of the weapons phase of round {} at hex {} on board {}: {} {}, "
+                    + "fired by {}", nuke.detonationRound(), nuke.groundZero().getBoardNum(), nuke.boardId(),
+              nuke.warheadName(), nuke.profile(), (firingPlayer == null) ? "nobody" : firingPlayer.getName());
         game.getScheduledNukes().add(nuke);
-        drawNukeIncomingOnBoard(nuke.groundZero(), nuke.detonationRound(), firingPlayer);
+        drawNukeIncomingOnBoard(nuke.groundZero(), nuke.boardId(), nuke.detonationRound(), firingPlayer);
         new NuclearStrikeNotifications(this).announceIncoming(nuke.groundZero(), nuke.detonationRound(),
               firingPlayer);
     }
@@ -20263,9 +20263,9 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         for (ScheduledNuke nuke : dueNukes) {
-            drawNukeHitOnBoard(nuke.groundZero());
-            int unitsDestroyed = new NuclearDetonationResolver(this).resolve(nuke.groundZero(), nuke.profile(),
-                  mainPhaseReport);
+            drawNukeHitOnBoard(nuke.groundZero(), nuke.boardId());
+            int unitsDestroyed = new NuclearDetonationResolver(this).resolve(nuke.groundZero(), nuke.boardId(),
+                  nuke.profile(), mainPhaseReport);
             new NuclearStrikeNotifications(this).announceDetonation(nuke.warheadName(), nuke.groundZero(),
                   unitsDestroyed);
         }
@@ -20302,8 +20302,14 @@ public class TWGameManager extends AbstractGameManager {
      * Marks the hexes around a nuclear detonation on the board.
      *
      * @param groundZero the Ground Zero hex
+     * @param boardId    the board Ground Zero is on
      */
-    public void drawNukeHitOnBoard(Coords groundZero) {
+    public void drawNukeHitOnBoard(Coords groundZero, int boardId) {
+        Board board = getGame().getBoard(boardId);
+        if (board == null) {
+            LOGGER.info("[Nukes] No board {} to mark the detonation at hex {} on", boardId, groundZero.getBoardNum());
+            return;
+        }
         // Turns out this object can be used here
         var nuke = new OrbitalBombardment.Builder().x(groundZero.getX())
               .y(groundZero.getY())
@@ -20312,10 +20318,10 @@ public class TWGameManager extends AbstractGameManager {
               .build();
 
         var allCoords = nuke.getAllAffectedCoords();
-        var hexes = getGame().getBoard().getSpecialHexDisplayTable();
+        var hexes = board.getSpecialHexDisplayTable();
 
         for (var coord : allCoords) {
-            if (!getGame().getBoard().contains(coord)) {
+            if (!board.contains(coord)) {
                 continue;
             }
 
@@ -20326,12 +20332,12 @@ public class TWGameManager extends AbstractGameManager {
                       .toList();
 
                 for (var shd : removeIncoming) {
-                    getGame().getBoard().removeSpecialHexDisplay(coord, shd);
+                    board.removeSpecialHexDisplay(coord, shd);
                 }
             }
 
             String imageSignature = nuke.getImageSignature(coord);
-            getGame().getBoard()
+            board
                   .addSpecialHexDisplay(coord,
                         new SpecialHexDisplay(SpecialHexDisplay.Type.NUKE_HIT,
                               getGame().getRoundCount(),
@@ -20341,7 +20347,7 @@ public class TWGameManager extends AbstractGameManager {
                               Messages.getString("Nuke.exploded"),
                               SpecialHexDisplay.SHD_VISIBLE_TO_ALL,
                               imageSignature));
-            sendChangedHex(coord);
+            sendChangedHex(coord, boardId);
         }
     }
 
@@ -20349,7 +20355,14 @@ public class TWGameManager extends AbstractGameManager {
      * Marks the hexes around an incoming strike. Like an artillery target, the marker shows only to the firing
      * player's side; with no firing player it shows to everyone, as it always did.
      */
-    private void drawNukeIncomingOnBoard(Coords groundZero, int detonationRound, @Nullable Player firingPlayer) {
+    private void drawNukeIncomingOnBoard(Coords groundZero, int boardId, int detonationRound,
+          @Nullable Player firingPlayer) {
+        Board board = getGame().getBoard(boardId);
+        if (board == null) {
+            LOGGER.info("[Nukes] No board {} to mark the incoming strike at hex {} on", boardId,
+                  groundZero.getBoardNum());
+            return;
+        }
         var nuke = new OrbitalBombardment.Builder().x(groundZero.getX())
               .y(groundZero.getY())
               .radius(4)
@@ -20359,10 +20372,10 @@ public class TWGameManager extends AbstractGameManager {
         var allCoords = nuke.getAllAffectedCoords();
         List<Coords> markedHexes = new ArrayList<>();
         for (var coord : allCoords) {
-            if (!getGame().getBoard().contains(coord)) {
+            if (!board.contains(coord)) {
                 continue;
             }
-            getGame().getBoard()
+            board
                   .addSpecialHexDisplay(coord,
                         new SpecialHexDisplay(SpecialHexDisplay.Type.NUKE_INCOMING,
                               detonationRound,
@@ -20373,18 +20386,19 @@ public class TWGameManager extends AbstractGameManager {
                                     : SpecialHexDisplay.SHD_VISIBLE_TO_TEAM));
             markedHexes.add(coord);
         }
-        sendChangedHexes(markedHexes, 0);
+        sendChangedHexes(markedHexes, boardId);
     }
 
     /**
      * do a nuclear explosion
      *
      * @param position the position that will be hit by the nuke
+     * @param boardId  the board the position is on
      * @param nukeType the type of nuke
      * @param vDesc    a vector that contains the output report
      */
-    public void doNuclearExplosion(Coords position, NuclearWeaponType nukeType, Vector<Report> vDesc) {
-        int unitsDestroyed = new NuclearDetonationResolver(this).resolve(position,
+    public void doNuclearExplosion(Coords position, int boardId, NuclearWeaponType nukeType, Vector<Report> vDesc) {
+        int unitsDestroyed = new NuclearDetonationResolver(this).resolve(position, boardId,
               NuclearBlastProfile.groundBurst(nukeType), vDesc);
         new NuclearStrikeNotifications(this).announceDetonation(nukeType.getDisplayName(), position, unitsDestroyed);
     }

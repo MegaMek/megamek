@@ -239,7 +239,9 @@ public final class FluffImageHelper {
         List<String> nameCandidates = nameCandidates(unit);
 
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        boolean hasUserDir = !userDir.isBlank() && listing(new File(userDir)).isDirectory();
+        // No existence check on the user dir itself: listing its root can be slow on cloud-synced drives, and a
+        // missing user dir simply yields empty (cached) listings for its fluff subdirectories below
+        boolean hasUserDir = !userDir.isBlank();
 
         // Assets search their own folder first, then the folder of the corresponding TW unit type; all other units
         // search a single folder. The folders are searched in order so that the most specific art wins.

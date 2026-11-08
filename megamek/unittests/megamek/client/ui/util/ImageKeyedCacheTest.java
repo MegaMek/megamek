@@ -43,10 +43,18 @@ import org.junit.jupiter.api.Test;
 
 class ImageKeyedCacheTest {
 
-    /** A picture whose hash code is fixed, so two of them always share it. */
+    /**
+     * A picture whose hash code is fixed, so two of them always share it. Equality stays identity, as it is for the JDK
+     * image classes: that mismatch is the collision under test.
+     */
     private static final class SameHashImage extends BufferedImage {
         SameHashImage() {
             super(4, 4, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return this == other;
         }
 
         @Override

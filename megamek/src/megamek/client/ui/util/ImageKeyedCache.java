@@ -43,9 +43,10 @@ import jakarta.annotation.Nullable;
  * itself.
  *
  * <p>Keying by {@code image.hashCode()} is not safe: that number is not unique, so two different pictures can share
- * it and one would be drawn in place of the other. An {@link Image} uses identity for equality, so this cache can
- * only ever answer for the exact picture it was given. Keys are held weakly, so a result is dropped once its source
- * picture is no longer used anywhere else.</p>
+ * it and one would be drawn in place of the other. This cache keys by {@code equals()}, and the JDK image classes
+ * ({@link java.awt.image.BufferedImage} and the toolkit images) do not override it, so for them equality is identity
+ * and the cache only answers for the exact picture it was given. Keys are held weakly, so a result is dropped once
+ * its source picture is no longer used anywhere else.</p>
  *
  * @param <V> the type of the cached result
  */

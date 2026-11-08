@@ -47,9 +47,6 @@ public class WarShipCostCalculator {
         double[] costs = new double[24];
         int costIdx = 0;
         double cost = 0;
-        // The verifier knows the primitive engine and jump sail weights (IO:AE p.123-124), which the
-        // cost formulas below are priced on (SO:AA p.146: 1,000 x Engine Tonnage, 50,000 x Sail Tonnage)
-        TestAdvancedAerospace testShip = new TestAdvancedAerospace(warShip, null, null);
 
         // Control Systems
         // Bridge
@@ -70,8 +67,8 @@ public class WarShipCostCalculator {
         // Maneuvering Drive
         // Drive Unit
         costs[costIdx++] += 500 * warShip.getOriginalWalkMP() * (warShip.getWeight() / 100.0);
-        // Engine
-        costs[costIdx++] += 1000 * testShip.getWeightEngine();
+        // Engine: 1,000 x Engine Tonnage (SO:AA p.146); primitive engines are heavier before 2300 (IO:AE p.123)
+        costs[costIdx++] += 1000 * TestAdvancedAerospace.calculateEngineTonnage(warShip);
         // Engine Control Unit
         costs[costIdx++] += 1000;
 
@@ -87,8 +84,8 @@ public class WarShipCostCalculator {
         driveCost[driveIdx++] += 50000000.0;
         // Tankage
         driveCost[driveIdx++] += 50000.0 * warShip.getKFIntegrity();
-        // Sail
-        driveCost[driveIdx++] += 50000.0 * testShip.getWeightSail();
+        // Sail: 50,000 x Sail Tonnage (SO:AA p.146); none before 2200, heavier until 2300 (IO:AE p.124)
+        driveCost[driveIdx++] += 50000.0 * TestAdvancedAerospace.calculateSailTonnage(warShip);
         // Charging System
         driveCost[driveIdx++] += 500000.0 + (200000.0 * warShip.getDocks(true));
 

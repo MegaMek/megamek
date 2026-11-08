@@ -456,26 +456,28 @@ public class Precognition implements Runnable {
                     LOGGER.error(exception, "Precognition pass failed for {}; carrying on", getOwner().getName());
                 }
             }
-        } finally {
-            if (!getDone().get()) {
-                // Only an Error gets here. Mark the thread done so a movement turn stops waiting for it.
-                LOGGER.error("Precognition for " + getOwner().getName()
-                      + " stopped unexpectedly; movement turns will no longer wait for it");
-                getDone().set(true);
-            }
+        } catch (Error error) {
+            // Mark the thread done so a movement turn stops waiting for it, then let the Error end the thread
+            LOGGER.error(error, "Precognition for {} stopped unexpectedly; movement turns will no longer wait for it",
+                  getOwner().getName());
+            getDone().set(true);
+            throw error;
         }
     }
 
     private void runOnePass() {
         if (!getEventsToProcess().isEmpty()) {
             processGameEvents();
-            // The packet handler changes the entity list under GAME_LOCK; reading it without the lock can throw
+            // The packet handler changes the entity list under GAME_LOCK; reading it without the lock can throw.
+            // Copy the list under the lock and run the (expensive) ECM computation after releasing it.
+            List<Entity> entities;
             GAME_LOCK.lock();
             try {
-                ecmInfo = ComputeECM.computeAllEntitiesECMInfo(getGame().getEntitiesVector());
+                entities = new ArrayList<>(getGame().getEntitiesVector());
             } finally {
                 GAME_LOCK.unlock();
             }
+            ecmInfo = ComputeECM.computeAllEntitiesECMInfo(entities);
         } else if (!getDirtyUnits().isEmpty()) {
             Integer entityId = getDirtyUnits().pollFirst();
             if (entityId != null) {

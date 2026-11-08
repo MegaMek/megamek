@@ -1292,33 +1292,19 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
-    private boolean resetMiniMapZoom(Container c) {
-        for (Component comp : c.getComponents()) {
-            if (comp instanceof MinimapPanel minimapPanel) {
-                minimapPanel.resetZoom();
-                return true;
-            } else {
-                if (resetMiniMapZoom((Container) comp)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Moves the floating windows to the top left corner of the screen. Only the position changes; each window keeps
+     * its size, and the minimap keeps its zoom.
+     */
     public void resetWindowPositions() {
-        miniMaps.values().forEach(miniMap -> {
-            miniMap.setBounds(0, 0, miniMap.getWidth(), miniMap.getHeight());
-            resetMiniMapZoom(miniMap);
-        });
+        for (MinimapDialog miniMap : miniMaps.values()) {
+            miniMap.setLocation(0, 0);
+        }
         if (getUnitDisplayDialog() != null) {
-            getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
+            getUnitDisplayDialog().setLocation(0, 0);
         }
         if (getForceDisplayDialog() != null) {
-            getForceDisplayDialog().setBounds(0,
-                  0,
-                  getForceDisplayPanel().getWidth(),
-                  getForceDisplayPanel().getHeight());
+            getForceDisplayDialog().setLocation(0, 0);
         }
         if (getMekSelectorDialog() != null) {
             // This one reads the GUIP every time it goes visible, so need to set those directly.
@@ -1326,9 +1312,6 @@ public class ClientGUI extends AbstractClientGUI
             GUIP.setMekSelectorSizeWidth(getMekSelectorDialog().getWidth());
             GUIP.setMekSelectorPosX(0);
             GUIP.setMekSelectorPosY(0);
-        }
-        if (getBotCommandsDialog() != null) {
-            getBotCommandsDialog().setBounds(0, 0, getBotCommandsPanel().getWidth(), getBotCommandsPanel().getHeight());
         }
         if (getRoundsInAirDialog() != null) {
             getRoundsInAirDialog().setBounds(0,
@@ -1370,10 +1353,7 @@ public class ClientGUI extends AbstractClientGUI
             commonSettingsDialog.setBounds(0, 0, commonSettingsDialog.getWidth(), commonSettingsDialog.getHeight());
         }
         if (getBotCommandsDialog() != null) {
-            getBotCommandsDialog().setBounds(0,
-                  0,
-                  getBotCommandsDialog().getWidth(),
-                  getBotCommandsDialog().getHeight());
+            getBotCommandsDialog().setLocation(0, 0);
         }
         if (getRandomArmyDialog() != null) {
             getRandomArmyDialog().setBounds(0, 0, getRandomArmyDialog().getWidth(), getRandomArmyDialog().getHeight());

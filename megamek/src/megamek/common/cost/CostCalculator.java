@@ -246,7 +246,7 @@ public class CostCalculator {
     static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo, String[] systemNames,
           int equipIndex, int costStartIndex, double cost, double[] costs) {
         NumberFormat commaFormatter = NumberFormat.getInstance();
-        commaFormatter.setMaximumFractionDigits(10);
+        commaFormatter.setMaximumFractionDigits(3);
         costReport.addHeader(MessageFormat.format(
               Messages.getString("CostCalculator.CostCalculatorHeader"),
               entity.getChassis(),

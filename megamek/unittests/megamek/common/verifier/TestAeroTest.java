@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,9 +33,14 @@
 package megamek.common.verifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import megamek.common.units.AeroSpaceFighter;
+import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.AeroSpaceFighter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,5 +79,31 @@ class TestAeroTest {
         // 100-ton ASF desiring Safe Thrust of 6 should be 400
         rating = TestAero.calculateEngineRating(aero, 100, 6);
         assertEquals(400, rating);
+    }
+
+    /**
+     * Bombs carried by a fighter never count toward its tonnage, including bombs that mount a weapon pod (rocket
+     * launcher, TAG). Mid-game MUL reinforcements arrive with their bombs already applied, so the verifier sees the
+     * pods as mounted weapons (issue #9487).
+     */
+    @Test
+    void testAppliedBombPodsDoNotCountTowardWeight() {
+        Game game = new Game();
+        game.getOptions().getOption(OptionsConstants.ALLOWED_TECH_LEVEL).setValue("Advanced");
+        aero.setGame(game);
+        aero.setWeight(65);
+        aero.autoSetMaxBombPoints();
+        BombLoadout loadout = new BombLoadout();
+        loadout.put(BombTypeEnum.RL, 2);
+        loadout.put(BombTypeEnum.TAG, 1);
+        aero.setExtBombChoices(loadout);
+        TestAero testAero = new TestAero(aero, new TestXMLOption(), null);
+        double weaponWeightBeforeBombs = testAero.getWeightWeapon();
+
+        aero.applyBombs();
+
+        assertFalse(aero.getWeaponList().isEmpty(), "the bomb pods are mounted as weapons");
+        assertEquals(weaponWeightBeforeBombs, testAero.getWeightWeapon(),
+              "bomb pods add nothing to the fighter's weapon weight");
     }
 }

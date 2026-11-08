@@ -78,6 +78,7 @@ import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.ImageCache;
+import megamek.client.ui.util.ImageKeyedCache;
 import megamek.client.ui.util.KeyBindReceiver;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
@@ -321,8 +322,8 @@ public final class BoardView extends AbstractBoardView
 
     // Initial scale factor for sprites and map
     float scale = 1.00f;
-    private ImageCache<Integer, Image> scaledImageCache = new ImageCache<>();
-    private final ImageCache<Integer, BufferedImage> shadowImageCache = new ImageCache<>();
+    private ImageKeyedCache<Image> scaledImageCache = new ImageKeyedCache<>();
+    private final ImageKeyedCache<BufferedImage> shadowImageCache = new ImageKeyedCache<>();
 
     private final Set<Integer> animatedImages = new HashSet<>();
 
@@ -5713,7 +5714,7 @@ public final class BoardView extends AbstractBoardView
 
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
 
-        scaledImageCache = new ImageCache<>();
+        scaledImageCache = new ImageKeyedCache<>();
 
         cursorSprite.prepare();
         highlightSprite.prepare();
@@ -5796,7 +5797,7 @@ public final class BoardView extends AbstractBoardView
         Image scaled;
         if (useCache) {
             // Check the cache
-            scaled = scaledImageCache.get(base.hashCode());
+            scaled = scaledImageCache.get(base);
         } else {
             scaled = null;
         }
@@ -5834,7 +5835,7 @@ public final class BoardView extends AbstractBoardView
             tracker.removeImage(scaled);
             // Cache the image if the flag is set
             if (useCache) {
-                scaledImageCache.put(base.hashCode(), scaled);
+                scaledImageCache.put(base, scaled);
             }
         }
         return scaled;
@@ -5871,8 +5872,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     public BufferedImage createShadowMask(Image image) {
-        int hashCode = image.hashCode();
-        BufferedImage mask = shadowImageCache.get(hashCode);
+        BufferedImage mask = shadowImageCache.get(image);
         if (mask != null) {
             return mask;
         }
@@ -5884,7 +5884,7 @@ public final class BoardView extends AbstractBoardView
         graphics2D.setColor(Color.BLACK);
         graphics2D.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
         graphics2D.dispose();
-        shadowImageCache.put(hashCode, mask);
+        shadowImageCache.put(image, mask);
         return mask;
     }
 

@@ -715,11 +715,12 @@ public abstract class TestEntity implements TestEntityOption {
 
     public double getWeightWeapon() {
         double weight = 0.0;
-        for (Mounted<?> m : getEntity().getTotalWeaponList()) {
-            if (m.isWeaponGroup()) {
+        for (Mounted<?> mounted : getEntity().getTotalWeaponList()) {
+            // Bomb pods (rocket launcher, TAG, Arrow IV...) are part of the bomb load, not the unit's own weight
+            if (mounted.isWeaponGroup() || mounted.isBombMounted()) {
                 continue;
             }
-            weight += m.getTonnage();
+            weight += mounted.getTonnage();
         }
         return weight;
     }

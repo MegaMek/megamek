@@ -48,7 +48,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.util.fileUtils.DataFolders;
 import megamek.logging.MMLogger;
 
 /**
@@ -161,9 +161,8 @@ public class Bloodnames2 {
         LOGGER.info("Loading Bloodname data...");
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         loadFromDirectory(MMConstants.BLOODNAMES_DIR, mapper);
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        if ((userDir != null) && !userDir.isBlank()) {
-            loadFromDirectory(new File(userDir, MMConstants.BLOODNAMES_DIR).toString(), mapper);
+        for (File bloodnamesDir : DataFolders.current().subfolders(MMConstants.BLOODNAMES_DIR)) {
+            loadFromDirectory(bloodnamesDir.toString(), mapper);
         }
         LOGGER.info("Loaded {} Bloodnames across {} Clans",
               bloodnames.size(), byFoundingClan.size());

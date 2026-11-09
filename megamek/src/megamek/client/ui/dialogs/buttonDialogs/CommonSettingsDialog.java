@@ -4458,7 +4458,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         try {
             Desktop.getDesktop().open(folder);
         } catch (IOException | UnsupportedOperationException | SecurityException exception) {
-            logger.error(exception, "Could not open the user directory {}", folder);
+            logger.error(exception, "Could not open the user directory " + folder);
             String message = Messages.getString("CommonSettingsDialog.userDir.open.failed", folder.getPath());
             JOptionPane.showMessageDialog(getFrame(), message, title, JOptionPane.ERROR_MESSAGE);
         }

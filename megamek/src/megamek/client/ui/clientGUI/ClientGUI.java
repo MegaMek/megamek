@@ -159,6 +159,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.loaders.MULParser;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.moves.MovePath;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -3295,6 +3296,16 @@ public class ClientGUI extends AbstractClientGUI
         audioService.playSound(SoundType.BING_OTHERS_TURN);
     }
 
+    /**
+     * Plays the "my turn" sound before a pop-up that holds the game until this player answers it.
+     *
+     * @param decision the request type, written to the log so a test can see which pop-up rang
+     */
+    private void bingForDecision(PacketCommand decision) {
+        logger.info("Decision prompt {}: playing my-turn sound", decision);
+        bingMyTurn();
+    }
+
     private void setWeaponOrderPrefs(boolean prefChange) {
         for (Entity entity : client.getGame().getEntitiesVector()) {
             if ((entity.getOwner().equals(client.getLocalPlayer()))
@@ -3707,6 +3718,7 @@ public class ClientGUI extends AbstractClientGUI
                         paths[1] = null;
                         optionType = JOptionPane.YES_NO_OPTION;
                     }
+                    bingForDecision(gameCFREvent.getCFRType());
                     int choice = JOptionPane.showOptionDialog(frame,
                           Messages.getFormattedString("CFRDomino.Message", entity.getDisplayName()),
                           Messages.getString("CFRDomino.Title"),
@@ -3750,6 +3762,7 @@ public class ClientGUI extends AbstractClientGUI
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));
                     }
 
+                    bingForDecision(gameCFREvent.getCFRType());
                     int amsResult = JOptionPane.showConfirmDialog(frame,
                           amsScrollPane,
                           Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
@@ -3799,6 +3812,7 @@ public class ClientGUI extends AbstractClientGUI
                         apdsOptions.add(waaMsg);
                     }
 
+                    bingForDecision(gameCFREvent.getCFRType());
                     result = JOptionPane.showInputDialog(frame,
                           Messages.getString("CFRAPDSAssign.Message", entity.getDisplayName()),
                           Messages.getString("CFRAPDSAssign.Title", entity.getDisplayName()),
@@ -3842,6 +3856,7 @@ public class ClientGUI extends AbstractClientGUI
                     getBoardView().cursor(target.getPosition());
 
                     // Ask whether the player wants to take a PBS or not
+                    bingForDecision(gameCFREvent.getCFRType());
                     int pbsChoice = JOptionPane.showConfirmDialog(frame,
                           Messages.getString("ClientGUI.PointBlankShot.Message",
                                 target.getShortName(),
@@ -3886,6 +3901,7 @@ public class ClientGUI extends AbstractClientGUI
                     }
                     logger.debug("CFR_TELEGUIDED_TARGET: showing dialog with {} targets", targetDescriptions.size());
                     // Set up the selection pane
+                    bingForDecision(gameCFREvent.getCFRType());
                     input = (String) JOptionPane.showInputDialog(frame,
                           Messages.getString("TeleMissileTargetDialog.message"),
                           Messages.getString("TeleMissileTargetDialog.title"),
@@ -3924,6 +3940,7 @@ public class ClientGUI extends AbstractClientGUI
                     }
                     logger.debug("CFR_TAG_TARGET: showing dialog with {} targets", TAGTargetDescriptions.size());
                     // Set up the selection pane
+                    bingForDecision(gameCFREvent.getCFRType());
                     input = (String) JOptionPane.showInputDialog(frame,
                           Messages.getString("TAGTargetDialog.message"),
                           Messages.getString("TAGTargetDialog.title"),

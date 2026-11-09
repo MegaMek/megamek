@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -501,6 +501,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
+                    clientgui.bingMyTurn();
                 }
             } else {
                 endMyTurn();
@@ -509,7 +510,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
                           "PrephaseDisplay.its_others_turn",
                           phase.toString(), e.getPlayer().getName()));
                 }
-
+                clientgui.bingOthersTurn();
             }
         }
     }

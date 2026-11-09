@@ -1271,6 +1271,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove(true);
     }
 
+    /**
+     * Returns true if the last step of the plotted path crosses a height change the unit could only make by climbing.
+     * The step starts where the step before it ended, or where the unit stands if it is the first step.
+     *
+     * @param entity the moving unit
+     *
+     * @return {@code true} if the last step would need a climb
+     */
+    private boolean lastStepNeedsClimbing(Entity entity) {
+        MoveStep lastStep = cmd.getLastStep();
+        // Not getSecondLastStep(): on a one-step path it returns the last step itself
+        MoveStep previousStep = cmd.getStep(cmd.length() - 2);
+        Coords fromCoords = (previousStep != null) ? previousStep.getPosition() : entity.getPosition();
+        int fromElevation = (previousStep != null) ? previousStep.getElevation() : entity.getElevation();
+        return ClimbingHelper.stepNeedsClimbing(entity, fromCoords, fromElevation, lastStep.getPosition(), game);
+    }
+
     private void updateMove(boolean redrawMovement) {
         Entity currentEntity = currentEntity();
         if (redrawMovement &&
@@ -1280,7 +1297,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // Check if the path ends with an illegal FORWARDS step that could have been a climb
-        // Show feedback to the player about why climbing is not possible
+        // Show feedback to the player about why climbing is not possible. The step must cross
+        // a height change too big to walk: a step that is illegal only because it runs out of
+        // MP is not a climb attempt (#9492).
         if ((currentEntity instanceof Mek)
             && (cmd != null)
             && (cmd.getLastStep() != null)
@@ -1288,7 +1307,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             && (cmd.getLastStep().getMovementType(true) == EntityMovementType.MOVE_ILLEGAL)
             && cmd.getLastStep().climbMode()
             && !ClimbingHelper.canClimb(currentEntity)
-            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
+            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+            && lastStepNeedsClimbing(currentEntity)) {
             String reason = ClimbingHelper.getClimbingImpossibleReason(currentEntity);
             // updateMove() runs on every step add/redraw while plotting, so a modal
             // JOptionPane here would re-fire and block UI on every keypress. Use a

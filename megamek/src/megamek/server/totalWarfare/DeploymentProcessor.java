@@ -120,6 +120,14 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             return;
         }
 
+        // Under double blind the client cannot see enemy units, so it may deploy onto one (issue 9488)
+        Entity blocker = deploymentServerHelper.findDeploymentStackingViolation(entity, coords, boardId, elevation,
+              assaultDrop);
+        if (blocker != null) {
+            deploymentServerHelper.refuseStackedDeployment(connId, entity, blocker, coords, turn.playerId());
+            return;
+        }
+
         // looks like mostly everything's okay
         boolean setDone = true;
         deploymentServerHelper.processDeployment(entity,

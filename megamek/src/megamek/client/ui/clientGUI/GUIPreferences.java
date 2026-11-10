@@ -390,9 +390,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_NO_UNJAM_RAC = "NagForNoUnjamRAC";
     public static final String NAG_FOR_PSR = "NagForPSR";
     public static final String NAG_FOR_README = "NagForReadme";
-    public static final String SHOW_RELEASE_NOTES_AFTER_UPDATE = "ShowReleaseNotesAfterUpdate";
-    /** Prefix of the version each application last showed or skipped its release notes for, e.g. ".megamek". */
-    public static final String RELEASE_NOTES_SEEN = "ReleaseNotesSeen";
+    /** The suite version last started, which tells when it changed. */
+    public static final String RELEASE_NOTES_VERSION = "ReleaseNotesVersion";
+    /** The suite version started before the last one, where Help &gt; Release Notes starts. */
+    public static final String RELEASE_NOTES_PREVIOUS_VERSION = "ReleaseNotesPreviousVersion";
     public static final String NAG_FOR_SPRINT = "NagForSprint";
     public static final String NAG_FOR_OVERHEAT = "NagForOverHeat";
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
@@ -936,7 +937,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_NO_UNJAM_RAC, true);
         store.setDefault(NAG_FOR_PSR, true);
         store.setDefault(NAG_FOR_README, true);
-        store.setDefault(SHOW_RELEASE_NOTES_AFTER_UPDATE, true);
         store.setDefault(NAG_FOR_SPRINT, true);
         store.setDefault(NAG_FOR_OVERHEAT, true);
         store.setDefault(NAG_FOR_LAUNCH_DOORS, true);
@@ -1701,20 +1701,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(NAG_FOR_README);
     }
 
-    public boolean getShowReleaseNotesAfterUpdate() {
-        return store.getBoolean(SHOW_RELEASE_NOTES_AFTER_UPDATE);
+    /**
+     * @return The suite version last started, or an empty string
+     */
+    public String getReleaseNotesVersion() {
+        return store.getString(RELEASE_NOTES_VERSION);
     }
 
     /**
-     * Returns the version the given application last showed or skipped its release notes for after an update, or an
-     * empty string when it never has.
-     *
-     * @param repository The application's repository name, e.g. "megamek"
-     *
-     * @return The version, as text
+     * @return The suite version started before the last one, or an empty string when unknown
      */
-    public String getReleaseNotesSeen(String repository) {
-        return store.getString(RELEASE_NOTES_SEEN + "." + repository);
+    public String getReleaseNotesPreviousVersion() {
+        return store.getString(RELEASE_NOTES_PREVIOUS_VERSION);
     }
 
     public boolean getNagForSprint() {
@@ -2726,12 +2724,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(NAG_FOR_README, b);
     }
 
-    public void setShowReleaseNotesAfterUpdate(boolean show) {
-        store.setValue(SHOW_RELEASE_NOTES_AFTER_UPDATE, show);
+    public void setReleaseNotesVersion(String version) {
+        store.setValue(RELEASE_NOTES_VERSION, version);
     }
 
-    public void setReleaseNotesSeen(String repository, String version) {
-        store.setValue(RELEASE_NOTES_SEEN + "." + repository, version);
+    public void setReleaseNotesPreviousVersion(String version) {
+        store.setValue(RELEASE_NOTES_PREVIOUS_VERSION, version);
     }
 
     public void setNagForSprint(boolean b) {

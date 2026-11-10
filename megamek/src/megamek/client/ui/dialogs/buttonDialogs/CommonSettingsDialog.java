@@ -284,8 +284,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           new JCheckBox(Messages.getString("CommonSettingsDialog.entityOwnerColor"));
     private final JCheckBox teamColoring = new JCheckBox(Messages.getString("CommonSettingsDialog.teamColoring"));
     private final JCheckBox dockOnLeft = new JCheckBox(Messages.getString("CommonSettingsDialog.dockOnLeft"));
-    private final JCheckBox showReleaseNotesAfterUpdate = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.showReleaseNotesAfterUpdate"));
     private final JCheckBox dockMultipleOnYAxis = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.dockMultipleOnYAxis"));
     private final JCheckBox useCamoOverlay = new JCheckBox(Messages.getString("CommonSettingsDialog.useCamoOverlay"));
@@ -2634,12 +2632,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         dockMultipleOnYAxis.setSelected(GUIP.getDockMultipleOnYAxis());
         configureCheckBox(useCamoOverlay, null);
         useCamoOverlay.setSelected(GUIP.getUseCamoOverlay());
-        configureCheckBox(showReleaseNotesAfterUpdate,
-              Messages.getString("CommonSettingsDialog.showReleaseNotesAfterUpdate.tooltip"));
-        showReleaseNotesAfterUpdate.setSelected(GUIP.getShowReleaseNotesAfterUpdate());
         row = new ArrayList<>();
         row.add(createBehaviorOptionsGrid("CommonSettingsWindowLayoutGrid",
-              teamColoring, dockOnLeft, dockMultipleOnYAxis, useCamoOverlay, showReleaseNotesAfterUpdate));
+              teamColoring, dockOnLeft, dockMultipleOnYAxis, useCamoOverlay));
         comps.add(row);
 
         addLineSpacer(comps);
@@ -2850,7 +2845,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             useAutoSelectNext.setSelected(GUIP.getAutoSelectNextUnit());
             entityOwnerColor.setSelected(GUIP.getUnitLabelBorder());
             teamColoring.setSelected(GUIP.getTeamColoring());
-            showReleaseNotesAfterUpdate.setSelected(GUIP.getShowReleaseNotesAfterUpdate());
 
             File dir = Configuration.hexesDir();
             tileSets = new ArrayList<>(Arrays.asList(Objects.requireNonNull(dir.list((directory, name) -> name.endsWith(
@@ -3173,7 +3167,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitLabelBorder(entityOwnerColor.isSelected());
         GUIP.setTeamColoring(teamColoring.isSelected());
         GUIP.setDockOnLeft(dockOnLeft.isSelected());
-        GUIP.setShowReleaseNotesAfterUpdate(showReleaseNotesAfterUpdate.isSelected());
         GUIP.setDockMultipleOnYAxis(dockMultipleOnYAxis.isSelected());
         GUIP.setUseCamoOverlay(useCamoOverlay.isSelected());
         GUIP.setAutoEndFiring(autoEndFiring.isSelected());

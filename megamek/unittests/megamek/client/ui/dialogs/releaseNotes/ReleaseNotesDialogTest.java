@@ -32,9 +32,6 @@
  */
 package megamek.client.ui.dialogs.releaseNotes;
 
-import static megamek.client.ui.dialogs.releaseNotes.ReleaseNotesDialog.AfterUpdate.NOTHING;
-import static megamek.client.ui.dialogs.releaseNotes.ReleaseNotesDialog.AfterUpdate.REMEMBER;
-import static megamek.client.ui.dialogs.releaseNotes.ReleaseNotesDialog.AfterUpdate.SHOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,60 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.net.URI;
 import java.util.List;
 
-import megamek.Version;
 import org.junit.jupiter.api.Test;
 
 class ReleaseNotesDialogTest {
 
-    private static final Version CURRENT = new Version("0", "51", "1", "5", null);
-
-    @Test
-    void anUpdateShowsTheNotes() {
-        assertEquals(SHOW, ReleaseNotesDialog.afterUpdate("0.51.01.4", CURRENT, false, true));
-        assertEquals(SHOW, ReleaseNotesDialog.afterUpdate("0.50.10", CURRENT, false, true));
-    }
-
-    @Test
-    void theSameVersionShowsNothing() {
-        assertEquals(NOTHING, ReleaseNotesDialog.afterUpdate("0.51.01.5", CURRENT, false, true));
-        assertEquals(NOTHING, ReleaseNotesDialog.afterUpdate("0.51.01.5", CURRENT, true, false));
-    }
-
-    @Test
-    void aDevelopmentBuildShowsNothing() {
-        Version development = new Version("0", "52", "0", null, null);
-
-        assertEquals(NOTHING, ReleaseNotesDialog.afterUpdate("0.51.01.5", development, false, true));
-        assertEquals(NOTHING, ReleaseNotesDialog.afterUpdate("", development, false, true));
-    }
-
-    @Test
-    void aNewInstallationOnlyRemembersTheVersion() {
-        assertEquals(REMEMBER, ReleaseNotesDialog.afterUpdate("", CURRENT, false, true));
-        assertEquals(REMEMBER, ReleaseNotesDialog.afterUpdate(null, CURRENT, false, true));
-    }
-
-    @Test
-    void anUnreadableSettingOnlyRemembersTheVersion() {
-        assertEquals(REMEMBER, ReleaseNotesDialog.afterUpdate("latest", CURRENT, false, true));
-        assertEquals(REMEMBER, ReleaseNotesDialog.afterUpdate("0.51", CURRENT, false, true));
-    }
-
-    @Test
-    void theLauncherOrTheOptOutSkipTheNotes() {
-        assertEquals(REMEMBER, ReleaseNotesDialog.afterUpdate("0.51.01.4", CURRENT, true, true));
-        assertEquals(REMEMBER, ReleaseNotesDialog.afterUpdate("0.51.01.4", CURRENT, false, false));
-    }
-
-    @Test
-    void anOlderVersionOnlyRemembersItself() {
-        assertEquals(REMEMBER, ReleaseNotesDialog.afterUpdate("0.51.01.6", CURRENT, false, true));
-    }
-
     @Test
     void htmlEscapesTitlesAndLinksPullRequests() {
         ReleaseNotes notes = new ReleaseNotes("megamek", URI.create("https://github.com/MegaMek/megamek/releases"),
-              List.of(new ReleaseNotes.Section("Bug Fixes", List.of(
+              null, List.of(new ReleaseNotes.Section("Bug Fixes", List.of(
                     new ReleaseNotes.Change("Fix <b>bold</b> & 'quotes'", 12,
                           URI.create("https://github.com/MegaMek/megamek/pull/12")),
                     new ReleaseNotes.Change("Written by hand", 0, null)))));

@@ -41,32 +41,46 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nullable;
+import megamek.SuiteConstants;
 import megamek.Version;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.common.preference.PreferenceManager;
 
 /**
- * The published release notes of one version of a MegaMek suite application, as GitHub generates them from the titles
- * of the merged pull requests.
+ * The published release notes of a MegaMek suite application, as GitHub generates them from the titles of the merged
+ * pull requests: those of one version, or everything that changed between two versions of the same release channel.
+ * Experimental releases are only compared with Experimental releases and Core releases with Core releases, as each
+ * release's own notes are.
  *
  * @param repository The repository name, without the organization, e.g. "megamek"
- * @param page       The release page on GitHub
+ * @param page       The release page on GitHub, or the list of releases when the notes cover several
+ * @param since      The version the notes start after, or {@code null} when they are one version's own notes
  * @param sections   The changes, grouped by kind in the order the release notes use
  */
-public record ReleaseNotes(String repository, URI page, List<Section> sections) {
+public record ReleaseNotes(String repository, URI page, @Nullable String since, List<Section> sections) {
 
     /** Heading for changes listed before any heading, as in notes from before the categories. */
     static final String UNGROUPED = "Changes";
     private static final int MAX_BYTES = 2_000_000;
+    private static final int PAGE_SIZE = 30;
+    private static final int MAX_PAGES = 5;
     private static final Duration TIMEOUT = Duration.ofSeconds(15);
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    /** A released version as the preferences store it, with its revision. */
+    private static final Pattern RELEASED = Pattern.compile("\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,6}");
+    private static final Pattern TAG = Pattern.compile("v(" + RELEASED.pattern() + ")");
     /** The order of the headings in .github/release.yml of the suite repositories. */
     private static final List<String> HEADINGS = List.of("new features", "rules", "improvements", "bug fixes",
           "other changes", "behind the scenes");
@@ -151,6 +165,176 @@ public record ReleaseNotes(String repository, URI page, List<Section> sections) 
             throw new IOException("Version " + version + " has no release");
         }
         URI api = URI.create("https://api.github.com/repos/MegaMek/" + repository + "/releases/tags/" + tag);
+        return fromJson(repository, version, get(api, version));
+    }
+
+    /**
+     * Loads everything that changed from {@code since} to {@code version}: the notes of every release of the same
+     * channel as {@code version} after {@code since}, up to and including {@code version}. Without an older
+     * {@code since}, or when the releases cannot be told apart, these are the version's own notes, which GitHub wrote
+     * against the previous release of its channel. Call this off the event thread.
+     *
+     * @param repository The repository name, without the organization
+     * @param since      The version the player had before, or {@code null} when unknown
+     * @param version    The version
+     *
+     * @return The notes
+     *
+     * @throws IOException          when the version has no release or the notes cannot be read
+     * @throws InterruptedException when interrupted while waiting for GitHub
+     */
+    public static ReleaseNotes load(String repository, @Nullable Version since, Version version)
+          throws IOException, InterruptedException {
+        if ((since == null) || !since.hasRevision() || (tag(version) == null) || !version.isHigherThan(since)) {
+            return load(repository, version);
+        }
+        List<JsonNode> listed = new ArrayList<>();
+        // GitHub lists the newest releases first, so the listing can stop at the player's old version.
+        for (int page = 1; page <= MAX_PAGES; page++) {
+            URI api = URI.create("https://api.github.com/repos/MegaMek/" + repository + "/releases?per_page="
+                  + PAGE_SIZE + "&page=" + page);
+            JsonNode releases = MAPPER.readTree(get(api, version));
+            if ((releases == null) || !releases.isArray()) {
+                throw new IOException("GitHub returned an unexpected release list");
+            }
+            boolean reached = false;
+            for (JsonNode release : releases) {
+                listed.add(release);
+                Version listedVersion = releaseVersion(release.path("tag_name").asText(""));
+                reached |= (listedVersion != null) && !listedVersion.isHigherThan(since);
+            }
+            if (reached || (releases.size() < PAGE_SIZE)) {
+                break;
+            }
+        }
+        ReleaseNotes combined = combine(repository, listed, since, version);
+        return (combined != null) ? combined : load(repository, version);
+    }
+
+    /**
+     * Combines the listed releases of the channel of {@code version}, after {@code since} and up to {@code version}.
+     * GitHub marks Experimental releases as pre-releases and Core releases as full releases.
+     *
+     * @return The notes, or {@code null} when {@code version} is not among the listed releases
+     */
+    static @Nullable ReleaseNotes combine(String repository, List<JsonNode> releases, Version since,
+          Version version) {
+        JsonNode target = null;
+        for (JsonNode release : releases) {
+            Version listedVersion = releaseVersion(release.path("tag_name").asText(""));
+            if (!release.path("draft").asBoolean(false) && (listedVersion != null)
+                  && (listedVersion.compareTo(version) == 0)) {
+                target = release;
+                break;
+            }
+        }
+        if (target == null) {
+            return null;
+        }
+        boolean prerelease = target.path("prerelease").asBoolean(false);
+        List<JsonNode> chosen = new ArrayList<>();
+        for (JsonNode release : releases) {
+            Version listedVersion = releaseVersion(release.path("tag_name").asText(""));
+            if (!release.path("draft").asBoolean(false) && (release.path("prerelease").asBoolean(false) == prerelease)
+                  && (listedVersion != null) && listedVersion.isHigherThan(since)
+                  && !listedVersion.isHigherThan(version)) {
+                chosen.add(release);
+            }
+        }
+        chosen.sort(Comparator.comparing((JsonNode release) -> releaseVersion(release.path("tag_name").asText("")))
+              .reversed());
+        List<List<Section>> parsed = new ArrayList<>();
+        for (JsonNode release : chosen) {
+            parsed.add(parse(repository, release.path("body").asText("")));
+        }
+        URI page = (chosen.size() == 1) ? page(repository, version)
+              : URI.create("https://github.com/MegaMek/" + repository + "/releases");
+        return new ReleaseNotes(repository, page, tag(since).substring(1), merge(parsed));
+    }
+
+    /** The changes of several releases, newest first, under one heading each and each pull request once. */
+    static List<Section> merge(List<List<Section>> releases) {
+        Map<String, String> headings = new LinkedHashMap<>();
+        Map<String, List<Change>> changes = new LinkedHashMap<>();
+        Set<String> seen = new HashSet<>();
+        for (List<Section> sections : releases) {
+            for (Section section : sections) {
+                String key = section.heading().toLowerCase(Locale.ROOT);
+                headings.putIfAbsent(key, section.heading());
+                for (Change change : section.changes()) {
+                    String identity = (change.pullRequest() > 0) ? "#" + change.pullRequest() : change.title();
+                    if (seen.add(identity)) {
+                        changes.computeIfAbsent(key, ignored -> new ArrayList<>()).add(change);
+                    }
+                }
+            }
+        }
+        List<String> order = new ArrayList<>(changes.keySet());
+        order.sort(Comparator.comparingInt(ReleaseNotes::rank));
+        List<Section> merged = new ArrayList<>();
+        for (String key : order) {
+            merged.add(new Section(headings.get(key), changes.get(key)));
+        }
+        return merged;
+    }
+
+    /** The version of a release tag such as "v0.51.01.5", or {@code null} for any other tag. */
+    static @Nullable Version releaseVersion(String tag) {
+        Matcher matcher = TAG.matcher(tag);
+        return matcher.matches() ? new Version(matcher.group(1)) : null;
+    }
+
+    /**
+     * Remembers the running version and, when it changed, the version run before it, which is where Help &gt; Release
+     * Notes starts. Call this once when the application starts.
+     */
+    public static void rememberRunningVersion() {
+        GUIPreferences preferences = GUIPreferences.getInstance();
+        String recorded = preferences.getReleaseNotesVersion();
+        String previous = previousAfterStart(recorded, SuiteConstants.VERSION);
+        if (previous != null) {
+            preferences.setReleaseNotesPreviousVersion(previous);
+            preferences.setReleaseNotesVersion(tag(SuiteConstants.VERSION).substring(1));
+            PreferenceManager.getInstance().save();
+        }
+    }
+
+    /**
+     * Returns the version to remember as the one before {@code running}, an empty string when there is none, or
+     * {@code null} when nothing changes because the version is the same or has no release.
+     *
+     * @param recorded The version remembered as running, or an empty string
+     * @param running  The running version
+     */
+    static @Nullable String previousAfterStart(@Nullable String recorded, Version running) {
+        if (!running.hasRevision() || tag(running).substring(1).equals(recorded)) {
+            return null;
+        }
+        return ((recorded != null) && RELEASED.matcher(recorded).matches()) ? recorded : "";
+    }
+
+    /**
+     * Returns the version the player ran before {@code running}, or {@code null} when there is none or it is not older.
+     *
+     * @param previous The remembered previous version, or an empty string
+     * @param running  The running version
+     */
+    static @Nullable Version since(@Nullable String previous, Version running) {
+        if ((previous == null) || !RELEASED.matcher(previous).matches()) {
+            return null;
+        }
+        Version version = new Version(previous);
+        return running.isHigherThan(version) ? version : null;
+    }
+
+    /**
+     * Returns the version the player ran before the running one, or {@code null} when unknown.
+     */
+    public static @Nullable Version previousVersion() {
+        return since(GUIPreferences.getInstance().getReleaseNotesPreviousVersion(), SuiteConstants.VERSION);
+    }
+
+    private static byte[] get(URI api, Version version) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder(api)
               .timeout(TIMEOUT)
               .header("Accept", "application/vnd.github+json")
@@ -164,13 +348,13 @@ public record ReleaseNotes(String repository, URI page, List<Section> sections) 
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
             try (InputStream body = response.body()) {
                 if (response.statusCode() != 200) {
-                    throw new IOException("GitHub returned HTTP " + response.statusCode() + " for " + tag);
+                    throw new IOException("GitHub returned HTTP " + response.statusCode() + " for " + api);
                 }
                 byte[] bytes = body.readNBytes(MAX_BYTES + 1);
                 if (bytes.length > MAX_BYTES) {
-                    throw new IOException("The release notes of " + tag + " exceed the size limit");
+                    throw new IOException("The release notes at " + api + " exceed the size limit");
                 }
-                return fromJson(repository, version, bytes);
+                return bytes;
             }
         }
     }
@@ -180,7 +364,7 @@ public record ReleaseNotes(String repository, URI page, List<Section> sections) 
         if ((release == null) || !release.isObject()) {
             throw new IOException("GitHub returned an unexpected release");
         }
-        return new ReleaseNotes(repository, page(repository, version),
+        return new ReleaseNotes(repository, page(repository, version), null,
               parse(repository, release.path("body").asText("")));
     }
 

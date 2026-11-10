@@ -35,15 +35,12 @@ package megamek.client.ui.dialogs.releaseNotes;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -59,16 +56,13 @@ import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.MMButton;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.util.LauncherReadySignal;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
 /**
- * Shows what changed in the running version of a MegaMek suite application: its published release notes on GitHub,
- * grouped by kind of change. It opens from Help &gt; Release Notes, and once on the first start after an update unless
- * the player turned that off or the MegaMek Launcher already showed the changes.
+ * Shows what changed in the running version of a MegaMek suite application, from Help &gt; Release Notes: the
+ * published release notes on GitHub, grouped by kind of change, of every release of the running version's channel
+ * since the version the player ran before. It only opens when the player asks for it.
  *
  * <p>The dialog is not modal and the notes load in the background, so a slow or refused GitHub request never holds
  * up the application.</p>
@@ -78,31 +72,27 @@ public final class ReleaseNotesDialog extends JDialog {
     private static final long serialVersionUID = 4618843517362904911L;
     private static final MMLogger LOGGER = MMLogger.create(ReleaseNotesDialog.class);
     private static final String GITHUB = "https://github.com/MegaMek/";
-    private static final Pattern SEEN_VERSION = Pattern.compile("\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}(\\.\\d{1,6})?");
 
     private final JEditorPane notes = new JEditorPane("text/html", "");
+    private final JLabel since = new JLabel();
+    private URI page;
     private transient SwingWorker<ReleaseNotes, Void> worker;
-
-    /** What the first start after an update does. */
-    enum AfterUpdate {
-        /** Load the notes and show them; remember the version once they are shown. */
-        SHOW,
-        /** Show nothing, but remember the version so it is not offered again. */
-        REMEMBER,
-        /** Show and remember nothing. */
-        NOTHING
-    }
 
     private ReleaseNotesDialog(@Nullable Window owner, String repository, Version version) {
         super(owner, Messages.getString("ReleaseNotesDialog.title"), ModalityType.MODELESS);
         setName("releaseNotesDialog");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        URI page = ReleaseNotes.page(repository, version);
+        page = ReleaseNotes.page(repository, version);
 
         JLabel heading = new JLabel(Messages.getString("ReleaseNotesDialog.heading", productName(repository),
               version.toString()));
         heading.setName("releaseNotesHeading");
         heading.setFont(heading.getFont().deriveFont(Font.BOLD, heading.getFont().getSize2D() * 1.4f));
+        since.setName("releaseNotesSince");
+        since.setVisible(false);
+        JPanel header = new JPanel(new BorderLayout(0, UIUtil.scaleForGUI(4)));
+        header.add(heading, BorderLayout.NORTH);
+        header.add(since, BorderLayout.SOUTH);
 
         notes.setName("releaseNotesContent");
         notes.setEditable(false);
@@ -118,15 +108,6 @@ public final class ReleaseNotesDialog extends JDialog {
         scroll.setPreferredSize(UIUtil.scaleForGUI(620, 440));
         scroll.getVerticalScrollBar().setUnitIncrement(16);
 
-        JCheckBox showAfterUpdates = new JCheckBox(Messages.getString("ReleaseNotesDialog.showAfterUpdates"));
-        showAfterUpdates.setName("releaseNotesShowAfterUpdates");
-        showAfterUpdates.setToolTipText(Messages.getString("ReleaseNotesDialog.showAfterUpdates.tooltip"));
-        showAfterUpdates.setSelected(GUIPreferences.getInstance().getShowReleaseNotesAfterUpdate());
-        showAfterUpdates.addActionListener(event -> {
-            GUIPreferences.getInstance().setShowReleaseNotesAfterUpdate(showAfterUpdates.isSelected());
-            PreferenceManager.getInstance().save();
-        });
-
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, UIUtil.scaleForGUI(8), 0));
         buttons.add(new MMButton("releaseNotesViewOnGitHub", Messages.getString("ReleaseNotesDialog.viewOnGitHub"),
               event -> UIUtil.browse(page.toString(), this)));
@@ -134,16 +115,12 @@ public final class ReleaseNotesDialog extends JDialog {
               event -> dispose());
         buttons.add(close);
 
-        JPanel footer = new JPanel(new BorderLayout());
-        footer.add(showAfterUpdates, BorderLayout.WEST);
-        footer.add(buttons, BorderLayout.EAST);
-
         int pad = UIUtil.scaleForGUI(12);
         JPanel content = new JPanel(new BorderLayout(0, pad));
         content.setBorder(BorderFactory.createEmptyBorder(pad, pad, pad, pad));
-        content.add(heading, BorderLayout.NORTH);
+        content.add(header, BorderLayout.NORTH);
         content.add(scroll, BorderLayout.CENTER);
-        content.add(footer, BorderLayout.SOUTH);
+        content.add(buttons, BorderLayout.SOUTH);
         setContentPane(content);
         getRootPane().setDefaultButton(close);
         getRootPane().registerKeyboardAction(event -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -153,18 +130,19 @@ public final class ReleaseNotesDialog extends JDialog {
     }
 
     /**
-     * Opens the release notes of the running version and loads them in the background, as Help &gt; Release Notes
-     * does.
+     * Opens what changed in the running version since the version the player ran before it, within the same release
+     * channel, and loads it in the background, as Help &gt; Release Notes does.
      *
      * @param owner      The window to center on, or {@code null}
      * @param repository The application's repository name, e.g. "megamek"
      */
     public static void showReleaseNotes(@Nullable Window owner, String repository) {
+        Version previous = ReleaseNotes.previousVersion();
         ReleaseNotesDialog dialog = new ReleaseNotesDialog(owner, repository, SuiteConstants.VERSION);
         dialog.worker = new SwingWorker<>() {
             @Override
             protected ReleaseNotes doInBackground() throws Exception {
-                return ReleaseNotes.load(repository, SuiteConstants.VERSION);
+                return ReleaseNotes.load(repository, previous, SuiteConstants.VERSION);
             }
 
             @Override
@@ -186,83 +164,6 @@ public final class ReleaseNotesDialog extends JDialog {
         dialog.setVisible(true);
     }
 
-    /**
-     * Shows the release notes once on the first start after an update, if the player wants that and the MegaMek
-     * Launcher has not already shown them. The notes load in the background; when they cannot be loaded, nothing is
-     * shown and the next start tries again. Call this once the application's first window is on screen.
-     *
-     * @param owner      The window to center on, or {@code null}
-     * @param repository The application's repository name, e.g. "megamek"
-     */
-    public static void showAfterUpdate(@Nullable Window owner, String repository) {
-        if (GraphicsEnvironment.isHeadless()) {
-            return;
-        }
-        GUIPreferences preferences = GUIPreferences.getInstance();
-        Version version = SuiteConstants.VERSION;
-        String launcherReadyFile = System.getProperty(LauncherReadySignal.READY_FILE_PROPERTY);
-        AfterUpdate decision = afterUpdate(preferences.getReleaseNotesSeen(repository), version,
-              (launcherReadyFile != null) && !launcherReadyFile.isBlank(),
-              preferences.getShowReleaseNotesAfterUpdate());
-        if (decision == AfterUpdate.REMEMBER) {
-            remember(repository, version);
-        } else if (decision == AfterUpdate.SHOW) {
-            new SwingWorker<ReleaseNotes, Void>() {
-                @Override
-                protected ReleaseNotes doInBackground() throws Exception {
-                    return ReleaseNotes.load(repository, version);
-                }
-
-                @Override
-                protected void done() {
-                    try {
-                        ReleaseNotes loaded = get();
-                        remember(repository, version);
-                        ReleaseNotesDialog dialog = new ReleaseNotesDialog(owner, repository, version);
-                        dialog.showNotes(loaded);
-                        dialog.setVisible(true);
-                    } catch (InterruptedException interrupted) {
-                        Thread.currentThread().interrupt();
-                    } catch (ExecutionException failure) {
-                        LOGGER.info("Skipped the release notes after the update: {}", failure.getCause().toString());
-                    }
-                }
-            }.execute();
-        }
-    }
-
-    /**
-     * Decides what the first start of {@code current} does, given the version the notes were last shown or skipped
-     * for.
-     *
-     * @param seen         The remembered version, or an empty string when there is none
-     * @param current      The running version
-     * @param fromLauncher Whether the MegaMek Launcher started the application; it shows the notes after its updates
-     * @param wanted       Whether the player wants the notes after updates
-     *
-     * @return What to do
-     */
-    static AfterUpdate afterUpdate(@Nullable String seen, Version current, boolean fromLauncher, boolean wanted) {
-        if (!current.hasRevision()) {
-            // A development build has no release notes
-            return AfterUpdate.NOTHING;
-        }
-        if ((seen == null) || !SEEN_VERSION.matcher(seen).matches()) {
-            // A new installation, with nothing it was updated from, or an unreadable setting
-            return AfterUpdate.REMEMBER;
-        }
-        Version previous = new Version(seen);
-        if (!current.isHigherThan(previous) || fromLauncher || !wanted) {
-            return current.is(previous) ? AfterUpdate.NOTHING : AfterUpdate.REMEMBER;
-        }
-        return AfterUpdate.SHOW;
-    }
-
-    private static void remember(String repository, Version version) {
-        GUIPreferences.getInstance().setReleaseNotesSeen(repository, version.toString());
-        PreferenceManager.getInstance().save();
-    }
-
     @Override
     public void dispose() {
         if (worker != null) {
@@ -272,6 +173,12 @@ public final class ReleaseNotesDialog extends JDialog {
     }
 
     private void showNotes(ReleaseNotes releaseNotes) {
+        page = releaseNotes.page();
+        if (releaseNotes.since() != null) {
+            since.setText(Messages.getString("ReleaseNotesDialog.since", releaseNotes.since()));
+            since.setVisible(true);
+            getContentPane().revalidate();
+        }
         showText(html(releaseNotes));
     }
 

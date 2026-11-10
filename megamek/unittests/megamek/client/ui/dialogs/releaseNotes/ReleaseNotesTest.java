@@ -40,12 +40,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import megamek.Version;
 import org.junit.jupiter.api.Test;
 
 class ReleaseNotesTest {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final String BODY = String.join("\n",
           "| Download | Link |",
@@ -151,5 +157,103 @@ class ReleaseNotesTest {
 
         assertThrows(IOException.class,
               () -> ReleaseNotes.fromJson("megamek", version, "[1, 2]".getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @Test
+    void releaseVersionsNeedARevisionedTag() {
+        assertEquals(0, new Version("0.51.01.5").compareTo(ReleaseNotes.releaseVersion("v0.51.01.5")));
+        assertNull(ReleaseNotes.releaseVersion("v0.51.01-Development"));
+        assertNull(ReleaseNotes.releaseVersion("v0.51.00.1-Core Rules"));
+        assertNull(ReleaseNotes.releaseVersion("0.51.01.5"));
+    }
+
+    @Test
+    void anUpdateRemembersTheVersionBefore() {
+        Version running = new Version("0", "51", "1", "6", "main-abc1234");
+
+        assertEquals("0.51.01.5", ReleaseNotes.previousAfterStart("0.51.01.5", running));
+        assertNull(ReleaseNotes.previousAfterStart("0.51.01.6", running));
+    }
+
+    @Test
+    void aFirstStartHasNoVersionBefore() {
+        Version running = new Version("0", "51", "1", "6", null);
+
+        assertEquals("", ReleaseNotes.previousAfterStart("", running));
+        assertEquals("", ReleaseNotes.previousAfterStart(null, running));
+        assertEquals("", ReleaseNotes.previousAfterStart("latest", running));
+    }
+
+    @Test
+    void aDevelopmentBuildRemembersNothing() {
+        assertNull(ReleaseNotes.previousAfterStart("0.51.01.5", new Version("0", "52", "0", null, null)));
+    }
+
+    @Test
+    void onlyAnOlderPreviousVersionIsASince() {
+        Version running = new Version("0", "51", "1", "6", null);
+
+        assertEquals(0, new Version("0.51.01.4").compareTo(ReleaseNotes.since("0.51.01.4", running)));
+        assertNull(ReleaseNotes.since("0.51.01.7", running));
+        assertNull(ReleaseNotes.since("", running));
+        assertNull(ReleaseNotes.since("0.51", running));
+    }
+
+    @Test
+    void combiningKeepsOnlyTheReleasesOfTheTargetsChannel() throws IOException {
+        List<JsonNode> releases = releases(
+              release("v0.51.01.7", true, "* Too new by @a in https://github.com/MegaMek/megamek/pull/7"),
+              release("v0.51.01.6", false, "### Bug Fixes\n* Core fix by @a in https://github.com/MegaMek/megamek/pull/6"),
+              release("v0.51.01.5", true, "### Bug Fixes\n* Fix five by @a in https://github.com/MegaMek/megamek/pull/5"
+                    + "\n### New Features\n* Feature by @a in https://github.com/MegaMek/megamek/pull/3"),
+              release("v0.51.01.4", true, "### Bug Fixes\n* Fix four by @a in https://github.com/MegaMek/megamek/pull/4"
+                    + "\n* Feature by @a in https://github.com/MegaMek/megamek/pull/3"),
+              release("v0.51.01.3", true, "* Already seen by @a in https://github.com/MegaMek/megamek/pull/2"));
+
+        ReleaseNotes notes = ReleaseNotes.combine("megamek", releases, new Version("0.51.01.3"),
+              new Version("0.51.01.5"));
+
+        assertEquals("0.51.01.3", notes.since());
+        assertEquals(URI.create("https://github.com/MegaMek/megamek/releases"), notes.page());
+        assertEquals(List.of("New Features", "Bug Fixes"),
+              notes.sections().stream().map(ReleaseNotes.Section::heading).toList());
+        assertEquals(List.of(3), notes.sections().get(0).changes().stream()
+              .map(ReleaseNotes.Change::pullRequest).toList());
+        assertEquals(List.of(5, 4), notes.sections().get(1).changes().stream()
+              .map(ReleaseNotes.Change::pullRequest).toList());
+    }
+
+    @Test
+    void aFirstCoreReleaseHasOnlyItsOwnNotes() throws IOException {
+        List<JsonNode> releases = releases(
+              release("v0.51.01.6", false, "First Core release, no previous Core release to compare with.\n"),
+              release("v0.51.01.5", true, "### Bug Fixes\n* Fix by @a in https://github.com/MegaMek/megamek/pull/5"));
+
+        ReleaseNotes notes = ReleaseNotes.combine("megamek", releases, new Version("0.51.01.5"),
+              new Version("0.51.01.6"));
+
+        assertTrue(notes.sections().isEmpty());
+        assertEquals(URI.create("https://github.com/MegaMek/megamek/releases/tag/v0.51.01.6"), notes.page());
+    }
+
+    @Test
+    void combiningNeedsTheTargetRelease() throws IOException {
+        List<JsonNode> releases = releases(release("v0.51.01.4", true, ""));
+
+        assertNull(ReleaseNotes.combine("megamek", releases, new Version("0.51.01.3"), new Version("0.51.01.5")));
+    }
+
+    private static String release(String tag, boolean prerelease, String body) throws IOException {
+        String notes = body.startsWith("First") ? body : "## What's Changed\n" + body;
+        return MAPPER.writeValueAsString(Map.of("tag_name", tag, "prerelease", prerelease, "draft", false,
+              "body", notes));
+    }
+
+    private static List<JsonNode> releases(String... releases) throws IOException {
+        List<JsonNode> nodes = new ArrayList<>();
+        for (String release : releases) {
+            nodes.add(MAPPER.readTree(release));
+        }
+        return nodes;
     }
 }

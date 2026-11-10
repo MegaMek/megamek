@@ -35,6 +35,8 @@ package megamek.utilities;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.swing.JFileChooser;
@@ -104,12 +106,18 @@ public class GifWriterThread extends Thread {
                 Frame frame = frameQueue.take();
                 gifWriter.appendFrame(frame.image(), frame.duration());
             }
-        } catch (InterruptedException e) {
-            // Stop requested while waiting for or encoding a frame.
-            Thread.currentThread().interrupt();
+        } catch (InterruptedException interruptedException) {
+            // Stop requested while waiting for a frame. Nothing to restore: this thread ends below.
+            LOGGER.debug("GIF writer interrupted while waiting for a frame");
         } catch (IOException e) {
             LOGGER.error(e, "Error appending frame to GIF");
         } finally {
+            // stopThread() interrupts this thread. A modal dialog shown while the interrupt flag is set
+            // closes at once and returns CLOSED_OPTION, so the GIF is deleted before the player can answer.
+            Thread.interrupted();
+            if (!forceInterrupt) {
+                encodeQueuedFrames();
+            }
             gifWriter.close();
             frameQueue.clear();
             if (!forceInterrupt) {
@@ -124,7 +132,31 @@ public class GifWriterThread extends Thread {
         }
     }
 
-    private void saveGifNag() {
+    /**
+     * Encodes the frames still waiting in the queue when a normal stop arrives, so the last turns of the game
+     * are not cut from the GIF. The final frames are queued just before the victory phase stops this thread.
+     */
+    private void encodeQueuedFrames() {
+        int framesEncoded = 0;
+        Frame frame = frameQueue.poll();
+        while (frame != null) {
+            try {
+                gifWriter.appendFrame(frame.image(), frame.duration());
+                framesEncoded++;
+            } catch (IOException ioException) {
+                LOGGER.error(ioException, "Error appending a queued frame to GIF");
+                return;
+            }
+            frame = frameQueue.poll();
+        }
+        LOGGER.info("Encoded {} queued frames before closing the GIF", framesEncoded);
+    }
+
+    /**
+     * Asks the player whether to keep the recorded GIF, saves it if they say yes, and then deletes the
+     * temporary file. Package-private so tests can observe the thread state it runs under.
+     */
+    void saveGifNag() {
         // Recording only ever runs with the player's up-front consent (see GifRecordingMode), so this dialog
         // needs no preference gate: the player chose to record and now only decides whether to keep the result.
         int response = JOptionPane.showConfirmDialog(null,
@@ -132,6 +164,7 @@ public class GifWriterThread extends Thread {
               Messages.getString("ClientGUI.SaveGifDialog.title"),
               JOptionPane.YES_NO_OPTION,
               JOptionPane.INFORMATION_MESSAGE);
+        LOGGER.info("Save GIF prompt answered: {}", describeResponse(response));
         if (response == JOptionPane.YES_OPTION) {
             saveGif();
         }
@@ -162,14 +195,11 @@ public class GifWriterThread extends Thread {
             }
             File finalGifFile = gifFile;
             try {
-                if (gifWriter.getOutputFile().renameTo(finalGifFile)) {
-                    LOGGER.info("Game summary GIF saved to {}", finalGifFile);
-                } else {
-                    LOGGER.errorDialog("Unable to save GIF in destination",
-                          "Unable to save file {} at {}",
-                          gifWriter.getOutputFile(),
-                          finalGifFile);
-                }
+                // Files.move copies across drives and replaces a file the player chose to overwrite;
+                // File.renameTo fails silently in both cases.
+                Files.move(gifWriter.getOutputFile().toPath(), finalGifFile.toPath(),
+                      StandardCopyOption.REPLACE_EXISTING);
+                LOGGER.info("Game summary GIF saved to {}", finalGifFile);
             } catch (Exception ex) {
                 LOGGER.errorDialog(ex,
                       "Unable to save file {} at {}",
@@ -199,7 +229,19 @@ public class GifWriterThread extends Thread {
     private record SaveDialogResult(JFileChooser saveDialog, int returnVal) {
     }
 
+    private static String describeResponse(int response) {
+        return switch (response) {
+            case JOptionPane.YES_OPTION -> "yes";
+            case JOptionPane.NO_OPTION -> "no";
+            default -> "closed without an answer";
+        };
+    }
+
     private void deleteGif() {
+        if (!gifWriter.getOutputFile().exists()) {
+            // Already moved to the player's chosen location.
+            return;
+        }
         if (gifWriter.delete()) {
             LOGGER.info("Deleted temporary game summary GIF {}", gifWriter.getOutputFile());
         } else {
@@ -214,9 +256,21 @@ public class GifWriterThread extends Thread {
         stopThread(false);
     }
 
-    public void stopThread(boolean forceInterrupt) {
-        isLive = false;
+    /**
+     * Stops recording. Only the first call has an effect: once a stop is under way the thread may be showing
+     * the save prompt, and a later stop (MekHQ closes the client right after the victory phase) must not
+     * interrupt it, or the prompt closes before the player can answer.
+     *
+     * @param forceInterrupt {@code true} to discard the GIF without asking the player
+     */
+    public synchronized void stopThread(boolean forceInterrupt) {
+        if (!isLive) {
+            LOGGER.info("GIF writer already stopping; ignoring stop request (discard={})", forceInterrupt);
+            return;
+        }
+        LOGGER.info("Stopping GIF writer (discard={})", forceInterrupt);
         this.forceInterrupt = forceInterrupt;
+        isLive = false;
         interrupt();
     }
 }

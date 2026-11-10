@@ -94,6 +94,8 @@ public final class Player extends TurnOrdered {
     private boolean bot = false;
     private boolean observer = false;
     private boolean gameMaster = false;
+    /** Set by a Game Master to stop everyone else using {@code /ping}; cleared when they give up the role. */
+    private boolean pingGameMasterOnly = false;
 
     private boolean seeAll = false; // Observer or Game Master can observe double-blind games
     private boolean singleBlind = false; // Bot can observe double-blind games
@@ -383,6 +385,26 @@ public final class Player extends TurnOrdered {
      */
     public void setGameMaster(boolean gameMaster) {
         this.gameMaster = gameMaster;
+        if (!gameMaster) {
+            pingGameMasterOnly = false;
+        }
+    }
+
+    /**
+     * @return {@code true} when this player holds the Game Master role and has limited {@code /ping} to themselves
+     */
+    public boolean isPingGameMasterOnly() {
+        return pingGameMasterOnly && isGameMaster();
+    }
+
+    /**
+     * Limits {@code /ping} to this player, or lifts that limit. Only takes effect while this player holds the Game
+     * Master role, and is cleared when they give it up.
+     *
+     * @param pingGameMasterOnly {@code true} to stop every other player pinging
+     */
+    public void setPingGameMasterOnly(boolean pingGameMasterOnly) {
+        this.pingGameMasterOnly = pingGameMasterOnly;
     }
 
     /**
@@ -1111,6 +1133,7 @@ public final class Player extends TurnOrdered {
         copy.bot = bot;
         copy.observer = observer;
         copy.gameMaster = gameMaster;
+        copy.pingGameMasterOnly = pingGameMasterOnly;
 
         copy.seeAll = seeAll;
         copy.singleBlind = singleBlind;

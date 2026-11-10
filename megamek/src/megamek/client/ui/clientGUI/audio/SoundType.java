@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,4 +37,5 @@ public enum SoundType {
     BING_CHAT,
     BING_MY_TURN,
     BING_OTHERS_TURN,
+    BING_PING,
 }

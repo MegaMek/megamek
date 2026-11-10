@@ -317,7 +317,12 @@ public enum PacketCommand {
      * player's team. Team rolls decide who wins initiative but are not part of a player update, so without this a
      * client only knows each player's roll for ordering within their own team.
      */
-    TEAM_INITIATIVE;
+    TEAM_INITIATIVE,
+    /**
+     * A Server to Client packet telling a player that someone pinged them: the sender's player id and whether the
+     * ping went to everyone. The client plays its ping sound and shows who pinged it.
+     */
+    PLAYER_PING;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

@@ -33,15 +33,13 @@
 
 package megamek.common.cost;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.InfantryBay;
 import megamek.common.equipment.ArmorType;
 import megamek.common.units.Warship;
+import megamek.common.verifier.TestAdvancedAerospace;
 
 public class WarShipCostCalculator {
 
@@ -69,8 +67,8 @@ public class WarShipCostCalculator {
         // Maneuvering Drive
         // Drive Unit
         costs[costIdx++] += 500 * warShip.getOriginalWalkMP() * (warShip.getWeight() / 100.0);
-        // Engine
-        costs[costIdx++] += 1000 * warShip.getOriginalWalkMP() * warShip.getWeight() * 0.06;
+        // Engine: 1,000 x Engine Tonnage (SO:AA p.146); primitive engines are heavier before 2300 (IO:AE p.123)
+        costs[costIdx++] += 1000 * TestAdvancedAerospace.calculateEngineTonnage(warShip);
         // Engine Control Unit
         costs[costIdx++] += 1000;
 
@@ -86,8 +84,8 @@ public class WarShipCostCalculator {
         driveCost[driveIdx++] += 50000000.0;
         // Tankage
         driveCost[driveIdx++] += 50000.0 * warShip.getKFIntegrity();
-        // Sail
-        driveCost[driveIdx++] += 50000.0 * (30 + (warShip.getWeight() / 20000.0));
+        // Sail: 50,000 x Sail Tonnage (SO:AA p.146); none before 2200, heavier until 2300 (IO:AE p.124)
+        driveCost[driveIdx++] += 50000.0 * TestAdvancedAerospace.calculateSailTonnage(warShip);
         // Charging System
         driveCost[driveIdx++] += 500000.0 + (200000.0 * warShip.getDocks(true));
 
@@ -162,15 +160,14 @@ public class WarShipCostCalculator {
         }
 
         costs[costIdx] = -warShip.getPriceMultiplier(); // Negative indicates multiplier
-        double roundedCost = BigDecimal.valueOf(cost * warShip.getPriceMultiplier())
-              .setScale(2, RoundingMode.UP)
-              .doubleValue();
+        cost = Math.round(cost * warShip.getPriceMultiplier());
+
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
                                  "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
                                  "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
                                  "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
                                  "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, warShip, ignoreAmmo, systemNames, 21, roundedCost, costs);
-        return roundedCost;
+        CostCalculator.fillInReport(costReport, warShip, ignoreAmmo, systemNames, 21, cost, costs);
+        return cost;
     }
 }

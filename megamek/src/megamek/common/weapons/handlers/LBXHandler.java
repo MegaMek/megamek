@@ -112,8 +112,7 @@ public class LBXHandler extends AmmoWeaponHandler {
                 shotsHit = (int) Math.ceil(shotsHit * .5);
             }
         } else {
-            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier,
-                  attackingEntity.isAffectedByEMI(target.getPosition()));
+            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier);
         }
 
         Report report = new Report(3325);

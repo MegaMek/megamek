@@ -182,6 +182,7 @@ public class LosEffects {
     int attackerCover = COVER_NONE; // ditto
     IBuilding thruBldg = null;
     Coords targetLoc;
+    private List<Coords> selectedSplitHexes = List.of();
     /**
      * Indicates if the primary cover is damageable.
      */
@@ -232,6 +233,13 @@ public class LosEffects {
 
     public Coords getTargetPosition() {
         return targetLoc;
+    }
+
+    /**
+     * Returns the split-path hexes selected by the LOS calculation.
+     */
+    public List<Coords> getSelectedSplitHexes() {
+        return selectedSplitHexes;
     }
 
     public int getMinimumWaterDepth() {
@@ -1463,11 +1471,17 @@ public class LosEffects {
         // Determine whether left or right is worse and update los with it
         int lVal = totalLeftLos.losModifiers(game).getValue();
         int rVal = totalRightLos.losModifiers(game).getValue();
-        if ((lVal > rVal) || ((lVal == rVal) && totalLeftLos.isAttackerCover())) {
+        boolean useLeftPath = (lVal > rVal) || ((lVal == rVal) && totalLeftLos.isAttackerCover());
+        if (useLeftPath) {
             los.add(totalLeftLos);
         } else {
             los.add(totalRightLos);
         }
+        List<Coords> selectedSplitHexes = new ArrayList<>();
+        for (int i = 1; i < in.size() - 2; i += 3) {
+            selectedSplitHexes.add(in.get(useLeftPath ? i : i + 1));
+        }
+        los.selectedSplitHexes = List.copyOf(selectedSplitHexes);
         return los;
     }
 

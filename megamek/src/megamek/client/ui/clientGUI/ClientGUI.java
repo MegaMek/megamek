@@ -34,17 +34,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.HeadlessException;
-import java.awt.Image;
-import java.awt.KeyboardFocusManager;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -59,6 +49,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -162,6 +153,7 @@ import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
+import megamek.common.event.player.GamePlayerPingEvent;
 import megamek.common.game.Game;
 import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
@@ -394,6 +386,12 @@ public class ClientGUI extends AbstractClientGUI
     public ChatLounge chatlounge;
     private OffBoardTargetOverlay offBoardOverlay;
     private BoardToastOverlay toastOverlay;
+
+    /**
+     * Set while a ping notice is written to the chat box, so that line does not also play the chat sound. Chat events
+     * are dispatched on the thread that raises them, so the flag is only ever read during that one call.
+     */
+    private boolean isQuietSystemMessage = false;
 
     private final ConcurrentLinkedQueue<Runnable> toastDripQueue = new ConcurrentLinkedQueue<>();
     private javax.swing.Timer toastDripTimer;
@@ -1301,33 +1299,19 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
-    private boolean resetMiniMapZoom(Container c) {
-        for (Component comp : c.getComponents()) {
-            if (comp instanceof MinimapPanel minimapPanel) {
-                minimapPanel.resetZoom();
-                return true;
-            } else {
-                if (resetMiniMapZoom((Container) comp)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Moves the floating windows to the top left corner of the screen. Only the position changes; each window keeps
+     * its size, and the minimap keeps its zoom.
+     */
     public void resetWindowPositions() {
-        miniMaps.values().forEach(miniMap -> {
-            miniMap.setBounds(0, 0, miniMap.getWidth(), miniMap.getHeight());
-            resetMiniMapZoom(miniMap);
-        });
+        for (MinimapDialog miniMap : miniMaps.values()) {
+            miniMap.setLocation(0, 0);
+        }
         if (getUnitDisplayDialog() != null) {
-            getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
+            getUnitDisplayDialog().setLocation(0, 0);
         }
         if (getForceDisplayDialog() != null) {
-            getForceDisplayDialog().setBounds(0,
-                  0,
-                  getForceDisplayPanel().getWidth(),
-                  getForceDisplayPanel().getHeight());
+            getForceDisplayDialog().setLocation(0, 0);
         }
         if (getMekSelectorDialog() != null) {
             // This one reads the GUIP every time it goes visible, so need to set those directly.
@@ -1335,9 +1319,6 @@ public class ClientGUI extends AbstractClientGUI
             GUIP.setMekSelectorSizeWidth(getMekSelectorDialog().getWidth());
             GUIP.setMekSelectorPosX(0);
             GUIP.setMekSelectorPosY(0);
-        }
-        if (getBotCommandsDialog() != null) {
-            getBotCommandsDialog().setBounds(0, 0, getBotCommandsPanel().getWidth(), getBotCommandsPanel().getHeight());
         }
         if (getRoundsInAirDialog() != null) {
             getRoundsInAirDialog().setBounds(0,
@@ -1379,10 +1360,7 @@ public class ClientGUI extends AbstractClientGUI
             commonSettingsDialog.setBounds(0, 0, commonSettingsDialog.getWidth(), commonSettingsDialog.getHeight());
         }
         if (getBotCommandsDialog() != null) {
-            getBotCommandsDialog().setBounds(0,
-                  0,
-                  getBotCommandsDialog().getWidth(),
-                  getBotCommandsDialog().getHeight());
+            getBotCommandsDialog().setLocation(0, 0);
         }
         if (getRandomArmyDialog() != null) {
             getRandomArmyDialog().setBounds(0, 0, getRandomArmyDialog().getWidth(), getRandomArmyDialog().getHeight());
@@ -1749,6 +1727,11 @@ public class ClientGUI extends AbstractClientGUI
             getPlayerListDialog().saveSettings();
         }
 
+        // Rounds in Air Dialog
+        if (getRoundsInAirDialog() != null) {
+            getRoundsInAirDialog().saveSettings();
+        }
+
         // Ruler display
         if ((ruler != null) && (ruler.getSize().width != 0) && (ruler.getSize().height != 0)) {
             GUIP.setRulerPosX(ruler.getLocation().x);
@@ -1769,6 +1752,9 @@ public class ClientGUI extends AbstractClientGUI
             SwingUtilities.invokeLater(this::die);
             return;
         }
+
+        // Capture window positions before anything is torn down.
+        saveSettings();
 
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
@@ -3316,6 +3302,34 @@ public class ClientGUI extends AbstractClientGUI
         audioService.playSound(SoundType.BING_OTHERS_TURN);
     }
 
+    /**
+     * Plays the ping sound and shows who pinged this player: a toast on the board in game, or a line in the chat box in
+     * the lobby or when toasts are switched off. The chat line does not also play the chat sound.
+     *
+     * @param event the ping, naming its sender
+     */
+    private void showPing(GamePlayerPingEvent event) {
+        Player sender = client.getGame().getPlayer(event.senderId());
+        String senderName = (sender == null) ? Messages.getString("ClientGUI.ping.unknownSender") : sender.getName();
+        String notice = Messages.getString(event.isToEveryone() ? "ClientGUI.ping.everyone" : "ClientGUI.ping.you",
+              senderName);
+        audioService.playSound(SoundType.BING_PING);
+        boolean canToast = !client.getGame().getPhase().isLounge() && (toastOverlay != null)
+              && GUIP.getToastEnabled();
+        logger.info("[PlayerPing] pinged by {} (everyone: {}), notice as {}, ping sound muted: {}",
+              senderName, event.isToEveryone(), canToast ? "toast" : "chat line", GUIP.getSoundMutePing());
+        if (canToast) {
+            addToast(ToastLevel.INFO, notice);
+        } else {
+            isQuietSystemMessage = true;
+            try {
+                systemMessage(notice);
+            } finally {
+                isQuietSystemMessage = false;
+            }
+        }
+    }
+
     private void setWeaponOrderPrefs(boolean prefChange) {
         for (Entity entity : client.getGame().getEntitiesVector()) {
             if ((entity.getOwner().equals(client.getLocalPlayer()))
@@ -3397,7 +3411,6 @@ public class ClientGUI extends AbstractClientGUI
                           client.getGame(),
                           boardView,
                           ClientGUI.this,
-                          null,
                           boardId));
                     // A board arriving during the lounge (lobby-built battlefield) must not pop up the minimap;
                     // the boards are re-sent at game start (EXCHANGE), which shows it as usual.
@@ -3460,7 +3473,14 @@ public class ClientGUI extends AbstractClientGUI
 
         @Override
         public void gamePlayerChat(GamePlayerChatEvent e) {
-            bingChat();
+            if (!isQuietSystemMessage) {
+                bingChat();
+            }
+        }
+
+        @Override
+        public void gamePlayerPing(GamePlayerPingEvent event) {
+            showPing(event);
         }
 
         @Override
@@ -4363,7 +4383,8 @@ public class ClientGUI extends AbstractClientGUI
             }
             case GUIPreferences.SOUND_BING_FILENAME_CHAT,
                  GUIPreferences.SOUND_BING_FILENAME_MY_TURN,
-                 GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
+                 GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN,
+                 GUIPreferences.SOUND_BING_FILENAME_PING -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
             case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
                 // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)

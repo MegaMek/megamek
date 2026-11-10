@@ -36,6 +36,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -59,6 +61,7 @@ import org.apache.commons.text.StringEscapeUtils;
 /** Owns the central scrollable settings content and an optional sticky help panel. */
 public class SettingsContentHost extends JPanel {
     private static final int SCROLL_SPEED = 16;
+    private static final int HOVER_HELP_DELAY_MS = 200;
     private static final Pattern HTML_TAG_PATTERN = Pattern.compile("</?([A-Za-z][A-Za-z0-9]*)\\b[^<>]*>");
 
     private final JPanel contentPanel = new SettingsContentPanel();
@@ -67,6 +70,9 @@ public class SettingsContentHost extends JPanel {
     private final JLayer<JScrollPane> searchHighlightLayer;
     private final SettingsHelpPanel helpPanel;
     private final List<HelpBinding> activeHelpBindings = new ArrayList<>();
+    private final Timer hoverHelpTimer = new Timer(HOVER_HELP_DELAY_MS, event -> commitPendingHoverHelp(true));
+    private @Nullable Component pendingHoverSource;
+    private @Nullable String pendingHoverText;
     private Component currentContent;
     private String activeSearchFilter = "";
 
@@ -82,6 +88,7 @@ public class SettingsContentHost extends JPanel {
         searchHighlightLayer = new JLayer<>(contentScrollPane, searchHighlightLayerUI);
         searchHighlightLayer.setName("settingsSearchHighlightLayer");
         helpPanel = new SettingsHelpPanel();
+        hoverHelpTimer.setRepeats(false);
         add(searchHighlightLayer, BorderLayout.CENTER);
         add(helpPanel, BorderLayout.SOUTH);
         setContent(content, showHelpPanel);
@@ -102,6 +109,7 @@ public class SettingsContentHost extends JPanel {
      * {@code defaultShowHelpPanel} is used only when the content does not contain one.
      */
     public void setContent(Component content, boolean defaultShowHelpPanel) {
+        cancelPendingHoverHelp();
         unbindHelp();
         helpPanel.clearHelpText();
         boolean showHelp = shouldShowHelpPanel(content, defaultShowHelpPanel);
@@ -121,6 +129,7 @@ public class SettingsContentHost extends JPanel {
 
     /** Rebuilds contextual-help listeners after the current content's component hierarchy changes. */
     public void refreshHelpBindings() {
+        cancelPendingHoverHelp();
         unbindHelp();
         helpPanel.clearHelpText();
         if (helpPanel.isVisible() && currentContent != null) {
@@ -163,7 +172,7 @@ public class SettingsContentHost extends JPanel {
         if (firstMatch == null) {
             return;
         }
-        setHelpText(firstMatch.helpText());
+        showHelpTextNow(firstMatch.helpText());
         JComponent firstMatchOwner = firstMatch.helpOwner();
         SwingUtilities.invokeLater(() -> {
             if (normalizedFilter.equals(activeSearchFilter)
@@ -186,11 +195,31 @@ public class SettingsContentHost extends JPanel {
     /**
      * Updates this host's sticky help surface. Plain text is wrapped as HTML so it soft-wraps to the panel width;
      * caller-supplied HTML is preserved.
+     *
+     * <p>When called while the pointer is over the settings content (that is, from a hover handler), the update is
+     * treated as hover help: it is only shown once the pointer has rested for {@link #HOVER_HELP_DELAY_MS} and is
+     * still over the same control. This keeps the text from being replaced by every option the mouse crosses on its
+     * way down to the help box. Otherwise the text is shown immediately.</p>
      */
     public void setHelpText(String helpText) {
         if (helpText == null || helpText.isBlank()) {
             return;
         }
+        Component hovered = findComponentUnderPointer();
+        if (hovered == null) {
+            showHelpTextNow(helpText);
+            return;
+        }
+        // A page's own hover handler typically runs just after the generic binding for the same control; keep the
+        // already-pending control as the source so its text simply replaces the generic text.
+        boolean samePendingControl = pendingHoverSource != null
+              && SwingUtilities.isDescendingFrom(hovered, pendingHoverSource);
+        requestHoverHelpText(samePendingControl ? pendingHoverSource : hovered, helpText);
+    }
+
+    /** Shows help text immediately, discarding any pending hover help. Used for focus, search, and settled hovers. */
+    private void showHelpTextNow(String helpText) {
+        cancelPendingHoverHelp();
         boolean isHtmlDocument = helpText.regionMatches(true, 0, "<html>", 0, "<html>".length());
         if (isHtmlDocument) {
             helpPanel.setHelpText(helpText);
@@ -203,6 +232,75 @@ public class SettingsContentHost extends JPanel {
               .replace('\r', '\n')
               .replace("\n", "<br>");
         helpPanel.setHelpText("<html>" + body + "</html>");
+    }
+
+    /**
+     * Queues hover help. It is committed only once the pointer has rested on {@code source} for
+     * {@link #HOVER_HELP_DELAY_MS} and is still over it. Each request replaces any pending one.
+     */
+    private void requestHoverHelpText(Component source, String helpText) {
+        pendingHoverSource = source;
+        pendingHoverText = helpText;
+        hoverHelpTimer.restart();
+    }
+
+    /**
+     * Commits the pending hover help, if any.
+     *
+     * @param requirePointerOverSource when {@code true}, the text is only shown if the pointer is still over the
+     *                                 requesting component; tests pass {@code false} because there is no real pointer
+     */
+    void commitPendingHoverHelp(boolean requirePointerOverSource) {
+        Component source = pendingHoverSource;
+        String helpText = pendingHoverText;
+        cancelPendingHoverHelp();
+        if (source == null || helpText == null) {
+            return;
+        }
+        if (requirePointerOverSource && !isPointerOver(source)) {
+            return;
+        }
+        showHelpTextNow(helpText);
+    }
+
+    private void cancelPendingHoverHelp() {
+        hoverHelpTimer.stop();
+        pendingHoverSource = null;
+        pendingHoverText = null;
+    }
+
+    /** Returns the deepest content component under the pointer, or {@code null} if the pointer is not over content. */
+    private @Nullable Component findComponentUnderPointer() {
+        JViewport viewport = contentScrollPane.getViewport();
+        try {
+            if (!viewport.isShowing()) {
+                return null;
+            }
+            Point viewportPoint = viewport.getMousePosition(true);
+            if (viewportPoint == null) {
+                return null;
+            }
+            Point contentPoint = SwingUtilities.convertPoint(viewport, viewportPoint, contentPanel);
+            Component deepest = SwingUtilities.getDeepestComponentAt(contentPanel, contentPoint.x, contentPoint.y);
+            return deepest == null ? contentPanel : deepest;
+        } catch (HeadlessException exception) {
+            return null;
+        }
+    }
+
+    private static boolean isPointerOver(Component component) {
+        try {
+            if (!component.isShowing()) {
+                return false;
+            }
+            // Count the pointer as "over" a container while it rests on one of its children, so container-level help
+            // bindings are not dropped just because a child is under the pointer.
+            return component instanceof Container container
+                  ? container.getMousePosition(true) != null
+                  : component.getMousePosition() != null;
+        } catch (HeadlessException exception) {
+            return false;
+        }
     }
 
     private static boolean containsHtmlTag(String text) {
@@ -261,13 +359,13 @@ public class SettingsContentHost extends JPanel {
                 MouseAdapter mouseListener = new MouseAdapter() {
                     @Override
                     public void mouseEntered(MouseEvent event) {
-                        setHelpText(helpText);
+                        requestHoverHelpText(event.getComponent(), helpText);
                     }
                 };
                 FocusAdapter focusListener = new FocusAdapter() {
                     @Override
                     public void focusGained(FocusEvent event) {
-                        setHelpText(helpText);
+                        showHelpTextNow(helpText);
                     }
                 };
                 boolean suppressTooltip = swingComponent.getToolTipText() != null;
@@ -301,6 +399,7 @@ public class SettingsContentHost extends JPanel {
 
     @Override
     public void removeNotify() {
+        cancelPendingHoverHelp();
         unbindHelp();
         super.removeNotify();
     }

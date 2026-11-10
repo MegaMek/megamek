@@ -32,6 +32,10 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
+import java.awt.Component;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.ToDoubleFunction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -45,7 +49,6 @@ import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.panels.battlefieldSupport.ConfigurableBFSCardPanel;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.alphaStrike.ASCardDisplayable;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.templates.TROView;
@@ -68,6 +71,16 @@ public class EntityViewPane extends EnhancedTabbedPane {
     private final AvailabilityPanel factionPanel = new AvailabilityPanel();
     private final DamageAnalysisPanel analysisPanel = new DamageAnalysisPanel();
     private boolean menuVisible = true;
+
+    /** The unit shown by the panels; each panel is filled in only once its tab is visible. */
+    private @Nullable Entity shownEntity;
+    /** The Alpha Strike unit for shownEntity, or null to convert shownEntity when the AS Card tab is first shown. */
+    private @Nullable ASCardDisplayable shownAsUnit;
+    private boolean convertShownEntity;
+    private @Nullable BattlefieldSupportAsset shownAsset;
+    private boolean shownStandaloneAsset;
+    /** The tab panels that still show an earlier unit. */
+    private final Set<Component> outdatedPanels = new HashSet<>();
 
     /** Which set of tabs is currently shown, so tabs are only rebuilt when the configuration actually changes. */
     private TabConfiguration tabConfiguration;
@@ -104,6 +117,8 @@ public class EntityViewPane extends EnhancedTabbedPane {
         bfsViewPane.addTab(Messages.getString("BFSCard.title"), linkedBfsCardPanel);
 
         applyTabConfiguration(TabConfiguration.STANDARD);
+        addChangeListener(event -> updateVisiblePanels());
+        bfsViewPane.addChangeListener(event -> updateVisiblePanels());
     }
 
     /** Adds the standard unit tabs (Summary, TRO, AS Card, Faction Availability) in order. */
@@ -152,11 +167,7 @@ public class EntityViewPane extends EnhancedTabbedPane {
      * @param entity the entity to update to, or null if the panels are to be emptied.
      */
     public void updateDisplayedEntity(@Nullable Entity entity) {
-        AlphaStrikeElement asUnit = null;
-        if (ASConverter.canConvert(entity)) {
-            asUnit = ASConverter.convert(entity, new FlexibleCalculationReport());
-        }
-        updateDisplayedEntity(entity, asUnit);
+        showUnit(entity, null, true, null);
     }
 
     /**
@@ -182,8 +193,25 @@ public class EntityViewPane extends EnhancedTabbedPane {
      */
     public void updateDisplayedEntity(@Nullable Entity entity, @Nullable ASCardDisplayable asUnit,
           @Nullable BattlefieldSupportAsset assetEntity) {
+        showUnit(entity, asUnit, false, assetEntity);
+    }
+
+    /**
+     * Records the unit to show and fills in only the visible tab. Building every tab (HTML readouts, cards, charts)
+     * on each selection makes clicking through unit lists sluggish, so hidden tabs catch up when they are selected.
+     */
+    private void showUnit(@Nullable Entity entity, @Nullable ASCardDisplayable asUnit, boolean convertEntity,
+          @Nullable BattlefieldSupportAsset assetEntity) {
         boolean hasAsset = assetEntity != null;
         boolean standaloneAsset = hasAsset && (entity instanceof BattlefieldSupportAsset);
+        shownEntity = entity;
+        shownAsUnit = asUnit;
+        convertShownEntity = convertEntity;
+        shownAsset = assetEntity;
+        shownStandaloneAsset = standaloneAsset;
+        outdatedPanels.addAll(List.of(summaryPanel, troPanel, cardPanel, factionPanel.getPanel(), analysisPanel,
+              assetSummaryPanel, assetTroPanel, bfsCardPanel, linkedBfsCardPanel));
+
         if (standaloneAsset) {
             applyTabConfiguration(TabConfiguration.STANDALONE_ASSET);
         } else if (hasAsset) {
@@ -191,30 +219,57 @@ public class EntityViewPane extends EnhancedTabbedPane {
         } else {
             applyTabConfiguration(TabConfiguration.STANDARD);
         }
+        updateVisiblePanels();
+    }
 
-        if (entity == null) {
-            troPanel.reset();
-            factionPanel.reset();
-        } else {
-            troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
-            if (standaloneAsset) {
+    private void updateVisiblePanels() {
+        Component selected = getSelectedComponent();
+        if (selected == bfsViewPane) {
+            selected = bfsViewPane.getSelectedComponent();
+        }
+        if ((selected != null) && outdatedPanels.remove(selected)) {
+            updatePanel(selected);
+        }
+    }
+
+    private void updatePanel(Component panel) {
+        if (panel == summaryPanel) {
+            summaryPanel.setEntity(shownEntity);
+        } else if (panel == troPanel) {
+            if (shownEntity == null) {
+                troPanel.reset();
+            } else {
+                troPanel.showEntity(shownEntity, TROView.createView(shownEntity, ViewFormatting.HTML));
+            }
+        } else if (panel == cardPanel) {
+            if (convertShownEntity) {
+                convertShownEntity = false;
+                shownAsUnit = ASConverter.canConvert(shownEntity)
+                      ? ASConverter.convert(shownEntity, new FlexibleCalculationReport())
+                      : null;
+            }
+            cardPanel.setASElement(ASConverter.canConvert(shownEntity) ? shownAsUnit : null);
+        } else if (panel == factionPanel.getPanel()) {
+            if ((shownEntity == null) || shownStandaloneAsset) {
                 factionPanel.reset();
             } else {
-                factionPanel.setUnit(entity.getModel(), entity.getFullChassis());
+                factionPanel.setUnit(shownEntity.getModel(), shownEntity.getFullChassis());
             }
+        } else if (panel == analysisPanel) {
+            analysisPanel.setEntity(shownStandaloneAsset ? null : shownEntity);
+        } else if (panel == assetSummaryPanel) {
+            assetSummaryPanel.setEntity(shownAsset);
+        } else if (panel == assetTroPanel) {
+            if (shownAsset == null) {
+                assetTroPanel.reset();
+            } else {
+                assetTroPanel.showEntity(shownAsset, TROView.createView(shownAsset, ViewFormatting.HTML));
+            }
+        } else if (panel == bfsCardPanel) {
+            bfsCardPanel.setAsset(shownAsset);
+        } else if (panel == linkedBfsCardPanel) {
+            linkedBfsCardPanel.setAsset(shownAsset);
         }
-
-        summaryPanel.setEntity(entity);
-        cardPanel.setASElement(ASConverter.canConvert(entity) ? asUnit : null);
-        assetSummaryPanel.setEntity(assetEntity);
-        if (assetEntity == null) {
-            assetTroPanel.reset();
-        } else {
-            assetTroPanel.showEntity(assetEntity, TROView.createView(assetEntity, ViewFormatting.HTML));
-        }
-        bfsCardPanel.setAsset(assetEntity);
-        linkedBfsCardPanel.setAsset(assetEntity);
-        analysisPanel.setEntity(standaloneAsset ? null : entity);
     }
 
     /**

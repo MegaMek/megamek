@@ -717,11 +717,12 @@ public abstract class TestEntity implements TestEntityOption {
 
     public double getWeightWeapon() {
         double weight = 0.0;
-        for (Mounted<?> m : getEntity().getTotalWeaponList()) {
-            if (m.isWeaponGroup()) {
+        for (Mounted<?> mounted : getEntity().getTotalWeaponList()) {
+            // Bomb pods (rocket launcher, TAG, Arrow IV...) are part of the bomb load, not the unit's own weight
+            if (mounted.isWeaponGroup() || mounted.isBombMounted()) {
                 continue;
             }
-            weight += m.getTonnage();
+            weight += mounted.getTonnage();
         }
         return weight;
     }
@@ -1130,8 +1131,11 @@ public abstract class TestEntity implements TestEntityOption {
         if (unit.isProtoMek()) {
             return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
         } else if (unit.isSupportVehicle()) {
-            // Avoid losing a whole point when decimal tonnages divide just below an integer (0.15 / 0.025).
-            return Math.floor(Math.nextUp(armorTons / TestSupportVehicle.armorWeightPerPoint(unit)));
+            // TM, Support Vehicle armor: weight is points x kg per point, rounded up, so a tonnage only buys points it
+            // fully covers. Per-point weights are whole kilograms; dividing in kg avoids floating point error
+            // (0.15 / 0.025, 0.564 / 0.047) without granting a partially paid point.
+            return Math.floor((double) Math.round(armorTons * 1000)
+                  / Math.round(TestSupportVehicle.armorWeightPerPoint(unit) * 1000));
         } else {
             return armorTons * getArmorPointsPerTon(unit);
         }
@@ -1621,7 +1625,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     private boolean isIntroducedByValidationYear(int introDate, int margin) {
-        return getIntroYearValidationYears().stream().anyMatch(year -> introDate <= year + margin);
+        // Compare in long so a year of Integer.MAX_VALUE (no year limit) or an extreme configured margin cannot overflow
+        return getIntroYearValidationYears().stream().anyMatch(year -> (long) introDate <= (long) year + margin);
     }
 
     public boolean hasFailedEquipment(StringBuffer buff) {

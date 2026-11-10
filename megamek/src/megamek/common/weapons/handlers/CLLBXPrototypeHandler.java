@@ -92,8 +92,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
         } else {
             // flat modifier of -1, because of prototype
             nHitsModifier -= 1;
-            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier,
-                  attackingEntity.isAffectedByEMI(target.getPosition()));
+            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier);
         }
 
         Report r = new Report(3325);

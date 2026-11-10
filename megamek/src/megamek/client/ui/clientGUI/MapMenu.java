@@ -1956,7 +1956,8 @@ public class MapMenu extends JPopupMenu {
         if (list.size() == 1) {
             myTarget = selectedEntity = list.firstElement();
             if (currentPanel instanceof FiringDisplay panel) {
-                panel.target(myTarget);
+                // The aim window would take focus and close this menu before it can be used (#9472)
+                panel.targetWithoutAimWindow(myTarget);
             } else if (currentPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay) currentPanel).target(myTarget);
             } else if (currentPanel instanceof TargetingPhaseDisplay) {

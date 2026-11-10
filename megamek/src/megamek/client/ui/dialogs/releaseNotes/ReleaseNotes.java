@@ -87,7 +87,7 @@ public record ReleaseNotes(String repository, URI page, List<Section> sections) 
      *
      * @param title       The change as listed
      * @param pullRequest The pull request number, or 0 when the change has none
-     * @param link        The pull request page, or null when there is no safe link
+     * @param link        The pull request page, or {@code null} when there is no safe link
      */
     public record Change(String title, int pullRequest, URI link) {
     }
@@ -105,12 +105,12 @@ public record ReleaseNotes(String repository, URI page, List<Section> sections) 
     }
 
     /**
-     * Returns the GitHub tag of a suite release, e.g. "v0.51.01.5", or null when the version has no revision and so
+     * Returns the GitHub tag of a suite release, e.g. "v0.51.01.5", or {@code null} when the version has no revision and so
      * was never released.
      *
      * @param version The version
      *
-     * @return The tag, or null
+     * @return The tag, or {@code null}
      */
     public static String tag(Version version) {
         if (!version.hasRevision()) {

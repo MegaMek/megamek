@@ -156,7 +156,7 @@ public final class ReleaseNotesDialog extends JDialog {
      * Opens the release notes of the running version and loads them in the background, as Help &gt; Release Notes
      * does.
      *
-     * @param owner      The window to center on, or null
+     * @param owner      The window to center on, or {@code null}
      * @param repository The application's repository name, e.g. "megamek"
      */
     public static void showReleaseNotes(@Nullable Window owner, String repository) {
@@ -191,7 +191,7 @@ public final class ReleaseNotesDialog extends JDialog {
      * Launcher has not already shown them. The notes load in the background; when they cannot be loaded, nothing is
      * shown and the next start tries again. Call this once the application's first window is on screen.
      *
-     * @param owner      The window to center on, or null
+     * @param owner      The window to center on, or {@code null}
      * @param repository The application's repository name, e.g. "megamek"
      */
     public static void showAfterUpdate(@Nullable Window owner, String repository) {

@@ -101,6 +101,7 @@ import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.dialogs.randomArmy.AbstractRandomArmyDialog;
 import megamek.client.ui.dialogs.randomArmy.MMMainMenuRandomArmyDialog;
+import megamek.client.ui.dialogs.releaseNotes.ReleaseNotesDialog;
 import megamek.client.ui.dialogs.scenario.ScenarioChooserDialog;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MainMenuUnitBrowserDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -290,6 +291,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Show licensing/welcome dialog
         if (show) {
             LicensingDialog.showIfNeeded(frame);
+            ReleaseNotesDialog.showAfterUpdate(frame, "megamek");
         }
     }
 

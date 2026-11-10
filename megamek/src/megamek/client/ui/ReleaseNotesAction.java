@@ -34,15 +34,16 @@ package megamek.client.ui;
 
 import static megamek.client.ui.Messages.getString;
 
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
-import megamek.SuiteConstants;
 import megamek.Version;
-import megamek.client.ui.util.UIUtil;
+import megamek.client.ui.dialogs.releaseNotes.ReleaseNotes;
+import megamek.client.ui.dialogs.releaseNotes.ReleaseNotesDialog;
 
 /**
- * This Action opens the GitHub release notes of the running suite version in the browser.
+ * This Action opens the release notes of the running suite version in a dialog.
  */
 public class ReleaseNotesAction extends AbstractAction {
 
@@ -67,7 +68,8 @@ public class ReleaseNotesAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        UIUtil.browse(releaseNotesUrl(repository, SuiteConstants.VERSION));
+        ReleaseNotesDialog.showReleaseNotes(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
+              repository);
     }
 
     /**
@@ -82,11 +84,6 @@ public class ReleaseNotesAction extends AbstractAction {
      * @return The release page address
      */
     public static String releaseNotesUrl(String repository, Version version) {
-        String releases = "https://github.com/MegaMek/" + repository + "/releases";
-        if (!version.hasRevision()) {
-            return releases;
-        }
-        return String.format("%s/tag/v%d.%02d.%02d.%d", releases, version.getMajor(), version.getMinor(),
-              version.getPatch(), version.getRevision());
+        return ReleaseNotes.page(repository, version).toString();
     }
 }

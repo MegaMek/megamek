@@ -390,6 +390,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_NO_UNJAM_RAC = "NagForNoUnjamRAC";
     public static final String NAG_FOR_PSR = "NagForPSR";
     public static final String NAG_FOR_README = "NagForReadme";
+    public static final String SHOW_RELEASE_NOTES_AFTER_UPDATE = "ShowReleaseNotesAfterUpdate";
+    /** Prefix of the version each application last showed or skipped its release notes for, e.g. ".megamek". */
+    public static final String RELEASE_NOTES_SEEN = "ReleaseNotesSeen";
     public static final String NAG_FOR_SPRINT = "NagForSprint";
     public static final String NAG_FOR_OVERHEAT = "NagForOverHeat";
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
@@ -933,6 +936,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_NO_UNJAM_RAC, true);
         store.setDefault(NAG_FOR_PSR, true);
         store.setDefault(NAG_FOR_README, true);
+        store.setDefault(SHOW_RELEASE_NOTES_AFTER_UPDATE, true);
         store.setDefault(NAG_FOR_SPRINT, true);
         store.setDefault(NAG_FOR_OVERHEAT, true);
         store.setDefault(NAG_FOR_LAUNCH_DOORS, true);
@@ -1695,6 +1699,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getNagForReadme() {
         return store.getBoolean(NAG_FOR_README);
+    }
+
+    public boolean getShowReleaseNotesAfterUpdate() {
+        return store.getBoolean(SHOW_RELEASE_NOTES_AFTER_UPDATE);
+    }
+
+    /**
+     * Returns the version the given application last showed or skipped its release notes for after an update, or an
+     * empty string when it never has.
+     *
+     * @param repository The application's repository name, e.g. "megamek"
+     *
+     * @return The version, as text
+     */
+    public String getReleaseNotesSeen(String repository) {
+        return store.getString(RELEASE_NOTES_SEEN + "." + repository);
     }
 
     public boolean getNagForSprint() {
@@ -2704,6 +2724,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setNagForReadme(boolean b) {
         store.setValue(NAG_FOR_README, b);
+    }
+
+    public void setShowReleaseNotesAfterUpdate(boolean show) {
+        store.setValue(SHOW_RELEASE_NOTES_AFTER_UPDATE, show);
+    }
+
+    public void setReleaseNotesSeen(String repository, String version) {
+        store.setValue(RELEASE_NOTES_SEEN + "." + repository, version);
     }
 
     public void setNagForSprint(boolean b) {

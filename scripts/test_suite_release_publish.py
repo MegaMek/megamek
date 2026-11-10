@@ -80,6 +80,16 @@ class PublishTests(unittest.TestCase):
             self.assertIn("First Core release, no previous Core release to compare with.",
                           self.fake.releases[repo][0]["body"])
 
+    def test_first_experimental_release_has_no_previous_tag(self):
+        record = self.publish(*self.prepare())
+        self.assertEqual(record["channel"], "experimental")
+        self.assertFalse(any(w[0] == "notes" for w in self.fake.writes))
+        self.assertTrue(all(w[3] is True for w in self.fake.writes if w[0] == "release"))
+        for repo in release.REPOS.values():
+            body = self.fake.releases[repo][0]["body"]
+            self.assertIn("First Experimental release, no previous Experimental release to compare with.", body)
+            self.assertNotIn("Core release", body)
+
     def test_rehearsal_and_noop_never_write(self):
         inventory, archives = self.prepare("core", "main", rehearsal=True)
         with self.assertRaisesRegex(release.UnsafeInventory, "rehearsal"):

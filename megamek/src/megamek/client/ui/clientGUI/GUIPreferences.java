@@ -390,6 +390,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_NO_UNJAM_RAC = "NagForNoUnjamRAC";
     public static final String NAG_FOR_PSR = "NagForPSR";
     public static final String NAG_FOR_README = "NagForReadme";
+    /** The suite version last started, which tells when it changed. */
+    public static final String RELEASE_NOTES_VERSION = "ReleaseNotesVersion";
+    /** The suite version started before the last one, where Help &gt; Release Notes starts. */
+    public static final String RELEASE_NOTES_PREVIOUS_VERSION = "ReleaseNotesPreviousVersion";
     public static final String NAG_FOR_SPRINT = "NagForSprint";
     public static final String NAG_FOR_OVERHEAT = "NagForOverHeat";
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
@@ -1701,6 +1705,20 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(NAG_FOR_README);
     }
 
+    /**
+     * @return The suite version last started, or an empty string
+     */
+    public String getReleaseNotesVersion() {
+        return store.getString(RELEASE_NOTES_VERSION);
+    }
+
+    /**
+     * @return The suite version started before the last one, or an empty string when unknown
+     */
+    public String getReleaseNotesPreviousVersion() {
+        return store.getString(RELEASE_NOTES_PREVIOUS_VERSION);
+    }
+
     public boolean getNagForSprint() {
         return store.getBoolean(NAG_FOR_SPRINT);
     }
@@ -2716,6 +2734,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setNagForReadme(boolean b) {
         store.setValue(NAG_FOR_README, b);
+    }
+
+    public void setReleaseNotesVersion(String version) {
+        store.setValue(RELEASE_NOTES_VERSION, version);
+    }
+
+    public void setReleaseNotesPreviousVersion(String version) {
+        store.setValue(RELEASE_NOTES_PREVIOUS_VERSION, version);
     }
 
     public void setNagForSprint(boolean b) {

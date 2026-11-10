@@ -1288,7 +1288,6 @@ public class MekSummaryCache {
         loadReport.append("  Looking in zip file ").append(fZipFile.getPath())
               .append("...\n");
         List<MekSummary> reloadedSummaries = new ArrayList<>();
-        Set<String> reloadedEntryNames = new HashSet<>();
 
         for (Enumeration<?> i = zFile.entries(); i.hasMoreElements(); ) {
             if (shouldStopLoading()) {
@@ -1324,7 +1323,6 @@ public class MekSummaryCache {
                 Entity e = mfp.getEntity();
                 MekSummary ms = getSummary(e, fZipFile, zEntry.getName());
                 reloadedSummaries.add(ms);
-                reloadedEntryNames.add(zEntry.getName());
                 sKnownFiles.add(zEntry.getName());
                 bNeedsUpdate = true;
                 thisZipFileCount++;
@@ -1360,7 +1358,7 @@ public class MekSummaryCache {
 
         // A reloaded entry replaces every cached summary of it. Adding beside them would keep the stale copies,
         // so a cache refreshed after each upgrade would gain one more copy of every unit in the zip.
-        removeCachedZipSummaries(vMeks, fZipFile, reloadedEntryNames);
+        removeCachedZipSummaries(vMeks, fZipFile, reloadedSummaries);
         vMeks.addAll(reloadedSummaries);
 
         loadReport.append("  ...loaded ").append(thisZipFileCount)
@@ -1370,16 +1368,20 @@ public class MekSummaryCache {
     }
 
     /**
-     * Removes the summaries that were loaded from the given zip entries.
+     * Removes the cached summaries of the zip entries that were just read again.
      *
-     * @param summaries  the summaries to remove from
-     * @param zipFile    the zip file the entries belong to
-     * @param entryNames the names of the zip entries whose summaries are removed
+     * @param summaries          the summaries to remove from
+     * @param zipFile            the zip file the entries belong to
+     * @param reloadedSummaries  the fresh summaries; any cached summary with the same zip entry is removed
      */
     private static void removeCachedZipSummaries(Vector<MekSummary> summaries, File zipFile,
-          Set<String> entryNames) {
-        if (entryNames.isEmpty()) {
+          List<MekSummary> reloadedSummaries) {
+        if (reloadedSummaries.isEmpty()) {
             return;
+        }
+        Set<String> entryNames = new HashSet<>();
+        for (MekSummary reloadedSummary : reloadedSummaries) {
+            entryNames.add(reloadedSummary.getEntryName());
         }
         // removeIf compacts the vector in one pass; removing through an iterator would shift it once per removal
         summaries.removeIf(summary -> zipFile.equals(summary.getSourceFile())

@@ -48,6 +48,7 @@ import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.Base64Image;
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
@@ -481,16 +482,17 @@ public abstract class AbstractClient implements IClient {
                     disconnected();
                     break;
                 case SERVER_VERSION_CHECK:
-                    send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION));
+                    // The name rides along so that, if the server refuses us, the host can be told who it was. Servers
+                    // older than 0.51.01 read only the version and ignore it.
+                    send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION, getName()));
                     break;
                 case ILLEGAL_CLIENT_VERSION:
                     final Version serverVersion = (Version) packet.getObject(0);
-                    logger.errorDialog("Connection Failure: Version Difference",
-                          "Failed to connect to the server at {} because of version differences. " +
-                                "Cannot connect to a server running {} with a {} install.",
-                          getHost(),
-                          serverVersion,
-                          SuiteConstants.VERSION);
+                    logger.errorDialog(Messages.getString("AbstractClient.versionRefused.title"),
+                          Messages.getString("AbstractClient.versionRefused.message",
+                                getHost(),
+                                serverVersion,
+                                SuiteConstants.VERSION));
                     disconnected();
                     break;
                 case LOCAL_PN:

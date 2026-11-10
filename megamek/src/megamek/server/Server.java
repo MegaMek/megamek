@@ -206,6 +206,13 @@ public class Server implements Runnable {
      */
     private final Object serverLock = new Object();
 
+    /**
+     * Told about every connection refused for running a different version, so the hosting application can let the
+     * host know. {@code null} on a dedicated server, where there is nobody at the keyboard to tell. Marked
+     * {@code volatile} because it is set on the user interface thread and read on the network thread.
+     */
+    private volatile @Nullable Consumer<RefusedConnection> refusedConnectionHandler = null;
+
     public static final String ORIGIN = "***Server";
 
     // Easter eggs. Happy April Fool's Day!!
@@ -672,24 +679,72 @@ public class Server implements Runnable {
         return oldName;
     }
 
+    /**
+     * Sets who is told when a connection is refused for running a different version. The hosting application sets
+     * this so it can show the host a dialog; a dedicated server leaves it unset.
+     *
+     * @param refusedConnectionHandler what to call for each refused connection, or {@code null} for nobody
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setRefusedConnectionHandler(@Nullable Consumer<RefusedConnection> refusedConnectionHandler) {
+        this.refusedConnectionHandler = refusedConnectionHandler;
+    }
+
     private boolean receivePlayerVersion(Packet packet, int connId) throws InvalidPacketDataException {
         final Version version = (Version) packet.getObject(0);
+        final Version serverVersion = SuiteConstants.VERSION;
 
-        if (!SuiteConstants.VERSION.is(version)) {
+        if (!serverVersion.is(version)) {
+            // Clients from 0.51.01 onwards send their player name alongside the version, so the host can be told who
+            // was refused. Older clients send the version alone, and are named by their address instead.
+            final AbstractConnection pendingConnection = getPendingConnection(connId);
+            final RefusedConnection refusedConnection = RefusedConnection.fromReceived(packet.getObject(1),
+                  (pendingConnection == null) ? null : pendingConnection.getInetAddress(),
+                  version,
+                  serverVersion);
+            final String playerDescription = refusedConnection.hasPlayerName()
+                  ? refusedConnection.playerName() + " (" + refusedConnection.address() + ")"
+                  : "unknown player (" + refusedConnection.address() + ")";
+
             final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
                   version,
-                  SuiteConstants.VERSION);
-            LOGGER.error(message);
+                  serverVersion);
+            LOGGER.error("Refused connection from {}: {}", playerDescription, message);
 
-            final Player player = getPlayer(connId);
             sendServerChat(String.format("For %s, Server reports:%s%s",
-                  ((player == null) ? "unknown player" : player.getName()),
+                  playerDescription,
                   System.lineSeparator(),
                   message));
+
+            notifyRefusedConnectionHandler(refusedConnection);
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Passes a refused connection on to the hosting application, if one is listening. A failure in the handler is
+     * logged and swallowed, because it must not stop the server turning the connection away.
+     *
+     * @param refusedConnection the connection that was refused
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void notifyRefusedConnectionHandler(RefusedConnection refusedConnection) {
+        final Consumer<RefusedConnection> handler = refusedConnectionHandler;
+        if (handler == null) {
+            return;
+        }
+
+        try {
+            handler.accept(refusedConnection);
+        } catch (Exception exception) {
+            LOGGER.error(exception, "Failed to tell the host about a refused connection");
+        }
     }
 
     /**

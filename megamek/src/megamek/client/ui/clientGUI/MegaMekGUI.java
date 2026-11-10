@@ -107,6 +107,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.skinEditor.SkinEditorMainGUIPanel;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.MegaMekController;
+import megamek.client.ui.util.RefusedConnectionNotifier;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.RawImagePanel;
@@ -1080,6 +1081,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             gameManager = getGameManager(gameType);
             server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
+            server.setRefusedConnectionHandler(RefusedConnectionNotifier::showHostDialog);
         } catch (Exception ex) {
             LOGGER.errorDialog(ex,
                   Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
@@ -1265,14 +1267,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         final Version version = getVersion(n);
-        if (SuiteConstants.VERSION.is(version)) {
-            return true;
-        } else if (version.toString().toLowerCase().contains("nightly") &&
-              (version.getMajor() == SuiteConstants.VERSION.getMajor() &&
-                    version.getMinor() == SuiteConstants.VERSION.getMinor() &&
-                    version.getPatch() == SuiteConstants.VERSION.getPatch())
-              && version.toString().contains(SuiteConstants.VERSION.toString())) {
-            // Nightly version of current development version
+        // Saves load into the same or a later revision of the same release (0.51.01.1 -> 0.51.01.2), but never into
+        // an older revision (0.51.01.2 -> 0.51.01.1) or across releases (0.51.01 -> 0.51.02).
+        if (SuiteConstants.VERSION.canLoadSaveFrom(version)) {
             return true;
         } else {
             LOGGER.errorDialog(Messages.getString("MegaMek.LoadGameAlert.title"),

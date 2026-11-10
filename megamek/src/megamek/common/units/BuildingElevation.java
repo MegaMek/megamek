@@ -196,6 +196,11 @@ public final class BuildingElevation {
         if (!firstBelow && otherRoof > firstBase) {
             return false;
         }
+        // The limits below are the TO:AR p.139 construction rules for the two halves of a semi-subsurface building.
+        // A mobile structure merely passing above or below another structure only needs a clear volume.
+        if (first instanceof MobileStructure || other instanceof MobileStructure) {
+            return true;
+        }
         AbstractBuildingEntity lower = firstBelow ? first : other;
         AbstractBuildingEntity upper = firstBelow ? other : first;
         java.util.List<Coords> lowerHexes = firstBelow ? footprint : other.getCoordsList();

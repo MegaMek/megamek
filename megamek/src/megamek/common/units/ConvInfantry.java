@@ -2896,6 +2896,8 @@ public class ConvInfantry extends Infantry {
         super.clearGameState();
         // Pheromone impairment only lasts for the remainder of the scenario
         pheromoneImpaired = false;
+        // Whether carried survival gear is being worn is set up for each scenario (TO:AR p.137)
+        survivalGearStored = false;
     }
 
     /**

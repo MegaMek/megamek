@@ -14077,6 +14077,7 @@ public abstract class Entity extends TurnOrdered
         setFacing(0);
         setPosition(null);
         getSecondaryPositions().clear();
+        setOccupiedWall(null);
         setProne(false);
         setHullDown(false);
         setStuck(false);

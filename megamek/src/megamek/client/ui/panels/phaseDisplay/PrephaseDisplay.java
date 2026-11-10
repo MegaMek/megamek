@@ -358,6 +358,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
             endMyTurn();
             return;
         }
+        // only ring once it is clear the turn needs the player; an auto-completed turn above stays silent
+        clientgui.bingMyTurn();
 
         if (GUIP.getAutoSelectNextUnit()) {
             selectEntity(firstEntity);
@@ -501,7 +503,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
-                    clientgui.bingMyTurn();
                 }
             } else {
                 endMyTurn();

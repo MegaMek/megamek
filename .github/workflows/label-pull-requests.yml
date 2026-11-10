@@ -1,0 +1,42 @@
+name: Label Pull Requests
+
+# Release notes are grouped by "Notes: ..." labels (see .github/release.yml), but most fixes arrive
+# unlabeled. A pull request whose title starts with "Fix", "Fixes", "Fixed", "Fixing", "Bugfix" or
+# "Hotfix" gets "Notes: Bug Fix" so it lands under "Bug fixes". A pull request that already has a
+# "Notes: ..." label is left alone, and labels are never removed, so a label set by hand always wins.
+#
+# pull_request_target lets this label pull requests from forks. It never checks out or runs the
+# pull request's code, and the title only reaches the shell through an environment variable.
+on:
+  pull_request_target:
+    types: [ opened, edited, reopened ]
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  label:
+    if: github.event.action != 'edited' || github.event.changes.title
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Label fixes as Notes - Bug Fix
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          TITLE: ${{ github.event.pull_request.title }}
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          if [[ "$LABELS" == *'"Notes: '* ]]; then
+            echo "Already has a Notes label; nothing to do."
+            exit 0
+          fi
+          shopt -s nocasematch
+          if [[ "$TITLE" =~ ^[[:space:]]*(bug|hot)?fix(es|ed|ing)?([^[:alpha:]]|$) ]]; then
+            gh api --method POST "repos/${REPOSITORY}/issues/${NUMBER}/labels" -f "labels[]=Notes: Bug Fix" > /dev/null
+            echo "Labeled #${NUMBER} as Notes: Bug Fix."
+          else
+            echo "Title does not start with a fix keyword; no label added."
+          fi

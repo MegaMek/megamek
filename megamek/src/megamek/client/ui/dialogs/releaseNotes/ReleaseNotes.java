@@ -247,7 +247,12 @@ public record ReleaseNotes(String repository, URI page, List<Section> sections) 
         if (!pull.matches()) {
             return new Change(title, 0, null);
         }
-        int number = Integer.parseInt(pull.group(1));
+        int number;
+        try {
+            number = Integer.parseInt(pull.group(1));
+        } catch (NumberFormatException ignored) {
+            return new Change(title, 0, null);
+        }
         return new Change(title, number, URI.create("https://github.com/MegaMek/" + repository + "/pull/" + number));
     }
 

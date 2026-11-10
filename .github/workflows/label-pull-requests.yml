@@ -1,0 +1,52 @@
+name: Label Pull Requests
+
+# Release notes are grouped by "Notes: ..." labels (see .github/release.yml), but most fixes arrive
+# unlabeled. A pull request whose title starts with "Fix", "Fixes", "Fixed", "Fixing", "Bugfix" or
+# "Hotfix" gets "Notes: Bug Fix" so it lands under "Bug fixes". A pull request that already has a
+# "Notes: ..." label is left alone, and labels are never removed, so a label set by hand always wins.
+#
+# pull_request_target lets this label pull requests from forks. It never checks out or runs the
+# pull request's code, and the title only reaches the shell through an environment variable.
+on:
+  pull_request_target:
+    types: [ opened, edited, reopened ]
+
+permissions:
+  # Adding a label to a pull request needs pull request write access, even through the issues API.
+  pull-requests: write
+
+jobs:
+  label:
+    if: github.event.action != 'edited' || github.event.changes.title
+    runs-on: ubuntu-latest
+
+    steps:
+      # A labeling problem must never mark a pull request as failing: every API error becomes a
+      # warning and the step ends without adding a label.
+      - name: Label fixes as Notes - Bug Fix
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          shopt -s nocasematch
+          if [[ ! "$TITLE" =~ ^[[:space:]]*(bug|hot)?fix(es|ed|ing)?([^[:alpha:]]|$) ]]; then
+            echo "Title does not start with a fix keyword; no label added."
+            exit 0
+          fi
+          # Read the labels now rather than from the event, so a label a reviewer added after the
+          # event (while this job was queued, or before a rerun) still counts. Without them, skip.
+          if ! labels=$(gh api "repos/${REPOSITORY}/issues/${NUMBER}/labels" --jq '.[].name'); then
+            echo "::warning::Could not read the labels of #${NUMBER}; no label added."
+            exit 0
+          fi
+          if grep -q '^Notes: ' <<< "$labels"; then
+            echo "Already has a Notes label; nothing to do."
+            exit 0
+          fi
+          if gh api --method POST "repos/${REPOSITORY}/issues/${NUMBER}/labels" -f "labels[]=Notes: Bug Fix" > /dev/null; then
+            echo "Labeled #${NUMBER} as Notes: Bug Fix."
+          else
+            echo "::warning::Could not add Notes: Bug Fix to #${NUMBER}."
+          fi

@@ -153,6 +153,7 @@ import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
+import megamek.common.event.player.GamePlayerPingEvent;
 import megamek.common.game.Game;
 import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
@@ -386,6 +387,12 @@ public class ClientGUI extends AbstractClientGUI
     public ChatLounge chatlounge;
     private OffBoardTargetOverlay offBoardOverlay;
     private BoardToastOverlay toastOverlay;
+
+    /**
+     * Set while a ping notice is written to the chat box, so that line does not also play the chat sound. Chat events
+     * are dispatched on the thread that raises them, so the flag is only ever read during that one call.
+     */
+    private boolean isQuietSystemMessage = false;
 
     private final ConcurrentLinkedQueue<Runnable> toastDripQueue = new ConcurrentLinkedQueue<>();
     private javax.swing.Timer toastDripTimer;
@@ -3306,6 +3313,34 @@ public class ClientGUI extends AbstractClientGUI
         bingMyTurn();
     }
 
+    /**
+     * Plays the ping sound and shows who pinged this player: a toast on the board in game, or a line in the chat box in
+     * the lobby or when toasts are switched off. The chat line does not also play the chat sound.
+     *
+     * @param event the ping, naming its sender
+     */
+    private void showPing(GamePlayerPingEvent event) {
+        Player sender = client.getGame().getPlayer(event.senderId());
+        String senderName = (sender == null) ? Messages.getString("ClientGUI.ping.unknownSender") : sender.getName();
+        String notice = Messages.getString(event.isToEveryone() ? "ClientGUI.ping.everyone" : "ClientGUI.ping.you",
+              senderName);
+        audioService.playSound(SoundType.BING_PING);
+        boolean canToast = !client.getGame().getPhase().isLounge() && (toastOverlay != null)
+              && GUIP.getToastEnabled();
+        logger.info("[PlayerPing] pinged by {} (everyone: {}), notice as {}, ping sound muted: {}",
+              senderName, event.isToEveryone(), canToast ? "toast" : "chat line", GUIP.getSoundMutePing());
+        if (canToast) {
+            addToast(ToastLevel.INFO, notice);
+        } else {
+            isQuietSystemMessage = true;
+            try {
+                systemMessage(notice);
+            } finally {
+                isQuietSystemMessage = false;
+            }
+        }
+    }
+
     private void setWeaponOrderPrefs(boolean prefChange) {
         for (Entity entity : client.getGame().getEntitiesVector()) {
             if ((entity.getOwner().equals(client.getLocalPlayer()))
@@ -3449,7 +3484,14 @@ public class ClientGUI extends AbstractClientGUI
 
         @Override
         public void gamePlayerChat(GamePlayerChatEvent e) {
-            bingChat();
+            if (!isQuietSystemMessage) {
+                bingChat();
+            }
+        }
+
+        @Override
+        public void gamePlayerPing(GamePlayerPingEvent event) {
+            showPing(event);
         }
 
         @Override
@@ -4338,7 +4380,8 @@ public class ClientGUI extends AbstractClientGUI
             }
             case GUIPreferences.SOUND_BING_FILENAME_CHAT,
                  GUIPreferences.SOUND_BING_FILENAME_MY_TURN,
-                 GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
+                 GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN,
+                 GUIPreferences.SOUND_BING_FILENAME_PING -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
             case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
                 // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)

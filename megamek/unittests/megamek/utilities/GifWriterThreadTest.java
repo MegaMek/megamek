@@ -39,10 +39,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
 
@@ -92,5 +95,112 @@ class GifWriterThreadTest {
             thread.join(5000);
             assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
         }
+    }
+
+    /**
+     * Regression guard: a normal stop at the end of the game must reach the save prompt with the
+     * thread's interrupt flag cleared. With the flag still set, the modal "Save the GIF?" dialog closes
+     * immediately, reads as "No", and the recorded GIF is deleted before the player sees it.
+     */
+    @Test
+    void testSavePromptRunsWithInterruptFlagCleared() throws Exception {
+        GifWriter gifWriter = mock(GifWriter.class);
+        AtomicBoolean promptReached = new AtomicBoolean(false);
+        AtomicBoolean interruptedAtPrompt = new AtomicBoolean(true);
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                promptReached.set(true);
+                interruptedAtPrompt.set(Thread.currentThread().isInterrupted());
+            }
+        };
+        thread.start();
+        thread.addFrame(new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB), 100);
+
+        // The same call MinimapPanel makes when the game reaches the victory phase.
+        thread.stopThread();
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        assertTrue(promptReached.get(), "A normal stop should offer to save the GIF");
+        assertFalse(interruptedAtPrompt.get(), "The save prompt must not run on an interrupted thread");
+    }
+
+    /**
+     * Regression guard: MekHQ closes the game client right after the victory phase, which calls
+     * {@code stopThread(true)} while the save prompt may be on screen. That second stop must not
+     * interrupt the prompt, or it closes before the player can answer and the GIF is deleted.
+     */
+    @Test
+    void testLaterStopDoesNotInterruptSavePrompt() throws Exception {
+        GifWriter gifWriter = mock(GifWriter.class);
+        CountDownLatch promptShowing = new CountDownLatch(1);
+        CountDownLatch playerAnswers = new CountDownLatch(1);
+        AtomicBoolean promptInterrupted = new AtomicBoolean(false);
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                promptShowing.countDown();
+                try {
+                    // Stands in for the modal dialog waiting on the player.
+                    playerAnswers.await(5, TimeUnit.SECONDS);
+                } catch (InterruptedException interruptedException) {
+                    promptInterrupted.set(true);
+                }
+            }
+        };
+        thread.start();
+
+        thread.stopThread();
+        assertTrue(promptShowing.await(2, TimeUnit.SECONDS), "A normal stop should offer to save the GIF");
+
+        // MekHQ tearing the client down while the prompt is open.
+        thread.stopThread(true);
+        playerAnswers.countDown();
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        assertFalse(promptInterrupted.get(), "A later stop must not interrupt the open save prompt");
+    }
+
+    /**
+     * Regression guard: frames still queued when the game ends must be encoded, not dropped, so the
+     * last turns of the game appear in the GIF.
+     */
+    @Test
+    void testNormalStopEncodesQueuedFrames() throws Exception {
+        GifWriter gifWriter = mock(GifWriter.class);
+        CountDownLatch encodingStarted = new CountDownLatch(1);
+        AtomicBoolean releaseEncode = new AtomicBoolean(false);
+        // The first encode is slow and ignores interrupts, like a real file write, so later frames queue up.
+        doAnswer(invocation -> {
+            encodingStarted.countDown();
+            while (!releaseEncode.get()) {
+                Thread.onSpinWait();
+            }
+            return null;
+        }).when(gifWriter).appendFrame(any(), anyLong());
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                // No dialog in tests.
+            }
+        };
+        thread.start();
+        BufferedImage frame = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+        thread.addFrame(frame, 100);
+        assertTrue(encodingStarted.await(2, TimeUnit.SECONDS), "Encoder should have started");
+        thread.addFrame(frame, 100);
+        thread.addFrame(frame, 100);
+
+        thread.stopThread();
+        releaseEncode.set(true);
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        verify(gifWriter, times(3)).appendFrame(any(), anyLong());
     }
 }

@@ -56,6 +56,7 @@ import megamek.common.event.GameToastEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
+import megamek.common.event.player.GamePlayerPingEvent;
 import megamek.common.force.Force;
 import megamek.common.game.GameLog;
 import megamek.common.game.InGameObject;
@@ -544,6 +545,11 @@ public abstract class AbstractClient implements IClient {
                           (GameToastEvent.Level) packet.getObject(0),
                           (String) packet.getObject(1),
                           packet.getIntValue(2)));
+                    break;
+                case PLAYER_PING:
+                    getGame().fireGameEvent(new GamePlayerPingEvent(this,
+                          packet.getIntValue(0),
+                          packet.getBooleanValue(1)));
                     break;
                 default:
                     return false;

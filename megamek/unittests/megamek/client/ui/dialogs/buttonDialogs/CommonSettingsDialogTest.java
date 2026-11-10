@@ -1373,6 +1373,8 @@ class CommonSettingsDialogTest {
         JCheckBox otherTurnsMute = new JCheckBox(
             Messages.getString("CommonSettingsDialog.soundMuteOthersTurn"));
         JTextField otherTurnsSoundFile = new JTextField(5);
+        JCheckBox pingMute = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMutePing"));
+        JTextField pingSoundFile = new JTextField(5);
         int otherTurnsMuteWidth = otherTurnsMute.getPreferredSize().width;
         assertTrue(otherTurnsMuteWidth <= UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH));
 
@@ -1380,7 +1382,8 @@ class CommonSettingsDialogTest {
               volumeLabel, volumeSlider,
               chatMute, chatSoundFile,
               myTurnMute, myTurnSoundFile,
-              otherTurnsMute, otherTurnsSoundFile, soundPrompt);
+              otherTurnsMute, otherTurnsSoundFile,
+              pingMute, pingSoundFile, soundPrompt);
 
         assertEquals(2, content.getComponentCount());
         JPanel volumeSection = (JPanel) content.getComponent(0);
@@ -1416,23 +1419,28 @@ class CommonSettingsDialogTest {
         JPanel notificationGrid = findNamedPanel(notificationsSection,
             "pnlCommonSettingsAudioNotificationGrid");
         assertSame(notificationsSection, notificationGrid);
-        assertEquals(8, notificationGrid.getComponentCount());
+        assertEquals(10, notificationGrid.getComponentCount());
         JPanel chatSoundControl = (JPanel) notificationGrid.getComponent(1);
         JPanel myTurnSoundControl = (JPanel) notificationGrid.getComponent(3);
         JPanel otherTurnsSoundControl = (JPanel) notificationGrid.getComponent(5);
+        JPanel pingSoundControl = (JPanel) notificationGrid.getComponent(7);
         assertCell(notificationGrid, chatMute, 0, 0);
         assertCell(notificationGrid, chatSoundControl, 1, 0);
         assertCell(notificationGrid, myTurnMute, 0, 1);
         assertCell(notificationGrid, myTurnSoundControl, 1, 1);
         assertCell(notificationGrid, otherTurnsMute, 0, 2);
         assertCell(notificationGrid, otherTurnsSoundControl, 1, 2);
-        assertCell(notificationGrid, soundPrompt, 0, 3);
+        assertCell(notificationGrid, pingMute, 0, 3);
+        assertCell(notificationGrid, pingSoundControl, 1, 3);
+        assertCell(notificationGrid, soundPrompt, 0, 4);
           assertAudioFileControl(chatSoundControl, chatSoundFile, "btnChatSoundChooser",
             "CommonSettingsDialog.soundMuteChat.chooser.title");
           assertAudioFileControl(myTurnSoundControl, myTurnSoundFile, "btnMyTurnSoundChooser",
             "CommonSettingsDialog.soundMuteMyTurn.chooser.title");
           assertAudioFileControl(otherTurnsSoundControl, otherTurnsSoundFile, "btnOtherTurnsSoundChooser",
             "CommonSettingsDialog.soundMuteOthersTurn.chooser.title");
+        assertAudioFileControl(pingSoundControl, pingSoundFile, "btnPingSoundChooser",
+              "CommonSettingsDialog.soundMutePing.chooser.title");
 
         assertAtConstrainedStandardAndWideWidths(pane, List.of(volumeGrid, notificationGrid), laidOutPane -> {
             assertEquals(xRelativeTo(volumeGrid, laidOutPane), xRelativeTo(notificationGrid, laidOutPane));
@@ -1441,7 +1449,8 @@ class CommonSettingsDialogTest {
                     List.of(volumeLabel, volumeControl),
                     List.of(chatMute, chatSoundControl),
                     List.of(myTurnMute, myTurnSoundControl),
-                    List.of(otherTurnsMute, otherTurnsSoundControl)));
+                    List.of(otherTurnsMute, otherTurnsSoundControl),
+                    List.of(pingMute, pingSoundControl)));
             GridBagConstraints volumeLabelConstraints =
                   ((GridBagLayout) volumeGrid.getLayout()).getConstraints(volumeLabel);
             int columnGap = xRelativeTo(volumeControl, laidOutPane)

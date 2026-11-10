@@ -419,10 +419,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOUND_BING_FILENAME_CHAT = "SoundBingFilenameChat";
     public static final String SOUND_BING_FILENAME_MY_TURN = "SoundBingFilenameMyTurn";
     public static final String SOUND_BING_FILENAME_OTHERS_TURN = "SoundBingFilenameOthersTurn";
+    public static final String SOUND_BING_FILENAME_PING = "SoundBingFilenamePing";
     public static final String MASTER_VOLUME = "MasterVolume";
     public static final String SOUND_MUTE_CHAT = "SoundMuteChat";
     public static final String SOUND_MUTE_MY_TURN = "SoundMuteMyTurn";
     public static final String SOUND_MUTE_OTHERS_TURN = "SoundMuteOthersTurn";
+    public static final String SOUND_MUTE_PING = "SoundMutePing";
     public static final String SOUND_PROMPT_SUPPRESS = "SoundPrompt";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
     public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
@@ -960,9 +962,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SOUND_BING_FILENAME_CHAT, "data/sounds/call.wav");
         store.setDefault(SOUND_BING_FILENAME_MY_TURN, "data/sounds/call.wav");
         store.setDefault(SOUND_BING_FILENAME_OTHERS_TURN, "data/sounds/call.wav");
+        store.setDefault(SOUND_BING_FILENAME_PING, "data/sounds/call.wav");
         store.setDefault(SOUND_MUTE_CHAT, true);
         store.setDefault(SOUND_MUTE_MY_TURN, false);
         store.setDefault(SOUND_MUTE_OTHERS_TURN, true);
+        store.setDefault(SOUND_MUTE_PING, false);
         store.setDefault(SOUND_PROMPT_SUPPRESS, false);
 
         store.setDefault(TOOLTIP_DELAY, 1000);
@@ -1816,6 +1820,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getSoundMuteOthersTurn() {
         return store.getBoolean(SOUND_MUTE_OTHERS_TURN);
+    }
+
+    public String getSoundBingFilenamePing() {
+        return store.getString(SOUND_BING_FILENAME_PING);
+    }
+
+    public boolean getSoundMutePing() {
+        return store.getBoolean(SOUND_MUTE_PING);
     }
 
     public int getTooltipDelay() {
@@ -2836,6 +2848,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setSoundMuteOthersTurn(boolean state) {
         store.setValue(SOUND_MUTE_OTHERS_TURN, state);
+    }
+
+    public void setSoundBingFilenamePing(String name) {
+        store.setValue(SOUND_BING_FILENAME_PING, name);
+    }
+
+    public void setSoundMutePing(boolean state) {
+        store.setValue(SOUND_MUTE_PING, state);
     }
 
     public void setTooltipDelay(int i) {

@@ -100,6 +100,11 @@ class GitHubWrites:
         return result["id"]
 
 
+def first_release_notes(channel):
+    name = "Experimental" if channel == "experimental" else "Core"
+    return f"First {name} release, no previous {name} release to compare with.\n"
+
+
 def release_presentation(record, product, notes):
     experimental = record["channel"] == "experimental"
     version = record["version"]
@@ -253,8 +258,13 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
                 raise UnsafeInventory("suite version collision")
         # Generated notes create nothing, so a failure here still leaves no trace.
         previous_tag = proposal["previousTag"]
-        notes = {p: writes.notes(REPOS[p], tag, inventory["commits"][REPOS[p]], previous_tag)
-                 for p in REPOS}
+        if previous_tag is None:
+            # Without a previous tag GitHub compares with whichever release came before, often
+            # the other channel's; notes only ever compare releases of the same channel.
+            notes = {p: first_release_notes(channel) for p in REPOS}
+        else:
+            notes = {p: writes.notes(REPOS[p], tag, inventory["commits"][REPOS[p]], previous_tag)
+                     for p in REPOS}
         # No writes until the entire local and remote preflight has passed.
         for product, repo in REPOS.items():
             item = provisional["products"][product]

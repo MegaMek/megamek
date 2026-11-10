@@ -1287,6 +1287,8 @@ public class MekSummaryCache {
         }
         loadReport.append("  Looking in zip file ").append(fZipFile.getPath())
               .append("...\n");
+        List<MekSummary> reloadedSummaries = new ArrayList<>();
+        Set<String> reloadedEntryNames = new HashSet<>();
 
         for (Enumeration<?> i = zFile.entries(); i.hasMoreElements(); ) {
             if (shouldStopLoading()) {
@@ -1321,7 +1323,8 @@ public class MekSummaryCache {
                       zFile.getInputStream(zEntry), zEntry.getName());
                 Entity e = mfp.getEntity();
                 MekSummary ms = getSummary(e, fZipFile, zEntry.getName());
-                vMeks.addElement(ms);
+                reloadedSummaries.add(ms);
+                reloadedEntryNames.add(zEntry.getName());
                 sKnownFiles.add(zEntry.getName());
                 bNeedsUpdate = true;
                 thisZipFileCount++;
@@ -1355,10 +1358,32 @@ public class MekSummaryCache {
             logger.error("", ex);
         }
 
+        // A reloaded entry replaces every cached summary of it. Adding beside them would keep the stale copies,
+        // so a cache refreshed after each upgrade would gain one more copy of every unit in the zip.
+        removeCachedZipSummaries(vMeks, fZipFile, reloadedEntryNames);
+        vMeks.addAll(reloadedSummaries);
+
         loadReport.append("  ...loaded ").append(thisZipFileCount)
               .append(" files.\n");
 
         return bNeedsUpdate;
+    }
+
+    /**
+     * Removes the summaries that were loaded from the given zip entries.
+     *
+     * @param summaries  the summaries to remove from
+     * @param zipFile    the zip file the entries belong to
+     * @param entryNames the names of the zip entries whose summaries are removed
+     */
+    private static void removeCachedZipSummaries(Vector<MekSummary> summaries, File zipFile,
+          Set<String> entryNames) {
+        if (entryNames.isEmpty()) {
+            return;
+        }
+        // removeIf compacts the vector in one pass; removing through an iterator would shift it once per removal
+        summaries.removeIf(summary -> zipFile.equals(summary.getSourceFile())
+              && entryNames.contains(summary.getEntryName()));
     }
 
     private void addLookupNames() {

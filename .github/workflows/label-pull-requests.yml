@@ -27,9 +27,12 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           NUMBER: ${{ github.event.pull_request.number }}
           TITLE: ${{ github.event.pull_request.title }}
-          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         run: |
-          if [[ "$LABELS" == *'"Notes: '* ]]; then
+          # Read the labels now rather than from the event, so a label a reviewer added after the
+          # event (while this job was queued, or before a rerun) still counts. If the read fails,
+          # the step fails rather than labeling blind.
+          labels=$(gh api "repos/${REPOSITORY}/issues/${NUMBER}/labels" --jq '.[].name')
+          if grep -q '^Notes: ' <<< "$labels"; then
             echo "Already has a Notes label; nothing to do."
             exit 0
           fi

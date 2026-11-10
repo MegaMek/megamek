@@ -109,6 +109,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * ships brought by earlier rolls. Defaults to none.
      */
     private Supplier<ExistingLift> existingLiftSupplier = () -> ExistingLift.NONE;
+    /** Whether rolls make repeat units less likely; off unless a host asks for it. */
+    private boolean unitVarietyBias = false;
+    /** Where a roll learns which units earlier rolls of the same command brought. Defaults to none. */
+    private Supplier<List<String>> earlierUnitsSupplier = List::of;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
@@ -1128,6 +1132,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setFighterComplement(chkFighterComplement.isSelected() && chkFighterComplement.isEnabled());
         // Asked now rather than cached: the ships an earlier roll brought are what this roll starts from.
         fd.setExistingLift(existingLiftSupplier.get());
+        fd.setUnitVarietyBias(unitVarietyBias);
+        fd.setEarlierUnits(unitVarietyBias ? earlierUnitsSupplier.get() : List.of());
 
         return fd;
     }
@@ -2246,6 +2252,33 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setExistingLiftSupplier(@Nullable Supplier<ExistingLift> supplier) {
         this.existingLiftSupplier = (supplier == null) ? () -> ExistingLift.NONE : supplier;
+    }
+
+    /**
+     * Makes each roll less likely to repeat a unit already in its own formation or elsewhere in the command. Off by
+     * default, so the standalone generator draws exactly as the unit tables weigh it.
+     *
+     * @param unitVarietyBias {@code true} to make repeat units less likely
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setUnitVarietyBias(boolean unitVarietyBias) {
+        this.unitVarietyBias = unitVarietyBias;
+    }
+
+    /**
+     * Tells the panel where to learn which units earlier rolls of the same command brought, so that with
+     * {@link #setUnitVarietyBias(boolean)} on, a roll is less likely to repeat them. The supplier is asked at every
+     * Generate.
+     *
+     * @param supplier the model names of those units, or {@code null} for none
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setEarlierUnitsSupplier(@Nullable Supplier<List<String>> supplier) {
+        this.earlierUnitsSupplier = (supplier == null) ? List::of : supplier;
     }
 
     /**

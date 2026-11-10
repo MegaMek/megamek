@@ -39,8 +39,9 @@ import megamek.codeUtilities.StringUtility;
 /**
  * Describes a connection the server turned away because the joining client runs a different version.
  *
- * <p>The server hands this to whoever is hosting, so that the host can be told a player was refused rather than
- * finding out only when that player complains.</p>
+ * <p>The server tells every player already in the game about it, so they know a player was refused rather than
+ * finding out only when that player complains. Only the name and versions go to the players; the address is kept for
+ * the server log.</p>
  *
  * @param playerName    the name the joining player asked for, or {@code null} when their client is too old to send
  *                      one along with its version
@@ -91,7 +92,8 @@ public record RefusedConnection(@Nullable String playerName, String address, Ver
 
     /**
      * Reduces the name a client sent to something safe to show: a trimmed, single-line string of sensible length, or
-     * {@code null} when there is nothing usable.
+     * {@code null} when there is nothing usable. Used by the server on receipt, and again by each client before it
+     * shows the name, since neither end should trust what came over the wire.
      *
      * @param rawPlayerName the name object sent alongside the version
      *
@@ -100,7 +102,7 @@ public record RefusedConnection(@Nullable String playerName, String address, Ver
      * @author Illiani
      * @since 0.51.01
      */
-    static @Nullable String cleanPlayerName(@Nullable Object rawPlayerName) {
+    public static @Nullable String cleanPlayerName(@Nullable Object rawPlayerName) {
         if (!(rawPlayerName instanceof String nameText)) {
             return null;
         }

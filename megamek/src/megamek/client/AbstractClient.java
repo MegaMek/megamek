@@ -49,6 +49,7 @@ import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.Base64Image;
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.RefusedConnectionNotifier;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
@@ -361,6 +362,19 @@ public abstract class AbstractClient implements IClient {
         return false;
     }
 
+    /**
+     * Whether this client puts up dialogs for notices about other players, such as someone being refused for running
+     * a different version. Only a person at a screen should see those, so bots never do.
+     *
+     * @return {@code true} if this client shows player notice dialogs, otherwise {@code false}
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    protected boolean showsPlayerNoticeDialogs() {
+        return !isBot();
+    }
+
     @Override
     public int getPort() {
         return port;
@@ -494,6 +508,13 @@ public abstract class AbstractClient implements IClient {
                                 serverVersion,
                                 SuiteConstants.VERSION));
                     disconnected();
+                    break;
+                case PLAYER_REFUSED_DIFFERENT_VERSION:
+                    if (showsPlayerNoticeDialogs()) {
+                        RefusedConnectionNotifier.showPlayerDialog(packet.getObject(0),
+                              (Version) packet.getObject(1),
+                              (Version) packet.getObject(2));
+                    }
                     break;
                 case LOCAL_PN:
                     localPlayerNumber = packet.getIntValue(0);

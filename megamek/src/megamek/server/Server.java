@@ -206,13 +206,6 @@ public class Server implements Runnable {
      */
     private final Object serverLock = new Object();
 
-    /**
-     * Told about every connection refused for running a different version, so the hosting application can let the
-     * host know. {@code null} on a dedicated server, where there is nobody at the keyboard to tell. Marked
-     * {@code volatile} because it is set on the user interface thread and read on the network thread.
-     */
-    private volatile @Nullable Consumer<RefusedConnection> refusedConnectionHandler = null;
-
     public static final String ORIGIN = "***Server";
 
     // Easter eggs. Happy April Fool's Day!!
@@ -680,16 +673,21 @@ public class Server implements Runnable {
     }
 
     /**
-     * Sets who is told when a connection is refused for running a different version. The hosting application sets
-     * this so it can show the host a dialog; a dedicated server leaves it unset.
+     * Tells every player already in the game that someone was refused for running a different version. Only the
+     * name is passed on, never the address: that stays in the server log for the host.
      *
-     * @param refusedConnectionHandler what to call for each refused connection, or {@code null} for nobody
+     * <p>The refused connection is still pending, so it is not among the connections this reaches.</p>
+     *
+     * @param refusedConnection the connection that was refused
      *
      * @author Illiani
      * @since 0.51.01
      */
-    public void setRefusedConnectionHandler(@Nullable Consumer<RefusedConnection> refusedConnectionHandler) {
-        this.refusedConnectionHandler = refusedConnectionHandler;
+    private void notifyPlayersOfRefusedConnection(RefusedConnection refusedConnection) {
+        send(new Packet(PacketCommand.PLAYER_REFUSED_DIFFERENT_VERSION,
+              refusedConnection.playerName(),
+              refusedConnection.clientVersion(),
+              refusedConnection.serverVersion()));
     }
 
     private boolean receivePlayerVersion(Packet packet, int connId) throws InvalidPacketDataException {
@@ -697,54 +695,33 @@ public class Server implements Runnable {
         final Version serverVersion = SuiteConstants.VERSION;
 
         if (!serverVersion.is(version)) {
-            // Clients from 0.51.01 onwards send their player name alongside the version, so the host can be told who
-            // was refused. Older clients send the version alone, and are named by their address instead.
+            // Clients from 0.51.01 onwards send their player name alongside the version, so the other players can be
+            // told who was refused. Older clients send the version alone. The address goes to the server log only,
+            // never to the other players.
             final AbstractConnection pendingConnection = getPendingConnection(connId);
             final RefusedConnection refusedConnection = RefusedConnection.fromReceived(packet.getObject(1),
                   (pendingConnection == null) ? null : pendingConnection.getInetAddress(),
                   version,
                   serverVersion);
-            final String playerDescription = refusedConnection.hasPlayerName()
-                  ? refusedConnection.playerName() + " (" + refusedConnection.address() + ")"
-                  : "unknown player (" + refusedConnection.address() + ")";
+            final String playerName = refusedConnection.hasPlayerName()
+                  ? refusedConnection.playerName()
+                  : "unknown player";
 
             final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
                   version,
                   serverVersion);
-            LOGGER.error("Refused connection from {}: {}", playerDescription, message);
+            LOGGER.error("Refused connection from {} ({}): {}", playerName, refusedConnection.address(), message);
 
             sendServerChat(String.format("For %s, Server reports:%s%s",
-                  playerDescription,
+                  playerName,
                   System.lineSeparator(),
                   message));
 
-            notifyRefusedConnectionHandler(refusedConnection);
+            notifyPlayersOfRefusedConnection(refusedConnection);
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Passes a refused connection on to the hosting application, if one is listening. A failure in the handler is
-     * logged and swallowed, because it must not stop the server turning the connection away.
-     *
-     * @param refusedConnection the connection that was refused
-     *
-     * @author Illiani
-     * @since 0.51.01
-     */
-    private void notifyRefusedConnectionHandler(RefusedConnection refusedConnection) {
-        final Consumer<RefusedConnection> handler = refusedConnectionHandler;
-        if (handler == null) {
-            return;
-        }
-
-        try {
-            handler.accept(refusedConnection);
-        } catch (Exception exception) {
-            LOGGER.error(exception, "Failed to tell the host about a refused connection");
-        }
     }
 
     /**

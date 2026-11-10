@@ -37,36 +37,33 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.Version;
-import megamek.server.RefusedConnection;
 import org.junit.jupiter.api.Test;
 
 class RefusedConnectionNotifierTest {
-    private static final Version CLIENT_VERSION = new Version("0.51.01.1");
-    private static final Version SERVER_VERSION = new Version("0.51.01.2");
+    private static final Version REFUSED_VERSION = new Version("0.51.01.1");
+    private static final Version GAME_VERSION = new Version("0.51.01.2");
 
     @Test
-    void hostMessageNamesThePlayerAndBothVersions() {
-        RefusedConnection refused = RefusedConnection.fromReceived("Natasha Kerensky", "/203.0.113.7",
-              CLIENT_VERSION, SERVER_VERSION);
-        String message = RefusedConnectionNotifier.buildHostMessage(refused);
+    void playerMessageNamesThePlayerAndBothVersions() {
+        String message = RefusedConnectionNotifier.buildPlayerMessage("Natasha Kerensky", REFUSED_VERSION,
+              GAME_VERSION);
         assertTrue(message.contains("Natasha Kerensky"));
-        assertTrue(message.contains("203.0.113.7"));
-        assertTrue(message.contains(CLIENT_VERSION.toString()));
-        assertTrue(message.contains(SERVER_VERSION.toString()));
+        assertTrue(message.contains(REFUSED_VERSION.toString()));
+        assertTrue(message.contains(GAME_VERSION.toString()));
     }
 
     @Test
-    void hostMessageFallsBackToTheAddressForOlderClients() {
-        RefusedConnection refused = RefusedConnection.fromReceived(null, "/203.0.113.7", CLIENT_VERSION,
-              SERVER_VERSION);
-        assertTrue(RefusedConnectionNotifier.buildHostMessage(refused).contains("203.0.113.7"));
+    void playerMessageWorksWithoutAName() {
+        String message = RefusedConnectionNotifier.buildPlayerMessage(null, REFUSED_VERSION, GAME_VERSION);
+        assertTrue(message.contains(REFUSED_VERSION.toString()));
+        assertFalse(message.contains("null"));
     }
 
     @Test
-    void hostMessageIsNeverRenderedAsHtml() {
-        // Swing renders dialog text beginning with <html> as HTML, and the player picks their own name.
-        RefusedConnection refused = RefusedConnection.fromReceived("<html><b>Gotcha</b>", "/203.0.113.7",
-              CLIENT_VERSION, SERVER_VERSION);
-        assertFalse(RefusedConnectionNotifier.buildHostMessage(refused).toLowerCase().startsWith("<html>"));
+    void playerMessageIsNeverRenderedAsHtml() {
+        // Swing renders dialog text beginning with <html> as HTML, and the refused player picks their own name.
+        String message = RefusedConnectionNotifier.buildPlayerMessage("<html><b>Gotcha</b>", REFUSED_VERSION,
+              GAME_VERSION);
+        assertFalse(message.toLowerCase().startsWith("<html>"));
     }
 }

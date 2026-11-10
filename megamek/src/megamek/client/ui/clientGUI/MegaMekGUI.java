@@ -107,7 +107,6 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.skinEditor.SkinEditorMainGUIPanel;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.MegaMekController;
-import megamek.client.ui.util.RefusedConnectionNotifier;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.RawImagePanel;
@@ -1081,7 +1080,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             gameManager = getGameManager(gameType);
             server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
-            server.setRefusedConnectionHandler(RefusedConnectionNotifier::showHostDialog);
         } catch (Exception ex) {
             LOGGER.errorDialog(ex,
                   Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),

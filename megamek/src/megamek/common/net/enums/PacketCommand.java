@@ -319,7 +319,16 @@ public enum PacketCommand {
      * A Server to Client packet telling a player that someone pinged them: the sender's player id and whether the
      * ping went to everyone. The client plays its ping sound and shows who pinged it.
      */
-    PLAYER_PING;
+    PLAYER_PING,
+    /**
+     * A Server to Client packet telling every player already in the game that someone was refused for running a
+     * different version: the refused player's name (or {@code null} when their client is too old to send one), their
+     * version, and the server's version. Each human client shows a dialog.
+     *
+     * <p>Packet commands travel as their position in this list, so new commands must always be added at the end;
+     * inserting one earlier would shift the handshake commands and break the version check against older builds.</p>
+     */
+    PLAYER_REFUSED_DIFFERENT_VERSION;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

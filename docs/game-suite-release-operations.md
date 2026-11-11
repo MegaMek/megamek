@@ -7,7 +7,7 @@ version. There are two channels:
   `releases/<line>` branch (for example `releases/0.51.02`) in each of the four
   repositories (megamek, megameklab, mekhq, mm-data).
 - **Experimental**: the newest development work, built from `main` every
-  Tuesday at 05:00 UTC and on demand. Players see it only after opting in.
+  Wednesday at 05:00 UTC and on demand. Players see it only after opting in.
 
 Run every workflow from the **Actions** tab on `main`. The workflow file always
 comes from `main`, even when it builds a release branch.
@@ -92,7 +92,7 @@ patched. If nothing changed since the last Core build, the run ends as a no-op.
 
 ### Weekly Experimental
 
-Nothing to do. Every Tuesday at 05:00 UTC the schedule builds `main` and
+Nothing to do. Every Wednesday at 05:00 UTC the schedule builds `main` and
 publishes the next Experimental build, without approval (environment
 `suite-release-weekly`). If nothing changed since the last Experimental build,
 the run is a no-op and publishes nothing. A failed scheduled run opens (or

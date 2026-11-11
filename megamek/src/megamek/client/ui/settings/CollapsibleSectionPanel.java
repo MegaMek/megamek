@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.settings;
 
+import static megamek.client.ui.WrapLayout.wordWrap;
 import static megamek.codeUtilities.StringUtility.isNullOrBlank;
 
 import java.awt.*;
@@ -130,7 +131,7 @@ public class CollapsibleSectionPanel extends JPanel {
     }
 
     private static String truncatedSummaryToolTip(JLabel label) {
-        return label.getPreferredSize().width > label.getWidth() ? label.getText() : null;
+        return label.getPreferredSize().width > label.getWidth() ? wordWrap(label.getText()) : null;
     }
 
     /**

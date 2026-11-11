@@ -110,6 +110,20 @@ final class ConvoyTracker {
         return convoy.isEmpty() ? Optional.empty() : Optional.of(head(convoy));
     }
 
+    /**
+     * @return {@code true} if any unit of the convoy lance is alive and still to deploy: a convoy not yet on the board
+     *       is not gone
+     */
+    boolean isStillToDeploy(int convoyForceId) {
+        for (Entity unit : owner.getGame().getEntitiesVector()) {
+            if ((unit.getForceId() == convoyForceId) && !unit.isDeployed() && !unit.isDestroyed()
+                  && !unit.isDoomed()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static boolean isOnBoardAndAlive(Entity unit) {
         return (unit.getPosition() != null) && !unit.isOffBoard() && !unit.isDestroyed() && !unit.isDoomed()
               && unit.isDeployed();

@@ -97,6 +97,12 @@ public class UnitOrdersFollower {
     /** Each unit's route as last seen, by unit id, to tell a new order from waypoints ticked off; not saved. */
     private final Map<Integer, List<Coords>> knownRoutes = new HashMap<>();
 
+    /**
+     * The round this bot first followed orders in, or {@link UnitOrders#NO_ROUND} before it has: a bot that joins a
+     * game under way - reconnected, or a saved game loaded - finds routes it never saw given (QA playtest, #9524).
+     */
+    private int firstRoundFollowed = UnitOrders.NO_ROUND;
+
     // what the bot knows of each convoy: its units, front, heading and exit; the one source for convoys and escorts
     private final ConvoyTracker convoys;
     // the waypoint each unit last planned its way to, so a leg is planned once
@@ -651,6 +657,7 @@ public class UnitOrdersFollower {
      * its last waypoint holds there, facing as ordered, until it gets new orders.
      */
     void advanceRoutes() {
+        noteFirstRoundFollowed();
         fireReaction.reactToFire();
         roster.trackFormationUnits();
         for (Entity entity : owner.getEntitiesOwned()) {
@@ -736,6 +743,7 @@ public class UnitOrdersFollower {
      * moved, round 1 - and the round after any new order - was driven without a plan.
      */
     void planRoutes() {
+        noteFirstRoundFollowed();
         for (Entity entity : owner.getEntitiesOwned()) {
             if ((entity.getPosition() == null) || entity.getUnitOrders().getFightState().isPresent()) {
                 continue;
@@ -816,9 +824,29 @@ public class UnitOrdersFollower {
         return true;
     }
 
+    private void noteFirstRoundFollowed() {
+        if (firstRoundFollowed == UnitOrders.NO_ROUND) {
+            firstRoundFollowed = currentRound();
+        }
+    }
+
+    /**
+     * @return {@code true} if this bot has just joined a game already under way, in a round after the first: every
+     *       route it sees this round was given before it joined
+     */
+    boolean isJoiningGameUnderWay() {
+        return (firstRoundFollowed != UnitOrders.NO_ROUND) && (firstRoundFollowed == currentRound())
+              && (currentRound() > 1);
+    }
+
     /**
      * Calls a new route on the radio: "Charlie Lance, proceeding to Nav Point Alpha (1625)." A route that is the one
      * seen before with waypoints ticked off the front is not new. The formation's leader calls for the lance.
+     *
+     * <p>A route first seen by a bot that has just joined a game under way, after a reconnect or a saved game loaded,
+     * is not new either: the bot simply had not seen it (QA playtest, #9524: the reconnected bot called the route again
+     * and stopped its lance up to 3 rounds to assemble at the next waypoint). It is taken up where the lance is: a
+     * lance already formed up round its leader marches on, one that is not still assembles.</p>
      */
     private void announceNewRoute(Entity entity) {
         List<Coords> route = entity.getUnitOrders().getRoute();
@@ -829,6 +857,13 @@ public class UnitOrdersFollower {
             return;
         }
         legsPlannedTo.remove(entity.getId());
+        if ((known == null) && isJoiningGameUnderWay()) {
+            boolean isFormedUp = march.resumeMarchIfFormedUp(entity);
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: ROUTE_TAKEN_UP - {} waypoint(s), next {}, given before this "
+                        + "bot joined; {}", entity.getDisplayName(), entity.getId(), currentRound(), route.size(),
+                  route.get(0).getBoardNum(), isFormedUp ? "formed up, marching on" : "not formed up, assembling");
+            return;
+        }
         if (known != null) {
             // a changed order: the lance assembles again at its new first waypoint before it marches. Every lance
             // starts out assembling, so the first order needs nothing here. A leg set to take its shape on the way
@@ -1214,6 +1249,38 @@ public class UnitOrdersFollower {
         return roster.isFollowingPlayerUnit(entity);
     }
 
+    /**
+     * A formation follower may carry no route of its own: a convoy's route, for one, goes on its leader only, and the
+     * follower takes its slot round the leader's next waypoint. Such a follower is on that route as much as its leader
+     * is (QA playtest, #9524: a crippled wingman withdrew while its leader kept to the route).
+     *
+     * @param entity a unit of the bot
+     *
+     * @return the unit's acting formation leader, if the unit follows one on this leg and that leader - a bot's unit
+     *       in action and on the board - has a route; empty otherwise
+     */
+    public Optional<Entity> routedFormationLeader(Entity entity) {
+        Optional<Entity> leader = roster.formationLeaderOf(entity);
+        if (leader.isEmpty() || roster.isFollowingPlayerUnit(entity) || !leader.get().getUnitOrders().hasRoute()) {
+            return Optional.empty();
+        }
+        return leader;
+    }
+
+    /**
+     * A follower of a routed leader keeps to the route over its own Forced Withdrawal, as the leader does, while it
+     * keeps up with its lance. One that has fallen behind, which the lance no longer waits for, or that is out of
+     * action, which the lance no longer counts, is on its own; crippled and on its own, it withdraws (QA playtest,
+     * #9524).
+     *
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit follows a routed leader and is keeping up with its lance
+     */
+    public boolean isKeepingUpWithRoutedLeader(Entity entity) {
+        return routedFormationLeader(entity).isPresent() && !roster.isFallingBehind(entity);
+    }
+
 
     /**
      * See {@code FormationRoster.isOutOfAction}.
@@ -1272,10 +1339,18 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * See {@code FormationMarch.limitToFormationPace}.
+     * See {@code FormationMarch.limitToFormationPace} and {@code ConvoyEscortFollower.leashToPlace}.
      */
     List<MovePath> limitToFormationPace(Entity entity, List<MovePath> paths) {
-        return march.limitToFormationPace(entity, paths);
+        // an escort fighting briefly is also held near its place (QA playtest, #9524)
+        return convoyEscorts.leashToPlace(entity, march.limitToFormationPace(entity, paths));
+    }
+
+    /**
+     * See {@code ConvoyEscortFollower.isFightingBriefly}.
+     */
+    public boolean isEscortFightingBriefly(Entity entity) {
+        return convoyEscorts.isFightingBriefly(entity);
     }
 
     /**

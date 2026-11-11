@@ -325,6 +325,31 @@ class FormationMarch {
     }
 
     /**
+     * Takes up the march of a lance whose route was given before this bot joined the game, after a reconnect or a
+     * saved game loaded: which formations had formed up is not saved, so without this every lance would stop to
+     * assemble again (QA playtest, #9524). A lance with every other unit within {@link #REFORM_SLACK} of its marching
+     * slot round its leader counts as assembled; one that is not still assembles at its next waypoint.
+     *
+     * @param leader the unit leading the formation, or a unit in none
+     *
+     * @return {@code true} if the formation counts as assembled
+     */
+    boolean resumeMarchIfFormedUp(Entity leader) {
+        Optional<FormationOrder> formation = leader.getUnitOrders().getFormation();
+        if (formation.isEmpty() || assembledFormations.contains(formation.get().getLeaderId())) {
+            return true;
+        }
+        // the marching slots, round the leader, are the ones to measure by: while assembling they lie round the
+        // waypoint, which a lance on the march is nowhere near
+        assembledFormations.add(formation.get().getLeaderId());
+        if (isFormationAssembled(leader)) {
+            return true;
+        }
+        assembledFormations.remove(formation.get().getLeaderId());
+        return false;
+    }
+
+    /**
      * @return {@code true} if the leg after the next waypoint is set to travel in a different formation from the leg
      *       ending there, so the lance changes shape at the waypoint
      */

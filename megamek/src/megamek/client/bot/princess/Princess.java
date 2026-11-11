@@ -4700,12 +4700,20 @@ public class Princess extends BotClient {
     }
 
     /**
-     * @return where the player has ordered the unit: "the NORTH edge" for an edge order, else its next waypoint
+     * @return where the player has ordered the unit: "the NORTH edge" for an edge order, else its next waypoint, or
+     *       its routed formation leader's for a follower with no route of its own
      */
     private String describeOrderedDestination(Entity entity) {
         Optional<CardinalEdge> orderedEdge = getUnitOrdersFollower().getOrderedEdge(entity);
         if (orderedEdge.isPresent()) {
             return Messages.getString("Princess.orders.edge", orderedEdge.get().name());
+        }
+        Optional<Entity> routedLeader = getUnitOrdersFollower().routedFormationLeader(entity);
+        if (!entity.getUnitOrders().hasRoute() && routedLeader.isPresent()) {
+            // a follower keeping to its leader's route over Forced Withdrawal names the leader's waypoint (#9524)
+            Entity leader = routedLeader.get();
+            return getUnitBehaviorTracker().getWaypointForEntity(leader)
+                  .map(waypoint -> getUnitOrdersFollower().navLabel(leader, waypoint)).orElse("?");
         }
         return getUnitBehaviorTracker().getWaypointForEntity(entity)
               .map(waypoint -> getUnitOrdersFollower().navLabel(entity, waypoint)).orElse("?");

@@ -39,6 +39,7 @@ import java.util.Optional;
 import megamek.common.board.Coords;
 import megamek.common.enums.ForcedWithdrawalOrder;
 import megamek.common.orders.FightState;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -62,8 +63,9 @@ public class UnitOrdersBehavior extends UnitBehavior {
      * Worker function that calculates a unit's desired behavior.
      *
      * <p>Order of precedence: a gamemaster's order to withdraw; the player's edge order for the unit; the unit's own
-     * Forced Withdrawal, unless the player has given it a route; the bot-wide flee order; the unit's route; and then
-     * the bot's own judgement. A Pause or Stop order is handled before this, by holding the unit in place.</p>
+     * Forced Withdrawal, unless the player has given it, or the formation leader it keeps up with, a route; the
+     * bot-wide flee order; the unit's route, or its slot round its routed leader; and then the bot's own judgement. A
+     * Pause or Stop order is handled before this, by holding the unit in place.</p>
      */
     @Override
     protected BehaviorType calculateUnitBehavior(Entity entity, Princess owner) {
@@ -88,6 +90,14 @@ public class UnitOrdersBehavior extends UnitBehavior {
             logDecision(entity, "UNDER_FIRE", "breaking off the route to fight");
             return BehaviorType.Engaged;
         } else if (owner.getUnitOrdersFollower().getEscortPlace(entity).isPresent()) {
+            if (owner.getUnitOrdersFollower().isEscortFightingBriefly(entity)) {
+                // Break and fight, leaving Briefly: the escort engages the threat, its moves held near its place
+                // (QA playtest, #9524: escorts that only shifted their places never fought)
+                logDecision(entity, "ESCORT_FIGHT", "engaging, within " + LanceRole.BRIEF_CHASE_HEXES
+                      + " hexes of its place at " + owner.getUnitOrdersFollower().getEscortPlace(entity).get()
+                      .getBoardNum());
+                return BehaviorType.Engaged;
+            }
             // an escort keeps its place round its convoy; it has no route of its own
             logDecision(entity, "ESCORT", "head " + owner.getUnitOrdersFollower().getEscortPlace(entity).get()
                   .getBoardNum());
@@ -116,14 +126,20 @@ public class UnitOrdersBehavior extends UnitBehavior {
 
             logDecision(entity, "PLAYER_ROUTE", "no reachable waypoint left");
             return BehaviorType.NoPathToDestination;
-        } else if (owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity)) {
+        } else if (owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity)
+              || owner.getUnitOrdersFollower().routedFormationLeader(entity).isPresent()) {
+            // a follower with no route of its own heads for its slot round its leader, a player's unit or a bot's
+            // unit on a route; it was left with no orders at all (QA playtest, #9524)
+            String rule = owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity) ? "FOLLOW_UNIT"
+                  : "FORMATION_SLOT";
             Optional<Coords> slot = owner.getUnitOrdersFollower().getFormationSlot(entity);
             if (slot.isPresent()) {
-                logDecision(entity, "FOLLOW_UNIT", "head " + slot.get().getBoardNum());
+                logDecision(entity, rule, isWithdrawing ? "head " + slot.get().getBoardNum() + " over FORCED_WITHDRAWAL"
+                      : "head " + slot.get().getBoardNum());
                 return BehaviorType.MoveToDestination;
             }
             // the formation broke on contact: fight, and fall back in once the enemy is gone
-            logDecision(entity, "FOLLOW_UNIT", "engaging");
+            logDecision(entity, rule, "engaging");
             return BehaviorType.Engaged;
         } else if ((entity instanceof Mek) && ((Mek) entity).isJustMovedIntoIndustrialKillingWater()) {
             return edgeBehavior(entity, owner, "INDUSTRIAL_WATER", BehaviorType.ForcedWithdrawal);
@@ -157,8 +173,10 @@ public class UnitOrdersBehavior extends UnitBehavior {
      * Returns whether a withdrawing unit follows the player's orders instead of heading for its retreat edge.
      *
      * <p>A player's direct order outranks the unit's own Forced Withdrawal: a crippled unit sent to a hex or an edge
-     * goes there (issue #9038). A gamemaster's order to withdraw still wins over everything, and the bot-wide flee
-     * order wins over a route, sending a withdrawing unit toward the ordered edge instead.</p>
+     * goes there (issue #9038). So does a formation follower keeping up with a leader on a route: only the leader
+     * carries the route, and the follower keeps to it with its lance (QA playtest, #9524). A gamemaster's order to
+     * withdraw still wins over everything, and the bot-wide flee order wins over a route, sending a withdrawing unit
+     * toward the ordered edge instead.</p>
      *
      * @param entity the unit
      * @param owner  the bot that owns the unit
@@ -176,7 +194,8 @@ public class UnitOrdersBehavior extends UnitBehavior {
         if (owner.getUnitOrdersFollower().getOrderedEdge(entity).isPresent()) {
             return true;
         }
-        return !isFleeOrdered(owner) && entity.getUnitOrders().hasRoute();
+        return !isFleeOrdered(owner) && (entity.getUnitOrders().hasRoute()
+              || owner.getUnitOrdersFollower().isKeepingUpWithRoutedLeader(entity));
     }
 
     /**
@@ -240,9 +259,12 @@ public class UnitOrdersBehavior extends UnitBehavior {
         }
         Optional<Coords> escortPlace = owner.getUnitOrdersFollower().getEscortPlace(entity);
         if (escortPlace.isPresent()) {
-            return escortPlace;
+            // an escort fighting briefly is not pulled back to its place while it fights; the leash on its moves
+            // keeps it near (QA playtest, #9524)
+            return owner.getUnitOrdersFollower().isEscortFightingBriefly(entity) ? Optional.empty() : escortPlace;
         }
-        if (entity.getUnitOrders().hasRoute() || owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity)) {
+        if (entity.getUnitOrders().hasRoute() || owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity)
+              || owner.getUnitOrdersFollower().routedFormationLeader(entity).isPresent()) {
             // a formation unit heads for its slot beside the leader rather than the waypoint itself
             Optional<Coords> formationSlot = owner.getUnitOrdersFollower().getFormationSlot(entity);
             if (formationSlot.isPresent()) {

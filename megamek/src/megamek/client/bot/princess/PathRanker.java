@@ -759,11 +759,12 @@ public abstract class PathRanker implements IPathRanker {
      * the home edge, which is NORTH when no edge is set, so a waypoint anywhere else was pulled toward the north edge.
      *
      * <p>Anywhere within {@link Princess#DISTANCE_TO_WAYPOINT} of the waypoint counts as arrived, matching the point at
-     * which the bot moves on to the next waypoint. Further out, the distance is the movement points to the waypoint by
-     * the cheapest route the unit can take ({@link WaypointDistanceField}), so a unit behind a lake or in a dead-end
-     * street prefers the way round over the shore facing the waypoint (issue #7615). A unit on the ground heading for
-     * its home edge is measured the same way, to the nearest hex of the edge. Where no route is known, the
-     * straight-line distance stands in.</p>
+     * which the bot moves on to the next waypoint. Princess's original waypoints are measured in a straight line, and
+     * the home edge in rows. For a bot that follows unit orders ({@link Princess#followsUnitOrders()}), the distance
+     * is the movement points to the waypoint by the cheapest route the unit can take ({@link WaypointDistanceField}),
+     * so a unit behind a lake or in a dead-end street prefers the way round over the shore facing the waypoint (issue
+     * #7615). A unit on the ground heading for its home edge is measured the same way, to the nearest hex of the edge.
+     * Where no route is known, the straight-line distance stands in.</p>
      *
      * @param movingUnit the unit on the mission
      * @param position   the position to measure from
@@ -774,6 +775,13 @@ public abstract class PathRanker implements IPathRanker {
      */
     protected int distanceToDestination(Entity movingUnit, Coords position, int boardId, Game game) {
         Optional<Coords> waypoint = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner());
+        boolean followsUnitOrders = getOwner().followsUnitOrders();
+        if (waypoint.isPresent() && (boardId == movingUnit.getBoardId()) && !followsUnitOrders) {
+            return Math.max(0, position.distance(waypoint.get()) - Princess.DISTANCE_TO_WAYPOINT);
+        }
+        if (!followsUnitOrders) {
+            return distanceToHomeEdge(position, boardId, getOwner().getHomeEdge(movingUnit), game);
+        }
         if (waypoint.isPresent() && (boardId == movingUnit.getBoardId())) {
             // Score the way still to go along the whole route, not just to the next waypoint. Otherwise every hex
             // near a waypoint scores as "arrived", and a unit with movement to spare runs a loop past it to bank

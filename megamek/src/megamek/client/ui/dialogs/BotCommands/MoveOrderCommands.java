@@ -35,6 +35,7 @@ package megamek.client.ui.dialogs.BotCommands;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import jakarta.annotation.Nullable;
 import megamek.common.OffBoardDirection;
@@ -60,6 +61,12 @@ import megamek.server.commands.UnitOrderCommand;
  * route's priority.
  */
 final class MoveOrderCommands {
+
+    /** The pace a convoy travels at: it runs. */
+    static final FormationPace CONVOY_PACE = FormationPace.RUN;
+
+    /** What a convoy does under fire: it pushes through rather than turning to fight. */
+    static final ContactRule CONVOY_CONTACT = ContactRule.HOLD;
 
     private MoveOrderCommands() {
     }
@@ -117,8 +124,10 @@ final class MoveOrderCommands {
     /**
      * Puts a convoy into a Column when nothing else gives it a shape: a convoy that deploys or drives scattered is
      * never what the player wants (HammerGS, 2026-10-02). It runs, and pushes through fire rather than turning to
-     * fight. Left out when the role is not a convoy, when there is only one unit, or when any unit is already in a
-     * formation - a shape the player set is kept.
+     * fight. A lance already in a formation keeps the shape the player set, and only takes up the convoy's Run pace
+     * and Push through: putting it back in a Column, or leaving it at the Bot formation menu's Walk and Turn and fire,
+     * made the result depend on whether the formation or the role was set first (QA playtest, #9524). Left out when
+     * the role is not a convoy, or when there is only one unit.
      *
      * @param units the units ordered, the first leading
      * @param role  the role being given
@@ -131,13 +140,59 @@ final class MoveOrderCommands {
             return commands;
         }
         List<Integer> unitIds = new ArrayList<>();
+        boolean isAnyInFormation = false;
         for (Entity unit : units) {
-            if (unit.getUnitOrders().getFormation().isPresent()) {
-                return commands;
-            }
+            isAnyInFormation |= unit.getUnitOrders().getFormation().isPresent();
             unitIds.add(unit.getId());
         }
-        return columnCommands(unitIds);
+        if (!isAnyInFormation) {
+            return columnCommands(unitIds);
+        }
+        for (Entity unit : units) {
+            Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
+            boolean isConvoyPaced = formation.isPresent() && (formation.get().getPace() == CONVOY_PACE)
+                  && (formation.get().getContactRule() == CONVOY_CONTACT);
+            if (formation.isPresent() && !isConvoyPaced) {
+                FormationOrder order = formation.get();
+                commands.add(formationCommand(unit.getId(), order.getLeaderId(), order.getSlot(),
+                      order.getShape().name(), order.getSpacing(), CONVOY_PACE.name(), CONVOY_CONTACT.name(),
+                      order.isKeepTogether()));
+            }
+        }
+        return commands;
+    }
+
+    /**
+     * The commands the lobby's Bot formation menu sends to put one lance in a shape: spacing
+     * {@link FormationOrder#DEFAULT_SPACING}, the lance's first unit leading, keeping together. A convoy lance keeps
+     * the convoy's Run pace and Push through, as setting its role after the shape gives it (QA playtest, #9524); any
+     * other lance takes the default pace and contact rule.
+     *
+     * @param units the lance's units, in lance order, the first leading
+     * @param shape the shape chosen
+     *
+     * @return the commands to send, in order
+     */
+    static List<String> lobbyFormationCommands(List<Entity> units, FormationShape shape) {
+        LanceRole role = LanceRoles.roleOf(units);
+        boolean isConvoy = (role != null) && role.isConvoy();
+        List<String> commands = new ArrayList<>();
+        for (int slot = 0; slot < units.size(); slot++) {
+            int unitId = units.get(slot).getId();
+            int leaderId = units.get(0).getId();
+            if (isConvoy) {
+                commands.add(formationCommand(unitId, leaderId, slot, shape.name(), FormationOrder.DEFAULT_SPACING,
+                      CONVOY_PACE.name(), CONVOY_CONTACT.name(), true));
+            } else {
+                commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION,
+                      UnitOrderCommand.SHAPE + '=' + shape.name(),
+                      UnitOrderCommand.LEADER + '=' + leaderId,
+                      UnitOrderCommand.SPACING + '=' + FormationOrder.DEFAULT_SPACING,
+                      UnitOrderCommand.SLOT + '=' + slot,
+                      UnitOrderCommand.TOGETHER + "=true"));
+            }
+        }
+        return commands;
     }
 
     /**
@@ -150,7 +205,7 @@ final class MoveOrderCommands {
         int slot = 0;
         for (int unitId : unitIds) {
             commands.add(formationCommand(unitId, unitIds.get(0), slot++, FormationShape.COLUMN.name(),
-                  FormationOrder.DEFAULT_SPACING, FormationPace.RUN.name(), ContactRule.HOLD.name(), true));
+                  FormationOrder.DEFAULT_SPACING, CONVOY_PACE.name(), CONVOY_CONTACT.name(), true));
         }
         return commands;
     }

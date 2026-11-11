@@ -1130,6 +1130,11 @@ public class TWGameManager extends AbstractGameManager {
                         // bot to this seat instead of guessing.
                         if (packet.getObject(1) instanceof AIType aiType) {
                             game.recordBotType(player.getName(), aiType);
+                            // Tell every client too, not only those that connect later: only CASPAR bots take unit
+                            // orders, so a player who joined before this bot needs its type to be offered them.
+                            // Copied to a plain HashMap for the same reason as on connect.
+                            send(new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings(),
+                                  new HashMap<>(getGame().getBotTypes())));
                         }
                     }
                     break;

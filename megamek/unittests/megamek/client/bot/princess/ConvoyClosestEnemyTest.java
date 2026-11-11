@@ -89,6 +89,8 @@ class ConvoyClosestEnemyTest {
         me = mock(BipedMek.class);
 
         princess = mock(Princess.class);
+        // convoys are part of unit orders, which only a bot that follows them (CASPAR) knows about
+        when(princess.followsUnitOrders()).thenReturn(true);
         when(princess.getBehaviorSettings()).thenReturn(behaviorSettings);
         when(princess.getUnitOrdersFollower()).thenReturn(ordersFollower);
         when(princess.getHonorUtil()).thenReturn(honorUtil);
@@ -119,5 +121,14 @@ class ConvoyClosestEnemyTest {
         NewtonianAerospacePathRanker ranker = new NewtonianAerospacePathRanker(princess);
 
         assertEquals(convoyTruck, ranker.findClosestEnemy(me, ORIGIN, game));
+    }
+
+    @Test
+    void princessWithTheOriginalWaypointsPassesARetreatingConvoyUnitAsBefore() {
+        // Princess knows nothing of convoys: the withdrawing truck is skipped like any broken unit
+        when(princess.followsUnitOrders()).thenReturn(false);
+        BasicPathRanker ranker = new BasicPathRanker(princess);
+
+        assertEquals(escort, ranker.findClosestEnemy(me, ORIGIN, game, false));
     }
 }

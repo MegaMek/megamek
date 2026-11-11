@@ -76,8 +76,11 @@ public class FleeCommand implements ChatCommand {
         princess.getBehaviorSettings().setAutoFlee(true);
         princess.setFallBack(true, reason);
         princess.setFleeBoard(true, reason);
-        // the order is carried by each unit as Exit by edge, replacing its route, so it shows on the map and is saved
-        princess.getUnitOrdersFollower().orderAllToExit(edge);
+        // for a bot that follows unit orders, the order is carried by each unit as Exit by edge, replacing its route,
+        // so it shows on the map and is saved
+        if (princess.followsUnitOrders()) {
+            princess.getUnitOrdersFollower().orderAllToExit(edge);
+        }
     }
 
     private void cancelFleeOrder(Princess princess) {
@@ -87,6 +90,8 @@ public class FleeCommand implements ChatCommand {
         princess.getBehaviorSettings().setAutoFlee(false);
         princess.setFallBack(false, reason);
         princess.setFleeBoard(false, reason);
-        princess.getUnitOrdersFollower().cancelExitOrders();
+        if (princess.followsUnitOrders()) {
+            princess.getUnitOrdersFollower().cancelExitOrders();
+        }
     }
 }

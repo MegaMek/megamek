@@ -42,6 +42,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -128,6 +129,8 @@ class FormationFollowerTest {
         bot.setBot(true);
         game.addPlayer(1, bot);
         princess = spy(new Princess("Lyran Allies", UUID.randomUUID().toString(), 1));
+        // formations are unit orders, which only a bot that follows them (CASPAR) carries out
+        doReturn(true).when(princess).followsUnitOrders();
         doReturn(game).when(princess).getGame();
         doReturn(enemies).when(princess).getEnemyEntities();
         // most tests are of a lance on the march; the assembly tests below clear this
@@ -145,6 +148,7 @@ class FormationFollowerTest {
         private Double weight;
         private boolean immobile;
         private boolean prone;
+        private boolean crippled;
 
         @Override
         public int getWalkMP() {
@@ -174,6 +178,11 @@ class FormationFollowerTest {
         @Override
         public boolean isProne() {
             return prone || super.isProne();
+        }
+
+        @Override
+        public boolean isCrippled(boolean checkCrew) {
+            return crippled;
         }
     }
 
@@ -1742,5 +1751,121 @@ class FormationFollowerTest {
         second.setPosition(slot);
         assertTrue(follower.isHolding(second));
         assertEquals(SOUTH_WEST, follower.stoppedFacing(second));
+    }
+
+    /** A leader on a route at {@link #LEADER_HEX} and a crippled follower with no route of its own. */
+    private BipedMek crippledFollowerOfARoutedLeader() {
+        doReturn(true).when(princess).getForcedWithdrawal();
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        // only the leader carries the route, as a convoy's does
+        second.setUnitOrders(second.getUnitOrders().withRoute(List.of()));
+        fake(second).crippled = true;
+        return second;
+    }
+
+    @Test
+    void aCrippledFollowerKeepsToItsLeadersRouteInsteadOfWithdrawing() {
+        // QA playtest, #9524: Vedette #2 withdrew while its leader went on "PLAYER_ROUTE over FORCED_WITHDRAWAL"
+        BipedMek second = crippledFollowerOfARoutedLeader();
+        UnitBehavior behavior = princess.getUnitBehaviorTracker();
+        Coords slot = princess.getUnitOrdersFollower().getFormationSlot(second).orElseThrow();
+
+        assertTrue(princess.getForcedWithdrawalTracker().isWithdrawing(second));
+        assertTrue(behavior.isFollowingOrdersOverWithdrawal(second, princess));
+        assertEquals(UnitBehavior.BehaviorType.MoveToDestination, behavior.getBehaviorType(second, princess));
+        assertEquals(Optional.of(slot), behavior.getActiveWaypoint(second, princess));
+    }
+
+    @Test
+    void aCrippledFollowerWithdrawsOnceItsLeaderHasNoRouteOrItFallsBehind() {
+        BipedMek second = crippledFollowerOfARoutedLeader();
+        BipedMek leader = (BipedMek) game.getEntity(FORMATION_LEADER_ID);
+        UnitBehavior behavior = princess.getUnitBehaviorTracker();
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+
+        // no closer to its slot for three rounds: the lance stops waiting for it, and it is on its own
+        game.setCurrentRound(1);
+        follower.roster().trackFormationUnits();
+        game.setCurrentRound(1 + FormationRoster.ROUNDS_WITHOUT_PROGRESS);
+        follower.roster().trackFormationUnits();
+        assertTrue(follower.isFallingBehind(second));
+        assertFalse(behavior.isFollowingOrdersOverWithdrawal(second, princess));
+
+        second.setPosition(follower.getFormationSlot(second).orElseThrow());
+        follower.roster().trackFormationUnits();
+        assertTrue(behavior.isFollowingOrdersOverWithdrawal(second, princess), "back in its place, it keeps on");
+
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of()));
+        assertFalse(behavior.isFollowingOrdersOverWithdrawal(second, princess), "no route to keep to");
+    }
+
+    /**
+     * A leader on its way to {@link #NORTH_WAYPOINT} and one other unit, seen by a bot with nothing remembered yet,
+     * as after a reconnect or a saved game loaded.
+     */
+    private UnitOrdersFollower freshBotWithLance(Coords secondPosition, int round) {
+        UnitOrdersFollower follower = new UnitOrdersFollower(princess);
+        doReturn(follower).when(princess).getUnitOrdersFollower();
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, secondPosition, 1, 4);
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        game.setCurrentRound(round);
+        return follower;
+    }
+
+    /** Where the second unit stands in the marching Echelon Right round a leader at {@link #LEADER_HEX}. */
+    private static final Coords MARCHING_SLOT = LEADER_HEX.translated(SOUTH_EAST, 2);
+
+    @Test
+    void aBotJoiningAGameUnderWayTakesUpAFormedUpLancesRouteWithoutAssembling() {
+        // QA playtest, #9524: the reconnected bot called the route again and stopped its lance to assemble
+        UnitOrdersFollower follower = freshBotWithLance(MARCHING_SLOT, 5);
+        BipedMek second = (BipedMek) game.getEntity(21);
+
+        follower.advanceRoutes();
+
+        assertFalse(follower.isAssembling(second), "already formed up, it marches on");
+        verify(princess, never()).sendChat(argThat((String call) -> call.contains("proceeding to")),
+              any(Level.class));
+    }
+
+    @Test
+    void aBotJoiningAGameUnderWayStillAssemblesALanceThatIsNotFormedUp() {
+        UnitOrdersFollower follower = freshBotWithLance(new Coords(16, 25), 5);
+
+        follower.advanceRoutes();
+
+        assertTrue(follower.isAssembling(game.getEntity(21)));
+    }
+
+    @Test
+    void aLanceGivenItsFirstRouteStillAssemblesEvenInItsShape() {
+        // a fresh game: deployed in its shape round its leader, the lance still meets at its first waypoint
+        UnitOrdersFollower follower = freshBotWithLance(MARCHING_SLOT, 1);
+
+        follower.advanceRoutes();
+
+        assertTrue(follower.isAssembling(game.getEntity(21)));
+        verify(princess).sendChat(argThat((String call) -> call.contains("proceeding to")), any(Level.class));
+    }
+
+    @Test
+    void aFirstRouteGivenLaterInTheGameStillAssembles() {
+        // a bot that has been following orders since before the route was given: it is a new order
+        UnitOrdersFollower follower = freshBotWithLance(MARCHING_SLOT, 4);
+        BipedMek leader = (BipedMek) game.getEntity(FORMATION_LEADER_ID);
+        UnitOrders routed = leader.getUnitOrders();
+        leader.setUnitOrders(routed.withRoute(List.of()));
+        follower.advanceRoutes();
+
+        leader.setUnitOrders(routed);
+        game.setCurrentRound(5);
+        follower.advanceRoutes();
+
+        assertTrue(follower.isAssembling(game.getEntity(21)));
     }
 }

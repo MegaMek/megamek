@@ -888,9 +888,12 @@ public class Princess extends BotClient {
             return movePath;
         }
         Coords closestEnemyPosition = findClosestEnemyPosition(entity);
-        // a player's "when stopped" facing stands while the closest enemy is in that facing's front arc
-        int orderedFacing = getUnitOrdersFollower().facingThatStandsFor(entity,
-              getUnitOrdersFollower().stoppedFacing(entity), entity.getPosition(), closestEnemyPosition);
+        // a player's "when stopped" facing stands while the closest enemy is in that facing's front arc; a bot with
+        // the original waypoints has no ordered facing and turns toward the closest enemy
+        int orderedFacing = followsUnitOrders()
+              ? getUnitOrdersFollower().facingThatStandsFor(entity, getUnitOrdersFollower().stoppedFacing(entity),
+              entity.getPosition(), closestEnemyPosition)
+              : UnitOrders.FACING_AUTO;
         int desiredFacing;
         if ((orderedFacing != UnitOrders.FACING_AUTO)
               && (OrderedFacing.sidesApart(entity.getFacing(), orderedFacing)
@@ -1033,7 +1036,7 @@ public class Princess extends BotClient {
      */
     public BotMemory getMemory() {
         if (memory == null) {
-            memory = new BotMemory();
+            memory = new BotMemory(followsUnitOrders());
         }
         return memory;
     }
@@ -1087,26 +1090,28 @@ public class Princess extends BotClient {
     }
 
     /**
-     * @return the units the bot most wants to destroy: those set in its behavior, and every unit of an enemy convoy,
-     *       which the bot goes for over its escorts (HammerGS, 2026-10-04)
+     * @return the units the bot most wants to destroy: those set in its behavior and, for a bot that follows unit
+     *       orders, every unit of an enemy convoy, which it goes for over the escorts (HammerGS, 2026-10-04)
      */
     public Set<Integer> getPriorityUnitTargets() {
         Set<Integer> targets = getBehaviorSettings().getPriorityUnitTargets();
-        targets.addAll(getUnitOrdersFollower().enemyConvoyUnitIds());
+        if (followsUnitOrders()) {
+            targets.addAll(getUnitOrdersFollower().enemyConvoyUnitIds());
+        }
         return targets;
     }
 
     /**
-     * Returns how keenly this bot goes for one of its priority targets, from 1 (shoot first) to 5. Enemy convoy units
-     * are always 1, so a convoy is hit before anything a player put on the list; other units read their priority from
-     * the behavior settings, 3 when none was chosen.
+     * Returns how keenly this bot goes for one of its priority targets, from 1 (shoot first) to 5. For a bot that
+     * follows unit orders, enemy convoy units are always 1, so a convoy is hit before anything a player put on the
+     * list; other units read their priority from the behavior settings, 3 when none was chosen.
      *
      * @param unitId the ID of a unit in {@link #getPriorityUnitTargets()}
      *
      * @return the target priority, 1 to 5
      */
     public int getTargetPriority(int unitId) {
-        if (getUnitOrdersFollower().enemyConvoyUnitIds().contains(unitId)) {
+        if (followsUnitOrders() && getUnitOrdersFollower().enemyConvoyUnitIds().contains(unitId)) {
             return BehaviorSettings.HIGHEST_TARGET_PRIORITY;
         }
         return getBehaviorSettings().getTargetPriority(unitId);
@@ -1205,8 +1210,11 @@ public class Princess extends BotClient {
             return;
         }
         // a formation's leader deploys before its members, so they can deploy in their slots around it; but a unit
-        // that cannot walk on keeps the turn the server counted for it
-        final Entity orderedChoice = getEntity(getUnitOrdersFollower().chooseUnitToDeploy(firstChoice.getId(), turn));
+        // that cannot walk on keeps the turn the server counted for it. A bot with the original waypoints deploys
+        // the unit the server counted.
+        final Entity orderedChoice = followsUnitOrders()
+              ? getEntity(getUnitOrdersFollower().chooseUnitToDeploy(firstChoice.getId(), turn))
+              : firstChoice;
         final boolean keepsWalkOnTurn = !canWalkOnThisRound(firstChoice) && canWalkOnThisRound(orderedChoice);
         final Entity deployEntity = keepsWalkOnTurn ? firstChoice : orderedChoice;
         if (deployEntity == null) {
@@ -1322,18 +1330,20 @@ public class Princess extends BotClient {
     }
 
     private int getDeploymentFacing(final Entity entity, final Board board, final Coords deployCoords) {
-        // the facing a player ordered for when it is stopped, or its convoy's way, else toward the enemy's deployment
-        // zone
-        Optional<Coords> enemyZoneCenter = facesEnemyZoneAtDeployment() ? getEnemyDeploymentCenter(board)
-              : Optional.empty();
-        int decentFacing = getUnitOrdersFollower().deployment().deploymentFacing(entity, deployCoords, board,
-              enemyZoneCenter);
-        if (decentFacing != UnitOrders.FACING_AUTO) {
-            return decentFacing;
+        if (followsUnitOrders()) {
+            // the facing a player ordered for when it is stopped, or its convoy's way, else toward the enemy's
+            // deployment zone
+            Optional<Coords> enemyZoneCenter = facesEnemyZoneAtDeployment() ? getEnemyDeploymentCenter(board)
+                  : Optional.empty();
+            int orderedFacing = getUnitOrdersFollower().deployment().deploymentFacing(entity, deployCoords, board,
+                  enemyZoneCenter);
+            if (orderedFacing != UnitOrders.FACING_AUTO) {
+                return orderedFacing;
+            }
         }
 
-        // with no enemy zone to face, face the last deployed enemy
-        decentFacing = -1;
+        // with no ordered facing or enemy zone to face, face the last deployed enemy
+        int decentFacing = -1;
         for (final Entity enemy : getEnemyEntities()) {
             if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(entity, enemy)) {
                 decentFacing = deployCoords.direction(enemy.getPosition());
@@ -1627,6 +1637,18 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Whether this bot carries out the unit orders players give: routes, formations, holds, ordered facings, convoy
+     * and escort roles, and the deployment and scoring that go with them. Princess keeps her original waypoints,
+     * held in her own memory and scored by straight-line distance; CASPAR follows unit orders. Princess is the
+     * control and CASPAR the experiment (HammerGS, 2026-11-05).
+     *
+     * @return {@code true} to follow unit orders, {@code false} for the original waypoints
+     */
+    public boolean followsUnitOrders() {
+        return false;
+    }
+
+    /**
      * Picks the hex a formation leader still to deploy will deploy on, the way it would pick it on its own turn. The
      * starting-hex scoring stands the unit on every hex it scores and leaves it on the last, so the leader is put back
      * off the board after: other code reads a unit with a position as one on the board.
@@ -1689,22 +1711,27 @@ public class Princess extends BotClient {
                   .toList();
         }
 
-        // never where the unit is blocked from where its lance is going, such as across water it cannot cross
-        possibleDeployCoords = getUnitOrdersFollower().keepReachable(deployedUnit, possibleDeployCoords);
+        // a bot that follows unit orders never deploys where the unit is blocked from where its lance is going, such
+        // as across water it cannot cross
+        if (followsUnitOrders()) {
+            possibleDeployCoords = getUnitOrdersFollower().keepReachable(deployedUnit, possibleDeployCoords);
+        }
 
         // Order the candidates before the capped scan below only looks at the first handful of them. Princess hands
         // them back untouched, so each unit deploys on terrain alone; subclasses may reorder to keep a force together.
         possibleDeployCoords = prioritizeDeploymentCoords(deployedUnit, possibleDeployCoords);
 
         // where its orders decide it: a leader's anchor, a formation slot, an escort's place. Done here rather than in
-        // prioritizeDeploymentCoords, whose CASPAR override does not call super, so both bots do it.
-        DeploymentPlanner.OrderedDeployment ordered = getUnitOrdersFollower().deployment().orderedDeployment(
-              deployedUnit, possibleDeployCoords, (unit, hexes) -> super.getFirstValidCoords(unit, hexes),
-              this::chooseDeploymentAnchor);
-        if (ordered.hex() != null) {
-            return ordered.hex();
+        // prioritizeDeploymentCoords, whose CASPAR override does not call super.
+        if (followsUnitOrders()) {
+            DeploymentPlanner.OrderedDeployment ordered = getUnitOrdersFollower().deployment().orderedDeployment(
+                  deployedUnit, possibleDeployCoords, (unit, hexes) -> super.getFirstValidCoords(unit, hexes),
+                  this::chooseDeploymentAnchor);
+            if (ordered.hex() != null) {
+                return ordered.hex();
+            }
+            possibleDeployCoords = ordered.candidates();
         }
-        possibleDeployCoords = ordered.candidates();
 
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
@@ -2071,7 +2098,8 @@ public class Princess extends BotClient {
             }
 
             // with nothing to aim at, turn the torso or turret the way the player ordered, which costs nothing
-            int orderedTwist = getUnitOrdersFollower().orderedTwist(shooter);
+            int orderedTwist = followsUnitOrders() ? getUnitOrdersFollower().orderedTwist(shooter)
+                  : UnitOrders.FACING_AUTO;
             if (orderedTwist != UnitOrders.FACING_AUTO) {
                 LOGGER.info("[BotOrders] {} (ID {}): twists to the ordered facing {}", shooter.getDisplayName(),
                       shooter.getId(), orderedTwist);
@@ -3359,9 +3387,9 @@ public class Princess extends BotClient {
 
     boolean mustFleeBoard(final Entity entity) {
         // a player's edge order decides: exit by the edge once on it, or hold at the edge and never leave
-        if (getUnitOrdersFollower().isOrderedToHoldAtEdge(entity)) {
+        if (followsUnitOrders() && getUnitOrdersFollower().isOrderedToHoldAtEdge(entity)) {
             return false;
-        } else if (getUnitOrdersFollower().isOrderedToExit(entity)) {
+        } else if (followsUnitOrders() && getUnitOrdersFollower().isOrderedToExit(entity)) {
             return entity.canFlee(entity.getPosition())
                   && (0 >= getPathRanker(entity).distanceToHomeEdge(entity.getPosition(), entity.getBoardId(),
                   getHomeEdge(entity), getGame()));
@@ -3833,14 +3861,14 @@ public class Princess extends BotClient {
                 return getHoldPositionPath(entity);
             }
 
-            if (getUnitOrdersFollower().isHolding(entity) && !entity.isAirborne()
+            if (followsUnitOrders() && getUnitOrdersFollower().isHolding(entity) && !entity.isAirborne()
                   && !entity.isAirborneVTOLorWIGE()) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: HOLD - {}", entity.getDisplayName(), entity.getId(),
                       game.getCurrentRound(), getUnitOrdersFollower().holdReason(entity));
                 return getHoldPositionPath(entity);
             }
 
-            if (getUnitOrdersFollower().isOrderedToExit(entity) && mustFleeBoard(entity)) {
+            if (followsUnitOrders() && getUnitOrdersFollower().isOrderedToExit(entity) && mustFleeBoard(entity)) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: EXIT_BY_EDGE - leaving by the {} edge",
                       entity.getDisplayName(), entity.getId(), game.getCurrentRound(), getHomeEdge(entity));
                 final MovePath exitPath = new MovePath(game, entity);
@@ -3857,7 +3885,12 @@ public class Princess extends BotClient {
             if (getUnitBehaviorTracker().isFollowingOrdersOverWithdrawal(entity, this)) {
                 // A crippled unit the player has sent somewhere goes there instead of withdrawing (issue #9038). It
                 // stays a withdrawing unit for firing and honor, but does not run for, or leave by, its retreat edge.
-                getOrdersRadio().report(entity, OrdersRadio.RadioEvent.FOLLOWING_ORDERS, describeOrderedDestination(entity));
+                if (followsUnitOrders()) {
+                    getOrdersRadio().report(entity, OrdersRadio.RadioEvent.FOLLOWING_ORDERS,
+                          describeOrderedDestination(entity));
+                } else {
+                    reportFollowingWaypoint(entity);
+                }
             } else if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
@@ -3927,7 +3960,8 @@ public class Princess extends BotClient {
             final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
 
             // each unit in a formation keeps to the formation's pace, up to its own walk or run
-            final List<MovePath> pacedPaths = getUnitOrdersFollower().limitToFormationPace(entity, paths);
+            final List<MovePath> pacedPaths = followsUnitOrders()
+                  ? getUnitOrdersFollower().limitToFormationPace(entity, paths) : paths;
             // the unit's active waypoint is worked out once for all its moves, not for each one scored
             getUnitBehaviorTracker().beginRanking(entity, this);
             final TreeSet<RankedPath> rankedPaths;
@@ -4106,9 +4140,11 @@ public class Princess extends BotClient {
                     if ((bulldozerPaths == null) || bulldozerPaths.isEmpty()) {
                         // A unit with a player's route or edge order keeps heading there: its moves are still scored
                         // by the distance to the waypoint by the real route, which does not need a long-range path.
-                        // Labelling it "no path" would take away that pull and leave it standing still.
-                        boolean hasOrderedDestination = getUnitBehaviorTracker().getActiveWaypoint(mover, this)
-                              .isPresent() || getUnitOrdersFollower().getOrderedEdge(mover).isPresent();
+                        // Labelling it "no path" would take away that pull and leave it standing still. Only a bot
+                        // that follows unit orders scores by the real route.
+                        boolean hasOrderedDestination = followsUnitOrders()
+                              && (getUnitBehaviorTracker().getActiveWaypoint(mover, this).isPresent()
+                              || getUnitOrdersFollower().getOrderedEdge(mover).isPresent());
                         if (hasOrderedDestination) {
                             LOGGER.info("[BotOrders] {} (ID {}): no long-range path; steering by the route distance",
                                   mover.getDisplayName(), mover.getId());
@@ -4121,7 +4157,8 @@ public class Princess extends BotClient {
 
                     bulldozerPaths.sort(new MPCostComparator());
 
-                    if (bulldozerPaths.getFirst().needsLeveling() && getUnitOrdersFollower().hasWalkingRoute(mover)) {
+                    if (followsUnitOrders() && bulldozerPaths.getFirst().needsLeveling()
+                          && getUnitOrdersFollower().hasWalkingRoute(mover)) {
                         // clearing a way is the last resort, for when no way on foot exists (HammerGS, 2026-10-01): a
                         // unit on a player's route that can walk round goes round. Clearing one stopped a Stalker to
                         // shoot the town's south block and took away its route's pull, and it fell out of its lance
@@ -4288,7 +4325,9 @@ public class Princess extends BotClient {
             checkMorale();
             getUnitBehaviorTracker().clear();
             // routes are planned before the first unit moves, not only after the phase
-            getUnitOrdersFollower().planRoutes();
+            if (followsUnitOrders()) {
+                getUnitOrdersFollower().planRoutes();
+            }
             getSwarmContext().assignClusters(getEntitiesOwned());
             getEnemyTracker().updateThreatAssessment(getSwarmContext().getCurrentCenter());
             // reset strategic targets
@@ -4661,15 +4700,38 @@ public class Princess extends BotClient {
     }
 
     /**
-     * @return where the player has ordered the unit: "the NORTH edge" for an edge order, else its next waypoint
+     * @return where the player has ordered the unit: "the NORTH edge" for an edge order, else its next waypoint, or
+     *       its routed formation leader's for a follower with no route of its own
      */
     private String describeOrderedDestination(Entity entity) {
         Optional<CardinalEdge> orderedEdge = getUnitOrdersFollower().getOrderedEdge(entity);
         if (orderedEdge.isPresent()) {
             return Messages.getString("Princess.orders.edge", orderedEdge.get().name());
         }
+        Optional<Entity> routedLeader = getUnitOrdersFollower().routedFormationLeader(entity);
+        if (!entity.getUnitOrders().hasRoute() && routedLeader.isPresent()) {
+            // a follower keeping to its leader's route over Forced Withdrawal names the leader's waypoint (#9524)
+            Entity leader = routedLeader.get();
+            return getUnitBehaviorTracker().getWaypointForEntity(leader)
+                  .map(waypoint -> getUnitOrdersFollower().navLabel(leader, waypoint)).orElse("?");
+        }
         return getUnitBehaviorTracker().getWaypointForEntity(entity)
               .map(waypoint -> getUnitOrdersFollower().navLabel(entity, waypoint)).orElse("?");
+    }
+
+    /**
+     * Tells the players that a crippled unit is heading for its waypoint instead of withdrawing, for a bot with the
+     * original waypoints (issue #9038).
+     */
+    private void reportFollowingWaypoint(Entity entity) {
+        Optional<Coords> waypoint = getUnitBehaviorTracker().getActiveWaypoint(entity, this);
+        if (waypoint.isEmpty()) {
+            return;
+        }
+        String message = Messages.getString("Princess.followingOrders", entity.getDisplayName(),
+              waypoint.get().toFriendlyString());
+        LOGGER.info("[BotOrders] {}", message);
+        sendChat(message, Level.ERROR);
     }
 
     /**
@@ -4745,9 +4807,11 @@ public class Princess extends BotClient {
      */
     CardinalEdge getHomeEdge(Entity entity) {
         // a player's edge order for this unit comes first, unless a gamemaster has ordered it to withdraw
-        Optional<CardinalEdge> orderedEdge = getUnitOrdersFollower().getOrderedEdge(entity);
-        if (orderedEdge.isPresent() && (entity.getForcedWithdrawalOrder() != ForcedWithdrawalOrder.WITHDRAW)) {
-            return orderedEdge.get();
+        if (followsUnitOrders()) {
+            Optional<CardinalEdge> orderedEdge = getUnitOrdersFollower().getOrderedEdge(entity);
+            if (orderedEdge.isPresent() && (entity.getForcedWithdrawalOrder() != ForcedWithdrawalOrder.WITHDRAW)) {
+                return orderedEdge.get();
+            }
         }
 
         // if I am withdrawing under forced withdrawal, my home edge is the "retreat" edge - unless the player has
@@ -5758,7 +5822,21 @@ public class Princess extends BotClient {
 
     @Override
     protected void postMovementProcessing() {
-        getUnitOrdersFollower().advanceRoutes();
+        if (followsUnitOrders()) {
+            getUnitOrdersFollower().advanceRoutes();
+            return;
+        }
+        // the original waypoints: a unit within DISTANCE_TO_WAYPOINT of its first waypoint moves on to the next
+        for (Entity entity : getEntitiesOwned()) {
+            if (entity.getPosition() == null) {
+                continue;
+            }
+            Optional<Coords> waypoint = getUnitBehaviorTracker().getWaypointForEntity(entity);
+            if (waypoint.isPresent() && (waypoint.get().distance(entity.getPosition()) <= DISTANCE_TO_WAYPOINT)) {
+                LOGGER.debug("{} arrived at waypoint {}", entity.getDisplayName(), waypoint.get());
+                getUnitBehaviorTracker().removeHeadWaypoint(entity);
+            }
+        }
     }
 
     public ArtilleryCommandAndControl getArtilleryCommandAndControl() {

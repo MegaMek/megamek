@@ -165,6 +165,17 @@ public final class ReleaseNotesDialog extends JDialog {
     }
 
     /**
+     * Opens the release notes of one application, as {@link #showReleaseNotes(Window, String...)} does. Kept so
+     * applications compiled against this fixed-arity method still run.
+     *
+     * @param owner      The window to center on, or {@code null}
+     * @param repository The application's repository name, e.g. "megameklab"
+     */
+    public static void showReleaseNotes(@Nullable Window owner, String repository) {
+        showReleaseNotes(owner, new String[] { repository });
+    }
+
+    /**
      * Opens what changed in the running version since the version the player ran before it, within the same release
      * channel, and loads it in the background, as Help &gt; Release Notes does. With several repositories, each gets
      * its own tab, in the given order.

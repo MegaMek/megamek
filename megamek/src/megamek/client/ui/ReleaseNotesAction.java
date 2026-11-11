@@ -61,6 +61,11 @@ public class ReleaseNotesAction extends AbstractAction {
         putValue(AbstractAction.SHORT_DESCRIPTION, getString("CommonMenuBar.helpReleaseNotes.tip"));
     }
 
+    /** Creates this action for MegaMek. Kept so applications compiled against the earlier constructor still run. */
+    public ReleaseNotesAction() {
+        this("megamek");
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         ReleaseNotesDialog.showReleaseNotes(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),

@@ -155,6 +155,7 @@ public final class BoardView extends AbstractBoardView
     private static final int BOARD_HEX_DOUBLE_CLICK = 2;
     private static final int BOARD_HEX_DRAG = 3;
     private static final int BOARD_HEX_POPUP = 4;
+    private static final long CHATTER_BOX_WHEEL_SCROLL_INTERVAL_NANOS = 100_000_000L;
 
     // the dimensions of MegaMek's hex images
     public static final int HEX_DIAG = (int) Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
@@ -230,6 +231,9 @@ public final class BoardView extends AbstractBoardView
     private JScrollBar horizontalBar;
     private int scrollXDifference = 0;
     private int scrollYDifference = 0;
+    private double chatterBoxWheelRotation;
+    private long lastChatterBoxWheelScrollNanos = Long.MIN_VALUE;
+    private double boardZoomWheelRotation;
     private int preZoomOverviewIndex = 0;
     private int preZoomOverviewViewX = 0;
     private int preZoomOverviewViewY = 0;
@@ -669,11 +673,6 @@ public final class BoardView extends AbstractBoardView
             Point dispPoint = new Point(mousePoint.x + boardPanel.getBounds().x,
                   mousePoint.y + boardPanel.getBounds().y);
 
-            // Rotations of 0 should not be processed, as they are not valid and can cause issues
-            // Macs especially can run into this.
-            if (mouseWheelEvent.getWheelRotation() == 0) {
-                return;
-            }
             // If the mouse is over an IDisplayable, have it react instead of the board. Currently only implemented
             // for the ChatterBox
             for (IDisplayable displayable : overlays) {
@@ -685,45 +684,71 @@ public final class BoardView extends AbstractBoardView
 
                     // mouseWheelEvent need to adjust the point, because it should be against the displayable dimension
                     if (displayable.isMouseOver(dispPoint, drawDimension)) {
-                        if (mouseWheelEvent.getWheelRotation() > 0) {
-                            chatterBox2.scrollDown();
-                        } else {
-                            chatterBox2.scrollUp();
+                        boardZoomWheelRotation = 0;
+                        chatterBoxWheelRotation += mouseWheelEvent.getPreciseWheelRotation();
+                        long now = java.lang.System.nanoTime();
+                        if ((Math.abs(chatterBoxWheelRotation) >= 1.0)
+                              && ((lastChatterBoxWheelScrollNanos == Long.MIN_VALUE)
+                                    || (now - lastChatterBoxWheelScrollNanos
+                                          >= CHATTER_BOX_WHEEL_SCROLL_INTERVAL_NANOS))) {
+                            if (chatterBoxWheelRotation > 0) {
+                                chatterBox2.scrollDown();
+                            } else {
+                                chatterBox2.scrollUp();
+                            }
+
+                            chatterBoxWheelRotation = 0;
+                            lastChatterBoxWheelScrollNanos = now;
+                            refreshDisplayables();
                         }
 
-                        refreshDisplayables();
                         return;
                     }
                 }
             }
 
-            // calculate a few things to reposition the map
-            Coords zoomCenter = getCoordsAt(mouseWheelEvent.getPoint());
-            Point hexL = getCentreHexLocation(zoomCenter);
-            Point inHexDelta = new Point(mouseWheelEvent.getPoint());
-            inHexDelta.translate(-HEX_W, -HEX_H);
-            inHexDelta.translate(-hexL.x, -hexL.y);
-            double inHexDeltaX = ((double) inHexDelta.x) / ((double) HEX_W) / scale;
-            double inHexDeltaY = ((double) inHexDelta.y) / ((double) HEX_H) / scale;
-            int oldZoomIndex = zoomIndex;
-
             boolean ZoomNoCtrl = GUIP.getMouseWheelZoom();
             boolean wheelFlip = GUIP.getMouseWheelZoomFlip();
-            boolean zoomIn = (mouseWheelEvent.getWheelRotation() > 0) ^ wheelFlip; // = XOR
             boolean doZoom = ZoomNoCtrl ^ mouseWheelEvent.isControlDown(); // = XOR
             boolean horizontalScroll = !doZoom && mouseWheelEvent.isShiftDown();
 
             if (doZoom) {
-                if (zoomIn) {
-                    zoomIn();
-                } else {
-                    zoomOut();
+                boardZoomWheelRotation += mouseWheelEvent.getPreciseWheelRotation();
+                int zoomSteps = (int) Math.abs(boardZoomWheelRotation);
+                if (zoomSteps == 0) {
+                    return;
+                }
+
+                boolean zoomIn = (boardZoomWheelRotation > 0) ^ wheelFlip; // = XOR
+                boardZoomWheelRotation -= Math.copySign(zoomSteps, boardZoomWheelRotation);
+
+                Coords zoomCenter = getCoordsAt(mouseWheelEvent.getPoint());
+                Point hexL = getCentreHexLocation(zoomCenter);
+                Point inHexDelta = new Point(mouseWheelEvent.getPoint());
+                inHexDelta.translate(-HEX_W, -HEX_H);
+                inHexDelta.translate(-hexL.x, -hexL.y);
+                double inHexDeltaX = ((double) inHexDelta.x) / ((double) HEX_W) / scale;
+                double inHexDeltaY = ((double) inHexDelta.y) / ((double) HEX_H) / scale;
+                int oldZoomIndex = zoomIndex;
+
+                for (int step = 0; step < zoomSteps; step++) {
+                    if (zoomIn) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
                 }
 
                 if (zoomIndex != oldZoomIndex) {
                     adjustVisiblePosition(zoomCenter, dispPoint, inHexDeltaX, inHexDeltaY);
                 }
+                pingMinimap();
             } else {
+                boardZoomWheelRotation = 0;
+                if (mouseWheelEvent.getWheelRotation() == 0) {
+                    return;
+                }
+
                 // SCROLL
                 if (horizontalScroll) {
                     horizontalBar.setValue((int) (horizontalBar.getValue() + (HEX_H
@@ -735,9 +760,8 @@ public final class BoardView extends AbstractBoardView
                           * (mouseWheelEvent.getWheelRotation()))));
                 }
                 stopSoftCentering();
+                pingMinimap();
             }
-
-            pingMinimap();
         });
 
         MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {

@@ -177,6 +177,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         this.parentFrame = parentFrame;
         panControls = new ForceGeneratorOptionsView(this::setGeneratedForce, gameOptions);
         panControls.setExistingLiftSupplier(this::existingLift);
+        panControls.setEarlierUnitsSupplier(this::earlierUnits);
         initUi();
     }
 
@@ -205,6 +206,14 @@ public class ForceGeneratorViewUi implements ActionListener {
                   lift.freeBays(), lift.freeDockingCollars());
         }
         return lift;
+    }
+
+    /**
+     * @return the model names of the units the rolls accumulated so far will build, so a new roll can avoid repeating
+     *       them; empty outside accumulate mode
+     */
+    private List<String> earlierUnits() {
+        return (accumulateModel && (modelRoot != null)) ? modelRoot.getIncludedUnitModelNames() : List.of();
     }
 
     private void initUi() {

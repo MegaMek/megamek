@@ -379,14 +379,27 @@ public class UnitTable {
      * @return - the selected unit, or null if no units pass the filter.
      */
     public @Nullable MekSummary generateUnit(UnitFilter filter) {
+        return generateUnit(filter, List.of());
+    }
+
+    /**
+     * Selects a unit from the entries in the table that pass the filter.
+     *
+     * @param filter        the function that determines which units are permitted; if null, no filter is applied
+     * @param drawnThisCall units already drawn earlier in the same multi-unit draw, counted toward
+     *                      {@link UnitVariety} when it is in force
+     *
+     * @return the selected unit, or null if no units pass the filter
+     */
+    private @Nullable MekSummary generateUnit(@Nullable UnitFilter filter, List<MekSummary> drawnThisCall) {
         int roll = Compute.randomInt(100);
         if (roll < salvagePct) {
-            MekSummary ms = generateSalvage(filter);
+            MekSummary ms = generateSalvage(filter, drawnThisCall);
             if (ms != null) {
                 return ms;
             }
         }
-        return drawFromOwnTable(filter);
+        return drawFromOwnTable(filter, drawnThisCall);
     }
 
     /**
@@ -401,16 +414,21 @@ public class UnitTable {
      * @return the selected unit, or {@code null} if none of the faction's own units pass the filter
      */
     public @Nullable MekSummary generateUnitWithoutSalvage(@Nullable UnitFilter filter) {
-        return drawFromOwnTable(filter);
+        return drawFromOwnTable(filter, List.of());
     }
 
-    private @Nullable MekSummary drawFromOwnTable(@Nullable UnitFilter filter) {
+    private @Nullable MekSummary drawFromOwnTable(@Nullable UnitFilter filter, List<MekSummary> drawnThisCall) {
         int roll;
         List<TableEntry> useUnitList = unitTable;
         int unitMapSize = unitTotal;
         if (filter != null) {
             useUnitList = unitTable.stream().filter(te -> filter.include(te.getUnitEntry())).toList();
             unitMapSize = useUnitList.stream().mapToInt(te -> te.weight).sum();
+        }
+
+        UnitVariety variety = UnitVariety.active();
+        if ((variety != null) && (useUnitList.size() > 1)) {
+            return drawWithVariety(useUnitList, variety.weightsForDraw(drawnThisCall));
         }
 
         if (unitMapSize > 0) {
@@ -423,6 +441,49 @@ public class UnitTable {
             }
         }
         return null;
+    }
+
+    /** How finely a scaled weight is kept: a unit's table weight is at most 1000, so totals stay well inside an int. */
+    private static final int VARIETY_WEIGHT_SCALE = 100;
+
+    /**
+     * Draws from entries whose weights are scaled by {@link UnitVariety}. Every entry keeps some weight, so a unit is
+     * never ruled out, only made less likely.
+     *
+     * @param entries the entries that may be drawn
+     * @param weights what the force already holds
+     *
+     * @return the unit drawn, or {@code null} if no entry has any weight
+     */
+    private static @Nullable MekSummary drawWithVariety(List<TableEntry> entries, UnitVariety.DrawWeights weights) {
+        int[] scaled = new int[entries.size()];
+        int total = 0;
+        for (int index = 0; index < entries.size(); index++) {
+            TableEntry entry = entries.get(index);
+            if (entry.weight > 0) {
+                double factor = weights.factor(entry.getUnitEntry());
+                scaled[index] = Math.max(1, (int) Math.round(entry.weight * factor * VARIETY_WEIGHT_SCALE));
+                total += scaled[index];
+            }
+        }
+        return (total > 0) ? entries.get(pickIndex(scaled, Compute.randomInt(total))).getUnitEntry() : null;
+    }
+
+    /**
+     * @param weights weights, none negative
+     * @param roll    a number from zero to one less than their total
+     *
+     * @return the index the roll lands on
+     */
+    static int pickIndex(int[] weights, int roll) {
+        int remaining = roll;
+        for (int index = 0; index < weights.length; index++) {
+            if (remaining < weights[index]) {
+                return index;
+            }
+            remaining -= weights[index];
+        }
+        return weights.length - 1;
     }
 
     /**
@@ -447,7 +508,8 @@ public class UnitTable {
     public ArrayList<MekSummary> generateUnits(int num, UnitFilter filter) {
         ArrayList<MekSummary> retVal = new ArrayList<>();
         for (int i = 0; i < num; i++) {
-            MekSummary ms = generateUnit(filter);
+            // The units drawn so far will sit together, so they count against each other under UnitVariety.
+            MekSummary ms = generateUnit(filter, retVal);
             if (ms != null) {
                 retVal.add(ms);
             }
@@ -466,7 +528,7 @@ public class UnitTable {
      * @return - a unit generated from another faction, or null if none of the factions in the salvage list contain any
      *       units that meet the parameters.
      */
-    private @Nullable MekSummary generateSalvage(UnitFilter filter) {
+    private @Nullable MekSummary generateSalvage(@Nullable UnitFilter filter, List<MekSummary> drawnThisCall) {
         while (salvageTotal > 0) {
             int roll = Compute.randomInt(salvageTotal);
             TableEntry salvageEntry = null;
@@ -489,7 +551,7 @@ public class UnitTable {
                       key.getRoleStrictness(),
                       key.getFaction());
                 if (salvage.hasUnits()) {
-                    return salvage.generateUnit(filter);
+                    return salvage.generateUnit(filter, drawnThisCall);
                 } else {
                     salvageTotal -= salvageEntry.weight;
                     salvageTable.remove(salvageEntry);

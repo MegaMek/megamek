@@ -188,6 +188,15 @@ public class ForceDescriptor {
     private double warshipPct = 0.0;
     /** What the force already owns to carry it before this run; only the shortfall is generated. */
     private ExistingLift existingLift = ExistingLift.NONE;
+    /** Whether repeat units are made less likely while this force is generated; see {@link UnitVariety}. */
+    private boolean unitVarietyBias = false;
+    /** The model names of units earlier rolls of the same command already brought, for {@link UnitVariety}. */
+    private List<String> earlierUnits = List.of();
+    /**
+     * Models a pick for this slot should avoid if its chassis offers any other: the variants a lance already holds,
+     * while {@link UnitVariety} is in force. Set only for the length of one pick.
+     */
+    private final Set<String> excludedModels = new HashSet<>();
     /** Whether this node is the "Naval Units" branch the transport stage attaches to a force. */
     private boolean transportRoot = false;
     /**
@@ -261,6 +270,25 @@ public class ForceDescriptor {
      * Goes through the force tree structure and generates units for all leaf nodes.
      */
     public void generateUnits(ProgressListener l, double progress) {
+        // The outermost call of a generation decides whether repeat units are made less likely for all of it. The
+        // recursion below comes back through here with variety already in force, or already declined.
+        if (UnitVariety.active() == null) {
+            UnitVariety variety = UnitVariety.forGeneration(this);
+            if (variety != null) {
+                variety.runFor(this, () -> generateUnitsInScope(l, progress));
+                return;
+            }
+            generateUnitsInScope(l, progress);
+            if (getParent() == null) {
+                // Logged without variety too, so the two can be compared from the same log.
+                UnitVariety.logSummary(this, false);
+            }
+            return;
+        }
+        generateUnitsInScope(l, progress);
+    }
+
+    private void generateUnitsInScope(ProgressListener l, double progress) {
         // If the parent node has a chassis or model assigned, it carries through to the
         // children.
         if (parent != null) {
@@ -455,6 +483,14 @@ public class ForceDescriptor {
      *       the given parameters.
      */
     private List<ModelRecord> generateFormation(List<ForceDescriptor> subs, int networkMask, int numGroups) {
+        UnitVariety variety = UnitVariety.active();
+        // The formation builder draws this node's own units, so its draws are compared with this formation.
+        return (variety == null)
+              ? generateFormationUnits(subs, networkMask, numGroups)
+              : variety.inFormation(this, () -> generateFormationUnits(subs, networkMask, numGroups));
+    }
+
+    private List<ModelRecord> generateFormationUnits(List<ForceDescriptor> subs, int networkMask, int numGroups) {
         // Collect the weight classes the force tree assigned to this formation's elements. Passing
         // them to the formation builder keeps it within the lance's intended weight profile; left
         // null it would pick any weight the FormationType itself allows (e.g. a light Mek in a
@@ -778,7 +814,7 @@ public class ForceDescriptor {
                             sub.getChassis().add(model);
                             int oldWt = sub.getWeightClass();
                             sub.setWeightClass(-1);
-                            unit = sub.generate();
+                            unit = generateVariantNotInLance(sub, subs);
                             if (unit != null && weights.contains(unit.getWeightClass())) {
                                 sub.setUnit(unit);
                                 if (useWeights) {
@@ -844,7 +880,7 @@ public class ForceDescriptor {
                         Set<String> chassisBeforeAttempt = new HashSet<>(sub.getChassis());
                         sub.getChassis().add(baseModel.getChassis());
                         sub.setWeightClass(-1);
-                        unit = sub.generate();
+                        unit = generateVariantNotInLance(sub, subs);
                         if (unit != null) {
                             sub.setUnit(unit);
                             if (useWeights) {
@@ -909,6 +945,43 @@ public class ForceDescriptor {
     }
 
     /**
+     * Picks a unit for a slot pinned to a lance-mate's chassis. While {@link UnitVariety} is in force the lance keeps
+     * the chassis - one logistics chain, one look - but takes a variant it does not already hold whenever the chassis
+     * offers one, so four tanks of a lance read as four Manticores rather than four identical ones. Without variety,
+     * or when the chassis has no other variant, this is an ordinary pick.
+     *
+     * @param slot  the slot, already pinned to the chassis
+     * @param lance every slot of the lance, to read the variants already chosen
+     *
+     * @return the unit, or {@code null} if none could be generated
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static @Nullable ModelRecord generateVariantNotInLance(ForceDescriptor slot, List<ForceDescriptor> lance) {
+        if (UnitVariety.active() == null) {
+            return slot.generate();
+        }
+        Set<String> variantsInLance = new HashSet<>();
+        for (ForceDescriptor other : lance) {
+            if ((other != slot) && other.isElement()) {
+                variantsInLance.addAll(other.getModels());
+            }
+        }
+        if (variantsInLance.isEmpty()) {
+            return slot.generate();
+        }
+        slot.excludedModels.addAll(variantsInLance);
+        ModelRecord otherVariant;
+        try {
+            otherVariant = slot.generate();
+        } finally {
+            slot.excludedModels.clear();
+        }
+        return (otherVariant != null) ? otherVariant : slot.generate();
+    }
+
+    /**
      * Assigns a specific model to this node of the force tree. If this is a leaf node it will be flagged as an element.
      * If it has child nodes, they will all be made up of the same model unless changed by a rule at a lower level of
      * organization.
@@ -925,6 +998,10 @@ public class ForceDescriptor {
         }
         if (subForces.isEmpty()) {
             element = true;
+            UnitVariety variety = UnitVariety.active();
+            if (variety != null) {
+                variety.record(this, unit);
+            }
             movementModes.clear();
             movementModes.add(unit.getMovementMode());
             if (unitType == null) {
@@ -1109,6 +1186,12 @@ public class ForceDescriptor {
     }
 
     public @Nullable ModelRecord generate() {
+        UnitVariety variety = UnitVariety.active();
+        // A slot's pick is compared with the rest of the formation it belongs to: its parent.
+        return (variety == null) ? generatePick() : variety.inFormation(parent, this::generatePick);
+    }
+
+    private @Nullable ModelRecord generatePick() {
         // A null unit type means there is no concrete element to generate here (e.g. a
         // subforce that failed to inherit a unitType). Bail out gracefully instead of NPEing
         // in the failure-logging path below, which would abort the entire force generation.
@@ -1377,6 +1460,7 @@ public class ForceDescriptor {
                           && workingCopy.acceptsForInfantryClass(unit));
                 } else if (!workingCopy.getChassis().isEmpty()) {
                     mekSummary = table.generateUnit(unit -> workingCopy.getChassis().contains(unit.getChassis())
+                          && !excludedModels.contains(unit.getName())
                           && workingCopy.acceptsForInfantryClass(unit));
                 } else if (workingCopy.isInfantryClassApplied()) {
                     mekSummary = allowSalvage
@@ -2949,6 +3033,34 @@ public class ForceDescriptor {
     }
 
     /**
+     * @return the model names of every unit under this node that will be built: struck-out units and branches are
+     *       left out, attached forces counted
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public List<String> getIncludedUnitModelNames() {
+        List<String> modelNames = new ArrayList<>();
+        collectIncludedUnitModelNames(modelNames);
+        return modelNames;
+    }
+
+    private void collectIncludedUnitModelNames(List<String> modelNames) {
+        if (!included) {
+            return;
+        }
+        if (element && !models.isEmpty()) {
+            modelNames.add(getModelName());
+        }
+        for (ForceDescriptor sub : subForces) {
+            sub.collectIncludedUnitModelNames(modelNames);
+        }
+        for (ForceDescriptor attachedForce : attached) {
+            attachedForce.collectIncludedUnitModelNames(modelNames);
+        }
+    }
+
+    /**
      * Sets whether this descriptor alone is included. Use {@link #setIncludedRecursively(boolean)} to
      * cascade the value to the whole subtree.
      *
@@ -3192,6 +3304,52 @@ public class ForceDescriptor {
      */
     public void setExistingLift(@Nullable ExistingLift existingLift) {
         this.existingLift = (existingLift == null) ? ExistingLift.NONE : existingLift;
+    }
+
+    /**
+     * @return {@code true} if repeat units are made less likely while this force, and anything under it, is generated
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUnitVarietyBias() {
+        return unitVarietyBias;
+    }
+
+    /**
+     * Asks for repeat units to be made less likely while this force, and anything under it, is generated. Off by
+     * default, so a force generates exactly as the unit tables weigh it; see {@link UnitVariety}.
+     *
+     * @param unitVarietyBias {@code true} to make repeat units less likely
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setUnitVarietyBias(boolean unitVarietyBias) {
+        this.unitVarietyBias = unitVarietyBias;
+    }
+
+    /**
+     * @return the model names of units earlier rolls of the same command already brought; never {@code null}
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public List<String> getEarlierUnits() {
+        return earlierUnits;
+    }
+
+    /**
+     * Hands generation the units earlier rolls of the same command brought, so that with
+     * {@link #isUnitVarietyBias()} on, this roll is less likely to repeat them.
+     *
+     * @param earlierUnits their model names; {@code null} means none
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setEarlierUnits(@Nullable List<String> earlierUnits) {
+        this.earlierUnits = (earlierUnits == null) ? List.of() : List.copyOf(earlierUnits);
     }
 
     public double getDropshipPct() {

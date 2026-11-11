@@ -214,8 +214,6 @@ public abstract class PathRanker implements IPathRanker {
                     BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                           .round(new MathContext(0, RoundingMode.DOWN));
                     if (percent.compareTo(interval) >= 0) {
-                        // Logged, never sent to chat: the shipped config runs the bot loggers at DEBUG, so a
-                        // chat line here buried the bot's real messages (issue #9510).
                         logger.debug("{}: {}% of paths ranked", getOwner().getName(), percent.intValue());
                         interval = percent.add(new BigDecimal(5));
                     }

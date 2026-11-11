@@ -682,6 +682,40 @@ class WaypointTableModel extends AbstractTableModel {
         };
     }
 
+    /**
+     * @param columnIndex a column
+     *
+     * @return what the column does, in plain language, for its header's tooltip
+     */
+    String getColumnToolTip(int columnIndex) {
+        return Messages.getString("BotCommandPanel.MoveOrder.column." + COLUMN_KEYS[columnIndex] + ".tooltip");
+    }
+
+    /**
+     * Sets a value the player chose in one row on every selected row it applies to, so a setting forgotten on a long
+     * route is changed in one go (QA playtest, #9449, 2026-11-07). The edited row always takes it. Another row takes it
+     * only where that cell can be changed and the value is one it offers: a Then of Hold is not put on the end of the
+     * route. A phase line marks one point of the route, so it stays on the edited row alone.
+     *
+     * @param value        the value chosen
+     * @param editedRow    the row the player changed
+     * @param selectedRows the rows selected, the edited one among them or not
+     * @param columnIndex  the column changed
+     */
+    void setValueAtRows(Object value, int editedRow, int[] selectedRows, int columnIndex) {
+        setValueAt(value, editedRow, columnIndex);
+        if (columnIndex == COLUMN_PHASE_LINE) {
+            return;
+        }
+        for (int row : selectedRows) {
+            boolean isOtherRow = (row != editedRow) && (row >= 0) && (row < rows.size());
+            if (isOtherRow && isCellEditable(row, columnIndex)
+                  && ((columnIndex != COLUMN_THEN) || thenOptions(row).contains(value))) {
+                setValueAt(value, row, columnIndex);
+            }
+        }
+    }
+
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         WaypointFormation formation = rows.get(rowIndex).formation;

@@ -126,7 +126,10 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     }
 
     private void done() {
+        LOGGER.debug("[DoneButton] {}: Done pressed in phase {}", getClass().getSimpleName(),
+              clientGUI.getClient().getGame().getPhase());
         if (shouldPerformDone()) {
+            LOGGER.debug("[DoneButton] {}: Done accepted", getClass().getSimpleName());
             // When the turn is ended, we could miss a key release event
             // This will ensure no repeating keys are stuck down
             MegaMekGUI.getKeyDispatcher().stopAllRepeating();

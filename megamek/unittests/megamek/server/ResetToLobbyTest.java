@@ -38,11 +38,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
@@ -61,12 +66,12 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * Resetting a game to the lobby from a report phase left every client holding the last turn of the old game, often
- * another player's. The lobby's Done button refuses to act while another player's turn is pending, so the human
- * player could not start the next game. These tests reset the server and feed the turn list it sends into a client's
- * copy of the game, the way a client receives it.
+ * A game reset to the lobby from a report phase - the usual moment for a reset - arrived in a lobby that could not
+ * start the next game: each client still held the old game's last turn, so its Done button refused to act; every
+ * player was still marked done; and a game reset while paused stayed paused, so the server held every Done press and
+ * unit change unprocessed. These tests reset the server the way the reset command does and check what it sends.
  */
-class ResetClearsClientTurnsTest {
+class ResetToLobbyTest {
 
     private static final int HUMAN_PLAYER_ID = 0;
     private static final int BOT_PLAYER_ID = 1;
@@ -76,19 +81,33 @@ class ResetClearsClientTurnsTest {
     private TWGameManager gameManager;
     private Game clientGame;
 
+    /** The Done flag of each player at the moment their player update was sent, by player ID */
+    private final Map<Integer, Boolean> doneFlagSentByPlayerId = new HashMap<>();
+
     @BeforeEach
     void beforeEach() {
         // every packet leaves through the server, whichever helper class sends it, so it is recorded there
         server = mock(Server.class);
         mockedServer = mockStatic(Server.class);
         mockedServer.when(Server::getServerInstance).thenReturn(server);
+        // the player object is sent by reference, so its Done flag is recorded as it was when sent
+        doAnswer(invocation -> {
+            Player player = invocation.getArgument(0);
+            doneFlagSentByPlayerId.put(player.getId(), player.isDone());
+            return null;
+        }).when(server).transmitPlayerUpdate(any(Player.class));
 
         gameManager = new TWGameManager();
 
         Game serverGame = gameManager.getGame();
-        serverGame.addPlayer(HUMAN_PLAYER_ID, new Player(HUMAN_PLAYER_ID, "Defenders"));
-        serverGame.addPlayer(BOT_PLAYER_ID, new Player(BOT_PLAYER_ID, "Bot"));
-        serverGame.setPhase(GamePhase.INITIATIVE_REPORT);
+        Player humanPlayer = new Player(HUMAN_PLAYER_ID, "Defenders");
+        Player botPlayer = new Player(BOT_PLAYER_ID, "Bot");
+        serverGame.addPlayer(HUMAN_PLAYER_ID, humanPlayer);
+        serverGame.addPlayer(BOT_PLAYER_ID, botPlayer);
+        serverGame.setPhase(GamePhase.END_REPORT);
+        // everyone has pressed Done on the report when the reset comes in
+        humanPlayer.setDone(true);
+        botPlayer.setDone(true);
 
         // the client still holds the deployment turns it was last sent; report phases send no turn list
         clientGame = new Game();
@@ -117,12 +136,13 @@ class ResetClearsClientTurnsTest {
     }
 
     @Test
-    @DisplayName("Before the reset, the client is waiting on the bot's leftover turn")
-    void clientStartsWithTheBotsLeftoverTurn() {
+    @DisplayName("Before the reset, the client is waiting on the bot's leftover turn and everyone is done")
+    void startsWithLeftoverTurnAndEveryoneDone() {
         GameTurn pendingTurn = clientGame.getTurn();
 
         assertNotNull(pendingTurn, "the client should start out holding the old game's turn");
         assertEquals(BOT_PLAYER_ID, pendingTurn.playerId(), "the leftover turn should be the bot's");
+        assertTrue(gameManager.getGame().getPlayer(HUMAN_PLAYER_ID).isDone(), "the human should start out done");
     }
 
     @Test
@@ -146,5 +166,28 @@ class ResetClearsClientTurnsTest {
 
         assertNull(clientGame.getTurn(), "the client should no longer be waiting on any turn in the lobby");
         assertTrue(gameManager.getGame().getPhase().isLounge(), "the server should be back in the lobby");
+    }
+
+    @Test
+    @DisplayName("A reset from a report phase arrives in the lobby with nobody marked done, on server and clients")
+    void resetFromReportPhaseClearsDoneFlags() {
+        gameManager.resetGame();
+
+        assertFalse(gameManager.getGame().getPlayer(HUMAN_PLAYER_ID).isDone(),
+              "the server should no longer count the human as done");
+        assertFalse(gameManager.getGame().getPlayer(BOT_PLAYER_ID).isDone(),
+              "the server should no longer count the bot as done");
+        assertEquals(Boolean.FALSE, doneFlagSentByPlayerId.get(HUMAN_PLAYER_ID),
+              "the clients should be sent the human as not done");
+        assertEquals(Boolean.FALSE, doneFlagSentByPlayerId.get(BOT_PLAYER_ID),
+              "the clients should be sent the bot as not done");
+    }
+
+    @Test
+    @DisplayName("Resetting to the lobby ends any pause, so the lobby acts on Done presses again")
+    void resetEndsThePause() {
+        gameManager.resetGame();
+
+        verify(server).endPauseForLobby();
     }
 }

@@ -114,6 +114,9 @@ public class LanceRolePanel extends JPanel {
     private final JLabel distanceHint = new JLabel();
     private final JLabel contactHint = new JLabel();
     private final JLabel leaveHint = new JLabel();
+    /** The Leave to fight row, shown only when the escort breaks off to fight on contact. */
+    private JLabel leaveLabel;
+    private JPanel leaveRow;
     private final JLabel goneHint = new JLabel();
     private boolean isLoading;
 
@@ -245,9 +248,8 @@ public class LanceRolePanel extends JPanel {
         });
         contactCombo.addActionListener(event -> fireChange());
         addFormRow(form, constraints, "BotCommandPanel.Role.escort.contact", contactCombo, contactHint);
-        addFormRow(form, constraints, "BotCommandPanel.Role.escort.leave",
-              segmentedRow(leaveButtons, List.of(LanceRole.LeaveToFight.values()), "BotCommandPanel.Role.leave."),
-              leaveHint);
+        leaveRow = segmentedRow(leaveButtons, List.of(LanceRole.LeaveToFight.values()), "BotCommandPanel.Role.leave.");
+        leaveLabel = addFormRow(form, constraints, "BotCommandPanel.Role.escort.leave", leaveRow, leaveHint);
         addFormRow(form, constraints, "BotCommandPanel.Role.escort.gone",
               segmentedRow(goneButtons, List.of(LanceRole.WhenConvoyGone.values()), "BotCommandPanel.Role.gone."),
               goneHint);
@@ -294,12 +296,16 @@ public class LanceRolePanel extends JPanel {
         return constraints;
     }
 
-    private void addFormRow(JPanel form, GridBagConstraints constraints, String labelKey, Component control,
+    /**
+     * @return the row's label, so the row can be shown or hidden as a whole
+     */
+    private JLabel addFormRow(JPanel form, GridBagConstraints constraints, String labelKey, Component control,
           @Nullable JLabel hint) {
         constraints.gridx = 0;
         constraints.gridwidth = 1;
         constraints.weightx = 0;
-        form.add(new JLabel(Messages.getString(labelKey)), constraints);
+        JLabel label = new JLabel(Messages.getString(labelKey));
+        form.add(label, constraints);
         constraints.gridx = 1;
         constraints.fill = GridBagConstraints.NONE;
         form.add(control, constraints);
@@ -308,6 +314,7 @@ public class LanceRolePanel extends JPanel {
             form.add(hint, constraints);
         }
         constraints.gridy++;
+        return label;
     }
 
     /**
@@ -487,14 +494,13 @@ public class LanceRolePanel extends JPanel {
         // each hint says what the choice picked on its row means, and changes with it
         distanceHint.setText(hint("distance." + selected(distanceButtons, LanceRole.Distance.MEDIUM).name()));
         contactHint.setText(hint("contact." + ((LanceRole.Contact) contactCombo.getSelectedItem()).name()));
-        // how far it leaves to fight matters only when it breaks off to fight
+        // how far it leaves to fight matters only when it breaks off to fight, so the row shows only then; greyed
+        // out, testers read it as an option to set (QA playtest, #9449, 2026-11-10)
         boolean isBreakingToFight = contactCombo.getSelectedItem() == LanceRole.Contact.BREAK_AND_FIGHT;
-        for (JToggleButton leaveButton : leaveButtons.values()) {
-            leaveButton.setEnabled(isBreakingToFight);
-        }
-        leaveHint.setText(isBreakingToFight
-              ? hint("leave." + selected(leaveButtons, LanceRole.LeaveToFight.BRIEFLY).name())
-              : Messages.getString("BotCommandPanel.Role.hint.leave.onlyBreaking"));
+        leaveLabel.setVisible(isBreakingToFight);
+        leaveRow.setVisible(isBreakingToFight);
+        leaveHint.setVisible(isBreakingToFight);
+        leaveHint.setText(hint("leave." + selected(leaveButtons, LanceRole.LeaveToFight.BRIEFLY).name()));
         goneHint.setText(hint("gone." + selected(goneButtons, LanceRole.WhenConvoyGone.FOLLOW).name()));
     }
 

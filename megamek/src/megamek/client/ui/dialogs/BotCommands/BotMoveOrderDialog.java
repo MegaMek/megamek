@@ -67,6 +67,7 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -254,7 +255,13 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         shownRoleKind = roleKind;
         String roleName = Messages.getString("BotCommandPanel.Role." + roleKind);
         roleButton.setText(Messages.getString("BotCommandPanel.MoveOrder.roleButton", roleName));
-        tabs.setTitleAt(ROLE_TAB, Messages.getString("BotCommandPanel.MoveOrder.tab.roleNamed", roleName));
+        // the Role tab was easy to miss beside Route (QA playtest, #9449, 2026-11-10): its title is bold, and drawn in
+        // the accent colour once the lance has a role
+        tabs.setTitleAt(ROLE_TAB, "<html><b>" + Messages.getString("BotCommandPanel.MoveOrder.tab.roleNamed",
+              roleName) + "</b></html>");
+        tabs.setToolTipTextAt(ROLE_TAB, Messages.getString("BotCommandPanel.MoveOrder.tab.role.tooltip"));
+        boolean hasRole = !LanceRole.NONE_TEXT.equals(roleKind);
+        tabs.setForegroundAt(ROLE_TAB, hasRole ? UIManager.getColor("Component.accentColor") : null);
         boolean isEscort = rolePanel.isEscortChosen();
         // a convoy leaving by an edge shows that on its last waypoint, rather than a hold the bot would not keep
         waypoints.setRole(isEscort ? null : rolePanel.getRole());
@@ -367,9 +374,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         toolbar.add(clearButton, BorderLayout.LINE_END);
         panel.add(toolbar, BorderLayout.PAGE_START);
 
-        waypointTable = new JTable(waypoints);
+        waypointTable = new WaypointColumns.WaypointTable(waypoints);
         waypointTable.setRowHeight(UIUtil.scaleForGUI(ROW_HEIGHT));
-        waypointTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // several rows may be selected, so one change sets them all (QA playtest, #9449, 2026-11-07)
+        waypointTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         WaypointColumns.setUp(waypointTable, waypoints, this::knownPhaseLines);
         waypointTable.getSelectionModel().addListSelectionListener(event -> {
             if (!event.getValueIsAdjusting()) {
@@ -537,13 +545,16 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         }
     }
 
+    /** Removes every selected waypoint, last first so the earlier rows keep their places, and selects the next one. */
     private void removeSelectedWaypoint() {
-        int row = waypointTable.getSelectedRow();
-        if (row < 0) {
+        int[] selected = waypointTable.getSelectedRows();
+        if (selected.length == 0) {
             return;
         }
-        waypoints.removeWaypoint(row);
-        selectRow(Math.min(row, waypoints.getRowCount() - 1));
+        for (int index = selected.length - 1; index >= 0; index--) {
+            waypoints.removeWaypoint(selected[index]);
+        }
+        selectRow(Math.min(selected[0], waypoints.getRowCount() - 1));
     }
 
     private void selectRow(int row) {

@@ -672,20 +672,52 @@ public class Server implements Runnable {
         return oldName;
     }
 
+    /**
+     * Tells every player already in the game that someone was refused for running a different version. Only the
+     * name is passed on, never the address: that stays in the server log for the host.
+     *
+     * <p>The refused connection is still pending, so it is not among the connections this reaches.</p>
+     *
+     * @param refusedConnection the connection that was refused
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void notifyPlayersOfRefusedConnection(RefusedConnection refusedConnection) {
+        send(new Packet(PacketCommand.PLAYER_REFUSED_DIFFERENT_VERSION,
+              refusedConnection.playerName(),
+              refusedConnection.clientVersion(),
+              refusedConnection.serverVersion()));
+    }
+
     private boolean receivePlayerVersion(Packet packet, int connId) throws InvalidPacketDataException {
         final Version version = (Version) packet.getObject(0);
+        final Version serverVersion = SuiteConstants.VERSION;
 
-        if (!SuiteConstants.VERSION.is(version)) {
+        if (!serverVersion.is(version)) {
+            // Clients from 0.51.01 onwards send their player name alongside the version, so the other players can be
+            // told who was refused. Older clients send the version alone. The address goes to the server log only,
+            // never to the other players.
+            final AbstractConnection pendingConnection = getPendingConnection(connId);
+            final RefusedConnection refusedConnection = RefusedConnection.fromReceived(packet.getObject(1),
+                  (pendingConnection == null) ? null : pendingConnection.getInetAddress(),
+                  version,
+                  serverVersion);
+            final String playerName = refusedConnection.hasPlayerName()
+                  ? refusedConnection.playerName()
+                  : "unknown player";
+
             final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
                   version,
-                  SuiteConstants.VERSION);
-            LOGGER.error(message);
+                  serverVersion);
+            LOGGER.error("Refused connection from {} ({}): {}", playerName, refusedConnection.address(), message);
 
-            final Player player = getPlayer(connId);
             sendServerChat(String.format("For %s, Server reports:%s%s",
-                  ((player == null) ? "unknown player" : player.getName()),
+                  playerName,
                   System.lineSeparator(),
                   message));
+
+            notifyPlayersOfRefusedConnection(refusedConnection);
             return false;
         }
 

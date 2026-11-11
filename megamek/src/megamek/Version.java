@@ -630,6 +630,46 @@ public final class Version implements Comparable<Version>, Serializable {
         return equals(other);
     }
 
+    /**
+     * Checks whether the other version belongs to the same release as this one.
+     *
+     * <p>Only the major, minor and patch components are compared. The optional revision is ignored, so
+     * {@code 0.51.01.1} and {@code 0.51.01.2} are the same release, while {@code 0.51.01} and {@code 0.51.02} are
+     * not. The extra build information, such as a nightly's git hash, is ignored as well.</p>
+     *
+     * @param other the version to compare against
+     *
+     * @return {@code true} if both versions share the same major, minor and patch components, otherwise
+     *       {@code false}
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isSameRelease(final Version other) {
+        return (getMajor() == other.getMajor())
+              && (getMinor() == other.getMinor())
+              && (getPatch() == other.getPatch());
+    }
+
+    /**
+     * Checks whether a save game written by the given version can be loaded by this version.
+     *
+     * <p>A save loads only within the same release, and never into an older revision of it: a save from
+     * {@code 0.51.01.1} loads into {@code 0.51.01.1} or {@code 0.51.01.6}, but a save from {@code 0.51.01.6} does
+     * not load into {@code 0.51.01.1}, and nothing loads across releases. The extra build information, such as a
+     * nightly's git hash, is ignored.</p>
+     *
+     * @param saveVersion the version the save game was written by
+     *
+     * @return {@code true} if this version can load the save, otherwise {@code false}
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean canLoadSaveFrom(final Version saveVersion) {
+        return isSameRelease(saveVersion) && (saveVersion.getRevision() <= getRevision());
+    }
+
     @Override
     public int compareTo(final Version other) {
         // Check the major version

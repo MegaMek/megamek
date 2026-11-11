@@ -45,11 +45,12 @@ class ReleaseNotesDialogTest {
 
     @Test
     void htmlEscapesTitlesAndLinksPullRequests() {
-        ReleaseNotes notes = new ReleaseNotes("megamek", URI.create("https://github.com/MegaMek/megamek/releases"),
-              null, List.of(new ReleaseNotes.Section("Bug Fixes", List.of(
+        URI page = URI.create("https://github.com/MegaMek/megamek/releases/tag/v0.51.01.5");
+        ReleaseNotes notes = new ReleaseNotes("megamek", page, null, List.of(new ReleaseNotes.Release("0.51.01.5",
+              page, List.of(new ReleaseNotes.Section("Bug Fixes", List.of(
                     new ReleaseNotes.Change("Fix <b>bold</b> & 'quotes'", 12,
                           URI.create("https://github.com/MegaMek/megamek/pull/12")),
-                    new ReleaseNotes.Change("Written by hand", 0, null)))));
+                    new ReleaseNotes.Change("Written by hand", 0, null)))))));
 
         String html = ReleaseNotesDialog.html(notes);
 
@@ -58,6 +59,38 @@ class ReleaseNotesDialogTest {
               + "<a href='https://github.com/MegaMek/megamek/pull/12'>#12</a></li>"));
         assertTrue(html.contains("<li>Written by hand</li>"));
         assertFalse(html.contains("<b>"));
+        assertFalse(html.contains("<h2>"), "one release needs no version heading");
+    }
+
+    @Test
+    void severalReleasesEachGetAVersionHeadingNewestFirst() {
+        ReleaseNotes notes = new ReleaseNotes("megamek", URI.create("https://github.com/MegaMek/megamek/releases"),
+              "0.51.01.3", List.of(release("0.51.01.5", 5), release("0.51.01.4", 4)));
+
+        String html = ReleaseNotesDialog.html(notes);
+
+        String five = "<h2><a href='https://github.com/MegaMek/megamek/releases/tag/v0.51.01.5'>0.51.01.5</a></h2>";
+        String four = "<h2><a href='https://github.com/MegaMek/megamek/releases/tag/v0.51.01.4'>0.51.01.4</a></h2>";
+        assertTrue(html.contains(five));
+        assertTrue(html.contains(four));
+        assertTrue(html.indexOf(five) < html.indexOf("#5<") && html.indexOf("#5<") < html.indexOf(four)
+              && html.indexOf(four) < html.indexOf("#4<"));
+    }
+
+    @Test
+    void aRangeWithOnlyOneChangedReleaseStillNamesIt() {
+        ReleaseNotes notes = new ReleaseNotes("megameklab",
+              URI.create("https://github.com/MegaMek/megameklab/releases"), "0.51.01.3",
+              List.of(release("0.51.01.4", 4)));
+
+        assertTrue(ReleaseNotesDialog.html(notes).contains(">0.51.01.4</a></h2>"));
+    }
+
+    private static ReleaseNotes.Release release(String version, int pullRequest) {
+        return new ReleaseNotes.Release(version,
+              URI.create("https://github.com/MegaMek/megamek/releases/tag/v" + version),
+              List.of(new ReleaseNotes.Section("Bug Fixes", List.of(new ReleaseNotes.Change("Fix", pullRequest,
+                    URI.create("https://github.com/MegaMek/megamek/pull/" + pullRequest))))));
     }
 
     @Test

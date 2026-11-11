@@ -34,7 +34,10 @@ package megamek.client.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.awt.Window;
+
 import megamek.Version;
+import megamek.client.ui.dialogs.releaseNotes.ReleaseNotesDialog;
 import org.junit.jupiter.api.Test;
 
 class ReleaseNotesActionTest {
@@ -61,5 +64,13 @@ class ReleaseNotesActionTest {
 
         assertEquals("https://github.com/MegaMek/megameklab/releases/tag/v0.51.01.5",
               ReleaseNotesAction.releaseNotesUrl("megameklab", version));
+    }
+
+    @Test
+    void earlierSignaturesStayForApplicationsCompiledAgainstThem() throws NoSuchMethodException {
+        ReleaseNotesAction.class.getConstructor();
+        ReleaseNotesAction.class.getConstructor(String[].class);
+        ReleaseNotesDialog.class.getMethod("showReleaseNotes", Window.class, String.class);
+        ReleaseNotesDialog.class.getMethod("showReleaseNotes", Window.class, String[].class);
     }
 }

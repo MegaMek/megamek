@@ -39,6 +39,8 @@ import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -47,6 +49,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
@@ -62,7 +65,8 @@ import megamek.logging.MMLogger;
 /**
  * Shows what changed in the running version of a MegaMek suite application, from Help &gt; Release Notes: the
  * published release notes on GitHub, grouped by kind of change, of every release of the running version's channel
- * since the version the player ran before. It only opens when the player asks for it.
+ * since the version the player ran before. It only opens when the player asks for it. An application that includes
+ * others, such as MekHQ, shows each application's notes in its own tab.
  *
  * <p>The dialog is not modal and the notes load in the background, so a slow or refused GitHub request never holds
  * up the application.</p>
@@ -73,19 +77,35 @@ public final class ReleaseNotesDialog extends JDialog {
     private static final MMLogger LOGGER = MMLogger.create(ReleaseNotesDialog.class);
     private static final String GITHUB = "https://github.com/MegaMek/";
 
-    private final JEditorPane notes = new JEditorPane("text/html", "");
     private final JLabel since = new JLabel();
-    private URI page;
-    private transient SwingWorker<ReleaseNotes, Void> worker;
+    private final transient List<Tab> tabs = new ArrayList<>();
+    private final JTabbedPane tabbedPane = new JTabbedPane();
 
-    private ReleaseNotesDialog(@Nullable Window owner, String repository, Version version) {
+    /** The notes of one application: its pane, its page on GitHub and the work loading them. */
+    private static final class Tab {
+        private final String repository;
+        private final JEditorPane notes = new JEditorPane("text/html", "");
+        private URI page;
+        private SwingWorker<ReleaseNotes, Void> worker;
+
+        private Tab(String repository, Version version) {
+            this.repository = repository;
+            page = ReleaseNotes.page(repository, version);
+        }
+
+        private void showText(String html) {
+            notes.setText(html);
+            notes.setCaretPosition(0);
+        }
+    }
+
+    private ReleaseNotesDialog(@Nullable Window owner, List<String> repositories, Version version) {
         super(owner, Messages.getString("ReleaseNotesDialog.title"), ModalityType.MODELESS);
         setName("releaseNotesDialog");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        page = ReleaseNotes.page(repository, version);
 
-        JLabel heading = new JLabel(Messages.getString("ReleaseNotesDialog.heading", productName(repository),
-              version.toString()));
+        JLabel heading = new JLabel(Messages.getString("ReleaseNotesDialog.heading",
+              productName(repositories.get(0)), version.toString()));
         heading.setName("releaseNotesHeading");
         heading.setFont(heading.getFont().deriveFont(Font.BOLD, heading.getFont().getSize2D() * 1.4f));
         since.setName("releaseNotesSince");
@@ -94,23 +114,34 @@ public final class ReleaseNotesDialog extends JDialog {
         header.add(heading, BorderLayout.NORTH);
         header.add(since, BorderLayout.SOUTH);
 
-        notes.setName("releaseNotesContent");
-        notes.setEditable(false);
-        notes.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
-        notes.setText(page(paragraph(Messages.getString("ReleaseNotesDialog.loading"))));
-        notes.addHyperlinkListener(event -> {
-            if ((event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) && isSafe(event.getDescription())) {
-                UIUtil.browse(event.getDescription(), this);
+        JScrollPane single = null;
+        for (String repository : repositories) {
+            Tab tab = new Tab(repository, version);
+            tab.notes.setName("releaseNotesContent." + repository);
+            tab.notes.setEditable(false);
+            tab.notes.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+            tab.notes.setText(page(paragraph(Messages.getString("ReleaseNotesDialog.loading"))));
+            tab.notes.addHyperlinkListener(event -> {
+                if ((event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) && isSafe(event.getDescription())) {
+                    UIUtil.browse(event.getDescription(), this);
+                }
+            });
+            JScrollPane scroll = new JScrollPane(tab.notes);
+            scroll.setName("releaseNotesScroll." + repository);
+            scroll.setPreferredSize(UIUtil.scaleForGUI(620, 440));
+            scroll.getVerticalScrollBar().setUnitIncrement(16);
+            if (repositories.size() > 1) {
+                tabbedPane.addTab(productName(repository), scroll);
+            } else {
+                single = scroll;
             }
-        });
-        JScrollPane scroll = new JScrollPane(notes);
-        scroll.setName("releaseNotesScroll");
-        scroll.setPreferredSize(UIUtil.scaleForGUI(620, 440));
-        scroll.getVerticalScrollBar().setUnitIncrement(16);
+            tabs.add(tab);
+        }
+        tabbedPane.setName("releaseNotesTabs");
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, UIUtil.scaleForGUI(8), 0));
         buttons.add(new MMButton("releaseNotesViewOnGitHub", Messages.getString("ReleaseNotesDialog.viewOnGitHub"),
-              event -> UIUtil.browse(page.toString(), this)));
+              event -> UIUtil.browse(selectedTab().page.toString(), this)));
         MMButton close = new MMButton("releaseNotesClose", Messages.getString("ReleaseNotesDialog.close"),
               event -> dispose());
         buttons.add(close);
@@ -119,7 +150,7 @@ public final class ReleaseNotesDialog extends JDialog {
         JPanel content = new JPanel(new BorderLayout(0, pad));
         content.setBorder(BorderFactory.createEmptyBorder(pad, pad, pad, pad));
         content.add(header, BorderLayout.NORTH);
-        content.add(scroll, BorderLayout.CENTER);
+        content.add((single != null) ? single : tabbedPane, BorderLayout.CENTER);
         content.add(buttons, BorderLayout.SOUTH);
         setContentPane(content);
         getRootPane().setDefaultButton(close);
@@ -129,83 +160,113 @@ public final class ReleaseNotesDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
+    private Tab selectedTab() {
+        return (tabs.size() > 1) ? tabs.get(Math.max(0, tabbedPane.getSelectedIndex())) : tabs.get(0);
+    }
+
     /**
-     * Opens what changed in the running version since the version the player ran before it, within the same release
-     * channel, and loads it in the background, as Help &gt; Release Notes does.
+     * Opens the release notes of one application, as {@link #showReleaseNotes(Window, String...)} does. Kept so
+     * applications compiled against this fixed-arity method still run.
      *
      * @param owner      The window to center on, or {@code null}
-     * @param repository The application's repository name, e.g. "megamek"
+     * @param repository The application's repository name, e.g. "megameklab"
      */
     public static void showReleaseNotes(@Nullable Window owner, String repository) {
-        Version previous = ReleaseNotes.previousVersion();
-        ReleaseNotesDialog dialog = new ReleaseNotesDialog(owner, repository, SuiteConstants.VERSION);
-        dialog.worker = new SwingWorker<>() {
-            @Override
-            protected ReleaseNotes doInBackground() throws Exception {
-                return ReleaseNotes.load(repository, previous, SuiteConstants.VERSION);
-            }
+        showReleaseNotes(owner, new String[] { repository });
+    }
 
-            @Override
-            protected void done() {
-                if (isCancelled() || !dialog.isDisplayable()) {
-                    return;
+    /**
+     * Opens what changed in the running version since the version the player ran before it, within the same release
+     * channel, and loads it in the background, as Help &gt; Release Notes does. With several repositories, each gets
+     * its own tab, in the given order.
+     *
+     * @param owner        The window to center on, or {@code null}
+     * @param repositories The application's repository name, e.g. "mekhq", then those of the applications it
+     *                     includes, e.g. "megamek"
+     */
+    public static void showReleaseNotes(@Nullable Window owner, String... repositories) {
+        if (repositories.length == 0) {
+            throw new IllegalArgumentException("No repository to show the release notes of");
+        }
+        Version previous = ReleaseNotes.previousVersion();
+        ReleaseNotesDialog dialog = new ReleaseNotesDialog(owner, List.of(repositories), SuiteConstants.VERSION);
+        for (Tab tab : dialog.tabs) {
+            tab.worker = new SwingWorker<>() {
+                @Override
+                protected ReleaseNotes doInBackground() throws Exception {
+                    return ReleaseNotes.load(tab.repository, previous, SuiteConstants.VERSION);
                 }
-                try {
-                    dialog.showNotes(get());
-                } catch (InterruptedException interrupted) {
-                    Thread.currentThread().interrupt();
-                } catch (ExecutionException failure) {
-                    LOGGER.warn("Could not load the release notes: {}", failure.getCause().toString());
-                    dialog.showText(failedHtml(ReleaseNotes.page(repository, SuiteConstants.VERSION)));
+
+                @Override
+                protected void done() {
+                    if (isCancelled() || !dialog.isDisplayable()) {
+                        return;
+                    }
+                    try {
+                        dialog.showNotes(tab, get());
+                    } catch (InterruptedException interrupted) {
+                        Thread.currentThread().interrupt();
+                    } catch (ExecutionException failure) {
+                        LOGGER.warn("Could not load the {} release notes: {}", tab.repository,
+                              failure.getCause().toString());
+                        tab.showText(failedHtml(ReleaseNotes.page(tab.repository, SuiteConstants.VERSION)));
+                    }
                 }
-            }
-        };
-        dialog.worker.execute();
+            };
+            tab.worker.execute();
+        }
         dialog.setVisible(true);
     }
 
     @Override
     public void dispose() {
-        if (worker != null) {
-            worker.cancel(true);
+        for (Tab tab : tabs) {
+            if (tab.worker != null) {
+                tab.worker.cancel(true);
+            }
         }
         super.dispose();
     }
 
-    private void showNotes(ReleaseNotes releaseNotes) {
-        page = releaseNotes.page();
-        if (releaseNotes.since() != null) {
+    private void showNotes(Tab tab, ReleaseNotes releaseNotes) {
+        tab.page = releaseNotes.page();
+        if ((releaseNotes.since() != null) && !since.isVisible()) {
             since.setText(Messages.getString("ReleaseNotesDialog.since", releaseNotes.since()));
             since.setVisible(true);
             getContentPane().revalidate();
         }
-        showText(html(releaseNotes));
+        tab.showText(html(releaseNotes));
     }
 
-    private void showText(String html) {
-        notes.setText(html);
-        notes.setCaretPosition(0);
-    }
-
-    /** The notes as HTML for the notes pane. */
+    /**
+     * The notes as HTML for the notes pane, under a heading for each release when they cover the releases since an
+     * older version, even when only one of those releases lists changes.
+     */
     static String html(ReleaseNotes releaseNotes) {
-        if (releaseNotes.sections().isEmpty()) {
+        if (releaseNotes.isEmpty()) {
             return page(paragraph(Messages.getString("ReleaseNotesDialog.empty")));
         }
+        boolean several = (releaseNotes.since() != null) || (releaseNotes.releases().size() > 1);
         StringBuilder html = new StringBuilder();
-        for (ReleaseNotes.Section section : releaseNotes.sections()) {
-            String heading = ReleaseNotes.UNGROUPED.equals(section.heading())
-                  ? Messages.getString("ReleaseNotesDialog.changes") : section.heading();
-            html.append("<h3>").append(escape(heading)).append("</h3><ul>");
-            for (ReleaseNotes.Change change : section.changes()) {
-                html.append("<li>").append(escape(change.title()));
-                if (change.link() != null) {
-                    html.append(" <a href='").append(escape(change.link().toString())).append("'>#")
-                          .append(change.pullRequest()).append("</a>");
-                }
-                html.append("</li>");
+        for (ReleaseNotes.Release release : releaseNotes.releases()) {
+            if (several) {
+                html.append("<h2><a href='").append(escape(release.page().toString())).append("'>")
+                      .append(escape(release.version())).append("</a></h2>");
             }
-            html.append("</ul>");
+            for (ReleaseNotes.Section section : release.sections()) {
+                String heading = ReleaseNotes.UNGROUPED.equals(section.heading())
+                      ? Messages.getString("ReleaseNotesDialog.changes") : section.heading();
+                html.append("<h3>").append(escape(heading)).append("</h3><ul>");
+                for (ReleaseNotes.Change change : section.changes()) {
+                    html.append("<li>").append(escape(change.title()));
+                    if (change.link() != null) {
+                        html.append(" <a href='").append(escape(change.link().toString())).append("'>#")
+                              .append(change.pullRequest()).append("</a>");
+                    }
+                    html.append("</li>");
+                }
+                html.append("</ul>");
+            }
         }
         return page(html.toString());
     }
@@ -224,8 +285,14 @@ public final class ReleaseNotesDialog extends JDialog {
         };
     }
 
-    /** Only pages of the MegaMek organization on GitHub are opened. */
-    static boolean isSafe(@Nullable String link) {
+    /**
+     * Whether a link in the notes may be opened: only pages of the MegaMek organization on GitHub are.
+     *
+     * @param link The link's address
+     *
+     * @return {@code true} if the link may be opened in a browser
+     */
+    public static boolean isSafe(@Nullable String link) {
         return (link != null) && link.startsWith(GITHUB) && !link.contains("..") && !link.contains("@");
     }
 

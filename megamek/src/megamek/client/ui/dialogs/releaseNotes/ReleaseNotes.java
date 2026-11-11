@@ -67,12 +67,12 @@ import megamek.common.preference.PreferenceManager;
  * @param repository The repository name, without the organization, e.g. "megamek"
  * @param page       The release page on GitHub, or the list of releases when the notes cover several
  * @param since      The version the notes start after, or {@code null} when they are one version's own notes
- * @param sections   The changes, grouped by kind in the order the release notes use
+ * @param releases   The releases with changes, newest first
  */
-public record ReleaseNotes(String repository, URI page, @Nullable String since, List<Section> sections) {
+public record ReleaseNotes(String repository, URI page, @Nullable String since, List<Release> releases) {
 
     /** Heading for changes listed before any heading, as in notes from before the categories. */
-    static final String UNGROUPED = "Changes";
+    public static final String UNGROUPED = "Changes";
     private static final int MAX_BYTES = 2_000_000;
     private static final int PAGE_SIZE = 30;
     private static final int MAX_PAGES = 5;
@@ -93,7 +93,27 @@ public record ReleaseNotes(String repository, URI page, @Nullable String since, 
     private static final Pattern BUMP = Pattern.compile("^Bump \\S+ from \\S+ to \\S+$");
 
     public ReleaseNotes {
-        sections = List.copyOf(sections);
+        releases = List.copyOf(releases);
+    }
+
+    /**
+     * Returns whether no release lists any change.
+     */
+    public boolean isEmpty() {
+        return releases.stream().allMatch(release -> release.sections().isEmpty());
+    }
+
+    /**
+     * The changes of one release.
+     *
+     * @param version  The version, e.g. "0.51.01.5"
+     * @param page     The release page on GitHub
+     * @param sections The changes, grouped by kind in the order the release notes use
+     */
+    public record Release(String version, URI page, List<Section> sections) {
+        public Release {
+            sections = List.copyOf(sections);
+        }
     }
 
     /**
@@ -243,39 +263,43 @@ public record ReleaseNotes(String repository, URI page, @Nullable String since, 
         }
         chosen.sort(Comparator.comparing((JsonNode release) -> releaseVersion(release.path("tag_name").asText("")))
               .reversed());
-        List<List<Section>> parsed = new ArrayList<>();
+        List<Release> parsed = new ArrayList<>();
         for (JsonNode release : chosen) {
-            parsed.add(parse(repository, release.path("body").asText("")));
+            Version listedVersion = releaseVersion(release.path("tag_name").asText(""));
+            parsed.add(new Release(tag(listedVersion).substring(1), page(repository, listedVersion),
+                  parse(repository, release.path("body").asText(""))));
         }
         URI page = (chosen.size() == 1) ? page(repository, version)
               : URI.create("https://github.com/MegaMek/" + repository + "/releases");
-        return new ReleaseNotes(repository, page, tag(since).substring(1), merge(parsed));
+        return new ReleaseNotes(repository, page, tag(since).substring(1), separate(parsed));
     }
 
-    /** The changes of several releases, newest first, under one heading each and each pull request once. */
-    static List<Section> merge(List<List<Section>> releases) {
-        Map<String, String> headings = new LinkedHashMap<>();
-        Map<String, List<Change>> changes = new LinkedHashMap<>();
+    /**
+     * The releases, newest first, with each pull request only under the oldest release that lists it, and without the
+     * releases left with no changes.
+     */
+    static List<Release> separate(List<Release> releases) {
         Set<String> seen = new HashSet<>();
-        for (List<Section> sections : releases) {
-            for (Section section : sections) {
-                String key = section.heading().toLowerCase(Locale.ROOT);
-                headings.putIfAbsent(key, section.heading());
+        List<Release> separated = new ArrayList<>();
+        for (Release release : releases.reversed()) {
+            List<Section> sections = new ArrayList<>();
+            for (Section section : release.sections()) {
+                List<Change> changes = new ArrayList<>();
                 for (Change change : section.changes()) {
                     String identity = (change.pullRequest() > 0) ? "#" + change.pullRequest() : change.title();
                     if (seen.add(identity)) {
-                        changes.computeIfAbsent(key, ignored -> new ArrayList<>()).add(change);
+                        changes.add(change);
                     }
                 }
+                if (!changes.isEmpty()) {
+                    sections.add(new Section(section.heading(), changes));
+                }
+            }
+            if (!sections.isEmpty()) {
+                separated.addFirst(new Release(release.version(), release.page(), sections));
             }
         }
-        List<String> order = new ArrayList<>(changes.keySet());
-        order.sort(Comparator.comparingInt(ReleaseNotes::rank));
-        List<Section> merged = new ArrayList<>();
-        for (String key : order) {
-            merged.add(new Section(headings.get(key), changes.get(key)));
-        }
-        return merged;
+        return separated;
     }
 
     /** The version of a release tag such as "v0.51.01.5", or {@code null} for any other tag. */
@@ -364,8 +388,9 @@ public record ReleaseNotes(String repository, URI page, @Nullable String since, 
         if ((release == null) || !release.isObject()) {
             throw new IOException("GitHub returned an unexpected release");
         }
-        return new ReleaseNotes(repository, page(repository, version), null,
-              parse(repository, release.path("body").asText("")));
+        URI page = page(repository, version);
+        return new ReleaseNotes(repository, page, null, List.of(new Release(tag(version).substring(1), page,
+              parse(repository, release.path("body").asText("")))));
     }
 
     /**

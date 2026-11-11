@@ -148,7 +148,8 @@ class ReleaseNotesTest {
         ReleaseNotes notes = ReleaseNotes.fromJson("megamek", version, json.getBytes(StandardCharsets.UTF_8));
 
         assertEquals(URI.create("https://github.com/MegaMek/megamek/releases/tag/v0.51.01.5"), notes.page());
-        assertEquals(12, notes.sections().get(0).changes().get(0).pullRequest());
+        assertEquals(12, notes.releases().get(0).sections().get(0).changes().get(0).pullRequest());
+        assertEquals("0.51.01.5", notes.releases().get(0).version());
     }
 
     @Test
@@ -200,7 +201,7 @@ class ReleaseNotesTest {
     }
 
     @Test
-    void combiningKeepsOnlyTheReleasesOfTheTargetsChannel() throws IOException {
+    void combiningKeepsOnlyTheReleasesOfTheTargetsChannelEachUnderItsVersion() throws IOException {
         List<JsonNode> releases = releases(
               release("v0.51.01.7", true, "* Too new by @a in https://github.com/MegaMek/megamek/pull/7"),
               release("v0.51.01.6", false, "### Bug Fixes\n* Core fix by @a in https://github.com/MegaMek/megamek/pull/6"),
@@ -215,12 +216,29 @@ class ReleaseNotesTest {
 
         assertEquals("0.51.01.3", notes.since());
         assertEquals(URI.create("https://github.com/MegaMek/megamek/releases"), notes.page());
-        assertEquals(List.of("New Features", "Bug Fixes"),
-              notes.sections().stream().map(ReleaseNotes.Section::heading).toList());
-        assertEquals(List.of(3), notes.sections().get(0).changes().stream()
-              .map(ReleaseNotes.Change::pullRequest).toList());
-        assertEquals(List.of(5, 4), notes.sections().get(1).changes().stream()
-              .map(ReleaseNotes.Change::pullRequest).toList());
+        assertEquals(List.of("0.51.01.5", "0.51.01.4"),
+              notes.releases().stream().map(ReleaseNotes.Release::version).toList());
+        ReleaseNotes.Release five = notes.releases().get(0);
+        assertEquals(URI.create("https://github.com/MegaMek/megamek/releases/tag/v0.51.01.5"), five.page());
+        assertEquals(List.of("Bug Fixes"), five.sections().stream().map(ReleaseNotes.Section::heading).toList());
+        assertEquals(List.of(5), pullRequests(five.sections().get(0)));
+        ReleaseNotes.Release four = notes.releases().get(1);
+        assertEquals(List.of(4, 3), pullRequests(four.sections().get(0)));
+    }
+
+    @Test
+    void separatingDropsReleasesWhoseChangesAllShippedBefore() {
+        ReleaseNotes.Change change = new ReleaseNotes.Change("Fix", 4,
+              URI.create("https://github.com/MegaMek/megamek/pull/4"));
+        ReleaseNotes.Section section = new ReleaseNotes.Section("Bug Fixes", List.of(change));
+        List<ReleaseNotes.Release> releases = List.of(
+              new ReleaseNotes.Release("0.51.01.5", URI.create("https://github.com/MegaMek/megamek/releases"),
+                    List.of(section)),
+              new ReleaseNotes.Release("0.51.01.4", URI.create("https://github.com/MegaMek/megamek/releases"),
+                    List.of(section)));
+
+        assertEquals(List.of("0.51.01.4"),
+              ReleaseNotes.separate(releases).stream().map(ReleaseNotes.Release::version).toList());
     }
 
     @Test
@@ -232,7 +250,7 @@ class ReleaseNotesTest {
         ReleaseNotes notes = ReleaseNotes.combine("megamek", releases, new Version("0.51.01.5"),
               new Version("0.51.01.6"));
 
-        assertTrue(notes.sections().isEmpty());
+        assertTrue(notes.isEmpty());
         assertEquals(URI.create("https://github.com/MegaMek/megamek/releases/tag/v0.51.01.6"), notes.page());
     }
 
@@ -241,6 +259,10 @@ class ReleaseNotesTest {
         List<JsonNode> releases = releases(release("v0.51.01.4", true, ""));
 
         assertNull(ReleaseNotes.combine("megamek", releases, new Version("0.51.01.3"), new Version("0.51.01.5")));
+    }
+
+    private static List<Integer> pullRequests(ReleaseNotes.Section section) {
+        return section.changes().stream().map(ReleaseNotes.Change::pullRequest).toList();
     }
 
     private static String release(String tag, boolean prerelease, String body) throws IOException {

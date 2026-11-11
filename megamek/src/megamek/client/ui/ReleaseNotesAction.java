@@ -47,21 +47,21 @@ import megamek.client.ui.dialogs.releaseNotes.ReleaseNotesDialog;
  */
 public class ReleaseNotesAction extends AbstractAction {
 
-    private final String repository;
+    private final String[] repositories;
 
     /**
-     * Creates this action for the given GitHub repository of the MegaMek organization, e.g. "megameklab" in the MML
-     * menu bar.
+     * Creates this action for the given GitHub repositories of the MegaMek organization: the application's own, e.g.
+     * "megameklab" in the MML menu bar, then those of the applications it includes, which get a tab each.
      *
-     * @param repository The repository name, without the organization
+     * @param repositories The repository names, without the organization
      */
-    public ReleaseNotesAction(String repository) {
+    public ReleaseNotesAction(String... repositories) {
         super(getString("CommonMenuBar.helpReleaseNotes"));
-        this.repository = repository;
+        this.repositories = (repositories.length == 0) ? new String[] { "megamek" } : repositories.clone();
         putValue(AbstractAction.SHORT_DESCRIPTION, getString("CommonMenuBar.helpReleaseNotes.tip"));
     }
 
-    /** Creates this action for MegaMek. */
+    /** Creates this action for MegaMek. Kept so applications compiled against the earlier constructor still run. */
     public ReleaseNotesAction() {
         this("megamek");
     }
@@ -69,7 +69,7 @@ public class ReleaseNotesAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         ReleaseNotesDialog.showReleaseNotes(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-              repository);
+              repositories);
     }
 
     /**

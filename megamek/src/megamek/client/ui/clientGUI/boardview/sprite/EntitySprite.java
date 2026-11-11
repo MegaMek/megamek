@@ -42,6 +42,7 @@ import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.UnitOwnerColors;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.StringDrawer;
@@ -882,23 +883,7 @@ public class EntitySprite extends Sprite {
 
                 // Draw a label border with player colors or team coloring
                 if (GUIP.getUnitLabelBorder()) {
-                    if (GUIP.getTeamColoring()) {
-                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.getClientgui()
-                              .getClient()
-                              .getLocalPlayer()
-                              .getTeam();
-                        boolean isLocalPlayer = entity.getOwner()
-                              .equals(bv.getClientgui().getClient().getLocalPlayer());
-                        if (isLocalPlayer) {
-                            graph.setColor(GUIP.getMyUnitColor());
-                        } else if (isLocalTeam) {
-                            graph.setColor(GUIP.getAllyUnitColor());
-                        } else {
-                            graph.setColor(GUIP.getEnemyUnitColor());
-                        }
-                    } else {
-                        graph.setColor(entity.getOwner().getColour().getColour(false));
-                    }
+                    graph.setColor(UnitOwnerColors.colorFor(entity.getOwner(), bv.getLocalPlayer()));
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1,

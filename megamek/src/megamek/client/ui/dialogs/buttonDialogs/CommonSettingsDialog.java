@@ -403,6 +403,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JCheckBox advancedShowDrawTime;
     private JCheckBox advancedSkipSavePrompt;
     private JCheckBox advancedSaveLobbyOnStart;
+    private JSpinner advancedLobbyBackupsToKeep;
+    /** Upper limit of the "Lobby backups to keep" field; {@code 0} means keep every backup. */
+    private static final int MAX_LOBBY_BACKUPS_TO_KEEP = 1000;
 
     // Button order
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> movePhaseCommands;
@@ -4607,6 +4610,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         advancedSaveLobbyOnStart = advancedCheckBox("AdvancedOptions.SaveLobbyOnStart");
         comps.add(List.of(createAdvancedSafetyGrid(
               advancedShowDrawTime, advancedSkipSavePrompt, advancedSaveLobbyOnStart)));
+        advancedLobbyBackupsToKeep = createBoundedIntegerSpinner(
+              GUIP.getLobbyBackupsToKeep(), 0, MAX_LOBBY_BACKUPS_TO_KEEP, 1);
+        JLabel lobbyBackupsToKeepLabel = advancedFieldLabel(
+              "AdvancedOptions.LobbyBackupsToKeep", advancedLobbyBackupsToKeep);
+        comps.add(List.of(createAdvancedLobbyBackupGrid(lobbyBackupsToKeepLabel, advancedLobbyBackupsToKeep)));
 
         loadAdvancedSettingsControls();
         return createSettingsPanel(comps);
@@ -4640,6 +4648,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsAdvancedSafetyGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
         grid.addEqualWidthComponentGrid(2, drawTime, skipSavePrompt, saveLobby);
+        return grid;
+    }
+
+    static SettingsFormPanel createAdvancedLobbyBackupGrid(JLabel backupsToKeepLabel, JComponent backupsToKeep) {
+        SettingsFormPanel grid = new SettingsFormPanel(
+              "CommonSettingsAdvancedLobbyBackupGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
+        backupsToKeepLabel.setLabelFor(backupsToKeep);
+        grid.addEqualWidthComponentGrid(2, backupsToKeepLabel, backupsToKeep);
         return grid;
     }
 
@@ -4678,6 +4694,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         advancedShowDrawTime.setSelected(GUIP.getShowFPS());
         advancedSkipSavePrompt.setSelected(GUIP.getNoSaveNag());
         advancedSaveLobbyOnStart.setSelected(GUIP.getSaveLobbyOnStart());
+        advancedLobbyBackupsToKeep.setValue(Math.clamp(GUIP.getLobbyBackupsToKeep(), 0, MAX_LOBBY_BACKUPS_TO_KEEP));
     }
 
     private void saveAdvancedSettingsControls() {
@@ -4697,6 +4714,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setValue(GUIPreferences.ADVANCED_NO_SAVE_NAG, advancedSkipSavePrompt.isSelected());
         GUIP.setValue(GUIPreferences.ADVANCED_SAVE_LOBBY_ON_START,
             advancedSaveLobbyOnStart.isSelected());
+        GUIP.setValue(GUIPreferences.ADVANCED_LOBBY_BACKUPS_TO_KEEP,
+            (int) advancedLobbyBackupsToKeep.getValue());
     }
 
     @Override

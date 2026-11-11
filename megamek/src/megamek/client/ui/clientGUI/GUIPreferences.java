@@ -89,6 +89,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP = "AdvancedShowBotArtilleryHeatMap";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_SAVE_LOBBY_ON_START = "AdvancedSaveLobbyOnStart";
+    public static final String ADVANCED_LOBBY_BACKUPS_TO_KEEP = "AdvancedLobbyBackupsToKeep";
 
     /* --End advanced settings-- */
     public static final String BOARD_MOVE_DEFAULT_CLIMB_MODE = "BoardMoveDefaultClimbMode";
@@ -587,6 +588,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RULER_DIAGRAM_VISIBLE, true);
         setDefault(ADVANCED_NO_SAVE_NAG, false);
         store.setDefault(ADVANCED_SAVE_LOBBY_ON_START, false);
+        store.setDefault(ADVANCED_LOBBY_BACKUPS_TO_KEEP, 5);
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 50);
         setDefault(ADVANCED_CHATBOX2_BACKCOLOR, DEFAULT_WHITE);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARENCY, 50);
@@ -2002,6 +2004,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
     @Deprecated(since = "0.51.0", forRemoval = true)
     public void setSaveLobbyOnStart(boolean value) {
         store.setValue(ADVANCED_SAVE_LOBBY_ON_START, value);
+    }
+
+    /**
+     * @return how many lobby backups to keep in the save folder, counting the newest; {@code 0} keeps every backup
+     */
+    public int getLobbyBackupsToKeep() {
+        return store.getInt(ADVANCED_LOBBY_BACKUPS_TO_KEEP);
     }
 
     public boolean getChatbox2AutoSlideDown() {

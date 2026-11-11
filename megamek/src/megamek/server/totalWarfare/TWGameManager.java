@@ -394,6 +394,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new ForcedWithdrawalOrderCommand(server, this));
         commands.add(new UnitOrderCommand(server, this));
         commands.add(new RadioCommand(server, this));
+        commands.add(new PingCommand(server));
+        commands.add(new GameMasterPingCommand(server));
         commands.add(new ChangeWeatherCommand(server, this));
         commands.add(new TraitorCommand(server, this));
         commands.add(new ListEntitiesCommand(server, this));

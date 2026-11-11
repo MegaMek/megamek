@@ -33,9 +33,6 @@
 
 package megamek.common.cost;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.MDAugmentationType;
@@ -119,14 +116,12 @@ public class BattleArmorCostCalculator {
         costs[idx++] = Math.max(0, CostCalculator.getWeaponsAndEquipmentCost(battleArmor, ignoreAmmo));
         costs[idx] = -battleArmor.getSquadSize();
 
-        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
-              .setScale(2, RoundingMode.UP)
-              .doubleValue();
+        double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Chassis", "Jumping/VTOL/UMU", "Ground Movement", "Manipulators", "Armor",
                                  "Augmentations", "Clan Structure Multiplier", "Training", "Equipment", "Troopers" };
-        CostCalculator.fillInReport(costReport, battleArmor, ignoreAmmo, systemNames, 8, roundedCost, costs);
+        CostCalculator.fillInReport(costReport, battleArmor, ignoreAmmo, systemNames, 8, cost, costs);
 
-        return roundedCost;
+        return cost;
     }
 
     /**

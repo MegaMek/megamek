@@ -50,6 +50,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -121,6 +124,23 @@ public class EntityReadoutPanel extends JPanel {
     private static final String PLACEHOLDER_IMAGE_NAME =
             new File(Configuration.fluffImagesDir(), "fluff_placeholder.png").getPath();
     private static final Image PLACEHOLDER_IMAGE = readPlaceHolderImage();
+
+    /**
+     * Finds and reads fluff images away from the UI thread. Both need disk access, which can be slow, e.g. when the
+     * user directory is on a cloud-synced drive, and would otherwise delay every unit selection. A single thread is
+     * enough, as work for a unit that is no longer shown is skipped.
+     */
+    private static final ExecutorService FLUFF_IMAGE_LOADER = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "Fluff Image Loader");
+        thread.setDaemon(true);
+        return thread;
+    });
+
+    /**
+     * Increased whenever another unit (or none) is shown, so background fluff image work for a unit that is no longer
+     * shown can be recognized and dropped. Only changed on the UI thread.
+     */
+    private final AtomicInteger fluffGeneration = new AtomicInteger();
 
     public EntityReadoutPanel() {
         this(-1, -1);
@@ -217,14 +237,12 @@ public class EntityReadoutPanel extends JPanel {
     }
 
     public void showEntity(Entity entity, EntityReadout mekView) {
-        readoutTextComponent.setText(mekView.getFullReadout());
-        readoutTextComponent.setCaretPosition(0);
+        setReadoutText(mekView.getFullReadout());
         setFluffImage(entity);
     }
 
     public void showEntity(Entity entity, EntityReadout mekView, String fontName) {
-        readoutTextComponent.setText(mekView.getFullReadout(fontName, ViewFormatting.HTML));
-        readoutTextComponent.setCaretPosition(0);
+        setReadoutText(mekView.getFullReadout(fontName, ViewFormatting.HTML));
         setFluffImage(entity);
     }
 
@@ -235,13 +253,21 @@ public class EntityReadoutPanel extends JPanel {
     }
 
     private void showReadout(EntityReadout readout, String fontName, Collection<ReadoutSections> sections) {
-        readoutTextComponent.setText(readout.getReadout(fontName, ViewFormatting.HTML, sections));
+        setReadoutText(readout.getReadout(fontName, ViewFormatting.HTML, sections));
+    }
+
+    /**
+     * Shows the given HTML in a fresh document. Reusing one HTML document for many readouts makes its style cache
+     * grow, and every later setText gets slower (tens of ms per unit after browsing a few units).
+     */
+    private void setReadoutText(String html) {
+        readoutTextComponent.setDocument(readoutTextComponent.getEditorKit().createDefaultDocument());
+        readoutTextComponent.setText(html);
         readoutTextComponent.setCaretPosition(0);
     }
 
     public void showEntity(Entity entity, TROView troView) {
-        readoutTextComponent.setText(troView.processTemplate());
-        readoutTextComponent.setCaretPosition(0);
+        setReadoutText(troView.processTemplate());
         setFluffImage(entity);
     }
 
@@ -300,35 +326,59 @@ public class EntityReadoutPanel extends JPanel {
     }
 
     private void setFluffImage(@Nullable Entity entity) {
-        fluffImageList.clear();
-        recentFluffImages.clear();
-        fluffImageIndex = 0;
+        int generation = startNewFluffGeneration();
 
         boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
         if (isSpritesOnly || (entity == null)) {
-            nextImageButton.setEnabled(false);
-            previousImageButton.setEnabled(false);
-            imageInfoLabel.setText("");
             displayFluffImage(null);
             return;
         }
 
-        fluffImageList.addAll(FluffImageHelper.getFluffRecords(entity));
-        boolean hasMultipleImages = fluffImageList.size() > 1;
-        nextImageButton.setEnabled(hasMultipleImages);
-        previousImageButton.setEnabled(hasMultipleImages);
-        // Show the first image, not the next one - stepping by 1 here would open on the second image
-        changeFluffImageIndex(0);
+        // Until the unit's own images are found, show the same placeholder that units without fluff images show
+        displayFluffImage(PLACEHOLDER_IMAGE);
+        FLUFF_IMAGE_LOADER.execute(() -> {
+            if (generation != fluffGeneration.get()) {
+                return;
+            }
+            List<FluffImageHelper.FluffImageRecord> records;
+            try {
+                records = FluffImageHelper.getFluffRecords(entity);
+            } catch (RuntimeException exception) {
+                LOGGER.warn("[FluffImages] Could not find fluff images for {}", entity.getShortName(), exception);
+                return;
+            }
+            SwingUtilities.invokeLater(() -> {
+                if (generation != fluffGeneration.get()) {
+                    return;
+                }
+                fluffImageList.addAll(records);
+                boolean hasMultipleImages = fluffImageList.size() > 1;
+                nextImageButton.setEnabled(hasMultipleImages);
+                previousImageButton.setEnabled(hasMultipleImages);
+                // Show the first image, not the next one - stepping by 1 here would open on the second image
+                changeFluffImageIndex(0);
+            });
+        });
     }
 
-    public void reset() {
-        readoutTextComponent.setText("");
+    /**
+     * Forgets the fluff images of the previously shown unit, including any that are still being found or read.
+     *
+     * @return The new fluff generation
+     */
+    private int startNewFluffGeneration() {
         fluffImageList.clear();
         recentFluffImages.clear();
         fluffImageIndex = 0;
         nextImageButton.setEnabled(false);
         previousImageButton.setEnabled(false);
         imageInfoLabel.setText("");
+        return fluffGeneration.incrementAndGet();
+    }
+
+    public void reset() {
+        setReadoutText("");
+        startNewFluffGeneration();
         displayFluffImage(null);
     }
 
@@ -366,19 +416,60 @@ public class EntityReadoutPanel extends JPanel {
         }
 
         ShownFluffImage shownImage = recentFluffImages.get(fluffImageIndex);
-        if (shownImage == null) {
-            FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
-            try {
-                Image image = record.getImage();
-                shownImage = new ShownFluffImage((image != null) ? scaleToPanelWidth(image) : null,
-                      FluffImageTooltip.getTooltip(record));
-            } catch (IOException exception) {
-                LOGGER.warn("[FluffImages] Could not load fluff image {}", record.file(), exception);
-                displayFluffImage(null);
-                imageInfoLabel.setText(Messages.getString("EntityReadoutPanel.imageLoadError"));
+        if (shownImage != null) {
+            showFluffImage(shownImage);
+            return;
+        }
+
+        // Keep showing the current image until the new one is read; reading can take a moment on slow drives
+        int generation = fluffGeneration.get();
+        int index = fluffImageIndex;
+        FluffImageHelper.FluffImageRecord record = fluffImageList.get(index);
+        FLUFF_IMAGE_LOADER.execute(() -> {
+            if (generation != fluffGeneration.get()) {
                 return;
             }
-            recentFluffImages.put(fluffImageIndex, shownImage);
+            ShownFluffImage loadedImage = loadFluffImage(record);
+            SwingUtilities.invokeLater(() -> {
+                if (generation != fluffGeneration.get()) {
+                    return;
+                }
+                if (loadedImage != null) {
+                    recentFluffImages.put(index, loadedImage);
+                }
+                if (fluffImageIndex == index) {
+                    showFluffImage(loadedImage);
+                }
+            });
+        });
+    }
+
+    /**
+     * Reads the image of the record and scales it to the panel width. Called away from the UI thread.
+     *
+     * @return The image ready to be shown, or {@code null} if it could not be read
+     */
+    private static @Nullable ShownFluffImage loadFluffImage(FluffImageHelper.FluffImageRecord record) {
+        try {
+            Image image = record.getImage();
+            return new ShownFluffImage((image != null) ? scaleToPanelWidth(image) : null,
+                  FluffImageTooltip.getTooltip(record));
+        } catch (IOException | RuntimeException exception) {
+            LOGGER.warn("[FluffImages] Could not load fluff image {}", record.file(), exception);
+            return null;
+        }
+    }
+
+    /**
+     * Shows the given fluff image with its information, or an error message if the image could not be read.
+     *
+     * @param shownImage The image to show, or {@code null} when it could not be read
+     */
+    private void showFluffImage(@Nullable ShownFluffImage shownImage) {
+        if (shownImage == null) {
+            displayFluffImage(null);
+            imageInfoLabel.setText(Messages.getString("EntityReadoutPanel.imageLoadError"));
+            return;
         }
         displayFluffImage(shownImage.image());
         fluffImageLabel.setToolTipText(shownImage.info());

@@ -49,6 +49,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
@@ -753,6 +754,92 @@ class ClimbingHelperTest {
             int drop = ClimbingHelper.getEdgeDropHeight(mek, new Coords(0, 1), game);
             assertEquals(5, drop,
                   "Dry hex → dry hex: drop is just absolute altitude difference.");
+        }
+    }
+
+    @Nested
+    @DisplayName("stepNeedsClimbing - only height changes too big to walk need a climb (#9492)")
+    class StepNeedsClimbingTests {
+
+        private static final Coords FROM = new Coords(0, 0);
+        private static final Coords TO = new Coords(0, 1);
+
+        /**
+         * Builds a 1x2 board with {@code fromHex} at (0,0) and {@code toHex} at (0,1) and returns a Mek on it.
+         */
+        private Mek setupStep(Hex fromHex, Hex toHex) {
+            Board board = new Board(1, 2);
+            board.setHex(0, 0, fromHex);
+            board.setHex(0, 1, toHex);
+            game.setBoard(board);
+            Mek mek = createFullyFunctionalMek(55);
+            mek.setPosition(FROM);
+            return mek;
+        }
+
+        @Test
+        @DisplayName("Flat step does not need climbing - an out-of-MP step must not raise the climb warning")
+        void flatStep() {
+            Mek mek = setupStep(new Hex(1, "", ""), new Hex(1, "", ""));
+
+            assertFalse(ClimbingHelper.stepNeedsClimbing(mek, FROM, 0, TO, game));
+        }
+
+        @Test
+        @DisplayName("Two levels up is a normal walk")
+        void twoLevelsUp() {
+            Mek mek = setupStep(new Hex(0, "", ""), new Hex(2, "", ""));
+
+            assertFalse(ClimbingHelper.stepNeedsClimbing(mek, FROM, 0, TO, game));
+        }
+
+        @Test
+        @DisplayName("Three levels up needs climbing")
+        void threeLevelsUp() {
+            Mek mek = setupStep(new Hex(0, "", ""), new Hex(3, "", ""));
+
+            assertTrue(ClimbingHelper.stepNeedsClimbing(mek, FROM, 0, TO, game));
+        }
+
+        @Test
+        @DisplayName("Two levels down is a normal walk")
+        void twoLevelsDown() {
+            Mek mek = setupStep(new Hex(2, "", ""), new Hex(0, "", ""));
+
+            assertFalse(ClimbingHelper.stepNeedsClimbing(mek, FROM, 0, TO, game));
+        }
+
+        @Test
+        @DisplayName("Three levels down needs climbing when Leaping is off")
+        void threeLevelsDown() {
+            Mek mek = setupStep(new Hex(3, "", ""), new Hex(0, "", ""));
+
+            assertTrue(ClimbingHelper.stepNeedsClimbing(mek, FROM, 0, TO, game));
+        }
+
+        @Test
+        @DisplayName("A drop never needs climbing when Leaping is on")
+        void dropWithLeaping() {
+            game.getOptions().getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING).setValue(true);
+            Mek mek = setupStep(new Hex(5, "", ""), new Hex(0, "", ""));
+
+            assertFalse(ClimbingHelper.stepNeedsClimbing(mek, FROM, 0, TO, game));
+        }
+
+        @Test
+        @DisplayName("Three-floor building roof counts as a climb from the ground")
+        void climbToBuildingRoof() {
+            Mek mek = setupStep(new Hex(0, "", ""), new Hex(0, "bldg_elev:3;building:2:80;bldg_cf:80", ""));
+
+            assertTrue(ClimbingHelper.stepNeedsClimbing(mek, FROM, 0, TO, game));
+        }
+
+        @Test
+        @DisplayName("Starting elevation counts: off a 1-level roof onto ground 2 below is a normal walk")
+        void startingElevationCounts() {
+            Mek mek = setupStep(new Hex(1, "bldg_elev:1;building:2:80;bldg_cf:80", ""), new Hex(0, "", ""));
+
+            assertFalse(ClimbingHelper.stepNeedsClimbing(mek, FROM, 1, TO, game));
         }
     }
 }

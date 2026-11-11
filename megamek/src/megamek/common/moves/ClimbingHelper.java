@@ -118,22 +118,64 @@ public final class ClimbingHelper {
             return 0;
         }
         int entityAlt = entityHex.getLevel() + entity.getElevation();
-        // The drop's destination is the highest surface the Mek would land on in the target
-        // hex — building roof if present, bridge surface if present, otherwise the hex floor
-        // (water bottom for water hexes, basement floor for basements, hex level for dry).
-        // Pre-fix this measured only to hex.getLevel(), so stepping off a bridge into adjacent
-        // water:2 reported drop=2 (below the 3-level edge threshold) instead of the actual
-        // drop=4 down to the water floor — and the edge-descent dialog never fired.
-        int targetAlt;
-        if (targetHex.containsTerrain(Terrains.BUILDING)) {
-            targetAlt = targetHex.getLevel() + targetHex.terrainLevel(Terrains.BLDG_ELEV);
-        } else if (targetHex.containsTerrain(Terrains.BRIDGE)) {
-            targetAlt = targetHex.getLevel() + targetHex.terrainLevel(Terrains.BRIDGE_ELEV);
-        } else {
-            targetAlt = targetHex.floor();
-        }
-        int levelDiff = entityAlt - targetAlt;
+        int levelDiff = entityAlt - getDropLandingLevel(targetHex);
         return Math.max(0, levelDiff);
+    }
+
+    /**
+     * Returns the absolute level a unit lands on when it drops into the given hex. The drop's destination is the
+     * highest surface in the hex: the building roof if present, the bridge surface if present, otherwise the hex floor
+     * (water bottom for water hexes, basement floor for basements, hex level for dry). Measuring only to
+     * {@code hex.getLevel()} would make stepping off a bridge into adjacent water:2 look like a 2-level drop instead of
+     * the real 4 levels down to the water floor.
+     *
+     * @param hex the hex being dropped into
+     *
+     * @return the absolute level of the landing surface
+     */
+    private static int getDropLandingLevel(Hex hex) {
+        if (hex.containsTerrain(Terrains.BUILDING)) {
+            return hex.getLevel() + hex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        if (hex.containsTerrain(Terrains.BRIDGE)) {
+            return hex.getLevel() + hex.terrainLevel(Terrains.BRIDGE_ELEV);
+        }
+        return hex.floor();
+    }
+
+    /**
+     * Returns true if moving between two adjacent hexes crosses a height change too large to walk, so the step could
+     * only be made by climbing (TO:AR p.20). A climb up is measured to the top climbable surface of the destination
+     * (see {@link #getClimbDestinationLevel(Hex)}); a drop is measured to the surface the unit would land on. The
+     * limits are the unit's own {@link Entity#getMaxElevationChange()} and {@link Entity#getMaxElevationDown(int)}, so
+     * a drop never needs climbing when Leaping makes the way down unlimited.
+     *
+     * <p>Used to tell a step that is illegal because it needs a climb apart from one that is illegal for another
+     * reason, such as running out of MP.</p>
+     *
+     * @param entity        the moving unit
+     * @param fromCoords    the hex the step starts in
+     * @param fromElevation the unit's elevation above {@code fromCoords} at the start of the step
+     * @param toCoords      the hex the step enters
+     * @param game          the current game
+     *
+     * @return {@code true} if the height change between the two hexes is beyond normal movement
+     */
+    public static boolean stepNeedsClimbing(Entity entity, Coords fromCoords, int fromElevation, Coords toCoords,
+          Game game) {
+        if ((entity == null) || (fromCoords == null) || (toCoords == null) || (game == null)) {
+            return false;
+        }
+        Hex fromHex = game.getBoard(entity).getHex(fromCoords);
+        Hex toHex = game.getBoard(entity).getHex(toCoords);
+        if ((fromHex == null) || (toHex == null)) {
+            return false;
+        }
+        int fromAltitude = fromHex.getLevel() + fromElevation;
+        int levelsUp = getClimbDestinationLevel(toHex) - fromAltitude;
+        int levelsDown = fromAltitude - getDropLandingLevel(toHex);
+        return (levelsUp > entity.getMaxElevationChange())
+              || (levelsDown > entity.getMaxElevationDown(fromElevation));
     }
 
     /**

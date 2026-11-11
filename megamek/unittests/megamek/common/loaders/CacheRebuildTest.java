@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,17 +33,25 @@
 package megamek.common.loaders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import megamek.common.Configuration;
 import megamek.common.units.Entity;
@@ -56,6 +64,7 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class CacheRebuildTest {
 
@@ -177,6 +186,43 @@ class CacheRebuildTest {
         assertTrue(appender.message.contains("first-loaded results are retained"));
         assertTrue(appender.message.contains("Ambiguous Battlefield Support Asset name 'Duplicate Asset'"));
         assertTrue(appender.message.contains("retaining the first-loaded lookup result"));
+    }
+
+    /**
+     * An upgrade ships a unit_files.zip newer than units.cache, so every zip entry is read again. The fresh summary
+     * must replace the cached one rather than sit beside it, or each upgrade adds another copy of every unit.
+     */
+    @Test
+    void reloadingAChangedZipReplacesTheCachedSummaries(@TempDir Path tempDir) throws Exception {
+        File zipFile = tempDir.resolve("units.zip").toFile();
+        String entryName = "meks/Archer ARC-2R.mtf";
+        try (ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            zipOutput.putNextEntry(new ZipEntry(entryName));
+            zipOutput.write(Files.readAllBytes(Path.of("testresources/data/mekfiles/Archer ARC-2R.mtf")));
+            zipOutput.closeEntry();
+        }
+
+        MekSummaryCache cache = newCacheInstance();
+        Method resetLoadStats = MekSummaryCache.class.getDeclaredMethod("resetLoadStats");
+        resetLoadStats.setAccessible(true);
+        resetLoadStats.invoke(cache);
+        Method loadMeksFromZipFile = MekSummaryCache.class.getDeclaredMethod("loadMeksFromZipFile",
+              Vector.class, Set.class, long.class, File.class);
+        loadMeksFromZipFile.setAccessible(true);
+
+        Vector<MekSummary> summaries = new Vector<>();
+        Set<String> knownFiles = new HashSet<>();
+        loadMeksFromZipFile.invoke(cache, summaries, knownFiles, 0L, zipFile);
+        assertEquals(1, summaries.size());
+        MekSummary cachedSummary = summaries.getFirst();
+        // A cache written by an affected version already holds one extra copy per earlier upgrade
+        summaries.add(cachedSummary);
+
+        // A last-check time of 0 makes the zip count as newer than the cache, as it does after an upgrade
+        loadMeksFromZipFile.invoke(cache, summaries, knownFiles, 0L, zipFile);
+
+        assertEquals(1, summaries.size(), "The reloaded unit should replace its cached summary");
+        assertNotSame(cachedSummary, summaries.getFirst(), "The cached summary should be the one dropped");
     }
 
     private void resetCacheSingleton() throws Exception {

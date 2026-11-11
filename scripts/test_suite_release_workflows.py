@@ -67,6 +67,14 @@ class EngineTests(unittest.TestCase):
         self.assertIn("APP_KEY_PRESENT: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY != '' }}", gate)
         self.assertLess(self.position("Gate live operation"), self.position("actions/checkout"))
 
+    def test_disk_is_freed_before_the_sources_are_cloned(self):
+        free = self.steps["Free runner disk space"]
+        self.assertIn("sudo rm -rf /usr/share/dotnet", free)
+        # setup-java and setup-python install into the tool cache, so it must survive.
+        self.assertNotRegex(free, r"/opt/hostedtoolcache[\s\\]")
+        self.assertLess(self.position("Gate live operation"), self.position("Free runner disk space"))
+        self.assertLess(self.position("Free runner disk space"), self.position("mkdir sources"))
+
     def test_build_never_holds_a_write_token(self):
         prepare = self.steps["prepare"]
         self.assertIn("GH_TOKEN: ${{ github.token }}", prepare)

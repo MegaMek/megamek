@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -358,6 +358,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
             endMyTurn();
             return;
         }
+        // only ring once it is clear the turn needs the player; an auto-completed turn above stays silent
+        clientgui.bingMyTurn();
 
         if (GUIP.getAutoSelectNextUnit()) {
             selectEntity(firstEntity);
@@ -509,7 +511,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
                           "PrephaseDisplay.its_others_turn",
                           phase.toString(), e.getPlayer().getName()));
                 }
-
+                clientgui.bingOthersTurn();
             }
         }
     }

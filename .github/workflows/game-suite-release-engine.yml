@@ -64,6 +64,14 @@ jobs:
             echo "::error::Missing suite release App configuration"
             exit 1
           fi
+      # Four full clones plus three pinned mm-data stagings outgrew the ~14 GB free on the runner.
+      - name: Free runner disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup \
+            /opt/hostedtoolcache/CodeQL /usr/share/swift /usr/local/share/powershell \
+            /usr/local/share/chromium /usr/local/lib/node_modules
+          df -h /
       - uses: actions/checkout@v7
         with:
           persist-credentials: false

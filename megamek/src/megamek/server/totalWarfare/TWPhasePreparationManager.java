@@ -73,6 +73,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.send(gameManager.createMapSizesPacket());
                 gameManager.checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
+                clearTurnsForLobby();
                 break;
             case INITIATIVE:
                 // remove the last traces of last round
@@ -390,6 +391,21 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
             default:
                 break;
         }
+    }
+
+    /**
+     * Empties the turn list and sends the empty list to every client as the game returns to the lobby. Report phases
+     * send no turn list, so after a reset from one of them each client still held the last turn of the old game, often
+     * another player's. The lobby's Done button only acts when no turn is pending or the pending turn is the player's
+     * own, so it silently did nothing until that client reconnected.
+     */
+    private void clearTurnsForLobby() {
+        int leftoverTurns = gameManager.getGame().getTurnsList().size();
+        gameManager.getGame().setTurnVector(new ArrayList<>());
+        gameManager.getGame().resetTurnIndex();
+        gameManager.sendCurrentTurns();
+        LOGGER.debug("[LobbyTurns] entering the lobby: cleared {} leftover turn(s) and sent the empty turn list",
+              leftoverTurns);
     }
 
     /**

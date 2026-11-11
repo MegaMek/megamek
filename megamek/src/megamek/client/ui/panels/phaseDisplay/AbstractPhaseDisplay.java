@@ -59,6 +59,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerConnectedEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
 import megamek.common.game.IGame;
+import megamek.common.interfaces.PlayerTurn;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableDelegate;
 import megamek.logging.MMLogger;
@@ -133,14 +134,42 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         }
     }
 
+    /**
+     * Checks whether a Done press (button or hotkey) should be acted on. Each refusal is logged with its reason, as a
+     * refused press otherwise gives the player no feedback at all.
+     *
+     * @return {@code true} if the press should end the player's turn or phase
+     */
     private boolean shouldPerformDone() {
-        return ((clientGUI.getClient().isMyTurn() ||
-              (clientGUI.getClient().getGame().getTurn() == null) ||
-              (clientGUI.getClient().getGame().getPhase().isReport()))) &&
-              !clientGUI.shouldIgnoreHotKeys() &&
-              !isIgnoringEvents() &&
-              isVisible() &&
-              butDone.isEnabled();
+        String displayName = getClass().getSimpleName();
+        IGame game = clientGUI.getClient().getGame();
+        PlayerTurn pendingTurn = game.getTurn();
+        boolean isMyTurn = clientGUI.getClient().isMyTurn();
+        boolean isNoTurnPending = (pendingTurn == null);
+        boolean isReportPhase = game.getPhase().isReport();
+        if (!isMyTurn && !isNoTurnPending && !isReportPhase) {
+            LOGGER.debug("[DoneButton] {}: Done refused - phase {} has a pending turn for player {}, not this player",
+                  displayName, game.getPhase(), pendingTurn.playerId());
+            return false;
+        }
+        if (clientGUI.shouldIgnoreHotKeys()) {
+            LOGGER.debug("[DoneButton] {}: Done refused - the game window is inactive or a dialog is open",
+                  displayName);
+            return false;
+        }
+        if (isIgnoringEvents()) {
+            LOGGER.debug("[DoneButton] {}: Done refused - the display is muted", displayName);
+            return false;
+        }
+        if (!isVisible()) {
+            LOGGER.debug("[DoneButton] {}: Done refused - the display is not visible", displayName);
+            return false;
+        }
+        if (!butDone.isEnabled()) {
+            LOGGER.debug("[DoneButton] {}: Done refused - the Done button is disabled", displayName);
+            return false;
+        }
+        return true;
     }
 
     @Override

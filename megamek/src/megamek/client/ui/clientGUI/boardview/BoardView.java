@@ -669,6 +669,11 @@ public final class BoardView extends AbstractBoardView
             Point dispPoint = new Point(mousePoint.x + boardPanel.getBounds().x,
                   mousePoint.y + boardPanel.getBounds().y);
 
+            // Rotations of 0 should not be processed, as they are not valid and can cause issues
+            // Macs especially can run into this.
+            if (mouseWheelEvent.getWheelRotation() == 0) {
+                return;
+            }
             // If the mouse is over an IDisplayable, have it react instead of the board. Currently only implemented
             // for the ChatterBox
             for (IDisplayable displayable : overlays) {

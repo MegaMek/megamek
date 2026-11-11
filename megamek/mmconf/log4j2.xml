@@ -243,6 +243,21 @@
         </Logger>
         -->
         <!--
+          Done button diagnostics. AbstractPhaseDisplay logs [DoneButton] with the reason whenever a Done
+          press (button or hotkey) is refused, which otherwise gives no feedback at all. TWPhasePreparationManager
+          logs [LobbyReset] as the server clears the turn list and the Done flags on returning to the lobby; a
+          pause ended by that return is logged by Server at info, so it shows without this switch.
+          Uncomment the loggers below to diagnose; leave them commented out for normal play.
+        -->
+        <!--
+        <Logger name="megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        <Logger name="megamek.server.totalWarfare.TWPhasePreparationManager" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        -->
+        <!--
           Tainted and Toxic Atmospheres diagnostics (TO:AR p.54). All messages are tagged [TaintedAtmosphere]; grep
           logs/megamek.log for that tag to follow the whole feature flow. The events that change the game - a hex set
           alight, a crew killed by the air, a platoon poisoned past its exposure limit - are logged at INFO and appear

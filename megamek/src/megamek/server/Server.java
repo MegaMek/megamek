@@ -63,6 +63,7 @@ import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.Version;
+import megamek.client.ui.Messages;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Player;
@@ -227,10 +228,9 @@ public class Server implements Runnable {
 
     public static final int SERVER_CONN = Integer.MIN_VALUE;
 
-    private final ConnectionListener connectionListener = new ConnectionListener() {
+    private final PacketPauseGate pauseGate = new PacketPauseGate();
 
-        private boolean isPaused = false;
-        private final List<ReceivedPacket> pausedWaitingList = new ArrayList<>();
+    private final ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
          * Called when it is sensed that a connection has terminated.
@@ -276,28 +276,24 @@ public class Server implements Runnable {
                     handle(rp.getConnectionId(), rp.getPacket());
                     break;
                 case PAUSE:
-                    if (!isPaused) {
+                    if (pauseGate.pause()) {
                         LOGGER.info("Pause packet received - pausing packet handling");
                         sendServerChat("Game is paused.");
                     }
-                    isPaused = true;
                     break;
                 case UNPAUSE:
-                    if (isPaused) {
+                    if (pauseGate.isPaused()) {
                         LOGGER.info("Unpause packet received - resuming packet handling");
                         sendServerChat("Game is resumed.");
                     }
-                    isPaused = false;
+                    List<ReceivedPacket> releasedPackets = pauseGate.unpause();
                     synchronized (packetQueue) {
-                        packetQueue.addAll(pausedWaitingList);
+                        packetQueue.addAll(releasedPackets);
                         packetQueue.notifyAll();
                     }
-                    pausedWaitingList.clear();
                     break;
                 default:
-                    if (isPaused) {
-                        pausedWaitingList.add(rp);
-                    } else {
+                    if (!pauseGate.holdIfPaused(rp)) {
                         synchronized (packetQueue) {
                             packetQueue.add(rp);
                             packetQueue.notifyAll();
@@ -929,6 +925,23 @@ public class Server implements Runnable {
 
     public void resetGame() {
         gameManager.resetGame();
+    }
+
+    /**
+     * Ends any pause as the game returns to the lobby. A pause holds every incoming packet except chat, and the reset
+     * command is chat, so a game reset while paused used to reach the lobby still paused: Done presses, unit changes
+     * and settings were all held and never acted on. The held packets belong to the game that just ended and are
+     * thrown away.
+     */
+    public void endPauseForLobby() {
+        if (!pauseGate.isPaused()) {
+            LOGGER.debug("[LobbyReset] entering the lobby: the game was not paused");
+            return;
+        }
+        int discardedPackets = pauseGate.endPauseForLobby();
+        LOGGER.info("[LobbyReset] the game was paused when it returned to the lobby: resumed packet handling and "
+              + "discarded {} packet(s) held from the old game", discardedPackets);
+        sendServerChat(Messages.getString("Server.pauseEndedByLobby"));
     }
 
     /**

@@ -37,6 +37,7 @@ package megamek.common.equipment.enums;
 import java.io.Serializable;
 
 import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentMessages;
 
 /**
  * {@link megamek.common.units.MobileStructure} and {@link megamek.common.units.BuildingEntity} both have some unique
@@ -153,11 +154,38 @@ public enum StructureEngine implements Serializable {
         return engineType;
     }
 
+    /**
+     * Returns the localized display name for this structure engine.
+     *
+     * @return the engine name
+     */
+    public String getEngineName() {
+        return EquipmentMessages.getString("EquipmentType.StructureEngine." + name());
+    }
+
     public double getBuildingWeightMultiplier() {
         return buildingWeightMultiplier;
     }
 
+    public double getBuildingDailyFuelWeight() {
+        return buildingDailyFuelWeight;
+    }
+
     public double getBaseCost() {
         return baseCost;
+    }
+
+    public double mobilePowerMultiplier(megamek.common.units.EntityMovementMode motive, boolean clan) {
+        return switch (motive) {
+            case TRACKED -> clan ? groundMobileStructurePowerSystemWeightMultiplierClan : groundMobileStructurePowerSystemWeightMultiplierIS;
+            case VTOL -> clan ? airMobileStructurePowerSystemWeightMultiplierClan : airMobileStructurePowerSystemWeightMultiplierIS;
+            case NAVAL -> clan ? surfaceNavalMobileStructurePowerSystemWeightMultiplierClan : surfaceNavalMobileStructurePowerSystemWeightMultiplierIS;
+            case SUBMARINE -> clan ? submarineNavalMobileStructurePowerSystemWeightMultiplierClan : submarineNavalMobileStructurePowerSystemWeightMultiplierIS;
+            default -> -1;
+        };
+    }
+
+    public double getMobileFuelMultiplier() {
+        return mobileStructureFuelMultiplier / 100;
     }
 }

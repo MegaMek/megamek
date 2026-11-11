@@ -97,6 +97,8 @@ public class LBXHandlerTest {
         when(mockTarget.getId()).thenReturn(2);
         var targetCoords = new Coords(0, 10);
         when(mockTarget.getPosition()).thenReturn(targetCoords);
+        // EMI is resolved per attacker (planetary EMI or heavy-metal structure interference)
+        when(mockAttacker.isAffectedByEMI(targetCoords)).thenReturn(true);
         when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_ENTITY);
         when(mockGame.getTarget(Targetable.TYPE_ENTITY, 2)).thenReturn(mockTarget);
 

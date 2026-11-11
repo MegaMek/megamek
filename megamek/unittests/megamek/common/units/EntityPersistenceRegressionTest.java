@@ -35,6 +35,7 @@ package megamek.common.units;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
@@ -356,6 +357,8 @@ class EntityPersistenceRegressionTest {
         changes.put("Entity.pendingINarcPods",
               (owner, field) -> addTo(owner, field, new INarcPod(1, INarcPod.HOMING, 0)));
         changes.put("Entity.iNarcPods", (owner, field) -> addTo(owner, field, new INarcPod(1, INarcPod.HOMING, 0)));
+        changes.put("Entity.occupiedWall",
+              (owner, field) -> ((Entity) owner).setOccupiedWall(mock(WallTarget.class)));
         changes.put("Entity.carriedObjects", (owner, field) -> putIn(owner, field, 0, new ObjectiveMarker()));
         changes.put("Tank.jammedWeapons",
               (owner, field) -> addTo(owner, field, ((Entity) owner).getEquipment().get(0)));

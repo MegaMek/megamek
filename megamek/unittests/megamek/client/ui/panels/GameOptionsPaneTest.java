@@ -99,6 +99,23 @@ class GameOptionsPaneTest {
     private static final String LEGACY_SYMBOL = Character.toString(0xE889);
 
     @Test
+    void optionalBuildingDamageTrackingIsAnUncheckedCombatCheckbox() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel expandedCF = component(
+                  options.getOption(OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF));
+            GameOptionsPane pane = pane("advancedRules", List.of(expandedCF), option -> true);
+
+            assertTreePathExists(findComponent(pane, JTree.class), "Combat", "Damage, Heat, and Criticals");
+            assertFalse(expandedCF.settingsCheckBox().isSelected());
+            expandedCF.settingsCheckBox().doClick();
+            assertEquals(Boolean.TRUE, expandedCF.getValue());
+            expandedCF.settingsCheckBox().doClick();
+            assertEquals(Boolean.FALSE, expandedCF.getValue());
+        });
+    }
+
+    @Test
     void searchFiltersRowsByOptionName() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();

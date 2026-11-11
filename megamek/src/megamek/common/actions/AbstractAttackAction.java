@@ -93,7 +93,12 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     }
 
     public @Nullable Targetable getTarget(final Game game) {
-        return game.getTarget(getTargetType(), getTargetId());
+        Targetable target = game.getTarget(getTargetType(), getTargetId());
+        Entity attacker = game.getEntity(getEntityId());
+        if (target instanceof megamek.common.units.WallTarget wall && attacker != null) {
+            return wall.viewFrom(attacker.getPosition());
+        }
+        return target;
     }
 
     /**

@@ -34,6 +34,7 @@ package megamek.common.weapons.handlers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -65,6 +66,7 @@ import megamek.common.units.BipedMek;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
@@ -147,7 +149,8 @@ class BuildingAttackResolutionTest extends GameBoardTestCase {
 
         // The damage itself is not under test; only what attack reaches the building and the infantry inside
         doReturn(new Vector<Report>()).when(gameManager)
-              .damageBuilding(any(IBuilding.class), anyInt(), any(Coords.class));
+              .damageBuilding(any(IBuilding.class), anyInt(), any(String.class), any(Coords.class), anyInt(),
+                    any(Entity.class), anyBoolean());
         doReturn(new Vector<Report>()).when(gameManager)
               .damageInfantryIn(any(IBuilding.class), anyInt(), any(Coords.class), anyInt());
     }
@@ -169,7 +172,8 @@ class BuildingAttackResolutionTest extends GameBoardTestCase {
 
         handler.handle(GamePhase.FIRING, new Vector<>());
 
-        verify(gameManager, times(1)).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
+        verify(gameManager, times(1)).damageBuilding(eq(building), eq(20), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
         verify(gameManager, times(1)).damageInfantryIn(eq(building), eq(20), eq(BUILDING_HEX),
               eq(WeaponType.WEAPON_CLUSTER_MISSILE));
     }
@@ -199,7 +203,8 @@ class BuildingAttackResolutionTest extends GameBoardTestCase {
 
         handler.handle(GamePhase.FIRING, new Vector<>());
 
-        verify(gameManager, times(1)).damageBuilding(eq(building), anyInt(), eq(BUILDING_HEX));
+        verify(gameManager, times(1)).damageBuilding(eq(building), anyInt(), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
     }
 
     /** Damage from conventional infantry weapons reaches infantry inside unreduced (TW p. 216). */

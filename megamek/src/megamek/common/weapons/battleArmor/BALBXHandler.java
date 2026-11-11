@@ -66,7 +66,7 @@ public class BALBXHandler extends WeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize() * 2, getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -82,7 +82,7 @@ public class BALBXHandler extends WeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             bSalvo = true;
             Report r = new Report(3325);
             r.subject = subjectId;

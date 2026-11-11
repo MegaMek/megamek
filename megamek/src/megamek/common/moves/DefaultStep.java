@@ -63,7 +63,8 @@ class DefaultStep implements PhasePass {
     @Override
     public PhasePassResult preCompilation(final MoveStep moveStep, final Game game, final Entity entity, MoveStep prev,
           final CachedEntityState cachedEntityState) {
-        moveStep.setMp(0);
+        moveStep.setMp(moveStep.getType() == MoveStepType.MOUNT
+              ? MountPathHelper.mountMpCost(entity, moveStep.getTarget(game)) : 0);
         return PhasePassResult.BREAK;
     }
 }

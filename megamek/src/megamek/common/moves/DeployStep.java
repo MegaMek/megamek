@@ -40,6 +40,7 @@ import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.units.Entity;
+import megamek.common.units.MobileStructure;
 
 /**
  * This class handles the deployment step for Walk On Deployment.
@@ -60,7 +61,8 @@ class DeployStep implements PhasePass {
                                           MoveStep prev,
                                           final CachedEntityState cachedEntityState) {
         // Aerospace units need a clean slate to move
-        if (entity.isAero()) {
+        // Air mobile structures use Small Craft landing/liftoff, rather than entering terrain under ground movement.
+        if (entity.isAero() || (entity instanceof MobileStructure mobile && MobileStructureAirMovement.isAir(mobile))) {
             moveStep.setMp(0);
             return PhasePassResult.BREAK;
         }

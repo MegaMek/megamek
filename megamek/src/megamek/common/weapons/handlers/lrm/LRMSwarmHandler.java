@@ -92,7 +92,7 @@ public class LRMSwarmHandler extends LRMHandler {
         }
 
         // Which building takes the damage?
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
 
         // Report weapon attack and its to-hit value.
         Report report = new Report(3115);
@@ -262,7 +262,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 hits = 0;
             }
             // Targeting a building.
-            if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+            if (Targetable.isBuildingType(target.getTargetType())) {
                 // The building takes the full brunt of the attack, all its hits as one attack (TW p. 171)
                 nDamage = nDamPerHit * hits;
                 handleBuildingDamage(vPhaseReport, bldg, nDamage,
@@ -345,7 +345,7 @@ public class LRMSwarmHandler extends LRMHandler {
         // This needs to override the superclass method because in case of swarm
         // the damage to adjacent infantry should be based on the missiles left over,
         // not the total rack size.
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             int missiles = weaponAttackAction.isSwarmingMissiles() ? weaponAttackAction.getSwarmMissiles()
                   : weaponType.getRackSize();
             double toReturn = Compute.directBlowInfantryDamage(
@@ -417,7 +417,7 @@ public class LRMSwarmHandler extends LRMHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             // A conventional platoon absorbs every remaining missile and the flight is over: cluster weapons do
             // not roll on the cluster table against infantry (TW p.215), so there is nothing left to carry on
             // with. Asked and answered officially - "That's a strange side-effect of the infantry rules, but yes":

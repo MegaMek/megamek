@@ -61,7 +61,7 @@ public class ComputeEnvironmentalToHitMods {
     public static ToHitData compileEnvironmentalToHitMods(Game game, Entity attacker, Targetable target,
           WeaponType weaponType, AmmoType ammoType, ToHitData toHit, boolean isArtilleryIndirect) {
 
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        PlanetaryConditions conditions = game.getPlanetaryConditions().forEntity(attacker);
 
         if (toHit == null) {
             // Without valid toHit data, the rest of this will fail
@@ -142,7 +142,7 @@ public class ComputeEnvironmentalToHitMods {
         }
 
         // Electro-Magnetic Interference
-        if (conditions.getEMI().isEMI() && !attacker.isConventionalInfantry()) {
+        if (attacker.isAffectedByEMI(target.getPosition()) && !attacker.isConventionalInfantry()) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
         }
         return toHit;

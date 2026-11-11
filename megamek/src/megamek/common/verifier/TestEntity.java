@@ -158,6 +158,8 @@ public abstract class TestEntity implements TestEntityOption {
             testEntity = new TestBattleArmor((BattleArmor) unit, entityVerifier.baOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             testEntity = new TestInfantry((ConvInfantry) unit, entityVerifier.infOption, null);
+        } else if (unit instanceof BuildingEntity building) {
+            testEntity = new TestBuilding(building, entityVerifier.tankOption, null);
         }
         return testEntity;
     }
@@ -1129,7 +1131,11 @@ public abstract class TestEntity implements TestEntityOption {
         if (unit.isProtoMek()) {
             return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
         } else if (unit.isSupportVehicle()) {
-            return Math.round(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
+            // TM, Support Vehicle armor: weight is points x kg per point, rounded up, so a tonnage only buys points it
+            // fully covers. Per-point weights are whole kilograms; dividing in kg avoids floating point error
+            // (0.15 / 0.025, 0.564 / 0.047) without granting a partially paid point.
+            return Math.floor((double) Math.round(armorTons * 1000)
+                  / Math.round(TestSupportVehicle.armorWeightPerPoint(unit) * 1000));
         } else {
             return armorTons * getArmorPointsPerTon(unit);
         }

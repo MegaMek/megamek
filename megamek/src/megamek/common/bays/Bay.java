@@ -170,6 +170,24 @@ public class Bay implements Transporter, ITechnology {
         return Math.clamp(currentDoors, 0, doors);
     }
 
+    /** Doors usable now, after authored building positions and temporary modular linkages are considered. */
+    public int getUsableDoors() {
+        var building = buildingCarrier();
+        return building == null ? getCurrentDoors() : megamek.common.units.BuildingBayDoors.usableDoors(building, this);
+    }
+
+    protected megamek.common.units.AbstractBuildingEntity buildingCarrier() {
+        if (game != null) {
+            for (Entity entity : game.getEntitiesVector()) {
+                if (entity instanceof megamek.common.units.AbstractBuildingEntity building
+                      && building.getTransportBays().stream().anyMatch(bay -> bay == this)) {
+                    return building;
+                }
+            }
+        }
+        return null;
+    }
+
     public void setCurrentDoors(int d) {
         currentDoors = d;
     }
@@ -213,7 +231,19 @@ public class Bay implements Transporter, ITechnology {
 
     @Override
     public boolean canLoad(Entity unit) {
-        return (getUnused() >= spaceForUnit(unit)) && (currentDoors > loadedThisTurn);
+        return canLoad(unit, getUsableDoors());
+    }
+
+    /** The same native type/capacity validation, using doors at a proposed carrier position. */
+    public boolean canLoad(Entity unit, int usableDoors) {
+        return (getUnused() >= spaceForUnit(unit)) && (usableDoors > loadedThisTurn);
+    }
+
+    /** A projected carrier pose retains each bay's native capacity and any door-specific recovery state. */
+    public boolean canLoadAt(Entity unit, megamek.common.board.Coords position, int facing) {
+        var building = buildingCarrier();
+        return canLoad(unit, building == null ? getUsableDoors()
+              : megamek.common.units.BuildingBayDoors.usableDoors(building, this, position, facing));
     }
 
     /**
@@ -221,7 +251,7 @@ public class Bay implements Transporter, ITechnology {
      *       doors, not if it has units left to unload or the status of those.
      */
     public boolean canUnloadUnits() {
-        return currentDoors > unloadedThisTurn;
+        return getUsableDoors() > unloadedThisTurn;
     }
 
     @Override
@@ -361,6 +391,11 @@ public class Bay implements Transporter, ITechnology {
 
     // destroy a door
     public void destroyDoor() {
+        var building = buildingCarrier();
+        if (building != null) {
+            megamek.common.units.BuildingBayDoors.damage(building, this, null);
+            return;
+        }
         if (getCurrentDoors() > 0) {
             setCurrentDoors(getCurrentDoors() - 1);
         }
@@ -369,6 +404,11 @@ public class Bay implements Transporter, ITechnology {
     // restore a door
     @Deprecated(since = "0.51.0", forRemoval = true)
     public void restoreDoor() {
+        var building = buildingCarrier();
+        if (building != null) {
+            megamek.common.units.BuildingBayDoors.restore(building, this, 1);
+            return;
+        }
         if (getCurrentDoors() < getDoors()) {
             setCurrentDoors(getCurrentDoors() + 1);
         }
@@ -377,6 +417,11 @@ public class Bay implements Transporter, ITechnology {
     // restore all doors
     @Deprecated(since = "0.51.0", forRemoval = true)
     public void restoreAllDoors() {
+        var building = buildingCarrier();
+        if (building != null) {
+            megamek.common.units.BuildingBayDoors.restoreAll(building, this);
+            return;
+        }
         setCurrentDoors(getDoors());
     }
 
@@ -596,6 +641,6 @@ public class Bay implements Transporter, ITechnology {
 
     /** @return The safe launch rate for this particular bay: # of intact doors x 2 */
     public int getSafeLaunchRate() {
-        return getCurrentDoors() * 2;
+        return getUsableDoors() * 2;
     }
 }

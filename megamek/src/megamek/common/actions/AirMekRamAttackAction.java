@@ -151,7 +151,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         IBuilding bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit;
         boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
-              || (getTargetType() == Targetable.TYPE_BUILDING));
+              || (Targetable.isBuildingType(getTargetType())));
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, targetEntity);
 
@@ -249,7 +249,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+        if ((Targetable.isBuildingType(target.getTargetType()))
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
               || (target.isBuildingEntityOrGunEmplacement())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,

@@ -69,6 +69,10 @@ public class FlamerHandler extends WeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
+        if (isTargetShieldedByCapitalBuilding()) {
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+            return;
+        }
         boolean flamerHeatAndDamage =
               Game.rulesManager.getRulesWeapons().flamerHeatAndDamage(game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT));
         Entity entity = game.getEntity(weaponAttackAction.getEntityId());

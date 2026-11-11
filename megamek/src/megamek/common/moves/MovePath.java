@@ -105,6 +105,15 @@ public class MovePath implements Cloneable,
 
     // is this move path being done using careful movement?
     private boolean careful = true;
+    private Integer mobileSpeedQuarters;
+
+    public Integer getMobileSpeedQuarters() {
+        return mobileSpeedQuarters;
+    }
+
+    public void setMobileSpeedQuarters(Integer speed) {
+        mobileSpeedQuarters = speed;
+    }
     private boolean gravityConcern = false;
     private final float gravity;
 
@@ -534,13 +543,16 @@ public class MovePath implements Cloneable,
             }
         }
 
-        // can't do anything after loading except loading again (if MPs exist)
-        if (contains(MoveStepType.LOAD) && !(getLastStep().getType() == MoveStepType.LOAD)) {
+        // TO:AUE p.38: mobile structures use grounded DropShip cargo rules; the passenger pays the MP.
+        // Ordinary carriers cannot do anything after loading except loading again (if MPs exist).
+        if (!(getEntity() instanceof MobileStructure)
+              && contains(MoveStepType.LOAD) && !(getLastStep().getType() == MoveStepType.LOAD)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
         // can't do anything after unloading except unloading again
-        if (contains(MoveStepType.UNLOAD) && !(getLastStep().getType() == MoveStepType.UNLOAD)) {
+        if (!(getEntity() instanceof MobileStructure)
+              && contains(MoveStepType.UNLOAD) && !(getLastStep().getType() == MoveStepType.UNLOAD)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
@@ -1474,7 +1486,10 @@ public class MovePath implements Cloneable,
 
     public boolean isMoveLegal() {
         // Moves which end up off of the board are not legal.
-        if (!getGame().getBoard(getFinalBoardId()).contains(getFinalCoords())) {
+        if (getEntity() instanceof megamek.common.units.MobileStructure mobile
+              ? MobileStructureLinkage.footprint(mobile, getFinalCoords(), getFinalFacing(), getFinalElevation()).stream()
+                    .noneMatch(coords -> getGame().getBoard(getFinalBoardId()).contains(coords))
+              : !getGame().getBoard(getFinalBoardId()).contains(getFinalCoords())) {
             return false;
         }
 
@@ -1659,6 +1674,16 @@ public class MovePath implements Cloneable,
                                        boolean forward) {
         final ArrayList<MovePath> result = new ArrayList<>();
         final MoveStep last = getLastStep();
+
+        if (getEntity() instanceof megamek.common.units.MobileStructure) {
+            // TO:AUE p.35: translation has no facing. A pivot is explicitly chosen, not a navigation shortcut.
+            for (MoveStepType type : List.of(MoveStepType.FORWARDS, MoveStepType.LATERAL_RIGHT,
+                  MoveStepType.LATERAL_RIGHT_BACKWARDS, MoveStepType.BACKWARDS,
+                  MoveStepType.LATERAL_LEFT_BACKWARDS, MoveStepType.LATERAL_LEFT)) {
+                result.add(clone().addStep(type));
+            }
+            return result;
+        }
 
         // need to do a separate section here for Aerospace.
         // just like jumping for now, but I could add some other stuff here later

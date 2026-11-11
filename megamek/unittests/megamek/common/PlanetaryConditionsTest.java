@@ -45,6 +45,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import java.util.Vector;
 import java.util.stream.Stream;
 
 import megamek.common.battleArmor.BattleArmor;
@@ -205,6 +206,7 @@ class PlanetaryConditionsTest {
         when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
         when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
         when(mockBoard.getHex(any())).thenReturn(mockHex);
+        when(mockBoard.getBuildingsVector()).thenReturn(new Vector<>());
         when(mockHex.containsTerrain(Terrains.BLDG_ELEV)).thenReturn(true);
         when(mockHex.containsTerrain(Terrains.BUILDING)).thenReturn(true);
         when(mockHex.terrainLevel(Terrains.BLDG_ELEV)).thenReturn(2);

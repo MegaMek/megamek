@@ -83,11 +83,11 @@ public final class SmallCraftBay extends AbstractSmallCraftASFBay {
     }
 
     @Override
-    public boolean canLoad(Entity unit) {
+    protected boolean canCarry(Entity unit) {
         boolean loadableAero = (unit.isFighter() || unit.isSmallCraft()) && !(unit instanceof FighterSquadron);
         boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode()
               == LandAirMek.CONV_MODE_FIGHTER);
-        return (getUnused() >= 1) && (availableRecoverySlots() >= 1) && (loadableAero || loadableLAM);
+        return (getUnused() >= 1) && (loadableAero || loadableLAM);
     }
 
     @Override

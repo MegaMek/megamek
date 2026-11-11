@@ -69,9 +69,9 @@ public final class LightVehicleBay extends UnitBay {
     }
 
     @Override
-    public boolean canLoad(Entity unit) {
+    public boolean canLoad(Entity unit, int usableDoors) {
         boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE);
-        return (getUnused() >= 1) && (currentDoors >= loadedThisTurn)
+        return (getUnused() >= 1) && (usableDoors > 0) && (usableDoors >= loadedThisTurn)
               && (unit.getWeight() <= 50) && ((unit instanceof Tank) || loadableQuadVee);
     }
 

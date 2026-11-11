@@ -115,6 +115,63 @@ public class Building implements Serializable {
      * The current construction factor of the building hexes. Any damage immediately updates this value.
      */
     private final Map<CubeCoords, Integer> currentCF = new HashMap<>();
+    private Map<CubeCoords, Integer> startTurnCF;
+    private Map<CubeCoords, BuildingFloorState> floorStates;
+
+    public boolean usesExpandedCF() {
+        return floorStates != null;
+    }
+
+    /** A scenario option, not a construction-file field. Existing games keep their per-hex state. */
+    public void enableExpandedCF() {
+        if (floorStates == null) {
+            floorStates = new HashMap<>();
+            for (CubeCoords coords : getCoordsList()) {
+                floorStates.put(coords, new BuildingFloorState(getHeight(coords), getCurrentCF(coords), getArmor(coords)));
+            }
+        }
+    }
+
+    public BuildingFloorState getFloorState(CubeCoords coords) {
+        return floorStates == null ? null : floorStates.get(coords);
+    }
+
+    /** Replace a received floor snapshot without sharing mutable state with the packet/entity. */
+    public void copyFloorState(CubeCoords coords, BuildingFloorState source) {
+        if (source == null) {
+            if (floorStates != null) {
+                floorStates.remove(coords);
+                if (floorStates.isEmpty()) {
+                    floorStates = null;
+                }
+            }
+        } else {
+            if (floorStates == null) {
+                floorStates = new HashMap<>();
+            }
+            floorStates.put(coords, new BuildingFloorState(source));
+        }
+    }
+
+    public void newRound() {
+        startTurnCF = new HashMap<>(currentCF);
+        if (floorStates != null) {
+            floorStates.values().forEach(BuildingFloorState::newRound);
+        }
+    }
+
+    public int getStartTurnCF(CubeCoords coords) {
+        return startTurnCF == null ? getPhaseCF(coords) : startTurnCF.getOrDefault(coords, getPhaseCF(coords));
+    }
+
+    public void synchronizeFloorState(CubeCoords coords) {
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors != null && isIn(coords)) {
+            currentCF.put(coords, floors.maximumCF());
+            phaseCF.put(coords, floors.maximumCF());
+            height.put(coords, floors.height());
+        }
+    }
 
     /**
      * The construction factor of the building hexes at the start of this attack phase. Damage that is received during
@@ -403,6 +460,12 @@ public class Building implements Serializable {
         }
 
         currentCF.put(coords, cf);
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors != null) {
+            for (int floor = 0; floor < floors.size(); floor++) {
+                floors.setCF(floor, cf);
+            }
+        }
     }
 
     /**
@@ -509,12 +572,7 @@ public class Building implements Serializable {
      * Returns a string representation of the given building class, e.g. "Hangar".
      */
     public static String className(int bldgClass) {
-        return switch (bldgClass) {
-            case IBuilding.HANGAR -> "Hangar";
-            case IBuilding.FORTRESS -> "Fortress";
-            case IBuilding.GUN_EMPLACEMENT -> "Gun Emplacement";
-            default -> "Building";
-        };
+        return IBuilding.className(bldgClass);
     }
 
     @Override
@@ -575,9 +633,19 @@ public class Building implements Serializable {
      * @param coords - the <code>CubeCoords</code> of the hex to be removed
      */
     public void removeHex(CubeCoords coords) {
-        coordinates.remove(coords);
+        if (!coordinates.remove(coords)) {
+            return;
+        }
         currentCF.remove(coords);
         phaseCF.remove(coords);
+        height.put(coords, 0);
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors != null) {
+            for (int floor = 0; floor < floors.size(); floor++) {
+                floors.setCF(floor, 0);
+            }
+            floors.resolveCollapse();
+        }
         collapsedHexes++;
     }
 

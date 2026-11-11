@@ -274,7 +274,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+        if ((Targetable.isBuildingType(target.getTargetType()))
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "You can not push a building (well, you can, but it won't do anything).");

@@ -22,6 +22,7 @@ import java.util.Map;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.loaders.MekFileParser;
@@ -38,6 +39,29 @@ class CostCalculatorReportTest {
     @BeforeAll
     static void initializeEquipment() {
         EquipmentType.initializeTypes();
+    }
+
+    @Test
+    void rocketLauncherPriceIncludesIntegralShotButNotSeparateReloads() throws Exception {
+        HandheldWeapon weapon = new HandheldWeapon();
+        weapon.addEquipment(EquipmentType.get("RL10"), HandheldWeapon.LOC_GUN);
+        assertEquals(1, weapon.getAmmo().size());
+        assertEquals(15000, CostCalculator.getWeaponsAndEquipmentCost(weapon, false));
+        assertEquals(15000, CostCalculator.getWeaponsAndEquipmentCost(weapon, true));
+
+        weapon.addEquipment(EquipmentType.get("IS Ammo RL-10"), HandheldWeapon.LOC_GUN);
+        assertEquals(16000, CostCalculator.getWeaponsAndEquipmentCost(weapon, false));
+        assertEquals(15000, CostCalculator.getWeaponsAndEquipmentCost(weapon, true));
+    }
+
+    @Test
+    void rocketAmmoExceptionDoesNotChangeOtherOneShotAmmunitionPrices() throws Exception {
+        HandheldWeapon weapon = new HandheldWeapon();
+        Mounted<?> launcher = weapon.addEquipment(EquipmentType.get("ISSRM2OS"), HandheldWeapon.LOC_GUN);
+        assertEquals(1, weapon.getAmmo().size());
+        assertEquals((long) (launcher.getCost() + weapon.getAmmo().getFirst().getCost()),
+              CostCalculator.getWeaponsAndEquipmentCost(weapon, false));
+        assertEquals((long) launcher.getCost(), CostCalculator.getWeaponsAndEquipmentCost(weapon, true));
     }
 
     @Test

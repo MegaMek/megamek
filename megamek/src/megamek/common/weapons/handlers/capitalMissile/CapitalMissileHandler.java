@@ -96,7 +96,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
@@ -320,7 +320,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                         return false;
                     }
                     // Targeting a building.
-                    if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                    if (Targetable.isBuildingType(target.getTargetType())) {
                         // The building takes the full brunt of the attack.
                         nDamage = nDamPerHit * hits;
                         handleBuildingDamage(vPhaseReport, bldg, nDamage,

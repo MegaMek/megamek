@@ -97,7 +97,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(
                   toReturn, getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -107,7 +107,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
             toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
+        toReturn = applyGlancingBlowModifier(toReturn, usesConventionalInfantryDamage());
 
         return (int) Math.ceil(toReturn);
 

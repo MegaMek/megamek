@@ -64,6 +64,21 @@ public interface Targetable extends InGameObject, Serializable {
     int TYPE_HEX_TAG = 19;
     int TYPE_BLDG_TAG = 20;
     int TYPE_SATURATION = 21;
+    // A wall target keeps the existing board/hex ID; the target type carries its clockwise hexside.
+    int TYPE_WALL_N = 22;
+    int TYPE_WALL_NE = 23;
+    int TYPE_WALL_SE = 24;
+    int TYPE_WALL_S = 25;
+    int TYPE_WALL_SW = 26;
+    int TYPE_WALL_NW = 27;
+
+    static boolean isWallType(int type) {
+        return type >= TYPE_WALL_N && type <= TYPE_WALL_NW;
+    }
+
+    static boolean isBuildingType(int type) {
+        return type == TYPE_BUILDING || isWallType(type);
+    }
 
     int getTargetType();
 

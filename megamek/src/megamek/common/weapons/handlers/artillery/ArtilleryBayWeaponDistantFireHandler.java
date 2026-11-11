@@ -645,7 +645,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = weaponType.getDamage();
         // area effect damage is double
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn /= 0.5;
         }
 

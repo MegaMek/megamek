@@ -75,6 +75,7 @@ public class UnitDamageSpecBuilder {
         spec.hidden = checkboxValue(controls.chkHidden);
         spec.stealth = checkboxValue(controls.chkStealth);
         spec.dugIn = checkboxValue(controls.chkDugIn);
+        spec.survivalGearStored = checkboxValue(controls.chkSurvivalGearStored);
         spec.fuel = spinnerValue(controls.spnFuel);
 
         for (Map.Entry<Integer, JSpinner> ammoShots : controls.ammoShots.entrySet()) {

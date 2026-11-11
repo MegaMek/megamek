@@ -43,7 +43,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -71,7 +70,7 @@ public class MPodHandler extends LBXHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
         int shots = 15;
@@ -92,8 +91,7 @@ public class MPodHandler extends LBXHandler {
             hitMod -= 4;
         }
 
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI()) {
+        if (attackingEntity.isAffectedByEMI(target.getPosition())) {
             hitMod -= 2;
         }
 

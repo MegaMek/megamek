@@ -83,6 +83,7 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.AutomaticEjectionRules;
 import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.Dropship;
@@ -419,6 +420,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private boolean checkNags() {
         Entity entity = currentEntity();
         if (entity == null || entity.getPosition() == null) {
+            return true;
+        }
+        if (entity instanceof AbstractBuildingEntity building
+              && !building.isDeploymentPositionAndFacingValid(entity.getPosition(), entity.getFacing(),
+                    entity.getElevation(), entity.getBoardId())) {
+            new DeploymentHelper(clientgui).showCannotDeployHereMessage(entity, entity.getPosition());
             return true;
         }
         if ((entity instanceof Dropship) && !entity.isAirborne()) {
@@ -914,9 +921,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * @param coords        the clicked hex
      * @param viaTurnButton {@code true} when the Turn button was pressed rather than shift held
      */
-    private void processTurn(Entity entity,
-                             Coords coords,
-                             boolean viaTurnButton) {
+    void processTurn(Entity entity, Coords coords, boolean viaTurnButton) {
         if (AllowedDeploymentHelper.hasFacingDependentFootprint(entity)) {
             if (viaTurnButton) {
                 turnBuildingToValidFacing(entity);
@@ -925,9 +930,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             return;
         }
+        if (coords.equals(entity.getPosition())) {
+            return;
+        }
+        int facing = entity.getPosition().direction(coords);
+        if (entity instanceof AbstractBuildingEntity building
+              && !building.isDeploymentPositionAndFacingValid(entity.getPosition(), facing,
+                    entity.getElevation(), entity.getBoardId())) {
+            clientgui.addToast(ToastLevel.WARNING, Messages.getString("DeploymentDisplay.buildingCannotRotate"), entity);
+            return;
+        }
         // Backup facing and then set the new prospective facing
         int originalFacing = entity.getFacing();
-        entity.setFacing(entity.getPosition().direction(coords));
+        entity.setFacing(facing);
         DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
         if (!deploymentHelper.checkDeployment(game.getBoard(entity.getBoardId()),
                                               entity,
@@ -937,7 +952,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             entity.setFacing(originalFacing);
             return;
         }
-        entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
         if (!entity.getAllTowedUnits().isEmpty()) {
             // clear any sprites
@@ -948,6 +962,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
+        clientgui.boardViews().forEach(IBoardView::repaint);
         turnMode = false;
     }
 
@@ -963,6 +978,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                     Coords clicked) {
         turnMode = false;
         Coords position = building.getPosition();
+        if (position.equals(clicked)) {
+            return;
+        }
         int facing = position.direction(clicked);
         if (facing == building.getFacing()) {
             return;

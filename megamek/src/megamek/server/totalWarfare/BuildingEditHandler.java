@@ -590,6 +590,9 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
      */
     private static int damageNeededToFlatten(IBuilding building, Coords coords) {
         int armor = Math.max(0, building.getArmor(coords));
+        if (building.usesCapitalScale()) {
+            armor *= 10;
+        }
         int constructionFactor = Math.max(0, building.getCurrentCF(coords));
         double scale = building.getDamageToScale();
         int damageThroughScaling = (scale <= 0)

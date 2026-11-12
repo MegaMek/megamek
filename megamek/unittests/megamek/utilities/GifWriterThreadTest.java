@@ -39,15 +39,22 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Tests for {@link GifWriterThread}'s producer/consumer behavior.
@@ -66,6 +73,8 @@ class GifWriterThreadTest {
         CountDownLatch releaseEncode = new CountDownLatch(1);
 
         GifWriter gifWriter = mock(GifWriter.class);
+        // The discard stop below deletes the temporary file, so the mock needs one to look at
+        when(gifWriter.getOutputFile()).thenReturn(new File("missing-test-summary.gif"));
         // Make the first encode block until the test releases it, simulating a slow frame.
         doAnswer(invocation -> {
             encodingStarted.countDown();
@@ -202,5 +211,56 @@ class GifWriterThreadTest {
 
         assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
         verify(gifWriter, times(3)).appendFrame(any(), anyLong());
+    }
+
+    /**
+     * Regression guard for #9543: closing a game early stops the writer in discard mode. That stop
+     * skips the save prompt, and the temporary GIF used to be deleted only after the prompt, so every
+     * game closed early left its GIF behind in {@code logs/gameSummaries/minimap}.
+     */
+    @Test
+    void testDiscardStopDeletesTemporaryGif(@TempDir Path tempDir) throws Exception {
+        File temporaryGif = Files.createFile(tempDir.resolve("summary.gif")).toFile();
+        GifWriter gifWriter = mock(GifWriter.class);
+        when(gifWriter.getOutputFile()).thenReturn(temporaryGif);
+        when(gifWriter.delete()).thenAnswer(invocation -> temporaryGif.delete());
+        AtomicBoolean promptShown = new AtomicBoolean(false);
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                promptShown.set(true);
+            }
+        };
+        thread.start();
+        thread.stopThread(true);
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        assertFalse(promptShown.get(), "A discard stop must not show the save prompt");
+        verify(gifWriter).close();
+        assertFalse(temporaryGif.exists(), "A discard stop must delete the temporary GIF");
+    }
+
+    /** A normal stop leaves the file alone until the save prompt has been answered. */
+    @Test
+    void testNormalStopKeepsGifForSavePrompt(@TempDir Path tempDir) throws IOException, InterruptedException {
+        File temporaryGif = Files.createFile(tempDir.resolve("summary.gif")).toFile();
+        GifWriter gifWriter = mock(GifWriter.class);
+        when(gifWriter.getOutputFile()).thenReturn(temporaryGif);
+        AtomicBoolean fileExistedAtPrompt = new AtomicBoolean(false);
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                fileExistedAtPrompt.set(temporaryGif.exists());
+            }
+        };
+        thread.start();
+        thread.stopThread();
+        thread.join(5000);
+
+        assertTrue(fileExistedAtPrompt.get(), "The GIF must still exist when the save prompt opens");
+        verify(gifWriter, never()).delete();
     }
 }

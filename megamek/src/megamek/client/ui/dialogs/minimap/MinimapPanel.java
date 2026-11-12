@@ -1652,6 +1652,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
 
+        if (MinimapDamagePip.shouldDraw(entity, getLocalPlayer(), GUIP.getShowDamageLevel(), removedFromGame)) {
+            MinimapDamagePip.draw(g2, entity, UNIT_SCALE[zoom] / 100.0d, stratOpsSymbols);
+        }
+
         if (GUIP.getDrawFacingArrowsOnMiniMap() && !removedFromGame && !entity.isInfantry()) {
             // draw facing arrow
             var facing = entity.getFacing();
@@ -2306,9 +2310,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.MM_SYMBOL)
-              || e.getName().equals(GUIPreferences.TEAM_COLORING)) {
+    public void preferenceChange(PreferenceChangeEvent event) {
+        if (event.getName().equals(GUIPreferences.MM_SYMBOL)
+              || event.getName().equals(GUIPreferences.TEAM_COLORING)
+              || event.getName().equals(GUIPreferences.SHOW_DAMAGE_LEVEL)) {
             refreshMap();
         }
     }

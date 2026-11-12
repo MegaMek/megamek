@@ -883,7 +883,7 @@ public class EntitySprite extends Sprite {
 
                 // Draw a label border with player colors or team coloring
                 if (GUIP.getUnitLabelBorder()) {
-                    graph.setColor(UnitOwnerColors.colorFor(entity.getOwner(), bv.getLocalPlayer()));
+                    graph.setColor(UnitOwnerColors.colorFor(entity.getOwner(), bv.getLocalPlayer(), bv.game));
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1,

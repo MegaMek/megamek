@@ -1512,7 +1512,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         boolean stratOpsSymbols = GUIP.getMmSymbol();
 
         // Choose player or team color depending on preferences
-        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer());
+        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer(), game);
 
         if (removedFromGame) {
             iconColor = changeColorForDestroyedUnit(iconColor.brighter(), DESTROYED_UNIT_ALPHA);
@@ -1711,7 +1711,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
 
         // Choose player or team color depending on preferences
-        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer());
+        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer(), game);
         Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
 

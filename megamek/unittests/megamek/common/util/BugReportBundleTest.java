@@ -33,13 +33,16 @@
 
 package megamek.common.util;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -47,6 +50,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -80,6 +85,69 @@ class BugReportBundleTest {
         archiveFile = temporaryDirectory.resolve("bug-report.zip").toFile();
         saveDirectory = temporaryDirectory.resolve("savegames").toFile();
         assertTrue(saveDirectory.mkdirs(), "test fixture: could not create the save directory");
+    }
+
+    @Test
+    void archiveCarriesNoHomeFolderLoginNameHostNameOrIpAddress() throws IOException {
+        String planted = String.join("\n",
+              "Loading C:\\Users\\Dave Smith\\mekhq\\campaigns\\Test.cpnx.gz",
+              "Custom units in D:\\dsmith\\Games\\customs",
+              "s: hostname = 'DESKTOP-AB12CD' port = 2346",
+              "s: hosting on address = 10.0.0.134",
+              "s: hosting on address = fe80::1c2d:3e4f:5a6b:7c8d%12");
+        writeLog("megamek.log", planted);
+        writeLog("gamelog_2026-07-21_12-09-27.html", "<p>" + planted + "</p>");
+        File rolledLog = new File(logDirectory, "megamek_1.log.gz");
+        try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(Files.newOutputStream(rolledLog.toPath()))) {
+            gzipOutputStream.write(planted.getBytes(StandardCharsets.UTF_8));
+        }
+        // A save is XML, so redaction could break it; it must reach the archive byte for byte.
+        File saveGame = new File(saveDirectory, "report.sav.gz");
+        Files.writeString(saveGame.toPath(), planted, StandardCharsets.UTF_8);
+
+        BugReportRedactor redactor = new BugReportRedactor("C:\\Users\\Dave Smith", "dsmith",
+              List.of("DESKTOP-AB12CD"));
+        BugReportBundle bundle = new BugReportBundle(new BugReportBundle.Sources(logDirectory, logDirectory,
+              saveDirectory, saveGame, SYSTEM_INFORMATION + "User dir: C:\\Users\\Dave Smith\n",
+              GAME_LOG_FILE_NAME, null), redactor);
+        bundle.writeTo(archiveFile);
+
+        try (ZipFile zipFile = new ZipFile(archiveFile)) {
+            for (String entryName : List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log",
+                  "logs/gamelog_2026-07-21_12-09-27.html", "logs/megamek_1.log.gz")) {
+                String text = readEntryText(zipFile, entryName);
+                for (String secret : List.of("Dave Smith", "dsmith", "DESKTOP-AB12CD", "10.0.0.134", "fe80::")) {
+                    assertFalse(text.contains(secret), entryName + " still contains " + secret + ":\n" + text);
+                }
+            }
+            String liveLog = readEntryText(zipFile, "logs/megamek.log");
+            assertTrue(liveLog.contains("[home]\\mekhq\\campaigns\\Test.cpnx.gz"), liveLog);
+            assertTrue(liveLog.contains("D:\\[user]\\Games"), liveLog);
+            assertTrue(liveLog.contains("hostname = '[host]'"), liveLog);
+            assertTrue(liveLog.contains("address = [ip]"), liveLog);
+
+            assertEquals(planted, readEntryText(zipFile, saveGame.getName()),
+                  "the save game must be copied unchanged");
+        }
+        assertEquals((3 * 2) + 1, redactor.pathCount(), "home and login folder in three logs, plus system info");
+    }
+
+    @Test
+    void logThatIsNotUtf8KeepsItsOtherBytesWhileBeingRedacted() throws IOException {
+        // "Cafe 10.0.0.5" with a Latin-1 e-acute (0xE9), which is not valid UTF-8 on its own.
+        byte[] latinOneLog = { 'C', 'a', 'f', (byte) 0xE9, ' ', '1', '0', '.', '0', '.', '0', '.', '5' };
+        Files.write(new File(logDirectory, "megamek.log").toPath(), latinOneLog);
+
+        BugReportBundle bundle = new BugReportBundle(new BugReportBundle.Sources(logDirectory, logDirectory,
+              saveDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME, null),
+              new BugReportRedactor(null, null, List.of()));
+        bundle.writeTo(archiveFile);
+
+        byte[] expected = { 'C', 'a', 'f', (byte) 0xE9, ' ', '[', 'i', 'p', ']' };
+        try (ZipFile zipFile = new ZipFile(archiveFile);
+              InputStream entryStream = zipFile.getInputStream(zipFile.getEntry("logs/megamek.log"))) {
+            assertArrayEquals(expected, entryStream.readAllBytes());
+        }
     }
 
     @Test
@@ -446,5 +514,20 @@ class BugReportBundleTest {
             }
         }
         return entryNames;
+    }
+
+    /**
+     * @param zipFile   the open archive
+     * @param entryName the entry to read; a {@code .log.gz} entry is unpacked first
+     *
+     * @return the entry's text
+     */
+    private static String readEntryText(ZipFile zipFile, String entryName) throws IOException {
+        ZipEntry entry = zipFile.getEntry(entryName);
+        assertNotNull(entry, "the archive should contain " + entryName);
+        try (InputStream entryStream = zipFile.getInputStream(entry);
+              InputStream textStream = entryName.endsWith(".log.gz") ? new GZIPInputStream(entryStream) : entryStream) {
+            return new String(textStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 }

@@ -1576,10 +1576,7 @@ public final class Game extends AbstractGame implements Serializable,
         } else {
             entity.setGame(this);
             inGameObjects.put(id, entity);
-            // Get the collection of positions
-            HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
-            // Update position lookup table
-            updateEntityPositionLookup(entity, oldPositions);
+            updateEntityPositionLookup(entity, getPositionsToReplace(oldEntity));
 
             // Not sure if this really required
             if (id > lastEntityId) {
@@ -1588,6 +1585,28 @@ public final class Game extends AbstractGame implements Serializable,
 
             processGameEvent(new GameEntityChangeEvent(this, entity, movePath, oldEntity));
         }
+    }
+
+    /**
+     * Returns every hex the position lookup must drop a unit from when the unit is replaced by a newer copy: where
+     * the old copy stands, and also wherever the lookup itself still lists it. The two can differ. A bot shares its
+     * unit objects with its planner's game, so when the bot moves a unit while choosing a hex, only the planner's
+     * lookup hears about it; this game can be left listing the unit on a hex it was merely tried on (see
+     * {@code SharedEntityPositionLookupTest}). Trusting the old copy alone would keep such an entry forever.
+     *
+     * @param oldEntity the copy of the unit being replaced
+     *
+     * @return the hexes to remove the unit from in the position lookup
+     */
+    private HashSet<Coords> getPositionsToReplace(Entity oldEntity) {
+        HashSet<Coords> positionsToReplace = oldEntity.getOccupiedCoords();
+        HashSet<Coords> listedPositions = getEntityPositions(oldEntity);
+        if (!positionsToReplace.containsAll(listedPositions)) {
+            logger.debug("[PositionLookup] {}: dropping stale listed hexes {}, the unit stood on {}",
+                  oldEntity.getDisplayName(), listedPositions, positionsToReplace);
+            positionsToReplace.addAll(listedPositions);
+        }
+        return positionsToReplace;
     }
 
     @Override

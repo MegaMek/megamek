@@ -79,9 +79,12 @@ import megamek.logging.MMLogger;
  * push the total past the cap are skipped and named in the returned {@link BundleResult}, so the caller can tell the
  * player exactly what was left out instead of silently truncating.</p>
  *
- * <p>Every text file, and the system information, passes through a {@link BugReportRedactor} on the way in, so the
- * archive does not carry the player's home folder, login name, computer name or IP addresses. Save games and images
- * are copied unchanged.</p>
+ * <p>The version, OS, Java and hardware details are not a separate file. They are written into the live log just
+ * before packaging, so they sit in {@code logs/megamek.log} next to everything else, even when the startup header
+ * has rolled out of it.</p>
+ *
+ * <p>Every text file passes through a {@link BugReportRedactor} on the way in, so the archive does not carry the
+ * player's home folder, login name, computer name or IP addresses. Save games and images are copied unchanged.</p>
  *
  * <p>This class deliberately has no Swing or game-state dependencies so that it can be exercised headlessly.</p>
  *
@@ -92,9 +95,6 @@ public class BugReportBundle {
 
     /** GitHub refuses issue attachments larger than 25 MB, whatever the file type. */
     public static final long MAX_ARCHIVE_BYTES = 25L * 1024L * 1024L;
-
-    /** The archive entry holding the version, OS and Java details. */
-    public static final String SYSTEM_INFO_ENTRY_NAME = "system-info.txt";
 
     /** Archive sub-directory holding the collected logs, matching the layout MekHQ's bug report bundle uses. */
     private static final String LOG_ENTRY_PREFIX = "logs/";
@@ -200,7 +200,8 @@ public class BugReportBundle {
      *                             {@code MMConstants.SAVEGAME_DIR}
      * @param saveGameFile         the saved game to place at the archive root, or {@code null} when no game was
      *                             running (the main-menu and startup-crash cases)
-     * @param systemInformation    the version, OS and Java details to write to {@value #SYSTEM_INFO_ENTRY_NAME}
+     * @param systemInformation    the version, OS, Java and hardware details, written into the live log just before
+     *                             it is packaged
      * @param gameLogFileName      the configured combat-report filename, normally {@code gamelog.html}, used to find
      *                             the newest matching report; or {@code null} to collect no combat report
      * @param gameSummaryDirectory the current game's minimap image folder, normally
@@ -258,16 +259,14 @@ public class BugReportBundle {
         long totalBytes = 0;
         BugReportRedactor activeRedactor = (redactor != null) ? redactor : BugReportRedactor.forThisMachine();
 
+        // The startup header can roll out of the live log in a long session, so it is written again now. The live
+        // log goes into the archive right after the saves, so the version and hardware always reach the maintainer
+        // in the same place, with no separate file to look for.
+        LOGGER.info("[BugReport] Packaging a bug report. System information now:\n{}",
+              asCurrentState(systemInformation));
+
         try (OutputStream fileOutputStream = new FileOutputStream(archiveFile);
               ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)) {
-
-            // The system information is tiny and always wanted, so it is written first and never counted against
-            // the cap; a bundle that omitted it would be of little use.
-            byte[] systemInformationBytes = activeRedactor.redact(systemInformation).getBytes(StandardCharsets.UTF_8);
-            writeEntry(zipOutputStream, SYSTEM_INFO_ENTRY_NAME, systemInformationBytes);
-            includedEntries.add(SYSTEM_INFO_ENTRY_NAME);
-            totalBytes += systemInformationBytes.length;
-
             for (CandidateFile candidate : gatherCandidates()) {
                 long candidateLength = candidate.source().length();
                 if ((totalBytes + candidateLength) > MAX_ARCHIVE_BYTES) {
@@ -567,6 +566,18 @@ public class BugReportBundle {
             LOGGER.warn(exception, "[BugReport] Could not read {}; it will be empty in the archive", source.getName());
         }
         zipOutputStream.closeEntry();
+    }
+
+    /**
+     * Rewords the startup header for logging mid-session. The header opens with "Starting MegaMek v...", which would
+     * read as a restart in the middle of a log.
+     *
+     * @param systemInformation the header from {@code MegaMek.getUnderlyingInformation}
+     *
+     * @return the same text without the leading "Starting "
+     */
+    public static String asCurrentState(String systemInformation) {
+        return systemInformation.replaceFirst("^Starting ", "");
     }
 
     /**

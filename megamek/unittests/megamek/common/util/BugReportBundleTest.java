@@ -113,7 +113,7 @@ class BugReportBundleTest {
         bundle.writeTo(archiveFile);
 
         try (ZipFile zipFile = new ZipFile(archiveFile)) {
-            for (String entryName : List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log",
+            for (String entryName : List.of("logs/megamek.log",
                   "logs/gamelog_2026-07-21_12-09-27.html", "logs/megamek_1.log.gz")) {
                 String text = readEntryText(zipFile, entryName);
                 for (String secret : List.of("Dave Smith", "dsmith", "DESKTOP-AB12CD", "10.0.0.134", "fe80::")) {
@@ -129,7 +129,7 @@ class BugReportBundleTest {
             assertEquals(planted, readEntryText(zipFile, saveGame.getName()),
                   "the save game must be copied unchanged");
         }
-        assertEquals((3 * 2) + 1, redactor.pathCount(), "home and login folder in three logs, plus system info");
+        assertEquals(3 * 2, redactor.pathCount(), "home and login folder in each of the three logs");
     }
 
     @Test
@@ -151,14 +151,20 @@ class BugReportBundleTest {
     }
 
     @Test
-    void emptyLogDirectoryStillProducesAnArchiveWithSystemInformation() throws IOException {
+    void emptyLogDirectoryStillProducesAnArchive() throws IOException {
         BugReportBundle bundle = newBundle(null);
 
         BugReportBundle.BundleResult result = bundle.writeTo(archiveFile);
 
         assertTrue(archiveFile.isFile(), "an archive should be written even with nothing to collect");
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME), entryNamesOf(archiveFile));
+        assertEquals(List.of(), entryNamesOf(archiveFile), "system information goes in the log, not its own file");
         assertFalse(result.hasSkippedEntries());
+    }
+
+    @Test
+    void systemInformationLoggedMidSessionDoesNotReadAsARestart() {
+        assertEquals("MegaMek v0.51.01\n    Java Version: 21.0.5\n",
+              BugReportBundle.asCurrentState(SYSTEM_INFORMATION));
     }
 
     @Test
@@ -169,7 +175,7 @@ class BugReportBundleTest {
 
         bundle.writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME), entryNamesOf(archiveFile));
+        assertEquals(List.of(), entryNamesOf(archiveFile));
     }
 
     @Test
@@ -256,8 +262,7 @@ class BugReportBundleTest {
 
         newBundle(null).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "logs/megamek.log",
+        assertEquals(List.of("logs/megamek.log",
               "logs/mekhq.log",
               "logs/unified_log.log",
               "logs/princess.log",
@@ -275,7 +280,7 @@ class BugReportBundleTest {
 
         newBundle(null).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log"),
+        assertEquals(List.of("logs/megamek.log"),
               entryNamesOf(archiveFile));
     }
 
@@ -311,8 +316,7 @@ class BugReportBundleTest {
 
         newBundle(null).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "logs/" + GAME_LOG_FILE_NAME,
+        assertEquals(List.of("logs/" + GAME_LOG_FILE_NAME,
               "logs/game_actions_1.tsv",
               "logs/megamek_1.log.gz"), entryNamesOf(archiveFile));
     }
@@ -329,8 +333,7 @@ class BugReportBundleTest {
         newBundle(null, gameDirectory).writeTo(archiveFile);
 
         String prefix = "logs/gameSummaries/minimap/" + GAME_UUID + "/";
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "logs/megamek.log",
+        assertEquals(List.of("logs/megamek.log",
               "logs/megamek_1.log.gz",
               prefix + newestFrame.getName(),
               prefix + oldestFrame.getName(),
@@ -345,7 +348,7 @@ class BugReportBundleTest {
 
         newBundle(null, absentGameDirectory).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log"),
+        assertEquals(List.of("logs/megamek.log"),
               entryNamesOf(archiveFile));
     }
 
@@ -362,8 +365,7 @@ class BugReportBundleTest {
 
         BugReportBundle.BundleResult result = newBundle(null, gameDirectory).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "logs/megamek.log",
+        assertEquals(List.of("logs/megamek.log",
               "logs/gameSummaries/minimap/" + GAME_UUID + "/" + newestFrame.getName(),
               "logs/gameSummaries/minimap/" + GAME_UUID + "/" + oldestFrame.getName()), entryNamesOf(archiveFile));
         assertEquals(List.of(recording.getName()), result.skippedEntries());
@@ -394,8 +396,7 @@ class BugReportBundleTest {
 
         newBundle(saveGame).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "savegame.sav.gz",
+        assertEquals(List.of("savegame.sav.gz",
               "battle-autosave/" + newestAutosave.getName(),
               "logs/megamek.log"), entryNamesOf(archiveFile));
     }
@@ -406,8 +407,7 @@ class BugReportBundleTest {
 
         newBundle(null).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "battle-autosave/autosave2026-10-17_11-05-00.sav.gz"), entryNamesOf(archiveFile));
+        assertEquals(List.of("battle-autosave/autosave2026-10-17_11-05-00.sav.gz"), entryNamesOf(archiveFile));
     }
 
     @Test

@@ -33,19 +33,25 @@
 package megamek.client.ui.clientGUI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.awt.Color;
 
 import megamek.client.ui.clientGUI.UnitOwnerColors.TeamColors;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.Player;
+import megamek.common.game.IGame;
 import megamek.common.icons.Camouflage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * An observer watching two bots: with team coloring on, each side must keep its lobby colour rather than both
- * being drawn in the enemy colour. A player on a side must still see own, ally and enemy colours.
+ * An observer or a refereeing Game Master watching two bots: with team coloring on, each side must keep its
+ * lobby colour rather than both being drawn in the enemy colour. A player on a side must still see own, ally
+ * and enemy colours.
  */
 class UnitOwnerColorsTest {
 
@@ -57,12 +63,17 @@ class UnitOwnerColorsTest {
     private Player princess;
     private Player caspar;
     private Player teammate;
+    private Player gameMaster;
+    private IGame game;
 
     @BeforeEach
     void setUp() {
-        princess = createPlayer(1, "Princess", 1, PlayerColour.GREEN);
-        caspar = createPlayer(2, "CASPAR", 2, PlayerColour.YELLOW);
-        teammate = createPlayer(3, "Teammate", 1, PlayerColour.PURPLE);
+        princess = createPlayer(1, "Princess", 2, PlayerColour.GREEN);
+        caspar = createPlayer(2, "CASPAR", 3, PlayerColour.YELLOW);
+        teammate = createPlayer(3, "Teammate", 2, PlayerColour.PURPLE);
+        gameMaster = createPlayer(0, "Defenders", 1, PlayerColour.BLUE);
+        gameMaster.setGameMaster(true);
+        game = mock(IGame.class);
     }
 
     private static Player createPlayer(int id, String name, int team, PlayerColour lobbyColour) {
@@ -73,14 +84,45 @@ class UnitOwnerColorsTest {
     }
 
     @Test
-    void observerSeesEachOwnersLobbyColourWithTeamColoringOn() {
-        Player observer = createPlayer(4, "Observer", 3, PlayerColour.BLUE);
+    void observerIsNotOnASide() {
+        Player observer = createPlayer(4, "Observer", 1, PlayerColour.BLUE);
         observer.setObserver(true);
 
+        assertFalse(UnitOwnerColors.isViewerOnASide(observer, game));
+    }
+
+    @Test
+    void noLocalPlayerIsNotOnASide() {
+        assertFalse(UnitOwnerColors.isViewerOnASide(null, game));
+    }
+
+    @Test
+    void gameMasterWithoutUnitsIsNotOnASide() {
+        when(game.getEntitiesOwnedBy(gameMaster)).thenReturn(0);
+
+        assertFalse(UnitOwnerColors.isViewerOnASide(gameMaster, game));
+    }
+
+    @Test
+    void gameMasterWithUnitsIsOnASide() {
+        when(game.getEntitiesOwnedBy(gameMaster)).thenReturn(3);
+
+        assertTrue(UnitOwnerColors.isViewerOnASide(gameMaster, game));
+    }
+
+    @Test
+    void playerWithUnitsIsOnASide() {
+        when(game.getEntitiesOwnedBy(princess)).thenReturn(4);
+
+        assertTrue(UnitOwnerColors.isViewerOnASide(princess, game));
+    }
+
+    @Test
+    void viewerOnNoSideSeesEachOwnersLobbyColour() {
         assertEquals(PlayerColour.GREEN.getColour(false),
-              UnitOwnerColors.colorFor(princess, observer, true, TEAM_COLORS));
+              UnitOwnerColors.colorFor(princess, gameMaster, false, TEAM_COLORS));
         assertEquals(PlayerColour.YELLOW.getColour(false),
-              UnitOwnerColors.colorFor(caspar, observer, true, TEAM_COLORS));
+              UnitOwnerColors.colorFor(caspar, gameMaster, false, TEAM_COLORS));
     }
 
     @Test
@@ -97,7 +139,7 @@ class UnitOwnerColorsTest {
     }
 
     @Test
-    void teamColoringOffUsesTheLobbyColourNotThePlainColourField() {
+    void lobbyColourComesFromTheCamouflageNotThePlainColourField() {
         // The lobby sets the colour camouflage only; the plain colour field stays at its default
         caspar.setColour(PlayerColour.BLUE);
 

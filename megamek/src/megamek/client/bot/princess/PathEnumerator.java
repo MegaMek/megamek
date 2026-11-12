@@ -115,11 +115,11 @@ public class PathEnumerator {
     }
 
     Coords getLastKnownCoords(Integer entityId) {
-        CoordFacingCombo ccr = getLastKnownLocations().get(entityId);
-        if (ccr == null) {
+        CoordFacingCombo coordFacingCombo = getLastKnownLocations().get(entityId);
+        if (coordFacingCombo == null) {
             return null;
         }
-        return ccr.getCoords();
+        return coordFacingCombo.getCoords();
     }
 
     /**
@@ -135,8 +135,8 @@ public class PathEnumerator {
         if (location == null) {
             return returnSet;
         }
-        for (Integer id : getUnitPotentialLocations().keySet()) {
-            Entity entity = getGame().getEntity(id);
+        for (Integer coordFacingLocation : getUnitPotentialLocations().keySet()) {
+            Entity entity = getGame().getEntity(coordFacingLocation);
 
             if (groundOnly
                   && entity != null
@@ -147,9 +147,9 @@ public class PathEnumerator {
             // Hex facings are 0-5, so all six must be checked - stopping at 4 missed units whose only potential
             // location here faces 5 (NW), leaving them under-dirtied with stale predicted paths.
             for (int facing = 0; facing < 6; facing++) {
-                if (getUnitPotentialLocations().get(id)
+                if (getUnitPotentialLocations().get(coordFacingLocation)
                       .contains(CoordFacingCombo.createCoordFacingCombo(location, facing))) {
-                    returnSet.add(id);
+                    returnSet.add(coordFacingLocation);
                     break;
                 }
             }
@@ -279,34 +279,34 @@ public class PathEnumerator {
                 // this handles the case of the mover being an aerospace unit and "advances
                 // space flight" rules being on
             } else if (mover.isAero() && game.useVectorMove()) {
-                NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
-                npf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
-                paths.addAll(npf.getAllComputedPathsUncategorized());
+                NewtonianAerospacePathFinder newtonianPathFinder = NewtonianAerospacePathFinder.getInstance(getGame());
+                newtonianPathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
+                paths.addAll(newtonianPathFinder.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an aerospace unit on a space map
             } else if (mover.isAero() && game.getBoard(mover).isSpace()) {
-                AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
-                apf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
-                paths.addAll(apf.getAllComputedPathsUncategorized());
+                AeroSpacePathFinder aeroSpacePathFinder = AeroSpacePathFinder.getInstance(getGame());
+                aeroSpacePathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
+                paths.addAll(aeroSpacePathFinder.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being a winged aerospace unit on a
                 // low-atmosphere map
             } else if (mover.isAero() && game.getBoard(mover).isLowAltitude()
                   && !Compute.useSpheroidAtmosphere(game, mover)) {
-                AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
-                apf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
-                paths.addAll(apf.getAllComputedPathsUncategorized());
+                AeroLowAltitudePathFinder aeroLowAltitudePathFinder = AeroLowAltitudePathFinder.getInstance(getGame());
+                aeroLowAltitudePathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
+                paths.addAll(aeroLowAltitudePathFinder.getAllComputedPathsUncategorized());
                 // this handles the case of the mover acting like a spheroid aerospace unit in
                 // an atmosphere
             } else if (Compute.useSpheroidAtmosphere(game, mover)) {
                 int dir = AeroPathUtil.getSpheroidDir(game, mover);
-                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game, dir);
-                spf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
-                paths.addAll(spf.getAllComputedPathsUncategorized());
+                SpheroidPathFinder spheroidPathFinder = SpheroidPathFinder.getInstance(game, dir);
+                spheroidPathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
+                paths.addAll(spheroidPathFinder.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an infantry unit of some kind,
                 // that's not airborne.
             } else if (mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
-                InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
-                ipf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
-                paths.addAll(ipf.getAllComputedPathsUncategorized());
+                InfantryPathFinder infantryPathFinder = InfantryPathFinder.getInstance(getGame());
+                infantryPathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
+                paths.addAll(infantryPathFinder.getAllComputedPathsUncategorized());
 
                 // long-range paths are built on first use; see getLongRangePathsFor
                 pendingLongRangePaths.put(mover.getId(), includeDeploymentStep);
@@ -320,25 +320,25 @@ public class PathEnumerator {
                 // TODO: Will this cause Princess to never use MASC?
                 int maxMove = Math.min(mover.getRunMPWithoutMASC(), mover.getRunMP(MPCalculationSetting.NO_GRAVITY));
 
-                LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove,
+                LongestPathFinder longestPathFinder = LongestPathFinder.newInstanceOfLongestPath(maxMove,
                       MoveStepType.FORWARDS, getGame());
-                lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
-                paths.addAll(lpf.getLongestComputedPaths());
+                longestPathFinder.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                longestPathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
+                paths.addAll(longestPathFinder.getLongestComputedPaths());
 
                 // add walking moves; capped at the gravity-free walk MP like the running moves above, since low
                 // gravity multiplies MP (6 walk MP is 150 at 0.04 g) and the search never finishes (issue #9265)
                 int maxBackwardsMove = Math.min(mover.getWalkMP(), mover.getWalkMP(MPCalculationSetting.NO_GRAVITY));
-                lpf = LongestPathFinder.newInstanceOfLongestPath(
+                longestPathFinder = LongestPathFinder.newInstanceOfLongestPath(
                       maxBackwardsMove, MoveStepType.BACKWARDS, getGame());
-                lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
-                paths.addAll(lpf.getLongestComputedPaths());
+                longestPathFinder.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                longestPathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
+                paths.addAll(longestPathFinder.getLongestComputedPaths());
 
                 // add all moves that involve the entity remaining prone
-                PronePathFinder ppf = new PronePathFinder();
-                ppf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
-                paths.addAll(ppf.getPronePaths());
+                PronePathFinder pronePathFinder = new PronePathFinder();
+                pronePathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
+                paths.addAll(pronePathFinder.getPronePaths());
 
                 // Add regular jump jet moves independently from mechanical booster jumps. A Mek may have both,
                 // and each movement type has different legal step generation and its own MP limit.
@@ -349,29 +349,34 @@ public class PathEnumerator {
                      * When the movestep is added in createDeploymentAwarePath, it will add the jump step back in,
                      * so the total jump MP used will be correct.
                      */
-                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(jumpMP,
+                    ShortestPathFinder shortestPathFinder = ShortestPathFinder.newInstanceOfOneToAll(jumpMP,
                           MoveStepType.FORWARDS, getGame());
-                    spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    spf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, true));
-                    paths.addAll(spf.getAllComputedPathsUncategorized());
+                    shortestPathFinder.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                    shortestPathFinder.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, true));
+                    paths.addAll(shortestPathFinder.getAllComputedPathsUncategorized());
                 }
 
                 int mechanicalJumpBoosterMP = mover.getMechanicalJumpBoosterMP();
                 if (mechanicalJumpBoosterMP > 0) {
-                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mechanicalJumpBoosterMP,
+                    ShortestPathFinder shortestPathFinder = ShortestPathFinder.newInstanceOfOneToAll(
+                            mechanicalJumpBoosterMP,
                           MoveStepType.FORWARDS, getGame());
-                    spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    spf.run(createDeploymentAwareMechanicalBoosterJumpPath(mover, wayPoint, includeDeploymentStep));
-                    paths.addAll(spf.getAllComputedPathsUncategorized());
+                    shortestPathFinder.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                    shortestPathFinder.run(createDeploymentAwareMechanicalBoosterJumpPath(mover,
+                                                                                          wayPoint,
+                                                                                          includeDeploymentStep));
+                    paths.addAll(shortestPathFinder.getAllComputedPathsUncategorized());
                 }
 
                 // add moves that take off first: a grounded WiGE has only 1 MP on the ground
                 MovePath takeoffPath = createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false);
                 if (PathDecorator.addWiGETakeoff(takeoffPath)) {
-                    lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove, MoveStepType.FORWARDS, getGame());
-                    lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    lpf.run(takeoffPath);
-                    List<MovePath> takeoffPaths = lpf.getLongestComputedPaths();
+                    longestPathFinder = LongestPathFinder.newInstanceOfLongestPath(maxMove,
+                                                                                   MoveStepType.FORWARDS,
+                                                                                   getGame());
+                    longestPathFinder.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                    longestPathFinder.run(takeoffPath);
+                    List<MovePath> takeoffPaths = longestPathFinder.getLongestComputedPaths();
                     logger.debug("{} is a grounded WiGE; added {} takeoff paths", mover.getDisplayName(),
                           takeoffPaths.size());
                     paths.addAll(takeoffPaths);
@@ -414,11 +419,11 @@ public class PathEnumerator {
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;
-        } catch (IllegalArgumentException ex) {
-            logger.debug(ex, "Lost sight of a unit while plotting predicted paths");
+        } catch (IllegalArgumentException exception) {
+            logger.debug(exception, "Lost sight of a unit while plotting predicted paths");
             return false;
-        } catch (Exception e) {
-            logger.error(e, "recalculateMovesForWorker");
+        } catch (Exception exception) {
+            logger.error(exception, "recalculateMovesForWorker");
             return false;
         }
     }
@@ -463,7 +468,7 @@ public class PathEnumerator {
             return;
         }
 
-        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
+        DestructionAwareDestinationPathfinder destructionAwarePathFinder = new DestructionAwareDestinationPathfinder();
 
         // where are we going?
         Set<Coords> destinations = new HashSet<>();
@@ -530,18 +535,24 @@ public class PathEnumerator {
         }
 
         // calculate a ground-bound long range path
-        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations, false, includeDeploymentStep,
+        BulldozerMovePath bulldozerMovePath = destructionAwarePathFinder.findPathToCoords(mover,
+                                                                                          destinations,
+                                                                                          false,
+                                                                                          includeDeploymentStep,
               owner.getClusterTracker());
 
-        if (bmp != null) {
-            getLongRangePaths().get(mover.getId()).add(bmp);
+        if (bulldozerMovePath != null) {
+            getLongRangePaths().get(mover.getId()).add(bulldozerMovePath);
         }
 
         // calculate a jumping long range path
-        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true, includeDeploymentStep,
+        BulldozerMovePath bulldozerJumpingMovePath = destructionAwarePathFinder.findPathToCoords(mover,
+                                                                                                 destinations,
+                                                                                                 true,
+                                                                                                 includeDeploymentStep,
               owner.getClusterTracker());
-        if (jmp != null) {
-            getLongRangePaths().get(mover.getId()).add(jmp);
+        if (bulldozerJumpingMovePath != null) {
+            getLongRangePaths().get(mover.getId()).add(bulldozerJumpingMovePath);
         }
     }
 
@@ -557,10 +568,12 @@ public class PathEnumerator {
 
     private void adjustPathForBridge(MovePath path) {
         boolean needsAdjust = false;
-        for (Coords c : path.getCoordsSet()) {
-            Hex hex = getGame().getBoard(path.getFinalBoardId()).getHex(c);
+        for (Coords coords : path.getCoordsSet()) {
+            Hex hex = getGame().getBoard(path.getFinalBoardId()).getHex(coords);
             if ((hex != null) && hex.containsTerrain(Terrains.BRIDGE)) {
-                if (getGame().getBoard(path.getFinalBoardId()).getBuildingAt(c).getCurrentCF(c) >= path.getEntity()
+                if (getGame().getBoard(path.getFinalBoardId())
+                             .getBuildingAt(coords)
+                             .getCurrentCF(coords) >= path.getEntity()
                       .getWeight()) {
                     needsAdjust = true;
                 }

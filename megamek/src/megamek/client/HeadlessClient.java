@@ -84,6 +84,19 @@ public class HeadlessClient extends Client {
         // Deliberately empty: see the javadoc.
     }
 
+    /**
+     * A client with no GUI has nobody at a screen to show a notice dialog to.
+     *
+     * @return {@code false}, always
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    @Override
+    protected boolean showsPlayerNoticeDialogs() {
+        return false;
+    }
+
     public HeadlessClient(String name, String host, int port) {
         super(name, host, port);
         // Note: the end-of-game MUL is written from changePhase(VICTORY) via saveVictoryList(), not from a gameEnd

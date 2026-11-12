@@ -86,6 +86,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.GifRecordingMode;
 import megamek.client.ui.clientGUI.IClientGUI;
+import megamek.client.ui.clientGUI.UnitOwnerColors;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.StringDrawer;
@@ -1511,19 +1512,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         boolean stratOpsSymbols = GUIP.getMmSymbol();
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer(), game);
 
         if (removedFromGame) {
             iconColor = changeColorForDestroyedUnit(iconColor.brighter(), DESTROYED_UNIT_ALPHA);
@@ -1722,19 +1711,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer(), game);
         Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
 

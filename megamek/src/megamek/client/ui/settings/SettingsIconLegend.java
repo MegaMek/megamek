@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.settings;
 
+import static megamek.client.ui.WrapLayout.wordWrap;
 import static megamek.client.ui.util.FontHandler.symbolIcon;
 
 import java.awt.BorderLayout;
@@ -48,9 +49,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 import megamek.client.ui.util.UIUtil;
+import org.apache.commons.text.StringEscapeUtils;
 
 /** Reference legend for resolved {@link SettingsBadge} markers. */
 public class SettingsIconLegend extends JPanel {
@@ -70,7 +70,7 @@ public class SettingsIconLegend extends JPanel {
         List<SettingsBadge> legendBadges = List.copyOf(badges);
         JButton button = new JButton(text);
         button.setName("btnSettingsIconLegend");
-        button.setToolTipText(tooltip);
+        button.setToolTipText(tooltip == null ? null : wordWrap(tooltip));
         button.setIcon(symbolIcon(0xE88E, button.getFont().getSize(), button.getForeground()));
         button.addActionListener(event -> showLegendPopupAbove(button, new SettingsIconLegend(legendBadges)));
         return button;

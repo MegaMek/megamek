@@ -66,23 +66,37 @@ final class DeploymentDiagnostics {
      * therefore never called for, even though the unit itself reports that it is ready to go - so it waits for
      * ever, in silence.</p>
      *
+     * <p>Units that walk on are listed apart. With walk-on deployment they are left out of the deployment phase on
+     * purpose and drive on from the map edge in the movement phase, so they are not stuck.</p>
+     *
      * @param game The game deciding whether to deploy
      */
     static void logDeploymentDecision(Game game) {
         int round = game.getRoundCount();
         List<String> waiting = new ArrayList<>();
+        List<String> walkingOn = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
-            if (!entity.isDeployed()) {
-                waiting.add(entity.getShortName() + " (" + ownerNameOf(entity) + ") due round "
-                      + entity.getDeployRound());
+            if (entity.isDeployed()) {
+                continue;
             }
+            String description = entity.getShortName() + " (" + ownerNameOf(entity) + ") due round "
+                  + entity.getDeployRound();
+            if (Game.rulesManager.getRulesGame().canWalkOnThisRound(entity)) {
+                walkingOn.add(description);
+            } else {
+                waiting.add(description);
+            }
+        }
+        if (!walkingOn.isEmpty()) {
+            LOGGER.info("[Deployment] round {}: {} unit(s) walk on from the map edge in the movement phase instead "
+                  + "of deploying: {}", round, walkingOn.size(), walkingOn);
         }
         if (game.shouldDeployThisRound()) {
             LOGGER.info("[Deployment] round {}: a deployment phase is due; waiting: {}", round, waiting);
             return;
         }
         if (waiting.isEmpty()) {
-            LOGGER.info("[Deployment] round {}: no deployment phase, nothing is waiting to arrive", round);
+            LOGGER.info("[Deployment] round {}: no deployment phase, nothing is waiting to deploy", round);
             return;
         }
         LOGGER.info("[Deployment] round {}: NO deployment phase, yet {} unit(s) are still undeployed - a phase only "

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
@@ -68,6 +69,10 @@ public class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
      */
     @Override
     public Collection<MovePath> getAdjacent(MovePath mp) {
+        if (mp.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)) {
+            return getMechanicalBoosterJumpSteps(mp);
+        }
+
         final MoveStep last = mp.getLastStep();
         final MoveStepType lType = (last == null) ? null : last.getType();
         final Entity entity = mp.getEntity();
@@ -124,5 +129,20 @@ public class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
         }
 
         return result;
+    }
+
+    private Collection<MovePath> getMechanicalBoosterJumpSteps(MovePath movePath) {
+        ArrayList<MovePath> newMechanicalPath = new ArrayList<>();
+        Board board = movePath.getGame().getBoard(movePath.getFinalBoardId());
+        Coords coords = movePath.getFinalCoords();
+        int facing = movePath.getFinalFacing();
+
+        for (int direction = 0; direction < 6; direction++) {
+            if (board.contains(coords.translated(direction))) {
+                MovePath nextPath = movePath.clone();
+                newMechanicalPath.add(nextPath.addStep(MoveStepType.stepTypeForRelativeDirection(direction, facing)));
+            }
+        }
+        return newMechanicalPath;
     }
 }

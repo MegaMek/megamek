@@ -384,6 +384,15 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Lobby backup cleanup diagnostics. Deleting old lobby backups is logged at INFO with the [LobbySave] tag
+          even with this block commented out. Uncomment it to also see, on every game start, how many backups were
+          found and the keep count, including when nothing was deleted. Then grep logs/megamek.log for "[LobbySave]".
+
+          <Logger name="megamek.client.ui.panels.phaseDisplay.lobby.LobbyBackupRotation" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

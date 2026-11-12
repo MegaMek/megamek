@@ -79,8 +79,12 @@ final class LobbyBackupRotation {
                 LOGGER.warn("[LobbySave] Could not delete old lobby backup {}", backup.getAbsolutePath());
             }
         }
-        LOGGER.debug("[LobbySave] Found {} lobby backups, keeping {}, deleted {}",
-              backups.size(), backupsToKeep, deletedCount);
+        if (deletedCount > 0) {
+            LOGGER.info("[LobbySave] Deleted {} old lobby backups to keep the newest {}", deletedCount, backupsToKeep);
+        } else {
+            LOGGER.debug("[LobbySave] Found {} lobby backups, keeping {}, nothing to delete",
+                  backups.size(), backupsToKeep);
+        }
         return deletedCount;
     }
 

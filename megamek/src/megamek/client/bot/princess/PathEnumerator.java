@@ -340,17 +340,28 @@ public class PathEnumerator {
                 ppf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(ppf.getPronePaths());
 
-                // add jumping moves
-                if (mover.getAnyTypeMaxJumpMP() > 0) {
+                // Add regular jump jet moves independently from mechanical booster jumps. A Mek may have both,
+                // and each movement type has different legal step generation and its own MP limit.
+                int jumpMP = mover.getJumpMP();
+                if (jumpMP > 0) {
                     /* If we are using jump and it is deployment, the deployment step takes 1 jump MP,
                      * so we need to subtract that from the max jump MP for the pathfinder.
                      * When the movestep is added in createDeploymentAwarePath, it will add the jump step back in,
                      * so the total jump MP used will be correct.
                      */
-                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getAnyTypeMaxJumpMP(),
+                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(jumpMP,
                           MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, true));
+                    paths.addAll(spf.getAllComputedPathsUncategorized());
+                }
+
+                int mechanicalJumpBoosterMP = mover.getMechanicalJumpBoosterMP();
+                if (mechanicalJumpBoosterMP > 0) {
+                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mechanicalJumpBoosterMP,
+                          MoveStepType.FORWARDS, getGame());
+                    spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                    spf.run(createDeploymentAwareMechanicalBoosterJumpPath(mover, wayPoint, includeDeploymentStep));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
@@ -420,6 +431,18 @@ public class PathEnumerator {
         if (shouldJump) {
             path.addStep(MoveStepType.START_JUMP);
         }
+        if (includeDeploymentStep) {
+            path.addStep(MoveStepType.DEPLOY);
+        }
+        return path;
+    }
+
+    private MovePath createDeploymentAwareMechanicalBoosterJumpPath(final Entity mover,
+          final Coords waypoint,
+          final boolean includeDeploymentStep) {
+        MovePath path = new MovePath(game, mover, waypoint);
+        path.addStep(MoveStepType.START_JUMP);
+        path.addStep(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
         if (includeDeploymentStep) {
             path.addStep(MoveStepType.DEPLOY);
         }

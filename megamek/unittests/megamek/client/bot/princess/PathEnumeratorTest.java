@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -59,6 +60,7 @@ import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.BoardType;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -214,5 +216,83 @@ class PathEnumeratorTest {
             assertTrue(path.getMpUsed() <= gravityFreeRunMP,
                   "no path may spend more than the gravity-free run MP, but one spent " + path.getMpUsed());
         }
+    }
+
+    @Test
+    void enumeratesMechanicalBoosterPathsWhenRegularJumpMpIsZero() {
+        List<MovePath> paths = enumerateMekPaths(0, 4);
+
+        assertTrue(paths.stream().anyMatch(path -> path.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)),
+              "mechanical booster movement should be enumerated without regular jump MP");
+        assertTrue(paths.stream()
+                    .filter(path -> path.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER))
+                    .allMatch(MovePath::isMoveLegal),
+              "the enumerated mechanical booster paths should be legal");
+    }
+
+    @Test
+    void enumeratesRegularAndMechanicalBoosterPathsWhenBothAreAvailable() {
+        Coords start = new Coords(6, 6);
+        List<MovePath> paths = enumerateMekPaths(2, 4);
+
+        assertTrue(paths.stream().anyMatch(path -> path.isJumping()
+                    && !path.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)),
+              "regular jump jet movement should still be enumerated");
+
+        List<MovePath> boosterPaths = paths.stream()
+              .filter(path -> path.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER))
+              .toList();
+        assertFalse(boosterPaths.isEmpty(), "mechanical booster movement should also be enumerated");
+        assertTrue(boosterPaths.stream().allMatch(MovePath::isMoveLegal),
+              "the enumerated mechanical booster paths should be legal");
+        assertTrue(boosterPaths.stream().anyMatch(path -> path.getFinalCoords().equals(start.translated(1))
+                    && path.getFinalFacing() == 0),
+              "booster paths should include a lateral landing without changing facing");
+        assertTrue(boosterPaths.stream().anyMatch(path -> path.getFinalCoords().equals(start.translated(3))
+                    && path.getFinalFacing() == 0),
+              "booster paths should include a backward landing without changing facing");
+    }
+
+    private List<MovePath> enumerateMekPaths(int regularJumpMP, int mechanicalBoosterMP) {
+        Hex[] hexes = new Hex[12 * 12];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex();
+        }
+        Board board = new Board(12, 12, hexes);
+        board.setBoardType(BoardType.GROUND);
+        Game game = new Game();
+        game.setBoard(board);
+        Player owner = new Player(1, "Owner");
+        game.addPlayer(1, owner);
+
+        BipedMek mek = spy(new BipedMek());
+        mek.setId(1);
+        mek.setGame(game);
+        mek.setOwner(owner);
+        mek.setWeight(50);
+        mek.autoSetInternal();
+        mek.setOriginalWalkMP(2);
+        mek.setOriginalJumpMP(regularJumpMP);
+        mek.setPosition(new Coords(6, 6));
+        mek.setFacing(0);
+        mek.setDeployed(true);
+        doReturn(regularJumpMP).when(mek).getJumpMP(any(MPCalculationSetting.class));
+        doReturn(mechanicalBoosterMP).when(mek).getMechanicalJumpBoosterMP();
+        doReturn(mechanicalBoosterMP).when(mek).getMechanicalJumpBoosterMP(any(MPCalculationSetting.class));
+        game.addEntity(mek);
+
+        Princess princess = mock(Princess.class);
+        UnitBehavior behaviorTracker = mock(UnitBehavior.class);
+        when(princess.getLocalPlayer()).thenReturn(owner);
+        when(princess.getGame()).thenReturn(game);
+        when(princess.getUnitBehaviorTracker()).thenReturn(behaviorTracker);
+        when(princess.getClusterTracker()).thenReturn(new BoardClusterTracker());
+        when(princess.getEnemyHotSpots()).thenReturn(List.of());
+        when(behaviorTracker.getBehaviorType(mek, princess)).thenReturn(BehaviorType.MoveToContact);
+        when(behaviorTracker.getWaypointForEntity(mek)).thenReturn(Optional.empty());
+
+        PathEnumerator pathEnumerator = new PathEnumerator(princess, game);
+        pathEnumerator.recalculateMovesFor(mek);
+        return pathEnumerator.getUnitPaths().get(mek.getId());
     }
 }

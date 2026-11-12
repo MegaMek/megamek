@@ -131,18 +131,18 @@ public class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
         return result;
     }
 
-    private Collection<MovePath> getMechanicalBoosterJumpSteps(MovePath mp) {
-        ArrayList<MovePath> result = new ArrayList<>();
-        Board board = mp.getGame().getBoard(mp.getFinalBoardId());
-        Coords coords = mp.getFinalCoords();
-        int facing = mp.getFinalFacing();
+    private Collection<MovePath> getMechanicalBoosterJumpSteps(MovePath movePath) {
+        ArrayList<MovePath> newMechanicalPath = new ArrayList<>();
+        Board board = movePath.getGame().getBoard(movePath.getFinalBoardId());
+        Coords coords = movePath.getFinalCoords();
+        int facing = movePath.getFinalFacing();
 
         for (int direction = 0; direction < 6; direction++) {
             if (board.contains(coords.translated(direction))) {
-                MovePath nextPath = mp.clone();
-                result.add(nextPath.addStep(MoveStepType.stepTypeForRelativeDirection(direction, facing)));
+                MovePath nextPath = movePath.clone();
+                newMechanicalPath.add(nextPath.addStep(MoveStepType.stepTypeForRelativeDirection(direction, facing)));
             }
         }
-        return result;
+        return newMechanicalPath;
     }
 }

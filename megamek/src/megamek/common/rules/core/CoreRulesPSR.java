@@ -34,19 +34,19 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPSR;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
-import megamek.common.units.Entity;
 import megamek.common.units.MekWithArms;
 import megamek.common.units.QuadMek;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
@@ -95,7 +95,7 @@ public class CoreRulesPSR extends RulesPSR {
      */
     @Override
     public void facingChangeAfterFall(Entity entity, int facing) {}
-    
+
     /**
      * {@inheritDoc}
      * Leg PSR numbers changed. Core p.90, 93
@@ -105,7 +105,7 @@ public class CoreRulesPSR extends RulesPSR {
         for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
             if (unit.isLocationBad(loc)) {
                 roll.addModifier(4, unit.getLocationName(loc) + " destroyed");
-                
+
             } else {
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(1, unit.getLocationName(loc) + " Hip Actuator destroyed");
@@ -136,7 +136,7 @@ public class CoreRulesPSR extends RulesPSR {
         ArrayList<PilotingRollData> rollCL = new ArrayList<>();
         ArrayList<PilotingRollData> rollFLL = new ArrayList<>();
         ArrayList<PilotingRollData> rollFRL = new ArrayList<>();
-        
+
         // Organize all rolls by location
         for (PilotingRollData roll : pilotRolls) {
                 // Assign rolls to locations
@@ -159,7 +159,7 @@ public class CoreRulesPSR extends RulesPSR {
                         rollCL.add(roll);
                 }
         }
-        
+
         if (!rollLL.isEmpty()) {
             rollRemoveHighest(rollLL);
             if (!rollLL.isEmpty()) { rollsToRemove.addAll(rollLL); }
@@ -180,12 +180,12 @@ public class CoreRulesPSR extends RulesPSR {
             rollRemoveHighest(rollCL);
             if (!rollCL.isEmpty()) { rollsToRemove.addAll(rollCL); }
         }
-        
+
         if (!rollsToRemove.isEmpty()) {
             game.removePSRsByArray(rollsToRemove);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      * Remove the highest roll from the list
@@ -200,8 +200,8 @@ public class CoreRulesPSR extends RulesPSR {
             rollList.remove(rollList.getFirst());
             return;
         }
-        
-        // Find the highest value by iterating the list, and remove it. If nothing is higher than 0, it removes the 
+
+        // Find the highest value by iterating the list, and remove it. If nothing is higher than 0, it removes the
         // first entry
         int highest = 0;
         int highestValue = 0;
@@ -213,7 +213,7 @@ public class CoreRulesPSR extends RulesPSR {
         }
         rollList.remove(highest);
     }
-    
+
     /**
      * {@inheritDoc}
      * Do we do Foot Actuator PSRs? No, not in core.
@@ -222,7 +222,7 @@ public class CoreRulesPSR extends RulesPSR {
     public boolean getFootActuatorPsr() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      * What is the hip hit penalty? Core p.99
@@ -231,7 +231,7 @@ public class CoreRulesPSR extends RulesPSR {
     public int getHipPenalty() {
         return 1;
     }
-    
+
     /**
      * {@inheritDoc}
      * Gyro hit modifiers
@@ -271,7 +271,7 @@ public class CoreRulesPSR extends RulesPSR {
     public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
         return (overallMoveType == EntityMovementType.MOVE_WALK) ? false : true;
     }
-    
+
     /**
      * {@inheritDoc}
      * Successful DFA is PSR+2 Core p.80
@@ -280,7 +280,7 @@ public class CoreRulesPSR extends RulesPSR {
     public int getSuccessfulDFAModifier() {
         return 2;
     }
-    
+
     /**
      * {@inheritDoc}
      * Successful club causes PSR . Core p.79
@@ -323,7 +323,7 @@ public class CoreRulesPSR extends RulesPSR {
         entity.addPilotingModifierForTerrain(roll);
         return roll;
     }
-    
+
     /**
      * {@inheritDoc}
      *
@@ -332,7 +332,19 @@ public class CoreRulesPSR extends RulesPSR {
     @Override
     public FallDamageInWater reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
         int waterDamage = (int) (((int) Math.round(weight / 10.0) * (fallHeight + waterDepth + 1)) / 2.0);
-        int newDamage = 0;        
+        int newDamage = 0;
         return new FallDamageInWater(newDamage, waterDamage);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Core does not apply any modifiers for water level. Core p.50
+     *
+     * @param waterLevel
+     * @return
+     */
+    @Override
+    public int getWaterLevelModifier(final int waterLevel) {
+        return 0;
     }
 }

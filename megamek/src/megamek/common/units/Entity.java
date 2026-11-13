@@ -36,9 +36,10 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -9645,14 +9646,16 @@ public abstract class Entity extends TurnOrdered
                                            EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        int mod;
-        if (waterLevel == 1) {
-            mod = -1;
-        } else if (waterLevel == 2) {
-            mod = 0;
-        } else {
-            mod = 1;
+        // Jumping into water is a special case. It is not modified for depth, just a straight roll.
+        // BMM p.19, Core p.50.
+        if (overallMoveType == EntityMovementType.MOVE_JUMP && waterLevel > 0) {
+            roll.append(new PilotingRollData(getId(), 0, "jumping into depth " + waterLevel + " water"));
+            adjustDifficultTerrainPSRModifier(roll);
+            return roll;
         }
+
+        int mod;
+        mod = Game.rulesManager.getRulesPSR().getWaterLevelModifier(waterLevel);
 
         if ((waterLevel > 1) &&
             hasAbility(OptionsConstants.PILOT_TM_FROGMAN) &&

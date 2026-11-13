@@ -120,7 +120,10 @@ public class GifWriterThread extends Thread {
             }
             gifWriter.close();
             frameQueue.clear();
-            if (!forceInterrupt) {
+            if (forceInterrupt) {
+                // A discarded GIF gets no save prompt, so delete the temporary file here
+                deleteGif();
+            } else {
                 try {
                     saveGifNag();
                 } catch (Exception e) {

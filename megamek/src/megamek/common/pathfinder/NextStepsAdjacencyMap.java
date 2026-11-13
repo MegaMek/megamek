@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
@@ -62,29 +63,33 @@ public class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
      * UP, ShL, ShR} if applicable. If stepType is equal to MoveStepType.BACKWARDS then extending steps include also {B,
      * ShBL, ShBR}. If stepType is equal to MoveStep.DFA or MoveStep.CHARGE then it is added to the resulting set.
      *
-     * @param mp the MovePath to be extended
+     * @param movePath the MovePath to be extended
      *
      * @see AdjacencyMap
      */
     @Override
-    public Collection<MovePath> getAdjacent(MovePath mp) {
-        final MoveStep last = mp.getLastStep();
-        final MoveStepType lType = (last == null) ? null : last.getType();
-        final Entity entity = mp.getEntity();
+    public Collection<MovePath> getAdjacent(MovePath movePath) {
+        if (movePath.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)) {
+            return getMechanicalBoosterJumpSteps(movePath);
+        }
 
-        final ArrayList<MovePath> result = new ArrayList<>();
+        final MoveStep last = movePath.getLastStep();
+        final MoveStepType lType = (last == null) ? null : last.getType();
+        final Entity entity = movePath.getEntity();
+
+        final ArrayList<MovePath> movePathList = new ArrayList<>();
 
         // we're trying to prevent
         // a) turning left and right endlessly
         // b) spinning around endlessly
         // especially during movement where turning costs 0 MP
         if (lType != MoveStepType.TURN_LEFT &&
-              (mp.getEndStepCount(MoveStepType.TURN_RIGHT) < MovePathFinder.MAX_TURN_COUNT)) {
-            result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
+            (movePath.getEndStepCount(MoveStepType.TURN_RIGHT) < MovePathFinder.MAX_TURN_COUNT)) {
+            movePathList.add(movePath.clone().addStep(MoveStepType.TURN_RIGHT));
         }
         if (lType != MoveStepType.TURN_RIGHT &&
-              (mp.getEndStepCount(MoveStepType.TURN_LEFT) < MovePathFinder.MAX_TURN_COUNT)) {
-            result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
+            (movePath.getEndStepCount(MoveStepType.TURN_LEFT) < MovePathFinder.MAX_TURN_COUNT)) {
+            movePathList.add(movePath.clone().addStep(MoveStepType.TURN_LEFT));
         }
 
         /*
@@ -92,37 +97,53 @@ public class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
          * such units can only turn or get up. (unless it's a tank; tanks
          * can just drive out of hull-down, and they cannot be prone)
          */
-        if (mp.getFinalProne() || (mp.getFinalHullDown() && !(entity instanceof Tank))) {
+        if (movePath.getFinalProne() || (movePath.getFinalHullDown() && !(entity instanceof Tank))) {
             if (entity.isCarefulStand()) {
-                result.add(mp.clone().addStep(MoveStepType.CAREFUL_STAND));
+                movePathList.add(movePath.clone().addStep(MoveStepType.CAREFUL_STAND));
             } else {
-                result.add(mp.clone().addStep(MoveStepType.GET_UP));
+                movePathList.add(movePath.clone().addStep(MoveStepType.GET_UP));
             }
-            return result;
+            return movePathList;
         }
 
-        if (mp.canShift()) {
+        if (movePath.canShift()) {
             if (backwardsStep) {
-                result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS));
-                result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT_BACKWARDS));
+                movePathList.add(movePath.clone().addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS));
+                movePathList.add(movePath.clone().addStep(MoveStepType.LATERAL_LEFT_BACKWARDS));
             } else {
-                result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT));
-                result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT));
+                movePathList.add(movePath.clone().addStep(MoveStepType.LATERAL_RIGHT));
+                movePathList.add(movePath.clone().addStep(MoveStepType.LATERAL_LEFT));
             }
         }
 
-        Board board = mp.getGame().getBoard(mp.getFinalBoardId());
+        Board board = movePath.getGame().getBoard(movePath.getFinalBoardId());
         if (backwardsStep &&
-              board.contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
-            MovePath newPath = mp.clone();
+            board.contains(movePath.getFinalCoords().translated((movePath.getFinalFacing() + 3) % 6))) {
+            MovePath newPath = movePath.clone();
             PathDecorator.AdjustElevationForForwardMovement(newPath);
-            result.add(newPath.addStep(MoveStepType.BACKWARDS));
-        } else if (board.contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
-            MovePath newPath = mp.clone();
+            movePathList.add(newPath.addStep(MoveStepType.BACKWARDS));
+        } else if (board.contains(movePath.getFinalCoords().translated(movePath.getFinalFacing()))) {
+            MovePath newPath = movePath.clone();
             PathDecorator.AdjustElevationForForwardMovement(newPath);
-            result.add(newPath.addStep(MoveStepType.FORWARDS));
+            movePathList.add(newPath.addStep(MoveStepType.FORWARDS));
         }
 
-        return result;
+        return movePathList;
+    }
+
+    private Collection<MovePath> getMechanicalBoosterJumpSteps(MovePath movePath) {
+        ArrayList<MovePath> mechanicalJumpPathList = new ArrayList<>();
+        Board board = movePath.getGame().getBoard(movePath.getFinalBoardId());
+        Coords coords = movePath.getFinalCoords();
+        int facing = movePath.getFinalFacing();
+
+        for (int direction = 0; direction < 6; direction++) {
+            if (board.contains(coords.translated(direction))) {
+                MovePath nextPath = movePath.clone();
+                mechanicalJumpPathList.add(nextPath.addStep(MoveStepType.stepTypeForRelativeDirection(direction,
+                                                                                                      facing)));
+            }
+        }
+        return mechanicalJumpPathList;
     }
 }

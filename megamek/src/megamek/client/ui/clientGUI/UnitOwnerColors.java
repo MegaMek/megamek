@@ -36,15 +36,16 @@ import java.awt.Color;
 
 import jakarta.annotation.Nullable;
 import megamek.common.Player;
+import megamek.common.game.IGame;
 
 /**
  * Decides which colour a unit is drawn in on the minimap and in its board label border.
  *
  * <p>With the team coloring setting on, units are drawn from the viewer's point of view: own units, allied
  * units and enemy units each get a fixed colour. That only makes sense for a viewer who is on a side. An
- * observer (or a view with no local player) is on no side, so every unit would come out as an enemy; such a
- * viewer gets each owner's own lobby colour instead. With the setting off, every viewer gets the owner's
- * lobby colour.</p>
+ * observer, a Game Master who owns no units, or a view with no local player is on no side, so every unit would
+ * come out as an enemy; such a viewer gets each owner's own lobby colour instead. With the setting off, every
+ * viewer gets the owner's lobby colour.</p>
  */
 public final class UnitOwnerColors {
 
@@ -77,30 +78,31 @@ public final class UnitOwnerColors {
      * @param owner       the player who owns the unit
      * @param localPlayer the player viewing the board, or {@code null} when there is none (e.g. the board
      *                    editor)
+     * @param game        the game being shown, used to tell whether a Game Master owns any units
      *
      * @return the colour to draw the unit in
      */
-    public static Color colorFor(Player owner, @Nullable Player localPlayer) {
-        return colorFor(owner,
-              localPlayer,
-              GUIPreferences.getInstance().getTeamColoring(),
-              TeamColors.fromPreferences());
+    public static Color colorFor(Player owner, @Nullable Player localPlayer, IGame game) {
+        boolean isTeamColoringApplicable = GUIPreferences.getInstance().getTeamColoring()
+              && isViewerOnASide(localPlayer, game);
+        return colorFor(owner, localPlayer, isTeamColoringApplicable, TeamColors.fromPreferences());
     }
 
     /**
      * Returns the colour for a unit owned by {@code owner}.
      *
-     * @param owner                 the player who owns the unit
-     * @param localPlayer           the player viewing the board, or {@code null} when there is none
-     * @param isTeamColoringEnabled {@code true} when the team coloring client setting is on
-     * @param teamColors            the own, ally and enemy colours used when team coloring applies
+     * @param owner                    the player who owns the unit
+     * @param localPlayer              the player viewing the board, or {@code null} when there is none
+     * @param isTeamColoringApplicable {@code true} when the team coloring setting is on and the viewer is on a
+     *                                 side (see {@link #isViewerOnASide(Player, IGame)})
+     * @param teamColors               the own, ally and enemy colours used when team coloring applies
      *
-     * @return the owner's lobby colour when team coloring is off or the viewer is on no side, otherwise the
-     *       own, ally or enemy colour from {@code teamColors}
+     * @return the owner's lobby colour when team coloring does not apply, otherwise the own, ally or enemy
+     *       colour from {@code teamColors}
      */
-    public static Color colorFor(Player owner, @Nullable Player localPlayer, boolean isTeamColoringEnabled,
+    public static Color colorFor(Player owner, @Nullable Player localPlayer, boolean isTeamColoringApplicable,
           TeamColors teamColors) {
-        if (!isTeamColoringEnabled || isViewerOnNoSide(localPlayer)) {
+        if (!isTeamColoringApplicable || (localPlayer == null)) {
             return owner.getDisplayColour().getColour(false);
         }
         if (owner.equals(localPlayer)) {
@@ -112,7 +114,22 @@ public final class UnitOwnerColors {
         return teamColors.enemyColor();
     }
 
-    private static boolean isViewerOnNoSide(@Nullable Player localPlayer) {
-        return (localPlayer == null) || localPlayer.isObserver();
+    /**
+     * Returns whether the viewer is playing a side, so that own, ally and enemy colours make sense to them. An
+     * observer is not, and neither is a Game Master who owns no units: the server never marks a Game Master as
+     * an observer, so without this check a refereeing Game Master would see every unit as an enemy.
+     *
+     * @param localPlayer the player viewing the board, or {@code null} when there is none
+     * @param game        the game being shown
+     *
+     * @return {@code true} if the viewer is on a side, {@code false} for no viewer, an observer, or a Game
+     *       Master who owns no units
+     */
+    public static boolean isViewerOnASide(@Nullable Player localPlayer, IGame game) {
+        if ((localPlayer == null) || localPlayer.isObserver()) {
+            return false;
+        }
+        boolean isRefereeingGameMaster = localPlayer.isGameMaster() && (game.getEntitiesOwnedBy(localPlayer) == 0);
+        return !isRefereeingGameMaster;
     }
 }

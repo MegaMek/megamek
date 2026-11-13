@@ -33,12 +33,17 @@
 
 package megamek.common.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +52,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -72,6 +79,13 @@ import megamek.logging.MMLogger;
  * push the total past the cap are skipped and named in the returned {@link BundleResult}, so the caller can tell the
  * player exactly what was left out instead of silently truncating.</p>
  *
+ * <p>The version, OS, Java and hardware details are not a separate file. They are written into the live log just
+ * before packaging, so they sit in {@code logs/megamek.log} next to everything else, even when the startup header
+ * has rolled out of it.</p>
+ *
+ * <p>Every text file passes through a {@link BugReportRedactor} on the way in, so the archive does not carry the
+ * player's home folder, login name, computer name or IP addresses. Save games and images are copied unchanged.</p>
+ *
  * <p>This class deliberately has no Swing or game-state dependencies so that it can be exercised headlessly.</p>
  *
  * @see megamek.common.util.IssueReportUrl
@@ -81,9 +95,6 @@ public class BugReportBundle {
 
     /** GitHub refuses issue attachments larger than 25 MB, whatever the file type. */
     public static final long MAX_ARCHIVE_BYTES = 25L * 1024L * 1024L;
-
-    /** The archive entry holding the version, OS and Java details. */
-    public static final String SYSTEM_INFO_ENTRY_NAME = "system-info.txt";
 
     /** Archive sub-directory holding the collected logs, matching the layout MekHQ's bug report bundle uses. */
     private static final String LOG_ENTRY_PREFIX = "logs/";
@@ -146,6 +157,10 @@ public class BugReportBundle {
     private static final String ROLLED_LOG_EXTENSION = ".log.gz";
     private static final int COPY_BUFFER_SIZE = 8192;
 
+    /** Archive entries with these endings are text and are redacted; everything else is copied unchanged. */
+    private static final List<String> REDACTED_TEXT_EXTENSIONS = List.of(LOG_EXTENSION, GAME_DATASET_EXTENSION,
+          ".html", ".htm", ".txt");
+
     private final File logDirectory;
     private final File gameReportDirectory;
     private final File autosaveDirectory;
@@ -153,6 +168,7 @@ public class BugReportBundle {
     private final @Nullable File gameSummaryDirectory;
     private final String systemInformation;
     private final @Nullable String gameLogFileName;
+    private final @Nullable BugReportRedactor redactor;
 
     /**
      * The outcome of writing a bug report archive.
@@ -184,7 +200,8 @@ public class BugReportBundle {
      *                             {@code MMConstants.SAVEGAME_DIR}
      * @param saveGameFile         the saved game to place at the archive root, or {@code null} when no game was
      *                             running (the main-menu and startup-crash cases)
-     * @param systemInformation    the version, OS and Java details to write to {@value #SYSTEM_INFO_ENTRY_NAME}
+     * @param systemInformation    the version, OS, Java and hardware details, written into the live log just before
+     *                             it is packaged
      * @param gameLogFileName      the configured combat-report filename, normally {@code gamelog.html}, used to find
      *                             the newest matching report; or {@code null} to collect no combat report
      * @param gameSummaryDirectory the current game's minimap image folder, normally
@@ -202,6 +219,19 @@ public class BugReportBundle {
      * @param sources where the report's files come from
      */
     public BugReportBundle(Sources sources) {
+        this(sources, null);
+    }
+
+    /**
+     * Creates a bundle description with a given redactor. Tests pass one built from fixed values; the game passes
+     * {@code null}, and a redactor for this machine is then built when the archive is written, off the event
+     * dispatch thread.
+     *
+     * @param sources  where the report's files come from
+     * @param redactor the redactor to clean text with, or {@code null} for one built from this machine
+     */
+    public BugReportBundle(Sources sources, @Nullable BugReportRedactor redactor) {
+        this.redactor = redactor;
         this.logDirectory = sources.logDirectory();
         this.gameReportDirectory = sources.gameReportDirectory();
         this.autosaveDirectory = sources.autosaveDirectory();
@@ -227,29 +257,30 @@ public class BugReportBundle {
         List<String> includedEntries = new ArrayList<>();
         List<String> skippedEntries = new ArrayList<>();
         long totalBytes = 0;
+        BugReportRedactor activeRedactor = (redactor != null) ? redactor : BugReportRedactor.forThisMachine();
+
+        // The startup header can roll out of the live log in a long session, so it is written again now. The live
+        // log goes into the archive right after the saves, so the version and hardware always reach the maintainer
+        // in the same place, with no separate file to look for.
+        LOGGER.info("[BugReport] Packaging a bug report. System information now:\n{}",
+              asCurrentState(systemInformation));
 
         try (OutputStream fileOutputStream = new FileOutputStream(archiveFile);
               ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)) {
-
-            // The system information is tiny and always wanted, so it is written first and never counted against
-            // the cap; a bundle that omitted it would be of little use.
-            byte[] systemInformationBytes = systemInformation.getBytes(StandardCharsets.UTF_8);
-            writeEntry(zipOutputStream, SYSTEM_INFO_ENTRY_NAME, systemInformationBytes);
-            includedEntries.add(SYSTEM_INFO_ENTRY_NAME);
-            totalBytes += systemInformationBytes.length;
-
             for (CandidateFile candidate : gatherCandidates()) {
                 long candidateLength = candidate.source().length();
                 if ((totalBytes + candidateLength) > MAX_ARCHIVE_BYTES) {
                     skippedEntries.add(candidate.source().getName());
                     continue;
                 }
-                copyFileToArchive(candidate.source(), candidate.entryName(), zipOutputStream);
+                addFileToArchive(candidate.source(), candidate.entryName(), zipOutputStream, activeRedactor);
                 includedEntries.add(candidate.entryName());
                 totalBytes += candidateLength;
             }
         }
 
+        LOGGER.info("[BugReport] Redacted {} path piece(s), {} host name(s) and {} IP address(es) from the archive",
+              activeRedactor.pathCount(), activeRedactor.hostNameCount(), activeRedactor.ipAddressCount());
         LOGGER.info("[BugReport] Archive written to {}: {} entries included, {} skipped, {} bytes uncompressed",
               archiveFile.getName(), includedEntries.size(), skippedEntries.size(), totalBytes);
         if (!skippedEntries.isEmpty()) {
@@ -535,5 +566,119 @@ public class BugReportBundle {
             LOGGER.warn(exception, "[BugReport] Could not read {}; it will be empty in the archive", source.getName());
         }
         zipOutputStream.closeEntry();
+    }
+
+    /**
+     * Rewords the startup header for logging mid-session. The header opens with "Starting MegaMek v...", which would
+     * read as a restart in the middle of a log.
+     *
+     * @param systemInformation the header from {@code MegaMek.getUnderlyingInformation}
+     *
+     * @return the same text without the leading "Starting "
+     */
+    public static String asCurrentState(String systemInformation) {
+        return systemInformation.replaceFirst("^Starting ", "");
+    }
+
+    /**
+     * Adds one file to a bug report archive. Text files (logs, rolled {@code .log.gz} logs, combat reports, the game
+     * dataset) are redacted; everything else (saves, campaigns, images) is copied unchanged.
+     *
+     * <p>Every suite archive goes through here, so MekHQ's bug report cleans its logs the same way MegaMek's
+     * does.</p>
+     *
+     * @param source          the file to add
+     * @param entryName       the path the file should occupy inside the archive; its ending decides whether it is
+     *                        redacted
+     * @param zipOutputStream the open archive
+     * @param redactor        the redactor to clean text with
+     *
+     * @throws IOException if the archive itself cannot be written
+     */
+    public static void addFileToArchive(File source, String entryName, ZipOutputStream zipOutputStream,
+          BugReportRedactor redactor) throws IOException {
+        if (isRedactedText(entryName)) {
+            copyRedactedTextToArchive(source, entryName, zipOutputStream, redactor);
+        } else {
+            copyFileToArchive(source, entryName, zipOutputStream);
+        }
+    }
+
+    /**
+     * @param entryName the archive path of an entry
+     *
+     * @return {@code true} if the entry is text to be redacted, including a rolled {@code .log.gz}
+     */
+    private static boolean isRedactedText(String entryName) {
+        String lowerCaseName = entryName.toLowerCase(Locale.ROOT);
+        if (lowerCaseName.endsWith(ROLLED_LOG_EXTENSION)) {
+            return true;
+        }
+        for (String extension : REDACTED_TEXT_EXTENSIONS) {
+            if (lowerCaseName.endsWith(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Reads a text file, redacts it and writes it into the archive. A rolled {@code .log.gz} is unpacked, redacted
+     * and packed again, so it keeps its name and format.
+     *
+     * <p>As in {@link #copyFileToArchive}, a file that cannot be read is logged and left empty rather than
+     * aborting the archive.</p>
+     *
+     * @param source          the file to read
+     * @param entryName       the path the file should occupy inside the archive
+     * @param zipOutputStream the open archive
+     * @param activeRedactor  the redactor to clean the text with
+     *
+     * @throws IOException if the archive itself cannot be written
+     */
+    private static void copyRedactedTextToArchive(File source, String entryName, ZipOutputStream zipOutputStream,
+          BugReportRedactor activeRedactor) throws IOException {
+        boolean isCompressed = entryName.toLowerCase(Locale.ROOT).endsWith(ROLLED_LOG_EXTENSION);
+        byte[] content;
+        boolean wasRead;
+        try (InputStream fileInputStream = new FileInputStream(source);
+              InputStream textStream = isCompressed ? new GZIPInputStream(fileInputStream) : fileInputStream) {
+            byte[] rawBytes = textStream.readAllBytes();
+            // Log4j writes UTF-8. Anything else is read one byte per character instead, so every byte that is not
+            // redacted comes back out exactly as it went in rather than as a replacement character.
+            Charset charset = isValidUtf8(rawBytes) ? StandardCharsets.UTF_8 : StandardCharsets.ISO_8859_1;
+            content = activeRedactor.redact(new String(rawBytes, charset)).getBytes(charset);
+            wasRead = true;
+        } catch (IOException exception) {
+            LOGGER.warn(exception, "[BugReport] Could not read {}; it will be empty in the archive", source.getName());
+            content = new byte[0];
+            wasRead = false;
+        }
+
+        if (isCompressed && wasRead) {
+            ByteArrayOutputStream compressedBytes = new ByteArrayOutputStream();
+            try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(compressedBytes)) {
+                gzipOutputStream.write(content);
+            }
+            content = compressedBytes.toByteArray();
+        }
+        writeEntry(zipOutputStream, entryName, content);
+    }
+
+    /**
+     * @param bytes the raw file content
+     *
+     * @return {@code true} if the bytes decode as UTF-8 without any malformed or unmappable sequence
+     */
+    private static boolean isValidUtf8(byte[] bytes) {
+        try {
+            StandardCharsets.UTF_8.newDecoder()
+                  .onMalformedInput(CodingErrorAction.REPORT)
+                  .onUnmappableCharacter(CodingErrorAction.REPORT)
+                  .decode(ByteBuffer.wrap(bytes));
+            return true;
+        } catch (CharacterCodingException exception) {
+            return false;
+        }
     }
 }

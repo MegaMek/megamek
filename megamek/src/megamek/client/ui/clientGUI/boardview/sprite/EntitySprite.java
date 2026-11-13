@@ -41,6 +41,7 @@ import java.util.Set;
 import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.DamageLevelColors;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.UnitOwnerColors;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -883,7 +884,7 @@ public class EntitySprite extends Sprite {
 
                 // Draw a label border with player colors or team coloring
                 if (GUIP.getUnitLabelBorder()) {
-                    graph.setColor(UnitOwnerColors.colorFor(entity.getOwner(), bv.getLocalPlayer()));
+                    graph.setColor(UnitOwnerColors.colorFor(entity.getOwner(), bv.getLocalPlayer(), bv.game));
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1,
@@ -1097,13 +1098,7 @@ public class EntitySprite extends Sprite {
     }
 
     private @Nullable Color getDamageColor() {
-        return switch (entity.getDamageLevel()) {
-            case Entity.DMG_CRIPPLED -> Color.black;
-            case Entity.DMG_HEAVY -> GUIP.getWarningColor();
-            case Entity.DMG_MODERATE -> GUIP.getCautionColor();
-            case Entity.DMG_LIGHT -> Color.green;
-            default -> null;
-        };
+        return DamageLevelColors.forEntity(entity);
     }
 
     /**

@@ -33,16 +33,17 @@
 
 package megamek.client.ui;
 
-import megamek.MMConstants;
-import megamek.MegaMek;
+import static megamek.client.ui.Messages.getString;
 
-import javax.swing.AbstractAction;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
 
-import static megamek.client.ui.Messages.getString;
+import megamek.MMConstants;
+import megamek.MegaMek;
+import megamek.common.util.BugReportRedactor;
 
 /**
  * This Action copies OS, Java and project data to the clipboard.
@@ -75,9 +76,9 @@ public class CopySystemDataAction extends AbstractAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent event) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(new StringSelection(
-              MegaMek.getUnderlyingInformation(MegaMek.getOriginProject(), currentProject)), null);
+        String systemInformation = MegaMek.getUnderlyingInformation(MegaMek.getOriginProject(), currentProject);
+        clipboard.setContents(new StringSelection(BugReportRedactor.forThisMachine().redact(systemInformation)), null);
     }
 }

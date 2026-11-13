@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -327,7 +327,7 @@ public final class HexTooltip {
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
 
         String sBuilding = Messages.getString("BoardView1.Tooltip.Building",
-              mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords),
+              structureHeight(mhex), bldg.toString(), bldg.getCurrentCF(mcoords),
               bldg.getArmor(mcoords), bldg.getBasement(mcoords).toString());
 
         if (bldg.getBasementCollapsed(mcoords)) {
@@ -345,13 +345,27 @@ public final class HexTooltip {
         return UIUtil.tag("TABLE", attr, row);
     }
 
+    /**
+     * Returns the height of the structure in the given hex. Bridges and fuel tanks keep their height in their own
+     * terrain (BRIDGE_ELEV, FUEL_TANK_ELEV) rather than BLDG_ELEV; reading BLDG_ELEV for them returns
+     * Terrain.LEVEL_NONE (Integer.MIN_VALUE), which showed as a height of -2,147,483,648.
+     */
+    private static int structureHeight(Hex hex) {
+        if (hex.containsTerrain(Terrains.BRIDGE)) {
+            return hex.terrainLevel(Terrains.BRIDGE_ELEV);
+        } else if (hex.containsTerrain(Terrains.FUEL_TANK)) {
+            return hex.terrainLevel(Terrains.FUEL_TANK_ELEV);
+        }
+        return hex.terrainLevel(Terrains.BLDG_ELEV);
+    }
+
     public static String getOneLineSummary(BuildingTarget target, Board board) {
         String result = "";
         Coords mcoords = target.getPosition();
         IBuilding bldg = board.getBuildingAt(mcoords);
         Hex mhex = board.getHex(mcoords);
         result += Messages.getString("BoardView1.Tooltip.BuildingLine",
-              mhex.terrainLevel(Terrains.BLDG_ELEV),
+              structureHeight(mhex),
               bldg.getCurrentCF(mcoords),
               bldg.getArmor(mcoords));
 

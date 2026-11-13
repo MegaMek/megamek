@@ -33,6 +33,8 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import java.util.ArrayList;
+
 import megamek.common.Messages;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
@@ -42,13 +44,11 @@ import megamek.common.units.Mek;
 import megamek.common.units.MekWithArms;
 import megamek.common.units.QuadMek;
 
-import java.util.ArrayList;
-
 /*
-This abstract class is to handle rules that are in relation to PSRs. 
+This abstract class is to handle rules that are in relation to PSRs.
  */
 public abstract class RulesPSR {
-    
+
     /**
      * Entity calls this when trying to run with damage.
      *
@@ -75,7 +75,7 @@ public abstract class RulesPSR {
      * @param facing the new facing direction
      */
     public abstract void facingChangeAfterFall(Entity entity, int facing);
-    
+
     /**
      * Apply leg damage modifiers to PSR.
      *
@@ -99,7 +99,7 @@ public abstract class RulesPSR {
      * @param rollList the list of piloting rolls
      */
     public void rollRemoveHighest(ArrayList<PilotingRollData> rollList) {}
-    
+
     /**
      * PSRs for hit actuators.
      *
@@ -130,14 +130,14 @@ public abstract class RulesPSR {
             game.addPSR(new PilotingRollData(entity.getId(), psrPenalty, psrText, loc));
         }
     }
-    
+
     /**
      * Hip Penalties.
      *
      * @return the hip penalty modifier
      */
     public abstract int getHipPenalty();
-    
+
     /**
      * Foot Actuator PSR?
      *
@@ -212,6 +212,14 @@ public abstract class RulesPSR {
      */
     public abstract PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
           int hexesMoved);
+
+    /**
+     * What is the water level modifier for PSR entering the hex?
+     *
+     * @param waterLevel
+     * @return
+     */
+    public abstract int getWaterLevelModifier(final int waterLevel);
 
     public record FallDamageInWater(int damage, int waterDamage) {}
 

@@ -2093,7 +2093,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
         computeCFWarningHexes(currentlySelectedEntity);
 
-        jumpSubGear = GEAR_SUB_STANDARD;
         clearFlightPath();
         Color walkColor = GUIP.getMoveDefaultColor();
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(walkColor));

@@ -67,6 +67,10 @@ import org.junit.jupiter.api.io.TempDir;
  * the order the units appear in the file. The lobby now saves in force tree order, so a battalion rearranged with the
  * up/down buttons reloads the way it was arranged. The file is loaded through the server's real lobby path
  * (ENTITY_ADD), and a save in plain unit order is the control that shows the arrangement is otherwise lost.
+ * <p>
+ * Issue #9321 adds the order of top-level forces, which the same save and load must keep, and which reaches the
+ * server as an ordinary force update.
+ * </p>
  */
 class ForceTreeOrderMulRoundTripTest {
 
@@ -156,7 +160,9 @@ class ForceTreeOrderMulRoundTripTest {
     private List<String> serverTree() {
         Forces forces = serverGame.getForces();
         List<String> lines = new ArrayList<>();
-        for (Force topLevelForce : forces.getTopLevelForces()) {
+        List<Force> topLevelForces = new ArrayList<>(forces.getTopLevelForces());
+        topLevelForces.sort(Forces.TOP_LEVEL_ORDER);
+        for (Force topLevelForce : topLevelForces) {
             describe(forces, topLevelForce, lines);
         }
         return lines;
@@ -205,5 +211,70 @@ class ForceTreeOrderMulRoundTripTest {
         saveAndLoad(sourceGame.getEntitiesVector());
 
         assertNotEquals(ARRANGED_TREE, serverTree(), "control: plain unit order should not reproduce the tree");
+    }
+
+    /**
+     * Builds two top-level forces, "1st Battalion" first and "Command Lance" second, then moves the command lance
+     * above the battalion.
+     */
+    private void buildReorderedTopLevelForces() {
+        Player player = sourceGame.getPlayer(CONNECTION_ID);
+        Forces forces = sourceGame.getForces();
+        int battalionId = forces.addTopLevelForce(Force.createToplevelForce("1st Battalion", player), player);
+        int commandLanceId = forces.addTopLevelForce(Force.createToplevelForce("Command Lance", player), player);
+        forces.addEntity(createUnit("battalion-a"), battalionId);
+        forces.addEntity(createUnit("command-a"), commandLanceId);
+
+        assertTrue(!forces.moveUp(forces.getForce(commandLanceId)).isEmpty(), "precondition: top-level force moved");
+    }
+
+    private static final List<String> REORDERED_TOP_LEVEL = List.of(
+          "Command Lance: [command-a]",
+          "1st Battalion: [battalion-a]");
+
+    @Test
+    void savingInTreeOrderKeepsTheTopLevelOrder() throws Exception {
+        buildReorderedTopLevelForces();
+
+        saveAndLoad(sourceGame.getForces().sortedInTreeOrder(sourceGame.getEntitiesVector()));
+
+        assertEquals(REORDERED_TOP_LEVEL, serverTree());
+    }
+
+    @Test
+    void savingInUnitOrderLosesTheTopLevelOrder() throws Exception {
+        buildReorderedTopLevelForces();
+
+        saveAndLoad(sourceGame.getEntitiesVector());
+
+        assertNotEquals(REORDERED_TOP_LEVEL, serverTree(), "control: plain unit order should not reproduce the order");
+    }
+
+    @Test
+    void aTopLevelMoveReachesTheServer() throws Exception {
+        // Put two top-level forces on the server, in creation order
+        Player player = sourceGame.getPlayer(CONNECTION_ID);
+        Forces sourceForces = sourceGame.getForces();
+        int battalionId = sourceForces.addTopLevelForce(Force.createToplevelForce("1st Battalion", player), player);
+        int commandLanceId = sourceForces.addTopLevelForce(Force.createToplevelForce("Command Lance", player), player);
+        sourceForces.addEntity(createUnit("battalion-a"), battalionId);
+        sourceForces.addEntity(createUnit("command-a"), commandLanceId);
+        saveAndLoad(sourceForces.sortedInTreeOrder(sourceGame.getEntitiesVector()));
+        assertEquals(List.of("1st Battalion: [battalion-a]", "Command Lance: [command-a]"), serverTree(),
+              "precondition: the server starts in creation order");
+
+        // The client moves the lobby's copy, as LobbyActions.forceMove does, and sends the changed forces
+        Forces clientForces = serverGame.getForces().clone();
+        Force clientCommandLance = null;
+        for (Force force : clientForces.getTopLevelForces()) {
+            if (force.getName().equals("Command Lance")) {
+                clientCommandLance = force;
+            }
+        }
+        List<Force> changedForces = clientForces.moveUp(clientCommandLance);
+        gameManager.handlePacket(CONNECTION_ID,
+              new Packet(PacketCommand.FORCE_UPDATE, changedForces, new ArrayList<Entity>()));
+
+        assertEquals(REORDERED_TOP_LEVEL, serverTree());
     }
 }

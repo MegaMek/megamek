@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -105,6 +105,8 @@ public record GameManagerSaveHelper(AbstractGameManager gameManager) {
      * @param localPath The <code>String</code> path to the file to be used on the client
      */
     public void sendSaveGame(int connId, String fileName, String localPath) {
+        // Logged for a player's own save only; autosaves come through saveGame and stay quiet
+        gameManager.getGame().getForces().logTopLevelOrder("Saving game to " + fileName);
         saveGame(fileName, false);
 
         String finalFileName = fileName;

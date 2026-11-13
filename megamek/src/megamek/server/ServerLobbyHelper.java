@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import jakarta.annotation.Nullable;
 import megamek.common.Player;
@@ -402,10 +403,29 @@ public class ServerLobbyHelper {
         }
         if (forcesClone.isValid()) {
             game.setForces(forcesClone);
+            logTopLevelOrder(forceList, forcesClone);
             gameManager.send(createForceUpdatePacket(forceList));
         } else {
             LOGGER.warn("Invalid forces update received.");
             gameManager.send(gameManager.createFullEntitiesPacket());
+        }
+    }
+
+    /**
+     * Logs the server's top-level order for each owner whose top-level forces came in an accepted force update, so a
+     * lobby move can be checked from the log (issue #9321). Updates that touch only sub forces log nothing.
+     */
+    private static void logTopLevelOrder(Collection<Force> updatedForces, Forces forces) {
+        // Sorted, so the lines come out in the same order every time
+        Set<Integer> ownerIds = new TreeSet<>();
+        for (Force force : updatedForces) {
+            if (force.isTopLevel()) {
+                ownerIds.add(force.getOwnerId());
+            }
+        }
+        for (int ownerId : ownerIds) {
+            LOGGER.info("[ForceOrder] Server accepted update; top-level order of player {} is now {}", ownerId,
+                  forces.topLevelOrderDescription(ownerId));
         }
     }
 

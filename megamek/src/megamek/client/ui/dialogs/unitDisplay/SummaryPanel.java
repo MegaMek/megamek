@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,15 +33,16 @@
 package megamek.client.ui.dialogs.unitDisplay;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -55,10 +56,10 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -68,7 +69,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 public class SummaryPanel extends PicMap {
 
     private final UnitDisplayPanel unitDisplayPanel;
-    private final JLabel unitInfo;
+    private final JEditorPane unitInfo;
     private final JPanel contentPanel;
 
     private static final GUIPreferences GUI_PREFERENCES = GUIPreferences.getInstance();
@@ -87,9 +88,19 @@ public class SummaryPanel extends PicMap {
         // Add spacing at top
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        // Create the unit info label
-        unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT);
+        // A JLabel always lays its HTML out at the HTML's own preferred width, which the nested tooltip tables
+        // report as far narrower than the panel, so the text wrapped early whatever the panel's width (#9435). An
+        // editor pane lays the HTML out at the width it is given.
+        unitInfo = new JEditorPane("text/html", "");
+        unitInfo.setEditable(false);
+        unitInfo.setFocusable(false);
+        unitInfo.setHighlighter(null);
         unitInfo.setOpaque(false);
+        unitInfo.setBorder(null);
+        unitInfo.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        unitInfo.setFont(UIManager.getFont("Label.font"));
+        unitInfo.setForeground(UIManager.getColor("Label.foreground"));
+        unitInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
         contentPanel.add(unitInfo);
 
         // Use BorderLayout to ensure the content panel is properly sized

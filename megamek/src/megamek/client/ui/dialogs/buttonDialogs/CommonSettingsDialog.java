@@ -2404,8 +2404,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                 Configuration.gameSummaryImagesMMDir()));
         JLabel gifGameSummaryRecordingLabel =
               new JLabel(Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.name"));
-        String gifRecordingTooltip = Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.tooltip",
-              Configuration.gameSummaryImagesMMDir());
+        String gifRecordingTooltip = Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.tooltip");
         gifGameSummaryRecordingLabel.setToolTipText(gifRecordingTooltip);
         gifGameSummaryRecording.setToolTipText(gifRecordingTooltip);
         configureCheckBox(drawFacingArrowsOnMiniMap, null);

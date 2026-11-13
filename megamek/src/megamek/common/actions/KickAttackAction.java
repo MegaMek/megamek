@@ -126,7 +126,7 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // TSM next (Core p.196, "Talons can receive TSM damage bonus")
         if (((Mek) entity).hasActiveTSM()) {
-            damage *= 2.0;
+            damage *= 2;
         }
 
         // SPA adding after TSM, but before actuators.

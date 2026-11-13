@@ -420,8 +420,6 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (((Mek) entity).hasActiveTSM()) {
             damage *= 2;
         }
-        // Melee specialist adds 1 damage to all melee attacks. Doing before divisors.
-        damage += entity.modifyPhysicalDamageForMeleeSpecialist();
 
         // Reduce by actuators
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, armLoc)) {
@@ -432,16 +430,24 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         // Should be no punching with a bad shoulder, but just in case
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, armLoc)) {
-            damage = 0;
+            return 0;
         }
 
         // underwater damage is half, round down (see bug 1110692) Core p.77
         if (entity.getLocationStatus(armLoc) == ILocationExposureStatus.WET) {
             damage = (int) Math.floor(damage / 2.0f);
         }
+
         if (targetInfantry) {
-            damage = Math.max(1, damage / 10);
+            damage = (int) Math.ceil(damage / 10);
         }
+
+        // Minimum amount
+        damage = Math.max(1, damage);
+
+        // Melee specialist adds 1 damage to all melee attacks.
+        damage += entity.modifyPhysicalDamageForMeleeSpecialist();
+
         return damage;
     }
 

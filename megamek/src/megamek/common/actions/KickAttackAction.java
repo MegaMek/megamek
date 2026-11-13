@@ -107,39 +107,52 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         final int legLoc = ((leg == RIGHT) || (leg == RIGHT_MULE)) ? kickLegs[0]
               : kickLegs[1];
-        int damage = (int) Math.floor(entity.getWeight() / 5.0);
-        float multiplier = 1.0f;
 
+        /* Ordering is very important here. As per Core p.87/88.
+         * The Order is:
+         * 1) Base Value
+         * 2) Equipment modified (eg: TSM, Talons, Shield)
+         * 3) Actuator modifiers (eg: Destroyed actuators)
+         *
+         * Rounding applies for each step which divides unless otherwise noted.
+         */
+        int damage = (int) Math.floor(entity.getWeight() / 5.0);
+
+        // Talons first
+        if (entity.hasWorkingMisc(MiscType.F_TALON, null, legLoc) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT,
+                                                                                             legLoc)) {
+            damage = Math.round(damage * 1.5f);
+        }
+
+        // TSM next (Core p.196, "Talons can receive TSM damage bonus")
+        if (((Mek) entity).hasActiveTSM()) {
+            damage *= 2.0;
+        }
+
+        // SPA adding after TSM, but before actuators.
+        damage += entity.modifyPhysicalDamageForMeleeSpecialist();
+
+        // Actuator damage
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, legLoc)) {
-            multiplier /= 2.0f;
+            damage = (int) Math.floor(damage / 2.0f);
         }
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, legLoc)) {
-            multiplier /= 2.0f;
+            damage = (int) Math.floor(damage / 2.0f);
         }
+        // Hip should never occur, but just in case, 0.
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_HIP, legLoc)) {
             damage = 0;
         }
-        if (((Mek) entity).hasActiveTSM()) {
-            multiplier *= 2.0f;
-        }
 
-        double talonMultiplier = 1;
-        if (entity.hasWorkingMisc(MiscType.F_TALON, null, legLoc) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT,
-              legLoc)) {
-            talonMultiplier += 0.5;
-        }
-
-        int toReturn = (int) Math.floor(damage * multiplier);
-        toReturn = (int) Math.round(toReturn * talonMultiplier);
-        toReturn += entity.modifyPhysicalDamageForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
+        // Core p.77 confirms this is floor, not ceil
         if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
-            toReturn = (int) Math.ceil(toReturn * 0.5f);
+            damage = (int) Math.floor(damage * 0.5f);
         }
         if (targetInfantry) {
-            toReturn = Math.max(1, toReturn / 10);
+            damage = Math.max(1, damage / 10);
         }
-        return toReturn;
+        return damage;
     }
 
     public ToHitData toHit(Game game) {
@@ -152,35 +165,35 @@ public class KickAttackAction extends PhysicalAttackAction {
      */
     public static ToHitData toHit(Game game, int attackerId,
           Targetable target, int leg) {
-        final Entity ae = game.getEntity(attackerId);
-        if (ae == null) {
+        final Entity attackingEntity = game.getEntity(attackerId);
+        if (attackingEntity == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "You can't attack from a null entity!");
         }
 
-        if (!(ae instanceof Mek)) {
+        if (!(attackingEntity instanceof Mek)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-'Meks can't kick.");
         }
 
-        if (ae.isStuck()) {
+        if (attackingEntity.isStuck()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Bogged-down units can't kick.");
         }
 
-        String impossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
+        String impossible = PhysicalAttackAction.toHitIsImpossible(game, attackingEntity, target);
         if (impossible != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        Hex attHex = game.getHexOf(ae);
+        Hex attHex = game.getHexOf(attackingEntity);
         Hex targHex = game.getHexOf(target);
-        final int attackerElevation = ae.getElevation() + attHex.getLevel();
+        final int attackerElevation = attackingEntity.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
               + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
 
         int mule = 0;
         int[] kickLegs = new int[2];
-        if (ae.entityIsQuad()) {
+        if (attackingEntity.entityIsQuad()) {
             if ((leg == KickAttackAction.LEFT_MULE)
                   || (leg == KickAttackAction.RIGHT_MULE)) {
                 kickLegs[0] = Mek.LOC_RIGHT_LEG;
@@ -209,26 +222,34 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // check if all legs are present & working
-        if (ae.isLocationBad(Mek.LOC_LEFT_LEG) || ae.isLocationBad(Mek.LOC_RIGHT_LEG)
-              || (ae.entityIsQuad()
-              && (ae.isLocationBad(Mek.LOC_LEFT_ARM)
-              || ae.isLocationBad(Mek.LOC_RIGHT_ARM)))) {
+        if (attackingEntity.isLocationBad(Mek.LOC_LEFT_LEG) || attackingEntity.isLocationBad(Mek.LOC_RIGHT_LEG)
+            || (attackingEntity.entityIsQuad()
+                && (attackingEntity.isLocationBad(Mek.LOC_LEFT_ARM)
+                    || attackingEntity.isLocationBad(Mek.LOC_RIGHT_ARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
         // check if all hips are operational
-        if (!ae.entityIsQuad() && (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
-              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG))) {
+        if (!attackingEntity.entityIsQuad() && (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
+                                                || !attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP,
+                                                                                     Mek.LOC_RIGHT_LEG))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
-        if (ae.entityIsQuad()) {
-            if (Game.rulesManager.getRulesPhysical().quadMuleKickImpossible(leg, ae)) {
+        // Core p.238. TW p. 158
+        if (attackingEntity.entityIsQuad()) {
+            if ((leg == KickAttackAction.LEFT_MULE || leg == KickAttackAction.RIGHT_MULE) &&
+                (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
+                 || !attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG))) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
+            } else if ((leg == KickAttackAction.LEFT || leg == KickAttackAction.RIGHT) &&
+                       (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
+                        || !attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
             }
         }
 
         // check if attacker has fired leg-mounted weapons
-        for (Mounted<?> mounted : ae.getWeaponList()) {
+        for (Mounted<?> mounted : attackingEntity.getWeaponList()) {
             if (mounted.isUsedThisRound() && (mounted.getLocation() == legLoc)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Weapons fired from leg this turn");
@@ -236,7 +257,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // check range
-        final int range = ae.getPosition().distance(target.getPosition());
+        final int range = attackingEntity.getPosition().distance(target.getPosition());
 
         // check elevation
         if (target.isAirborneVTOLorWIGE()) {
@@ -253,8 +274,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         // Don't check arc for stomping infantry or tanks.
         // Tripods use torso facing (secondary) for physical attacks per IO:AE p.158
         if ((0 != range) && (mule != 1)) {
-            int facing = ae.isTripodMek() ? ae.getSecondaryFacing() : ae.getFacing();
-            if (!ComputeArc.isInArc(ae.getPosition(), facing, target, Compute.ARC_FORWARD)) {
+            int facing = attackingEntity.isTripodMek() ? attackingEntity.getSecondaryFacing() : attackingEntity.getFacing();
+            if (!ComputeArc.isInArc(attackingEntity.getPosition(), facing, target, Compute.ARC_FORWARD)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
             }
         }
@@ -262,17 +283,20 @@ public class KickAttackAction extends PhysicalAttackAction {
         // check facing, part 2: Mule kick
         // Tripods cannot perform mule kicks per IO:AE p.158
         if (mule == 1) {
-            if (ae.isTripodMek()) {
+            if (attackingEntity.isTripodMek()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Tripods cannot perform mule kicks");
             }
             if ((0 != range)
-                  && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
+                && !ComputeArc.isInArc(attackingEntity.getPosition(),
+                                       attackingEntity.getFacing(),
+                                       target,
+                                       Compute.ARC_REAR)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
             }
         }
 
         // can't kick while prone
-        if (ae.isProne()) {
+        if (attackingEntity.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
@@ -285,7 +309,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             }
         }
 
-        if (ae.isHullDown()) {
+        if (attackingEntity.isHullDown()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is hull down");
         }
 
@@ -298,14 +322,14 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // Set the base BTH
-        int base = ae.getCrew().getPiloting();
+        int base = attackingEntity.getCrew().getPiloting();
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
 
         toHit.addModifier(Game.rulesManager.getRulesPhysical().getKickModifier(), "Kick");
 
-        PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
+        PhysicalAttackAction.setCommonModifiers(toHit, game, attackingEntity, target);
 
         // +3 modifier for kicking infantry in same hex
         // see bug 1749177
@@ -322,17 +346,17 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, legLoc)) {
+        if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, legLoc)) {
             toHit.addModifier(2, "Upper leg actuator destroyed");
         }
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, legLoc)) {
+        if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, legLoc)) {
             toHit.addModifier(2, "Lower leg actuator destroyed");
         }
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_FOOT, legLoc)) {
+        if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_FOOT, legLoc)) {
             toHit.addModifier(1, "Foot actuator destroyed");
         }
 
-        if (ae.hasFunctionalLegAES()) {
+        if (attackingEntity.hasFunctionalLegAES()) {
             toHit.addModifier(-1, "AES bonus");
         }
 
@@ -362,7 +386,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // factor in target side
-        toHit.setSideTable(ComputeSideTable.sideTable(ae, target));
+        toHit.setSideTable(ComputeSideTable.sideTable(attackingEntity, target));
 
         // BMRr pg. 42, "The side on which a vehicle takes damage is determined
         // randomly if the BattleMek is attacking from the same hex."

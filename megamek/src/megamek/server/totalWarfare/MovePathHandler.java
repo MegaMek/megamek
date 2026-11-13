@@ -3321,6 +3321,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.BRACE) {
                 entity.setBraceLocation(step.getBraceLocation());
+                logger.info("[Brace] {}: braced {} at {} (hull down: {})", entity.getDisplayName(),
+                      entity.getLocationName(step.getBraceLocation()), curPos, entity.isHullDown());
             }
 
             if (step.getType() == MoveStepType.SHUTDOWN) {

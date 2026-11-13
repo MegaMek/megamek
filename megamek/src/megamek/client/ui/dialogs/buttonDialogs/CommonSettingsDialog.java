@@ -388,6 +388,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.always"),
           Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.ask"),
           Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.never") });
+    private final JTextField gifSaveDirectory = new JTextField(20);
     private final JCheckBox showUnitDisplayNamesOnMinimap = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showUnitDisplayNamesOnMinimap.name"));
     private JComboBox<String> skinFiles;
@@ -2391,6 +2392,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         editor.getTextField().setHorizontalAlignment(SwingConstants.RIGHT);
     }
 
+    private static void selectGifSaveDirectory(JTextField textField, JFrame frame) {
+        fileChoose(textField, frame, Messages.getString("CommonSettingsDialog.gifSaveDirectory.chooser.title"), true);
+    }
+
     private static void selectTraceOverlayImageFile(JTextField textField, JFrame frame) {
           fileChoose(textField, frame,
               Messages.getString("CommonSettingsDialog.TraceOverlayImageFile.chooser.title"), false);
@@ -2404,10 +2409,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                 Configuration.gameSummaryImagesMMDir()));
         JLabel gifGameSummaryRecordingLabel =
               new JLabel(Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.name"));
-        String gifRecordingTooltip = Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.tooltip",
-              Configuration.gameSummaryImagesMMDir());
+        String gifRecordingTooltip = Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.tooltip");
         gifGameSummaryRecordingLabel.setToolTipText(gifRecordingTooltip);
         gifGameSummaryRecording.setToolTipText(gifRecordingTooltip);
+        JLabel gifSaveDirectoryLabel = new JLabel(Messages.getString("CommonSettingsDialog.gifSaveDirectory.name"));
+        String gifSaveDirectoryTooltip = Messages.getString("CommonSettingsDialog.gifSaveDirectory.tooltip");
+        gifSaveDirectoryLabel.setToolTipText(gifSaveDirectoryTooltip);
+        gifSaveDirectory.setToolTipText(gifSaveDirectoryTooltip);
+        JButton gifSaveDirectoryChooser = applicationIconButton("btnGifSaveDirectoryChooser", 0xE2C8,
+              Messages.getString("CommonSettingsDialog.gifSaveDirectory.chooser.title"));
+        gifSaveDirectoryChooser.addActionListener(event -> selectGifSaveDirectory(gifSaveDirectory, getFrame()));
+        JPanel gifSaveDirectoryControl = applicationPathControl(gifSaveDirectory, gifSaveDirectoryChooser);
         configureCheckBox(drawFacingArrowsOnMiniMap, null);
         configureCheckBox(drawSensorRangeOnMiniMap, null);
         configureCheckBox(paintBordersOnMiniMap, null);
@@ -2428,6 +2440,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(List.of(createMiniMapDisplayGrid(
               mmSymbol, gameSummaryMM,
               gifGameSummaryRecordingLabel, gifGameSummaryRecording,
+              gifSaveDirectoryLabel, gifSaveDirectoryControl,
               drawFacingArrowsOnMiniMap, drawSensorRangeOnMiniMap,
               paintBordersOnMiniMap, showUnitDisplayNamesOnMinimap,
               movePathPersistenceOnMiniMapLabel, movePathPersistenceOnMiniMap)));
@@ -2438,15 +2451,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     static SettingsFormPanel createMiniMapDisplayGrid(
         JCheckBox symbols, JCheckBox summaryImage,
         JLabel recordingLabel, JComponent recordingControl,
+        JLabel saveDirectoryLabel, JComponent saveDirectoryControl,
         JCheckBox facingArrows, JCheckBox sensorRange,
         JCheckBox borders, JCheckBox unitNames,
         JLabel persistenceLabel, JComponent persistenceControl) {
         SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsMiniMapDisplayGrid",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
         recordingLabel.setLabelFor(recordingControl);
+        saveDirectoryLabel.setLabelFor(saveDirectoryControl);
         persistenceLabel.setLabelFor(persistenceControl);
         grid.addEqualWidthComponentGrid(2, symbols, summaryImage);
         grid.addEqualWidthComponentGrid(2, recordingLabel, recordingControl);
+        grid.addEqualWidthComponentGrid(2, saveDirectoryLabel, saveDirectoryControl);
         grid.addEqualWidthComponentGrid(2, facingArrows, sensorRange);
         grid.addEqualWidthComponentGrid(2, borders, unitNames);
         grid.addEqualWidthComponentGrid(2, persistenceLabel, persistenceControl);
@@ -2877,6 +2893,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             gameSummaryBV.setSelected(GUIP.getGameSummaryBoardView());
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
             gifGameSummaryRecording.setSelectedIndex(GUIP.getGifGameSummaryRecording().ordinal());
+            gifSaveDirectory.setText(GUIP.getGifGameSummarySaveDirectory());
             skinFiles.removeAllItems();
             ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
 
@@ -3357,6 +3374,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setGifGameSummaryRecording(isValidRecordingIndex
               ? recordingModes[selectedRecordingIndex]
               : GifRecordingMode.ASK);
+        GUIP.setGifGameSummarySaveDirectory(gifSaveDirectory.getText().trim());
         GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = GUIP.getUITheme();

@@ -175,8 +175,9 @@ public class BugReportDialog {
             gatherFilesRow.add(createReportButton());
         } else if (copySystemDataAction != null) {
             // Only worth offering where nothing gathers the files automatically: the archive's megamek.log carries
-            // the system information and the repository buttons fill the same details into the issue form. MegaMekLab and
-            // MekHQ reach this dialog without a packaging action, and the Help menu keeps the item in its own right.
+            // the system information and the repository buttons fill the same details into the issue form.
+            // MegaMekLab and MekHQ reach this dialog without a packaging action, and the Help menu keeps the item in
+            // its own right.
             gatherFilesRow.add(new JButton(copySystemDataAction));
         }
 

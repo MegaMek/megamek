@@ -115,7 +115,8 @@ class BugReportRedactorTest {
     void hostNameIsReplacedButALongerNameIsNot() {
         BugReportRedactor redactor = windowsRedactor();
 
-        assertEquals("s: hostname = '[host]' port = 2346", redactor.redact("s: hostname = 'DESKTOP-AB12CD' port = 2346"));
+        assertEquals("s: hostname = '[host]' port = 2346",
+              redactor.redact("s: hostname = 'DESKTOP-AB12CD' port = 2346"));
         assertEquals("DESKTOP-AB12CDE", redactor.redact("DESKTOP-AB12CDE"));
     }
 

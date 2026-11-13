@@ -242,6 +242,11 @@ dependencies {
 
     implementation 'org.apache.logging.log4j:log4j-api:2.25.5'
     implementation 'org.apache.logging.log4j:log4j-core:2.25.5'
+    // OSHI logs through SLF4J; this routes those lines into our Log4j files instead of a "no provider" warning.
+    runtimeOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.5'
+
+    // CPU, GPU and memory details for the log header and bug reports (HardwareDescription).
+    implementation 'com.github.oshi:oshi-core:7.7.2'
 
     implementation 'org.apache.pdfbox:pdfbox:3.0.7'
 

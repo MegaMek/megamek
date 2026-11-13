@@ -269,7 +269,8 @@ dependencies {
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.7'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.3'
+    // Compile scope, not runtime only: megamek.testUtilities.TestEnvironmentIsolation implements the launcher listeners.
+    testImplementation 'org.junit.platform:junit-platform-launcher:6.0.3'
     testRuntimeOnly('org.apache.xmlgraphics:batik-codec:1.19') {
         exclude group: 'xml-apis', module: 'xml-apis'
     }

@@ -3715,10 +3715,16 @@ public class TWGameManager extends AbstractGameManager {
             game.setTurnVector(new ArrayList<>());
         } else {
             for (Entity entity : game.getEntitiesVector()) {
-                if (entity.isEligibleFor(phase)) {
-                    assistable = true;
-                } else {
+                if (!entity.isEligibleFor(phase)) {
                     assistants.addElement(entity);
+                } else if (!Game.rulesManager.getRulesGame().eligibleForPhase(entity, phase)) {
+                    // determineTurnOrder gives this unit no turn, so it must not stay selectable: a unit that can
+                    // be picked without a turn of its own spends a turn that belongs to another unit.
+                    LOGGER.info("[TurnOrder] {} gets no {} turn under the active rules system; marking it done",
+                          entity.getShortName(), phase);
+                    assistants.addElement(entity);
+                } else {
+                    assistable = true;
                 }
             }
         }

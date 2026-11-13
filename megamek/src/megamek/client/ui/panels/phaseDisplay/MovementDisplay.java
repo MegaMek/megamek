@@ -1411,8 +1411,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MoveStep edgeLastStep = (cmd != null) ? cmd.getLastStep() : null;
         boolean edgeHasLastStep = edgeLastStep != null;
         // distanceToFinalIsOne catches both: a single direct step has the same final-coord
-        // distance as a long routed loop that ends on an adjacent hex.
-        boolean distanceToFinalIsOne = (currentEntity != null) && edgeHasLastStep
+        // distance as a long routed loop that ends on an adjacent hex. A walk-on unit has no position
+        // until it is placed (issue 9547).
+        boolean distanceToFinalIsOne = (currentEntity != null) && (currentEntity.getPosition() != null)
+                                       && edgeHasLastStep
                                        && (currentEntity.getPosition().distance(edgeLastStep.getPosition()) == 1);
         long forwardStepCount = (cmd != null) ? cmd.getStepVector().stream()
                                                    .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
@@ -1675,7 +1677,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         boolean hasLastStep = (cmd != null) && (cmd.getLastStep() != null);
-        boolean fleeStart = !hasLastStep && movingEntity.canFlee();
+        // A walk-on unit has no hex until it is placed, and a move from no hex cannot be sent (issue 9547). It can
+        // flee once placed on the edge.
+        boolean isPlaced = movingEntity.getPosition() != null;
+        boolean fleeStart = !hasLastStep && isPlaced && movingEntity.canFlee();
         boolean fleeEnd = hasLastStep
                           && (cmd.getMpUsed() < cmd.getMaxMP())
                           && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL)

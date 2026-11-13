@@ -88,7 +88,7 @@ public class ISImpHGaussRifle extends GaussWeapon {
         longAV = 22;
         maxRange = RANGE_LONG;
         explosionDamage = 30;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 126);
+        rulesRefs = rulesRefs(rulesRef(SourceBookCode.TO_AUE, 126), rulesRef(SourceBookCode.CORE, 184));
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)

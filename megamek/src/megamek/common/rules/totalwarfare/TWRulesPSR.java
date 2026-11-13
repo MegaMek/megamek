@@ -34,6 +34,8 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import java.util.List;
+
 import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
@@ -43,9 +45,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.MekWithArms;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TWRulesPSR extends RulesPSR {
 
@@ -77,7 +76,7 @@ public class TWRulesPSR extends RulesPSR {
     /**
      * No modifier for standing
      *
-     * @param roll the piloting roll data 
+     * @param roll the piloting roll data
      */
     @Override
     public void standing(PilotingRollData roll) {}
@@ -248,7 +247,7 @@ public class TWRulesPSR extends RulesPSR {
 
     /**
      * No Special gyro jump modifier.
-     * 
+     *
      * @param gyroHits the number of gyro hits
      * @param gyroType the type of gyro
      * @return the gyro jump modifier
@@ -257,7 +256,7 @@ public class TWRulesPSR extends RulesPSR {
     public int getGyroJumpModifier(final int gyroHits, final int gyroType) {
         return 0;
     }
-    
+
     /**
      * We don't care about walking meks with legs destroyed
      *
@@ -294,5 +293,22 @@ public class TWRulesPSR extends RulesPSR {
             waterDamage = ((int) Math.round(weight / 10.0) * (fallHeight + 1)) / 2;
         }
         return new FallDamageInWater(damage, waterDamage);
+    }
+
+    /**
+     * Water entry modifier for PSR. +1 for water level 3 or higher, 0 for water level 2, -1 for water level 1
+     * BMM p.142
+     *
+     * @param waterLevel
+     * @return
+     */
+    @Override
+    public int getWaterLevelModifier(final int waterLevel) {
+        return switch (waterLevel) {
+            case 0 -> 0;
+            case 1 -> -1;
+            case 2 -> 0;
+            default -> 1;
+        };
     }
 }

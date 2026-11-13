@@ -410,15 +410,4 @@ public class TWRulesPhysical extends RulesPhysical {
     public int getClubFindInRubble() {
         return BuildingType.MEDIUM.getTypeValue();
     }
-
-    @Override
-    public boolean quadMuleKickImpossible(int leg, Entity entity) {
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
-              || !entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG)
-              || !entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
-              || !entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM)) {
-            return true;
-        }
-        return false;
-    }
 }

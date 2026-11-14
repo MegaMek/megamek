@@ -127,6 +127,7 @@ public class BotCommandsPanel extends JPanel {
     private MegaMekButton pauseContinue;
     private List<MegaMekButton> commandButtons = List.of();
     private BotOrdersMenuBuilder ordersMenuBuilder;
+    private PrincessMovementMenuBuilder princessMenuBuilder;
 
     /**
      * Bot Commands Panel constructor.
@@ -208,18 +209,22 @@ public class BotCommandsPanel extends JPanel {
     private void initialize() {
         applyLayout(false);
         UIUtil.applyTopBarBackground(this);
-        ordersMenuBuilder = new BotOrdersMenuBuilder(client,
-              (orderDescription, singleHex, onPicked) -> pickTargetHexes(orderDescription, singleHex, 0,
-                    "BotCommandPanel.WaypointPrompt.message", onPicked),
+        BotOrdersMenuBuilder.HexPicker routeHexPicker = (orderDescription, singleHex, onPicked) ->
+              pickTargetHexes(orderDescription, singleHex, 0, "BotCommandPanel.WaypointPrompt.message", onPicked);
+        ordersMenuBuilder = new BotOrdersMenuBuilder(client, routeHexPicker, this::acknowledgeOrder);
+        princessMenuBuilder = new PrincessMovementMenuBuilder(client, this::sendChatCommand, routeHexPicker,
               this::acknowledgeOrder);
         pauseContinue = createButton("PauseGame");
         var moveOrder = createButton("MoveOrder");
         var quickOrders = createButton("QuickOrders");
+        MegaMekButton waypoints = createButton("Waypoints");
+        MegaMekButton movement = createButton("Movement");
         var targets = createButton("Targets");
         var maneuver = createButton("Maneuver");
         var setBehavior = createButton("SetBehavior");
         var artillery = createButton("Artillery");
-        commandButtons = List.of(moveOrder, quickOrders, targets, maneuver, setBehavior, artillery);
+        commandButtons = List.of(moveOrder, quickOrders, waypoints, movement, targets, maneuver, setBehavior,
+              artillery);
 
         moveOrder.addActionListener(event -> {
             // with one bot and nothing to choose between, the editor opens at once; its Choose units... narrows it
@@ -249,6 +254,8 @@ public class BotCommandsPanel extends JPanel {
             }
             showButtonPopup(quickOrders, this::createQuickOrdersPopup, NO_ORDERABLE_UNITS_KEY);
         });
+        waypoints.addActionListener(event -> showPrincessPopup(waypoints, princessMenuBuilder::populateWaypoints));
+        movement.addActionListener(event -> showPrincessPopup(movement, princessMenuBuilder::populateMovement));
         targets.addActionListener(event -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
         setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
@@ -259,6 +266,8 @@ public class BotCommandsPanel extends JPanel {
         this.add(pauseContinue);
         this.add(moveOrder);
         this.add(quickOrders);
+        this.add(waypoints);
+        this.add(movement);
         this.add(targets);
         this.add(maneuver);
         this.add(setBehavior);
@@ -641,6 +650,58 @@ public class BotCommandsPanel extends JPanel {
     private void showCasparOnlyNotice() {
         String notice = Messages.getString("BotCommandPanel.Orders.casparOnly");
         LOGGER.info("[BotOrders] {}", notice);
+        if (clientGUI != null) {
+            clientGUI.addToast(ToastLevel.INFO, notice);
+        }
+    }
+
+    /**
+     * @param botPlayer The bot to inspect
+     *
+     * @return {@code true} if the bot is a Princess bot, the kind that takes waypoints, hold position and retreat as
+     *       chat commands, with at least one on-board unit to give them to
+     */
+    private boolean takesChatWaypoints(Player botPlayer) {
+        return (client.getGame() instanceof Game game) && OrderEligibility.takesChatWaypoints(game, botPlayer)
+              && hasOnBoardUnits(botPlayer);
+    }
+
+    /**
+     * Shows the Waypoints or Movement popup, which list Princess bots only. When the player commands no Princess bot
+     * with units on the board but does command a CASPAR bot, a notice names the buttons that order a CASPAR bot
+     * instead of showing an empty popup.
+     *
+     * @param button    The button the popup is anchored to
+     * @param populator Fills a given Princess bot's submenu with the button's orders
+     */
+    private void showPrincessPopup(MegaMekButton button, BiConsumer<JMenu, Player> populator) {
+        int princessBotCount = 0;
+        int skippedBotCount = 0;
+        for (Player botPlayer : getBotPlayersUnderYourCommand()) {
+            if (takesChatWaypoints(botPlayer)) {
+                princessBotCount++;
+            } else {
+                skippedBotCount++;
+            }
+        }
+        boolean isCasparBotAvailable = anyBotTakesUnitOrders();
+        LOGGER.info("[PrincessWaypoints] {} clicked: {} Princess bot(s) with on-board units offered, {} bot(s) left "
+                    + "out as CASPAR bots or bots with no on-board units, CASPAR bot to order instead: {}",
+              button.getText(), princessBotCount, skippedBotCount, isCasparBotAvailable);
+        if ((princessBotCount == 0) && isCasparBotAvailable) {
+            showPrincessOnlyNotice();
+            return;
+        }
+        showButtonPopup(button, () -> createBotFirstPopup(populator, this::takesChatWaypoints));
+    }
+
+    /**
+     * Tells the player that the Waypoints and Movement buttons are for Princess bots, when the only bots they command
+     * are CASPAR bots.
+     */
+    private void showPrincessOnlyNotice() {
+        String notice = Messages.getString("BotCommandPanel.Orders.princessOnly");
+        LOGGER.info("[PrincessWaypoints] {}", notice);
         if (clientGUI != null) {
             clientGUI.addToast(ToastLevel.INFO, notice);
         }

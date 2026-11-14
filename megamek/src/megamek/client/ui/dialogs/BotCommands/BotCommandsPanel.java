@@ -48,11 +48,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
@@ -1012,21 +1014,38 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Adds the item that opens the priority target picker for a bot. Without a client window to open it from, falls
-     * back to the plain list of enemy units, which adds a target at the default priority.
+     * Adds the item that opens the priority target picker for a bot. The picker opens over the game window, or over the
+     * Commander window when there is no game window. Without any window to open it from, falls back to the plain list
+     * of enemy units, which adds a target at the default priority.
      *
      * @param botMenu   the bot submenu to add the item to
      * @param botPlayer the bot the orders go to
      */
     private void addPriorityTargetItem(JMenu botMenu, Player botPlayer) {
-        if (clientGUI == null) {
+        JFrame parentFrame = pickerParentFrame();
+        if ((parentFrame == null) || !(client.getGame() instanceof Game game)) {
+            LOGGER.info("[PriorityTargets] {}: plain unit list, no window to open the picker from",
+                  botPlayer.getName());
             addEnemyUnitMenu(botMenu, botPlayer, "PriorityTargetMenu", this::setPriorityTarget);
             return;
         }
+        LOGGER.info("[PriorityTargets] {}: priority target picker over the {} window", botPlayer.getName(),
+              (clientGUI != null) ? "game" : "Commander");
         JMenuItem pickerItem = new JMenuItem(Messages.getString("BotCommandPanel.PriorityTargetPicker.title"));
         pickerItem.setToolTipText(Messages.getString("BotCommandPanel.PriorityTargetPicker.tooltip"));
-        pickerItem.addActionListener(event -> pickPriorityTargets(botPlayer));
+        pickerItem.addActionListener(event -> pickPriorityTargets(botPlayer, parentFrame, game));
         botMenu.add(pickerItem);
+    }
+
+    /**
+     * @return the window to open a dialog over: the game window, or else the window this panel sits in, such as the
+     *       Commander window; {@code null} when there is neither
+     */
+    private @Nullable JFrame pickerParentFrame() {
+        if (clientGUI != null) {
+            return clientGUI.getFrame();
+        }
+        return (SwingUtilities.getWindowAncestor(this) instanceof JFrame frame) ? frame : null;
     }
 
     /**
@@ -1034,10 +1053,11 @@ public class BotCommandsPanel extends JPanel {
      * whose target priority changed. Units already on the bot list cannot be unticked here, since the bot takes no
      * order to drop one.
      *
-     * @param botPlayer the bot the orders go to
+     * @param botPlayer   the bot the orders go to
+     * @param parentFrame the window to open the picker over
+     * @param game        the game as this client sees it
      */
-    private void pickPriorityTargets(Player botPlayer) {
-        Game game = clientGUI.getClient().getGame();
+    private void pickPriorityTargets(Player botPlayer, JFrame parentFrame, Game game) {
         Map<Integer, Integer> currentPriorities = new HashMap<>();
         // the server sends every bot's settings when a client connects; before that the map can still be missing
         Map<String, BehaviorSettings> allBotSettings = game.getBotSettings();
@@ -1047,7 +1067,7 @@ public class BotCommandsPanel extends JPanel {
                 currentPriorities.put(unitId, knownSettings.getTargetPriority(unitId));
             }
         }
-        var picker = new BotTargetPickerDialog(clientGUI.getFrame(), game, botPlayer,
+        var picker = new BotTargetPickerDialog(parentFrame, game, botPlayer,
               currentPriorities, currentPriorities.keySet());
         picker.setVisible(true);
         if (picker.getResult() != DialogResult.CONFIRMED) {
@@ -1061,7 +1081,7 @@ public class BotCommandsPanel extends JPanel {
                 ordersSent++;
             }
         }
-        LOGGER.debug("[PriorityTargets] sent {} priority target order(s) to {}", ordersSent, botPlayer.getName());
+        LOGGER.info("[PriorityTargets] sent {} priority target order(s) to {}", ordersSent, botPlayer.getName());
         if (ordersSent > 0) {
             acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.priorityTargets", ordersSent));
         }

@@ -142,7 +142,7 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
         }
         if (!result.isFullyRead()) {
             preview.append("<BR>")
-                  .append(UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColor()))
+                  .append(UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColorForTheme()))
                   // typed text goes into an HTML label: escape it so a stray < or & is shown, not interpreted
                   .append(Messages.getString("BotConfigDialog.unitIdUnreadable",
                         StringEscapeUtils.escapeHtml4(String.join(", ", result.unreadableEntries()))))

@@ -106,6 +106,7 @@ import megamek.client.ui.dialogs.miniReport.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
 import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
+import megamek.client.ui.dialogs.phaseDisplay.AutomaticEjectionWarning;
 import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
 import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
@@ -416,6 +417,8 @@ public class ClientGUI extends AbstractClientGUI
     private JFileChooser dlgSaveList;
     private JFileChooser dlgSaveGifList;
     private final Client client;
+    /** Shared by the deployment and movement displays, which are rebuilt every phase. */
+    private final AutomaticEjectionWarning automaticEjectionWarning = new AutomaticEjectionWarning(this);
 
     private File curFileBoardImage;
     private File curFileBoard;
@@ -4015,6 +4018,13 @@ public class ClientGUI extends AbstractClientGUI
     @Override
     public Client getClient() {
         return client;
+    }
+
+    /**
+     * @return the warning that ejecting crews will die, shared by every phase display so it is given once per round
+     */
+    public AutomaticEjectionWarning getAutomaticEjectionWarning() {
+        return automaticEjectionWarning;
     }
 
     @Override

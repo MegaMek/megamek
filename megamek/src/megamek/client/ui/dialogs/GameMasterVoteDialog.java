@@ -242,8 +242,8 @@ public class GameMasterVoteDialog extends JDialog {
         }));
         label.setFont(label.getFont().deriveFont(Font.BOLD));
         switch (choice) {
-            case YES -> label.setForeground(GUIP.getOkColor());
-            case NO -> label.setForeground(GUIP.getWarningColor());
+            case YES -> label.setForeground(GUIP.getOkColorForTheme());
+            case NO -> label.setForeground(GUIP.getWarningColorForTheme());
             default -> label.setForeground(Color.GRAY);
         }
         return label;

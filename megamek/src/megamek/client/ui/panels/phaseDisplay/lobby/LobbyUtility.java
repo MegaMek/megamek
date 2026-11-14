@@ -193,7 +193,7 @@ public class LobbyUtility {
      * Returns a formatted and colored tooltip string warning that a board is invalid.
      */
     static String invalidBoardTip() {
-        return UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColor()) +
+        return UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColorForTheme()) +
               Messages.getString("ChatLounge.map.invalidTip") +
               "</FONT>";
     }

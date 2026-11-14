@@ -213,8 +213,10 @@ public class SummaryPanel extends PicMap {
                       unitDisplayPanel.getClientGUI().getClient(),
                       entity.getBoardId());
                 if (!hexTip.isEmpty()) {
+                    // The hex tip's minefield and objective lines use the light tooltip FG colour, so they need the
+                    // dark tooltip BG, the same as the board tooltip gives them
                     attr = String.format("FACE=Dialog BGCOLOR=%s",
-                          UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipTerrainBGColor()));
+                          UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);
                     row = UIUtil.tag("TR", "", col);
                     rows += row;

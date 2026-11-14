@@ -2582,6 +2582,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
+        // A unit walking on from the map edge never passes through the deployment phase, where this warning is
+        // otherwise given. Core rules make every edge-zone unit walk on, so without this most of a Core force
+        // arrives unwarned. Cancel keeps the planned path and sends nothing. The DEPLOY step is the test because
+        // planning a walk-on already marks the unit deployed on this client, so canWalkOnThisRound is false here.
+        boolean isWalkingOn = (currentlySelectedEntity != null) && (cmd != null)
+              && cmd.contains(MoveStepType.DEPLOY);
+        if (isWalkingOn && clientgui.getAutomaticEjectionWarning()
+              .warnIfDue("Walking on " + currentlySelectedEntity.getShortName())) {
+            return true;
+        }
+
         return currentEntity() == null;
     }
 

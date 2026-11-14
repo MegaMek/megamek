@@ -845,7 +845,9 @@ public class BotCommandsPanel extends JPanel {
     /**
      * Builds a popup whose top level is one submenu per commandable bot, each populated with the command's actions
      * already bound to that bot. When the player commands exactly one bot, the bot level is skipped and that bot's
-     * actions are inlined directly into the popup so no extra navigation is needed.
+     * actions are inlined directly into the popup so no extra navigation is needed. With two or more bots the level
+     * is always shown, labelled with each bot's name and type, even when only one of them fits the command: on a
+     * team of one Princess and one CASPAR bot, an unlabelled menu would not say which bot the order goes to.
      *
      * @param populator Fills a given bot's submenu with the command's actions, bound to that bot
      *
@@ -893,8 +895,10 @@ public class BotCommandsPanel extends JPanel {
     private JPopupMenu createBotFirstPopup(BiConsumer<JMenu, Player> populator, int scrollThreshold,
           Predicate<Player> botFilter) {
         JPopupMenu popup = new JPopupMenu();
-        List<Player> botPlayers = getBotPlayersUnderYourCommand().stream().filter(botFilter).toList();
-        if (botPlayers.size() == 1) {
+        Collection<Player> commandedBots = getBotPlayersUnderYourCommand();
+        List<Player> botPlayers = commandedBots.stream().filter(botFilter).toList();
+        boolean isOnlyBotCommanded = commandedBots.size() == 1;
+        if (isOnlyBotCommanded && (botPlayers.size() == 1)) {
             // Single-bot shortcut: inline the only bot's actions, dropping the redundant bot submenu level.
             JMenu botMenu = new JMenu();
             populator.accept(botMenu, botPlayers.getFirst());
@@ -906,7 +910,7 @@ public class BotCommandsPanel extends JPanel {
             }
         } else {
             for (Player botPlayer : botPlayers) {
-                JMenu botMenu = new JMenu(botPlayer.getName());
+                JMenu botMenu = new JMenu(botMenuLabel(botPlayer));
                 populator.accept(botMenu, botPlayer);
                 if (botMenu.getItemCount() > 0) {
                     if (scrollThreshold > 0) {
@@ -917,6 +921,21 @@ public class BotCommandsPanel extends JPanel {
             }
         }
         return popup;
+    }
+
+    /**
+     * @param botPlayer The bot a submenu is for
+     *
+     * @return The submenu's label: the bot's name and its type, e.g. "Bravo (Princess)", so a player commanding both
+     *       kinds of bot can tell which one an order goes to
+     */
+    private String botMenuLabel(Player botPlayer) {
+        boolean isCasparBot = (client.getGame() instanceof Game game)
+              && OrderEligibility.takesUnitOrders(game, botPlayer);
+        String botTypeName = Messages.getString(isCasparBot
+              ? "BotConfigDialog.aiType.CASPAR"
+              : "BotConfigDialog.aiType.PRINCESS");
+        return Messages.getString("BotCommandPanel.botMenuLabel", botPlayer.getName(), botTypeName);
     }
 
     /**

@@ -36,6 +36,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Rectangle;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
@@ -72,6 +73,8 @@ public class SummaryPanel extends PicMap {
     private final UnitDisplayPanel unitDisplayPanel;
     private final JEditorPane unitInfo;
     private final JPanel contentPanel;
+    // The unit last shown, so a new unit opens at the top while a refresh of the same one keeps its place
+    private int lastShownEntityId = Entity.NONE;
 
     private static final GUIPreferences GUI_PREFERENCES = GUIPreferences.getInstance();
 
@@ -241,6 +244,12 @@ public class SummaryPanel extends PicMap {
 
         unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
 
+        // A refresh of the same unit can arrive as a new Entity object, so compare ids, not objects (#9573)
+        boolean isNewUnit = (entity != null) && (entity.getId() != lastShownEntityId);
+        if (entity != null) {
+            lastShownEntityId = entity.getId();
+        }
+
         // Force a revalidation to ensure proper sizing
         contentPanel.revalidate();
         contentPanel.setSize(contentPanel.getPreferredSize());
@@ -250,6 +259,9 @@ public class SummaryPanel extends PicMap {
             getParent().revalidate();
             if (getParent().getParent() instanceof JScrollPane) {
                 getParent().getParent().revalidate();
+            }
+            if (isNewUnit) {
+                scrollRectToVisible(new Rectangle(0, 0, 1, 1));
             }
         });
 

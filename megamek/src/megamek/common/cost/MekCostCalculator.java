@@ -33,9 +33,6 @@
 
 package megamek.common.cost;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
 import megamek.common.equipment.ArmorType;
@@ -183,15 +180,13 @@ public class MekCostCalculator {
             weightMultiplier = 1 + (mek.getWeight() / 400f);
         }
         costs[i] = -weightMultiplier; // negative just marks it as multiplier
-        double roundedCost = BigDecimal.valueOf(cost * weightMultiplier)
-              .setScale(2, RoundingMode.UP)
-              .doubleValue();
+        cost = Math.round(cost * weightMultiplier);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators",
                                  "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
                                  "Armored System Components", "Armor", "Equipment",
                                  "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, roundedCost, costs);
-        return roundedCost;
+        CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, cost, costs);
+        return cost;
     }
 
     private static int getStructureCost(Mek mek) {

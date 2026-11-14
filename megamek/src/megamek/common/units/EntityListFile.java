@@ -1101,6 +1101,10 @@ public class EntityListFile {
                     output.write("\" " + MULParser.ATTR_ARMOR_DIVISOR + "=\"");
                     output.write(infantry.getCustomArmorDamageDivisor() + "");
                 }
+                if (infantry.getArmorKit() != null) {
+                    output.write("\" " + MULParser.ATTR_INF_ARMOR_KIT + "=\"");
+                    output.write(MMXMLUtility.escape(infantry.getArmorKit().getInternalName()));
+                }
                 if (infantry.isArmorEncumbering()) {
                     output.write("\" " + MULParser.ATTR_ARMOR_ENC + "=\"1");
                 }

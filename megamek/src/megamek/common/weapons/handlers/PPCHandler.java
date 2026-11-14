@@ -64,6 +64,8 @@ import megamek.server.totalWarfare.TWGameManager;
 public class PPCHandler extends EnergyWeaponHandler {
     @Serial
     private static final long serialVersionUID = 5545991061428671743L;
+    /** The extra damage a charged PPC Capacitor adds to its PPC's shot. */
+    private static final int PPC_CAPACITOR_DAMAGE_BONUS = 5;
     private int chargedCapacitor = 0;
 
     public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
@@ -83,6 +85,17 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
     }
 
+    /**
+     * A charged PPC Capacitor adds {@code 5} to the PPC's damage, and so to its Attack Value when the Attack Value is
+     * used.
+     *
+     * @return {@code 5} with a charged capacitor, otherwise {@code 0}
+     */
+    @Override
+    protected int getAttackValueBonus() {
+        return (chargedCapacitor != 0) ? PPC_CAPACITOR_DAMAGE_BONUS : 0;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -98,7 +111,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
 
         if (chargedCapacitor != 0) {
-            toReturn += 5;
+            toReturn += PPC_CAPACITOR_DAMAGE_BONUS;
         }
         // during a swarm, all damage gets applied as one block to one location
         if ((attackingEntity instanceof BattleArmor)

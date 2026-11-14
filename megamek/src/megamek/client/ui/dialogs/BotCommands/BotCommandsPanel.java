@@ -90,6 +90,7 @@ import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.OrderEligibility;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -117,6 +118,11 @@ public class BotCommandsPanel extends JPanel {
     private boolean isStartPauseDue = true;
     /** How many groups the Move Order menu shows before it scrolls, so a bot with thirty lances still fits. */
     private static final int MOVE_ORDER_SCROLL_THRESHOLD = 20;
+    /**
+     * Explains an empty Move Order or Quick Orders popup: the player commands bots, but none of their units take unit
+     * orders - see {@link megamek.common.orders.OrderEligibility}.
+     */
+    private static final String NO_ORDERABLE_UNITS_KEY = "BotCommandPanel.emptyPopup.noOrderableUnits";
 
     private MegaMekButton pauseContinue;
     private List<MegaMekButton> commandButtons = List.of();
@@ -219,9 +225,13 @@ public class BotCommandsPanel extends JPanel {
             // with one bot and nothing to choose between, the editor opens at once; its Choose units... narrows it
             List<Player> botPlayers = new ArrayList<>();
             for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-                if (hasOnBoardUnits(botPlayer)) {
+                if (takesUnitOrders(botPlayer)) {
                     botPlayers.add(botPlayer);
                 }
+            }
+            if (botPlayers.isEmpty()) {
+                showCasparOnlyNotice();
+                return;
             }
             if ((clientGUI != null) && (botPlayers.size() == 1)) {
                 List<BotOrdersMenuBuilder.OrderGroup> lances = ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst());
@@ -230,9 +240,15 @@ public class BotCommandsPanel extends JPanel {
                     return;
                 }
             }
-            showButtonPopup(moveOrder, this::createMoveOrderPopup);
+            showButtonPopup(moveOrder, this::createMoveOrderPopup, NO_ORDERABLE_UNITS_KEY);
         });
-        quickOrders.addActionListener(event -> showButtonPopup(quickOrders, this::createQuickOrdersPopup));
+        quickOrders.addActionListener(event -> {
+            if (!anyBotTakesUnitOrders()) {
+                showCasparOnlyNotice();
+                return;
+            }
+            showButtonPopup(quickOrders, this::createQuickOrdersPopup, NO_ORDERABLE_UNITS_KEY);
+        });
         targets.addActionListener(event -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
         setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
@@ -448,20 +464,36 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Builds a button's popup and shows it, logging the reason instead of silently doing nothing if the build throws or
-     * the popup ends up empty. Popups are built lazily on click, so an exception there is otherwise lost on the AWT
-     * event thread and leaves the button looking dead (e.g. clicking it does nothing).
+     * Builds a button's popup and shows it, logging the reason if the build throws. Popups are built lazily on click,
+     * so an exception there is otherwise lost on the AWT event thread and leaves the button looking dead.
      *
      * @param button       The button the popup is anchored to
      * @param popupFactory Supplies the popup to display
      */
     private void showButtonPopup(MegaMekButton button, Supplier<JPopupMenu> popupFactory) {
+        showButtonPopup(button, popupFactory, "BotCommandPanel.emptyPopup.nothingToOffer");
+    }
+
+    /**
+     * Builds a button's popup and shows it. When the popup ends up empty it is shown anyway, holding one grayed-out
+     * line that says why, so the button never looks dead: the Commander window MekHQ's auto-resolve uses has no board
+     * to show a toast on, and an all-aerospace force left Move Order and Quick Orders doing nothing at all on a click
+     * (issue #10836).
+     *
+     * @param button          The button the popup is anchored to
+     * @param popupFactory    Supplies the popup to display
+     * @param emptyMessageKey The resource key of the line explaining an empty popup when the player does command bots
+     */
+    private void showButtonPopup(MegaMekButton button, Supplier<JPopupMenu> popupFactory, String emptyMessageKey) {
         try {
             JPopupMenu popup = popupFactory.get();
             if (popup.getComponentCount() == 0) {
-                LOGGER.info("[BotPanel] {} popup has no entries to show (no commandable bots or applicable options)",
-                      button.getText());
-                return;
+                String messageKey = getBotPlayersUnderYourCommand().isEmpty()
+                      ? "BotCommandPanel.emptyPopup.noBots" : emptyMessageKey;
+                LOGGER.info("[BotPanel] {} popup has no entries to show ({})", button.getText(), messageKey);
+                JMenuItem explanation = new JMenuItem(Messages.getString(messageKey));
+                explanation.setEnabled(false);
+                popup.add(explanation);
             }
             popup.show(button, 0, button.getHeight());
         } catch (Exception exception) {
@@ -513,7 +545,7 @@ public class BotCommandsPanel extends JPanel {
                 groupItem.addActionListener(event -> openMoveOrder(botPlayer, group));
                 botMenu.add(groupItem);
             }
-        }, MOVE_ORDER_SCROLL_THRESHOLD, this::hasOnBoardUnits);
+        }, MOVE_ORDER_SCROLL_THRESHOLD, this::takesUnitOrders);
     }
 
     /**
@@ -521,7 +553,7 @@ public class BotCommandsPanel extends JPanel {
      */
     private JPopupMenu createQuickOrdersPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populateQuick(botMenu, botPlayer),
-              this::hasOnBoardUnits);
+              this::takesUnitOrders);
     }
 
     /**
@@ -578,6 +610,40 @@ public class BotCommandsPanel extends JPanel {
             }
         }
         return false;
+    }
+
+    /**
+     * @param botPlayer The bot to inspect
+     *
+     * @return {@code true} if the bot is a CASPAR bot, the only kind that follows unit orders, with at least one
+     *       on-board unit to give them to
+     */
+    private boolean takesUnitOrders(Player botPlayer) {
+        return (client.getGame() instanceof Game game) && OrderEligibility.takesUnitOrders(game, botPlayer)
+              && hasOnBoardUnits(botPlayer);
+    }
+
+    /**
+     * @return {@code true} if any bot under the player's command takes unit orders
+     */
+    private boolean anyBotTakesUnitOrders() {
+        for (Player botPlayer : getBotPlayersUnderYourCommand()) {
+            if (takesUnitOrders(botPlayer)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Tells the player that unit orders are for CASPAR bots only, when none of the bots they command is one.
+     */
+    private void showCasparOnlyNotice() {
+        String notice = Messages.getString("BotCommandPanel.Orders.casparOnly");
+        LOGGER.info("[BotOrders] {}", notice);
+        if (clientGUI != null) {
+            clientGUI.addToast(ToastLevel.INFO, notice);
+        }
     }
 
     /**

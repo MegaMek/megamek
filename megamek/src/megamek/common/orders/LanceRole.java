@@ -126,7 +126,10 @@ public final class LanceRole implements Serializable {
     public enum LeaveToFight {
         /** Not at all: it fires from its place. */
         NEVER,
-        /** Up to {@link #BRIEF_CHASE_HEXES} hexes past its place, then back. */
+        /**
+         * Fights the threat for up to {@link #BRIEF_FIGHT_ROUNDS} rounds, never ending a move more than
+         * {@link #BRIEF_CHASE_HEXES} hexes from its place, then goes back.
+         */
         BRIEFLY,
         /** Until the attacker is gone, then back. */
         HUNT
@@ -142,6 +145,9 @@ public final class LanceRole implements Serializable {
 
     /** How far past its place an escort set to leave Briefly may chase. */
     public static final int BRIEF_CHASE_HEXES = 4;
+
+    /** How many rounds an escort set to leave Briefly fights a threat before it goes back to its place. */
+    public static final int BRIEF_FIGHT_ROUNDS = 2;
 
     /** The text for no role at all. */
     public static final String NONE_TEXT = "NONE";

@@ -35,6 +35,8 @@ package megamek.client.ui.clientGUI;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -46,12 +48,14 @@ import megamek.client.ui.dialogs.GameMasterPlayerSetupDialog;
 import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import megamek.server.commands.GameMasterPingCommand;
 import megamek.server.commands.KickCommand;
+import megamek.server.commands.PingCommand;
 
 /**
  * Builds the popup menu of the Commands button in the game commands strip: the game-level commands (declaring
- * victory, conceding, skipping a stuck turn, resetting the server to the lobby, kicking a player, checking remaining
- * battle value) and, below them, the Game Master role and its tools.
+ * victory, conceding, skipping a stuck turn, resetting the server to the lobby, kicking a player, pinging a player,
+ * checking remaining battle value) and, below them, the Game Master role and its tools.
  *
  * <p>Every entry is a server chat command, the same one a player could type into the chat box, so the server keeps
  * deciding what is allowed. The menu is rebuilt on every click, because who holds the Game Master role can change from
@@ -120,6 +124,8 @@ public class GameCommandsMenu {
                   localPlayer.getName(), gameMaster.getName());
         }
         popup.addSeparator();
+        popup.add(createPingMenu(localPlayer));
+        popup.addSeparator();
         popup.add(createCommandItem("CheckBvPlayers", COMMAND_CHECK_BV));
         popup.add(createCommandItem("CheckBvTeams", COMMAND_CHECK_BV_TEAM));
         popup.addSeparator();
@@ -169,6 +175,7 @@ public class GameCommandsMenu {
 
         if (localPlayerIsGameMaster) {
             popup.add(createCommandItem("GiveUpGameMaster", COMMAND_GAME_MASTER));
+            popup.add(createPingGameMasterOnlyItem(localPlayer));
             // in the order a gamemaster uses them: somebody has to be set up before there is any point giving them
             // units, because units handed to a player who cannot deploy are stranded
             popup.add(createPlayerSetupItem());
@@ -196,6 +203,61 @@ public class GameCommandsMenu {
             popup.add(createCommandItem("DenyGameMaster", COMMAND_DENY_GAME_MASTER));
             popup.add(createCommandItem("CancelGameMasterRequest", COMMAND_CANCEL_GAME_MASTER));
         }
+    }
+
+    /**
+     * Creates the Ping submenu: "Everyone" first, then one entry for each other connected player. Each entry sends
+     * {@code /ping}, so the server applies the cooldown and the Game Master's limit. While a Game Master has limited
+     * pings to themselves, the submenu is greyed out for everyone else and its tooltip says why.
+     *
+     * @param localPlayer The player this client belongs to
+     *
+     * @return The Ping submenu
+     */
+    private JMenu createPingMenu(Player localPlayer) {
+        JMenu pingMenu = new JMenu(Messages.getString("GameCommands.Ping.title"));
+        pingMenu.setToolTipText(Messages.getString("GameCommands.Ping.tooltip"));
+        Player restrictingGameMaster = PingCommand.findRestrictingGameMaster(getClient().getGame().getPlayersList());
+        if ((restrictingGameMaster != null) && !restrictingGameMaster.equals(localPlayer)) {
+            LOGGER.debug("[PlayerPing] {}: Ping menu greyed out - {} has limited pings to the Game Master",
+                  localPlayer.getName(), restrictingGameMaster.getName());
+            pingMenu.setToolTipText(Messages.getString("PingCommand.gameMasterOnly",
+                  restrictingGameMaster.getName()));
+            pingMenu.setEnabled(false);
+            return pingMenu;
+        }
+        pingMenu.add(createPingItem(Messages.getString("PlayerPing.menu.pingEveryone"), null));
+        pingMenu.addSeparator();
+        for (Player player : getClient().getGame().getPlayersList()) {
+            if (!player.equals(localPlayer) && !player.isGhost()) {
+                pingMenu.add(createPingItem(player.getName(), player));
+            }
+        }
+        return pingMenu;
+    }
+
+    private JMenuItem createPingItem(String title, @Nullable Player target) {
+        JMenuItem item = new JMenuItem(title);
+        item.addActionListener(event -> sendChatCommand("Ping", PingCommand.commandText(target)));
+        return item;
+    }
+
+    /**
+     * Creates the Game Master's switch that stops everyone else using Ping. It shows the current setting, which every
+     * client knows from the Game Master's player update.
+     *
+     * @param gameMaster The local player, who holds the Game Master role
+     *
+     * @return The checkbox item
+     */
+    private JMenuItem createPingGameMasterOnlyItem(Player gameMaster) {
+        boolean isLimited = gameMaster.isPingGameMasterOnly();
+        JCheckBoxMenuItem item = new JCheckBoxMenuItem(Messages.getString("GameCommands.PingGameMasterOnly.title"),
+              isLimited);
+        item.setToolTipText(Messages.getString("GameCommands.PingGameMasterOnly.tooltip"));
+        item.addActionListener(event -> sendChatCommand("PingGameMasterOnly",
+              GameMasterPingCommand.commandText(!isLimited)));
+        return item;
     }
 
     /**

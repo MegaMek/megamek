@@ -3141,7 +3141,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
      * @return the light theme colour when a light theme is active and the stored colour is still the stock default;
      *       otherwise the stored colour
      */
-    static Color getThemedColor(Color stored, Color stockDefault, Color lightThemeDefault) {
+    private static Color getThemedColor(Color stored, Color stockDefault, Color lightThemeDefault) {
         boolean isStockDefault = (stored.getRGB() & 0xFFFFFF) == (stockDefault.getRGB() & 0xFFFFFF);
         if (isStockDefault && UIUtil.isLightTheme()) {
             return lightThemeDefault;

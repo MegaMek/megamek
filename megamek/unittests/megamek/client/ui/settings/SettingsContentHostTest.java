@@ -51,16 +51,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ListResourceBundle;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.JViewport;
-import javax.swing.Scrollable;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 import org.junit.jupiter.api.Test;
@@ -393,7 +384,66 @@ class SettingsContentHostTest {
         assertNull(child.getToolTipText());
     }
 
+    @Test
+    void hoverHelpWaitsForPointerToSettleAndLastHoverWins() {
+        JLabel first = new JLabel("First");
+        first.setToolTipText("First option help");
+        JLabel second = new JLabel("Second");
+        second.setToolTipText("Second option help");
+        JPanel content = new JPanel();
+        content.add(first);
+        content.add(second);
+        SettingsContentHost host = new SettingsContentHost(content, true);
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+
+        fireMouseEnteredWithoutSettling(first);
+        assertFalse(helpPane.getText().contains("First option help"), helpPane.getText());
+
+        fireMouseEnteredWithoutSettling(second);
+        host.commitPendingHoverHelp(false);
+        assertTrue(helpPane.getText().contains("Second option help"), helpPane.getText());
+        assertFalse(helpPane.getText().contains("First option help"), helpPane.getText());
+    }
+
+    @Test
+    void hoverHelpIsDroppedWhenPointerHasLeftTheControl() {
+        SettingsLabel label = new SettingsLabel(TEXT, "field");
+        SettingsContentHost host = new SettingsContentHost(label, true);
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+
+        fireMouseEnteredWithoutSettling(label);
+        // The label is not showing, so the pointer cannot be over it when the dwell elapses.
+        host.commitPendingHoverHelp(true);
+
+        assertFalse(helpPane.getText().contains("Raw field help"), helpPane.getText());
+    }
+
+    @Test
+    void contentChangeCancelsPendingHoverHelp() {
+        SettingsLabel label = new SettingsLabel(TEXT, "field");
+        SettingsContentHost host = new SettingsContentHost(label, true);
+
+        fireMouseEnteredWithoutSettling(label);
+        host.setContent(new JLabel("Replacement"), true);
+        host.commitPendingHoverHelp(false);
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertFalse(helpPane.getText().contains("Raw field help"), helpPane.getText());
+    }
+
+    /**
+     * Simulates a hover that has settled: fires mouse-entered, then commits the host's pending hover help without the
+     * real-pointer check (headless tests have no pointer).
+     */
     private static void fireMouseEntered(Component component) {
+        fireMouseEnteredWithoutSettling(component);
+        SettingsContentHost host = SettingsContentHost.findHost(component);
+        if (host != null) {
+            host.commitPendingHoverHelp(false);
+        }
+    }
+
+    private static void fireMouseEnteredWithoutSettling(Component component) {
         MouseEvent event = new MouseEvent(component, MouseEvent.MOUSE_ENTERED, 0, 0, 0, 0, 0, false);
         for (MouseListener listener : component.getMouseListeners()) {
             listener.mouseEntered(event);

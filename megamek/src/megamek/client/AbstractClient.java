@@ -48,6 +48,8 @@ import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.Base64Image;
+import megamek.client.ui.Messages;
+import megamek.client.ui.util.RefusedConnectionNotifier;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
@@ -56,6 +58,7 @@ import megamek.common.event.GameToastEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
+import megamek.common.event.player.GamePlayerPingEvent;
 import megamek.common.force.Force;
 import megamek.common.game.GameLog;
 import megamek.common.game.InGameObject;
@@ -359,6 +362,19 @@ public abstract class AbstractClient implements IClient {
         return false;
     }
 
+    /**
+     * Whether this client puts up dialogs for notices about other players, such as someone being refused for running
+     * a different version. Only a person at a screen should see those, so bots never do.
+     *
+     * @return {@code true} if this client shows player notice dialogs, otherwise {@code false}
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    protected boolean showsPlayerNoticeDialogs() {
+        return !isBot();
+    }
+
     @Override
     public int getPort() {
         return port;
@@ -480,17 +496,25 @@ public abstract class AbstractClient implements IClient {
                     disconnected();
                     break;
                 case SERVER_VERSION_CHECK:
-                    send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION));
+                    // The name rides along so that, if the server refuses us, the host can be told who it was. Servers
+                    // older than 0.51.01 read only the version and ignore it.
+                    send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION, getName()));
                     break;
                 case ILLEGAL_CLIENT_VERSION:
                     final Version serverVersion = (Version) packet.getObject(0);
-                    logger.errorDialog("Connection Failure: Version Difference",
-                          "Failed to connect to the server at {} because of version differences. " +
-                                "Cannot connect to a server running {} with a {} install.",
-                          getHost(),
-                          serverVersion,
-                          SuiteConstants.VERSION);
+                    logger.errorDialog(Messages.getString("AbstractClient.versionRefused.title"),
+                          Messages.getString("AbstractClient.versionRefused.message",
+                                getHost(),
+                                serverVersion,
+                                SuiteConstants.VERSION));
                     disconnected();
+                    break;
+                case PLAYER_REFUSED_DIFFERENT_VERSION:
+                    if (showsPlayerNoticeDialogs()) {
+                        RefusedConnectionNotifier.showPlayerDialog(packet.getObject(0),
+                              (Version) packet.getObject(1),
+                              (Version) packet.getObject(2));
+                    }
                     break;
                 case LOCAL_PN:
                     localPlayerNumber = packet.getIntValue(0);
@@ -544,6 +568,11 @@ public abstract class AbstractClient implements IClient {
                           (GameToastEvent.Level) packet.getObject(0),
                           (String) packet.getObject(1),
                           packet.getIntValue(2)));
+                    break;
+                case PLAYER_PING:
+                    getGame().fireGameEvent(new GamePlayerPingEvent(this,
+                          packet.getIntValue(0),
+                          packet.getBooleanValue(1)));
                     break;
                 default:
                     return false;

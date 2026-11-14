@@ -38,16 +38,23 @@ package megamek.client.ui.util;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.SequencedSet;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -91,6 +98,19 @@ public final class FluffImageHelper {
 
     /** The model subdirectory name that units with an empty model match, e.g. fluff/Mek/Chassis/Chassis ---empty---. */
     static final String EMPTY_MODEL_DIR_NAME = "---empty---";
+
+    /**
+     * How long a directory listing is reused before the directory is read again. Fluff lookups run every time a unit
+     * is shown and check many directories, most of which do not exist. Reading each directory only once in a while
+     * keeps unit selection fast even when the user directory is on a slow drive, such as a cloud-synced folder, while
+     * newly added images still show up shortly afterwards.
+     */
+    private static final long LISTING_LIFETIME_NANOS = TimeUnit.SECONDS.toNanos(30);
+
+    /** Above this many cached listings, expired ones are dropped when a new listing is stored. */
+    private static final int LISTING_CACHE_PRUNE_SIZE = 2000;
+
+    private static final Map<File, DirectoryListing> DIRECTORY_LISTINGS = new ConcurrentHashMap<>();
 
     /**
      * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
@@ -219,7 +239,9 @@ public final class FluffImageHelper {
         List<String> nameCandidates = nameCandidates(unit);
 
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        boolean hasUserDir = !userDir.isBlank() && new File(userDir).isDirectory();
+        // No existence check on the user dir itself: listing its root can be slow on cloud-synced drives, and a
+        // missing user dir simply yields empty (cached) listings for its fluff subdirectories below
+        boolean hasUserDir = !userDir.isBlank();
 
         // Assets search their own folder first, then the folder of the corresponding TW unit type; all other units
         // search a single folder. The folders are searched in order so that the most specific art wins.
@@ -254,7 +276,7 @@ public final class FluffImageHelper {
             }
         }
 
-        fileCandidates.removeIf(candidate -> !candidate.exists() || candidate.isDirectory());
+        // All candidates come from directory listings that only hold regular files, so there's no need to check them
         return fileCandidates;
     }
 
@@ -275,7 +297,7 @@ public final class FluffImageHelper {
         List<File> result = new ArrayList<>();
         for (String nameCandidate : chassisNameCandidates(unit)) {
             File chassisDir = new File(unitTypeFluffDir, nameCandidate);
-            if (chassisDir.isDirectory()) {
+            if (listing(chassisDir).isDirectory()) {
                 result.addAll(getFluffInChassisDir(unit, chassisDir));
             }
         }
@@ -310,7 +332,7 @@ public final class FluffImageHelper {
         List<File> result = new ArrayList<>();
         for (String chassisNameCandidate : chassisNameCandidates(unit)) {
             File modelDir = new File(chassisDir, chassisNameCandidate + " " + sanitizedModel);
-            if (modelDir.isDirectory()) {
+            if (listing(modelDir).isDirectory()) {
                 result.addAll(getFluffInDir(modelDir));
             }
         }
@@ -321,14 +343,8 @@ public final class FluffImageHelper {
     }
 
     private static List<File> getFluffInDir(File dir) {
-        List<File> result = new ArrayList<>();
-        // Files.list is a shallow listing and, unlike Files.walk(dir, 1), does not include the directory itself
-        try (Stream<Path> entries = Files.list(dir.toPath())) {
-            result.addAll(entries.map(Path::toFile).toList());
-            result.removeIf(FluffImageHelper::isNoImageFile);
-        } catch (IOException exception) {
-            LOGGER.warn("Error while reading files from {}", dir, exception);
-        }
+        List<File> result = new ArrayList<>(listing(dir).files());
+        result.removeIf(FluffImageHelper::isNoImageFile);
         result.sort(Comparator.comparing(File::getName, String.CASE_INSENSITIVE_ORDER));
         return result;
     }
@@ -341,15 +357,7 @@ public final class FluffImageHelper {
 
     private static List<File> findMatchingFiles(File directory, List<String> nameCandidates) {
         List<File> matches = new ArrayList<>();
-        if (!directory.exists() || !directory.isDirectory()) {
-            return matches;
-        }
-
-        File[] files = directory.listFiles();
-        if (files == null) {
-            return matches;
-        }
-
+        List<File> files = listing(directory).files();
         for (String nameCandidate : nameCandidates) {
             for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
                 String searchName = nameCandidate + ext;
@@ -365,21 +373,89 @@ public final class FluffImageHelper {
     }
 
     private static @Nullable File findMatchingFile(File directory, String fileName) {
-        if (!directory.exists() || !directory.isDirectory()) {
-            return null;
-        }
-
-        File[] files = directory.listFiles();
-        if (files == null) {
-            return null;
-        }
-
-        for (File file : files) {
+        for (File file : listing(directory).files()) {
             if (file.getName().equalsIgnoreCase(fileName)) {
                 return file;
             }
         }
         return null;
+    }
+
+    /**
+     * Drops all cached directory listings so that the next fluff lookups read the directories again, e.g. after fluff
+     * images were added or removed.
+     */
+    public static void clearDirectoryCache() {
+        DIRECTORY_LISTINGS.clear();
+    }
+
+    /**
+     * @return The listing of the given directory, read from disk only if there is no recent cached listing
+     */
+    private static DirectoryListing listing(File directory) {
+        long now = System.nanoTime();
+        DirectoryListing cached = DIRECTORY_LISTINGS.get(directory);
+        if ((cached != null) && !cached.isExpired(now)) {
+            return cached;
+        }
+        DirectoryListing listing = readListing(directory, now);
+        if (DIRECTORY_LISTINGS.size() > LISTING_CACHE_PRUNE_SIZE) {
+            DIRECTORY_LISTINGS.values().removeIf(entry -> entry.isExpired(now));
+        }
+        DIRECTORY_LISTINGS.put(directory, listing);
+        return listing;
+    }
+
+    /**
+     * Reads the regular files of the given directory. This walks only the directory itself, so that each file's type
+     * comes with the listing instead of needing another disk access per file, which is slow on network or cloud
+     * drives.
+     */
+    private static DirectoryListing readListing(File directory, long now) {
+        Path root = directory.toPath();
+        List<File> files = new ArrayList<>();
+        boolean[] isDirectory = { false };
+        try {
+            Files.walkFileTree(root, EnumSet.of(FileVisitOption.FOLLOW_LINKS), 1, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attributes) {
+                    isDirectory[0] = true;
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                    // At depth 0, the root is passed here only when it is not a directory
+                    if (!file.equals(root) && attributes.isRegularFile()) {
+                        files.add(file.toFile());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exception) {
+                    // A missing directory is the common case and lands here; unreadable entries are skipped
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException exception) {
+            LOGGER.warn("Error while reading files from {}", directory, exception);
+        }
+        return new DirectoryListing(isDirectory[0], List.copyOf(files), now);
+    }
+
+    /**
+     * A cached directory listing.
+     *
+     * @param isDirectory True if the path is an existing directory
+     * @param files       The regular files in the directory; empty if it is not a directory
+     * @param readAt      When the listing was read, in {@link System#nanoTime()} units
+     */
+    private record DirectoryListing(boolean isDirectory, List<File> files, long readAt) {
+
+        boolean isExpired(long now) {
+            return now - readAt > LISTING_LIFETIME_NANOS;
+        }
     }
 
     private static String sanitize(String original) {

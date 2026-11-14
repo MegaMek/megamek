@@ -116,4 +116,29 @@ public abstract class RulesArmor {
      */
     public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
                                            HitDamageType damageType);
+
+    /**
+     * Reflective armor reduction
+     *
+     * @param damage the damage to be reduced
+     * @return the reduced damage amount
+     */
+    public abstract int reflectiveArmorReduction(final int damage);
+
+
+    /**
+     * Reactive armor reduction
+     *
+     * @param damage the damage to be reduced
+     * @return the reduced damage amount
+     */
+    public abstract int reactiveArmorReduction(final int damage);
+
+    /**
+     * Ballistic reinforced armor reduction
+     *
+     * @param damage the damage to be reduced
+     * @return the reduced damage amount
+     */
+    public abstract int ballisticReinforcedArmorReduction(final int damage);
 }

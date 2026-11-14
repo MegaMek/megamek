@@ -64,6 +64,14 @@ jobs:
             echo "::error::Missing suite release App configuration"
             exit 1
           fi
+      # Four full clones plus three pinned mm-data stagings outgrew the ~14 GB free on the runner.
+      - name: Free runner disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup \
+            /opt/hostedtoolcache/CodeQL /usr/share/swift /usr/local/share/powershell \
+            /usr/local/share/chromium /usr/local/lib/node_modules
+          df -h /
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
@@ -140,6 +148,26 @@ jobs:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           TMPDIR: ${{ runner.temp }}
         run: python3 scripts/suite_release_coordinator.py finish --sources sources --state suite-state --publish
+      - name: Mint version-stamp App token
+        # Also on a no-op, so rerunning repairs a stamp that failed after publication.
+        if: ${{ !inputs.dry_run }}
+        id: stamp_app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek
+          permission-contents: write
+      - name: Stamp the released revision on the built branch
+        env:
+          GH_TOKEN: ${{ inputs.dry_run && github.token || steps.stamp_app.outputs.token }}
+          STAMP_BRANCH: ${{ steps.prepare.outputs.branch }}
+        run: |
+          set -o pipefail
+          args=(stamp --branch "$STAMP_BRANCH")
+          if [[ "$DRY_RUN" == "true" ]]; then args+=(--dry-run); fi
+          python3 scripts/suite_release_cut.py "${args[@]}" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Mint main-branch App token (Core cut)
         if: ${{ inputs.cut_line != '' && !inputs.dry_run }}
         id: bump_app

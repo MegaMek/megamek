@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.settings;
 
+import static megamek.client.ui.WrapLayout.wordWrap;
 import static megamek.client.ui.util.FontHandler.symbolIcon;
 
 import java.awt.BorderLayout;
@@ -134,7 +135,7 @@ public class SettingsNavigationPanel extends JPanel {
     private void configureFilterField() {
         filterField.setName("txtSettingsFilter");
         filterField.putClientProperty("JTextField.placeholderText", text.filterPlaceholder());
-        filterField.setToolTipText(text.filterTooltip());
+        filterField.setToolTipText(wordWrap(text.filterTooltip()));
         filterField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent event) {
@@ -185,7 +186,7 @@ public class SettingsNavigationPanel extends JPanel {
         button.setName(name);
         button.setFocusable(false);
         button.setIcon(symbolIcon(codePoint, iconSize, button.getForeground()));
-        button.setToolTipText(tooltip);
+        button.setToolTipText(tooltip == null ? null : wordWrap(tooltip));
         button.putClientProperty("JButton.buttonType", "toolBarButton");
         button.putClientProperty("JComponent.sizeVariant", "small");
         int side = UIUtil.scaleForGUI(28);

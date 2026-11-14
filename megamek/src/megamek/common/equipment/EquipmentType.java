@@ -207,6 +207,8 @@ public class EquipmentType implements ITechnology {
     // static list of equipment
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
+    /** Lower-case display name to the first type registered with it; built on first use, cleared by addType. */
+    private static volatile Map<String, EquipmentType> displayNameIndex;
     private static Map<String, Set<EquipmentType>> lookupCollisions = new TreeMap<>();
 
     /** Structured sourcebook and page references for this equipment type. */
@@ -888,12 +890,7 @@ public class EquipmentType implements ITechnology {
         EquipmentType equipmentType = EquipmentType.lookupHash.get(normalizedKey);
         if (equipmentType == null) {
             // Display names are not lookup identities. This fallback is only needed when the caller supplied one.
-            for (EquipmentType type : allTypes) {
-                if (type.getName().equalsIgnoreCase(normalizedKey)) {
-                    equipmentType = type;
-                    break;
-                }
-            }
+            equipmentType = getByDisplayName(normalizedKey);
         }
         if ((equipmentType == null) || (techBase == null)
               || equipmentType.isMixedTech() || equipmentType.getTechBase() == techBase) {
@@ -908,6 +905,37 @@ public class EquipmentType implements ITechnology {
             }
         }
         return equipmentType;
+    }
+
+    /**
+     * Finds the first equipment type, in registration order, whose display name matches. Unit files often contain
+     * names that are not lookup names (empty slots, actuators, display names), so this runs on most misses and must
+     * not scan all equipment types every time.
+     *
+     * @param normalizedKey the name in lower case
+     *
+     * @return the first matching equipment type, or null if no display name matches
+     */
+    private static @Nullable EquipmentType getByDisplayName(String normalizedKey) {
+        Map<String, EquipmentType> index = displayNameIndex;
+        if (index == null) {
+            index = buildDisplayNameIndex();
+        }
+        return index.get(normalizedKey);
+    }
+
+    private static synchronized Map<String, EquipmentType> buildDisplayNameIndex() {
+        Map<String, EquipmentType> index = displayNameIndex;
+        if (index == null) {
+            index = new HashMap<>();
+            for (EquipmentType type : allTypes) {
+                if (type.getName() != null) {
+                    index.putIfAbsent(type.getName().toLowerCase(Locale.ROOT), type);
+                }
+            }
+            displayNameIndex = index;
+        }
+        return index;
     }
 
     /**
@@ -1068,6 +1096,9 @@ public class EquipmentType implements ITechnology {
         }
         EquipmentType.allTypes.addElement(type);
         type.registerLookupNames();
+        synchronized (EquipmentType.class) {
+            displayNameIndex = null;
+        }
     }
 
     public static int getArmorType(EquipmentType et) {

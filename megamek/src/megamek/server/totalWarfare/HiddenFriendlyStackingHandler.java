@@ -59,10 +59,8 @@ class HiddenFriendlyStackingHandler extends AbstractTWRuleHandler {
      *
      * @param mover    the unit that was moving
      * @param lastStep the last step of its path, which the server did not carry out
-     *
-     * @return {@code true} if the step was blocked by a hidden friendly unit and the player was told
      */
-    boolean reportMoveStoppedShort(Entity mover, MoveStep lastStep) {
+    void reportMoveStoppedShort(Entity mover, MoveStep lastStep) {
         Entity blocker = Compute.stackingViolation(getGame(),
               mover,
               lastStep.getElevation(),
@@ -72,23 +70,22 @@ class HiddenFriendlyStackingHandler extends AbstractTWRuleHandler {
               mover.climbMode(),
               false);
         if (blocker == null) {
-            return false;
+            return;
         }
         if (!blocker.isHidden()) {
             LOGGER.debug("[HiddenStacking] {} at {}: illegal last step, blocker {} is not hidden",
                   mover.getShortName(), lastStep.getPosition().getBoardNum(), blocker.getShortName());
-            return false;
+            return;
         }
         if (blocker.isEnemyOf(mover)) {
             LOGGER.debug("[HiddenStacking] {} at {}: illegal last step, hidden blocker {} is an enemy",
                   mover.getShortName(), lastStep.getPosition().getBoardNum(), blocker.getShortName());
-            return false;
+            return;
         }
         LOGGER.info("[HiddenStacking] {} stops one hex short of {}: hidden friendly unit {} is there",
               mover.getShortName(), lastStep.getPosition().getBoardNum(), blocker.getShortName());
         gameManager.sendServerChat(mover.getOwnerId(),
               Messages.getString("MovementDisplay.stoppedShortOfHiddenUnit",
                     mover.getShortName(), lastStep.getPosition().getBoardNum()));
-        return true;
     }
 }

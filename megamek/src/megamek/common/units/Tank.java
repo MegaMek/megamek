@@ -717,7 +717,10 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     @Override
     public boolean isImmobile(boolean checkCrew) {
         if (isActiveOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES)) {
-            return super.isImmobile(checkCrew);
+            // The option waives the immobile penalty for drive and engine damage only. A vehicle whose crew was
+            // killed (a carcass) is immobile whatever the motive state, TW p.194.
+            boolean isCrewKilled = checkCrew && isCarcass();
+            return isCrewKilled || super.isImmobile(checkCrew);
         }
 
         if (isTrailer()) {

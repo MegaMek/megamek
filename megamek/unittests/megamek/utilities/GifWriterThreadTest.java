@@ -33,6 +33,7 @@
 
 package megamek.utilities;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -262,5 +263,30 @@ class GifWriterThreadTest {
 
         assertTrue(fileExistedAtPrompt.get(), "The GIF must still exist when the save prompt opens");
         verify(gifWriter, never()).delete();
+    }
+
+    /** The save dialog opens in the folder the player last saved a GIF to. */
+    @Test
+    void testSaveDialogOpensInRememberedFolder(@TempDir Path tempDir) {
+        File startDirectory = GifWriterThread.resolveStartDirectory(tempDir.toString());
+
+        assertEquals(tempDir.toFile(), startDirectory);
+    }
+
+    /** A remembered folder that has since been deleted falls back to the old default instead of failing. */
+    @Test
+    void testSaveDialogFallsBackWhenRememberedFolderIsGone(@TempDir Path tempDir) {
+        String deletedFolder = tempDir.resolve("deleted-folder").toString();
+
+        File startDirectory = GifWriterThread.resolveStartDirectory(deletedFolder);
+
+        assertEquals(new File("."), startDirectory);
+    }
+
+    /** With no remembered folder (first save ever), the dialog opens in the old default folder. */
+    @Test
+    void testSaveDialogUsesDefaultFolderWithoutRememberedFolder() {
+        assertEquals(new File("."), GifWriterThread.resolveStartDirectory(""));
+        assertEquals(new File("."), GifWriterThread.resolveStartDirectory(null));
     }
 }

@@ -43,7 +43,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -203,6 +205,11 @@ public class GifWriterThread extends Thread {
                 Files.move(gifWriter.getOutputFile().toPath(), finalGifFile.toPath(),
                       StandardCopyOption.REPLACE_EXISTING);
                 LOGGER.info("Game summary GIF saved to {}", finalGifFile);
+                rememberSaveDirectory(finalGifFile);
+                JOptionPane.showMessageDialog(JOptionPane.getRootFrame(),
+                      Messages.getString("ClientGUI.SaveGifDialog.saved", finalGifFile.getAbsolutePath()),
+                      Messages.getString("ClientGUI.SaveGifDialog.title"),
+                      JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                 LOGGER.errorDialog(ex,
                       "Unable to save file {} at {}",
@@ -215,7 +222,9 @@ public class GifWriterThread extends Thread {
 
     private static SaveDialogResult getSaveDialog() {
         String filename = StringUtil.addDateTimeStamp("combat_summary_");
-        JFileChooser saveDialog = new JFileChooser(".");
+        File startDirectory = resolveStartDirectory(GUIPreferences.getInstance().getGifGameSummarySaveDirectory());
+        LOGGER.info("Opening GIF save dialog in {}", startDirectory.getAbsolutePath());
+        JFileChooser saveDialog = new JFileChooser(startDirectory);
         var frame = JOptionPane.getRootFrame();
         saveDialog.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         saveDialog.setDialogTitle(Messages.getString("ClientGUI.saveGameSummaryGifFileDialog.title"));
@@ -227,6 +236,32 @@ public class GifWriterThread extends Thread {
 
         int returnVal = saveDialog.showSaveDialog(frame);
         return new SaveDialogResult(saveDialog, returnVal);
+    }
+
+    /**
+     * Picks the folder the save dialog opens in: the folder the player last saved a GIF to, if it still exists,
+     * otherwise the working directory (the install folder), as before.
+     *
+     * @param storedDirectory The remembered folder from the preferences, or {@code null} or blank if none
+     *
+     * @return The folder to open the save dialog in
+     */
+    static File resolveStartDirectory(@Nullable String storedDirectory) {
+        if ((storedDirectory != null) && !storedDirectory.isBlank()) {
+            File directory = new File(storedDirectory);
+            if (directory.isDirectory()) {
+                return directory;
+            }
+            LOGGER.info("Remembered GIF save folder {} no longer exists; opening the default folder", directory);
+        }
+        return new File(".");
+    }
+
+    private static void rememberSaveDirectory(File savedGif) {
+        File directory = savedGif.getAbsoluteFile().getParentFile();
+        if (directory != null) {
+            GUIPreferences.getInstance().setGifGameSummarySaveDirectory(directory.getAbsolutePath());
+        }
     }
 
     private record SaveDialogResult(JFileChooser saveDialog, int returnVal) {

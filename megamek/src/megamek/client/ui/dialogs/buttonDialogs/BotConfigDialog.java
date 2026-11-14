@@ -552,7 +552,7 @@ public class BotConfigDialog extends AbstractButtonDialog
 
         removeTargetButton.setMnemonic(KeyEvent.VK_R);
         removeTargetButton.setFont(UIUtil.getDefaultFont());
-        removeTargetButton.setForeground(GUIPreferences.getInstance().getWarningColor());
+        removeTargetButton.setForeground(GUIPreferences.getInstance().getWarningColorForTheme());
         removeTargetButton.addActionListener(this);
 
         JPanel removeButtonPanel = new FixedXPanel(new FlowLayout(FlowLayout.RIGHT));

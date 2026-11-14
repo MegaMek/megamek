@@ -377,7 +377,6 @@ public final class HexTooltip {
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, boardId, mcoords).getIndicator();
-        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
 
         String result;
         // Hex number and level, with the terrain features following inline on the same line (separated by the
@@ -389,9 +388,10 @@ public final class HexTooltip {
                     mhex.getLevel()
               )
         );
-        // Illumination indicator, only when the hex is specially lit (the NONE level has a blank indicator).
+        // Illumination indicator, only when the hex is specially lit (the NONE level has a blank indicator). Bold in
+        // the Terrain FG colour: the Caution yellow it used to have is unreadable on the light Terrain BG.
         if (!indicator.isBlank()) {
-            sTerrain.append(DOT_SPACER).append(UIUtil.tag("FONT", attr, indicator));
+            sTerrain.append(DOT_SPACER).append(UIUtil.tag("B", "", indicator));
         }
         // Types that represent Elevations need converting and possibly zeroing if board is in Atmosphere (Low Alt.)
         List<Integer> typesThatNeedAltitudeChecked = List.of(
@@ -421,7 +421,8 @@ public final class HexTooltip {
         }
         sTerrain.append("<BR>");
 
-        attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s",
+              UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
         result = UIUtil.tag("FONT", attr, sTerrain.toString());
         result = UIUtil.tag("span", fontSizeAttr, result);
 
@@ -457,8 +458,8 @@ public final class HexTooltip {
             sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
             String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
 
-            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
-            sTerrain += UIUtil.tag("FONT", attr, tmp);
+            // Bold in the Terrain FG colour: this line sits on the light Terrain BG, where Warning red is unreadable
+            sTerrain += UIUtil.tag("B", "", tmp);
             sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
         }
 

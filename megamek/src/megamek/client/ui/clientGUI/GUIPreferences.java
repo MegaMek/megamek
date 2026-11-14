@@ -51,6 +51,7 @@ import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.PlayerColour;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.SensorFamily;
 import megamek.common.preference.IPreferenceStore;
@@ -285,6 +286,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String GIF_GAME_SUMMARY_MINIMAP = "GifGameSummaryMinimap";
     public static final String GIF_GAME_SUMMARY_RECORDING = "GifGameSummaryRecording";
+    public static final String GIF_GAME_SUMMARY_SAVE_DIRECTORY = "GifGameSummarySaveDirectory";
     public static final String SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP = "ShowUnitDisplayNamesOnMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
@@ -529,6 +531,16 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_MEDIUM_YELLOW = new Color(180, 180, 100);
     private static final Color DEFAULT_ORANGE = new Color(248, 140, 0);
     private static final Color DEFAULT_YELLOW = new Color(216, 200, 0);
+
+    // Stock Warning/Caution/Precaution/Ok defaults, and deeper variants that stay readable on a light theme
+    private static final Color DEFAULT_WARNING = DEFAULT_RED;
+    private static final Color DEFAULT_CAUTION = Color.YELLOW;
+    private static final Color DEFAULT_PRECAUTION = Color.ORANGE;
+    private static final Color DEFAULT_OK = DEFAULT_GREEN;
+    private static final Color LIGHT_THEME_WARNING = new Color(0xB71C1C);
+    private static final Color LIGHT_THEME_CAUTION = new Color(0x7A5F00);
+    private static final Color LIGHT_THEME_PRECAUTION = new Color(0xA35200);
+    private static final Color LIGHT_THEME_OK = new Color(0x2E7D32);
     private static final Color DEFAULT_MEDIUM_GREEN = new Color(100, 180, 100);
 
     // Heat Scale
@@ -621,10 +633,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TOAST_REPORT_EVENTS, true);
         setDefault(TOAST_DRIP_SECONDS, 2);
 
-        setDefault(WARNING_COLOR, DEFAULT_RED);
-        setDefault(CAUTION_COLOR, Color.yellow);
-        setDefault(PRECAUTION_COLOR, Color.orange);
-        setDefault(OK_COLOR, DEFAULT_GREEN);
+        setDefault(WARNING_COLOR, DEFAULT_WARNING);
+        setDefault(CAUTION_COLOR, DEFAULT_CAUTION);
+        setDefault(PRECAUTION_COLOR, DEFAULT_PRECAUTION);
+        setDefault(OK_COLOR, DEFAULT_OK);
 
         setDefault(PlayerColour.PLAYER_COLOUR_BLUE, new Color(0x8686BF));
         setDefault(PlayerColour.PLAYER_COLOUR_RED, new Color(0xCC6666));
@@ -1313,6 +1325,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public GifRecordingMode getGifGameSummaryRecording() {
         return GifRecordingMode.parse(store.getString(GIF_GAME_SUMMARY_RECORDING));
+    }
+
+    /**
+     * @return The folder the player last saved a combat-summary GIF to, or an empty string if they never have
+     */
+    public String getGifGameSummarySaveDirectory() {
+        return store.getString(GIF_GAME_SUMMARY_SAVE_DIRECTORY);
     }
 
     /**
@@ -2348,6 +2367,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(GIF_GAME_SUMMARY_RECORDING, mode.name());
     }
 
+    public void setGifGameSummarySaveDirectory(String directory) {
+        store.setValue(GIF_GAME_SUMMARY_SAVE_DIRECTORY, directory);
+    }
+
     /**
      * @deprecated since 0.51.01, use {@link #setGifGameSummaryRecording(GifRecordingMode)}; maps {@code true} to
      *       {@link GifRecordingMode#ALWAYS} and {@code false} to {@link GifRecordingMode#NEVER}.
@@ -3090,6 +3113,52 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setOkColor(Color color) {
         store.setValue(OK_COLOR, getColorString(color));
+    }
+
+    /**
+     * Returns the Warning colour for text drawn on the look-and-feel's own background (dialogs, lobby tables, the
+     * report window). On a light theme the stock colour is swapped for a deeper one. A colour the player has chosen is
+     * returned unchanged. Text on the fixed dark tooltip background or on the board keeps using
+     * {@link #getWarningColor()}.
+     */
+    public Color getWarningColorForTheme() {
+        return getThemedColor(getWarningColor(), DEFAULT_WARNING, LIGHT_THEME_WARNING);
+    }
+
+    /**
+     * Returns the Caution colour for text drawn on the look-and-feel's own background. See
+     * {@link #getWarningColorForTheme()}.
+     */
+    public Color getCautionColorForTheme() {
+        return getThemedColor(getCautionColor(), DEFAULT_CAUTION, LIGHT_THEME_CAUTION);
+    }
+
+    /**
+     * Returns the Precaution colour for text drawn on the look-and-feel's own background. See
+     * {@link #getWarningColorForTheme()}.
+     */
+    public Color getPrecautionColorForTheme() {
+        return getThemedColor(getPrecautionColor(), DEFAULT_PRECAUTION, LIGHT_THEME_PRECAUTION);
+    }
+
+    /**
+     * Returns the Ok colour for text drawn on the look-and-feel's own background. See
+     * {@link #getWarningColorForTheme()}.
+     */
+    public Color getOkColorForTheme() {
+        return getThemedColor(getOkColor(), DEFAULT_OK, LIGHT_THEME_OK);
+    }
+
+    /**
+     * @return the light theme colour when a light theme is active and the stored colour is still the stock default;
+     *       otherwise the stored colour
+     */
+    private static Color getThemedColor(Color stored, Color stockDefault, Color lightThemeDefault) {
+        boolean isStockDefault = (stored.getRGB() & 0xFFFFFF) == (stockDefault.getRGB() & 0xFFFFFF);
+        if (isStockDefault && UIUtil.isLightTheme()) {
+            return lightThemeDefault;
+        }
+        return stored;
     }
 
     public boolean getMoveDefaultClimbMode() {

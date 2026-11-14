@@ -45,6 +45,7 @@ import java.util.Set;
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.moves.MovePath;
 import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.LanceRole;
 import megamek.common.orders.UnitOrderAction;
@@ -74,6 +75,8 @@ class ConvoyEscortFollower {
     private final Set<Integer> convoyGoneLogged = new HashSet<>();
     // the contact decision last logged for each escort lance, by force id, so a change is logged once
     private final Map<Integer, String> contactsLogged = new HashMap<>();
+    // the round each escort lance set to leave Briefly began fighting its current threat, by force id; not saved
+    private final Map<Integer, Integer> briefFightsSinceRound = new HashMap<>();
 
     /**
      * @return {@code true} if the hex lies on that edge of the board
@@ -248,6 +251,11 @@ class ConvoyEscortFollower {
             return Optional.empty();
         }
         List<Entity> convoy = follower.convoys().unitsOnBoard(role.getConvoyForceId(), entity.getBoardId());
+        if (convoy.isEmpty() && follower.convoys().isStillToDeploy(role.getConvoyForceId())) {
+            // not on the board yet is not gone: every escort logged its convoy gone in round 1, before the convoy
+            // deployed, and so never logged it when it was (QA playtest, #9524)
+            return Optional.empty();
+        }
         if (convoy.isEmpty()) {
             Coords fellAt = follower.convoys().lastCenter(role.getConvoyForceId()).orElse(null);
             if ((role.getWhenConvoyGone() == LanceRole.WhenConvoyGone.FOLLOW) && (fellAt != null)
@@ -324,6 +332,7 @@ class ConvoyEscortFollower {
         if (threat.isPresent()) {
             onContact(escort.getForceId(), role, threat.get(), headNow, heading, board, escorts, places);
         } else if (contactsLogged.remove(escort.getForceId()) != null) {
+            briefFightsSinceRound.remove(escort.getForceId());
             LOGGER.info("[BotOrders] ESCORT_CONTACT round {}: escort lance {} - no threat to the convoy now; back to "
                   + "its places", currentRound(), escort.getForceId());
         }
@@ -363,9 +372,15 @@ class ConvoyEscortFollower {
 
     /**
      * What an escort lance does when an enemy comes near its convoy, as its role says (HammerGS, 2026-10-02):
-     * Screen moves its places between the threat and the convoy; Break and fight leaves them to fight - up to
-     * {@link LanceRole#BRIEF_CHASE_HEXES} hexes toward the threat when set to leave Briefly, freely when set to Hunt,
-     * not at all when set to Never; Stay keeps them. With the threat gone the escorts go back to their places.
+     * Screen moves its places between the threat and the convoy; Break and fight leaves them to fight - freely when
+     * set to Hunt, briefly when set to leave Briefly, not at all when set to Never; Stay keeps them. With the threat
+     * gone the escorts go back to their places.
+     *
+     * <p>Leaving Briefly, the escorts fight the threat as any lance would (see {@link #isFightingBriefly}) for
+     * {@link LanceRole#BRIEF_FIGHT_ROUNDS} rounds, their moves held to those ending within
+     * {@link LanceRole#BRIEF_CHASE_HEXES} hexes of their places (see {@link #leashToPlace}); then they go back to
+     * their places and fire from there while the same threat stays. Only shifting their places toward the threat left
+     * them heading for a hex and never fighting (QA playtest, #9524).</p>
      *
      * @param places each escort's place by unit id, changed here; an escort left without one fights freely
      */
@@ -391,14 +406,12 @@ class ConvoyEscortFollower {
             decision = "breaking off to hunt it";
         } else if ((role.getContact() == LanceRole.Contact.BREAK_AND_FIGHT)
               && (role.getLeaveToFight() == LanceRole.LeaveToFight.BRIEFLY)) {
-            for (Map.Entry<Integer, Coords> place : places.entrySet()) {
-                // up to the brief chase toward the threat, never onto its hex
-                int hexesShortOfThreat = Math.max(0, place.getValue().distance(threatHex) - 1);
-                int steps = Math.min(LanceRole.BRIEF_CHASE_HEXES, hexesShortOfThreat);
-                place.setValue(ConvoyTracker.clampToBoard(ConvoyTracker.stepToward(place.getValue(), threatHex,
-                      steps), board));
-            }
-            decision = "closing up to " + LanceRole.BRIEF_CHASE_HEXES + " hexes toward it";
+            // the places stay put: they are what the escorts are leashed to while they fight
+            briefFightsSinceRound.putIfAbsent(escortForceId, currentRound());
+            decision = isBriefFightOn(escortForceId)
+                  ? "engaging it for up to " + LanceRole.BRIEF_FIGHT_ROUNDS + " rounds, within "
+                  + LanceRole.BRIEF_CHASE_HEXES + " hexes of their places"
+                  : "back at their places after a brief fight, firing";
         } else {
             decision = "holding its places and firing";
         }
@@ -408,6 +421,58 @@ class ConvoyEscortFollower {
                         + "threat {} at {}", currentRound(), escortForceId, decision, role.getContact(),
                   role.getLeaveToFight(), threat.getShortName(), threatHex.getBoardNum());
         }
+    }
+
+    private boolean isBriefFightOn(int escortForceId) {
+        Integer since = briefFightsSinceRound.get(escortForceId);
+        return (since != null) && ((currentRound() - since) < LanceRole.BRIEF_FIGHT_ROUNDS);
+    }
+
+    /**
+     * An escort set to Break and fight, leaving Briefly, with a threat near its convoy fights it, as a lance with no
+     * orders would, for {@link LanceRole#BRIEF_FIGHT_ROUNDS} rounds from when the threat came; then it keeps its
+     * place again until that threat is gone (QA playtest, #9524).
+     *
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit is an escort fighting briefly this round
+     */
+    boolean isFightingBriefly(Entity entity) {
+        LanceRole role = follower.roleOf(entity);
+        if ((role == null) || !role.isEscort() || (role.getContact() != LanceRole.Contact.BREAK_AND_FIGHT)
+              || (role.getLeaveToFight() != LanceRole.LeaveToFight.BRIEFLY)) {
+            return false;
+        }
+        // working out the place works out the lance's plan, and with it whether a threat is near
+        return getEscortPlace(entity).isPresent() && isBriefFightOn(entity.getForceId());
+    }
+
+    /**
+     * Keeps an escort fighting briefly on its leash: only the moves that end within
+     * {@link LanceRole#BRIEF_CHASE_HEXES} hexes of its place, so it fights near the convoy rather than chasing off.
+     *
+     * @param entity the escort about to move
+     * @param paths  its candidate moves
+     *
+     * @return the moves within the leash; all of them for a unit not fighting briefly, or when none is within it
+     */
+    List<MovePath> leashToPlace(Entity entity, List<MovePath> paths) {
+        if (!isFightingBriefly(entity)) {
+            return paths;
+        }
+        Coords place = getEscortPlace(entity).orElseThrow();
+        List<MovePath> leashed = new ArrayList<>();
+        for (MovePath path : paths) {
+            Coords end = path.getFinalCoords();
+            if ((end != null) && (end.distance(place) <= LanceRole.BRIEF_CHASE_HEXES)) {
+                leashed.add(path);
+            }
+        }
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: ESCORT_LEASH - {} of {} moves end within {} hexes of its place "
+                    + "at {}", entity.getDisplayName(), entity.getId(), currentRound(), leashed.size(), paths.size(),
+              LanceRole.BRIEF_CHASE_HEXES, place.getBoardNum());
+        // a unit already further out than the leash still needs a move; its place pulls it back once the fight ends
+        return leashed.isEmpty() ? paths : leashed;
     }
 
     /**
@@ -500,6 +565,15 @@ class ConvoyEscortFollower {
             return Optional.empty();
         }
         return follower.convoys().exitEdgeLeftBy(role.getConvoyForceId());
+    }
+
+    /**
+     * @param entity an escort
+     *
+     * @return {@code true} if the escort has logged its convoy gone; for the playtest log, and its tests
+     */
+    boolean hasLoggedConvoyGone(Entity entity) {
+        return convoyGoneLogged.contains(entity.getId());
     }
 
     private void logConvoyGone(Entity entity, String what) {

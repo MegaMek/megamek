@@ -132,10 +132,7 @@ public class PreferenceManager {
     protected void load() {
         stores = new Hashtable<>();
         clientPreferenceStore = new PreferenceStore();
-        String cfgName = System.getProperty(
-              CFG_FILE_OPTION_NAME,
-              new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString());
-        load(cfgName);
+        load(getSettingsFileName());
         clientPreferences = new ClientPreferences(clientPreferenceStore);
     }
 
@@ -171,8 +168,24 @@ public class PreferenceManager {
         }
     }
 
+    /**
+     * Saves the client settings to the file they were loaded from: the {@value #CFG_FILE_OPTION_NAME} system property
+     * when it is set, otherwise {@value #DEFAULT_CFG_FILE_NAME} in the config directory.
+     */
     public void save() {
-        save(new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).getFile());
+        save(new File(getSettingsFileName()));
+    }
+
+    /**
+     * Returns the client settings file, which is read on load and written on save. Both must use the same file, or
+     * pointing {@value #CFG_FILE_OPTION_NAME} elsewhere (as the unit tests do) would load one file and overwrite
+     * another.
+     *
+     * @return the path of the client settings file
+     */
+    private static String getSettingsFileName() {
+        return System.getProperty(CFG_FILE_OPTION_NAME,
+              new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString());
     }
 
     public void save(final File file) {

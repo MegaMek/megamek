@@ -39,6 +39,7 @@ import megamek.common.bays.Bay;
 import megamek.common.bays.InfantryBay;
 import megamek.common.equipment.ArmorType;
 import megamek.common.units.Warship;
+import megamek.common.verifier.TestAdvancedAerospace;
 
 public class WarShipCostCalculator {
 
@@ -66,8 +67,8 @@ public class WarShipCostCalculator {
         // Maneuvering Drive
         // Drive Unit
         costs[costIdx++] += 500 * warShip.getOriginalWalkMP() * (warShip.getWeight() / 100.0);
-        // Engine
-        costs[costIdx++] += 1000 * warShip.getOriginalWalkMP() * warShip.getWeight() * 0.06;
+        // Engine: 1,000 x Engine Tonnage (SO:AA p.146); primitive engines are heavier before 2300 (IO:AE p.123)
+        costs[costIdx++] += 1000 * TestAdvancedAerospace.calculateEngineTonnage(warShip);
         // Engine Control Unit
         costs[costIdx++] += 1000;
 
@@ -83,8 +84,8 @@ public class WarShipCostCalculator {
         driveCost[driveIdx++] += 50000000.0;
         // Tankage
         driveCost[driveIdx++] += 50000.0 * warShip.getKFIntegrity();
-        // Sail
-        driveCost[driveIdx++] += 50000.0 * (30 + (warShip.getWeight() / 20000.0));
+        // Sail: 50,000 x Sail Tonnage (SO:AA p.146); none before 2200, heavier until 2300 (IO:AE p.124)
+        driveCost[driveIdx++] += 50000.0 * TestAdvancedAerospace.calculateSailTonnage(warShip);
         // Charging System
         driveCost[driveIdx++] += 500000.0 + (200000.0 * warShip.getDocks(true));
 

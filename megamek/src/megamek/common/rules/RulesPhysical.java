@@ -239,16 +239,6 @@ public abstract class RulesPhysical {
     public abstract int getClubFindInRubble();
 
     /**
-     * Check if the quad can kick
-     *
-     * @param leg    what leg is kicking
-     * @param entity the entity that is kicking
-     *
-     * @return true if the kick is impossible
-     */
-    public abstract boolean quadMuleKickImpossible(int leg, Entity entity);
-
-    /**
      * What is the lance's base to-hit modifier?
      *
      * @return

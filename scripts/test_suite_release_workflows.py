@@ -150,7 +150,7 @@ class CallerTests(unittest.TestCase):
 
     def test_only_experimental_is_scheduled_and_only_it_reports_failures(self):
         experimental = read("game-suite-release-experimental.yml")
-        self.assertIn('schedule:\n    - cron: "0 5 * * 2"', experimental)
+        self.assertIn('schedule:\n    - cron: "0 5 * * 3"', experimental)
         self.assertIn("channel: experimental", experimental)
         for required in (
                 "github.event_name != 'schedule' || (github.repository == 'MegaMek/megamek' "

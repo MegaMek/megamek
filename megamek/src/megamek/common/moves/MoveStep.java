@@ -2429,7 +2429,8 @@ public class MoveStep implements Serializable {
             !entity.isStuck() &&
             ((tmpWalkMP > 0) || (runMPMax > 0)) &&
             ((getMp() > 0) || (stepType == MoveStepType.BRACE))) {
-            // Prone meks can only spend MP to turn or get up
+            // Prone meks can only spend MP to turn or get up. A hull-down Mek may also brace, since TO:AR p.82
+            // bars bracing only after jumping.
             if ((stepType != MoveStepType.TURN_LEFT) &&
                 (stepType != MoveStepType.TURN_RIGHT) &&
                 (stepType != MoveStepType.GET_UP) &&
@@ -2441,7 +2442,7 @@ public class MoveStep implements Serializable {
                 !(entity instanceof Tank)
                 // Tanks can drive out of hull-down
                 &&
-                (isProne() || isHullDown())) {
+                (isProne() || (isHullDown() && (stepType != MoveStepType.BRACE)))) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }

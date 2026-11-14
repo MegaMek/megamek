@@ -86,6 +86,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.GifRecordingMode;
 import megamek.client.ui.clientGUI.IClientGUI;
+import megamek.client.ui.clientGUI.UnitOwnerColors;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.StringDrawer;
@@ -1511,19 +1512,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         boolean stratOpsSymbols = GUIP.getMmSymbol();
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer(), game);
 
         if (removedFromGame) {
             iconColor = changeColorForDestroyedUnit(iconColor.brighter(), DESTROYED_UNIT_ALPHA);
@@ -1663,6 +1652,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
 
+        if (MinimapDamagePip.shouldDraw(entity, getLocalPlayer(), GUIP.getShowDamageLevel(), removedFromGame)) {
+            MinimapDamagePip.draw(g2, entity, UNIT_SCALE[zoom] / 100.0d, stratOpsSymbols);
+        }
+
         if (GUIP.getDrawFacingArrowsOnMiniMap() && !removedFromGame && !entity.isInfantry()) {
             // draw facing arrow
             var facing = entity.getFacing();
@@ -1722,19 +1715,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer(), game);
         Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
 
@@ -2329,9 +2310,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.MM_SYMBOL)
-              || e.getName().equals(GUIPreferences.TEAM_COLORING)) {
+    public void preferenceChange(PreferenceChangeEvent event) {
+        if (event.getName().equals(GUIPreferences.MM_SYMBOL)
+              || event.getName().equals(GUIPreferences.TEAM_COLORING)
+              || event.getName().equals(GUIPreferences.SHOW_DAMAGE_LEVEL)) {
             refreshMap();
         }
     }

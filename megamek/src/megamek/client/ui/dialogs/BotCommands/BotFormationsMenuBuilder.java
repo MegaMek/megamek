@@ -71,39 +71,121 @@ public final class BotFormationsMenuBuilder {
 
     /**
      * The lobby's Formation menu for one bot lance, so a lance can start the game already in formation: one item per
-     * shape, spacing {@link FormationOrder#DEFAULT_SPACING}, the lance's first unit leading, Walk pace, Break on
-     * contact and keeping together, plus Formation off. The rest can be changed in game from the Move Order editor.
+     * shape, spacing {@link FormationOrder#DEFAULT_SPACING}, the lance's first unit leading and keeping together, plus
+     * Formation off. A convoy keeps its Run pace and Push through; any other lance takes the default pace and contact
+     * rule (see {@link MoveOrderCommands#lobbyFormationCommands}). The rest can be changed in game from the Move Order
+     * editor.
      *
      * @param client  the client that sends the orders
+     * @param game    the game
      * @param lance   the lance
      * @param unitIds the lance's units, in lance order
      *
      * @return the menu
      */
-    public static JMenu lobbyFormationMenu(AbstractClient client, Force lance, List<Integer> unitIds) {
+    public static JMenu lobbyFormationMenu(AbstractClient client, Game game, Force lance, List<Integer> unitIds) {
+        return formationMenu(client, game, lance.getName(), List.of(unitIds));
+    }
+
+    /**
+     * The lobby's Formation menu for a bot's parent force, a company with lances under it: the chosen shape, or
+     * Formation off, goes to every lance under it, each on its own leader with its own slots and by the same rules as
+     * {@link #lobbyFormationMenu}. Right-clicking the parent force offered no formation at all, and the tester
+     * concluded there was none (QA playtest, #9526).
+     *
+     * @param client the client that sends the orders
+     * @param game   the game
+     * @param parent the parent force
+     * @param lances the units of each lance under it that take orders, in lance order; lances of fewer than two units
+     *               are left out
+     *
+     * @return the menu
+     */
+    public static JMenu lobbyParentFormationMenu(AbstractClient client, Game game, Force parent,
+          List<List<Integer>> lances) {
+        return formationMenu(client, game, parent.getName(), formableLances(lances));
+    }
+
+    /**
+     * The lobby's Role item for a bot's parent force: disabled, saying to set the role on each lance, since a role is a
+     * lance's job and a company holds lances with different ones.
+     *
+     * @return the item
+     */
+    public static JMenuItem lobbyParentRoleItem() {
+        JMenuItem item = new JMenuItem(Messages.getString("BotCommandPanel.Role.lobbyParent"));
+        item.setEnabled(false);
+        return item;
+    }
+
+    /**
+     * @param lances the units of each lance
+     *
+     * @return the lances of two units or more, the only ones a formation can be given
+     */
+    static List<List<Integer>> formableLances(List<List<Integer>> lances) {
+        List<List<Integer>> formable = new ArrayList<>();
+        for (List<Integer> lance : lances) {
+            if (lance.size() >= 2) {
+                formable.add(lance);
+            }
+        }
+        return formable;
+    }
+
+    /**
+     * The commands that give each lance a shape, or take every lance out of formation.
+     *
+     * @param game   the game the units are in
+     * @param lances the units of each lance, in lance order, the first leading
+     * @param shape  the shape, or {@code null} for Formation off
+     *
+     * @return the commands to send, in order
+     */
+    static List<String> formationCommands(Game game, List<List<Integer>> lances, @Nullable FormationShape shape) {
+        List<String> commands = new ArrayList<>();
+        for (List<Integer> unitIds : lances) {
+            if (shape == null) {
+                for (int unitId : unitIds) {
+                    commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION_OFF));
+                }
+                continue;
+            }
+            List<Entity> units = new ArrayList<>();
+            for (int unitId : unitIds) {
+                Entity unit = game.getEntity(unitId);
+                if (unit != null) {
+                    units.add(unit);
+                }
+            }
+            if (units.size() >= 2) {
+                commands.addAll(MoveOrderCommands.lobbyFormationCommands(units, shape));
+            }
+        }
+        return commands;
+    }
+
+    private static JMenu formationMenu(AbstractClient client, Game game, String forceName,
+          List<List<Integer>> lances) {
         JMenu menu = new JMenu(Messages.getString("BotCommandPanel.Formations.lobby"));
-        menu.setEnabled(unitIds.size() >= 2);
+        boolean isAnyFormable = !formableLances(lances).isEmpty();
+        menu.setEnabled(isAnyFormable);
         for (FormationShape shape : FormationShape.values()) {
             JMenuItem item = new JMenuItem(Messages.getString("BotCommandPanel.Formations.shape." + shape));
             item.addActionListener(event -> {
-                for (int slot = 0; slot < unitIds.size(); slot++) {
-                    client.sendChat(UnitOrderCommand.commandText(unitIds.get(slot), UnitOrderAction.FORMATION,
-                          UnitOrderCommand.SHAPE + '=' + shape.name(),
-                          UnitOrderCommand.LEADER + '=' + unitIds.get(0),
-                          UnitOrderCommand.SPACING + '=' + FormationOrder.DEFAULT_SPACING,
-                          UnitOrderCommand.SLOT + '=' + slot,
-                          UnitOrderCommand.TOGETHER + "=true"));
+                // the role is read when the shape is picked, so a role set after the menu opened still counts
+                for (String command : formationCommands(game, lances, shape)) {
+                    client.sendChat(command);
                 }
-                LOGGER.info("[BotOrders] lobby formation {} for {} ({} units)", shape, lance.getName(),
-                      unitIds.size());
+                LOGGER.info("[BotOrders] lobby formation {} for {} ({} lance(s))", shape, forceName, lances.size());
             });
             menu.add(item);
         }
         menu.addSeparator();
         JMenuItem offItem = new JMenuItem(Messages.getString("BotCommandPanel.Formations.off"));
         offItem.addActionListener(event -> {
-            for (int unitId : unitIds) {
-                client.sendChat(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION_OFF));
+            for (String command : formationCommands(game, lances, null)) {
+                client.sendChat(command);
             }
         });
         menu.add(offItem);
@@ -186,11 +268,20 @@ public final class BotFormationsMenuBuilder {
         for (String command : MoveOrderCommands.roleCommands(units, role)) {
             client.sendChat(command);
         }
+        boolean isAnyInFormation = false;
+        for (Entity unit : units) {
+            isAnyInFormation |= unit.getUnitOrders().getFormation().isPresent();
+        }
         List<String> columnCommands = MoveOrderCommands.convoyColumnCommands(units, role);
         for (String command : columnCommands) {
             client.sendChat(command);
         }
+        String formationNote = "";
+        if (!columnCommands.isEmpty()) {
+            formationNote = isAnyInFormation ? ", keeping its shape at a convoy's Run pace and Push through"
+                  : ", put in a Column to travel";
+        }
         LOGGER.info("[BotOrders] lobby role {} for {} ({} units){}", (role == null) ? LanceRole.NONE_TEXT : role,
-              lance.getName(), units.size(), columnCommands.isEmpty() ? "" : ", put in a Column to travel");
+              lance.getName(), units.size(), formationNote);
     }
 }

@@ -78,6 +78,7 @@ import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.ImageCache;
+import megamek.client.ui.util.ImageKeyedCache;
 import megamek.client.ui.util.KeyBindReceiver;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
@@ -154,6 +155,7 @@ public final class BoardView extends AbstractBoardView
     private static final int BOARD_HEX_DOUBLE_CLICK = 2;
     private static final int BOARD_HEX_DRAG = 3;
     private static final int BOARD_HEX_POPUP = 4;
+    private static final long CHATTER_BOX_WHEEL_SCROLL_INTERVAL_NANOS = 100_000_000L;
 
     // the dimensions of MegaMek's hex images
     public static final int HEX_DIAG = (int) Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
@@ -229,6 +231,9 @@ public final class BoardView extends AbstractBoardView
     private JScrollBar horizontalBar;
     private int scrollXDifference = 0;
     private int scrollYDifference = 0;
+    private double chatterBoxWheelRotation;
+    private long lastChatterBoxWheelScrollNanos = Long.MIN_VALUE;
+    private double boardZoomWheelRotation;
     private int preZoomOverviewIndex = 0;
     private int preZoomOverviewViewX = 0;
     private int preZoomOverviewViewY = 0;
@@ -321,8 +326,8 @@ public final class BoardView extends AbstractBoardView
 
     // Initial scale factor for sprites and map
     float scale = 1.00f;
-    private ImageCache<Integer, Image> scaledImageCache = new ImageCache<>();
-    private final ImageCache<Integer, BufferedImage> shadowImageCache = new ImageCache<>();
+    private ImageKeyedCache<Image> scaledImageCache = new ImageKeyedCache<>();
+    private final ImageKeyedCache<BufferedImage> shadowImageCache = new ImageKeyedCache<>();
 
     private final Set<Integer> animatedImages = new HashSet<>();
 
@@ -679,45 +684,71 @@ public final class BoardView extends AbstractBoardView
 
                     // mouseWheelEvent need to adjust the point, because it should be against the displayable dimension
                     if (displayable.isMouseOver(dispPoint, drawDimension)) {
-                        if (mouseWheelEvent.getWheelRotation() > 0) {
-                            chatterBox2.scrollDown();
-                        } else {
-                            chatterBox2.scrollUp();
+                        boardZoomWheelRotation = 0;
+                        chatterBoxWheelRotation += mouseWheelEvent.getPreciseWheelRotation();
+                        long now = java.lang.System.nanoTime();
+                        if ((Math.abs(chatterBoxWheelRotation) >= 1.0)
+                              && ((lastChatterBoxWheelScrollNanos == Long.MIN_VALUE)
+                                    || (now - lastChatterBoxWheelScrollNanos
+                                          >= CHATTER_BOX_WHEEL_SCROLL_INTERVAL_NANOS))) {
+                            if (chatterBoxWheelRotation > 0) {
+                                chatterBox2.scrollDown();
+                            } else {
+                                chatterBox2.scrollUp();
+                            }
+
+                            chatterBoxWheelRotation = 0;
+                            lastChatterBoxWheelScrollNanos = now;
+                            refreshDisplayables();
                         }
 
-                        refreshDisplayables();
                         return;
                     }
                 }
             }
 
-            // calculate a few things to reposition the map
-            Coords zoomCenter = getCoordsAt(mouseWheelEvent.getPoint());
-            Point hexL = getCentreHexLocation(zoomCenter);
-            Point inHexDelta = new Point(mouseWheelEvent.getPoint());
-            inHexDelta.translate(-HEX_W, -HEX_H);
-            inHexDelta.translate(-hexL.x, -hexL.y);
-            double inHexDeltaX = ((double) inHexDelta.x) / ((double) HEX_W) / scale;
-            double inHexDeltaY = ((double) inHexDelta.y) / ((double) HEX_H) / scale;
-            int oldZoomIndex = zoomIndex;
-
             boolean ZoomNoCtrl = GUIP.getMouseWheelZoom();
             boolean wheelFlip = GUIP.getMouseWheelZoomFlip();
-            boolean zoomIn = (mouseWheelEvent.getWheelRotation() > 0) ^ wheelFlip; // = XOR
             boolean doZoom = ZoomNoCtrl ^ mouseWheelEvent.isControlDown(); // = XOR
             boolean horizontalScroll = !doZoom && mouseWheelEvent.isShiftDown();
 
             if (doZoom) {
-                if (zoomIn) {
-                    zoomIn();
-                } else {
-                    zoomOut();
+                boardZoomWheelRotation += mouseWheelEvent.getPreciseWheelRotation();
+                int zoomSteps = (int) Math.abs(boardZoomWheelRotation);
+                if (zoomSteps == 0) {
+                    return;
+                }
+
+                boolean zoomIn = (boardZoomWheelRotation > 0) ^ wheelFlip; // = XOR
+                boardZoomWheelRotation -= Math.copySign(zoomSteps, boardZoomWheelRotation);
+
+                Coords zoomCenter = getCoordsAt(mouseWheelEvent.getPoint());
+                Point hexL = getCentreHexLocation(zoomCenter);
+                Point inHexDelta = new Point(mouseWheelEvent.getPoint());
+                inHexDelta.translate(-HEX_W, -HEX_H);
+                inHexDelta.translate(-hexL.x, -hexL.y);
+                double inHexDeltaX = ((double) inHexDelta.x) / ((double) HEX_W) / scale;
+                double inHexDeltaY = ((double) inHexDelta.y) / ((double) HEX_H) / scale;
+                int oldZoomIndex = zoomIndex;
+
+                for (int step = 0; step < zoomSteps; step++) {
+                    if (zoomIn) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
                 }
 
                 if (zoomIndex != oldZoomIndex) {
                     adjustVisiblePosition(zoomCenter, dispPoint, inHexDeltaX, inHexDeltaY);
                 }
+                pingMinimap();
             } else {
+                boardZoomWheelRotation = 0;
+                if (mouseWheelEvent.getWheelRotation() == 0) {
+                    return;
+                }
+
                 // SCROLL
                 if (horizontalScroll) {
                     horizontalBar.setValue((int) (horizontalBar.getValue() + (HEX_H
@@ -729,9 +760,8 @@ public final class BoardView extends AbstractBoardView
                           * (mouseWheelEvent.getWheelRotation()))));
                 }
                 stopSoftCentering();
+                pingMinimap();
             }
-
-            pingMinimap();
         });
 
         MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
@@ -5713,7 +5743,7 @@ public final class BoardView extends AbstractBoardView
 
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
 
-        scaledImageCache = new ImageCache<>();
+        scaledImageCache = new ImageKeyedCache<>();
 
         cursorSprite.prepare();
         highlightSprite.prepare();
@@ -5796,7 +5826,7 @@ public final class BoardView extends AbstractBoardView
         Image scaled;
         if (useCache) {
             // Check the cache
-            scaled = scaledImageCache.get(base.hashCode());
+            scaled = scaledImageCache.get(base);
         } else {
             scaled = null;
         }
@@ -5834,7 +5864,7 @@ public final class BoardView extends AbstractBoardView
             tracker.removeImage(scaled);
             // Cache the image if the flag is set
             if (useCache) {
-                scaledImageCache.put(base.hashCode(), scaled);
+                scaledImageCache.put(base, scaled);
             }
         }
         return scaled;
@@ -5871,8 +5901,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     public BufferedImage createShadowMask(Image image) {
-        int hashCode = image.hashCode();
-        BufferedImage mask = shadowImageCache.get(hashCode);
+        BufferedImage mask = shadowImageCache.get(image);
         if (mask != null) {
             return mask;
         }
@@ -5884,7 +5913,7 @@ public final class BoardView extends AbstractBoardView
         graphics2D.setColor(Color.BLACK);
         graphics2D.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
         graphics2D.dispose();
-        shadowImageCache.put(hashCode, mask);
+        shadowImageCache.put(image, mask);
         return mask;
     }
 

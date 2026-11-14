@@ -122,7 +122,7 @@ public class InfantryCostCalculator {
         // MD Augmentation costs (per-trooper, IO rules)
         costs[idx] = calculateAugmentationCost(infantry);
 
-        double cost = CostCalculator.calculateCost(costs);
+        double cost = Math.round(CostCalculator.calculateCost(costs));
         String[] systemNames = { "Weapons", "Armor", "Multiplier", "Field Gun", "Mount", "Augmentations" };
         CostCalculator.fillInReport(costReport, infantry, ignoreAmmo, systemNames, -1, cost, costs);
         return cost;

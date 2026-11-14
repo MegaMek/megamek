@@ -128,6 +128,17 @@ public abstract class BotClient extends Client {
         return AIType.PRINCESS;
     }
 
+    /**
+     * Builds the chat line this bot says when it joins the lobby. It names the bot's AI type, so a player who
+     * switches a bot between Princess and CASPAR can see which one actually started.
+     *
+     * @return the localised lobby greeting, for example "Hi, I'm a CASPAR bot client!"
+     */
+    String getLoungeGreeting() {
+        String aiTypeName = Messages.getString("BotClient.aiType." + getAIType().name());
+        return Messages.getString("BotClient.Hi", aiTypeName);
+    }
+
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
 
@@ -767,7 +778,7 @@ public abstract class BotClient extends Client {
         try {
             switch (phase) {
                 case LOUNGE:
-                    sendChat(Messages.getString("BotClient.Hi"));
+                    sendChat(getLoungeGreeting());
                     break;
                 case DEPLOYMENT:
                     initialize();

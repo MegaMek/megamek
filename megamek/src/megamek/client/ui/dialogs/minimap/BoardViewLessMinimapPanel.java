@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -540,6 +540,11 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
         // Rectangle border for all units
         g2.setColor(borderColor);
         g2.draw(STRAT_BASE_RECT);
+
+        // This panel always draws the StratOps box, so the pip goes on the box corner
+        if (MinimapDamagePip.shouldDraw(entity, client.getLocalPlayer(), GUIP.getShowDamageLevel(), false)) {
+            MinimapDamagePip.draw(g2, entity, UNIT_SCALE[zoom] / 100.0d, true);
+        }
 
         // Draw Facing Arrow
         if (facing > -1) {

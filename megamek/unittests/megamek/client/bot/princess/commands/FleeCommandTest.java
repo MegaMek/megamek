@@ -39,6 +39,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import megamek.client.bot.princess.BehaviorSettings;
@@ -80,6 +81,8 @@ class FleeCommandTest {
 
     @Test
     void testFleeOrderByIndexEnablesRetreat() {
+        // a bot that follows unit orders (CASPAR) also writes the flee to every unit's orders
+        when(mockPrincess.followsUnitOrders()).thenReturn(true);
         // The Bot Commands panel and MapMenu send the CardinalEdge index, e.g. "fl : 0" for NORTH
         fleeCommand.execute(mockPrincess, parseArguments("0"));
 
@@ -115,7 +118,19 @@ class FleeCommandTest {
     }
 
     @Test
+    void princessFleesBySettingsAloneAndLeavesUnitOrdersAlone() {
+        // Princess keeps her original waypoints, so the flee order is her settings only, as before unit orders
+        fleeCommand.execute(mockPrincess, parseArguments("0"));
+        fleeCommand.execute(mockPrincess, parseArguments("5"));
+
+        verify(mockPrincess).setFleeBoard(eq(true), anyString());
+        verify(mockPrincess).setFleeBoard(eq(false), anyString());
+        verifyNoInteractions(followerMock);
+    }
+
+    @Test
     void testNoneEdgeCancelsFleeOrder() {
+        when(mockPrincess.followsUnitOrders()).thenReturn(true);
         // First issue a flee order, then cancel it with NONE
         fleeCommand.execute(mockPrincess, parseArguments("0"));
         fleeCommand.execute(mockPrincess, parseArguments("5"));

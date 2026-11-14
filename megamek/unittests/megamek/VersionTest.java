@@ -238,6 +238,76 @@ class VersionTest {
     }
 
     @Test
+    void differentRevisionsAreTheSameRelease() {
+        assertTrue(new Version("0.51.01.2").isSameRelease(new Version("0.51.01.1")));
+        assertTrue(new Version("0.51.01.1").isSameRelease(new Version("0.51.01.2")));
+    }
+
+    @Test
+    void revisionAndNoRevisionAreTheSameRelease() {
+        assertTrue(new Version("0.51.01.3").isSameRelease(new Version("0.51.01")));
+        assertTrue(new Version("0.51.01").isSameRelease(new Version("0.51.01.3")));
+    }
+
+    @Test
+    void extraInformationDoesNotChangeTheRelease() {
+        assertTrue(new Version("0.51.01.1").isSameRelease(new Version("0.51.01.1-nightly-abc1234")));
+    }
+
+    @Test
+    void differentPatchIsNotTheSameRelease() {
+        assertFalse(new Version("0.51.02").isSameRelease(new Version("0.51.01")));
+        assertFalse(new Version("0.51.01.1").isSameRelease(new Version("0.51.02.1")));
+    }
+
+    @Test
+    void differentMinorIsNotTheSameRelease() {
+        assertFalse(new Version("0.52.01").isSameRelease(new Version("0.51.01")));
+    }
+
+    @Test
+    void differentMajorIsNotTheSameRelease() {
+        assertFalse(new Version("1.51.01").isSameRelease(new Version("0.51.01")));
+    }
+
+    @Test
+    void saveLoadsIntoTheSameRevision() {
+        assertTrue(new Version("0.51.01.1").canLoadSaveFrom(new Version("0.51.01.1")));
+    }
+
+    @Test
+    void saveLoadsIntoALaterRevision() {
+        assertTrue(new Version("0.51.01.6").canLoadSaveFrom(new Version("0.51.01.1")));
+    }
+
+    @Test
+    void saveWithoutARevisionLoadsIntoAPointRelease() {
+        assertTrue(new Version("0.51.01.3").canLoadSaveFrom(new Version("0.51.01")));
+    }
+
+    @Test
+    void saveDoesNotLoadIntoAnOlderRevision() {
+        assertFalse(new Version("0.51.01.1").canLoadSaveFrom(new Version("0.51.01.6")));
+    }
+
+    @Test
+    void pointReleaseSaveDoesNotLoadIntoTheReleaseItBuildsOn() {
+        assertFalse(new Version("0.51.01").canLoadSaveFrom(new Version("0.51.01.1")));
+    }
+
+    @Test
+    void nightlySaveLoadsIntoTheSameRevision() {
+        assertTrue(new Version("0.51.01.1").canLoadSaveFrom(new Version("0.51.01.1-nightly-abc1234")));
+    }
+
+    @Test
+    void saveDoesNotLoadIntoADifferentRelease() {
+        assertFalse(new Version("0.51.02").canLoadSaveFrom(new Version("0.51.01")));
+        assertFalse(new Version("0.51.01").canLoadSaveFrom(new Version("0.51.02")));
+        assertFalse(new Version("0.52.01").canLoadSaveFrom(new Version("0.51.01")));
+    }
+
+    @Test
     void negativeRevisionFromMalformedTextIsNormalisedToNoRevision() {
         // Without normalising, such a version would render as "0.51.00" while still sorting below, and being
         // unequal to, the 0.51.0 it renders as.

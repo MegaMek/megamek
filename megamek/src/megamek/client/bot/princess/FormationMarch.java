@@ -53,6 +53,8 @@ import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
+import megamek.common.orders.WaypointOrder;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -283,11 +285,34 @@ class FormationMarch {
      * @param entity a unit of the bot
      *
      * @return {@code true} if the unit's formation has not yet formed up since its route was given, so it is assembling
-     *       at its first waypoint rather than marching
+     *       at its first waypoint rather than marching; never for a lance set to take its shape on the way there
      */
     boolean isAssembling(Entity entity) {
         Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
-        return formation.isPresent() && !assembledFormations.contains(formation.get().getLeaderId());
+        if (formation.isEmpty() || assembledFormations.contains(formation.get().getLeaderId())) {
+            return false;
+        }
+        if (takesShapeOnTheWay(entity.getUnitOrders())) {
+            // told to take its shape on the way, the lance forms up round its leader as it moves rather than meeting
+            // at the first flag; assembling there overrode the order (QA playtest, #9449, 2026-11-06: a Wedge set to
+            // form on the way formed only at its waypoint, then waited there for the last unit)
+            noteAssembled(formation.get().getLeaderId());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return {@code true} if the leg to the next waypoint is set to travel in a formation taken on the way, rather
+     *       than one the units form at the waypoint; a route with no formation of its own on that leg says nothing
+     */
+    private static boolean takesShapeOnTheWay(UnitOrders orders) {
+        if (!orders.hasRoute()) {
+            return false;
+        }
+        WaypointOrder firstLeg = orders.getWaypointOrder(0);
+        WaypointFormation legFormation = firstLeg.getFormation();
+        return (firstLeg.getArrivalFormation() == null) && (legFormation != null) && !legFormation.isNone();
     }
 
     /**
@@ -297,6 +322,31 @@ class FormationMarch {
      */
     void noteAssembled(int formationId) {
         assembledFormations.add(formationId);
+    }
+
+    /**
+     * Takes up the march of a lance whose route was given before this bot joined the game, after a reconnect or a
+     * saved game loaded: which formations had formed up is not saved, so without this every lance would stop to
+     * assemble again (QA playtest, #9524). A lance with every other unit within {@link #REFORM_SLACK} of its marching
+     * slot round its leader counts as assembled; one that is not still assembles at its next waypoint.
+     *
+     * @param leader the unit leading the formation, or a unit in none
+     *
+     * @return {@code true} if the formation counts as assembled
+     */
+    boolean resumeMarchIfFormedUp(Entity leader) {
+        Optional<FormationOrder> formation = leader.getUnitOrders().getFormation();
+        if (formation.isEmpty() || assembledFormations.contains(formation.get().getLeaderId())) {
+            return true;
+        }
+        // the marching slots, round the leader, are the ones to measure by: while assembling they lie round the
+        // waypoint, which a lance on the march is nowhere near
+        assembledFormations.add(formation.get().getLeaderId());
+        if (isFormationAssembled(leader)) {
+            return true;
+        }
+        assembledFormations.remove(formation.get().getLeaderId());
+        return false;
     }
 
     /**

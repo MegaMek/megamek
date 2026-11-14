@@ -1,9 +1,9 @@
 name: Game suite release - Experimental
 
 on:
-  # Every Tuesday 05:00 UTC (Monday night in the Americas). Skips itself when nothing changed.
+  # Every Wednesday 05:00 UTC (Tuesday night in the Americas). Skips itself when nothing changed.
   schedule:
-    - cron: "0 5 * * 2"
+    - cron: "0 5 * * 3"
   # An extra Experimental release now. Live manual runs wait for reviewer approval.
   workflow_dispatch:
     inputs:

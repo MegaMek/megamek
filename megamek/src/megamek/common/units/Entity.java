@@ -36,9 +36,10 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -6896,8 +6897,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), but not once the sensors are damaged
+        if (hasEiCockpit() && !EnhancedImagingSensors.areDamaged(this)) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
@@ -7004,8 +7005,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), but not once the sensors are damaged
+        if (hasEiCockpit() && !EnhancedImagingSensors.areDamaged(this)) {
             return 1;
         }
 
@@ -9645,14 +9646,16 @@ public abstract class Entity extends TurnOrdered
                                            EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        int mod;
-        if (waterLevel == 1) {
-            mod = -1;
-        } else if (waterLevel == 2) {
-            mod = 0;
-        } else {
-            mod = 1;
+        // Jumping into water is a special case. It is not modified for depth, just a straight roll.
+        // BMM p.19, Core p.50.
+        if (overallMoveType == EntityMovementType.MOVE_JUMP && waterLevel > 0) {
+            roll.append(new PilotingRollData(getId(), 0, "jumping into depth " + waterLevel + " water"));
+            adjustDifficultTerrainPSRModifier(roll);
+            return roll;
         }
+
+        int mod;
+        mod = Game.rulesManager.getRulesPSR().getWaterLevelModifier(waterLevel);
 
         if ((waterLevel > 1) &&
             hasAbility(OptionsConstants.PILOT_TM_FROGMAN) &&
@@ -17139,10 +17142,10 @@ public abstract class Entity extends TurnOrdered
     public int getLabTotalArmorPoints() {
         ArmorType armor = ArmorType.forEntity(this);
         if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-            return (int) Math.floor(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
+            return (int) Math.round(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
         } else {
             double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-            return (int) Math.floor(armorPerTon * armorTonnage);
+            return (int) Math.round(armorPerTon * armorTonnage);
         }
     }
 

@@ -86,6 +86,8 @@ class UnitBehaviorOrdersTest {
     @BeforeEach
     void setUp() {
         princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+        // these are the unit orders, which only a bot that follows them (CASPAR) carries out
+        doReturn(true).when(princess).followsUnitOrders();
         BoardClusterTracker clusterTracker = mock(BoardClusterTracker.class);
         doReturn(clusterTracker).when(princess).getClusterTracker();
         doReturn(true).when(princess).getForcedWithdrawal();

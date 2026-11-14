@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs.BotCommands;
 
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -40,11 +41,15 @@ import java.util.function.Supplier;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -117,6 +122,95 @@ final class WaypointColumns {
         columns.getColumn(WaypointTableModel.COLUMN_THEN).setCellRenderer(new ComboCellRenderer(String::valueOf));
         columns.getColumn(WaypointTableModel.COLUMN_TURNS).setCellEditor(new TurnsCellEditor(waypoints));
         columns.getColumn(WaypointTableModel.COLUMN_TURNS).setCellRenderer(new TurnsCellRenderer(waypoints));
+        columns.getColumn(WaypointTableModel.COLUMN_TOGETHER).setCellRenderer(new CheckBoxCellRenderer());
+    }
+
+    /**
+     * The waypoint table: each column header explains its column in a tooltip, and several rows can be selected so a
+     * change made in one selected row applies to all of them (QA playtest, #9449, 2026-11-07).
+     */
+    static final class WaypointTable extends JTable {
+        private final transient WaypointTableModel waypoints;
+
+        /**
+         * @param waypoints the table's model
+         */
+        WaypointTable(WaypointTableModel waypoints) {
+            super(waypoints);
+            this.waypoints = waypoints;
+        }
+
+        @Override
+        protected JTableHeader createDefaultTableHeader() {
+            return new JTableHeader(columnModel) {
+                @Override
+                public String getToolTipText(MouseEvent event) {
+                    int column = columnAtPoint(event.getPoint());
+                    if (column < 0) {
+                        return null;
+                    }
+                    return waypoints.getColumnToolTip(convertColumnIndexToModel(column));
+                }
+            };
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int column) {
+            waypoints.setValueAtRows(value, convertRowIndexToModel(row), getSelectedModelRows(),
+                  convertColumnIndexToModel(column));
+        }
+
+        /**
+         * Keeps a selection of several rows when the player clicks a control in one of them to change it, so the
+         * change can go to them all. A click on a cell that cannot be changed, such as the waypoint number, still
+         * selects that row alone.
+         */
+        @Override
+        public void changeSelection(int row, int column, boolean toggle, boolean extend) {
+            boolean isKeepingSelection = !toggle && !extend && (getSelectedRowCount() > 1) && isRowSelected(row)
+                  && isCellEditable(row, column);
+            if (isKeepingSelection) {
+                // move only the lead, the row the edit happens in: setting the lead index would also change which
+                // rows are selected
+                if (getSelectionModel() instanceof DefaultListSelectionModel rows) {
+                    rows.moveLeadSelectionIndex(row);
+                }
+                getColumnModel().getSelectionModel().setSelectionInterval(column, column);
+                return;
+            }
+            super.changeSelection(row, column, toggle, extend);
+        }
+
+        private int[] getSelectedModelRows() {
+            int[] selected = getSelectedRows();
+            for (int index = 0; index < selected.length; index++) {
+                selected[index] = convertRowIndexToModel(selected[index]);
+            }
+            return selected;
+        }
+    }
+
+    /**
+     * Draws the tick box like the other cells, with the table's own background rather than the selection colour, so
+     * the selected row is not highlighted in this column alone; greyed out where the cell cannot be changed.
+     */
+    private static final class CheckBoxCellRenderer implements TableCellRenderer {
+        private final JCheckBox checkBox = new JCheckBox();
+
+        private CheckBoxCellRenderer() {
+            checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+            checkBox.setOpaque(true);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+              boolean hasFocus, int row, int column) {
+            checkBox.setSelected(Boolean.TRUE.equals(value));
+            checkBox.setBackground(table.getBackground());
+            checkBox.setForeground(table.getForeground());
+            checkBox.setEnabled(table.getModel().isCellEditable(row, table.convertColumnIndexToModel(column)));
+            return checkBox;
+        }
     }
 
     /**

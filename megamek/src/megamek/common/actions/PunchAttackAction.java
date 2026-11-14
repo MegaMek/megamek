@@ -392,6 +392,15 @@ public class PunchAttackAction extends PhysicalAttackAction {
           boolean targetInfantry, boolean zweihandering) {
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RIGHT_ARM
               : Mek.LOC_LEFT_ARM;
+
+        /* Ordering is very important here. As per Core p.87/88.
+         * The Order is:
+         * 1) Base Value
+         * 2) Equipment modified (eg: TSM, Talons, Shield)
+         * 3) Actuator modifiers (eg: Destroyed actuators)
+         *
+         * Rounding applies for each step which divides unless otherwise noted.
+         */
         int damage = (int) Math.ceil(entity.getWeight() / 10.0);
 
         // Rules state tonnage/7 for claws
@@ -399,38 +408,47 @@ public class PunchAttackAction extends PhysicalAttackAction {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
         }
 
-        // Add Damage with a shield
+        // Add Damage with a shield to the base
         damage += Game.rulesManager.getRulesPhysical().getShieldDamageBoost(entity, armLoc);
 
-        // CamOps, pg. 82
+        // CamOps, pg. 82 add damage to the base
         if (zweihandering) {
             damage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 
-        float multiplier = 1.0f;
+        // add TSM
+        if (((Mek) entity).hasActiveTSM()) {
+            damage *= 2;
+        }
 
+        // Reduce by actuators
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, armLoc)) {
-            multiplier /= 2.0f;
+            damage = (int) Math.floor(damage / 2.0f);
         }
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, armLoc)) {
-            multiplier /= 2.0f;
+            damage = (int) Math.floor(damage / 2.0f);
         }
+        // Should be no punching with a bad shoulder, but just in case
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, armLoc)) {
-            damage = 0;
+            return 0;
         }
-        if (((Mek) entity).hasActiveTSM()) {
-            multiplier *= 2.0f;
-        }
-        int toReturn = (int) Math.floor(damage * multiplier)
-              + entity.modifyPhysicalDamageForMeleeSpecialist();
-        // underwater damage is half, round up (see bug 1110692)
+
+        // underwater damage is half, round down (see bug 1110692) Core p.77
         if (entity.getLocationStatus(armLoc) == ILocationExposureStatus.WET) {
-            toReturn = (int) Math.ceil(toReturn * 0.5f);
+            damage = (int) Math.floor(damage / 2.0f);
         }
+
         if (targetInfantry) {
-            toReturn = Math.max(1, toReturn / 10);
+            damage = (int) Math.ceil(damage / 10);
         }
-        return toReturn;
+
+        // Minimum amount
+        damage = Math.max(1, damage);
+
+        // Melee specialist adds 1 damage to all melee attacks.
+        damage += entity.modifyPhysicalDamageForMeleeSpecialist();
+
+        return damage;
     }
 
     @Override

@@ -89,8 +89,9 @@ class VehicleKillChanceTest {
         assertEquals(28d / 36, ProbabilityCalculator.getVehicleHitProbability(0, Tank.LOC_FRONT, false, false), DELTA);
         assertEquals(22d / 36, ProbabilityCalculator.getVehicleHitProbability(0, Tank.LOC_FRONT, true, false), DELTA);
         assertEquals(6d / 36, ProbabilityCalculator.getVehicleHitProbability(0, Tank.LOC_TURRET, true, false), DELTA);
-        // a 5 and a 9 from the front both land on the left, as Tank.rollHitLocation rolls them
-        assertEquals(8d / 36, ProbabilityCalculator.getVehicleHitProbability(0, Tank.LOC_LEFT, false, false), DELTA);
+        // from the front a 5 lands on the right and a 9 on the left (TW p.193)
+        assertEquals(4d / 36, ProbabilityCalculator.getVehicleHitProbability(0, Tank.LOC_RIGHT, false, false), DELTA);
+        assertEquals(4d / 36, ProbabilityCalculator.getVehicleHitProbability(0, Tank.LOC_LEFT, false, false), DELTA);
     }
 
     @Test

@@ -397,6 +397,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new ForcedWithdrawalOrderCommand(server, this));
         commands.add(new UnitOrderCommand(server, this));
         commands.add(new RadioCommand(server, this));
+        commands.add(new PingCommand(server));
+        commands.add(new GameMasterPingCommand(server));
         commands.add(new ChangeWeatherCommand(server, this));
         commands.add(new TraitorCommand(server, this));
         commands.add(new ListEntitiesCommand(server, this));
@@ -1131,6 +1133,11 @@ public class TWGameManager extends AbstractGameManager {
                         // bot to this seat instead of guessing.
                         if (packet.getObject(1) instanceof AIType aiType) {
                             game.recordBotType(player.getName(), aiType);
+                            // Tell every client too, not only those that connect later: only CASPAR bots take unit
+                            // orders, so a player who joined before this bot needs its type to be offered them.
+                            // Copied to a plain HashMap for the same reason as on connect.
+                            send(new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings(),
+                                  new HashMap<>(getGame().getBotTypes())));
                         }
                     }
                     break;
@@ -2958,8 +2965,9 @@ public class TWGameManager extends AbstractGameManager {
             // We don't use the hashmap for individual initiative, so can ignore it here
             TurnOrdered.rollInitiative(game.getEntitiesVector(), false, new HashMap<>());
         } else {
+            // Every team's aptitude goes into one map, then all teams roll once
+            Map<Team, Integer> initiativeAptitude = new HashMap<>();
             for (Team team : game.getTeams()) {
-                Map<Team, Integer> initiativeAptitude = new HashMap<>();
                 boolean commanderHasCombatSense = false;
                 boolean commanderHasCombatParalysis = false;
 
@@ -2982,13 +2990,13 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     initiativeAptitude.put(team, TEAM_HAS_NO_INITIATIVE_APTITUDE);
                 }
-
-                // Roll for initiative on the teams.
-                TurnOrdered.rollInitiative(game.getTeams(),
-                      game.getOptions().booleanOption(INIT_INITIATIVE_STREAK_COMPENSATION) &&
-                            !game.shouldDeployThisRound(),
-                      initiativeAptitude);
             }
+
+            // Roll for initiative on the teams.
+            TurnOrdered.rollInitiative(game.getTeams(),
+                  game.getOptions().booleanOption(INIT_INITIATIVE_STREAK_COMPENSATION) &&
+                        !game.shouldDeployThisRound(),
+                  initiativeAptitude);
         }
 
         transmitAllPlayerUpdates();
@@ -3715,10 +3723,16 @@ public class TWGameManager extends AbstractGameManager {
             game.setTurnVector(new ArrayList<>());
         } else {
             for (Entity entity : game.getEntitiesVector()) {
-                if (entity.isEligibleFor(phase)) {
-                    assistable = true;
-                } else {
+                if (!entity.isEligibleFor(phase)) {
                     assistants.addElement(entity);
+                } else if (!Game.rulesManager.getRulesGame().eligibleForPhase(entity, phase)) {
+                    // determineTurnOrder gives this unit no turn, so it must not stay selectable: a unit that can
+                    // be picked without a turn of its own spends a turn that belongs to another unit.
+                    LOGGER.info("[TurnOrder] {} gets no {} turn under the active rules system; marking it done",
+                          entity.getShortName(), phase);
+                    assistants.addElement(entity);
+                } else {
+                    assistable = true;
                 }
             }
         }
@@ -25256,11 +25270,11 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * add fire to a hex
      *
-     * @param c         - the <code>Coords</code> of the hex to be set on fire
+     * @param hexCoords - the <code>Coords</code> of the hex to be set on fire
      * @param fireLevel - The level of fire, see Terrains
      */
-    public void ignite(Coords c, int boardId, int fireLevel, Vector<Report> vReport) {
-        ignite(c, boardId, fireLevel, vReport, false);
+    public void ignite(Coords hexCoords, int boardId, int fireLevel, Vector<Report> reports) {
+        ignite(hexCoords, boardId, fireLevel, reports, false);
     }
 
     /**
@@ -25270,67 +25284,68 @@ public class TWGameManager extends AbstractGameManager {
      *
      * <p>Whether the fire spreads afterward is still up to the game options, as for any other fire.</p>
      *
-     * @param c         the coordinates of the hex to set on fire
+     * @param hexCoords the coordinates of the hex to set on fire
      * @param fireLevel the level of fire, see Terrains
-     * @param vReport   the report to add the result to, or {@code null}
+     * @param reports   the list of reports to add the result to, or {@code null}
      */
-    public void igniteByGameMaster(Coords c, int fireLevel, Vector<Report> vReport) {
-        ignite(c, 0, fireLevel, vReport, true);
+    public void igniteByGameMaster(Coords hexCoords, int fireLevel, Vector<Report> reports) {
+        ignite(hexCoords, 0, fireLevel, reports, true);
     }
 
-    private void ignite(Coords c, int boardId, int fireLevel, Vector<Report> vReport, boolean ignoreStartFireOption) {
+    private void ignite(Coords hexCoords, int boardId, int fireLevel, Vector<Report> reports,
+          boolean ignoreStartFireOption) {
         // you can't start fires in some planetary conditions!
         if (game.getPlanetaryConditions().cannotStartFire() != null) {
-            if (vReport != null) {
-                Report r = new Report(3007);
-                r.indent(2);
-                r.add(game.getPlanetaryConditions().cannotStartFire());
-                r.type = Report.PUBLIC;
-                vReport.add(r);
+            if (reports != null) {
+                Report report = new Report(3007);
+                report.indent(2);
+                report.add(game.getPlanetaryConditions().cannotStartFire());
+                report.type = Report.PUBLIC;
+                reports.add(report);
             }
             return;
         }
 
         if (!ignoreStartFireOption
               && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
-            if (vReport != null) {
-                Report r = new Report(3008);
-                r.indent(2);
-                r.type = Report.PUBLIC;
-                vReport.add(r);
+            if (reports != null) {
+                Report report = new Report(3008);
+                report.indent(2);
+                report.type = Report.PUBLIC;
+                reports.add(report);
             }
             return;
         }
 
-        Hex hex = game.getHex(c, boardId);
+        Hex hex = game.getHex(hexCoords, boardId);
         if (hex == null) {
             return;
         }
 
-        Report r = new Report(3005);
-        r.indent(2);
-        r.add(c.getBoardNum());
-        r.type = Report.PUBLIC;
+        Report report = new Report(3005);
+        report.indent(2);
+        report.add(hexCoords.getBoardNum());
+        report.type = Report.PUBLIC;
 
         // Adjust report message for inferno types
         switch (fireLevel) {
             case Terrains.FIRE_LVL_INFERNO:
-                r.messageId = 3006;
+                report.messageId = 3006;
                 break;
             case Terrains.FIRE_LVL_INFERNO_BOMB:
-                r.messageId = 3003;
+                report.messageId = 3003;
                 break;
             case Terrains.FIRE_LVL_INFERNO_IV:
-                r.messageId = 3004;
+                report.messageId = 3004;
                 break;
         }
 
         // report it
-        if (vReport != null) {
-            vReport.add(r);
+        if (reports != null) {
+            reports.add(report);
         }
         hex.addTerrain(new Terrain(Terrains.FIRE, fireLevel));
-        sendChangedHex(c, boardId);
+        sendChangedHex(hexCoords, boardId);
     }
 
     /**

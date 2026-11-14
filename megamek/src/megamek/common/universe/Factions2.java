@@ -57,7 +57,7 @@ import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.common.jacksonAdapters.ColorDeserializer;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.util.fileUtils.DataFolders;
 import megamek.logging.MMLogger;
 
 /**
@@ -186,10 +186,12 @@ public final class Factions2 {
         ObjectMapper mapper = getLoadMapper();
         loadFactionsFromDirectory(MMConstants.FACTIONS_DIR, mapper);
         loadFactionsFromDirectory(MMConstants.COMMANDS_DIR, mapper);
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        if ((userDir != null) && !userDir.isBlank()) {
-            loadFactionsFromDirectory(new File(userDir, MMConstants.FACTIONS_DIR).toString(), mapper);
-            loadFactionsFromDirectory(new File(userDir, MMConstants.COMMANDS_DIR).toString(), mapper);
+        DataFolders dataFolders = DataFolders.current();
+        for (File factionsDir : dataFolders.subfolders(MMConstants.FACTIONS_DIR)) {
+            loadFactionsFromDirectory(factionsDir.toString(), mapper);
+        }
+        for (File commandsDir : dataFolders.subfolders(MMConstants.COMMANDS_DIR)) {
+            loadFactionsFromDirectory(commandsDir.toString(), mapper);
         }
         registerAliases();
         LOGGER.info("Loaded a total of {} factions and commands", factions.size());

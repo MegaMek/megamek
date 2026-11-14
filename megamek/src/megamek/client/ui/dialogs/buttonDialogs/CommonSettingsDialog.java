@@ -36,6 +36,7 @@ package megamek.client.ui.dialogs.buttonDialogs;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -104,6 +105,7 @@ import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.SensorFamily;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.fileUtils.DataFolders;
 import megamek.logging.MMLogger;
 
 /**
@@ -2559,9 +2561,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             userFilesChooser.setToolTipText(overridden);
         }
         JButton userFilesHelp = createUserFilesHelpButton();
+        JButton userFilesOpen = applicationIconButton("btnUserDirOpen", 0xE89E,
+              Messages.getString("CommonSettingsDialog.userDir.open"));
+        userFilesOpen.addActionListener(e -> openUserDir(userDir.getText()));
         row = new ArrayList<>();
         row.add(userDirLabel);
-        row.add(applicationPathControl(userDir, userFilesChooser, userFilesHelp));
+        row.add(applicationPathControl(userDir, userFilesChooser, userFilesOpen, userFilesHelp));
         comps.add(row);
 
         addLineSpacer(comps);
@@ -2897,10 +2902,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             skinFiles.removeAllItems();
             ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
 
-            String userDirName = PreferenceManager.getClientPreferences().getUserDir();
-            File userDir = new File(userDirName);
-            if (!userDirName.isBlank() && userDir.isDirectory()) {
-                xmlFiles.addAll(filteredFilesWithSubDirs(userDir, ".xml"));
+            for (File dataFolder : DataFolders.current().folders()) {
+                xmlFiles.addAll(filteredFilesWithSubDirs(dataFolder, ".xml"));
             }
 
             File internalUserDataDir = new File(Configuration.userDataDir(), Configuration.skinsDir().toString());
@@ -4474,6 +4477,24 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         configureUserFilesHelpButton(button, Configuration.docsDir(),
             documentUrl -> new HelpDialog(title, documentUrl, this).setVisible(true));
         return button;
+    }
+
+    /** Opens the given user directory in the system's file manager, or explains why it can't. */
+    private void openUserDir(String directory) {
+        String title = Messages.getString("CommonSettingsDialog.userDir.open");
+        File folder = new File(directory.strip());
+        if (directory.isBlank() || !folder.isDirectory()) {
+            String message = Messages.getString("CommonSettingsDialog.userDir.open.missing");
+            JOptionPane.showMessageDialog(getFrame(), message, title, JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        try {
+            Desktop.getDesktop().open(folder);
+        } catch (IOException | UnsupportedOperationException | SecurityException exception) {
+            logger.error(exception, "Could not open the user directory {}", folder);
+            String message = Messages.getString("CommonSettingsDialog.userDir.open.failed", folder.getPath());
+            JOptionPane.showMessageDialog(getFrame(), message, title, JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     static void configureUserFilesHelpButton(JButton button, File docsDirectory, Consumer<URL> helpAction) {

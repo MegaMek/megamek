@@ -67,9 +67,9 @@ import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.util.ClickableLabel;
 import megamek.common.Configuration;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
+import megamek.common.util.fileUtils.DataFolders;
 import megamek.logging.MMLogger;
 
 /**
@@ -157,9 +157,7 @@ public class ScenarioChooserDialog extends AbstractButtonDialog {
     private static List<Scenario> getScenarioInfos() {
         List<Scenario> scenarios = new ArrayList<>(parseScenariosInDirectory(Configuration.scenariosDir()));
 
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        if (!userDir.isBlank()) {
-            File subDir = new File(userDir, Configuration.scenariosDir().toString());
+        for (File subDir : DataFolders.current().subfolders(Configuration.scenariosDir().toString())) {
             scenarios.addAll(parseScenariosInDirectory(subDir));
         }
 

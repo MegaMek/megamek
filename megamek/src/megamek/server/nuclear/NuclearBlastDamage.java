@@ -611,8 +611,8 @@ class NuclearBlastDamage {
         report.add(target.getValueAsString());
         report.add(roll);
         vDesc.addElement(report);
-        LOGGER.info("[Nukes] {} rolls {} against {} to withstand the blast: {}", entity.getDisplayName(), roll,
-              target.getValueAsString(), succeeded ? "succeeds" : "fails");
+        LOGGER.info("[Nukes] {} rolls {} against {} ({}) to withstand the blast: {}", entity.getDisplayName(), roll,
+              target.getValueAsString(), target.getDesc(), succeeded ? "succeeds" : "fails");
         if (succeeded) {
             return 0;
         }

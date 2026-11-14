@@ -115,7 +115,7 @@ public final class SpaCatalog {
           entry(OptionsConstants.PILOT_TM_FOREST_RANGER, FULL, 81, "3"),
           entry(OptionsConstants.PILOT_TM_FROGMAN, PARTIAL, 81, "3"),
           entry(OptionsConstants.PILOT_TM_MOUNTAINEER, PARTIAL, 81, "3"),
-          entry(OptionsConstants.PILOT_TM_NIGHTWALKER, PARTIAL, 81, "3"),
+          entry(OptionsConstants.PILOT_TM_NIGHTWALKER, FULL, 81, "3"),
           entry(OptionsConstants.PILOT_TM_SWAMP_BEAST, PARTIAL, 81, "3"),
           entry(OptionsConstants.INFANTRY_URBAN_GUERRILLA, FULL_MINOR_GAPS, 82, "1"),
           entry(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, FULL, 82, "3"),

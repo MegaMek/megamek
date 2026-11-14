@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -79,7 +79,7 @@ public class TurnTimer {
         display = new JPanel();
         progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, timeLimit);
         progressBar.setValue(timeLimit);
-        progressBar.setForeground(GUIP.getCautionColor());
+        progressBar.setForeground(GUIP.getCautionColorForTheme());
         int seconds = timeLimit % 60;
         int minutes = timeLimit / 60;
         remaining = new JLabel(String.format("%s:%02d", minutes, seconds));
@@ -102,7 +102,7 @@ public class TurnTimer {
                 String extended = (extendTimer && allowExtension) ? "\u2B50" : "";
                 String text = String.format("%s:%02d %s", minutes, seconds, extended);
                 remaining.setText(text);
-                Color c = counter >= 10 ? GUIP.getCautionColor() : GUIP.getWarningColor();
+                Color c = counter >= 10 ? GUIP.getCautionColorForTheme() : GUIP.getWarningColorForTheme();
                 progressBar.setForeground(c);
                 progressBar.setValue(counter);
 

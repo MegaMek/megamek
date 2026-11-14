@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -109,7 +109,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         if (!StringUtility.isNullOrBlank(hex.getTheme())) {
             result.append(paragraphHTMLOpen(padding))
                   .append(colorHTML("Theme: ", GUIP.getToolTipLightFGColor()))
-                  .append(colorHTML(hex.getTheme(), GUIP.getUnitToolTipHighlightColor()))
+                  .append(emphasisHTML(hex.getTheme()))
                   .append("</p>");
         }
 
@@ -124,7 +124,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
 
         result.append(paragraphHTMLOpen(padding));
         if (terrainLines.isEmpty()) {
-            result.append(colorHTML("Clear", GUIP.getUnitToolTipHighlightColor()));
+            result.append(emphasisHTML("Clear"));
         } else {
             result.append(String.join("<BR>", terrainLines));
         }
@@ -143,7 +143,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         List<String> errors = new ArrayList<>();
         if (!hex.isValid(errors)) {
             result.append(paragraphHTMLOpen(padding))
-                  .append(UIUtil.fontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
+                  .append(emphasisHTML(UIUtil.WARNING_SIGN))
                   .append(Messages.getString("BoardView1.invalidHex")).append("<BR>")
                   .append(String.join("<BR>", errors))
                   .append("</p>");
@@ -153,7 +153,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         List<BoardIssue> issues = BoardConnectivityCheck.findIssuesAt(board, coords);
         if (!issues.isEmpty()) {
             result.append(paragraphHTMLOpen(padding))
-                  .append(UIUtil.fontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
+                  .append(emphasisHTML(UIUtil.WARNING_SIGN))
                   .append(Messages.getString("BoardView1.roadBridgeIssues"));
             for (BoardIssue issue : issues) {
                 result.append("<BR>").append(issue.message()).append("<BR>")
@@ -208,7 +208,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         }
 
         if (!Terrains.AUTOMATIC.contains(terrain.getType())) {
-            terrainName = colorHTML(terrainName, GUIP.getUnitToolTipHighlightColor());
+            terrainName = emphasisHTML(terrainName);
         }
 
         if (isAuxiliary(terrain.getType())) {
@@ -266,6 +266,14 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
 
     private String paragraphHTMLOpen(int padding) {
         return "<p style=padding-top:" + padding + ">";
+    }
+
+    /**
+     * Marks text as important by making it bold in the Terrain FG colour the whole tooltip already uses. The
+     * Highlight and Warning colours are tuned for the dark unit tooltip and nearly vanish on the light Terrain BG.
+     */
+    private String emphasisHTML(String text) {
+        return UIUtil.tag("B", "", text);
     }
 
     private String colorHTML(String text, Color color) {

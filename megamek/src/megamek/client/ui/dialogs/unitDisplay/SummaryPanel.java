@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,10 +55,10 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -202,8 +202,10 @@ public class SummaryPanel extends PicMap {
                       unitDisplayPanel.getClientGUI().getClient(),
                       entity.getBoardId());
                 if (!hexTip.isEmpty()) {
+                    // The hex tip's minefield and objective lines use the light tooltip FG colour, so they need the
+                    // dark tooltip BG, the same as the board tooltip gives them
                     attr = String.format("FACE=Dialog BGCOLOR=%s",
-                          UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipTerrainBGColor()));
+                          UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);
                     row = UIUtil.tag("TR", "", col);
                     rows += row;

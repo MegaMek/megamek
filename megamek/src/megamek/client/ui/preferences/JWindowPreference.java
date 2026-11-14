@@ -33,6 +33,9 @@
 package megamek.client.ui.preferences;
 
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -52,6 +55,10 @@ import megamek.logging.MMLogger;
  */
 public class JWindowPreference extends PreferenceElement implements ComponentListener, WindowStateListener {
     private final static MMLogger logger = MMLogger.create(JWindowPreference.class);
+
+    private static final int TITLE_BAR_HEIGHT = 30;
+    private static final int MIN_VISIBLE_WIDTH = 100;
+    private static final int MIN_VISIBLE_HEIGHT = 20;
 
     // region Variable Declarations
     private final WeakReference<Window> weakReference;
@@ -151,7 +158,16 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
             setMaximized(Boolean.parseBoolean(parts[4]));
 
             element.setSize(getWidth(), getHeight());
-            element.setLocation(getScreenX(), getScreenY());
+            if (isLocationOnScreen(getScreenX(), getScreenY(), getWidth())) {
+                element.setLocation(getScreenX(), getScreenY());
+            } else {
+                // The saved location is on a monitor that is no longer connected (or the resolution changed). Keep
+                // whatever location the window already has, so it cannot open somewhere the user cannot reach.
+                logger.warn("Saved location {},{} for window {} is not on any screen; ignoring it",
+                      getScreenX(), getScreenY(), element.getName());
+                setScreenX(element.getLocation().x);
+                setScreenY(element.getLocation().y);
+            }
             if (isMaximized()) {
                 if (element instanceof JFrame) {
                     ((JFrame) element).setExtendedState(((JFrame) element).getExtendedState() | Frame.MAXIMIZED_BOTH);
@@ -168,6 +184,33 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
             element.removeWindowStateListener(this);
             getWeakReference().clear();
         }
+    }
+
+    /**
+     * Checks whether a window placed at the given location would have enough of its title bar on a currently connected
+     * screen for the user to be able to see and drag it.
+     *
+     * @param x           the saved X coordinate of the window
+     * @param y           the saved Y coordinate of the window
+     * @param windowWidth the width of the window
+     *
+     * @return {@code true} if the location is usable, or if screens cannot be queried (headless)
+     */
+    private static boolean isLocationOnScreen(final int x, final int y, final int windowWidth) {
+        if (GraphicsEnvironment.isHeadless()) {
+            return true;
+        }
+
+        final Rectangle titleBar = new Rectangle(x, y, windowWidth, TITLE_BAR_HEIGHT);
+        final int requiredWidth = Math.clamp(windowWidth, 1, MIN_VISIBLE_WIDTH);
+        for (final GraphicsDevice device : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+            final Rectangle overlap = device.getDefaultConfiguration().getBounds().intersection(titleBar);
+            // intersection() yields a negative width/height when there is no overlap, so these checks also fail then
+            if ((overlap.width >= requiredWidth) && (overlap.height >= MIN_VISIBLE_HEIGHT)) {
+                return true;
+            }
+        }
+        return false;
     }
     // endregion PreferenceElement
 

@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.text.DefaultCaret;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -95,6 +96,12 @@ public class SummaryPanel extends PicMap {
         unitInfo.setEditable(false);
         unitInfo.setFocusable(false);
         unitInfo.setHighlighter(null);
+        // The default caret follows each setText to the end of the text and scrolls it into view, which pulled the
+        // General tab to the bottom whenever the next unit was shown (#9573). This caret never moves. It is not a
+        // UIResource, so a theme change keeps it.
+        DefaultCaret fixedCaret = new DefaultCaret();
+        fixedCaret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+        unitInfo.setCaret(fixedCaret);
         unitInfo.setOpaque(false);
         unitInfo.setBorder(null);
         unitInfo.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);

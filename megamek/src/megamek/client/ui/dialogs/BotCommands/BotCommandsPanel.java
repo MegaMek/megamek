@@ -124,8 +124,18 @@ public class BotCommandsPanel extends JPanel {
      */
     private static final String NO_ORDERABLE_UNITS_KEY = "BotCommandPanel.emptyPopup.noOrderableUnits";
 
+    /** The gap between two buttons of one group, in pixels. */
+    private static final int BUTTON_GAP = 2;
+    /**
+     * The gap, in pixels before GUI scaling, that sets the docked strip's button groups apart: the CASPAR buttons,
+     * the Princess buttons, the buttons for every bot, and the misc button.
+     */
+    private static final int DOCKED_GROUP_GAP = 16;
+
     private MegaMekButton pauseContinue;
     private List<MegaMekButton> commandButtons = List.of();
+    /** The first button of each group of the docked strip, the misc button included. */
+    private List<MegaMekButton> groupStartButtons = List.of();
     private BotOrdersMenuBuilder ordersMenuBuilder;
     private PrincessMovementMenuBuilder princessMenuBuilder;
 
@@ -193,13 +203,15 @@ public class BotCommandsPanel extends JPanel {
      */
     private void applyLayout(boolean docked) {
         if (docked) {
-            // One row, columns grow to fit the buttons - a thin strip that steals little height from the board.
-            this.setLayout(new GridLayout(1, 0, 2, 2));
+            // One row of equal-width buttons - a thin strip that steals little height from the board - with a wider
+            // gap between the groups, so a player commanding both kinds of bot sees which buttons belong together.
+            this.setLayout(new GroupedButtonRowLayout(BUTTON_GAP, UIUtil.scaleForGUI(DOCKED_GROUP_GAP),
+                  groupStartButtons));
             this.setMinimumSize(UIUtil.scaleForGUI(600, 40));
             this.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(40)));
             this.setMaximumSize(new Dimension(-1, UIUtil.scaleForGUI(40)));
         } else {
-            this.setLayout(new GridLayout(2, 4, 2, 2));
+            this.setLayout(new GridLayout(2, 4, BUTTON_GAP, BUTTON_GAP));
             this.setMinimumSize(UIUtil.scaleForGUI(600, 80));
             this.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
             this.setMaximumSize(new Dimension(-1, UIUtil.scaleForGUI(80)));
@@ -225,6 +237,9 @@ public class BotCommandsPanel extends JPanel {
         var artillery = createButton("Artillery");
         commandButtons = List.of(moveOrder, quickOrders, waypoints, movement, targets, maneuver, setBehavior,
               artillery);
+        // Pause Game stands alone, then the CASPAR pair, the Princess pair, the buttons for every bot, and the misc
+        // button
+        groupStartButtons = List.of(moveOrder, waypoints, targets, miscButton);
 
         moveOrder.addActionListener(event -> {
             // with one bot and nothing to choose between, the editor opens at once; its Choose units... narrows it

@@ -33,9 +33,6 @@
 
 package megamek.common.cost;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Mounted;
@@ -109,14 +106,12 @@ public class ProtoMekCostCalculator {
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -protoMek.getPriceMultiplier();
-        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
-              .setScale(2, RoundingMode.UP)
-              .doubleValue();
+        double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Musculature", "Structure", "Arm Actuators",
                                  "Leg Actuators", "Engine", "Jump Jets", "Heatsinks", "Armor", "Equipment",
                                  "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, protoMek, ignoreAmmo, systemNames, 11, roundedCost, costs);
+        CostCalculator.fillInReport(costReport, protoMek, ignoreAmmo, systemNames, 11, cost, costs);
 
-        return roundedCost;
+        return cost;
     }
 }

@@ -349,6 +349,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 return;
             }
 
+            // Under double blind the client cannot see enemy units, so it may deploy onto one (issue 9488)
+            Entity blocker = deploymentProcess.findDeploymentStackingViolation(entity, position, boardId,
+                  entityElevation, assaultDrop);
+            if (blocker != null) {
+                deploymentProcess.refuseStackedDeployment(entity.getOwnerId(), entity, blocker, position,
+                      entity.getOwnerId());
+                return;
+            }
+
             deploymentProcess.processDeployment(entity,
                                                 position,
                                                 boardId,
@@ -3312,6 +3321,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.BRACE) {
                 entity.setBraceLocation(step.getBraceLocation());
+                logger.info("[Brace] {}: braced {} at {} (hull down: {})", entity.getDisplayName(),
+                      entity.getLocationName(step.getBraceLocation()), curPos, entity.isHullDown());
             }
 
             if (step.getType() == MoveStepType.SHUTDOWN) {

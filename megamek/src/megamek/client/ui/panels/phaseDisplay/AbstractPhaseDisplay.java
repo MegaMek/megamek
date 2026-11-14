@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,6 +45,8 @@ import megamek.client.ui.widget.MegaMekBorder;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinnedJPanel;
+import megamek.common.Player;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.board.GameBoardNewEvent;
@@ -56,8 +58,11 @@ import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerConnectedEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.PlayerTurn;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableDelegate;
+import megamek.logging.MMLogger;
 
 /**
  * This is the base class for all the "displays" which take control during the local player's turn. Only one display is
@@ -77,7 +82,14 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     protected final MegaMekButton butDone;
 
+    private static final MMLogger LOGGER = MMLogger.create(AbstractPhaseDisplay.class);
+
     private final DistractableDelegate distractableDelegate = new DistractableDelegate();
+
+    // where the game stood when this display was last muted, to tell on unmuting whether a turn change was dropped
+    private GamePhase mutedPhase;
+    private int mutedRound = -1;
+    private int mutedTurnIndex = -1;
 
     /** The IClientGUI that this display is a part of. Cannot be null. */
     private final IClientGUI clientGUI;
@@ -114,7 +126,10 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     }
 
     private void done() {
+        LOGGER.debug("[DoneButton] {}: Done pressed in phase {}", getClass().getSimpleName(),
+              clientGUI.getClient().getGame().getPhase());
         if (shouldPerformDone()) {
+            LOGGER.debug("[DoneButton] {}: Done accepted", getClass().getSimpleName());
             // When the turn is ended, we could miss a key release event
             // This will ensure no repeating keys are stuck down
             MegaMekGUI.getKeyDispatcher().stopAllRepeating();
@@ -122,14 +137,42 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         }
     }
 
+    /**
+     * Checks whether a Done press (button or hotkey) should be acted on. Each refusal is logged with its reason, as a
+     * refused press otherwise gives the player no feedback at all.
+     *
+     * @return {@code true} if the press should end the player's turn or phase
+     */
     private boolean shouldPerformDone() {
-        return ((clientGUI.getClient().isMyTurn() ||
-              (clientGUI.getClient().getGame().getTurn() == null) ||
-              (clientGUI.getClient().getGame().getPhase().isReport()))) &&
-              !clientGUI.shouldIgnoreHotKeys() &&
-              !isIgnoringEvents() &&
-              isVisible() &&
-              butDone.isEnabled();
+        String displayName = getClass().getSimpleName();
+        IGame game = clientGUI.getClient().getGame();
+        PlayerTurn pendingTurn = game.getTurn();
+        boolean isMyTurn = clientGUI.getClient().isMyTurn();
+        boolean isNoTurnPending = (pendingTurn == null);
+        boolean isReportPhase = game.getPhase().isReport();
+        if (!isMyTurn && !isNoTurnPending && !isReportPhase) {
+            LOGGER.debug("[DoneButton] {}: Done refused - phase {} has a pending turn for player {}, not this player",
+                  displayName, game.getPhase(), pendingTurn.playerId());
+            return false;
+        }
+        if (clientGUI.shouldIgnoreHotKeys()) {
+            LOGGER.debug("[DoneButton] {}: Done refused - the game window is inactive or a dialog is open",
+                  displayName);
+            return false;
+        }
+        if (isIgnoringEvents()) {
+            LOGGER.debug("[DoneButton] {}: Done refused - the display is muted", displayName);
+            return false;
+        }
+        if (!isVisible()) {
+            LOGGER.debug("[DoneButton] {}: Done refused - the display is not visible", displayName);
+            return false;
+        }
+        if (!butDone.isEnabled()) {
+            LOGGER.debug("[DoneButton] {}: Done refused - the Done button is disabled", displayName);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -137,9 +180,66 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         return distractableDelegate.isIgnoringEvents();
     }
 
+    /**
+     * Mutes or unmutes this display's game events. A muted display drops every turn change; a hex picker for a bot
+     * order mutes it while the player clicks the board. When the display is unmuted in the same phase and round and the
+     * turn has moved on meanwhile, the current turn is handed to {@link #gameTurnChange} again, so a turn that became
+     * the player's while they were picking is not left showing as another player's (issue #9503).
+     *
+     * @param isDistracted {@code true} to mute game events, {@code false} to hear them again
+     */
     @Override
     public final void setIgnoringEvents(boolean isDistracted) {
+        boolean wasMuted = distractableDelegate.isIgnoringEvents();
+        if (isDistracted == wasMuted) {
+            distractableDelegate.setIgnoringEvents(isDistracted);
+            return;
+        }
+        LOGGER.debug("[TurnSync] {} events {} by {}", getClass().getSimpleName(),
+              isDistracted ? "muted" : "unmuted", callerName());
+        IGame game = clientGUI.getClient().getGame();
         distractableDelegate.setIgnoringEvents(isDistracted);
+        if (isDistracted) {
+            mutedPhase = game.getPhase();
+            mutedRound = game.getCurrentRound();
+            mutedTurnIndex = game.getTurnIndex();
+        } else if (turnMovedOnWhileMuted(game)) {
+            replayCurrentTurn(game);
+        }
+    }
+
+    /**
+     * @return {@code true} if the turn changed since this display was muted, within the same phase and round; a new
+     *       phase or round is not a missed turn change, as the display is switched in afresh for it
+     */
+    private boolean turnMovedOnWhileMuted(IGame game) {
+        return (game.getPhase() == mutedPhase)
+              && (game.getCurrentRound() == mutedRound)
+              && (game.getTurnIndex() != mutedTurnIndex)
+              && (game.getTurn() != null);
+    }
+
+    /** Hands the current turn to {@link #gameTurnChange}, as the turn change dropped while muted would have. */
+    private void replayCurrentTurn(IGame game) {
+        int turnPlayerId = game.getTurn().playerId();
+        Player turnPlayer = game.getPlayer(turnPlayerId);
+        if ((turnPlayer == null) && (turnPlayerId != Player.PLAYER_NONE)) {
+            return;
+        }
+        int turnIndex = game.getTurnIndex();
+        int previousPlayerId = (turnIndex > 0) ? game.getTurnsList().get(turnIndex - 1).playerId() : Player.PLAYER_NONE;
+        LOGGER.info("[TurnSync] {}: turn {} ({}) arrived while muted; replaying it", getClass().getSimpleName(),
+              turnIndex, (turnPlayer == null) ? "no player" : turnPlayer.getName());
+        gameTurnChange(new GameTurnChangeEvent(game, turnPlayer, previousPlayerId));
+    }
+
+    /** @return the class and method that called {@link #setIgnoringEvents}, for the log */
+    private static String callerName() {
+        return StackWalker.getInstance()
+              .walk(frames -> frames.skip(2)
+                    .findFirst()
+                    .map(frame -> frame.getClassName() + '.' + frame.getMethodName())
+                    .orElse("unknown"));
     }
 
     /**

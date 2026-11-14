@@ -344,6 +344,8 @@ public class Precognition implements Runnable {
                 case UPDATE_CUT_HEXES:
                 case SYNC_TEMPORARY_ECM_FIELDS:
                 case TEAM_INITIATIVE:
+                case PLAYER_PING:
+                case PLAYER_REFUSED_DIFFERENT_VERSION:
                     LOGGER.debug("Intentionally ignoring PacketCommand: {}", c.command().name());
                     break;
                 default:
@@ -446,33 +448,53 @@ public class Precognition implements Runnable {
     @Override
     public void run() {
         try {
-            // todo There's probably a better way to handle this than a loop that only exits
-            // on an error.
             while (!getDone().get()) {
-                if (!getEventsToProcess().isEmpty()) {
-                    processGameEvents();
-                    ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
-                          getGame().getEntitiesVector());
-                } else if (!getDirtyUnits().isEmpty()) {
-                    Integer entityId = getDirtyUnits().pollFirst();
-                    if (entityId != null) {
-                        Entity entity = getGame().getEntity(entityId);
-                        if ((entity != null) && isEntityOnMap(entity)) {
-                            unPause();
-                            // Entity toString() is only evaluated when DEBUG is enabled; see ensureUpToDate.
-                            LOGGER.debug("run = recalculating paths for {}", entity);
-                            getPathEnumerator().recalculateMovesFor(entity);
-                            LOGGER.debug("run = finished recalculating paths for {}", entity);
-                        }
-
-                    }
-                } else if (getWaitWhenDone().get()) {
-                    waitForUnpause(); // paused for a reason
-                } else {
-                    waitForUnpause(); // idling because there's nothing to do
+                try {
+                    runOnePass();
+                } catch (Exception exception) {
+                    // One failed pass must not end the thread. A movement turn waits for this thread to pause, so a
+                    // thread that died here froze the game with nothing in the log (issue #9476). The event or unit
+                    // that failed has already been taken off its queue, so the next pass moves on.
+                    LOGGER.error(exception, "Precognition pass failed for {}; carrying on", getOwner().getName());
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Error error) {
+            // Mark the thread done so a movement turn stops waiting for it, then let the Error end the thread
+            LOGGER.error(error, "Precognition for {} stopped unexpectedly; movement turns will no longer wait for it",
+                  getOwner().getName());
+            getDone().set(true);
+            throw error;
+        }
+    }
+
+    private void runOnePass() {
+        if (!getEventsToProcess().isEmpty()) {
+            processGameEvents();
+            // The packet handler changes the entity list under GAME_LOCK; reading it without the lock can throw.
+            // Copy the list under the lock and run the (expensive) ECM computation after releasing it.
+            List<Entity> entities;
+            GAME_LOCK.lock();
+            try {
+                entities = new ArrayList<>(getGame().getEntitiesVector());
+            } finally {
+                GAME_LOCK.unlock();
+            }
+            ecmInfo = ComputeECM.computeAllEntitiesECMInfo(entities);
+        } else if (!getDirtyUnits().isEmpty()) {
+            Integer entityId = getDirtyUnits().pollFirst();
+            if (entityId != null) {
+                Entity entity = getGame().getEntity(entityId);
+                if ((entity != null) && isEntityOnMap(entity)) {
+                    unPause();
+                    // Entity toString() is only evaluated when DEBUG is enabled; see ensureUpToDate.
+                    LOGGER.debug("run = recalculating paths for {}", entity);
+                    getPathEnumerator().recalculateMovesFor(entity);
+                    LOGGER.debug("run = finished recalculating paths for {}", entity);
+                }
+            }
+        } else {
+            // Either paused for a move, or idle with nothing to do
+            waitForUnpause();
         }
     }
 

@@ -71,8 +71,11 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 mapSettings.setNullBoards(TWGameManager.DEFAULT_BOARD);
                 gameManager.send(gameManager.createMapSettingsPacket());
                 gameManager.send(gameManager.createMapSizesPacket());
+                endPauseForLobby();
                 gameManager.checkForObservers();
+                clearPlayersDoneForLobby();
                 gameManager.transmitAllPlayerUpdates();
+                clearTurnsForLobby();
                 break;
             case INITIATIVE:
                 // remove the last traces of last round
@@ -390,6 +393,50 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
             default:
                 break;
         }
+    }
+
+    /**
+     * Ends any pause as the game returns to the lobby, so the lobby acts on Done presses and unit changes again. See
+     * {@link Server#endPauseForLobby()}.
+     */
+    private void endPauseForLobby() {
+        Server server = Server.getServerInstance();
+        if (server == null) {
+            LOGGER.debug("[LobbyReset] entering the lobby: no server instance, so no pause to end");
+            return;
+        }
+        server.endPauseForLobby();
+    }
+
+    /**
+     * Marks every player not done as the game returns to the lobby. The usual reset of the Done flags is skipped in
+     * report phases, which are exactly where a game is usually reset from, so without this every player arrived in the
+     * lobby already marked done. The flags reach the clients with the player updates sent next.
+     */
+    private void clearPlayersDoneForLobby() {
+        int playersMarkedDone = 0;
+        for (Player player : gameManager.getGame().getPlayersList()) {
+            if (player.isDone()) {
+                playersMarkedDone++;
+            }
+            player.setDone(false);
+        }
+        LOGGER.debug("[LobbyReset] entering the lobby: cleared the Done flag of {} player(s)", playersMarkedDone);
+    }
+
+    /**
+     * Empties the turn list and sends the empty list to every client as the game returns to the lobby. Report phases
+     * send no turn list, so after a reset from one of them each client still held the last turn of the old game, often
+     * another player's. The lobby's Done button only acts when no turn is pending or the pending turn is the player's
+     * own, so it silently did nothing until that client reconnected.
+     */
+    private void clearTurnsForLobby() {
+        int leftoverTurns = gameManager.getGame().getTurnsList().size();
+        gameManager.getGame().setTurnVector(new ArrayList<>());
+        gameManager.getGame().resetTurnIndex();
+        gameManager.sendCurrentTurns();
+        LOGGER.debug("[LobbyReset] entering the lobby: cleared {} leftover turn(s) and sent the empty turn list",
+              leftoverTurns);
     }
 
     /**

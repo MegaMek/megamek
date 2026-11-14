@@ -1559,11 +1559,6 @@ public class TestSupportVehicle extends TestEntity {
         return "Support Vehicle: " + supportVee.getDisplayName();
     }
 
-    @Override
-    public double getWeightArmor() {
-        return supportVee.getArmorWeight();
-    }
-
     /**
      * @return The total slot space
      */

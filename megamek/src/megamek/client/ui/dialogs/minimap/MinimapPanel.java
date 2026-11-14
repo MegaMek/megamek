@@ -86,6 +86,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.GifRecordingMode;
 import megamek.client.ui.clientGUI.IClientGUI;
+import megamek.client.ui.clientGUI.UnitOwnerColors;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.StringDrawer;
@@ -115,12 +116,11 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.units.*;
 import megamek.common.util.ImageUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.utilities.GifWriter;
 import megamek.utilities.GifWriterThread;
@@ -185,7 +185,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private static final String ACTION_SENSORS_SHOW = "SENSORS_SHOW";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
+    /** The colour theme file (in the minimap themes directory) used for every minimap. */
+    private static final String MINIMAP_THEME_FILE = "defaultminimap.theme";
     private BufferedImage mapImage;
     private final BoardView bv;
     private final Game game;
@@ -249,35 +250,22 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
     /** Returns a minimap image of the given board at the maximum zoom index. */
     public static BufferedImage getMinimapImageMaxZoom(Board board) {
-        return getMinimapImage(board, MAX_ZOOM, null);
-    }
-
-    /** Returns a minimap image of the given board at the maximum zoom index. */
-    public static BufferedImage getMinimapImageMaxZoom(Board board, @Nullable File minimapTheme) {
-        return getMinimapImage(board, MAX_ZOOM, minimapTheme);
+        return getMinimapImage(board, MAX_ZOOM);
     }
 
     /** Returns a minimap image of the given board at the given zoom index. */
     public static BufferedImage getMinimapImage(Board board, int zoom) {
         Game game = new Game();
         game.setBoard(board);
-        return getMinimapImage(game, null, zoom, null, 0);
-    }
-
-    /** Returns a minimap image of the given board at the given zoom index. */
-    public static BufferedImage getMinimapImage(Board board, int zoom, @Nullable File minimapTheme) {
-        Game game = new Game();
-        game.setBoard(board);
-        return getMinimapImage(game, null, zoom, minimapTheme, 0);
+        return getMinimapImage(game, null, zoom, 0);
     }
 
     /**
      * Returns a minimap image of the given board at the given zoom index. The game and {@link BoardView} object will be
      * used to display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, BoardView boardView, int zoom, @Nullable File minimapTheme,
-          int boardId) {
-        return getMinimapImage(game, boardView, zoom, null, minimapTheme, Collections.emptyList(), boardId);
+    public static BufferedImage getMinimapImage(Game game, BoardView boardView, int zoom, int boardId) {
+        return getMinimapImage(game, boardView, zoom, null, Collections.emptyList(), boardId);
     }
 
     /**
@@ -285,14 +273,14 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
      * used to display additional information.
      */
     public static BufferedImage getMinimapImage(Game game, BoardView boardView, int zoom, IClientGUI clientGui,
-          @Nullable File minimapTheme, List<Line> movePathLines, int boardId) {
+          List<Line> movePathLines, int boardId) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < MIM_ZOOM) || (zoom > MAX_ZOOM)) {
                 throw new Exception("The given zoom index is out of bounds.");
             }
 
-            MinimapPanel tempMM = new MinimapPanel(null, game, boardView, clientGui, minimapTheme, boardId);
+            MinimapPanel tempMM = new MinimapPanel(null, game, boardView, clientGui, boardId);
             tempMM.zoom = zoom;
             tempMM.movePathLines.clear();
             tempMM.movePathLines.addAll(movePathLines);
@@ -313,8 +301,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
      */
 
     public MinimapPanel(@Nullable MinimapDialog minimapDialog, Game game, @Nullable BoardView boardView,
-          @Nullable IClientGUI clientGUI,
-          @Nullable File minimapTheme, int boardId) {
+          @Nullable IClientGUI clientGUI, int boardId) {
         this.game = Objects.requireNonNull(game);
         board = Objects.requireNonNull(this.game.getBoard(boardId));
         this.boardId = boardId;
@@ -325,7 +312,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         if (clientGui != null && clientGui.getClient() instanceof Client castClient) {
             client = castClient;
         }
-        initializeColors(minimapTheme);
+        initializeColors();
         if (dialog != null) {
             initializeDialog();
             initializeListeners();
@@ -360,8 +347,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                           filenameTemplate.formatted(game.getRoundCount(), e.getOldPhase().ordinal(), e.getOldPhase()));
 
                     try {
-                        BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null,
-                              movePathLines, boardId);
+                        BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, movePathLines,
+                              boardId);
                         if (GUIP.getGameSummaryMinimap()) {
                             ImageIO.write(image, "png", imgFile);
                         }
@@ -625,7 +612,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /** Initialize default colors and override with config file if there is one. */
-    private void initializeColors(File minimapTheme) {
+    private void initializeColors() {
 
         BACKGROUND = Color.black;
         terrainColors[0] = new Color(218, 215, 170);
@@ -658,9 +645,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         int green;
         int blue;
 
-        if (minimapTheme == null || !minimapTheme.exists()) {
-            minimapTheme = CLIENT_PREFERENCES.getMinimapTheme();
-        }
+        File minimapTheme = new MegaMekFile(Configuration.minimapThemesDir(), MINIMAP_THEME_FILE).getFile();
 
         // only while the defaults are hard-coded!
         if (!minimapTheme.exists()) {
@@ -1527,19 +1512,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         boolean stratOpsSymbols = GUIP.getMmSymbol();
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer(), game);
 
         if (removedFromGame) {
             iconColor = changeColorForDestroyedUnit(iconColor.brighter(), DESTROYED_UNIT_ALPHA);
@@ -1679,6 +1652,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
 
+        if (MinimapDamagePip.shouldDraw(entity, getLocalPlayer(), GUIP.getShowDamageLevel(), removedFromGame)) {
+            MinimapDamagePip.draw(g2, entity, UNIT_SCALE[zoom] / 100.0d, stratOpsSymbols);
+        }
+
         if (GUIP.getDrawFacingArrowsOnMiniMap() && !removedFromGame && !entity.isInfantry()) {
             // draw facing arrow
             var facing = entity.getFacing();
@@ -1738,19 +1715,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = UnitOwnerColors.colorFor(entity.getOwner(), getLocalPlayer(), game);
         Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
 
@@ -2345,9 +2310,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.MM_SYMBOL)
-              || e.getName().equals(GUIPreferences.TEAM_COLORING)) {
+    public void preferenceChange(PreferenceChangeEvent event) {
+        if (event.getName().equals(GUIPreferences.MM_SYMBOL)
+              || event.getName().equals(GUIPreferences.TEAM_COLORING)
+              || event.getName().equals(GUIPreferences.SHOW_DAMAGE_LEVEL)) {
             refreshMap();
         }
     }

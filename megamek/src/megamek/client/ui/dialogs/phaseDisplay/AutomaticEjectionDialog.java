@@ -34,26 +34,31 @@
 package megamek.client.ui.dialogs.phaseDisplay;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -81,21 +86,20 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int PADDING = UIUtil.scaleForGUI(10);
     private static final int PADDING_SMALL = UIUtil.scaleForGUI(5);
-    private static final int HEADER_ROW_HEIGHT = 35;
-    private static final int UNIT_ROW_HEIGHT = 30;
-    private static final int MINIMUM_LIST_HEIGHT = 95;
-    private static final int MAXIMUM_LIST_HEIGHT = 335;
-    private static final int LIST_WIDTH = 520;
+    private static final int MAXIMUM_LIST_HEIGHT = UIUtil.scaleForGUI(335);
+    private static final int SCROLL_INCREMENT = UIUtil.scaleForGUI(16);
 
     private final ClientGUI clientGUI;
     private final Game game;
     private final List<Entity> unitsWithEjectionSystems;
     private final String lethalCondition;
+    private final Set<Integer> unitsWhoseCrewDies = new HashSet<>();
     private final Map<Integer, JCheckBox> ejectionBoxes = new HashMap<>();
     private final Map<Integer, Boolean> settingsOnOpening = new HashMap<>();
     private final JCheckBox dontAskAgain =
           new JCheckBox(Messages.getString("AutomaticEjectionDialog.dontAskAgain"));
 
+    private JButton turnOffUnprotectedButton;
     private JButton deployButton;
     private JButton cancelButton;
     private boolean deploymentCancelled = true;
@@ -112,19 +116,55 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
         super(parent, Messages.getString("AutomaticEjectionDialog.title"), true);
         this.clientGUI = clientGUI;
         this.game = clientGUI.getClient().getGame();
-        this.unitsWithEjectionSystems = unitsWithEjectionSystems;
+        this.unitsWithEjectionSystems = unprotectedFirst(unitsWithEjectionSystems);
         this.lethalCondition = lethalCondition;
 
         initializeUI();
+        bindKeys();
         pack();
+        // The packed size fits every line of text, so the player can make the window bigger but never cut it off
+        setMinimumSize(getSize());
         setLocationRelativeTo(parent);
         LOGGER.debug("[EnvironmentalSealing] Automatic ejection dialog opened for {} unit(s)",
               unitsWithEjectionSystems.size());
     }
 
+    /**
+     * Puts the units whose crews would die on ejection at the top, so the ones that need a decision are seen first.
+     * Each group keeps the order it was given in. Also records which units those are, for the rest of the dialog.
+     *
+     * @param units the player's units with an ejection system
+     *
+     * @return the same units, unprotected crews first
+     */
+    private List<Entity> unprotectedFirst(List<Entity> units) {
+        List<Entity> unprotected = new ArrayList<>();
+        List<Entity> protectedCrews = new ArrayList<>();
+        for (Entity entity : units) {
+            if (CrewArmorKitRules.survivesEjection(entity, game)) {
+                protectedCrews.add(entity);
+            } else {
+                unprotected.add(entity);
+                unitsWhoseCrewDies.add(entity.getId());
+            }
+        }
+        unprotected.addAll(protectedCrews);
+        return unprotected;
+    }
+
+    /**
+     * Enter deploys and Escape cancels, as the two buttons would.
+     */
+    private void bindKeys() {
+        getRootPane().setDefaultButton(deployButton);
+        getRootPane().registerKeyboardAction(event -> cancelButton.doClick(),
+              KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+              JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
+
     private void initializeUI() {
         setLayout(new BorderLayout(PADDING, PADDING));
-        setResizable(false);
+        setResizable(true);
 
         JPanel mainPanel = new JPanel(new BorderLayout(PADDING, PADDING));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
@@ -141,7 +181,8 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Builds the unit rows: one tick box each, showing whether that unit is currently set to eject.
+     * Builds the unit rows: one tick box each, showing whether that unit is currently set to eject. A crew that would
+     * die out there has its crew entry in the warning colour, and its tick box says so when hovered.
      *
      * @return the scrollable list of units
      */
@@ -172,24 +213,56 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
             constraints.gridx = 0;
             unitPanel.add(new JLabel(entity.getShortName()), constraints);
 
+            boolean crewDies = unitsWhoseCrewDies.contains(entity.getId());
             constraints.gridx = 1;
-            unitPanel.add(new JLabel(crewStatus(entity)), constraints);
+            JLabel crewLabel = new JLabel(crewStatus(entity));
+            if (crewDies) {
+                crewLabel.setForeground(GUIP.getWarningColor());
+            }
+            unitPanel.add(crewLabel, constraints);
 
+            // The column header names the setting, so the box itself carries no text
             constraints.gridx = 2;
+            constraints.anchor = GridBagConstraints.CENTER;
             boolean willEject = AutomaticEjectionRules.willEjectAutomatically(entity, game);
-            JCheckBox ejectionBox = new JCheckBox(Messages.getString("AutomaticEjectionDialog.ejectAutomatically"));
+            JCheckBox ejectionBox = new JCheckBox();
             ejectionBox.setSelected(willEject);
-            ejectionBox.setToolTipText(Messages.getString("AutomaticEjectionDialog.ejectAutomatically.tooltip"));
+            ejectionBox.getAccessibleContext().setAccessibleName(Messages.getString(
+                  "AutomaticEjectionDialog.ejectAutomatically.accessibleName", entity.getShortName()));
+            ejectionBox.setToolTipText(Messages.getString(crewDies
+                  ? "AutomaticEjectionDialog.ejectAutomatically.tooltip"
+                  : "AutomaticEjectionDialog.ejectAutomatically.tooltip.protected"));
             unitPanel.add(ejectionBox, constraints);
+            constraints.anchor = GridBagConstraints.WEST;
             ejectionBoxes.put(entity.getId(), ejectionBox);
             settingsOnOpening.put(entity.getId(), willEject);
         }
 
-        JScrollPane scrollPane = new JScrollPane(unitPanel);
-        int contentHeight = HEADER_ROW_HEIGHT + (unitsWithEjectionSystems.size() * UNIT_ROW_HEIGHT);
-        int listHeight = Math.clamp(contentHeight, MINIMUM_LIST_HEIGHT, MAXIMUM_LIST_HEIGHT);
-        scrollPane.setPreferredSize(UIUtil.scaleForGUI(LIST_WIDTH, listHeight));
+        JScrollPane scrollPane = new JScrollPane(unitPanel,
+              JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+              JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_INCREMENT);
+        scrollPane.setPreferredSize(listSize(scrollPane, unitPanel));
         return scrollPane;
+    }
+
+    /**
+     * Sizes the list from what is actually in it, so a long crew entry is never cut off. The height stops at a cap and
+     * the list scrolls past it; room for the scroll bar is always kept, so a scrolling list does not hide the last
+     * column.
+     *
+     * @param scrollPane the scroll pane the list sits in
+     * @param unitPanel  the rows of units
+     *
+     * @return the size the list should open at
+     */
+    private static Dimension listSize(JScrollPane scrollPane, JPanel unitPanel) {
+        Dimension contentSize = unitPanel.getPreferredSize();
+        Insets borderInsets = scrollPane.getInsets();
+        int scrollBarWidth = scrollPane.getVerticalScrollBar().getPreferredSize().width;
+        int width = contentSize.width + scrollBarWidth + borderInsets.left + borderInsets.right;
+        int height = Math.min(contentSize.height + borderInsets.top + borderInsets.bottom, MAXIMUM_LIST_HEIGHT);
+        return new Dimension(width, height);
     }
 
     /**
@@ -221,16 +294,28 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Builds the tick box that turns the warning off for good, and the two buttons under it.
+     * Builds the button that unticks every unprotected crew at once, the tick box that turns the warning off for good,
+     * and the two buttons under them.
      *
      * @return the panel that sits along the bottom of the dialog
      */
     private JPanel buildButtonPanel() {
         JPanel southPanel = new JPanel(new BorderLayout());
 
-        JPanel nagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, PADDING, 0));
+        JPanel optionsPanel = new JPanel(new BorderLayout());
+        JPanel bulkPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, PADDING, 0));
+        turnOffUnprotectedButton = new JButton(Messages.getString("AutomaticEjectionDialog.turnOffUnprotected"));
+        turnOffUnprotectedButton.setToolTipText(
+              Messages.getString("AutomaticEjectionDialog.turnOffUnprotected.tooltip"));
+        turnOffUnprotectedButton.setEnabled(!unitsWhoseCrewDies.isEmpty());
+        turnOffUnprotectedButton.addActionListener(this);
+        bulkPanel.add(turnOffUnprotectedButton);
+        optionsPanel.add(bulkPanel, BorderLayout.NORTH);
+
+        JPanel nagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, PADDING, PADDING_SMALL));
         nagPanel.add(dontAskAgain);
-        southPanel.add(nagPanel, BorderLayout.NORTH);
+        optionsPanel.add(nagPanel, BorderLayout.SOUTH);
+        southPanel.add(optionsPanel, BorderLayout.NORTH);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, PADDING, PADDING));
         deployButton = new JButton(Messages.getString("AutomaticEjectionDialog.deploy"));
@@ -246,6 +331,10 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
+        if (event.getSource() == turnOffUnprotectedButton) {
+            turnOffUnprotectedCrews();
+            return;
+        }
         if (event.getSource() == deployButton) {
             applyEjectionChanges();
             deploymentCancelled = false;
@@ -254,6 +343,21 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
             GUIP.setNagForAutoEject(false);
         }
         dispose();
+    }
+
+    /**
+     * Unticks every unit whose crew would die on ejection. Nothing is sent yet: the player can still change a box, and
+     * Cancel still undoes it all.
+     */
+    private void turnOffUnprotectedCrews() {
+        for (Integer entityId : unitsWhoseCrewDies) {
+            JCheckBox ejectionBox = ejectionBoxes.get(entityId);
+            if (ejectionBox != null) {
+                ejectionBox.setSelected(false);
+            }
+        }
+        LOGGER.debug("[EnvironmentalSealing] Unticked automatic ejection for {} unprotected crew(s)",
+              unitsWhoseCrewDies.size());
     }
 
     /**

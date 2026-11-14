@@ -33,9 +33,6 @@
 
 package megamek.common.cost;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.equipment.ArmorType;
 import megamek.common.units.ConvFighter;
@@ -96,13 +93,11 @@ public class ConvFighterCostCalculator {
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -fighter.getPriceMultiplier();
-        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
-              .setScale(2, RoundingMode.UP)
-              .doubleValue();
+        double cost = Math.round(CostCalculator.calculateCost(costs));
         String[] systemNames = { "Avionics", "VSTOL Gear", "Structure", "Flight Systems", "Engine", "Fuel Tanks",
                                  "Armor", "Heat Sinks", "Equipment", "Power Amplifiers", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, fighter, ignoreAmmo, systemNames, 8, roundedCost, costs);
+        CostCalculator.fillInReport(costReport, fighter, ignoreAmmo, systemNames, 8, cost, costs);
 
-        return roundedCost;
+        return cost;
     }
 }

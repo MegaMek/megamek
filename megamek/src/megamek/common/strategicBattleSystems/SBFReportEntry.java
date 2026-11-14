@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -74,7 +74,7 @@ public class SBFReportEntry implements ReportEntry {
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
         styleSheet.addRule("pre { font-family:Noto Sans; font-size:" + size + "pt; }");
         styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
-        styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");
+        styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColorForTheme()) + " }");
         styleSheet.addRule("span.success { color: " + hexColor(GUIP.getReportSuccessColor()) + " }");
         styleSheet.addRule("span.miss { color: " + hexColor(GUIP.getReportMissColor()) + " }");
         styleSheet.addRule(".roll { font-weight:bold; }");

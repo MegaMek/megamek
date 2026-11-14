@@ -37,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,9 +72,10 @@ class GeneralEntityReadoutCostOverrideTest {
      * @since 0.51.01
      */
     private static String formatted(double cost) {
-        NumberFormat costFormatter = NumberFormat.getInstance();
-        costFormatter.setMinimumFractionDigits(2);
-        costFormatter.setMaximumFractionDigits(2);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator('.');
+        symbols.setGroupingSeparator(',');
+        DecimalFormat costFormatter = new DecimalFormat("#,###", symbols);
         return costFormatter.format(cost) + " C-bills";
     }
 

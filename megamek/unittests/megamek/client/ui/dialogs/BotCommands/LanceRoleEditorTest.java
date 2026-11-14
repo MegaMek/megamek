@@ -39,7 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import megamek.common.OffBoardDirection;
@@ -182,7 +184,62 @@ class LanceRoleEditorTest {
 
         trucks.get(1).setUnitOrders(UnitOrders.NONE.withFormation(new FormationOrder(FormationShape.WEDGE, 3, 1, 1,
               FormationPace.WALK, ContactRule.BREAK)));
-        assertTrue(MoveOrderCommands.convoyColumnCommands(trucks, convoy).isEmpty());
+        // the shape stays; only the convoy's Run pace and Push through go on it (QA playtest, #9524)
+        assertEquals(List.of("/unitOrder 4 FORMATION shape=WEDGE leader=3 spacing=1 slot=1 pace=RUN contact=HOLD "
+              + "together=false"), MoveOrderCommands.convoyColumnCommands(trucks, convoy));
+
+        trucks.get(1).setUnitOrders(UnitOrders.NONE.withFormation(new FormationOrder(FormationShape.WEDGE, 3, 1, 1,
+              FormationPace.RUN, ContactRule.HOLD)));
+        assertTrue(MoveOrderCommands.convoyColumnCommands(trucks, convoy).isEmpty(), "already a convoy's pace");
+    }
+
+    /** The formation a lobby command would give: shape, leader, slot, pace and contact, as the server reads them. */
+    private static FormationOrder formationFrom(String command) {
+        Map<String, String> arguments = new HashMap<>();
+        for (String word : command.split(" ")) {
+            int equals = word.indexOf('=');
+            if (equals > 0) {
+                arguments.put(word.substring(0, equals), word.substring(equals + 1));
+            }
+        }
+        return new FormationOrder(FormationShape.valueOf(arguments.get("shape")),
+              Integer.parseInt(arguments.get("leader")), Integer.parseInt(arguments.get("spacing")),
+              Integer.parseInt(arguments.get("slot")),
+              FormationPace.valueOf(arguments.getOrDefault("pace", FormationPace.WALK.name())),
+              ContactRule.valueOf(arguments.getOrDefault("contact", ContactRule.TURN_AND_FIRE.name())),
+              Boolean.parseBoolean(arguments.get("together")));
+    }
+
+    @Test
+    void aConvoyInALineEndsUpTheSameWhicheverIsSetFirstFormationOrRole() {
+        // QA playtest, #9524: Role then formation gave Walk and Turn and fire; formation then Role gave a Column
+        LanceRole convoy = LanceRole.convoy(OffBoardDirection.NORTH);
+
+        List<Entity> roleFirst = List.of(unit(3, Board.START_S), unit(4, Board.START_S));
+        for (Entity truck : roleFirst) {
+            truck.setLanceRole(convoy);
+        }
+        for (String command : MoveOrderCommands.convoyColumnCommands(roleFirst, convoy)) {
+            roleFirst.get(command.startsWith("/unitOrder 3 ") ? 0 : 1).setUnitOrders(UnitOrders.NONE.withFormation(
+                  formationFrom(command)));
+        }
+        FormationOrder afterRoleThenLine = formationFrom(MoveOrderCommands.lobbyFormationCommands(roleFirst,
+              FormationShape.LINE).get(1));
+
+        List<Entity> lineFirst = List.of(unit(3, Board.START_S), unit(4, Board.START_S));
+        for (String command : MoveOrderCommands.lobbyFormationCommands(lineFirst, FormationShape.LINE)) {
+            lineFirst.get(command.startsWith("/unitOrder 3 ") ? 0 : 1).setUnitOrders(UnitOrders.NONE.withFormation(
+                  formationFrom(command)));
+        }
+        assertEquals(FormationPace.WALK, lineFirst.get(1).getUnitOrders().getFormation().orElseThrow().getPace(),
+              "a lance that is no convoy keeps the default pace");
+        FormationOrder afterLineThenRole = formationFrom(MoveOrderCommands.convoyColumnCommands(lineFirst, convoy)
+              .get(1));
+
+        FormationOrder expected = new FormationOrder(FormationShape.LINE, 3, FormationOrder.DEFAULT_SPACING, 1,
+              FormationPace.RUN, ContactRule.HOLD, true);
+        assertEquals(expected, afterRoleThenLine);
+        assertEquals(expected, afterLineThenRole);
     }
 
     /** A game with two bot lances, Supply and Fire, and a human player's lance on the same side. */

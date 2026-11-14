@@ -36,8 +36,11 @@ package megamek.server.totalWarfare;
 import java.util.List;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
+import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
+import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -397,5 +400,80 @@ public class DeploymentServerHelper {
         return game.hasBoardLocation(coords, boardId)
                && game.getBoard(boardId).isLegalDeployment(coords, entity)
                && isLegalTrainFootprint(entity, coords, boardId, nFacing);
+    }
+
+    /**
+     * Finds a unit that the deploying unit would stack illegally with. Every hex the unit covers counts, so a
+     * DropShip's whole seven-hex footprint is checked. The client makes the same check, but under double blind it
+     * cannot see enemy units, so the server must make it too. Hidden units count as well: they are still physically in
+     * the hex.
+     * <p>
+     * No check is made for an assault drop, which lands later and resolves its own landing hex, for a flying
+     * aerospace unit, which never stacks, or for a VTOL carrying no external units, which
+     * {@link #processDeployment} raises above any unit in the hex.
+     * </p>
+     *
+     * @param entity      the unit being deployed
+     * @param coords      the centre hex of the deployment
+     * @param boardId     the board of the deployment
+     * @param elevation   the elevation, or the altitude for an aerospace unit, the unit deploys at
+     * @param assaultDrop {@code true} if the unit is making an assault drop
+     *
+     * @return the unit causing the violation, or {@code null} when the deployment does not break stacking
+     */
+    public @Nullable Entity findDeploymentStackingViolation(Entity entity, Coords coords, int boardId, int elevation,
+          boolean assaultDrop) {
+        Game game = gameManager.getGame();
+        if ((game == null) || (coords == null) || !game.hasBoardLocation(coords, boardId)) {
+            return null;
+        }
+        if (assaultDrop) {
+            LOGGER.info("[Deploy] {} at {}: assault drop, stacking resolved on landing", entity.getDisplayName(),
+                  coords.getBoardNum());
+            return null;
+        }
+        if (entity.isAero() && (elevation > 0)) {
+            LOGGER.info("[Deploy] {} at {}: aerospace in flight at altitude {}, no stacking", entity.getDisplayName(),
+                  coords.getBoardNum(), elevation);
+            return null;
+        }
+        if ((entity instanceof VTOL) && entity.getExternalUnits().isEmpty()) {
+            LOGGER.info("[Deploy] {} at {}: VTOL is raised clear of any unit", entity.getDisplayName(),
+                  coords.getBoardNum());
+            return null;
+        }
+        Entity violation = Compute.stackingViolation(game, entity, elevation, coords, boardId, null,
+              entity.climbMode(), false);
+        if (violation == null) {
+            LOGGER.info("[Deploy] {} at {}: no stacking violation", entity.getDisplayName(), coords.getBoardNum());
+        } else {
+            LOGGER.info("[Deploy] {} at {}: refused, stacking violation with {} at {}", entity.getDisplayName(),
+                  coords.getBoardNum(), violation.getDisplayName(),
+                  (violation.getPosition() == null) ? "?" : violation.getPosition().getBoardNum());
+        }
+        return violation;
+    }
+
+    /**
+     * Refuses a deployment that breaks stacking. The player is told why, and the unit in the way is sent to them so
+     * their own deployment check rules the hex out. Without that, a bot that cannot see the unit under double blind
+     * would pick the same hex again and never finish deploying. The refused unit is resent too, as the client already
+     * marked it deployed.
+     *
+     * @param connId    the connection of the player whose deployment is refused
+     * @param entity    the unit whose deployment is refused
+     * @param blocker   the unit causing the stacking violation
+     * @param coords    the refused deployment hex
+     * @param turnOwner the player whose turn it is, or {@link Player#PLAYER_NONE} if unknown
+     */
+    void refuseStackedDeployment(int connId, Entity entity, Entity blocker, Coords coords, int turnOwner) {
+        gameManager.send(connId, gameManager.createEntityPacket(blocker.getId(), null));
+        gameManager.send(connId, gameManager.createEntityPacket(entity.getId(), null));
+        gameManager.sendServerChat(connId, Messages.getString("DeploymentDisplay.stackingRefused",
+              entity.getShortName(), coords.getBoardNum(), blocker.getShortName()));
+        gameManager.send(connId, gameManager.getPacketHelper().createTurnListPacket());
+        if (turnOwner != Player.PLAYER_NONE) {
+            gameManager.send(connId, gameManager.getPacketHelper().createTurnIndexPacket(turnOwner));
+        }
     }
 }

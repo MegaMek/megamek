@@ -1271,6 +1271,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove(true);
     }
 
+    /**
+     * Returns true if the last step of the plotted path crosses a height change the unit could only make by climbing.
+     * The step starts where the step before it ended, or where the unit stands if it is the first step.
+     *
+     * @param entity the moving unit
+     *
+     * @return {@code true} if the last step would need a climb
+     */
+    private boolean lastStepNeedsClimbing(Entity entity) {
+        MoveStep lastStep = cmd.getLastStep();
+        // Not getSecondLastStep(): on a one-step path it returns the last step itself
+        MoveStep previousStep = cmd.getStep(cmd.length() - 2);
+        Coords fromCoords = (previousStep != null) ? previousStep.getPosition() : entity.getPosition();
+        int fromElevation = (previousStep != null) ? previousStep.getElevation() : entity.getElevation();
+        return ClimbingHelper.stepNeedsClimbing(entity, fromCoords, fromElevation, lastStep.getPosition(), game);
+    }
+
     private void updateMove(boolean redrawMovement) {
         Entity currentEntity = currentEntity();
         if (redrawMovement &&
@@ -1280,7 +1297,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // Check if the path ends with an illegal FORWARDS step that could have been a climb
-        // Show feedback to the player about why climbing is not possible
+        // Show feedback to the player about why climbing is not possible. The step must cross
+        // a height change too big to walk: a step that is illegal only because it runs out of
+        // MP is not a climb attempt (#9492).
         if ((currentEntity instanceof Mek)
             && (cmd != null)
             && (cmd.getLastStep() != null)
@@ -1288,7 +1307,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             && (cmd.getLastStep().getMovementType(true) == EntityMovementType.MOVE_ILLEGAL)
             && cmd.getLastStep().climbMode()
             && !ClimbingHelper.canClimb(currentEntity)
-            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)) {
+            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+            && lastStepNeedsClimbing(currentEntity)) {
             String reason = ClimbingHelper.getClimbingImpossibleReason(currentEntity);
             // updateMove() runs on every step add/redraw while plotting, so a modal
             // JOptionPane here would re-fire and block UI on every keypress. Use a
@@ -1391,8 +1411,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MoveStep edgeLastStep = (cmd != null) ? cmd.getLastStep() : null;
         boolean edgeHasLastStep = edgeLastStep != null;
         // distanceToFinalIsOne catches both: a single direct step has the same final-coord
-        // distance as a long routed loop that ends on an adjacent hex.
-        boolean distanceToFinalIsOne = (currentEntity != null) && edgeHasLastStep
+        // distance as a long routed loop that ends on an adjacent hex. A walk-on unit has no position
+        // until it is placed (issue 9547).
+        boolean distanceToFinalIsOne = (currentEntity != null) && (currentEntity.getPosition() != null)
+                                       && edgeHasLastStep
                                        && (currentEntity.getPosition().distance(edgeLastStep.getPosition()) == 1);
         long forwardStepCount = (cmd != null) ? cmd.getStepVector().stream()
                                                    .filter(s -> s.getType() == MoveStepType.FORWARDS).count() : 0;
@@ -1655,7 +1677,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         boolean hasLastStep = (cmd != null) && (cmd.getLastStep() != null);
-        boolean fleeStart = !hasLastStep && movingEntity.canFlee();
+        // A walk-on unit has no hex until it is placed, and a move from no hex cannot be sent (issue 9547). It can
+        // flee once placed on the edge.
+        boolean isPlaced = movingEntity.getPosition() != null;
+        boolean fleeStart = !hasLastStep && isPlaced && movingEntity.canFlee();
         boolean fleeEnd = hasLastStep
                           && (cmd.getMpUsed() < cmd.getMaxMP())
                           && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL)
@@ -2073,7 +2098,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
         computeCFWarningHexes(currentlySelectedEntity);
 
-        jumpSubGear = GEAR_SUB_STANDARD;
         clearFlightPath();
         Color walkColor = GUIP.getMoveDefaultColor();
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(walkColor));
@@ -2561,6 +2585,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 }
             }
+        }
+
+        // A unit walking on from the map edge never passes through the deployment phase, where this warning is
+        // otherwise given. Core rules make every edge-zone unit walk on, so without this most of a Core force
+        // arrives unwarned. Cancel keeps the planned path and sends nothing. The DEPLOY step is the test because
+        // planning a walk-on already marks the unit deployed on this client, so canWalkOnThisRound is false here.
+        boolean isWalkingOn = (currentlySelectedEntity != null) && (cmd != null)
+              && cmd.contains(MoveStepType.DEPLOY);
+        if (isWalkingOn && clientgui.getAutomaticEjectionWarning()
+              .warnIfDue("Walking on " + currentlySelectedEntity.getShortName())) {
+            return true;
         }
 
         return currentEntity() == null;

@@ -80,11 +80,11 @@ public class AeroCostCalculator {
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -aero.getPriceMultiplier();
-        double cost = CostCalculator.calculateCost(costs);
+        double cost = Math.round(CostCalculator.calculateCost(costs));
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Structure", "Flight Systems", "Engine",
                                  "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, aero, ignoreAmmo, systemNames, 9, cost, costs);
 
-        return Math.round(cost);
+        return cost;
     }
 }

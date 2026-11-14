@@ -38,7 +38,6 @@ import java.util.Vector;
 
 import megamek.common.Report;
 import megamek.common.board.Board;
-import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
@@ -125,29 +124,19 @@ public class NuclearDetonationResolver {
               profile.craterDepth(), craterRadius);
         Vector<Integer> blastedUnitsVec = new Vector<>();
         if (detonatesOnLowAltitudeMap) {
-            LOGGER.info("[Nukes] Board {} is a low-altitude map: no crater, ground blast, terrain damage or fires",
-                  boardId);
-        } else {
-            resolveOnGroundMap(position, boardId, profile, changedHexes, blastedUnitsVec, vDesc);
-        }
-
-        BoardLocation skyGroundZero = NuclearLowAltitudeBlast.lowAltitudeGroundZero(game, position, boardId);
-        NuclearLowAltitudeBlast lowAltitudeBlast = (skyGroundZero == null)
-              ? null
-              : new NuclearLowAltitudeBlast(gameManager, skyGroundZero.boardId());
-        if (lowAltitudeBlast != null) {
+            LOGGER.info("[Nukes] Board {} is a low-altitude map: no crater, ground blast, terrain damage or fires; "
+                  + "the blast sweeps the aircraft instead", boardId);
+            NuclearLowAltitudeBlast lowAltitudeBlast = new NuclearLowAltitudeBlast(gameManager, boardId);
             Vector<Report> skyReports = new Vector<>();
-            lowAltitudeBlast.apply(skyGroundZero.coords(), profile, skyReports, blastedUnitsVec);
+            lowAltitudeBlast.apply(position, profile, skyReports, blastedUnitsVec);
             Report.indentAll(skyReports, 2);
             vDesc.addAll(skyReports);
-        }
-
-        // Lastly, do secondary effects: on the ground map, then on the low-altitude map above it.
-        if (!detonatesOnLowAltitudeMap) {
+            lowAltitudeBlast.applySecondaryEffects(position, profile, vDesc);
+        } else {
+            LOGGER.info("[Nukes] Board {} is a ground map: crater, ground blast, terrain damage and fires", boardId);
+            resolveOnGroundMap(position, boardId, profile, changedHexes, blastedUnitsVec, vDesc);
+            // Lastly, do secondary effects.
             applyGroundSecondaryEffects(position, boardId, profile, vDesc);
-        }
-        if (lowAltitudeBlast != null) {
-            lowAltitudeBlast.applySecondaryEffects(skyGroundZero.coords(), profile, vDesc);
         }
 
         LOGGER.info("[Nukes] Detonation at hex {} resolved in {} ms; {} changed hexes sent in one update",

@@ -34,7 +34,6 @@ package megamek.server.nuclear;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -46,7 +45,6 @@ import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Board;
-import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.enums.NuclearWeaponType;
@@ -66,18 +64,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * A nuclear blast on the Low-Altitude Map (IO:AE p.166): a ground map inside a sky map, with fighters flying above it.
+ * A nuclear blast on the Low-Altitude Map (IO:AE p.166): a detonation on a sky map, with fighters flying around it.
  */
 class NuclearLowAltitudeBlastTest {
     private static final String UNIT_FILES = "testresources/megamek/common/units/";
     private static final String FIGHTER = "Mosquito Light Fighter.blk";
-    private static final int GROUND_BOARD = 0;
-    private static final int SKY_BOARD = 1;
-    private static final int GROUND_SIZE = 16;
+    private static final int SKY_BOARD = 0;
     private static final int SKY_SIZE = 20;
-    /** The sky hex that holds the ground map. */
-    private static final Coords GROUND_MAP_IN_THE_SKY = new Coords(5, 5);
-    private static final Coords GROUND_ZERO = new Coords(8, 8);
+    private static final Coords GROUND_ZERO = new Coords(5, 5);
 
     private TWGameManager gameManager;
     private Game game;
@@ -104,20 +98,9 @@ class NuclearLowAltitudeBlastTest {
         player = new Player(0, "Test");
         game.addPlayer(0, player);
 
-        Hex[] hexes = new Hex[GROUND_SIZE * GROUND_SIZE];
-        for (int index = 0; index < hexes.length; index++) {
-            hexes[index] = new Hex(0);
-        }
-        Board groundBoard = new Board();
-        groundBoard.newData(GROUND_SIZE, GROUND_SIZE, hexes, null);
-        groundBoard.setBoardId(GROUND_BOARD);
-        game.setBoard(GROUND_BOARD, groundBoard);
-
         skyBoard = Board.getSkyBoard(SKY_SIZE, SKY_SIZE);
         skyBoard.setBoardId(SKY_BOARD);
         game.setBoard(SKY_BOARD, skyBoard);
-        skyBoard.setEmbeddedBoard(GROUND_BOARD, GROUND_MAP_IN_THE_SKY);
-        groundBoard.setEnclosingBoard(SKY_BOARD);
     }
 
     @AfterEach
@@ -137,14 +120,26 @@ class NuclearLowAltitudeBlastTest {
         return fighter;
     }
 
-    /** A sky hex straight south of the ground map's hex, so its distance is exactly {@code distance}. */
+    /** A sky hex straight south of Ground Zero, so its distance is exactly {@code distance}. */
     private static Coords skyHexSouth(int distance) {
-        return new Coords(GROUND_MAP_IN_THE_SKY.getX(), GROUND_MAP_IN_THE_SKY.getY() + distance);
+        return new Coords(GROUND_ZERO.getX(), GROUND_ZERO.getY() + distance);
     }
 
-    private void detonateOnTheGround() {
-        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO, GROUND_BOARD,
+    private void detonateAirBurst() {
+        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO, SKY_BOARD,
               NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO), new Vector<Report>());
+    }
+
+    /**
+     * Runs only the blast step, not the secondary effects, which can also damage or destroy a fighter.
+     *
+     * @return the ids of the units the blast struck
+     */
+    private Vector<Integer> blastOnly() {
+        Vector<Integer> struckUnits = new Vector<>();
+        new NuclearLowAltitudeBlast(gameManager, SKY_BOARD).apply(GROUND_ZERO,
+              NuclearBlastProfile.airBurst(NuclearWeaponType.ALAMO), new Vector<Report>(), struckUnits);
+        return struckUnits;
     }
 
     private static boolean isHit(Entity fighter, int armorBefore) {
@@ -152,48 +147,31 @@ class NuclearLowAltitudeBlastTest {
     }
 
     @Test
-    void groundMapDetonationIsPlacedAtTheSkyHexHoldingThatMap() {
-        BoardLocation skyGroundZero = NuclearLowAltitudeBlast.lowAltitudeGroundZero(game, GROUND_ZERO, GROUND_BOARD);
-
-        assertEquals(BoardLocation.of(GROUND_MAP_IN_THE_SKY, SKY_BOARD), skyGroundZero);
-    }
-
-    @Test
-    void groundMapWithNoSkyMapAboveItHasNoLowAltitudeBlast() {
-        game.getBoard(GROUND_BOARD).setEnclosingBoard(Board.BOARD_NONE);
-
-        assertNull(NuclearLowAltitudeBlast.lowAltitudeGroundZero(game, GROUND_ZERO, GROUND_BOARD));
-    }
-
-    @Test
     void fighterThreeSkyHexesAwayBelowBlastHeightIsHit() throws Exception {
         // The Stuka example of IO:AE p.166: 3 hexes out at altitude 4 takes 541
         Entity fighter = placeFighter(skyHexSouth(3), 4);
-        int armorBefore = fighter.getTotalArmor();
 
-        detonateOnTheGround();
+        Vector<Integer> struckUnits = blastOnly();
 
-        assertTrue(isHit(fighter, armorBefore), "inside 4 sky hexes and below blast height 8");
+        assertTrue(struckUnits.contains(fighter.getId()), "inside 4 sky hexes and below blast height 8");
     }
 
     @Test
     void fighterAboveBlastHeightIsUntouched() throws Exception {
         Entity fighter = placeFighter(skyHexSouth(3), 9);
-        int armorBefore = fighter.getTotalArmor();
 
-        detonateOnTheGround();
+        Vector<Integer> struckUnits = blastOnly();
 
-        assertFalse(isHit(fighter, armorBefore), "altitude 9 is above the Alamo's blast height 8");
+        assertFalse(struckUnits.contains(fighter.getId()), "altitude 9 is above the Alamo's blast height 8");
     }
 
     @Test
     void fighterBeyondTheSkyRadiusIsUntouched() throws Exception {
         Entity fighter = placeFighter(skyHexSouth(5), 4);
-        int armorBefore = fighter.getTotalArmor();
 
-        detonateOnTheGround();
+        Vector<Integer> struckUnits = blastOnly();
 
-        assertFalse(isHit(fighter, armorBefore), "5 sky hexes out, beyond 58 / 17 = 4");
+        assertFalse(struckUnits.contains(fighter.getId()), "5 sky hexes out, beyond 58 / 17 = 4");
     }
 
     @Test
@@ -202,7 +180,7 @@ class NuclearLowAltitudeBlastTest {
         Entity fighter = placeFighter(skyHexSouth(6), 9);
         int armorBefore = fighter.getTotalArmor();
 
-        detonateOnTheGround();
+        detonateAirBurst();
 
         assertEquals(armorBefore, fighter.getTotalArmor(), "no blast damage this far out");
         assertTrue(fighter.isSufferingEMI(), "secondary effects reach it");
@@ -212,7 +190,7 @@ class NuclearLowAltitudeBlastTest {
     void fighterAboveSecondaryHeightEscapesTheSecondaryEffects() throws Exception {
         Entity fighter = placeFighter(skyHexSouth(6), 10);
 
-        detonateOnTheGround();
+        detonateAirBurst();
 
         assertFalse(fighter.isSufferingEMI(), "altitude 10 is above the Alamo's secondary effect height 9");
     }
@@ -221,24 +199,23 @@ class NuclearLowAltitudeBlastTest {
     void fighterBeyondTheSkySecondaryRadiusEscapesTheSecondaryEffects() throws Exception {
         Entity fighter = placeFighter(skyHexSouth(8), 4);
 
-        detonateOnTheGround();
+        detonateAirBurst();
 
         assertFalse(fighter.isSufferingEMI(), "8 sky hexes out, beyond 7");
     }
 
     @Test
-    void detonationOnTheSkyMapHitsFightersButLeavesTheMapAlone() throws Exception {
-        Coords skyGroundZero = new Coords(12, 12);
-        Entity fighter = placeFighter(skyGroundZero, 4);
+    void groundBurstOnTheSkyMapHitsFightersButLeavesTheMapAlone() throws Exception {
+        Entity fighter = placeFighter(GROUND_ZERO, 4);
         int armorBefore = fighter.getTotalArmor();
-        Hex hexBefore = skyBoard.getHex(skyGroundZero).duplicate();
+        Hex hexBefore = skyBoard.getHex(GROUND_ZERO).duplicate();
 
         // A ground burst with a crater: on the sky map it digs nothing
-        new NuclearDetonationResolver(gameManager).resolve(skyGroundZero, SKY_BOARD,
+        new NuclearDetonationResolver(gameManager).resolve(GROUND_ZERO, SKY_BOARD,
               NuclearBlastProfile.groundBurst(NuclearWeaponType.ALAMO), new Vector<Report>());
 
         assertTrue(isHit(fighter, armorBefore), "in the detonation's own sky hex");
-        Hex hexAfter = skyBoard.getHex(skyGroundZero);
+        Hex hexAfter = skyBoard.getHex(GROUND_ZERO);
         assertEquals(hexBefore.getLevel(), hexAfter.getLevel(), "no crater");
         assertFalse(hexAfter.containsTerrain(Terrains.RUBBLE), "no rubble");
     }

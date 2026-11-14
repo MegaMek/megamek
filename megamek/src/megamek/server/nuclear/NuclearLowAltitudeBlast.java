@@ -34,10 +34,7 @@ package megamek.server.nuclear;
 
 import java.util.Vector;
 
-import jakarta.annotation.Nullable;
 import megamek.common.Report;
-import megamek.common.board.Board;
-import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -66,44 +63,6 @@ class NuclearLowAltitudeBlast {
         this.skyBoardId = skyBoardId;
         this.blastDamage = new NuclearBlastDamage(gameManager, skyBoardId);
         this.secondaryEffects = new NuclearSecondaryEffects(gameManager);
-    }
-
-    /**
-     * Finds where a detonation sits on the Low-Altitude Map. A detonation on a low-altitude map is at its own hex. A
-     * detonation on a ground map that lies inside a low-altitude map is at the low-altitude hex holding that ground
-     * map. Example: a ground map embedded in sky hex 0505 puts any detonation on it at 0505 of the sky map.
-     *
-     * @param game     the game
-     * @param position the Ground Zero hex
-     * @param boardId  the board Ground Zero is on
-     *
-     * @return the detonation's place on the Low-Altitude Map, or {@code null} if there is no low-altitude map above it
-     */
-    static @Nullable BoardLocation lowAltitudeGroundZero(Game game, Coords position, int boardId) {
-        Board board = game.getBoard(boardId);
-        if (board == null) {
-            LOGGER.info("[Nukes] Board {} is not in the game: no low-altitude blast", boardId);
-            return null;
-        }
-        if (board.isLowAltitude()) {
-            LOGGER.info("[Nukes] Detonation at hex {} is on low-altitude board {}", position.getBoardNum(), boardId);
-            return BoardLocation.of(position, boardId);
-        }
-        Board enclosingBoard = game.getEnclosingBoard(board);
-        if ((enclosingBoard == null) || !enclosingBoard.isLowAltitude()) {
-            LOGGER.info("[Nukes] Ground board {} lies inside no low-altitude map: the blast stays on the ground map",
-                  boardId);
-            return null;
-        }
-        Coords skyHex = enclosingBoard.embeddedBoardPosition(boardId);
-        if (skyHex == null) {
-            LOGGER.info("[Nukes] Ground board {} names low-altitude board {} as its enclosing board, but has no hex "
-                  + "there: no low-altitude blast", boardId, enclosingBoard.getBoardId());
-            return null;
-        }
-        LOGGER.info("[Nukes] Ground board {} lies in hex {} of low-altitude board {}: the blast also sweeps that map",
-              boardId, skyHex.getBoardNum(), enclosingBoard.getBoardId());
-        return BoardLocation.of(skyHex, enclosingBoard.getBoardId());
     }
 
     /**

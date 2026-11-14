@@ -285,6 +285,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String GIF_GAME_SUMMARY_MINIMAP = "GifGameSummaryMinimap";
     public static final String GIF_GAME_SUMMARY_RECORDING = "GifGameSummaryRecording";
+    public static final String GIF_GAME_SUMMARY_SAVE_DIRECTORY = "GifGameSummarySaveDirectory";
     public static final String SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP = "ShowUnitDisplayNamesOnMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
@@ -1313,6 +1314,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public GifRecordingMode getGifGameSummaryRecording() {
         return GifRecordingMode.parse(store.getString(GIF_GAME_SUMMARY_RECORDING));
+    }
+
+    /**
+     * @return The folder the player last saved a combat-summary GIF to, or an empty string if they never have
+     */
+    public String getGifGameSummarySaveDirectory() {
+        return store.getString(GIF_GAME_SUMMARY_SAVE_DIRECTORY);
     }
 
     /**
@@ -2346,6 +2354,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setGifGameSummaryRecording(GifRecordingMode mode) {
         store.setValue(GIF_GAME_SUMMARY_RECORDING, mode.name());
+    }
+
+    public void setGifGameSummarySaveDirectory(String directory) {
+        store.setValue(GIF_GAME_SUMMARY_SAVE_DIRECTORY, directory);
     }
 
     /**

@@ -146,4 +146,31 @@ public class CoreRulesArmor extends RulesArmor {
         reportVec.addElement(report);
         return damage;
     }
+
+    /**
+     * {@inheritDoc}
+     * Reflective armor reduces damage by half, rounded up. Core p.202
+     */
+    @Override
+    public int reflectiveArmorReduction(final int damage) {
+        return (int) Math.ceil(((double) damage) / 2);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Reactive armor reduces damage by half, rounded up. Core p.202
+     */
+    @Override
+    public int reactiveArmorReduction(final int damage) {
+        return (int) Math.ceil(((double) damage) / 2);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Ballistic reinforced armor reduces damage by half, rounded up. Core p.202
+     */
+    @Override
+    public int ballisticReinforcedArmorReduction(final int damage) {
+        return (int) Math.ceil(((double) damage) / 2);
+    }
 }

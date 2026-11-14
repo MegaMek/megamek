@@ -377,14 +377,14 @@ class LobbyMekCellFormatter {
               || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
               || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
               || (!entity.isDesignValid())) {
-            result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
+            result.append(UIUtil.fontHTML(GUIP.getWarningColorForTheme()));
             result.append(WARNING_SIGN + "</FONT>");
             hasCritical = true;
         }
 
         // Unit Name
         if (hasCritical) {
-            result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
+            result.append(UIUtil.fontHTML(GUIP.getWarningColorForTheme()));
         } else if (hasWarning || (entity instanceof BattlefieldSupportAsset)) {
             // Battlefield Support Assets always show their name in yellow to stand out from ordinary units.
             result.append(UIUtil.fontHTML(uiYellow()));
@@ -427,7 +427,7 @@ class LobbyMekCellFormatter {
         if (!forceView) {
             if (!entity.isDesignValid()) {
                 result.append(MekTableModel.DOT_SPACER);
-                result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
+                result.append(UIUtil.fontHTML(GUIP.getWarningColorForTheme()));
                 result.append("\u26D4 ").append(Messages.getString("ChatLounge.invalidDesign"));
                 result.append("</FONT>");
             }
@@ -437,7 +437,7 @@ class LobbyMekCellFormatter {
         if (!forceView) {
             if (entity.isShutDown()) {
                 result.append(MekTableModel.DOT_SPACER);
-                result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
+                result.append(UIUtil.fontHTML(GUIP.getWarningColorForTheme()));
                 result.append(WARNING_SIGN).append(Messages.getString("ChatLounge.shutdown"));
                 result.append("</FONT>");
             }
@@ -559,7 +559,7 @@ class LobbyMekCellFormatter {
         if (forceView) {
             if (!entity.isDesignValid()) {
                 firstEntry = dotSpacer(result, firstEntry);
-                result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
+                result.append(UIUtil.fontHTML(GUIP.getWarningColorForTheme()));
                 result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
             }
         }
@@ -888,7 +888,7 @@ class LobbyMekCellFormatter {
               || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
               || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
               || (!entity.isDesignValid())) {
-            result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
+            result.append(UIUtil.fontHTML(GUIP.getWarningColorForTheme()));
             result.append(WARNING_SIGN + "</FONT>");
         }
 
@@ -961,7 +961,7 @@ class LobbyMekCellFormatter {
         // Invalid unit design
         if (!entity.isDesignValid()) {
             result.append(MekTableModel.DOT_SPACER);
-            result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
+            result.append(UIUtil.fontHTML(GUIP.getWarningColorForTheme()));
             result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
         }
 

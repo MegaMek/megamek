@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,14 +41,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.util.PlayerPingMenu;
 import megamek.client.ui.util.ScalingPopup;
+import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.interfaces.IStartingPositions;
-import megamek.common.Player;
 import megamek.common.util.CollectionUtil;
 
 /**
- * A popup menu for the lobby's player table. Offers configuration, bot settings and team assignment.
+ * A popup menu for the lobby's player table. Offers configuration, bot settings, team assignment and pings.
  *
  * @author Simon (Juliez)
  */
@@ -82,6 +83,9 @@ class PlayerTablePopup {
         popup.add(menuItem("Remove Bot", PTP_BOT_REMOVE, isOnePlayer && allOwnedBots, listener));
         popup.add(menuItem("Bot Settings...", PTP_BOT_SETTINGS, isOnePlayer && allOwnedBots, listener));
         popup.add(menuItem("Edit Bots...", PTP_REPLACE, isSingleGhost, listener));
+        if (isOnePlayer) {
+            PlayerPingMenu.addTo(popup, cl, singlePlayer);
+        }
 
         return popup;
 
@@ -121,4 +125,3 @@ class PlayerTablePopup {
         return menu;
     }
 }
-

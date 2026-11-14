@@ -33,9 +33,6 @@
 
 package megamek.common.cost;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.equipment.ArmorType;
 import megamek.common.units.SmallCraft;
@@ -51,14 +48,12 @@ public class SmallCraftCostCalculator {
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -smallCraft.getPriceMultiplier();
-        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
-              .setScale(2, RoundingMode.UP)
-              .doubleValue();
+        double cost = Math.round(CostCalculator.calculateCost(costs));
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "Fire Control Computer",
                                  "Gunnery Control Systems", "Structure", "Attitude Thruster", "Landing Gear", "Engine",
                                  "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, smallCraft, ignoreAmmo, systemNames, 14, roundedCost, costs);
-        return roundedCost;
+        CostCalculator.fillInReport(costReport, smallCraft, ignoreAmmo, systemNames, 14, cost, costs);
+        return cost;
     }
 
     /**

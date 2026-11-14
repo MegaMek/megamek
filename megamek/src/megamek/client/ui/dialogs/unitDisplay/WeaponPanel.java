@@ -781,7 +781,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private void createTargetDisplay(JPanel parent) {
         wTargetInfo = new JTextPane();
         setupTextPane(wTargetInfo);
-        addSubDisplay(parent, wTargetInfo, LINE_HEIGHT * 2, GridBagConstraints.BOTH);
+
+        // The target's details can run longer than the space below the split, so they scroll rather than get cut off
+        JScrollPane targetInfoScroll = new JScrollPane(wTargetInfo);
+        addSubDisplay(parent, targetInfoScroll, LINE_HEIGHT * 2, GridBagConstraints.BOTH);
     }
 
     public void clearToHit() {
@@ -837,6 +840,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         wTargetInfo.setText(UnitToolTip.wrapWithHTML(txt));
+        // Start at the top of the new target's details, not wherever the caret was left by setText
+        wTargetInfo.setCaretPosition(0);
     }
 
     @Override

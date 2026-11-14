@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -75,6 +75,10 @@ public class SoundManager implements AudioService {
         sound = new Sound(bingClipOthersTurn);
         sounds.add(sound);
 
+        final Clip bingClipPing = loadSoundClip(GUIP.getSoundBingFilenamePing());
+        sound = new Sound(bingClipPing);
+        sounds.add(sound);
+
         setVolume();
     }
 
@@ -103,6 +107,11 @@ public class SoundManager implements AudioService {
                     sound = sounds.get(2);
                 }
                 break;
+            case BING_PING:
+                if (!GUIP.getSoundMutePing()) {
+                    sound = sounds.get(3);
+                }
+                break;
         }
 
         if (sound != null) {
@@ -128,6 +137,9 @@ public class SoundManager implements AudioService {
                 break;
             case BING_OTHERS_TURN:
                 sound = sounds.get(2);
+                break;
+            case BING_PING:
+                sound = sounds.get(3);
                 break;
         }
 

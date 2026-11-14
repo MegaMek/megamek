@@ -33,13 +33,16 @@
 
 package megamek.common.util;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -47,6 +50,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -83,14 +88,83 @@ class BugReportBundleTest {
     }
 
     @Test
-    void emptyLogDirectoryStillProducesAnArchiveWithSystemInformation() throws IOException {
+    void archiveCarriesNoHomeFolderLoginNameHostNameOrIpAddress() throws IOException {
+        String planted = String.join("\n",
+              "Loading C:\\Users\\Dave Smith\\mekhq\\campaigns\\Test.cpnx.gz",
+              "Custom units in D:\\dsmith\\Games\\customs",
+              "s: hostname = 'DESKTOP-AB12CD' port = 2346",
+              "s: hosting on address = 10.0.0.134",
+              "s: hosting on address = fe80::1c2d:3e4f:5a6b:7c8d%12");
+        writeLog("megamek.log", planted);
+        writeLog("gamelog_2026-07-21_12-09-27.html", "<p>" + planted + "</p>");
+        File rolledLog = new File(logDirectory, "megamek_1.log.gz");
+        try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(Files.newOutputStream(rolledLog.toPath()))) {
+            gzipOutputStream.write(planted.getBytes(StandardCharsets.UTF_8));
+        }
+        // A save is XML, so redaction could break it; it must reach the archive byte for byte.
+        File saveGame = new File(saveDirectory, "report.sav.gz");
+        Files.writeString(saveGame.toPath(), planted, StandardCharsets.UTF_8);
+
+        BugReportRedactor redactor = new BugReportRedactor("C:\\Users\\Dave Smith", "dsmith",
+              List.of("DESKTOP-AB12CD"));
+        BugReportBundle bundle = new BugReportBundle(new BugReportBundle.Sources(logDirectory, logDirectory,
+              saveDirectory, saveGame, SYSTEM_INFORMATION + "User dir: C:\\Users\\Dave Smith\n",
+              GAME_LOG_FILE_NAME, null), redactor);
+        bundle.writeTo(archiveFile);
+
+        try (ZipFile zipFile = new ZipFile(archiveFile)) {
+            for (String entryName : List.of("logs/megamek.log",
+                  "logs/gamelog_2026-07-21_12-09-27.html", "logs/megamek_1.log.gz")) {
+                String text = readEntryText(zipFile, entryName);
+                for (String secret : List.of("Dave Smith", "dsmith", "DESKTOP-AB12CD", "10.0.0.134", "fe80::")) {
+                    assertFalse(text.contains(secret), entryName + " still contains " + secret + ":\n" + text);
+                }
+            }
+            String liveLog = readEntryText(zipFile, "logs/megamek.log");
+            assertTrue(liveLog.contains("[home]\\mekhq\\campaigns\\Test.cpnx.gz"), liveLog);
+            assertTrue(liveLog.contains("D:\\[user]\\Games"), liveLog);
+            assertTrue(liveLog.contains("hostname = '[host]'"), liveLog);
+            assertTrue(liveLog.contains("address = [ip]"), liveLog);
+
+            assertEquals(planted, readEntryText(zipFile, saveGame.getName()),
+                  "the save game must be copied unchanged");
+        }
+        assertEquals(3 * 2, redactor.pathCount(), "home and login folder in each of the three logs");
+    }
+
+    @Test
+    void logThatIsNotUtf8KeepsItsOtherBytesWhileBeingRedacted() throws IOException {
+        // "Cafe 10.0.0.5" with a Latin-1 e-acute (0xE9), which is not valid UTF-8 on its own.
+        byte[] latinOneLog = { 'C', 'a', 'f', (byte) 0xE9, ' ', '1', '0', '.', '0', '.', '0', '.', '5' };
+        Files.write(new File(logDirectory, "megamek.log").toPath(), latinOneLog);
+
+        BugReportBundle bundle = new BugReportBundle(new BugReportBundle.Sources(logDirectory, logDirectory,
+              saveDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME, null),
+              new BugReportRedactor(null, null, List.of()));
+        bundle.writeTo(archiveFile);
+
+        byte[] expected = { 'C', 'a', 'f', (byte) 0xE9, ' ', '[', 'i', 'p', ']' };
+        try (ZipFile zipFile = new ZipFile(archiveFile);
+              InputStream entryStream = zipFile.getInputStream(zipFile.getEntry("logs/megamek.log"))) {
+            assertArrayEquals(expected, entryStream.readAllBytes());
+        }
+    }
+
+    @Test
+    void emptyLogDirectoryStillProducesAnArchive() throws IOException {
         BugReportBundle bundle = newBundle(null);
 
         BugReportBundle.BundleResult result = bundle.writeTo(archiveFile);
 
         assertTrue(archiveFile.isFile(), "an archive should be written even with nothing to collect");
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME), entryNamesOf(archiveFile));
+        assertEquals(List.of(), entryNamesOf(archiveFile), "system information goes in the log, not its own file");
         assertFalse(result.hasSkippedEntries());
+    }
+
+    @Test
+    void systemInformationLoggedMidSessionDoesNotReadAsARestart() {
+        assertEquals("MegaMek v0.51.01\n    Java Version: 21.0.5\n",
+              BugReportBundle.asCurrentState(SYSTEM_INFORMATION));
     }
 
     @Test
@@ -101,7 +175,7 @@ class BugReportBundleTest {
 
         bundle.writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME), entryNamesOf(archiveFile));
+        assertEquals(List.of(), entryNamesOf(archiveFile));
     }
 
     @Test
@@ -188,8 +262,7 @@ class BugReportBundleTest {
 
         newBundle(null).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "logs/megamek.log",
+        assertEquals(List.of("logs/megamek.log",
               "logs/mekhq.log",
               "logs/unified_log.log",
               "logs/princess.log",
@@ -207,7 +280,7 @@ class BugReportBundleTest {
 
         newBundle(null).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log"),
+        assertEquals(List.of("logs/megamek.log"),
               entryNamesOf(archiveFile));
     }
 
@@ -243,8 +316,7 @@ class BugReportBundleTest {
 
         newBundle(null).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "logs/" + GAME_LOG_FILE_NAME,
+        assertEquals(List.of("logs/" + GAME_LOG_FILE_NAME,
               "logs/game_actions_1.tsv",
               "logs/megamek_1.log.gz"), entryNamesOf(archiveFile));
     }
@@ -261,8 +333,7 @@ class BugReportBundleTest {
         newBundle(null, gameDirectory).writeTo(archiveFile);
 
         String prefix = "logs/gameSummaries/minimap/" + GAME_UUID + "/";
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "logs/megamek.log",
+        assertEquals(List.of("logs/megamek.log",
               "logs/megamek_1.log.gz",
               prefix + newestFrame.getName(),
               prefix + oldestFrame.getName(),
@@ -277,7 +348,7 @@ class BugReportBundleTest {
 
         newBundle(null, absentGameDirectory).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log"),
+        assertEquals(List.of("logs/megamek.log"),
               entryNamesOf(archiveFile));
     }
 
@@ -294,8 +365,7 @@ class BugReportBundleTest {
 
         BugReportBundle.BundleResult result = newBundle(null, gameDirectory).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "logs/megamek.log",
+        assertEquals(List.of("logs/megamek.log",
               "logs/gameSummaries/minimap/" + GAME_UUID + "/" + newestFrame.getName(),
               "logs/gameSummaries/minimap/" + GAME_UUID + "/" + oldestFrame.getName()), entryNamesOf(archiveFile));
         assertEquals(List.of(recording.getName()), result.skippedEntries());
@@ -326,8 +396,7 @@ class BugReportBundleTest {
 
         newBundle(saveGame).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "savegame.sav.gz",
+        assertEquals(List.of("savegame.sav.gz",
               "battle-autosave/" + newestAutosave.getName(),
               "logs/megamek.log"), entryNamesOf(archiveFile));
     }
@@ -338,8 +407,7 @@ class BugReportBundleTest {
 
         newBundle(null).writeTo(archiveFile);
 
-        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
-              "battle-autosave/autosave2026-10-17_11-05-00.sav.gz"), entryNamesOf(archiveFile));
+        assertEquals(List.of("battle-autosave/autosave2026-10-17_11-05-00.sav.gz"), entryNamesOf(archiveFile));
     }
 
     @Test
@@ -446,5 +514,20 @@ class BugReportBundleTest {
             }
         }
         return entryNames;
+    }
+
+    /**
+     * @param zipFile   the open archive
+     * @param entryName the entry to read; a {@code .log.gz} entry is unpacked first
+     *
+     * @return the entry's text
+     */
+    private static String readEntryText(ZipFile zipFile, String entryName) throws IOException {
+        ZipEntry entry = zipFile.getEntry(entryName);
+        assertNotNull(entry, "the archive should contain " + entryName);
+        try (InputStream entryStream = zipFile.getInputStream(entry);
+              InputStream textStream = entryName.endsWith(".log.gz") ? new GZIPInputStream(entryStream) : entryStream) {
+            return new String(textStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 }

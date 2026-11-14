@@ -229,7 +229,7 @@ class PlayerTable extends JTable {
 
             // Second Line - Team
             boolean isEnemy = lobby.localPlayer().isEnemyOf(player);
-            Color color = isEnemy ? GUIPreferences.getInstance().getWarningColor() : uiGreen();
+            Color color = isEnemy ? GUIPreferences.getInstance().getWarningColorForTheme() : uiGreen();
             result.append("<FONT").append(UIUtil.colorString(color)).append(">");
             result.append(player.getTeamName());
             result.append("</FONT>");

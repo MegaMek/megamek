@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -431,7 +431,7 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
             label.setForeground(null);
             label.setToolTipText(null);
         } else {
-            label.setForeground(GUIPreferences.getInstance().getWarningColor());
+            label.setForeground(GUIPreferences.getInstance().getWarningColorForTheme());
             label.setToolTipText(text.toString());
         }
     }

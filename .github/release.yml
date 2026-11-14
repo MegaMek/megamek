@@ -1,0 +1,38 @@
+# Groups the release notes GitHub generates from pull request titles.
+# The suite release workflow and the launcher release both ask GitHub for these notes.
+#
+# Each section comes from one "Notes: ..." label. Typing "notes" in the label picker lists them all.
+# A title starting with "Fix" gets "Notes: Bug Fix" automatically (.github/workflows/label-pull-requests.yml).
+# A pull request goes into the first section whose label it has; one without a "Notes: ..." label
+# lands in "Other changes". Keep the same file in megamek, megameklab, mekhq and mm-launcher.
+changelog:
+  exclude:
+    labels:
+      - "Notes: Skip"
+      - dependencies
+      - github_actions
+    authors:
+      - dependabot
+      - dependabot[bot]
+  categories:
+    - title: New features
+      labels:
+        - "Notes: New Feature"
+    - title: Rules
+      labels:
+        - "Notes: Rules"
+    - title: Improvements
+      labels:
+        - "Notes: Improvement"
+    - title: Bug fixes
+      labels:
+        - "Notes: Bug Fix"
+    - title: Other changes
+      labels:
+        - "*"
+      exclude:
+        labels:
+          - "Notes: Behind the Scenes"
+    - title: Behind the scenes
+      labels:
+        - "Notes: Behind the Scenes"

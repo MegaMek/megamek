@@ -72,9 +72,23 @@ class PublishTests(unittest.TestCase):
         record = self.publish(*self.prepare("core", None))
         self.assertEqual((record["version"], record["channel"]), ("0.51.02.33", "core"))
         self.assertEqual(record["mmData"]["commit"], branch["mm-data"])
-        self.assertTrue(all(w[3] is None for w in self.fake.writes if w[0] == "notes"))
+        # Never compared with the Experimental release before it.
+        self.assertFalse(any(w[0] == "notes" for w in self.fake.writes))
         self.assertTrue(all(w[3] is False for w in self.fake.writes if w[0] == "release"))
         self.assertEqual(self.fake.releases["megamek"][0]["name"], "MegaMek 0.51.02.33")
+        for repo in release.REPOS.values():
+            self.assertIn("First Core release, no previous Core release to compare with.",
+                          self.fake.releases[repo][0]["body"])
+
+    def test_first_experimental_release_has_no_previous_tag(self):
+        record = self.publish(*self.prepare())
+        self.assertEqual(record["channel"], "experimental")
+        self.assertFalse(any(w[0] == "notes" for w in self.fake.writes))
+        self.assertTrue(all(w[3] is True for w in self.fake.writes if w[0] == "release"))
+        for repo in release.REPOS.values():
+            body = self.fake.releases[repo][0]["body"]
+            self.assertIn("First Experimental release, no previous Experimental release to compare with.", body)
+            self.assertNotIn("Core release", body)
 
     def test_rehearsal_and_noop_never_write(self):
         inventory, archives = self.prepare("core", "main", rehearsal=True)

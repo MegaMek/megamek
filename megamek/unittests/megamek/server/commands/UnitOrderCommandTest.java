@@ -37,7 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 
+import megamek.client.bot.AIType;
 import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.board.Coords;
@@ -70,7 +72,9 @@ class UnitOrderCommandTest {
     private static final int ENEMY_TEAM = 2;
     private static final int BOT_UNIT_ID = 10;
     private static final int HUMAN_UNIT_ID = 11;
+    private static final String BOT_NAME = "Lyran Allies";
 
+    private Game game;
     private UnitOrderCommand command;
     private BipedMek botUnit;
     private BipedMek humanUnit;
@@ -82,7 +86,7 @@ class UnitOrderCommandTest {
 
     @BeforeEach
     void setUp() {
-        Game game = new Game();
+        game = new Game();
         Player gamemaster = new Player(GAMEMASTER_CONNECTION, "Gamemaster");
         gamemaster.setGameMaster(true);
         gamemaster.setTeam(ENEMY_TEAM);
@@ -93,10 +97,12 @@ class UnitOrderCommandTest {
         Player opponent = new Player(OPPONENT_CONNECTION, "Clan Wolf");
         opponent.setTeam(ENEMY_TEAM);
         game.addPlayer(OPPONENT_CONNECTION, opponent);
-        Player bot = new Player(BOT_CONNECTION, "Lyran Allies");
+        Player bot = new Player(BOT_CONNECTION, BOT_NAME);
         bot.setBot(true);
         bot.setTeam(ALLIED_TEAM);
         game.addPlayer(BOT_CONNECTION, bot);
+        // only CASPAR bots take unit orders
+        game.recordBotType(BOT_NAME, AIType.CASPAR);
 
         botUnit = new BipedMek();
         botUnit.setId(BOT_UNIT_ID);
@@ -132,6 +138,25 @@ class UnitOrderCommandTest {
         assertEquals(List.of(Coords.parseHexNumber("1508"), Coords.parseHexNumber("1504")),
               botUnit.getUnitOrders().getRoute());
         assertEquals(OrderPriority.IMPERATIVE, botUnit.getUnitOrders().getPriority());
+    }
+
+    @Test
+    void aPrincessBotsUnitTakesNoOrders() {
+        game.recordBotType(BOT_NAME, AIType.PRINCESS);
+
+        runAs(TEAMMATE_CONNECTION, BOT_UNIT_ID, "ROUTE", "hexes=1508-1504");
+        runAs(GAMEMASTER_CONNECTION, BOT_UNIT_ID, "ROUTE", "hexes=1508-1504");
+
+        assertTrue(botUnit.getUnitOrders().isEmpty());
+    }
+
+    @Test
+    void aBotWhoseTypeIsNotKnownTakesNoOrders() {
+        game.setBotTypes(Map.of());
+
+        runAs(TEAMMATE_CONNECTION, BOT_UNIT_ID, "ROUTE", "hexes=1508-1504");
+
+        assertTrue(botUnit.getUnitOrders().isEmpty());
     }
 
     @Test

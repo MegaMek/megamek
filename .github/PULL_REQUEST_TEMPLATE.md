@@ -6,7 +6,8 @@
 
      More than one issue is fine: "Close #111, #5329: Added unit history tracking".
      Release notes are generated automatically from pull request titles, so the title is
-     what players end up reading. -->
+     what players end up reading. The notes are grouped by "Notes: ..." labels, and a title
+     starting with "Fix" gets "Notes: Bug Fix" automatically. -->
 
 ## What this changes
 
@@ -45,8 +46,12 @@ Fixes #
 - [ ] Bug fix: I checked whether it is also needed on `main` or the current `releases/` branch, and opened a separate PR there if so
 - [ ] Dev team only: if AI tools were used, the **AI Assisted Development** label is applied, and I can
       explain and have verified the result
+- [ ] Dev team only: one "Notes: ..." label is applied (type "notes" in the label picker), so the release
+      notes list this under the right heading: **Notes: New Feature**, **Notes: Improvement**,
+      **Notes: Rules**, **Notes: Bug Fix**, **Notes: Behind the Scenes** or **Notes: Skip**.
+      Reviewers add it for outside contributors
 
-<!-- ABOUT THAT LAST BOX, IF YOU ARE NOT ON THE DEV TEAM:
+<!-- ABOUT THE AI BOX, IF YOU ARE NOT ON THE DEV TEAM:
 
      Only active members of the dev team may use AI tools on contributions. That is not a judgement
      on your work. A developer carries the history of why the codebase is the way it is, and an AI

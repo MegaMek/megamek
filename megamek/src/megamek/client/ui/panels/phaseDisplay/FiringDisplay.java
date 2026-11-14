@@ -276,6 +276,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     protected AimedShotHandler ash;
 
+    /**
+     * Set while the right-click menu picks the target, so {@link #showAimWindow()} leaves the aim window closed. The
+     * window would take focus and close the menu on some window managers (#9472).
+     */
+    private boolean isAimWindowSuppressed = false;
+
     protected boolean isStrafing = false;
 
     protected int phaseInternalBombs = 0;
@@ -1859,6 +1865,51 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         ash.setAimingMode();
         updateTarget();
+        showAimWindow();
+    }
+
+    /**
+     * Targets something without opening the aim window. Used by the right-click menu, which picks the only enemy in
+     * the clicked hex while it is being built: the aim window would take focus and close the menu on some window
+     * managers. Choosing the menu's Target item still opens the window, after the menu has closed. An aim window left
+     * open for a different, earlier target is closed, so its chosen location cannot carry over to the new target.
+     *
+     * @param targetable the target to pick
+     */
+    public void targetWithoutAimWindow(Targetable targetable) {
+        Targetable previousTarget = target;
+        isAimWindowSuppressed = true;
+        try {
+            target(targetable);
+        } finally {
+            isAimWindowSuppressed = false;
+        }
+        boolean isNewTarget = isDifferentTarget(previousTarget, target);
+        if (isNewTarget) {
+            ash.closeDialog();
+        }
+        logger.info("[AimWindow] Right-click menu targeted {}; aim window not opened; earlier aim window closed: {}",
+              (target == null) ? "nothing" : target.getDisplayName(), isNewTarget);
+    }
+
+    private static boolean isDifferentTarget(Targetable previousTarget, Targetable currentTarget) {
+        if ((previousTarget == null) || (currentTarget == null)) {
+            return previousTarget != currentTarget;
+        }
+        return (previousTarget.getTargetType() != currentTarget.getTargetType())
+              || (previousTarget.getId() != currentTarget.getId());
+    }
+
+    /**
+     * Opens the aim window for the current target, unless the right-click menu is picking the target (see
+     * {@link #targetWithoutAimWindow(Targetable)}).
+     */
+    protected void showAimWindow() {
+        if (isAimWindowSuppressed) {
+            return;
+        }
+        logger.info("[AimWindow] Aim window requested for {} (aiming mode {})",
+              (target == null) ? "nothing" : target.getDisplayName(), ash.getAimingMode());
         ash.showDialog();
     }
 

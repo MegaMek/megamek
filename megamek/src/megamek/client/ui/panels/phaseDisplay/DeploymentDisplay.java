@@ -59,7 +59,6 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.phaseDisplay.AutomaticEjectionDialog;
 import megamek.client.ui.dialogs.phaseDisplay.BuildingFacingDialog;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -83,8 +82,6 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.AutomaticEjectionRules;
-import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
@@ -171,10 +168,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private boolean turnMode = false;
     private int originalFacing = -1;
     private boolean assaultDropPreference = false;
-    /**
-     * Whether the crews-will-die-if-they-eject warning has already been given this deployment phase.
-     */
-    private boolean hasWarnedAboutAutoEjection = false;
     private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
     private ElevationOption lastDeploymentOption = null;
 
@@ -455,21 +448,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
         }
 
-        if (shouldWarnAboutAutoEjection()) {
-            List<Entity> unitsWithEjectionSystems = unitsWithAnEjectionSystem();
-            hasWarnedAboutAutoEjection = true;
-            logger.debug("[EnvironmentalSealing] warning about auto-ejection - listing {} unit(s) with an ejection "
-                         + "system in conditions that would kill an ejected crew", unitsWithEjectionSystems.size());
-            AutomaticEjectionDialog ejectionDialog = new AutomaticEjectionDialog(clientgui.getFrame(),
-                                                                                 clientgui, unitsWithEjectionSystems,
-                                                                                 game.getPlanetaryConditions()
-                                                                                     .whyLethalToEjectedCrew());
-            ejectionDialog.setVisible(true);
-            if (ejectionDialog.isDeploymentCancelled()) {
-                takeBackDeployment(entity,
-                                   Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancelReason"));
-                return true;
-            }
+        if (clientgui.getAutomaticEjectionWarning().warnIfDue("Deploying " + entity.getShortName())) {
+            takeBackDeployment(entity,
+                               Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancelReason"));
+            return true;
         }
 
         return false;
@@ -557,59 +539,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // Closing the dialog with the window button lands here too, and means the same as Cancel.
             default -> DoomedDeploymentChoice.CANCEL;
         };
-    }
-
-    /**
-     * Whether the player still needs telling that their crews will die if they eject here.
-     * <p>
-     * Asked once for the whole force rather than once per unit, because automatic ejection is switched on by default
-     * and the answer is the same for every unit on the board: the conditions cover the whole map.
-     *
-     * @return {@code true} if the warning is due
-     */
-    private boolean shouldWarnAboutAutoEjection() {
-        if (hasWarnedAboutAutoEjection || !GUIP.getNagForAutoEject()) {
-            return false;
-        }
-        if (!game.getPlanetaryConditions().isLethalToEjectedCrew()) {
-            return false;
-        }
-        return anyCrewWouldDieEjecting();
-    }
-
-    /**
-     * Whether any of this player's units is set to throw a crew into something their kit does not answer.
-     * <p>
-     * A crew whose armor kit answers everything out there survives ejecting, so warning about them would be telling
-     * the player about a danger they have already dealt with. Asked per unit and per hazard, because a kit that
-     * answers the tainted air does not necessarily answer the vacuum.
-     *
-     * @return {@code true} if at least one crew would be killed by ejecting
-     */
-    private boolean anyCrewWouldDieEjecting() {
-        for (Entity entity : unitsWithAnEjectionSystem()) {
-            if (AutomaticEjectionRules.willEjectAutomatically(entity, game)
-                  && !CrewArmorKitRules.survivesEjection(entity, game)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Every unit of this player's that has an ejection system, whether or not it is currently switched on.
-     * <p>
-     * The dialog lists all of them rather than only the ones at risk, so the player can see the state of the whole
-     * force and change any of it. Hiding the units that are already safe would leave them wondering why a Mek they
-     * own is missing from the list.
-     *
-     * @return every unit with an ejection system, in the order the game holds them
-     */
-    private List<Entity> unitsWithAnEjectionSystem() {
-        return game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
-                   .stream()
-                   .filter(AutomaticEjectionRules::hasEjectionSystem)
-                   .toList();
     }
 
     /**
@@ -748,7 +677,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         if (game.getPhase().isDeployment()) {
-            hasWarnedAboutAutoEjection = false;
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
         }
     }

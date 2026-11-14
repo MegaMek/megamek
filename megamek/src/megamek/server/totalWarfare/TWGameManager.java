@@ -399,6 +399,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new ForcedWithdrawalOrderCommand(server, this));
         commands.add(new UnitOrderCommand(server, this));
         commands.add(new RadioCommand(server, this));
+        commands.add(new PingCommand(server));
+        commands.add(new GameMasterPingCommand(server));
         commands.add(new ChangeWeatherCommand(server, this));
         commands.add(new TraitorCommand(server, this));
         commands.add(new ListEntitiesCommand(server, this));
@@ -1133,6 +1135,11 @@ public class TWGameManager extends AbstractGameManager {
                         // bot to this seat instead of guessing.
                         if (packet.getObject(1) instanceof AIType aiType) {
                             game.recordBotType(player.getName(), aiType);
+                            // Tell every client too, not only those that connect later: only CASPAR bots take unit
+                            // orders, so a player who joined before this bot needs its type to be offered them.
+                            // Copied to a plain HashMap for the same reason as on connect.
+                            send(new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings(),
+                                  new HashMap<>(getGame().getBotTypes())));
                         }
                     }
                     break;
@@ -3718,10 +3725,16 @@ public class TWGameManager extends AbstractGameManager {
             game.setTurnVector(new ArrayList<>());
         } else {
             for (Entity entity : game.getEntitiesVector()) {
-                if (entity.isEligibleFor(phase)) {
-                    assistable = true;
-                } else {
+                if (!entity.isEligibleFor(phase)) {
                     assistants.addElement(entity);
+                } else if (!Game.rulesManager.getRulesGame().eligibleForPhase(entity, phase)) {
+                    // determineTurnOrder gives this unit no turn, so it must not stay selectable: a unit that can
+                    // be picked without a turn of its own spends a turn that belongs to another unit.
+                    LOGGER.info("[TurnOrder] {} gets no {} turn under the active rules system; marking it done",
+                          entity.getShortName(), phase);
+                    assistants.addElement(entity);
+                } else {
+                    assistable = true;
                 }
             }
         }

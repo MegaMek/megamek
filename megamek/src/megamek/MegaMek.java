@@ -47,6 +47,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.StringJoiner;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -69,6 +70,7 @@ import megamek.common.commandLine.MegaMekCommandLineParser;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.ui.RATGeneratorEditor;
+import megamek.common.util.HardwareDescription;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
 import megamek.utilities.GifWriter;
@@ -383,6 +385,7 @@ public class MegaMek {
                         Platform: %s %s (%s)
                         System Locale: %s
                         Total memory available to %s: %,.0f GB
+                    %s
                         MM Code Revision: %s
                         MML Code Revision: %s
                         MHQ Code Revision: %s
@@ -400,9 +403,21 @@ public class MegaMek {
               Locale.getDefault(),
               currentProject,
               Runtime.getRuntime().maxMemory() / Math.pow(2, 30),
+              hardwareBlock(),
               Revision.mmRevision(),
               Revision.mmlRevision(),
               Revision.mhqRevision());
+    }
+
+    /**
+     * @return the CPU, GPU and system memory lines, indented to sit inside {@link #getUnderlyingInformation}
+     */
+    private static String hardwareBlock() {
+        StringJoiner block = new StringJoiner("\n");
+        for (String line : HardwareDescription.lines()) {
+            block.add("    " + line);
+        }
+        return block.toString();
     }
 
     public static @Nullable LocalDateTime getBuildDate() {

@@ -1040,6 +1040,19 @@ public abstract class BotClient extends Client {
      *       those flying above it.
      */
     public double getMassOfAllInBuilding(final Game game, final Coords coords, int boardId) {
+        return getMassOfAllInBuilding(game, coords, boardId, null);
+    }
+
+    /**
+     * @param countedUnit a unit the caller has already weighed, such as the unit moving, so its weight is not added a
+     *                    second time; {@code null} counts everyone
+     *
+     * @return The total weight of all units other than {@code countedUnit} in or on the building or bridge (but not
+     *       fuel tank) at the given map location. If the given position doesn't exist, returns 0. Only units weighing
+     *       on the building count, not those flying above it.
+     */
+    public double getMassOfAllInBuilding(final Game game, final Coords coords, int boardId,
+          @Nullable Entity countedUnit) {
         double mass = 0;
 
         // Add the mass of anyone else standing in/on this building.
@@ -1048,6 +1061,9 @@ public abstract class BotClient extends Client {
             int buildingElevation = hex.terrainLevel(Terrains.BLDG_ELEV);
             int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
             for (Entity unit : game.getEntitiesVector(coords, boardId)) {
+                if ((countedUnit != null) && (unit.getId() == countedUnit.getId())) {
+                    continue;
+                }
                 //FIXME: This looks like a unit standing under a bridge would be inlcuded in the weight
                 if (buildingElevation >= unit.getElevation() || bridgeElevation >= unit.getElevation()) {
                     mass += unit.getWeight();

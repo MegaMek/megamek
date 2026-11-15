@@ -360,6 +360,7 @@ public class CoreRulesPhysical extends RulesPhysical {
      * {@inheritDoc}
      * Mule kicks only require the leg kicking to not fire weapons, not both legs.
      */
+    @Override
     public boolean muleWeaponsCheck() {
         return false;
     }

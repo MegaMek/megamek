@@ -178,13 +178,12 @@ public class KickAttackAction extends PhysicalAttackAction {
             }
         }
 
-        // underwater damage is half, round up (see bug 1110692)
-        // Core p.77 confirms this is floor, not ceil
+        // Core p.77 confirms this is round down (floor)
         if (entity.getLocationStatus(kickingLeg) == ILocationExposureStatus.WET) {
             damage = (int) Math.floor(damage * 0.5f);
         }
         if (targetInfantry) {
-            damage = (int) Math.ceil(damage / 10);
+            damage = (int) Math.ceil(damage / 10.0f);
         }
         damage = Math.max(1, damage);
         // SPA adding after TSM, but before actuators.
@@ -269,7 +268,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // For quads if the front leg is missing, no mule kicks
-        if (muleKick && attackingEntity.isLocationBad(Mek.LOC_LEFT_ARM) && attackingEntity.isLocationBad(Mek.LOC_RIGHT_ARM)) {
+        if (muleKick && (attackingEntity.isLocationBad(Mek.LOC_LEFT_ARM)
+              || attackingEntity.isLocationBad(Mek.LOC_RIGHT_ARM))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Front Leg missing, no mule kicks");
         }
 

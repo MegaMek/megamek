@@ -119,7 +119,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         List<Integer> legLocs = getLegLocs(entity, leg);
         int kickingLeg;
 
-        boolean muleKick = (entity.entityIsQuad() && (leg == LEFT_MULE || leg == RIGHT_MULE)) ? true : false;
+        boolean muleKick = (entity.entityIsQuad() && (leg == LEFT_MULE || leg == RIGHT_MULE));
 
         if (entity.entityIsQuad() && !muleKick) {
             kickingLeg = (leg == LEFT) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
@@ -186,7 +186,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             damage = (int) Math.ceil(damage / 10.0f);
         }
         damage = Math.max(1, damage);
-        // SPA adding after TSM, but before actuators.
+        // SPA adding last
         damage += entity.modifyPhysicalDamageForMeleeSpecialist();
 
         return damage;
@@ -228,7 +228,7 @@ public class KickAttackAction extends PhysicalAttackAction {
               + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
 
-        boolean muleKick = attackingEntity.entityIsQuad() && (leg == LEFT_MULE || leg == RIGHT_MULE) ? true : false;
+        boolean muleKick = attackingEntity.entityIsQuad() && (leg == LEFT_MULE || leg == RIGHT_MULE);
 
         // Early exits for invalid kicks
         if (!muleKick && (leg == LEFT_MULE || leg == RIGHT_MULE)) {

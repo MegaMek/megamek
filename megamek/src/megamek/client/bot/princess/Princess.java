@@ -3659,7 +3659,7 @@ public class Princess extends BotClient {
         return null;
     }
 
-    private @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
+    @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
         // Only isDeployed() decides this. The position below is set on the bot's local copy before the path is
         // sent, so after a rejected attempt the unit is still undeployed but already has a position.
         if ((entity == null) || entity.isDeployed()) {
@@ -3832,7 +3832,14 @@ public class Princess extends BotClient {
         Objects.requireNonNull(entity, "Entity is null.");
 
         if (!entity.isDeployed() || (entity.getPosition() == null)) {
-            final MovePath deploymentMovePath = calculateDeploymentPathForMovementPhase(entity);
+            final MovePath deploymentMovePath;
+            try {
+                deploymentMovePath = calculateDeploymentPathForMovementPhase(entity);
+            } finally {
+                // The walk-on path pauses Precognition to rebuild its paths. Left paused, it never handles the next
+                // movement phase's events, so the next move picks a stale path that still deploys (issue #9601)
+                getPrecognition().unPause();
+            }
             if (deploymentMovePath != null) {
                 return deploymentMovePath;
             }

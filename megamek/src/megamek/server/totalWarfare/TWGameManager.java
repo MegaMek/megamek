@@ -4568,6 +4568,19 @@ public class TWGameManager extends AbstractGameManager {
     } // End private void applyAffectedBuildings()
 
     /**
+     * Checks whether a movement path tries to deploy a unit that is already on the board. Only an undeployed unit may
+     * walk on; a {@code DEPLOY} step for a deployed one comes from a stale or bad path.
+     *
+     * @param entity   the moving unit, as the server knows it
+     * @param movePath the path the client sent
+     *
+     * @return {@code true} if the unit is already deployed and the path contains a {@code DEPLOY} step
+     */
+    static boolean deploysAlreadyDeployedUnit(Entity entity, MovePath movePath) {
+        return entity.isDeployed() && movePath.contains(MoveStepType.DEPLOY);
+    }
+
+    /**
      * Receives an entity movement packet, and if valid, executes it and ends the current turn.
      */
     private void receiveMovement(Packet packet, int connectionId) throws InvalidPacketDataException {
@@ -4603,6 +4616,18 @@ public class TWGameManager extends AbstractGameManager {
                       connectionId,
                       entity.getShortName());
                 // Without this the sender believes its turn is over while the server still waits on it
+                send(connectionId, packetHelper.createTurnListPacket());
+                send(connectionId, packetHelper.createTurnIndexPacket(connectionId));
+                return;
+            }
+
+            if (deploysAlreadyDeployedUnit(entity, movePath)) {
+                // A DEPLOY step carries its own hex, so running it would move the unit back to that hex (issue #9601)
+                LOGGER.error("Refused movement from connection {}: {} is already deployed at {} but the path deploys "
+                            + "it again; resending the turn so the sender can act again",
+                      connectionId,
+                      entity.getShortName(),
+                      entity.getPosition());
                 send(connectionId, packetHelper.createTurnListPacket());
                 send(connectionId, packetHelper.createTurnIndexPacket(connectionId));
                 return;

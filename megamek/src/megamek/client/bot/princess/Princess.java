@@ -4233,7 +4233,11 @@ public class Princess extends BotClient {
         }
     }
 
-    private void checkForDishonoredEnemies() {
+    /**
+     * Marks dishonored every player who attacked one of my units in a way the honor rules forbid this turn.
+     * Package-visible for testing.
+     */
+    void checkForDishonoredEnemies() {
         final StringBuilder msg = new StringBuilder("Checking for dishonored enemies.");
 
         try {
@@ -4251,8 +4255,14 @@ public class Princess extends BotClient {
                     continue;
                 }
 
-                // Was my unit withdrawing under forced withdrawal when this turn began?
-                final boolean fleeing = getMemory().isCrippled(mine.getId());
+                // Was my unit withdrawing under forced withdrawal when this turn began, and still protected? A unit
+                // that fired while withdrawing chose to fight, so shooting it is no dishonor (issue #9595).
+                final boolean fleeing = getForcedWithdrawalTracker().isProtected(mine.getId());
+                if (!fleeing && getMemory().isCrippled(mine.getId())) {
+                    msg.append("\n\t")
+                          .append(mine.getDisplayName())
+                          .append(" was attacked, but it gave up its protection by firing while withdrawing.");
+                }
 
                 for (final int id : attackedBy) {
                     final Entity entity = getGame().getEntity(id);
@@ -4895,6 +4905,10 @@ public class Princess extends BotClient {
         final Set<Integer> unitsWithdrawingAtStartOfTurn = getMemory().crippledUnitIds();
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
+        // After checkForDishonoredEnemies: attacks are declared at the same time, so an enemy shooting a unit in the
+        // same turn it first fires while withdrawing still shot a protected unit. Before sendDishonoredData, so
+        // clients stop tagging and warning about a unit that has given up its protection.
+        getForcedWithdrawalTracker().updateForfeitedProtection(unitsWithdrawingAtStartOfTurn);
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();

@@ -75,7 +75,11 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         bv = 15;
         cost = 8500;
         explosionDamage = 3;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 126);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 126),
+              rulesRef(SourceBookCode.BMM, 100),
+              rulesRef(SourceBookCode.CORE, 184)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

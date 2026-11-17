@@ -49,7 +49,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
@@ -120,10 +119,12 @@ public class KickAttackAction extends PhysicalAttackAction {
         List<Integer> legLocs = getLegLocs(entity, leg);
         int kickingLeg;
 
-        if (entity.entityIsQuad() && (leg != LEFT_MULE) && (leg != RIGHT_MULE)) {
+        boolean muleKick = (entity.entityIsQuad() && (leg == LEFT_MULE || leg == RIGHT_MULE));
+
+        if (entity.entityIsQuad() && !muleKick) {
             kickingLeg = (leg == LEFT) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
         } else {
-            kickingLeg = (leg == LEFT) ? Mek.LOC_LEFT_LEG : Mek.LOC_RIGHT_LEG;
+            kickingLeg = (leg == LEFT || leg == LEFT_MULE) ? Mek.LOC_LEFT_LEG : Mek.LOC_RIGHT_LEG;
         }
 
         /* Ordering is very important here. As per Core p.87/88.
@@ -138,9 +139,23 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // Talons first. Confirmed this is rounding normally (0.5 goes up) as per TO:AUE p.103
         // Core p.196, "Rounding normally"
-        if (entity.hasWorkingMisc(MiscType.F_TALON, null, kickingLeg) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT,
+        if (!muleKick && entity.hasWorkingMisc(MiscType.F_TALON,
+                                               null,
+                                               kickingLeg) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT,
                                                                                                  kickingLeg)) {
             damage = Math.round(damage * 1.5f);
+        } else if (muleKick) {
+            int talonCount = 0;
+            for (int legLoc : legLocs) {
+                if (entity.hasWorkingMisc(MiscType.F_TALON, null, legLoc) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT,
+                                                                                                     legLoc)) {
+                    talonCount++;
+                }
+            }
+            // For mule kicks, both legs must have talons to get the bonus.
+            if (talonCount == legLocs.size()) {
+                damage = Math.round(damage * 1.5f);
+            }
         }
 
         // TSM next (Core p.196, "Talons can receive TSM damage bonus")
@@ -163,16 +178,15 @@ public class KickAttackAction extends PhysicalAttackAction {
             }
         }
 
-        // underwater damage is half, round up (see bug 1110692)
-        // Core p.77 confirms this is floor, not ceil
+        // Core p.77 confirms this is round down (floor)
         if (entity.getLocationStatus(kickingLeg) == ILocationExposureStatus.WET) {
             damage = (int) Math.floor(damage * 0.5f);
         }
         if (targetInfantry) {
-            damage = (int) Math.ceil(damage / 10);
+            damage = (int) Math.ceil(damage / 10.0f);
         }
         damage = Math.max(1, damage);
-        // SPA adding after TSM, but before actuators.
+        // SPA adding last
         damage += entity.modifyPhysicalDamageForMeleeSpecialist();
 
         return damage;
@@ -214,15 +228,25 @@ public class KickAttackAction extends PhysicalAttackAction {
               + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
 
-        boolean muleKick = false;
+        boolean muleKick = attackingEntity.entityIsQuad() && (leg == LEFT_MULE || leg == RIGHT_MULE);
+
+        // Early exits for invalid kicks
+        if (!muleKick && (leg == LEFT_MULE || leg == RIGHT_MULE)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-quad 'Meks can't mule kick.");
+        }
+
+        // can't kick while prone
+        if (attackingEntity.isProne()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
+        }
+
         List<Integer> legLocs = getLegLocs(attackingEntity, leg);
         int kickingLeg;
 
-        if (attackingEntity.entityIsQuad() && (leg != LEFT_MULE) && (leg != RIGHT_MULE)) {
+        if (attackingEntity.entityIsQuad() && !muleKick) {
             kickingLeg = (leg == LEFT) ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM;
-            muleKick = true;
         } else {
-            kickingLeg = (leg == LEFT) ? Mek.LOC_LEFT_LEG : Mek.LOC_RIGHT_LEG;
+            kickingLeg = (leg == LEFT || leg == LEFT_MULE) ? Mek.LOC_LEFT_LEG : Mek.LOC_RIGHT_LEG;
         }
 
         ToHitData toHit;
@@ -236,32 +260,23 @@ public class KickAttackAction extends PhysicalAttackAction {
                   "Leg must be one of LEFT, RIGHT, LEFT_MULE, or RIGHT_MULE");
         }
 
-        // if either front leg is bad, no kick at all. No mule, no front.
-        if (attackingEntity.isLocationBad(Mek.LOC_LEFT_LEG) || attackingEntity.isLocationBad(Mek.LOC_RIGHT_LEG) ||
-            (attackingEntity.isTripodMek() && attackingEntity.isLocationBad(Mek.LOC_CENTER_LEG))) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
+        // Check legs being used for kicking. If the leg is missing, the kick is impossible.
+        for (int legLoc : legLocs) {
+            if (attackingEntity.isLocationBad(legLoc)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
+            }
         }
-        if (attackingEntity.entityIsQuad()
-                && (attackingEntity.isLocationBad(Mek.LOC_LEFT_ARM)
-                    || attackingEntity.isLocationBad(Mek.LOC_RIGHT_ARM)) && muleKick) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
+
+        // For quads if the front leg is missing, no mule kicks
+        if (muleKick && (attackingEntity.isLocationBad(Mek.LOC_LEFT_ARM)
+              || attackingEntity.isLocationBad(Mek.LOC_RIGHT_ARM))) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Front Leg missing, no mule kicks");
         }
 
         // check if all hips are operational
-        if (!attackingEntity.entityIsQuad() && (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
-                                                || !attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP,
-                                                                                     Mek.LOC_RIGHT_LEG))) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
-        }
         // Core p.238. TW p. 147
-        if (attackingEntity.entityIsQuad()) {
-            if ((leg == KickAttackAction.LEFT_MULE || leg == KickAttackAction.RIGHT_MULE) &&
-                (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
-                 || !attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG))) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
-            } else if ((leg == KickAttackAction.LEFT || leg == KickAttackAction.RIGHT) &&
-                       (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
-                        || !attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM))) {
+        for (int legLoc : legLocs) {
+            if (!attackingEntity.hasWorkingSystem(Mek.ACTUATOR_HIP, legLoc)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
             }
         }
@@ -277,7 +292,7 @@ public class KickAttackAction extends PhysicalAttackAction {
                 mounted.isUsedThisRound() &&
                 legLocs.contains(mounted.getLocation()) &&
                 muleKick &&
-                Game.rulesManager instanceof TWRulesManager) {
+                Game.rulesManager.getRulesPhysical().muleWeaponsCheck()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Weapons fired from rear legs this turn");
             }
@@ -308,11 +323,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // check facing, part 2: Mule kick
-        // Tripods cannot perform mule kicks per IO:AE p.158
         if (muleKick) {
-            if (attackingEntity.isTripodMek()) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Tripods cannot perform mule kicks");
-            }
             if ((0 != range)
                 && !ComputeArc.isInArc(attackingEntity.getPosition(),
                                        attackingEntity.getFacing(),
@@ -320,11 +331,6 @@ public class KickAttackAction extends PhysicalAttackAction {
                                        Compute.ARC_REAR)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
             }
-        }
-
-        // can't kick while prone
-        if (attackingEntity.isProne()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
         // Prone 'Meks can only be kicked if they are at the same level as the attacker

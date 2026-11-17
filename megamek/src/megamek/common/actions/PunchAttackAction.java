@@ -433,13 +433,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return 0;
         }
 
-        // underwater damage is half, round down (see bug 1110692) Core p.77
+        // underwater damage is half, round down Core p.77
         if (entity.getLocationStatus(armLoc) == ILocationExposureStatus.WET) {
             damage = (int) Math.floor(damage / 2.0f);
         }
 
         if (targetInfantry) {
-            damage = (int) Math.ceil(damage / 10);
+            damage = (int) Math.ceil(damage / 10.0f);
         }
 
         // Minimum amount

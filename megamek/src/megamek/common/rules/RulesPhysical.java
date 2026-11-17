@@ -244,4 +244,11 @@ public abstract class RulesPhysical {
      * @return
      */
     public abstract int getLanceToHitModifier();
+
+    /**
+     * Check if you can mule kick if you fired weapons from the non-kicking leg.
+     *
+     * @return true if it must check both legs, false if only the kicking leg must not have fired weapons
+     */
+    public abstract boolean muleWeaponsCheck();
 }

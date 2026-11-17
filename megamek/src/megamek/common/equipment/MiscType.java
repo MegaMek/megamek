@@ -9616,7 +9616,10 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         // TODO: add game rules, BV rules are implemented
-        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 88);
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.IO_AE, 88),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.F)

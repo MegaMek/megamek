@@ -168,6 +168,7 @@ public class CommanderGUI implements IClientGUI, ILocalBots {
         buttonPanel = new BotCommandsPanel(this.client, audioService, controller);
         buttonPanel.useSpaceForPauseUnpause();
         buttonPanel.setServerPassword(serverPassword);
+        buttonPanel.setHexPickingMap(minimap);
 
         var jScroll = new JScrollPane(entityListEntries);
         jScroll.setMinimumSize(new Dimension(-1, UIUtil.scaleForGUI(20)));

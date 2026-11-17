@@ -83,22 +83,4 @@ public final class OrderEligibility {
         }
         return game.getBotTypes().get(owner.getName()) == AIType.CASPAR;
     }
-
-    /**
-     * Whether a player's units take Princess's chat-command waypoints, hold position and retreat orders rather than
-     * unit orders. This is the mirror of {@link #takesUnitOrders(Game, Player)}: every bot answers {@code true} to
-     * exactly one of the two, so the Bot Commands panel's Waypoints and Movement buttons and its Move Order and Quick
-     * Orders buttons never both claim a bot, and never both refuse one.
-     *
-     * <p>A CASPAR bot does answer the waypoint chat commands, but it turns them into a unit-orders route, replacing
-     * the one set with Move Order - which is why it is left to the unit-order buttons.</p>
-     *
-     * @param game  the game, which records each bot's type by player name
-     * @param owner the player who owns the units, or {@code null}
-     *
-     * @return {@code true} if the owner is a bot that is not a CASPAR bot
-     */
-    public static boolean takesChatWaypoints(Game game, @Nullable Player owner) {
-        return (owner != null) && owner.isBot() && !takesUnitOrders(game, owner);
-    }
 }

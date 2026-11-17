@@ -34,6 +34,7 @@ package megamek.client.bot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,12 +44,18 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.moves.MovePath;
 import megamek.common.turns.SpecificEntityTurn;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.Test;
 
 class BotClientTest {
@@ -187,6 +194,164 @@ class BotClientTest {
         bot.lastCalculatedTurnIndex = turnIndex;
         assertFalse(bot.isRefusedTurnRestart(turnIndex, 4, false),
               "the same refused unit never restarts the turn twice");
+    }
+
+    private static final int BOT_PLAYER_ID = 4;
+    private static final int ENEMY_PLAYER_ID = 5;
+    private static final Coords REFUSED_HEX = new Coords(1, 1);
+    private static final Coords FREE_HEX = new Coords(2, 2);
+
+    /** A bot on a flat 4x4 board, with itself and one enemy player in its game. */
+    private static RecordingBotClient botOnAFlatBoard() {
+        RecordingBotClient bot = new RecordingBotClient();
+        bot.setLocalPlayerNumber(BOT_PLAYER_ID);
+        int boardSize = 4;
+        Hex[] hexes = new Hex[boardSize * boardSize];
+        int index = 0;
+        for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < boardSize; x++) {
+                hexes[index++] = new Hex(0, "", "", new Coords(x, y));
+            }
+        }
+        bot.getGame().setBoard(0, new Board(boardSize, boardSize, hexes));
+        Player botPlayer = new Player(BOT_PLAYER_ID, "Bot");
+        botPlayer.setTeam(1);
+        bot.getGame().addPlayer(BOT_PLAYER_ID, botPlayer);
+        Player enemyPlayer = new Player(ENEMY_PLAYER_ID, "Enemy");
+        enemyPlayer.setTeam(2);
+        bot.getGame().addPlayer(ENEMY_PLAYER_ID, enemyPlayer);
+        return bot;
+    }
+
+    private static Mek addMek(BotClient bot, int entityId, int ownerId) {
+        Mek mek = new BipedMek();
+        mek.setId(entityId);
+        mek.setOwner(bot.getGame().getPlayer(ownerId));
+        bot.getGame().addEntity(mek);
+        return mek;
+    }
+
+    private static Mek addHiddenMekAt(BotClient bot, int entityId, int ownerId, Coords position) {
+        Mek mek = addMek(bot, entityId, ownerId);
+        mek.setPosition(position);
+        mek.setDeployed(true);
+        mek.setHidden(true);
+        return mek;
+    }
+
+    /**
+     * Issue #9580: the server refuses a deployment onto a unit the bot cannot see and hands the same turn back. The
+     * bot must deploy the same unit again, on another hex. Before the fix it took the event for a duplicate and never
+     * deployed, which left the Deployment phase stuck.
+     */
+    @Test
+    void aRefusedDeploymentIsTriedAgainOnAnotherHex() {
+        RecordingBotClient bot = botOnAFlatBoard();
+        Mek refusedUnit = addMek(bot, 86, BOT_PLAYER_ID);
+        int turnIndex = 3;
+        bot.getGame().setTurnIndex(turnIndex, 0);
+        List<Coords> rankedHexes = List.of(REFUSED_HEX, FREE_HEX);
+        assertEquals(REFUSED_HEX, bot.getFirstValidCoords(refusedUnit, rankedHexes),
+              "control: before any refusal the best ranked hex is chosen");
+
+        bot.lastCalculatedTurnIndex = turnIndex;
+        bot.deploy(86, REFUSED_HEX, 0, 0, 0, List.of(), false);
+
+        assertFalse(bot.isRefusedDeploymentRestart(turnIndex, ENEMY_PLAYER_ID, false),
+              "another player's event is not a refusal of our deployment");
+        assertFalse(bot.isRefusedDeploymentRestart(turnIndex, BOT_PLAYER_ID, true),
+              "duplicate events are normal in a simultaneous phase");
+        assertTrue(bot.isRefusedDeploymentRestart(turnIndex, BOT_PLAYER_ID, false),
+              "the same turn handed back to us is a refused deployment");
+
+        bot.startRefusedDeploymentOver();
+
+        assertTrue(bot.shouldSpawnForTest(turnIndex), "a refused deployment turn is calculated again");
+        assertFalse(bot.isRefusedThisPhase(refusedUnit), "the refused unit still has to deploy, so it is not left out");
+        assertEquals(FREE_HEX, bot.getFirstValidCoords(refusedUnit, rankedHexes),
+              "the refused hex is ruled out, so the next best hex is chosen");
+    }
+
+    /** A turn handed back after the server did deploy the unit is not a refusal. */
+    @Test
+    void aDeploymentTheServerAcceptedDoesNotRestart() {
+        RecordingBotClient bot = botOnAFlatBoard();
+        Mek deployedUnit = addMek(bot, 86, BOT_PLAYER_ID);
+        int turnIndex = 3;
+        bot.getGame().setTurnIndex(turnIndex, 0);
+        bot.lastCalculatedTurnIndex = turnIndex;
+        bot.deploy(86, REFUSED_HEX, 0, 0, 0, List.of(), false);
+        assertTrue(bot.isRefusedDeploymentRestart(turnIndex, BOT_PLAYER_ID, false),
+              "control: while the unit is still undeployed the handed-back turn is a refusal");
+
+        deployedUnit.setDeployed(true);
+
+        assertFalse(bot.isRefusedDeploymentRestart(turnIndex, BOT_PLAYER_ID, false),
+              "a unit the server deployed was not refused");
+    }
+
+    /** A unit that keeps being refused stops restarting the turn, so the bot cannot loop forever. */
+    @Test
+    void aUnitThatKeepsBeingRefusedStopsRetrying() {
+        RecordingBotClient bot = botOnAFlatBoard();
+        addMek(bot, 86, BOT_PLAYER_ID);
+        int turnIndex = 3;
+        bot.getGame().setTurnIndex(turnIndex, 0);
+
+        for (int retry = 0; retry < RefusedDeploymentTracker.MAX_RETRIES_PER_UNIT; retry++) {
+            bot.lastCalculatedTurnIndex = turnIndex;
+            bot.deploy(86, REFUSED_HEX, 0, 0, 0, List.of(), false);
+            assertTrue(bot.isRefusedDeploymentRestart(turnIndex, BOT_PLAYER_ID, false),
+                  "a refusal within the retry limit restarts the turn");
+            bot.startRefusedDeploymentOver();
+        }
+        bot.lastCalculatedTurnIndex = turnIndex;
+        bot.deploy(86, REFUSED_HEX, 0, 0, 0, List.of(), false);
+
+        assertFalse(bot.isRefusedDeploymentRestart(turnIndex, BOT_PLAYER_ID, false),
+              "past the retry limit the unit no longer restarts the turn");
+    }
+
+    /**
+     * Issue #9580: the bot skipped every hidden unit when it checked a hex for stacking, its own included, so it sent
+     * a second unit onto its own hidden one and the server refused it.
+     */
+    @Test
+    void theBotsOwnHiddenUnitBlocksAHex() {
+        RecordingBotClient bot = botOnAFlatBoard();
+        addHiddenMekAt(bot, 87, BOT_PLAYER_ID, REFUSED_HEX);
+        Mek deployingUnit = addMek(bot, 86, BOT_PLAYER_ID);
+
+        assertTrue(bot.isBlockedByKnownUnit(deployingUnit, REFUSED_HEX),
+              "the bot knows where its own hidden unit is, and the server refuses to stack on it");
+        assertFalse(bot.isBlockedByKnownUnit(deployingUnit, FREE_HEX), "control: an empty hex is not blocked");
+        assertEquals(FREE_HEX, bot.getFirstValidCoords(deployingUnit, List.of(REFUSED_HEX, FREE_HEX)));
+    }
+
+    /** The bot has not found a hidden enemy, so it must not steer around one. */
+    @Test
+    void aHiddenEnemyDoesNotBlockAHexForTheBot() {
+        RecordingBotClient bot = botOnAFlatBoard();
+        Mek hiddenEnemy = addHiddenMekAt(bot, 87, ENEMY_PLAYER_ID, REFUSED_HEX);
+        Mek deployingUnit = addMek(bot, 86, BOT_PLAYER_ID);
+
+        assertFalse(bot.isBlockedByKnownUnit(deployingUnit, REFUSED_HEX),
+              "a hidden enemy is not something the bot may know about");
+
+        hiddenEnemy.setHidden(false);
+
+        assertTrue(bot.isBlockedByKnownUnit(deployingUnit, REFUSED_HEX),
+              "control: the same enemy in plain view blocks the hex");
+    }
+
+    /** With every hex blocked or refused there is nowhere to deploy. */
+    @Test
+    void noHexIsChosenWhenEveryHexIsRuledOut() {
+        RecordingBotClient bot = botOnAFlatBoard();
+        addHiddenMekAt(bot, 87, BOT_PLAYER_ID, REFUSED_HEX);
+        Mek deployingUnit = addMek(bot, 86, BOT_PLAYER_ID);
+
+        assertNull(bot.getFirstValidCoords(deployingUnit, List.of(REFUSED_HEX)));
     }
 
     /** A move sent on an earlier turn that reaches the server late is not a refusal of the current turn. */

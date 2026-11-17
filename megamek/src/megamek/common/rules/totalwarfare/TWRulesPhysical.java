@@ -410,4 +410,15 @@ public class TWRulesPhysical extends RulesPhysical {
     public int getClubFindInRubble() {
         return BuildingType.MEDIUM.getTypeValue();
     }
+
+    /**
+     * {@inheritDoc}
+     * Both legs must not have fired weapons to mule kick.
+     *
+     * @return
+     */
+    @Override
+    public boolean muleWeaponsCheck() {
+        return true;
+    }
 }

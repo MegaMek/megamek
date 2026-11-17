@@ -34,12 +34,17 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Vector;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
@@ -54,6 +59,7 @@ import megamek.common.units.Tank;
 import megamek.server.GameManagerPacketHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Tests the server's stacking check on deployment. Under double blind the client cannot see enemy units, so the server
@@ -189,5 +195,80 @@ class DeploymentStackingTest extends GameBoardTestCase {
         verify(gameManager).createEntityPacket(enemyTank.getId(), null);
         verify(gameManager).createEntityPacket(dropShip.getId(), null);
         verify(gameManager).sendServerChat(eq(PLAYER_ID), anyString());
+    }
+
+    /** Captures the one chat line the refusal sent to the player. */
+    private String refusalChatLine() {
+        ArgumentCaptor<String> chatLine = ArgumentCaptor.forClass(String.class);
+        verify(gameManager).sendServerChat(eq(PLAYER_ID), chatLine.capture());
+        return chatLine.getValue();
+    }
+
+    /**
+     * Issue 9580: the refusal used to send the blocking unit to the refused player and name it in chat, which gave
+     * away a hidden enemy.
+     */
+    @Test
+    void refusalOverAHiddenEnemyDoesNotNameOrSendIt() {
+        Tank enemyTank = deployedEnemyTank(CENTRE.translated(1));
+        enemyTank.setHidden(true);
+        Dropship dropShip = undeployedDropShip();
+
+        helper.refuseStackedDeployment(PLAYER_ID, dropShip, enemyTank, CENTRE, PLAYER_ID);
+
+        verify(gameManager, never()).createEntityPacket(enemyTank.getId(), null);
+        verify(gameManager).createEntityPacket(dropShip.getId(), null);
+        assertFalse(refusalChatLine().contains(enemyTank.getShortName()),
+              "the chat line must not name a unit the player cannot see");
+    }
+
+    @Test
+    void refusalOverTheEnemyInPlainViewNamesIt() {
+        Tank enemyTank = deployedEnemyTank(CENTRE.translated(1));
+        Dropship dropShip = undeployedDropShip();
+
+        helper.refuseStackedDeployment(PLAYER_ID, dropShip, enemyTank, CENTRE, PLAYER_ID);
+
+        assertTrue(refusalChatLine().contains(enemyTank.getShortName()),
+              "control: a blocker the player can see is still named");
+    }
+
+    @Test
+    void refusalOverAnEnemyOutOfSightUnderDoubleBlindDoesNotSendIt() {
+        Tank enemyTank = deployedEnemyTank(CENTRE.translated(1));
+        Dropship dropShip = undeployedDropShip();
+        when(gameManager.doBlind()).thenReturn(true);
+        Vector<Player> onlyTheOwner = new Vector<>();
+        onlyTheOwner.add(game.getPlayer(ENEMY_ID));
+        when(gameManager.whoCanSee(enemyTank)).thenReturn(onlyTheOwner);
+
+        helper.refuseStackedDeployment(PLAYER_ID, dropShip, enemyTank, CENTRE, PLAYER_ID);
+
+        verify(gameManager, never()).createEntityPacket(enemyTank.getId(), null);
+        verify(gameManager).createEntityPacket(dropShip.getId(), null);
+    }
+
+    @Test
+    void refusalOverAnEnemyInSightUnderDoubleBlindSendsIt() {
+        Tank enemyTank = deployedEnemyTank(CENTRE.translated(1));
+        Dropship dropShip = undeployedDropShip();
+        when(gameManager.doBlind()).thenReturn(true);
+        Vector<Player> bothPlayers = new Vector<>(game.getPlayersList());
+        when(gameManager.whoCanSee(enemyTank)).thenReturn(bothPlayers);
+
+        helper.refuseStackedDeployment(PLAYER_ID, dropShip, enemyTank, CENTRE, PLAYER_ID);
+
+        verify(gameManager).createEntityPacket(enemyTank.getId(), null);
+    }
+
+    @Test
+    void aPlayersOwnHiddenUnitIsVisibleToThem() {
+        Tank enemyTank = deployedEnemyTank(CENTRE);
+        enemyTank.setHidden(true);
+
+        assertTrue(helper.isVisibleToPlayer(enemyTank, game.getPlayer(ENEMY_ID)),
+              "a player always knows where their own hidden unit is");
+        assertFalse(helper.isVisibleToPlayer(enemyTank, game.getPlayer(PLAYER_ID)));
+        assertFalse(helper.isVisibleToPlayer(enemyTank, null), "a connection with no player sees nothing");
     }
 }

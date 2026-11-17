@@ -191,21 +191,8 @@ public class TestInfantry extends TestEntity {
 
         if (inf.getSecondaryWeapon() != null) {
             InfantryWeapon secondaryWeapon = inf.getSecondaryWeapon();
-            int secondaryCrew = secondaryWeapon.getCrew();
-            // Beast mounted infantry divide crew requirement in half, rounding up.
-            if (inf.getMount() != null) {
-                secondaryCrew = secondaryCrew / 2 + secondaryCrew % 2;
-            }
-            if (inf.getCrew() != null) {
-                if (inf.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                    secondaryCrew--;
-                }
-                if (inf.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                    secondaryCrew--;
-                }
-            }
-            secondaryCrew = Math.max(secondaryCrew, 1);
-            if (secondaryCrew * inf.getSecondaryWeaponsPerSquad() > inf.getSquadSize()) {
+
+            if (weaponCrew(inf, secondaryWeapon) * inf.getSecondaryWeaponsPerSquad() > inf.getSquadSize()) {
                 buff.append("Secondary weapon crew requirement exceeds squad size.\n\n");
                 correct = false;
             }
@@ -370,6 +357,31 @@ public class TestInfantry extends TestEntity {
      */
     public static int fieldGunCrewRequirement(EquipmentType equip, Infantry infantry) {
         return Math.max(2, (int) Math.ceil(equip.getTonnage(infantry)));
+    }
+
+    /**
+     * @param inf The infantry unit
+     * @param weapon The weapon
+     *
+     * @return The number of troopers required to crew the weapon for this infantry unit
+     */
+    public static int weaponCrew(ConvInfantry inf, InfantryWeapon weapon) {
+        int crew = weapon.getCrew();
+        // Beast mounted infantry divide crew requirement in half, rounding up.
+        if (inf.getMount() != null) {
+            crew = crew / 2 + crew % 2;
+        }
+
+        if (inf.getCrew() != null) {
+            if (inf.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+                crew--;
+            }
+            if (inf.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+                crew--;
+            }
+        }
+
+        return Math.max(crew, 1);
     }
 
     public static int maxSecondaryWeapons(ConvInfantry inf) {

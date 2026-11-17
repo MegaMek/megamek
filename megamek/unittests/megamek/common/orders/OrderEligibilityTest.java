@@ -35,13 +35,7 @@ package megamek.common.orders;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-import java.util.Map;
-
-import megamek.client.bot.AIType;
-import megamek.common.Player;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.game.Game;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.ConvFighter;
@@ -82,78 +76,5 @@ class OrderEligibilityTest {
 
         landAirMek.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
         assertFalse(OrderEligibility.isOrderableKind(landAirMek));
-    }
-
-    @Test
-    void aPrincessBotTakesChatWaypointsAndNoUnitOrders() {
-        Player princessBot = botNamed(1, "Princess Bot");
-        Game game = gameWithBotTypes(Map.of(princessBot.getName(), AIType.PRINCESS));
-
-        assertTrue(OrderEligibility.takesChatWaypoints(game, princessBot));
-        assertFalse(OrderEligibility.takesUnitOrders(game, princessBot));
-    }
-
-    @Test
-    void aCasparBotTakesUnitOrdersAndNoChatWaypoints() {
-        Player casparBot = botNamed(1, "Caspar Bot");
-        Game game = gameWithBotTypes(Map.of(casparBot.getName(), AIType.CASPAR));
-
-        assertFalse(OrderEligibility.takesChatWaypoints(game, casparBot));
-        assertTrue(OrderEligibility.takesUnitOrders(game, casparBot));
-    }
-
-    @Test
-    void aBotWithNoRecordedTypeCountsAsPrincess() {
-        Player unrecordedBot = botNamed(1, "Unrecorded Bot");
-        Game game = gameWithBotTypes(Map.of());
-
-        assertTrue(OrderEligibility.takesChatWaypoints(game, unrecordedBot));
-        assertFalse(OrderEligibility.takesUnitOrders(game, unrecordedBot));
-    }
-
-    @Test
-    void aHumanPlayerTakesNeitherKindOfOrder() {
-        Player human = new Player(1, "Human");
-        // a stale record under the human's name must not turn the human into a bot
-        Game game = gameWithBotTypes(Map.of(human.getName(), AIType.PRINCESS));
-
-        assertFalse(OrderEligibility.takesChatWaypoints(game, human));
-        assertFalse(OrderEligibility.takesUnitOrders(game, human));
-    }
-
-    @Test
-    void noPlayerTakesNeitherKindOfOrder() {
-        Game game = gameWithBotTypes(Map.of());
-
-        assertFalse(OrderEligibility.takesChatWaypoints(game, null));
-        assertFalse(OrderEligibility.takesUnitOrders(game, null));
-    }
-
-    @Test
-    void everyBotTakesExactlyOneKindOfOrder() {
-        Player princessBot = botNamed(1, "Princess Bot");
-        Player casparBot = botNamed(2, "Caspar Bot");
-        Player unrecordedBot = botNamed(3, "Unrecorded Bot");
-        Game game = gameWithBotTypes(Map.of(princessBot.getName(), AIType.PRINCESS,
-              casparBot.getName(), AIType.CASPAR));
-
-        for (Player bot : List.of(princessBot, casparBot, unrecordedBot)) {
-            boolean takesChatWaypoints = OrderEligibility.takesChatWaypoints(game, bot);
-            boolean takesUnitOrders = OrderEligibility.takesUnitOrders(game, bot);
-            assertTrue(takesChatWaypoints != takesUnitOrders,
-                  bot.getName() + " must be offered by exactly one pair of Bot Commands buttons");
-        }
-    }
-
-    private static Player botNamed(int playerId, String name) {
-        Player bot = new Player(playerId, name);
-        bot.setBot(true);
-        return bot;
-    }
-
-    private static Game gameWithBotTypes(Map<String, AIType> botTypes) {
-        Game game = new Game();
-        game.setBotTypes(botTypes);
-        return game;
     }
 }

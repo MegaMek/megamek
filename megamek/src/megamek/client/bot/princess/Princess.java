@@ -3659,7 +3659,7 @@ public class Princess extends BotClient {
         return null;
     }
 
-    private @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
+    @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
         // Only isDeployed() decides this. The position below is set on the bot's local copy before the path is
         // sent, so after a rejected attempt the unit is still undeployed but already has a position.
         if ((entity == null) || entity.isDeployed()) {
@@ -3832,7 +3832,14 @@ public class Princess extends BotClient {
         Objects.requireNonNull(entity, "Entity is null.");
 
         if (!entity.isDeployed() || (entity.getPosition() == null)) {
-            final MovePath deploymentMovePath = calculateDeploymentPathForMovementPhase(entity);
+            final MovePath deploymentMovePath;
+            try {
+                deploymentMovePath = calculateDeploymentPathForMovementPhase(entity);
+            } finally {
+                // The walk-on path pauses Precognition to rebuild its paths. Left paused, it never handles the next
+                // movement phase's events, so the next move picks a stale path that still deploys (issue #9601)
+                getPrecognition().unPause();
+            }
             if (deploymentMovePath != null) {
                 return deploymentMovePath;
             }
@@ -4041,6 +4048,10 @@ public class Princess extends BotClient {
             }
             // -----------------------------------------------------------------------
 
+            // A turret can die between the start of movement and now (fire, for one), so recheck the buildings
+            // picked up for their turrets before anyone shoots at them.
+            dropEmptyTurretBuildingTargets();
+
             // Pick up on any infantry/BA in buildings post-movement and shoot
             // their buildings, similar to the turret check
             // pre-movement(infantry can move so we only set target buildings
@@ -4233,7 +4244,11 @@ public class Princess extends BotClient {
         }
     }
 
-    private void checkForDishonoredEnemies() {
+    /**
+     * Marks dishonored every player who attacked one of my units in a way the honor rules forbid this turn.
+     * Package-visible for testing.
+     */
+    void checkForDishonoredEnemies() {
         final StringBuilder msg = new StringBuilder("Checking for dishonored enemies.");
 
         try {
@@ -4251,8 +4266,14 @@ public class Princess extends BotClient {
                     continue;
                 }
 
-                // Was my unit withdrawing under forced withdrawal when this turn began?
-                final boolean fleeing = getMemory().isCrippled(mine.getId());
+                // Was my unit withdrawing under forced withdrawal when this turn began, and still protected? A unit
+                // that fired while withdrawing chose to fight, so shooting it is no dishonor (issue #9595).
+                final boolean fleeing = getForcedWithdrawalTracker().isProtected(mine.getId());
+                if (!fleeing && getMemory().isCrippled(mine.getId())) {
+                    msg.append("\n\t")
+                          .append(mine.getDisplayName())
+                          .append(" was attacked, but it gave up its protection by firing while withdrawing.");
+                }
 
                 for (final int id : attackedBy) {
                     final Entity entity = getGame().getEntity(id);
@@ -4418,35 +4439,6 @@ public class Princess extends BotClient {
             initFriendlyHeatMap();
             initEnemyHeatMaps();
             initExperimentalFeatures();
-
-            // Pick up any turrets and add their buildings to the strategic targets list.
-            for (Board board : game.getBoards().values()) {
-                final Enumeration<IBuilding> buildings = board.getBuildings();
-                while (buildings.hasMoreElements()) {
-                    final IBuilding bldg = buildings.nextElement();
-                    final Enumeration<Coords> bldgCoords = bldg.getCoords();
-                    while (bldgCoords.hasMoreElements()) {
-                        final Coords coords = bldgCoords.nextElement();
-                        for (final Entity entity : game.getEntitiesVector(coords, board.getBoardId(), true)) {
-                            if (isEnemyGunEmplacement(entity, coords)) {
-                                getStrategicBuildingTargets().add(coords);
-
-                                sendChat("Building in Hex " +
-                                      coords.toFriendlyString() +
-                                      " designated target due to Gun Emplacement.", Level.INFO);
-                            }
-
-
-                            if (isEnemyBuildingEntity(entity, coords)) {
-                                getStrategicBuildingTargets().add(coords);
-                                sendChat("Building in Hex " +
-                                      coords.toFriendlyString() +
-                                      " designated target due to Building Entity.", Level.INFO);
-                            }
-                        }
-                    }
-                }
-            }
 
             initialized = true;
             BotGeometry.debugSelfTest(this);
@@ -4762,8 +4754,53 @@ public class Princess extends BotClient {
         getForcedWithdrawalTracker().refreshWithdrawingUnits();
     }
 
+    /**
+     * Drops the buildings that were made targets because of a gun emplacement or building entity when that unit is no
+     * longer there to shoot at. Targets are picked before movement, and a turret can die before the firing phase:
+     * fire damage is rolled at the end of movement. Hexes the player named as strategic targets are always kept.
+     */
+    void dropEmptyTurretBuildingTargets() {
+        final FireControlState state = getFireControlState();
+        final List<Targetable> keptTargets = new ArrayList<>();
+        for (final Targetable target : state.getAdditionalTargets()) {
+            if (isEmptyTurretBuilding(target)) {
+                LOGGER.info("[TurretBuildings] Dropping building in hex {} as a target: no live enemy turret in it",
+                      target.getPosition().toFriendlyString());
+            } else {
+                LOGGER.info("[TurretBuildings] Keeping {} in hex {} as a target",
+                      target.getDisplayName(), target.getPosition().toFriendlyString());
+                keptTargets.add(target);
+            }
+        }
+        state.setAdditionalTargets(keptTargets);
+    }
+
+    /**
+     * @param target one of the bot's additional targets
+     *
+     * @return {@code true} if this is a building that is not a strategic target and holds no live enemy gun
+     *       emplacement or building entity
+     */
+    private boolean isEmptyTurretBuilding(final Targetable target) {
+        if (!(target instanceof BuildingTarget) || (target.getPosition() == null)) {
+            return false;
+        }
+        final Coords coords = target.getPosition();
+        if (getStrategicBuildingTargets().contains(coords)) {
+            return false;
+        }
+        for (final Entity entity : getGame().getEntitiesVector(coords, target.getBoardId(), true)) {
+            if (isEnemyGunEmplacement(entity, coords) || isEnemyBuildingEntity(entity, coords)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean isEnemyGunEmplacement(final Entity entity, final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) &&
+              !entity.isDestroyed() &&
+              !entity.isDoomed() &&
               !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId()) &&
               entity.getOwner().isEnemyOf(getLocalPlayer()) &&
               !getStrategicBuildingTargets().contains(coords) &&
@@ -4772,6 +4809,8 @@ public class Princess extends BotClient {
 
     private boolean isEnemyBuildingEntity(final Entity entity, final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY) &&
+              !entity.isDestroyed() &&
+              !entity.isDoomed() &&
               !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId()) &&
               entity.getOwner().isEnemyOf(getLocalPlayer()) &&
               !getStrategicBuildingTargets().contains(coords) &&
@@ -4895,6 +4934,10 @@ public class Princess extends BotClient {
         final Set<Integer> unitsWithdrawingAtStartOfTurn = getMemory().crippledUnitIds();
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
+        // After checkForDishonoredEnemies: attacks are declared at the same time, so an enemy shooting a unit in the
+        // same turn it first fires while withdrawing still shot a protected unit. Before sendDishonoredData, so
+        // clients stop tagging and warning about a unit that has given up its protection.
+        getForcedWithdrawalTracker().updateForfeitedProtection(unitsWithdrawingAtStartOfTurn);
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();

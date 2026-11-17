@@ -43,6 +43,7 @@ import static megamek.common.units.Terrains.FUEL_TANK;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -60,6 +61,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -76,6 +78,7 @@ import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -95,7 +98,7 @@ import org.apache.commons.text.StringEscapeUtils;
 /**
  * This class is WIP, commiting just to have an artifact.
  */
-public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter {
+public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter, HexPickingMap {
     private final Client client;
     private final IGame game;
     private final List<Blip> removedUnits;
@@ -127,6 +130,9 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
     private int currentRound = -1;
 
     private final Map<Coords, Integer> multiUnits = new HashMap<>();
+    private final List<Consumer<Coords>> hexClickListeners = new ArrayList<>();
+    private List<Coords> pickedHexes = List.of();
+    private boolean pickedHexesNumbered = false;
     private static final String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
     private static final int[] HEX_SIDE = { 2, 3, 5, 6, 8, 10, 12 };
     private static final int[] HEX_SIDE_BY_COS30 = { 2, 3, 4, 5, 7, 9, 10 };
@@ -218,6 +224,17 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
             public void mousePressed(MouseEvent e) {
                 initialClickX = e.getX();
                 initialClickY = e.getY();
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                // Swing sends no click after a drag, so panning the map never picks a hex
+                if ((event.getButton() == MouseEvent.BUTTON1) && !hexClickListeners.isEmpty()) {
+                    Coords coords = coordsAt(event.getX(), event.getY());
+                    if (coords != null) {
+                        notifyHexClicked(coords);
+                    }
+                }
             }
         });
         addMouseWheelListener(e -> {
@@ -351,6 +368,9 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
             }
         }
 
+        // 9) Hexes picked for a bot order
+        drawPickedHexes(g);
+
         paintOverlays(g);
     }
 
@@ -410,6 +430,75 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
               color.getGreen(),
               color.getBlue(),
               (int) (color.getAlpha() / alphaDivisor));
+    }
+
+    /** Rings each hex picked for a bot order, numbered in pick order when it is a route. */
+    private void drawPickedHexes(Graphics g) {
+        if (pickedHexes.isEmpty()) {
+            return;
+        }
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setStroke(new BasicStroke(3));
+        g2.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, FONT_SIZE[zoom]));
+        FontMetrics metrics = g2.getFontMetrics();
+        int number = 1;
+        for (Coords hex : pickedHexes) {
+            int[] center = projectToView(hex.getX(), hex.getY());
+            int centerX = center[0] + xOffset;
+            int centerY = center[1] + yOffset;
+            g2.setColor(Color.YELLOW);
+            g2.drawOval(centerX - unitSize, centerY - unitSize, 2 * unitSize, 2 * unitSize);
+            if (pickedHexesNumbered) {
+                String label = String.valueOf(number);
+                int labelX = centerX - (metrics.stringWidth(label) / 2);
+                int labelY = centerY - unitSize - 2;
+                g2.setColor(Color.BLACK);
+                g2.drawString(label, labelX + 1, labelY + 1);
+                g2.setColor(Color.YELLOW);
+                g2.drawString(label, labelX, labelY);
+            }
+            number++;
+        }
+        g2.dispose();
+    }
+
+    @Override
+    public void addHexClickListener(Consumer<Coords> listener) {
+        hexClickListeners.add(listener);
+    }
+
+    @Override
+    public void removeHexClickListener(Consumer<Coords> listener) {
+        hexClickListeners.remove(listener);
+    }
+
+    @Override
+    public void showPickedHexes(List<Coords> hexes, boolean numbered) {
+        pickedHexes = List.copyOf(hexes);
+        pickedHexesNumbered = numbered;
+        repaint();
+    }
+
+    @Override
+    public Board getPickingBoard() {
+        return game.getBoard();
+    }
+
+    @Override
+    public Component getPickingComponent() {
+        return this;
+    }
+
+    /**
+     * Tells the hex click listeners which hex was clicked. A listener may remove itself, so they are told from a
+     * copy.
+     *
+     * @param coords the clicked hex
+     */
+    void notifyHexClicked(Coords coords) {
+        for (Consumer<Coords> listener : List.copyOf(hexClickListeners)) {
+            listener.accept(coords);
+        }
     }
 
     /** Draws a red crosshair for artillery auto hit hexes (predesignated only). */

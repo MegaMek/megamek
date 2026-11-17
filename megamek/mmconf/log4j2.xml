@@ -88,6 +88,14 @@
         <File name="MekHQLog" fileName="logs/mekhq.log" append="false">
             <PatternLayout pattern="${layout}" />
         </File>
+        <!--
+          The Entity Verifier report (the entityVerifier Gradle task). Message text only, so it reads as a plain
+          report. Each run that logs from the verifier starts a fresh file; createOnDemand leaves the last report
+          in place when a launch never touches the verifier.
+        -->
+        <File name="EntityVerifierLog" fileName="logs/entity_verifier.txt" append="false" createOnDemand="true">
+            <PatternLayout pattern="%m%n%ex" />
+        </File>
         <Console name="dev">
             <PatternLayout pattern="${layout}" />
         </Console>
@@ -408,6 +416,16 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Entity Verifier report goes to logs/entity_verifier.txt. The game also runs the verifier when it loads
+          units, so its errors are still copied to megamek.log and the unified log.
+        -->
+        <Logger name="megamek.common.verifier.EntityVerifier" level="info" additivity="false">
+            <AppenderRef ref="EntityVerifierLog" />
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" level="error" />
+            <AppenderRef ref="MegaMekLog" level="error" />
+        </Logger>
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

@@ -4522,7 +4522,7 @@ public abstract class Entity extends TurnOrdered
 
     public int getArmorForReal(int loc,
                                boolean rear) {
-        return armor[loc];
+        return Math.min(armor[loc], getOArmor(loc));
     }
 
     public int getArmorForReal(int loc) {

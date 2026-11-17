@@ -2562,7 +2562,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     @Override
     public int getArmorForReal(int loc, boolean rear) {
         if (rear && hasRearArmor(loc)) {
-            return rearArmor[loc];
+            return Math.min(rearArmor[loc], getOArmor(loc, true));
         }
         return super.getArmorForReal(loc, rear);
     }
@@ -2575,7 +2575,21 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (rear && hasRearArmor(loc)) {
             return orig_rearArmor[loc];
         }
-        return super.getOArmor(loc, rear);
+        int val = super.getOArmor(loc, rear);
+        if (loc == 0) {
+            if (hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_HEAD_1)) {
+                val = Math.max(val - 1, 0);
+            } else if (hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_HEAD_2)) {
+                val = Math.max(val - 2, 0);
+            } else if (hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_HEAD_3)) {
+                val = Math.max(val - 3, 0);
+            } else if (hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_HEAD_4)) {
+                val = Math.max(val - 4, 0);
+            } else if (hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)) {
+                val = Math.max(val - 5, 0);
+            }
+        }
+        return val;
     }
 
     /**

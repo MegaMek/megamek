@@ -55,9 +55,9 @@ class QuirkCatalogTest {
 
     private static final int UNIT_QUIRK_COUNT = 93;
     private static final int WEAPON_QUIRK_COUNT = 18;
-    private static final int UNIT_IMPLEMENTED_COUNT = 57;
+    private static final int UNIT_IMPLEMENTED_COUNT = 62;
     private static final int UNIT_PARTIAL_COUNT = 3;
-    private static final int UNIT_NOT_IMPLEMENTED_COUNT = 33;
+    private static final int UNIT_NOT_IMPLEMENTED_COUNT = 28;
     private static final int WEAPON_IMPLEMENTED_COUNT = 12;
     private static final int WEAPON_NOT_IMPLEMENTED_COUNT = 6;
 

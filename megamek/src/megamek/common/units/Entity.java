@@ -14093,6 +14093,9 @@ public abstract class Entity extends TurnOrdered
         for (Mounted<?> mounted : getEquipment()) {
             mounted.clearGameState();
         }
+
+        // Remove inLab state
+        inLab = false;
     }
 
     public PilotingRollData checkSideSlip(EntityMovementType moveType,

@@ -49,6 +49,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import megamek.client.AbstractClient;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.ui.Messages;
 import megamek.common.OffBoardDirection;
@@ -205,6 +206,54 @@ class PrincessWaypointMenuBuilderTest {
 
         Arguments arguments = parseAsPrincess(chatLine, ChatCommands.CLEAR_WAYPOINT);
         assertEquals(20, arguments.get("unitID", UnitArgument.class).getValue());
+    }
+
+    @Test
+    void removeLastWaypointSendsTheUnitPrincessCanRead() {
+        JMenu botMenu = new JMenu();
+        builder.populateMoveOrders(botMenu, bot);
+
+        String chatLine = clickAndCaptureChat(findItem((JMenu) botMenu.getItem(1),
+              princessText("removeLastWaypoint")));
+
+        Arguments arguments = parseAsPrincess(chatLine, ChatCommands.REMOVE_WAYPOINT);
+        assertEquals(21, arguments.get("unitID", UnitArgument.class).getValue());
+    }
+
+    @Test
+    void retreatToAnEdgeSendsTheEdgePrincessCanRead() {
+        JMenu botMenu = new JMenu();
+        builder.populateQuickOrders(botMenu, bot);
+        JMenuItem retreatMenu = findItem(botMenu, princessText("retreat"));
+        assertInstanceOf(JMenu.class, retreatMenu);
+
+        String chatLine = clickAndCaptureChat(findItem((JMenu) retreatMenu, princessText("retreat.EAST")));
+
+        Arguments arguments = parseAsPrincess(chatLine, ChatCommands.FLEE);
+        assertEquals(CardinalEdge.EAST, arguments.getEnum("edge", CardinalEdge.class));
+    }
+
+    @Test
+    void theRetreatMenuOffersEveryEdgeAndTheNearest() {
+        JMenu botMenu = new JMenu();
+        builder.populateQuickOrders(botMenu, bot);
+        JMenu retreatMenu = (JMenu) findItem(botMenu, princessText("retreat"));
+
+        for (CardinalEdge edge : List.of(CardinalEdge.NORTH, CardinalEdge.EAST, CardinalEdge.SOUTH,
+              CardinalEdge.WEST, CardinalEdge.NEAREST)) {
+            assertNotNull(findItem(retreatMenu, princessText("retreat." + edge.name())), edge.name());
+        }
+    }
+
+    @Test
+    void cancelRetreatSendsNoEdge() {
+        JMenu botMenu = new JMenu();
+        builder.populateQuickOrders(botMenu, bot);
+
+        String chatLine = clickAndCaptureChat(findItem(botMenu, princessText("retreat.NONE")));
+
+        Arguments arguments = parseAsPrincess(chatLine, ChatCommands.FLEE);
+        assertEquals(CardinalEdge.NONE, arguments.getEnum("edge", CardinalEdge.class));
     }
 
     @Test

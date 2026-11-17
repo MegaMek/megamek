@@ -68,6 +68,7 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
@@ -762,6 +763,7 @@ public class MoveStep implements Serializable {
             }
         } else {
             calcMovementCostFor(game, prev, cachedEntityState);
+            addNightwalkerLightCost(game, cachedEntityState);
         }
         // check for water
         if (Game.rulesManager.getRulesMovement().cannotRunInWater(entity.getMovementMode(),
@@ -3253,6 +3255,111 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * Whether this step pays the careful-movement MP penalties for fog and light (TO pg 63). VTOLs (including
+     * powered flight infantry), jumping units, careless movement and space boards are exempt, as is everyone when
+     * the "no night movement penalty" option is on.
+     *
+     * @param game the current game
+     *
+     * @return {@code true} if fog and light MP penalties apply to this step
+     */
+    private boolean paysCarefulMovementPenalties(Game game) {
+        boolean applyNightPen = !game.getOptions()
+                                     .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_NIGHT_MOVE_PEN);
+        boolean carefulExempt = (getEntity().getMovementMode() == EntityMovementMode.VTOL) || isJumping();
+        return !game.getBoard(boardId).isSpace() && isCareful() && applyNightPen && !carefulExempt;
+    }
+
+    /**
+     * The careful-movement MP penalty for light conditions (TO:AR 6th ed. p. 34), per hex.
+     *
+     * @param light             the current light condition
+     * @param isLightSpecialist whether the crew has the Light environmental specialist SPA
+     * @param isUsingSearchlight whether the unit has its searchlight on
+     *
+     * @return the extra MP each hex costs
+     */
+    static int lightMovementPenalty(Light light, boolean isLightSpecialist, boolean isUsingSearchlight) {
+        return switch (light) {
+            case FULL_MOON -> (isLightSpecialist || isUsingSearchlight) ? 0 : 1;
+            case GLARE -> isLightSpecialist ? 0 : 1;
+            case MOONLESS -> {
+                if (isUsingSearchlight) {
+                    yield 0;
+                }
+                yield isLightSpecialist ? 1 : 2;
+            }
+            case SOLAR_FLARE -> isLightSpecialist ? 1 : 2;
+            case PITCH_BLACK -> isLightSpecialist ? 1 : 3;
+            default -> 0;
+        };
+    }
+
+    /**
+     * The light MP penalty a Terrain Master [Nightwalker] pays for one hex (CamOps). The penalty is ignored while the
+     * unit is still within its walk MP. Past walk MP it is reduced by 1, to a minimum of 0. A crew that is also a
+     * Light specialist pays whichever of the two costs is lower; the reductions do not stack.
+     *
+     * @param light              the current light condition
+     * @param isLightSpecialist  whether the crew also has the Light environmental specialist SPA
+     * @param isUsingSearchlight whether the unit has its searchlight on
+     * @param isWalking          whether the unit is still within its walk MP after this hex
+     *
+     * @return the extra MP this hex costs
+     */
+    static int nightwalkerLightPenalty(Light light, boolean isLightSpecialist, boolean isUsingSearchlight,
+          boolean isWalking) {
+        if (isWalking) {
+            return 0;
+        }
+        int reducedPenalty = Math.max(0, lightMovementPenalty(light, false, isUsingSearchlight) - 1);
+        if (isLightSpecialist) {
+            return Math.min(reducedPenalty, lightMovementPenalty(light, true, isUsingSearchlight));
+        }
+        return reducedPenalty;
+    }
+
+    /**
+     * Adds the Terrain Master [Nightwalker] light cost to this step. Each hex is judged on its own: a hex that still
+     * ends within walk MP is free, and a hex past walk MP pays the reduced cost. This runs after the rest of the step
+     * is priced, because whether the hex ends past walk MP depends on its full terrain cost.
+     *
+     * @param game              the current game
+     * @param cachedEntityState the cached state of the moving entity
+     */
+    private void addNightwalkerLightCost(Game game, CachedEntityState cachedEntityState) {
+        Entity movingEntity = getEntity();
+        boolean paysCarefulPenalties = paysCarefulMovementPenalties(game);
+        LOGGER.trace("[DarknessMP] {} at {}: light {}, careful penalties apply {}, Nightwalker {}, step MP before "
+                     + "Nightwalker cost {}", movingEntity.getDisplayName(), getPosition(),
+              game.getPlanetaryConditions().getLight(), paysCarefulPenalties, movingEntity.isNightwalker(), getMp());
+        // A step that costs nothing (e.g. 0 MP infantry's free hex) never pays light penalties
+        if (!movingEntity.isNightwalker() || (getMp() == 0) || !paysCarefulPenalties) {
+            return;
+        }
+        Light light = game.getPlanetaryConditions().getLight();
+        int fullPenalty = lightMovementPenalty(light, false, movingEntity.isUsingSearchlight());
+        if (fullPenalty == 0) {
+            return;
+        }
+        boolean isLightSpecialist = movingEntity.getCrew()
+                                          .getOptions()
+                                          .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                                          .equals(Crew.ENVIRONMENT_SPECIALIST_LIGHT);
+        int roadBonus = (movingEntity.isEligibleForPavementOrRoadBonus() && isOnlyPavementOrRoad()) ? 1 : 0;
+        int walkMP = cachedEntityState.getWalkMP() + wigeBonus + roadBonus;
+        // mpUsed still holds the total before this step; compile adds this step's MP afterwards
+        int mpUsedAfterStep = getMpUsed() + getMp();
+        boolean isWalking = mpUsedAfterStep <= walkMP;
+        int lightCost = nightwalkerLightPenalty(light, isLightSpecialist, movingEntity.isUsingSearchlight(),
+              isWalking);
+        setMp(getMp() + lightCost);
+        LOGGER.trace("[Nightwalker] {} at {}: light {}, MP used after hex {} of walk {}, {} - pays {} of {} light MP",
+              movingEntity.getDisplayName(), getPosition(), light, mpUsedAfterStep, walkMP,
+              isWalking ? "walking, penalty ignored" : "past walk MP, penalty reduced by 1", lightCost, fullPenalty);
+    }
+
+    /**
      * Amount of movement points required to move from start to dest
      */
     protected void calcMovementCostFor(Game game,
@@ -3305,13 +3412,8 @@ public class MoveStep implements Serializable {
             return;
         }
 
-        boolean applyNightPen = !game.getOptions()
-                                     .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_NIGHT_MOVE_PEN);
-        // VTOL (includes powered flight infantry), jumping are exempt from careful movement penalties
-        boolean carefulExempt = (moveMode == EntityMovementMode.VTOL) || isJumping();
-
         // Apply careful movement MP penalties for fog and light (TO pg 63)
-        if (!game.getBoard(boardId).isSpace() && isCareful() && applyNightPen && !carefulExempt) {
+        if (paysCarefulMovementPenalties(game)) {
             // Fog
             switch (conditions.getFog()) {
                 case FOG_LIGHT:
@@ -3329,48 +3431,10 @@ public class MoveStep implements Serializable {
                 default:
             }
 
-            // Light TO:AR 6th ed. p. 34
+            // Light TO:AR 6th ed. p. 34. A Nightwalker's light cost depends on whether the step ends past walk MP,
+            // which is only known once the whole step is priced, so addNightwalkerLightCost adds it afterwards.
             if (!entity.isNightwalker()) {
-                switch (conditions.getLight()) {
-                    case FULL_MOON:
-                        if (!isLightSpecialist && !en.isUsingSearchlight()) {
-                            mp += 1;
-                        }
-                        break;
-                    case GLARE:
-                        if (!isLightSpecialist) {
-                            mp += 1;
-                        }
-                        break;
-                    case MOONLESS:
-                        if (en.isUsingSearchlight()) {
-                            break;
-                        }
-
-                        if (!isLightSpecialist) {
-                            mp += 2;
-                        } else {
-                            mp += 1;
-                        }
-                        break;
-                    case SOLAR_FLARE:
-                        if (!isLightSpecialist) {
-                            mp += 2;
-                        } else {
-                            mp += 1;
-                        }
-                        break;
-                    case PITCH_BLACK:
-                        if (!isLightSpecialist) {
-                            mp += 3;
-                        } else {
-                            mp += 1;
-                        }
-                        break;
-                    default:
-                }
-            } else if (conditions.getLight().isFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
-                setRunProhibited(true);
+                mp += lightMovementPenalty(conditions.getLight(), isLightSpecialist, en.isUsingSearchlight());
             }
         }
 

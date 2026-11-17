@@ -885,8 +885,8 @@ public abstract class PathRanker implements IPathRanker {
             // building.
             double mass = path.getEntity().getWeight() + 10;
 
-            // Add the mass of anyone else standing in/on this building.
-            mass += owner.getMassOfAllInBuilding(game, finalCoords, path.getFinalBoardId());
+            // Add the mass of anyone else standing in/on this building; the mover is already in mass.
+            mass += owner.getMassOfAllInBuilding(game, finalCoords, path.getFinalBoardId(), path.getEntity());
 
             return (mass > building.get().getCurrentCF(finalCoords));
         }
@@ -922,8 +922,9 @@ public abstract class PathRanker implements IPathRanker {
                     continue;
                 }
 
-                // Add the mass of anyone else standing in/on this building.
-                double fullMass = mass + owner.getMassOfAllInBuilding(game, pos, step.getBoardId());
+                // Add the mass of anyone else standing in/on this building. The mover is already in mass, and a
+                // unit starting on a bridge must not count its own weight twice (issue #9574).
+                double fullMass = mass + owner.getMassOfAllInBuilding(game, pos, step.getBoardId(), entity);
 
                 if (fullMass > building.getCurrentCF(pos)) {
                     return true;

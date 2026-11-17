@@ -4608,6 +4608,17 @@ public class TWGameManager extends AbstractGameManager {
                 return;
             }
 
+            if (DeploymentServerHelper.deploysAlreadyDeployedUnit(entity, movePath)) {
+                LOGGER.error("Refused movement from connection {}: {} is already deployed at {} but the path deploys "
+                            + "it again; resending the turn so the sender can act again",
+                      connectionId,
+                      entity.getShortName(),
+                      entity.getPosition());
+                send(connectionId, packetHelper.createTurnListPacket());
+                send(connectionId, packetHelper.createTurnIndexPacket(connectionId));
+                return;
+            }
+
             // looks like mostly everything's okay
             Coords positionBeforeMovement = entity.getPosition();
             MovePathHandler handler = new MovePathHandler(this, entity, movePath, losCache);

@@ -151,6 +151,11 @@ public final class PilotToolTip {
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         String col = CrewSkillSummaryUtil.getSkillNames(entity) + ": "
               + CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpg_skills);
+        String crewStatus = crewStatusDescription(entity.getCrew());
+        if (!crewStatus.isEmpty()) {
+            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
+            col += " " + UIUtil.tag("FONT", attr, crewStatus);
+        }
         String implantAdjustments = CrewSkillSummaryUtil.getImplantAdjustmentsDescription(entity);
         if (!implantAdjustments.isEmpty()) {
             col += "<BR>" + implantAdjustments;
@@ -159,6 +164,30 @@ public final class PilotToolTip {
         String rows = UIUtil.tag("TR", "", col);
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 BORDER=0", rows);
         return new StringBuilder(table);
+    }
+
+    /**
+     * Names the state of the crew as a whole when it can no longer act, so the one-line crew summary tells a unit whose
+     * crew was killed apart from one that is only immobilized. A crew that is doomed (killed this phase, removed at the
+     * end of it) already counts as dead.
+     *
+     * @param crew the unit's crew
+     *
+     * @return "Crew Dead" or "Crew Unconscious", or an empty String while any crew member can still act or the unit
+     *       has no crew slots at all
+     */
+    static String crewStatusDescription(Crew crew) {
+        // A crew without slots is never active, so Crew.isUnconscious() would wrongly report it as knocked out
+        if (crew.getSlotCount() == 0) {
+            return "";
+        }
+        if (crew.isDead() || crew.isDoomed()) {
+            return Messages.getString("BoardView1.Tooltip.CrewDead");
+        }
+        if (crew.isUnconscious()) {
+            return Messages.getString("BoardView1.Tooltip.CrewUnconscious");
+        }
+        return "";
     }
 
     /** Returns a tooltip part with names and skills of the crew. */

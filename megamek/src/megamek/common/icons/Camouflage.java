@@ -45,9 +45,11 @@ import java.util.Objects;
 import jakarta.annotation.Nullable;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.PlayerColour;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.battlefieldSupport.OverlayStyle;
 import megamek.common.battlefieldSupport.StripeDirection;
 import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Node;
 
 /**
@@ -66,6 +68,11 @@ public class Camouflage extends AbstractIcon {
     public static final String NO_CAMOUFLAGE = "-- No Camo --";
     public static final String COLOUR_CAMOUFLAGE = "-- Colour Camo --";
     public static final String XML_TAG = "camouflage";
+    private static final String XML_ROTATION = "rotation";
+    private static final String XML_SCALE = "scale";
+    private static final String XML_OVERLAY_STYLE = "overlayStyle";
+    private static final String XML_OVERLAY_DIRECTION = "overlayDirection";
+    private static final String XML_OVERLAY_COLOR = "overlayColor";
 
     /** The default marker-overlay color (a caution-tape yellow) drawn on a Battlefield Support Asset's sprite. */
     public static final Color DEFAULT_ASSET_OVERLAY_COLOR = new Color(0xFF, 0xCC, 0x00);
@@ -181,6 +188,57 @@ public class Camouflage extends AbstractIcon {
     @Override
     public void writeToXML(final PrintWriter pw, final int indent) {
         writeToXML(pw, indent, XML_TAG);
+    }
+
+    @Override
+    protected void writeBodyToXML(final PrintWriter pw, final int indent) {
+        super.writeBodyToXML(pw, indent);
+
+        if (rotationAngle != 0) {
+            MMXMLUtility.writeSimpleXMLTag(pw, indent, XML_ROTATION, rotationAngle);
+        }
+
+        if (scale != 10) {
+            MMXMLUtility.writeSimpleXMLTag(pw, indent, XML_SCALE, scale);
+        }
+
+        if (!hasDefaultOverlay()) {
+            MMXMLUtility.writeSimpleXMLTag(pw, indent, XML_OVERLAY_STYLE, getOverlayStyle().name());
+            MMXMLUtility.writeSimpleXMLTag(pw, indent, XML_OVERLAY_DIRECTION, getOverlayDirection().name());
+            MMXMLUtility.writeSimpleXMLTag(pw, indent, XML_OVERLAY_COLOR,
+                  String.format("%06X", getOverlayColor().getRGB() & 0xFFFFFF));
+        }
+    }
+
+    @Override
+    protected void parseNode(final Node workingNode) {
+        final String text = workingNode.getTextContent().trim();
+        switch (workingNode.getNodeName()) {
+            case XML_ROTATION -> setRotationAngle(MathUtility.parseInt(text, 0));
+            case XML_SCALE -> setScale(MathUtility.parseInt(text, 10));
+            case XML_OVERLAY_STYLE -> {
+                try {
+                    setOverlayStyle(OverlayStyle.valueOf(text));
+                } catch (IllegalArgumentException ex) {
+                    LOGGER.warn("Unknown camouflage overlay style {}, using default", text);
+                }
+            }
+            case XML_OVERLAY_DIRECTION -> {
+                try {
+                    setOverlayDirection(StripeDirection.valueOf(text));
+                } catch (IllegalArgumentException ex) {
+                    LOGGER.warn("Unknown camouflage overlay direction {}, using default", text);
+                }
+            }
+            case XML_OVERLAY_COLOR -> {
+                try {
+                    setOverlayColor(new Color(Integer.parseInt(text, 16)));
+                } catch (NumberFormatException ex) {
+                    LOGGER.warn("Invalid camouflage overlay color {}, using default", text);
+                }
+            }
+            default -> super.parseNode(workingNode);
+        }
     }
 
     public static Camouflage parseFromXML(final Node wn) {

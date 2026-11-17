@@ -72,6 +72,7 @@ import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.buttonDialogs.BotTargetPickerDialog;
+import megamek.client.ui.dialogs.minimap.HexPickingMap;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
@@ -112,6 +113,8 @@ public class BotCommandsPanel extends JPanel {
     private final MegaMekController controller;
     private final ClientGUI clientGUI;
     private String serverPassword = "";
+    // where to pick hexes when there is no board view, e.g. the Commander window's minimap
+    private HexPickingMap hexPickingMap;
     private final MegaMekButton miscButton =
           new MegaMekButton("", SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
     // This latch is used only to change the state of the button from pause to continue and back
@@ -427,6 +430,16 @@ public class BotCommandsPanel extends JPanel {
      */
     public void setServerPassword(String serverPassword) {
         this.serverPassword = (serverPassword == null) ? "" : serverPassword;
+    }
+
+    /**
+     * Sets the map to pick hexes on when there is no board view, so orders that need hexes are given by clicking it
+     * instead of typing hex numbers. The Commander window passes its minimap.
+     *
+     * @param hexPickingMap the map, or {@code null} to go back to typing hex numbers
+     */
+    public void setHexPickingMap(@Nullable HexPickingMap hexPickingMap) {
+        this.hexPickingMap = hexPickingMap;
     }
 
     /**
@@ -1401,7 +1414,7 @@ public class BotCommandsPanel extends JPanel {
 
     /**
      * Lets the player designate target hexes by clicking them on the board. When no board view is available (e.g. in
-     * the Commander GUI), falls back to a typed hex number prompt.
+     * the Commander GUI), they click the hex picking map instead if one is set, or else type the hex numbers.
      *
      * @param orderDescription  Human-readable description of the order shown while picking
      * @param singleHex         {@code true} to finish after the first hex is picked
@@ -1417,6 +1430,11 @@ public class BotCommandsPanel extends JPanel {
                   .filter(BoardView.class::isInstance)
                   .map(BoardView.class::cast)
                   .orElse(null);
+        }
+        if ((boardView == null) && (hexPickingMap != null)) {
+            new MinimapHexPicker(hexPickingMap, client.getGame(), orderDescription, singleHex, maxHexes,
+                  onTargetsSelected).start();
+            return;
         }
         if (boardView == null) {
             String targets = promptForHexNumbers(fallbackPromptKey, "BotCommandPanel.TargetHexPrompt.title", maxHexes);

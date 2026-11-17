@@ -577,7 +577,8 @@ public class Compute {
      * @param destBoardId  Allows setting a different board for checking destination hex
      * @param transport    Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode    The moving Entity's climb mode at the point it enters the destination hex
-     * @param ignoreHidden true by default.
+     * @param ignoreHidden {@code true} to leave hidden enemies of the entering unit out of the check, as that unit
+     *                     does not know they are there; hidden units on its own side always count
      *
      * @return Entity instance that is causing the violation
      */
@@ -658,8 +659,10 @@ public class Compute {
                     continue;
                 }
 
-                // We are not allowed to consider hidden units here!
-                if (ignoreHidden && inHex.isHidden()) {
+                // A hidden enemy must not be considered: the entering unit does not know it is there. A hidden unit
+                // on the entering unit's own side is known to it and takes up room like any other unit.
+                boolean isUndiscoveredEnemy = inHex.isHidden() && inHex.isEnemyOf(entering);
+                if (ignoreHidden && isUndiscoveredEnemy) {
                     continue;
                 }
 

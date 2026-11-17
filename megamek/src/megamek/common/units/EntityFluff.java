@@ -243,6 +243,48 @@ public class EntityFluff implements Serializable {
               .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
     }
 
+    /**
+     * Returns the fluff to show for a unit whose unit file fluff is this object, using the given fallback (usually unit
+     * fluff kept outside the unit file) for whatever this object leaves blank. Fluff in the unit file always takes
+     * precedence. Manufacturer and primary factory are taken as a pair, as their entries correspond by position; so are
+     * the manufacturer and model of each system component. Neither this object nor the fallback is changed.
+     *
+     * @param fallback The fluff to fill blank fields from; may be null
+     *
+     * @return This object if there is no fallback, otherwise a new, merged fluff object
+     */
+    public EntityFluff withFallback(@Nullable EntityFluff fallback) {
+        if (fallback == null) {
+            return this;
+        }
+        EntityFluff merged = new EntityFluff();
+        merged.capabilities = capabilities.isBlank() ? fallback.capabilities : capabilities;
+        merged.overview = overview.isBlank() ? fallback.overview : overview;
+        merged.deployment = deployment.isBlank() ? fallback.deployment : deployment;
+        merged.history = history.isBlank() ? fallback.history : history;
+        if (manufacturer.isBlank() && primaryFactory.isBlank()) {
+            merged.manufacturer = fallback.manufacturer;
+            merged.primaryFactory = fallback.primaryFactory;
+        } else {
+            merged.manufacturer = manufacturer;
+            merged.primaryFactory = primaryFactory;
+        }
+        for (System system : System.values()) {
+            EntityFluff source = (getSystemManufacturer(system).isBlank() && getSystemModel(system).isBlank())
+                  ? fallback : this;
+            merged.setSystemManufacturer(system, source.getSystemManufacturer(system));
+            merged.setSystemModel(system, source.getSystemModel(system));
+        }
+        merged.notes = notes;
+        merged.fluffDate = getFluffDate();
+        merged.fluffImage = fluffImage;
+        merged.use = use;
+        merged.length = length;
+        merged.width = width;
+        merged.height = height;
+        return merged;
+    }
+
     /** Sets the encoded form of the fluff image to the given String. */
     public void setFluffImage(String fluffImage64) {
         fluffImage = new Base64Image(fluffImage64);

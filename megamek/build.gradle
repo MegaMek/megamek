@@ -1032,6 +1032,23 @@ tasks.register('resaveUnits', JavaExec) {
     jvmArgs = mmJvmOptions
 }
 
+tasks.register('splitUnitFluff', JavaExec) {
+    dependsOn jar
+    description = 'Moves unit fluff out of the unit files into unit fluff files. Defaults to the sibling mm-data; ' +
+          'override with -PunitFilesDir=..., -PunitFluffDir=... and add -PdryRun to only report.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.UnitFluffSplitter'
+    workingDir = projectDir
+    def splitterArgs = [project.findProperty('unitFilesDir') ?: "${rootDir}/../mm-data/data/mekfiles",
+                        project.findProperty('unitFluffDir') ?: "${rootDir}/../mm-data/unitfluff"]
+    if (project.hasProperty('dryRun')) {
+        splitterArgs << '--dry-run'
+    }
+    args(splitterArgs)
+    jvmArgs = mmJvmOptions
+}
+
 tasks.register('testAi', JavaExec) {
     dependsOn jar
     description = 'Test AI'

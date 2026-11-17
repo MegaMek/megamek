@@ -175,3 +175,15 @@ as its last publication step. A partial record or mutable "latest" pointer
 must not be published. The website and launcher use these records
 to find complete releases. Update this document alongside the validator,
 record example, and consumers if the format or publication rules change.
+
+### Unit fluff download
+
+After the record, a separate step (`scripts/suite_release_fluff.py`) attaches
+`unit-fluff-<version>.zip` to the same MegaMek release. It is a `git archive`
+of the top-level `unitfluff/` folder at the record's `mmData.commit`, with
+entries `data/unitfluff/<uuid>.yml`, for extraction into a user directory or
+the install's `userdata/` folder (MegaMek reads `data/unitfluff/` under both).
+The product archives do not contain unit fluff. The asset is not part of the
+record: it neither starts with `suite-record-` nor ends with `.tar.gz`, so the
+launcher ignores it, and its absence (for example before the folder existed
+in mm-data) never makes a suite incomplete.

@@ -63,8 +63,10 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
+import megamek.common.loaders.UnitFluffLoader;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityFluff;
 import megamek.common.units.IBomber;
 import megamek.common.units.Mek;
 import megamek.common.verifier.TestEntity;
@@ -260,21 +262,22 @@ class GeneralEntityReadout implements EntityReadout {
 
     protected List<ViewElement> createFluffBlock() {
         List<ViewElement> result = new ArrayList<>();
-        if (!entity.getFluff().getOverview().isEmpty()) {
+        EntityFluff fluff = UnitFluffLoader.displayFluff(entity);
+        if (!fluff.getOverview().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextLine("Overview", entity.getFluff().getOverview()));
+            result.add(new FluffTextLine("Overview", fluff.getOverview()));
         }
-        if (!entity.getFluff().getCapabilities().isEmpty()) {
+        if (!fluff.getCapabilities().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextLine("Capabilities", entity.getFluff().getCapabilities()));
+            result.add(new FluffTextLine("Capabilities", fluff.getCapabilities()));
         }
-        if (!entity.getFluff().getDeployment().isEmpty()) {
+        if (!fluff.getDeployment().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextLine("Deployment", entity.getFluff().getDeployment()));
+            result.add(new FluffTextLine("Deployment", fluff.getDeployment()));
         }
-        if (!entity.getFluff().getHistory().isEmpty()) {
+        if (!fluff.getHistory().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextLine("History", entity.getFluff().getHistory()));
+            result.add(new FluffTextLine("History", fluff.getHistory()));
         }
         return result;
     }

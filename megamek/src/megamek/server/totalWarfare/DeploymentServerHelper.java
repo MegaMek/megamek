@@ -44,7 +44,9 @@ import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
@@ -252,6 +254,20 @@ public class DeploymentServerHelper {
         gameManager.entityUpdate(entity.getId());
 
         deployTowedTrailers(entity);
+    }
+
+    /**
+     * Checks whether a movement path tries to deploy a unit that is already on the board. Only an undeployed unit may
+     * walk on; a {@code DEPLOY} step for a deployed one comes from a stale or bad path, and running it would move the
+     * unit back to the step's hex (issue #9601).
+     *
+     * @param entity   the moving unit, as the server knows it
+     * @param movePath the path the client sent
+     *
+     * @return {@code true} if the unit is already deployed and the path contains a {@code DEPLOY} step
+     */
+    static boolean deploysAlreadyDeployedUnit(Entity entity, MovePath movePath) {
+        return entity.isDeployed() && movePath.contains(MoveStepType.DEPLOY);
     }
 
     /**

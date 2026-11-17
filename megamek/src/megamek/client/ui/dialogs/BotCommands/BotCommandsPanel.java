@@ -132,6 +132,7 @@ public class BotCommandsPanel extends JPanel {
     private MegaMekButton pauseContinue;
     private List<MegaMekButton> commandButtons = List.of();
     private BotOrdersMenuBuilder ordersMenuBuilder;
+    private PrincessWaypointMenuBuilder princessMenuBuilder;
 
     /**
      * Bot Commands Panel constructor.
@@ -217,6 +218,10 @@ public class BotCommandsPanel extends JPanel {
               (orderDescription, singleHex, onPicked) -> pickTargetHexes(orderDescription, singleHex, 0,
                     "BotCommandPanel.WaypointPrompt.message", onPicked),
               this::acknowledgeOrder);
+        princessMenuBuilder = new PrincessWaypointMenuBuilder(client,
+              (orderDescription, singleHex, onPicked) -> pickTargetHexes(orderDescription, singleHex, 0,
+                    "BotCommandPanel.WaypointPrompt.message", onPicked),
+              this::acknowledgeOrder);
         pauseContinue = createButton("PauseGame");
         var moveOrder = createButton("MoveOrder");
         var quickOrders = createButton("QuickOrders");
@@ -227,18 +232,11 @@ public class BotCommandsPanel extends JPanel {
         commandButtons = List.of(moveOrder, quickOrders, targets, maneuver, setBehavior, artillery);
 
         moveOrder.addActionListener(event -> {
-            // with one bot and nothing to choose between, the editor opens at once; its Choose units... narrows it
-            List<Player> botPlayers = new ArrayList<>();
-            for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-                if (takesUnitOrders(botPlayer)) {
-                    botPlayers.add(botPlayer);
-                }
-            }
-            if (botPlayers.isEmpty()) {
-                showCasparOnlyNotice();
-                return;
-            }
-            if ((clientGUI != null) && (botPlayers.size() == 1)) {
+            List<Player> botPlayers = getBotPlayersWithOnBoardUnits();
+            logOrderMenus(moveOrder, botPlayers);
+            // with one CASPAR bot and nothing to choose between, the editor opens at once; its Choose units...
+            // narrows it
+            if ((clientGUI != null) && (botPlayers.size() == 1) && takesUnitOrders(botPlayers.getFirst())) {
                 List<BotOrdersMenuBuilder.OrderGroup> lances = ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst());
                 if (lances.size() == 1) {
                     openMoveOrder(botPlayers.getFirst(), lances.getFirst());
@@ -248,10 +246,7 @@ public class BotCommandsPanel extends JPanel {
             showButtonPopup(moveOrder, this::createMoveOrderPopup, NO_ORDERABLE_UNITS_KEY);
         });
         quickOrders.addActionListener(event -> {
-            if (!anyBotTakesUnitOrders()) {
-                showCasparOnlyNotice();
-                return;
-            }
+            logOrderMenus(quickOrders, getBotPlayersWithOnBoardUnits());
             showButtonPopup(quickOrders, this::createQuickOrdersPopup, NO_ORDERABLE_UNITS_KEY);
         });
         targets.addActionListener(event -> showButtonPopup(targets, this::createTargetsPopup));
@@ -545,11 +540,16 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * The Move Order editor for each bot: pick all its units or a lance here, then set their route, each waypoint's
-     * facing and hold, and their formation in one window. One unit or a mix is picked in the editor.
+     * The Move Order menu for each bot. A CASPAR bot gets the Move Order editor: pick all its units or a lance here,
+     * then set their route, each waypoint's facing and hold, and their formation in one window; one unit or a mix is
+     * picked in the editor. A Princess bot gets her waypoint commands for each unit.
      */
     private JPopupMenu createMoveOrderPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> {
+            if (!takesUnitOrders(botPlayer)) {
+                princessMenuBuilder.populateMoveOrders(botMenu, botPlayer);
+                return;
+            }
             if (clientGUI == null) {
                 // no board to click in this GUI: the orders menu, where routes are typed as hex numbers
                 ordersMenuBuilder.populate(botMenu, botPlayer, null);
@@ -560,15 +560,21 @@ public class BotCommandsPanel extends JPanel {
                 groupItem.addActionListener(event -> openMoveOrder(botPlayer, group));
                 botMenu.add(groupItem);
             }
-        }, MOVE_ORDER_SCROLL_THRESHOLD, this::takesUnitOrders);
+        }, MOVE_ORDER_SCROLL_THRESHOLD, this::hasOnBoardUnits);
     }
 
     /**
-     * The one-click orders for each bot's units: pause, resume, stop, hold position, edges, priority and formation off.
+     * The one-click orders for each bot. A CASPAR bot's units get pause, resume, stop, hold position, edges, priority
+     * and formation off; a Princess bot gets hold position and resume.
      */
     private JPopupMenu createQuickOrdersPopup() {
-        return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populateQuick(botMenu, botPlayer),
-              this::takesUnitOrders);
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            if (takesUnitOrders(botPlayer)) {
+                ordersMenuBuilder.populateQuick(botMenu, botPlayer);
+            } else {
+                princessMenuBuilder.populateQuickOrders(botMenu, botPlayer);
+            }
+        }, this::hasOnBoardUnits);
     }
 
     /**
@@ -639,25 +645,38 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * @return {@code true} if any bot under the player's command takes unit orders
+     * @return the bots under the player's command that have at least one on-board unit, CASPAR or Princess
      */
-    private boolean anyBotTakesUnitOrders() {
+    private List<Player> getBotPlayersWithOnBoardUnits() {
+        List<Player> botPlayers = new ArrayList<>();
         for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-            if (takesUnitOrders(botPlayer)) {
-                return true;
+            if (hasOnBoardUnits(botPlayer)) {
+                botPlayers.add(botPlayer);
             }
         }
-        return false;
+        return botPlayers;
     }
 
     /**
-     * Tells the player that unit orders are for CASPAR bots only, when none of the bots they command is one.
+     * Logs which menu each bot gets from an order button: the unit orders for a CASPAR bot, the waypoint commands for
+     * a Princess bot. Logged on every click, so a test in game shows the choice made and not only whether a menu
+     * appeared.
+     *
+     * @param button     The order button that was clicked
+     * @param botPlayers The bots the menu is built for
      */
-    private void showCasparOnlyNotice() {
-        String notice = Messages.getString("BotCommandPanel.Orders.casparOnly");
-        LOGGER.info("[BotOrders] {}", notice);
-        if (clientGUI != null) {
-            clientGUI.addToast(ToastLevel.INFO, notice);
+    private void logOrderMenus(MegaMekButton button, List<Player> botPlayers) {
+        if (botPlayers.isEmpty()) {
+            LOGGER.info("[BotOrders] {}: no bot under your command has units on the board", button.getText());
+            return;
+        }
+        for (Player botPlayer : botPlayers) {
+            if (takesUnitOrders(botPlayer)) {
+                LOGGER.info("[BotOrders] {}: {} is CASPAR, unit orders menu", button.getText(), botPlayer.getName());
+            } else {
+                LOGGER.info("[BotOrders] {}: {} is Princess, waypoint menu, {} unit(s)", button.getText(),
+                      botPlayer.getName(), princessMenuBuilder.unitsFor(botPlayer).size());
+            }
         }
     }
 

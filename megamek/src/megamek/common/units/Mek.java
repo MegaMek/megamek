@@ -2576,6 +2576,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return orig_rearArmor[loc];
         }
         int val = super.getOArmor(loc, rear);
+        if (inLab) {
+            return val;
+        }
         if (loc == 0) {
             if (hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_HEAD_1)) {
                 val = Math.max(val - 1, 0);

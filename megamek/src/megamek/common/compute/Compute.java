@@ -1055,27 +1055,28 @@ public class Compute {
     /**
      * Gets a valid displacement, from the hexes around src, as close to the original direction as is possible.
      *
-     * @return valid displacement coords, or null if none
+     * @return valid displacement coords, or {@code null} if none
      */
+    @Nullable
     public static Coords getValidDisplacement(Game game, int entityId,
           Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
         int[] offsets = { 0, 1, 5, 2, 4, 3 };
         int range = getDisplacementRange(game, src);
         for (int offset : offsets) {
-            Coords dest = src.translated((direction + offset) % 6, range);
-            if (Compute.isValidDisplacement(game, entityId, src, dest)) {
-                return dest;
+            Coords destination = src.translated((direction + offset) % 6, range);
+            if (Compute.isValidDisplacement(game, entityId, src, destination)) {
+                return destination;
             }
             // code here borrowed from Compute.coordsAtRange
             for (int count = 1; count < range; count++) {
-                dest = dest.translated((direction + offset + 2) % 6);
-                if (Compute.isValidDisplacement(game, entityId, src, dest)) {
-                    return dest;
+                destination = destination.translated((direction + offset + 2) % 6);
+                if (Compute.isValidDisplacement(game, entityId, src, destination)) {
+                    return destination;
                 }
             }
         }
-        // have fun being instant-killed!
+        // no hex around the source can take the unit
         return null;
     }
 
@@ -1086,6 +1087,7 @@ public class Compute {
      *
      * @return valid displacement coords, or {@code null} if none
      */
+    @Nullable
     public static Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction) {
         return Game.rulesManager.getRulesMovement().getAccidentalFallDisplacement(game, entityId, src, direction,
               getDisplacementRange(game, src));
@@ -1096,9 +1098,9 @@ public class Compute {
      * otherwise one.
      */
     private static int getDisplacementRange(Game game, Coords src) {
-        for (Entity en : game.getEntitiesVector(src)) {
-            if ((en instanceof Dropship) && !en.isAirborne()
-                  && en.getPosition().equals(src)) {
+        for (Entity entity : game.getEntitiesVector(src)) {
+            if ((entity instanceof Dropship) && !entity.isAirborne()
+                  && entity.getPosition().equals(src)) {
                 return 2;
             }
         }

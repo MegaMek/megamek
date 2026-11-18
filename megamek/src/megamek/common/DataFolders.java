@@ -115,7 +115,7 @@ public final class DataFolders {
     /**
      * @param relativePath A file path relative to a data folder, e.g. {@code "unitfluff/<uuid>.yml"}
      *
-     * @return The file from the highest data folder that has it, or null if no data folder has it
+     * @return The file from the highest data folder that has it, or {@code null} if no data folder has it
      */
     public static @Nullable File findFile(String relativePath) {
         for (DataFolder folder : lookupOrder()) {
@@ -129,7 +129,7 @@ public final class DataFolders {
 
     /**
      * @param officialDataDir The installation's data folder
-     * @param userDir         The User Directory, or null or blank when none is set
+     * @param userDir         The User Directory, or {@code null} or blank when none is set
      * @param userDataDir     The installation's {@code userdata/} folder
      *
      * @return The existing data folders from the lowest layer to the highest; a folder that is the same as a lower

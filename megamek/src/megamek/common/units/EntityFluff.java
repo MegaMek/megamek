@@ -249,7 +249,7 @@ public class EntityFluff implements Serializable {
      * precedence. Manufacturer and primary factory are taken as a pair, as their entries correspond by position; so are
      * the manufacturer and model of each system component. Neither this object nor the fallback is changed.
      *
-     * @param fallback The fluff to fill blank fields from; may be null
+     * @param fallback The fluff to fill blank fields from; may be {@code null}
      *
      * @return This object if there is no fallback, otherwise a new, merged fluff object
      */

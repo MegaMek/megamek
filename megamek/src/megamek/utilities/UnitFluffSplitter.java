@@ -126,7 +126,7 @@ public final class UnitFluffSplitter {
     /**
      * Splits the fluff from all unit files.
      *
-     * @return False if any unit file failed its verification; the report lists them
+     * @return {@code false} if any unit file failed its verification; the report lists them
      */
     boolean run() throws IOException {
         List<SplitPlan> plans = new ArrayList<>();
@@ -181,7 +181,10 @@ public final class UnitFluffSplitter {
         return lowerName.endsWith(".mtf") || lowerName.endsWith(".blk");
     }
 
-    /** @return The changes to make for the given unit file, or null if there's nothing to do or it can't be done */
+    /**
+     * @return The changes to make for the given unit file, or {@code null} if there's nothing to do or it can't be
+     *       done
+     */
     private SplitPlan plan(Path unitFile) {
         String relativeName = unitDirectory.relativize(unitFile).toString().replace('\\', '/');
         String content;
@@ -233,7 +236,7 @@ public final class UnitFluffSplitter {
         return parser.getEntity();
     }
 
-    /** @return A description of what's wrong, or null if the split is correct */
+    /** @return A description of what's wrong, or {@code null} if the split is correct */
     private String verify(Entity original, String newContent, String yaml, String fileName) {
         try {
             Entity changed = load(newContent, fileName);

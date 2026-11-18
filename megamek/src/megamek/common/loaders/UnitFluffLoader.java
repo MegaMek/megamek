@@ -114,7 +114,7 @@ public final class UnitFluffLoader {
     /**
      * @param unitFileUUID The UUID of a unit file
      *
-     * @return The external fluff for the unit with the given UUID, or null if there is none
+     * @return The external fluff for the unit with the given UUID, or {@code null} if there is none
      */
     public static @Nullable EntityFluff externalFluff(@Nullable String unitFileUUID) {
         if ((unitFileUUID == null) || !UUID_PATTERN.matcher(unitFileUUID).matches()) {
@@ -211,7 +211,7 @@ public final class UnitFluffLoader {
     /**
      * @param fluff A unit's fluff
      *
-     * @return True if the given fluff has any of the fields that unit fluff files hold
+     * @return {@code true} if the given fluff has any of the fields that unit fluff files hold
      */
     public static boolean hasFileFluff(EntityFluff fluff) {
         if (!fluff.getOverview().isBlank() || !fluff.getCapabilities().isBlank() || !fluff.getDeployment().isBlank()
@@ -287,8 +287,9 @@ public final class UnitFluffLoader {
     }
 
     /**
-     * @return True if the value can be written as a single-line literal block and read back unchanged: no surrounding
-     *       whitespace and no line breaks or other characters that YAML treats specially or doesn't allow unescaped
+     * @return {@code true} if the value can be written as a single-line literal block and read back unchanged: no
+     *       surrounding whitespace and no line breaks or other characters that YAML treats specially or doesn't allow
+     *       unescaped
      */
     private static boolean fitsLiteralBlock(String value) {
         if (!value.equals(value.strip())) {

@@ -33,6 +33,7 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,6 +56,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
+import megamek.server.totalWarfare.InfantryActionNarrator.BuildingScale;
 import megamek.server.totalWarfare.InfantryActionNarrator.Outcome;
 import megamek.server.totalWarfare.InfantryActionNarrator.Side;
 import org.junit.jupiter.api.BeforeAll;
@@ -64,14 +66,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * The story under the header: a lead for the outcome, then for each side its linked names, a clause from its
- * strongest trait, and its loss.
+ * The story under the header: a lead for the outcome that fits the size of the building, then for each side its
+ * linked names, a clause from its strongest trait, and its loss. The tests cover which wording set is chosen; the
+ * wording itself is read in game.
  */
 @DisplayName("Infantry action narrative")
 class InfantryActionNarratorTest {
 
     private static final Coords BUILDING_HEX = new Coords(5, 5);
-    private static final int SECOND_LEAD = 1;
+    private static final int SECOND_WORDING = 1;
+    private static final int PLATOON_HEAD_COUNT = 28;
+    private static final int SMALL_BUILDING_LEADS = 70;
 
     private Game game;
     private TWGameManager gameManager;
@@ -123,8 +128,13 @@ class InfantryActionNarratorTest {
         return infantry;
     }
 
-    private InfantryActionNarrator narratorPicking(int lead) {
-        return new InfantryActionNarrator(gameManager, count -> lead);
+    private InfantryActionNarrator narratorPicking(int wording) {
+        return new InfantryActionNarrator(gameManager, count -> wording);
+    }
+
+    /** Gives the building another hex beside its first, so it is no longer a one-hex building. */
+    private void addSecondHex() {
+        building.getInternalBuilding().addHex(new CubeCoords(1, -1, 0), 30, 20, BasementType.NONE, false);
     }
 
     private List<Integer> reportIds() {
@@ -132,9 +142,14 @@ class InfantryActionNarratorTest {
     }
 
     private static Side side(List<Entity> units, int lost, int own, boolean eliminated, MarinePointsTrait... traits) {
+        return sideOf(PLATOON_HEAD_COUNT, units, lost, own, eliminated, traits);
+    }
+
+    private static Side sideOf(int headCount, List<Entity> units, int lost, int own, boolean eliminated,
+          MarinePointsTrait... traits) {
         Set<MarinePointsTrait> traitSet = EnumSet.noneOf(MarinePointsTrait.class);
         traitSet.addAll(List.of(traits));
-        return new Side(units, traitSet, lost, own, eliminated);
+        return new Side(units, traitSet, headCount, lost, own, eliminated);
     }
 
     @Test
@@ -142,14 +157,17 @@ class InfantryActionNarratorTest {
     void repulseTellsBothSides() {
         ConvInfantry marines = platoon(attackingPlayer, 1);
 
-        narratorPicking(SECOND_LEAD).narrate(Outcome.REPULSED,
+        narratorPicking(SECOND_WORDING).narrate(Outcome.REPULSED,
               side(List.of(marines), 40, 40, false, MarinePointsTrait.MARINES),
-              side(List.of(building), 6, 40, false, MarinePointsTrait.BUILDING_CREW), null);
+              side(List.of(building), 6, 40, false, MarinePointsTrait.BUILDING_CREW), building, false);
 
-        assertEquals(List.of(5674,
-              InfantryActionNarrator.UNIT_NAME, 5688, InfantryActionNarrator.LOST_SHARE,
+        int lostShare = InfantryActionNarrator.LOST_SHARE + SECOND_WORDING;
+        assertEquals(List.of(Outcome.REPULSED.firstLead(BuildingScale.SMALL) + SECOND_WORDING,
+              InfantryActionNarrator.UNIT_NAME,
+              InfantryActionNarrator.clauseFor(MarinePointsTrait.MARINES) + SECOND_WORDING, lostShare,
               InfantryActionNarrator.FULL_STOP,
-              InfantryActionNarrator.BUILDING_CREW_NAME, 5691, InfantryActionNarrator.LOST_SHARE,
+              InfantryActionNarrator.BUILDING_CREW_NAME_FIRST,
+              InfantryActionNarrator.clauseFor(MarinePointsTrait.BUILDING_CREW) + SECOND_WORDING, lostShare,
               InfantryActionNarrator.FULL_STOP), reportIds());
     }
 
@@ -163,13 +181,15 @@ class InfantryActionNarratorTest {
 
         narratorPicking(0).narrate(Outcome.ATTACKERS_ELIMINATED,
               side(List.of(first, second, third), 20, 20, true, MarinePointsTrait.CIVILIANS),
-              side(List.of(defender), 0, 60, false, MarinePointsTrait.ELEMENTALS), null);
+              side(List.of(defender), 0, 60, false, MarinePointsTrait.ELEMENTALS), building, false);
 
-        assertEquals(List.of(5667,
+        assertEquals(List.of(Outcome.ATTACKERS_ELIMINATED.firstLead(BuildingScale.SMALL),
               InfantryActionNarrator.UNIT_NAME, InfantryActionNarrator.COMMA, InfantryActionNarrator.UNIT_NAME,
-              InfantryActionNarrator.AND, InfantryActionNarrator.UNIT_NAME, 5692,
+              InfantryActionNarrator.AND, InfantryActionNarrator.UNIT_NAME,
+              InfantryActionNarrator.clauseFor(MarinePointsTrait.CIVILIANS),
               InfantryActionNarrator.NONE_SURVIVED, InfantryActionNarrator.FULL_STOP,
-              InfantryActionNarrator.UNIT_NAME, 5686, InfantryActionNarrator.LOST_NOBODY,
+              InfantryActionNarrator.UNIT_NAME, InfantryActionNarrator.clauseFor(MarinePointsTrait.ELEMENTALS),
+              InfantryActionNarrator.LOST_NOBODY,
               InfantryActionNarrator.FULL_STOP), reportIds());
     }
 
@@ -181,10 +201,12 @@ class InfantryActionNarratorTest {
 
         narratorPicking(0).narrate(Outcome.DEFENDERS_ELIMINATED,
               side(List.of(attacker), 6, 93, false, MarinePointsTrait.BURST_FIRE),
-              side(List.of(defender), 21, 21, true, MarinePointsTrait.LINE_INFANTRY), building);
+              side(List.of(defender), 21, 21, true, MarinePointsTrait.LINE_INFANTRY), building, true);
 
         List<Integer> ids = reportIds();
-        assertEquals(List.of(InfantryActionNarrator.UNIT_NAME, 5689, InfantryActionNarrator.NONE_SURVIVED,
+        assertEquals(List.of(InfantryActionNarrator.UNIT_NAME,
+              InfantryActionNarrator.clauseFor(MarinePointsTrait.LINE_INFANTRY),
+              InfantryActionNarrator.NONE_SURVIVED,
               InfantryActionNarrator.AND_THE_BUILDING, InfantryActionNarrator.UNIT_NAME,
               InfantryActionNarrator.BUILDING_FALLS), ids.subList(ids.size() - 6, ids.size()));
         List<Report> reports = gameManager.getMainPhaseReport();
@@ -202,10 +224,12 @@ class InfantryActionNarratorTest {
 
         narratorPicking(0).narrate(Outcome.DEFENDERS_ELIMINATED,
               side(List.of(attacker), 6, 93, false, MarinePointsTrait.BURST_FIRE),
-              side(List.of(building), 2, 2, true, MarinePointsTrait.BUILDING_CREW), building);
+              side(List.of(building), 2, 2, true, MarinePointsTrait.BUILDING_CREW), building, true);
 
         List<Integer> ids = reportIds();
-        assertEquals(List.of(InfantryActionNarrator.BUILDING_CREW_NAME, 5691, InfantryActionNarrator.NONE_SURVIVED,
+        assertEquals(List.of(InfantryActionNarrator.BUILDING_CREW_NAME_FIRST,
+              InfantryActionNarrator.clauseFor(MarinePointsTrait.BUILDING_CREW),
+              InfantryActionNarrator.NONE_SURVIVED,
               InfantryActionNarrator.AND_THE_BUILDING, InfantryActionNarrator.UNIT_NAME,
               InfantryActionNarrator.BUILDING_FALLS_NOBODY_LEFT), ids.subList(ids.size() - 6, ids.size()));
     }
@@ -214,7 +238,7 @@ class InfantryActionNarratorTest {
     @DisplayName("A side with nobody to name is called the attackers or the defenders")
     void unnamedSidesGetAPlainSubject() {
         narratorPicking(0).narrate(Outcome.ENGAGED, side(List.of(), 12, 50, false), side(List.of(), 12, 25, false),
-              null);
+              building, false);
 
         List<Integer> ids = reportIds();
         assertEquals(InfantryActionNarrator.THE_ATTACKERS, ids.get(1));
@@ -223,12 +247,84 @@ class InfantryActionNarratorTest {
     }
 
     @Test
-    @DisplayName("The lead picker's choice wraps into the outcome's leads")
-    void leadChoiceWraps() {
-        narratorPicking(InfantryActionNarrator.LEADS_PER_OUTCOME + 2).narrate(Outcome.PENETRATION,
-              side(List.of(), 12, 60, false), side(List.of(), 39, 40, false), null);
+    @DisplayName("The picker's choice wraps into the outcome's leads, the trait's clauses and the loss's wordings")
+    void wordingChoiceWraps() {
+        int choice = (InfantryActionNarrator.LEADS_PER_OUTCOME * InfantryActionNarrator.CLAUSES_PER_TRAIT) + 2;
+        narratorPicking(choice).narrate(Outcome.PENETRATION,
+              side(List.of(), 12, 60, false), side(List.of(), 39, 40, false), building, false);
 
-        assertEquals(5681, reportIds().getFirst());
+        List<Integer> ids = reportIds();
+        assertEquals(Outcome.PENETRATION.firstLead(BuildingScale.SMALL) + 2, ids.get(0));
+        assertEquals(InfantryActionNarrator.PLAIN_TROOPERS + 2, ids.get(2));
+        assertEquals(InfantryActionNarrator.LOST_SHARE + 2, ids.get(3));
+    }
+
+    @Test
+    @DisplayName("A building's crew is named with a capital only when it opens the sentence")
+    void buildingCrewAfterAnotherNameIsLowerCase() {
+        ConvInfantry defender = platoon(defendingPlayer, 1);
+
+        narratorPicking(0).narrate(Outcome.ENGAGED, side(List.of(), 12, 50, false),
+              side(List.of(defender, building), 12, 25, false), building, false);
+
+        assertTrue(reportIds().contains(InfantryActionNarrator.BUILDING_CREW_NAME));
+        assertFalse(reportIds().contains(InfantryActionNarrator.BUILDING_CREW_NAME_FIRST));
+    }
+
+    @Test
+    @DisplayName("A building is small when it is one hex of one or two levels, and large otherwise")
+    void buildingScaleFollowsHexesAndLevels() {
+        assertEquals(BuildingScale.SMALL, BuildingScale.of(building));
+
+        building.getInternalBuilding().setBuildingHeight(BuildingScale.SMALL_MAX_LEVELS);
+        assertEquals(BuildingScale.SMALL, BuildingScale.of(building));
+
+        building.getInternalBuilding().setBuildingHeight(BuildingScale.SMALL_MAX_LEVELS + 1);
+        assertEquals(BuildingScale.LARGE, BuildingScale.of(building));
+
+        building.getInternalBuilding().setBuildingHeight(1);
+        addSecondHex();
+        assertEquals(BuildingScale.LARGE, BuildingScale.of(building));
+    }
+
+    @Test
+    @DisplayName("Every outcome has its own leads for a small building, apart from those for a large one")
+    void smallAndLargeBuildingsHaveTheirOwnLeads() {
+        for (Outcome outcome : Outcome.values()) {
+            assertEquals(outcome.firstLead(BuildingScale.LARGE) + SMALL_BUILDING_LEADS,
+                  outcome.firstLead(BuildingScale.SMALL), outcome.name());
+        }
+    }
+
+    @Test
+    @DisplayName("A large building's story opens with a large-building lead")
+    void largeBuildingGetsALargeBuildingLead() {
+        addSecondHex();
+
+        narratorPicking(SECOND_WORDING).narrate(Outcome.ENGAGED, side(List.of(), 12, 50, false),
+              side(List.of(), 12, 25, false), building, false);
+
+        assertEquals(Outcome.ENGAGED.firstLead(BuildingScale.LARGE) + SECOND_WORDING, reportIds().getFirst());
+    }
+
+    @Test
+    @DisplayName("A side of one person gets its loss in the singular; two or more get the plural")
+    void loneFighterGetsSingularLoss() {
+        ConvInfantry attacker = platoon(attackingPlayer, 1);
+        ConvInfantry defender = platoon(defendingPlayer, 2);
+
+        narratorPicking(0).narrate(Outcome.ATTACKERS_ELIMINATED,
+              sideOf(1, List.of(attacker), 1, 1, true), sideOf(2, List.of(defender), 0, 2, false), building, false);
+        List<Integer> ids = reportIds();
+        assertEquals(InfantryActionNarrator.NONE_SURVIVED + InfantryActionNarrator.LONE_FIGHTER_OFFSET, ids.get(3));
+        assertEquals(InfantryActionNarrator.LOST_NOBODY, ids.get(7));
+
+        gameManager.getMainPhaseReport().clear();
+        narratorPicking(0).narrate(Outcome.ENGAGED,
+              sideOf(1, List.of(attacker), 0, 1, false), sideOf(1, List.of(defender), 1, 4, false), building, false);
+        ids = reportIds();
+        assertEquals(InfantryActionNarrator.LOST_NOBODY + InfantryActionNarrator.LONE_FIGHTER_OFFSET, ids.get(3));
+        assertEquals(InfantryActionNarrator.LOST_SHARE + InfantryActionNarrator.LONE_FIGHTER_OFFSET, ids.get(7));
     }
 
     @Test
@@ -275,11 +371,13 @@ class InfantryActionNarratorTest {
         Side defenders = Side.of(game, List.of(building.getId(), platoon.getId()), building, 5, 21, false);
 
         assertEquals(List.of(platoon), defenders.units());
+        assertEquals(PLATOON_HEAD_COUNT, defenders.headCount());
         assertTrue(defenders.traits().contains(MarinePointsTrait.LINE_INFANTRY));
 
         building.commitCrew(4);
         Side withCrew = Side.of(game, List.of(building.getId(), platoon.getId()), building, 5, 23, false);
         assertEquals(List.of(building, platoon), withCrew.units());
+        assertEquals(PLATOON_HEAD_COUNT + 4, withCrew.headCount());
         assertTrue(withCrew.traits().contains(MarinePointsTrait.BUILDING_CREW));
     }
 }

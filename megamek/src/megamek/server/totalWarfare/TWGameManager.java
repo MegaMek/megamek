@@ -9546,7 +9546,8 @@ public class TWGameManager extends AbstractGameManager {
                 violation = faller;
                 displacementRoll = null;
             }
-            Coords displacedTo = Compute.getValidDisplacement(game, violation.getId(), fallPosition, direction);
+            Coords displacedTo = Compute.getAccidentalFallDisplacement(game, violation.getId(), fallPosition,
+                  direction);
             if (displacedTo != null) {
                 reports.addAll(doEntityDisplacement(violation, fallPosition, displacedTo, displacementRoll));
                 // Update the violating entity's position on the
@@ -9674,7 +9675,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             // ok, we missed, let's fall into a valid other hex and not cause an
             // AFFA while doing so
-            Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+            Coords targetDest = Compute.getAccidentalFallDisplacement(game, entity.getId(), dest, direction);
             if (targetDest != null) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
                       entitySrcElevation,

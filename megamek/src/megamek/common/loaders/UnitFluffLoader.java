@@ -79,6 +79,7 @@ public final class UnitFluffLoader {
     public static final String HISTORY = "history";
     public static final String MANUFACTURER = "manufacturer";
     public static final String PRIMARY_FACTORY = "primaryFactory";
+    public static final String FLUFF_DATE = "fluffDate";
     public static final String SYSTEM_MANUFACTURERS = "systemManufacturers";
     public static final String SYSTEM_MODELS = "systemModels";
 
@@ -184,6 +185,7 @@ public final class UnitFluffLoader {
         fluff.setHistory(text(root, HISTORY));
         fluff.setManufacturer(text(root, MANUFACTURER));
         fluff.setPrimaryFactory(text(root, PRIMARY_FACTORY));
+        fluff.setFluffDate(text(root, FLUFF_DATE));
         for (Map.Entry<String, JsonNode> entry : root.path(SYSTEM_MANUFACTURERS).properties()) {
             System system = System.parse(entry.getKey());
             if (system != null) {
@@ -212,7 +214,7 @@ public final class UnitFluffLoader {
     public static boolean hasFileFluff(EntityFluff fluff) {
         if (!fluff.getOverview().isBlank() || !fluff.getCapabilities().isBlank() || !fluff.getDeployment().isBlank()
               || !fluff.getHistory().isBlank() || !fluff.getManufacturer().isBlank()
-              || !fluff.getPrimaryFactory().isBlank()) {
+              || !fluff.getPrimaryFactory().isBlank() || !fluff.getFluffDate().isBlank()) {
             return true;
         }
         for (System system : System.values()) {
@@ -246,6 +248,7 @@ public final class UnitFluffLoader {
         appendText(yaml, HISTORY, fluff.getHistory());
         appendLine(yaml, MANUFACTURER, fluff.getManufacturer());
         appendLine(yaml, PRIMARY_FACTORY, fluff.getPrimaryFactory());
+        appendLine(yaml, FLUFF_DATE, fluff.getFluffDate());
         appendSystems(yaml, SYSTEM_MANUFACTURERS, fluff, true);
         appendSystems(yaml, SYSTEM_MODELS, fluff, false);
         return yaml.toString();

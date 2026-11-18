@@ -276,7 +276,7 @@ public class EntityFluff implements Serializable {
             merged.setSystemModel(system, source.getSystemModel(system));
         }
         merged.notes = notes;
-        merged.fluffDate = getFluffDate();
+        merged.fluffDate = fluffDate.isBlank() ? fallback.fluffDate : fluffDate;
         merged.fluffImage = fluffImage;
         merged.use = use;
         merged.length = length;

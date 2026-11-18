@@ -79,6 +79,7 @@ class UnitFluffLoaderTest {
         fluff.setHistory(text);
         fluff.setManufacturer(text);
         fluff.setPrimaryFactory(text);
+        fluff.setFluffDate(text);
         fluff.setSystemManufacturer(System.ENGINE, text);
         fluff.setSystemModel(System.ENGINE, text);
 
@@ -90,6 +91,7 @@ class UnitFluffLoaderTest {
         assertEquals(text, readBack.getHistory());
         assertEquals(text, readBack.getManufacturer());
         assertEquals(text, readBack.getPrimaryFactory());
+        assertEquals(text, readBack.getFluffDate());
         assertEquals(text, readBack.getSystemManufacturer(System.ENGINE));
         assertEquals(text, readBack.getSystemModel(System.ENGINE));
     }
@@ -116,15 +118,15 @@ class UnitFluffLoaderTest {
     void onlyFileFluffIsWrittenAndRead() throws IOException {
         EntityFluff fluff = new EntityFluff();
         fluff.setNotes("Notes stay in the unit file");
-        fluff.setFluffDate("2026-01-01");
         assertFalse(UnitFluffLoader.hasFileFluff(fluff));
 
-        fluff.setSystemModel(System.ARMOR, "Durallex Heavy");
+        fluff.setFluffDate("2026-01-01 10:00:00");
         assertTrue(UnitFluffLoader.hasFileFluff(fluff));
+        fluff.setSystemModel(System.ARMOR, "Durallex Heavy");
 
         EntityFluff readBack = roundTrip(fluff);
         assertEquals("", readBack.getNotes());
-        assertEquals("", readBack.getFluffDate());
+        assertEquals("2026-01-01 10:00:00", readBack.getFluffDate());
         assertEquals("Durallex Heavy", readBack.getSystemModel(System.ARMOR));
     }
 
@@ -163,12 +165,14 @@ class UnitFluffLoaderTest {
         external.setOverview("External overview");
         external.setHistory("External history");
         external.setNotes("External notes");
+        external.setFluffDate("2026-01-01");
 
         EntityFluff merged = own.withFallback(external);
 
         assertEquals("Own overview", merged.getOverview());
         assertEquals("External history", merged.getHistory());
         assertEquals("Own notes", merged.getNotes());
+        assertEquals("2026-01-01", merged.getFluffDate());
         assertEquals("Own overview", own.getOverview());
         assertEquals("", own.getHistory());
     }

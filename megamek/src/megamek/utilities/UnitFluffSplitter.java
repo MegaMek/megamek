@@ -63,8 +63,8 @@ import megamek.common.units.Mek;
 import megamek.common.units.System;
 
 /**
- * Moves the fluff texts (overview, capabilities, deployment, history, manufacturer, primary factory and the system
- * manufacturers and models) out of unit files into separate unit fluff files that {@link UnitFluffLoader} reads. Notes
+ * Moves the fluff texts (overview, capabilities, deployment, history, manufacturer, primary factory, fluff date and
+ * the system manufacturers and models) out of unit files into separate unit fluff files that {@link UnitFluffLoader} reads. Notes
  * and all other content stay in the unit files. The unit files are changed by removing just the fluff lines or blocks,
  * so everything else in them, including comments and formatting, stays as it is.
  *
@@ -78,14 +78,17 @@ import megamek.common.units.System;
 public final class UnitFluffSplitter {
 
     private static final List<String> MTF_FLUFF_KEYS = List.of(MtfFile.OVERVIEW, MtfFile.CAPABILITIES,
-          MtfFile.DEPLOYMENT, MtfFile.HISTORY, MtfFile.MANUFACTURER, MtfFile.PRIMARY_FACTORY,
+          MtfFile.DEPLOYMENT, MtfFile.HISTORY, MtfFile.MANUFACTURER, MtfFile.PRIMARY_FACTORY, MtfFile.FLUFF_DATE,
           MtfFile.SYSTEM_MANUFACTURER, MtfFile.SYSTEM_MODEL);
 
+    /** The old way of writing the fluff date in MTF files, as a comment; matched as exactly as MtfFile reads it. */
+    private static final String MTF_LEGACY_FLUFF_DATE = "# Fluff Date: ";
+
     private static final List<String> BLK_FLUFF_BLOCKS = List.of("overview", "capabilities", "deployment", "history",
-          "manufacturer", "primaryFactory", "systemManufacturers", "systemModels");
+          "manufacturer", "primaryFactory", "fluffDate", "systemManufacturers", "systemModels");
 
     private static final List<String> BLK_TEXT_BLOCKS = List.of("overview", "capabilities", "deployment", "history",
-          "manufacturer", "primaryFactory");
+          "manufacturer", "primaryFactory", "fluffDate");
 
     private final Path unitDirectory;
     private final Path fluffDirectory;
@@ -285,6 +288,7 @@ public final class UnitFluffSplitter {
         target.setHistory(source.getHistory());
         target.setManufacturer(source.getManufacturer());
         target.setPrimaryFactory(source.getPrimaryFactory());
+        target.setFluffDate(source.getFluffDate());
         for (System system : System.values()) {
             target.setSystemManufacturer(system, source.getSystemManufacturer(system));
             target.setSystemModel(system, source.getSystemModel(system));
@@ -304,6 +308,7 @@ public final class UnitFluffSplitter {
         fields.put(UnitFluffLoader.MANUFACTURER, new String[] { expected.getManufacturer(), actual.getManufacturer() });
         fields.put(UnitFluffLoader.PRIMARY_FACTORY,
               new String[] { expected.getPrimaryFactory(), actual.getPrimaryFactory() });
+        fields.put(UnitFluffLoader.FLUFF_DATE, new String[] { expected.getFluffDate(), actual.getFluffDate() });
         for (System system : System.values()) {
             fields.put("manufacturer of " + system,
                   new String[] { expected.getSystemManufacturer(system), actual.getSystemManufacturer(system) });
@@ -323,6 +328,10 @@ public final class UnitFluffSplitter {
         List<String> lines = splitLines(content);
         boolean[] remove = new boolean[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
+            if (lineText(lines.get(i)).trim().startsWith(MTF_LEGACY_FLUFF_DATE)) {
+                remove[i] = true;
+                continue;
+            }
             String line = lineText(lines.get(i)).trim().toLowerCase(Locale.ROOT);
             for (String key : MTF_FLUFF_KEYS) {
                 if (line.startsWith(key)) {
@@ -335,7 +344,7 @@ public final class UnitFluffSplitter {
                 }
             }
         }
-        return joinWithoutRemoved(lines, remove);
+        return joinWithoutRemoved(lines, remove, false);
     }
 
     /** Removes the fluff blocks of a BLK file, along with the blank line that separates each from the next block. */
@@ -378,16 +387,16 @@ public final class UnitFluffSplitter {
                 i = end + 1;
             }
         }
-        return joinWithoutRemoved(lines, remove);
+        return joinWithoutRemoved(lines, remove, true);
     }
 
     /**
      * Joins the lines that aren't removed. Where removed lines leave two blank lines next to each other (or a blank
      * line at the start), the second is dropped, as the unit file writers separate fluff entries with blank lines.
-     * Where they leave blank lines at the end, the file keeps its original ending: after its last line, or after one
-     * blank line.
+     * Where they leave blank lines at the end, the file ends with a single line break; BLK files keep a final blank
+     * line if they had one, as the BLK writer adds one.
      */
-    private static String joinWithoutRemoved(List<String> lines, boolean[] remove) {
+    private static String joinWithoutRemoved(List<String> lines, boolean[] remove, boolean keepFinalBlankLine) {
         StringBuilder result = new StringBuilder();
         boolean afterRemoved = false;
         boolean lastKeptBlank = true;
@@ -405,10 +414,10 @@ public final class UnitFluffSplitter {
             lastKeptBlank = blank;
         }
         if (afterRemoved) {
-            // The fluff was at the end; keep the file's ending, with or without a final blank line
+            // The fluff was at the end; drop the blank lines that separated it from the rest
             String text = result.toString();
             String lineBreak = text.endsWith("\r\n") ? "\r\n" : "\n";
-            boolean endedWithBlankLine = !lines.isEmpty() && lineText(lines.get(lines.size() - 1)).isBlank();
+            boolean endedWithBlankLine = keepFinalBlankLine && !lines.isEmpty() && lineText(lines.get(lines.size() - 1)).isBlank();
             return text.stripTrailing() + lineBreak + (endedWithBlankLine ? lineBreak : "");
         }
         return result.toString();

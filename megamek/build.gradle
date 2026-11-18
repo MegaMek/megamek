@@ -322,6 +322,8 @@ jar {
         attributes "Add-Opens": 'java.base/java.util java.base/java.util.concurrent'
         // Tells the MegaMek Launcher to wait for the first window (see LauncherReadySignal)
         attributes "MegaMek-Launcher-Ready": '1'
+        // Tells the MegaMek Launcher that this build reads the data folder it provides (see DataFolders)
+        attributes "MegaMek-Launcher-Data-Dir": '1'
         attributes "Build-Date": LocalDateTime.now()
         attributes "Sealed": true
     }

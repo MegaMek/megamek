@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.DataFolders.DataFolder;
@@ -51,6 +52,7 @@ class DataFoldersTest {
     File root;
 
     private File officialData;
+    private File launcherData;
     private File userDir;
     private File userDirData;
     private File userData;
@@ -59,6 +61,7 @@ class DataFoldersTest {
     @BeforeEach
     void setUp() {
         officialData = new File(root, "install/data");
+        launcherData = new File(root, "launcher/unit-fluff/abc123/data");
         userDir = new File(root, "My Games/MegaMek");
         userDirData = new File(userDir, DataFolders.DATA_DIRECTORY_NAME);
         userData = new File(root, "install/userdata");
@@ -75,7 +78,7 @@ class DataFoldersTest {
     void loadOrderGoesFromOfficialToUserDirToUserData() {
         createDirectories(officialData, userDirData, userDataData);
 
-        List<DataFolder> folders = DataFolders.loadOrder(officialData, userDir.getPath(), userData);
+        List<DataFolder> folders = DataFolders.loadOrder(officialData, null, userDir.getPath(), userData);
 
         assertEquals(List.of(new DataFolder(Layer.OFFICIAL, officialData),
               new DataFolder(Layer.USER_DIR, userDirData),
@@ -87,6 +90,7 @@ class DataFoldersTest {
         createDirectories(officialData, userDirData, userDataData);
 
         List<DataFolder> folders = DataFolders.reversed(DataFolders.loadOrder(officialData,
+              null,
               userDir.getPath(),
               userData));
 
@@ -99,9 +103,9 @@ class DataFoldersTest {
         createDirectories(officialData, userDirData, userDataData);
 
         assertEquals(List.of(Layer.OFFICIAL, Layer.USER_DATA),
-              DataFolders.loadOrder(officialData, null, userData).stream().map(DataFolder::layer).toList());
+              DataFolders.loadOrder(officialData, null, null, userData).stream().map(DataFolder::layer).toList());
         assertEquals(List.of(Layer.OFFICIAL, Layer.USER_DATA),
-              DataFolders.loadOrder(officialData, "  ", userData).stream().map(DataFolder::layer).toList());
+              DataFolders.loadOrder(officialData, null, "  ", userData).stream().map(DataFolder::layer).toList());
     }
 
     @Test
@@ -109,7 +113,7 @@ class DataFoldersTest {
         createDirectories(officialData, userDir);
 
         assertEquals(List.of(new DataFolder(Layer.OFFICIAL, officialData)),
-              DataFolders.loadOrder(officialData, userDir.getPath(), userData));
+              DataFolders.loadOrder(officialData, null, userDir.getPath(), userData));
     }
 
     @Test
@@ -118,10 +122,51 @@ class DataFoldersTest {
         File installation = officialData.getParentFile();
 
         assertEquals(List.of(Layer.OFFICIAL, Layer.USER_DATA),
-              DataFolders.loadOrder(officialData, installation.getPath(), userData)
+              DataFolders.loadOrder(officialData, null, installation.getPath(), userData)
                     .stream()
                     .map(DataFolder::layer)
                     .toList());
+    }
+
+    @Test
+    void launcherFolderGoesAboveOfficialAndBelowThePlayersFolders() {
+        createDirectories(officialData, launcherData, userDirData, userDataData);
+
+        List<DataFolder> folders = DataFolders.loadOrder(officialData,
+              launcherData.getPath(),
+              userDir.getPath(),
+              userData);
+
+        assertEquals(List.of(new DataFolder(Layer.OFFICIAL, officialData),
+              new DataFolder(Layer.LAUNCHER, launcherData),
+              new DataFolder(Layer.USER_DIR, userDirData),
+              new DataFolder(Layer.USER_DATA, userDataData)), folders);
+    }
+
+    @Test
+    void unsetOrMissingLauncherFolderIsLeftOut() {
+        createDirectories(officialData, userDataData);
+
+        assertEquals(List.of(Layer.OFFICIAL, Layer.USER_DATA),
+              layersOf(DataFolders.loadOrder(officialData, "  ", null, userData)));
+        assertEquals(List.of(Layer.OFFICIAL, Layer.USER_DATA),
+              layersOf(DataFolders.loadOrder(officialData, launcherData.getPath(), null, userData)));
+    }
+
+    @Test
+    void launcherFolderThatIsTheOfficialFolderIsOnlyListedOnce() {
+        createDirectories(officialData, userDataData);
+
+        assertEquals(List.of(Layer.OFFICIAL, Layer.USER_DATA),
+              layersOf(DataFolders.loadOrder(officialData, officialData.getPath(), null, userData)));
+    }
+
+    private static List<Layer> layersOf(List<DataFolder> folders) {
+        List<Layer> layers = new ArrayList<>(folders.size());
+        for (DataFolder folder : folders) {
+            layers.add(folder.layer());
+        }
+        return layers;
     }
 
     @Test

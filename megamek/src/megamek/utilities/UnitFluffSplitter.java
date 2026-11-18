@@ -42,6 +42,8 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,7 +72,8 @@ import megamek.common.units.System;
  *
  * <p>Every changed unit is checked: the changed unit file must load to the same unit as before, minus the moved
  * fluff, and the fluff file must read back to exactly the moved fluff. Units that fail a check, can't be loaded, have
- * no UUID of their own or share their UUID with another unit file are left unchanged and listed in the report.</p>
+ * no UUID of their own or share their UUID with another unit file are left unchanged and listed in the report, and
+ * the run then ends with a failure exit code.</p>
  *
  * <p>Usage: {@code UnitFluffSplitter <unit files folder> <fluff output folder> [--dry-run]}, or
  * {@code ./gradlew :megamek:splitUnitFluff} for the mm-data units next to this repository.</p>
@@ -126,7 +129,8 @@ public final class UnitFluffSplitter {
     /**
      * Splits the fluff from all unit files.
      *
-     * @return {@code false} if any unit file failed its verification; the report lists them
+     * @return {@code false} if any unit file couldn't be split: it failed to load or its verification, or it has no
+     *       UUID of its own or the same UUID as another unit file; the report lists them
      */
     boolean run() throws IOException {
         List<SplitPlan> plans = new ArrayList<>();
@@ -158,13 +162,39 @@ public final class UnitFluffSplitter {
                 continue;
             }
             if (!dryRun) {
-                Files.writeString(fluffFile, plan.yaml(), StandardCharsets.UTF_8);
-                Files.write(plan.unitFile(), plan.newContent().getBytes(StandardCharsets.UTF_8));
+                commit(plan, fluffFile);
             }
             splitCount++;
         }
         report();
-        return verificationFailures.isEmpty() && loadFailures.isEmpty();
+        return verificationFailures.isEmpty() && loadFailures.isEmpty() && missingUUIDs.isEmpty()
+              && duplicateUUIDs.isEmpty();
+    }
+
+    /**
+     * Writes the fluff file and the changed unit file as a pair: the unit file is replaced only after the fluff file
+     * is written, and the fluff file is removed again if the unit file can't be replaced, so a failure leaves neither
+     * changed and the split can simply be run again.
+     */
+    private static void commit(SplitPlan plan, Path fluffFile) throws IOException {
+        Path unitFile = plan.unitFile();
+        Path changedUnitFile = unitFile.resolveSibling(unitFile.getFileName() + ".splitting");
+        Files.write(changedUnitFile, plan.newContent().getBytes(StandardCharsets.UTF_8));
+        boolean fluffWritten = false;
+        try {
+            Files.writeString(fluffFile, plan.yaml(), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW,
+                  StandardOpenOption.WRITE);
+            fluffWritten = true;
+            Files.move(changedUnitFile, unitFile, StandardCopyOption.REPLACE_EXISTING,
+                  StandardCopyOption.ATOMIC_MOVE);
+        } catch (IOException | RuntimeException exception) {
+            if (fluffWritten) {
+                Files.deleteIfExists(fluffFile);
+            }
+            throw exception;
+        } finally {
+            Files.deleteIfExists(changedUnitFile);
+        }
     }
 
     private List<Path> unitFiles() throws IOException {

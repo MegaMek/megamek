@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -214,6 +215,18 @@ class UnitFluffLoaderTest {
     void noFallbackKeepsOwnFluff() {
         EntityFluff own = new EntityFluff();
         assertSame(own, own.withFallback(null));
+    }
+
+    @Test
+    void missingFluffDateFromOlderSavedGamesUsesTheFallback() throws ReflectiveOperationException {
+        EntityFluff own = new EntityFluff();
+        Field fluffDate = EntityFluff.class.getDeclaredField("fluffDate");
+        fluffDate.setAccessible(true);
+        fluffDate.set(own, null);
+        EntityFluff external = new EntityFluff();
+        external.setFluffDate("2026-01-01");
+
+        assertEquals("2026-01-01", own.withFallback(external).getFluffDate());
     }
 
     private EntityFluff roundTrip(EntityFluff fluff) throws IOException {

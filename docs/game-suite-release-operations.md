@@ -124,10 +124,15 @@ Run **Game suite release - Experimental** with `dry_run=false` and approve the
    - creates the tag, release and archive in each repository;
    - uploads the suite record (`suite-record-<version>.json`) to the MegaMek
      release **last**.
-5. Mints a MegaMek-only write token and commits the released build number to
+5. Starts the Docker image build in `megamek-docker-image`, with a token that
+   can only start workflows there. That repository then builds the dedicated
+   server image for the new release. This step never fails a release: if it
+   cannot run, the Docker repository's own scheduled check builds the image
+   later. A dry run or no-op skips it.
+6. Mints a MegaMek-only write token and commits the released build number to
    the built branch's `Version.properties` (see [Version numbers](#version-numbers)).
    This also runs after a no-op, so rerunning repairs a stamp that failed.
-6. With the same token, attaches the unit fluff download
+7. With the same token, attaches the unit fluff download
    (`unit-fluff-<version>.zip`) to the MegaMek release of the channel's latest
    suite, built with `git archive` from the record's pinned mm-data commit.
    It holds mm-data's top-level `unitfluff/` folder as `data/unitfluff/<uuid>.yml`;
@@ -169,6 +174,11 @@ step requests the narrowest token it needs:
 - publication: megamek, megameklab and mekhq;
 - stamping the released revision, moving `main` and attaching the unit fluff
   download: megamek only.
+
+To start the Docker image build, the App must also be installed on
+megamek-docker-image with Actions write. That token is limited to that
+repository and holds no Contents permission. Without it the step is skipped
+with a warning and the release is unaffected.
 
 Repository rules must allow the App to:
 

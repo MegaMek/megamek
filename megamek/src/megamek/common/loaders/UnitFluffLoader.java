@@ -45,8 +45,8 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import jakarta.annotation.Nullable;
-import megamek.common.Configuration;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.DataFolders;
+import megamek.common.DataFolders.DataFolder;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityFluff;
 import megamek.common.units.System;
@@ -54,9 +54,10 @@ import megamek.logging.MMLogger;
 
 /**
  * Loads unit fluff that is kept outside the unit files. Such fluff isn't shipped with the games; players who want it
- * place it in a {@value #DIRECTORY_NAME} folder in a data folder: [User Dir]/data/{@value #DIRECTORY_NAME},
- * userdata/data/{@value #DIRECTORY_NAME} or data/{@value #DIRECTORY_NAME}, searched in that order. Each unit has its
- * own YAML file named after the unit file's UUID, e.g. {@code 0192f1e6-3f48-7c2b-9d4e-5a6b7c8d9e0f.yml}.
+ * place it in a {@value #DIRECTORY_NAME} folder in a data folder: userdata/data/{@value #DIRECTORY_NAME},
+ * [User Dir]/data/{@value #DIRECTORY_NAME} or data/{@value #DIRECTORY_NAME}, searched in that order (see
+ * {@link DataFolders}). Each unit has its own YAML file named after the unit file's UUID, e.g.
+ * {@code 0192f1e6-3f48-7c2b-9d4e-5a6b7c8d9e0f.yml}.
  *
  * <p>Fluff in the unit file always takes precedence. The external fluff only fills what the unit file leaves blank
  * (see {@link EntityFluff#withFallback(EntityFluff)}) and is only applied for display, through
@@ -138,15 +139,16 @@ public final class UnitFluffLoader {
         LOOKUPS.clear();
     }
 
-    /** @return The folders that may hold unit fluff files, in the order they are searched */
+    /**
+     * @return The folders that may hold unit fluff files, in the order they are searched: the {@value #DIRECTORY_NAME}
+     *       folder of each data folder, from the highest layer to the lowest (see {@link DataFolders})
+     */
     public static List<File> fluffDirectories() {
-        List<File> result = new ArrayList<>();
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        if ((userDir != null) && !userDir.isBlank()) {
-            result.add(new File(new File(userDir, "data"), DIRECTORY_NAME));
+        List<DataFolder> dataFolders = DataFolders.lookupOrder();
+        List<File> result = new ArrayList<>(dataFolders.size());
+        for (DataFolder dataFolder : dataFolders) {
+            result.add(dataFolder.resolve(DIRECTORY_NAME));
         }
-        result.add(new File(new File(Configuration.userDataDir(), "data"), DIRECTORY_NAME));
-        result.add(new File(Configuration.dataDir(), DIRECTORY_NAME));
         return result;
     }
 

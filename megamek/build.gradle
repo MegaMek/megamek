@@ -288,7 +288,9 @@ application {
             'java.base/java.util=ALL-UNNAMED',
             '--add-opens',
             'java.base/java.util.concurrent=ALL-UNNAMED',
-            '-Dsun.awt.disablegrab=true'
+            '-Dsun.awt.disablegrab=true',
+            // See mmJvmOptions for why
+            '-XX:-UseBASE64Intrinsics'
     ]
 }
 
@@ -299,7 +301,12 @@ ext {
             'java.base/java.util=ALL-UNNAMED',
             '--add-opens',
             'java.base/java.util.concurrent=ALL-UNNAMED',
-            '-Dsun.awt.disablegrab=true'
+            '-Dsun.awt.disablegrab=true',
+            // Java4Shell (CVE-2026-114938): the JIT's fast Base64 decoder can write past its buffer on AVX-512 CPUs,
+            // and unit icons from other players are Base64. This uses the plain decoder instead. Base64 decoding is
+            // rare in MegaMek, so there is no noticeable cost. Remove once Java 21 builds before the fix are no
+            // longer supported.
+            '-XX:-UseBASE64Intrinsics'
     ]
     fileStagingDir = "${layout.buildDirectory.get()}/files"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
@@ -607,6 +614,8 @@ tasks.register('createStartScripts', CreateStartScripts) {
     description = 'Create shell script for generic distribution.'
     applicationName = 'MegaMek'
     mainClass = application.mainClass
+    // This and startScripts both write the bin/ launcher, so it must pass the same JVM options or whichever runs last wins
+    defaultJvmOpts = mmJvmOptions
     outputDir = startScripts.outputDir
     classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
             .filter { it.name.endsWith(".jar") }

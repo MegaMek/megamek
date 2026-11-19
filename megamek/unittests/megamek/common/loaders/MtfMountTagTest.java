@@ -53,6 +53,8 @@ import megamek.common.units.BipedMek;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * The mount tags of MTF critical rows: {@code Autocannon/20#1} tells which mount of its equipment a row belongs to,
@@ -209,25 +211,35 @@ class MtfMountTagTest {
               .size());
     }
 
-    @Test
-    void splitWeaponKeepsItsRowsNextToAWholeOneInTheSameTorso() throws Exception {
+    /** The split weapon shares the torso with the whole one, so its rows are tagged whether they are on top or not */
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void splitWeaponKeepsItsRowsNextToAWholeOneInTheSameTorso(boolean splitRowsOnTop) throws Exception {
         Mek mek = newMek();
         Mounted<?> split = mount(mek, AC20);
         Mounted<?> whole = mount(mek, AC20);
         addRows(mek, split, Mek.LOC_RIGHT_ARM, 8);
-        addRows(mek, whole, Mek.LOC_RIGHT_TORSO, 10);
-        addRows(mek, split, Mek.LOC_RIGHT_TORSO, 2);
+        if (splitRowsOnTop) {
+            addRows(mek, split, Mek.LOC_RIGHT_TORSO, 2);
+            addRows(mek, whole, Mek.LOC_RIGHT_TORSO, 10);
+        } else {
+            addRows(mek, whole, Mek.LOC_RIGHT_TORSO, 10);
+            addRows(mek, split, Mek.LOC_RIGHT_TORSO, 2);
+        }
 
         String mtf = mek.getMtf();
-        assertEquals(join(repeat(AC20 + "#2", 10), repeat(AC20 + "#1", 2)), rows(mtf, "Right Torso"));
+        assertEquals(splitRowsOnTop ? join(repeat(AC20 + "#1", 2), repeat(AC20, 10))
+              : join(repeat(AC20, 10), repeat(AC20 + "#1", 2)), rows(mtf, "Right Torso"));
 
         Mek loaded = load(mtf);
         Mounted<?> loadedSplit = loaded.getCritical(Mek.LOC_RIGHT_ARM, 4).getMount();
-        Mounted<?> loadedWhole = loaded.getCritical(Mek.LOC_RIGHT_TORSO, 0).getMount();
+        Mounted<?> loadedWhole = loaded.getCritical(Mek.LOC_RIGHT_TORSO, splitRowsOnTop ? 2 : 0).getMount();
+        int wholeFirstSlot = splitRowsOnTop ? 2 : 0;
         assertEquals(2, loaded.getWeaponList().size());
         assertEquals(List.of(4, 5, 6, 7, 8, 9, 10, 11), slots(loaded, Mek.LOC_RIGHT_ARM, loadedSplit));
-        assertEquals(List.of(10, 11), slots(loaded, Mek.LOC_RIGHT_TORSO, loadedSplit));
-        assertEquals(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), slots(loaded, Mek.LOC_RIGHT_TORSO, loadedWhole));
+        assertEquals(splitRowsOnTop ? List.of(0, 1) : List.of(10, 11), slots(loaded, Mek.LOC_RIGHT_TORSO, loadedSplit));
+        assertEquals(IntStream.range(wholeFirstSlot, wholeFirstSlot + 10).boxed().toList(),
+              slots(loaded, Mek.LOC_RIGHT_TORSO, loadedWhole));
         assertTrue(loadedSplit.isSplit());
         assertFalse(loadedWhole.isSplit());
         assertEquals(rows(mtf, "Right Arm"), rows(loaded.getMtf(), "Right Arm"));

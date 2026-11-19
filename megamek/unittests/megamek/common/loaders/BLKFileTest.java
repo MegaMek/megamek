@@ -56,9 +56,13 @@ import megamek.common.enums.Faction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConstructionUtil;
 import megamek.common.units.DropShuttleBay;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
@@ -511,6 +515,73 @@ class BLKFileTest {
 
         assertEquals(1, loaded.getWeaponList().get(0).getEnhancements().size());
         assertEquals(1, loaded.getWeaponList().get(1).getEnhancements().size());
+    }
+
+    @Test
+    void weaponQuirksStayOnTheirWeaponWhenEnhancementsMove() throws Exception {
+        Tank tank = createMinimalTank();
+        Mounted<?> ppc = tank.addEquipment(EquipmentType.get("ISERPPC"), Tank.LOC_FRONT);
+        Mounted<?> laser = tank.addEquipment(EquipmentType.get("Medium Laser"), Tank.LOC_FRONT);
+        tank.addEquipment(EquipmentType.get("ISPPCCapacitor"), Tank.LOC_FRONT).setLinked(ppc);
+        laser.getQuirks().getOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE).setValue(true);
+        String blk = String.join("\n", BLKFile.getBlock(tank).getAllDataAsString());
+
+        // The capacitor is written between the PPC and the laser, so the laser's quirk names the laser's new slot
+        Entity loaded = new MekFileParser(blk).getEntity();
+
+        Mounted<?> loadedLaser = loaded.getWeaponList().stream()
+              .filter(weapon -> weapon.getType().getInternalName().equals(laser.getType().getInternalName()))
+              .findFirst().orElseThrow();
+        assertTrue(loadedLaser.getQuirks().booleanOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE));
+    }
+
+    @Test
+    void weaponQuirksStayOnTheirWeaponAfterEquipmentBeforeItWasRemoved() throws Exception {
+        Tank tank = createMinimalTank();
+        Mounted<?> machineGun = tank.addEquipment(EquipmentType.get("ISMG"), Tank.LOC_FRONT);
+        Mounted<?> ppc = tank.addEquipment(EquipmentType.get("ISERPPC"), Tank.LOC_FRONT);
+        Mounted<?> laser = tank.addEquipment(EquipmentType.get("Medium Laser"), Tank.LOC_FRONT);
+        tank.addEquipment(EquipmentType.get("ISPPCCapacitor"), Tank.LOC_FRONT).setLinked(ppc);
+        laser.getQuirks().getOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE).setValue(true);
+        // The removed machine gun leaves an empty slot, which the file does not keep
+        ConstructionUtil.removeMounted(tank, machineGun);
+        String blk = String.join("\n", BLKFile.getBlock(tank).getAllDataAsString());
+
+        Entity loaded = new MekFileParser(blk).getEntity();
+
+        Mounted<?> loadedLaser = loaded.getWeaponList().stream()
+              .filter(weapon -> weapon.getType().getInternalName().equals(laser.getType().getInternalName()))
+              .findFirst().orElseThrow();
+        assertTrue(loadedLaser.getQuirks().booleanOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE));
+    }
+
+    @Test
+    void weaponQuirksStayOnTheirWeaponWhenEachMountHoldsTwoSlots() throws Exception {
+        // A gun emplacement gives each mount two critical slots, so the second medium laser reloads at slot 4
+        String turret = String.join("\n", "<UnitType>", "GunEmplacement", "</UnitType>", "<Name>", "Turret",
+              "</Name>", "<Model>", "Test", "</Model>", "<year>", "2300", "</year>", "<type>", "IS Level 2",
+              "</type>", "<GUNS Equipment>", "Large Laser", "Medium Laser", "Medium Laser", "</GUNS Equipment>");
+        GunEmplacement emplacement = (GunEmplacement) new MekFileParser(turret).getEntity();
+        Mounted<?> second = emplacement.getWeaponList().get(2);
+        second.getQuirks().getOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE).setValue(true);
+        String blk = String.join("\n", BLKFile.getBlock(emplacement).getAllDataAsString());
+
+        List<WeaponMounted> weapons = new MekFileParser(blk).getEntity().getWeaponList();
+
+        assertFalse(weapons.get(1).getQuirks().booleanOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE), blk);
+        assertTrue(weapons.get(2).getQuirks().booleanOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE), blk);
+    }
+
+    @Test
+    void anEnhancementOfARemovedWeaponIsStillWritten() throws Exception {
+        Tank tank = createMinimalTank();
+        Mounted<?> laser = tank.addEquipment(EquipmentType.get("Medium Laser"), Tank.LOC_FRONT);
+        tank.addEquipment(EquipmentType.get("ISLaserInsulator"), Tank.LOC_FRONT).setLinked(laser);
+        ConstructionUtil.removeMounted(tank, laser);
+
+        String blk = String.join("\n", BLKFile.getBlock(tank).getAllDataAsString());
+
+        assertTrue(blk.contains("ISLaserInsulator"), blk);
     }
 
     @Test

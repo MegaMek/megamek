@@ -833,6 +833,7 @@ public class BLKFile {
             blk.writeBlockData("quirks", String.join("\n", quirkList));
         }
 
+        EquipmentLayout layout = equipmentLayout(t);
         List<String> weaponQuirkList = new ArrayList<>();
         for (Mounted<?> equipment : t.getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
@@ -840,7 +841,7 @@ public class BLKFile {
                       ":" +
                       t.getLocationAbbr(equipment.getLocation()) +
                       ":" +
-                      t.slotNumber(equipment) +
+                      layout.slotNumber(t, equipment) +
                       ":" +
                       equipment.getType().getInternalName());
             }
@@ -973,78 +974,8 @@ public class BLKFile {
             blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
         }
 
-        Vector<Vector<String>> eq = new Vector<>(numLocs);
-
         for (int i = 0; i < numLocs; i++) {
-            eq.add(new Vector<>());
-        }
-        for (Mounted<?> m : t.getEquipment()) {
-            // Ignore Mounted's that represent a WeaponGroup
-            // BA anti-personnel weapon are written just after the mount
-            if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
-                continue;
-            }
-
-            // Infantry primary and secondary are written separately
-            if (t.isConventionalInfantry() && m.getType() instanceof InfantryWeapon) {
-                continue;
-            }
-
-            // Ignore ammo for one-shot launchers
-            if ((m.getLinkedBy() != null) && (m.getLinkedBy().isOneShot())) {
-                continue;
-            }
-
-            // A weapon enhancement links to the nearest weapon above it, so it is written right after its weapon
-            if (isWrittenWithItsWeapon(t, m)) {
-                continue;
-            }
-
-            if (m.getType() instanceof BayWeapon) {
-                int loc = m.getLocation();
-                if (loc == Entity.LOC_NONE) {
-                    continue;
-                }
-                boolean rear = m.isRearMounted();
-                List<WeaponMounted> bayWeapons = ((WeaponMounted) m).getBayWeapons();
-                for (int i = 0; i < bayWeapons.size(); i++) {
-                    String name = bayWeapons.get(i).getType().getInternalName();
-                    if (i == 0) {
-                        name = "(B) " + name;
-                    }
-                    if (rear) {
-                        name = "(R) " + name;
-                    }
-                    eq.get(loc).add(name);
-                    addEnhancements(eq, bayWeapons.get(i));
-                }
-                for (AmmoMounted a : ((WeaponMounted) m).getBayAmmo()) {
-                    String name = a.getType().getInternalName();
-                    name += ":" + a.getBaseShotsLeft();
-                    if (rear) {
-                        name = "(R) " + name;
-                    }
-                    eq.get(loc).add(name);
-                }
-                continue;
-            }
-
-            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType) || (m.getType() instanceof AmmoType))) {
-                continue;
-            }
-
-            String name = encodeEquipmentLine(m);
-            int loc = m.getLocation();
-            if (loc != Entity.LOC_NONE) {
-                eq.get(loc).add(name);
-                addEnhancements(eq, m);
-            }
-            if ((m.getLinked() != null) && m.getLinked().isAPMMounted()) {
-                eq.get(loc).add(encodeEquipmentLine(m.getLinked()));
-            }
-        }
-        for (int i = 0; i < numLocs; i++) {
-            blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
+            blk.writeBlockData(t.getLocationName(i) + " Equipment", layout.lines().get(i));
         }
 
         // Write slotless equipment (LOC_NONE) - e.g., cockpit modifications like DNI.
@@ -1477,10 +1408,109 @@ public class BLKFile {
         return quirk.getName();
     }
 
+    /**
+     * The equipment lines of each location as the file lists them, and the equipment the reader mounts from them in
+     * the same order, which is the order of their critical slots: a weapon bay takes the slot after its first weapon.
+     */
+    private record EquipmentLayout(List<Vector<String>> lines, List<List<Mounted<?>>> mounts) {
+        private void add(int location, String line, Mounted<?> mounted) {
+            lines.get(location).add(line);
+            mounts.get(location).add(mounted);
+        }
+
+        /** @return The slot the equipment is read into: its place in its location's list, two slots per line on a gun emplacement */
+        private int slotNumber(Entity entity, Mounted<?> mounted) {
+            int index = (mounted.getLocation() < 0) ? -1 : mounts.get(mounted.getLocation()).indexOf(mounted);
+            if (index < 0) {
+                return entity.slotNumber(mounted);
+            }
+            return (entity instanceof GunEmplacement) ? (2 * index) : index;
+        }
+    }
+
+    private static EquipmentLayout equipmentLayout(Entity t) {
+        EquipmentLayout layout = new EquipmentLayout(new ArrayList<>(), new ArrayList<>());
+        for (int i = 0; i < t.locations(); i++) {
+            layout.lines().add(new Vector<>());
+            layout.mounts().add(new ArrayList<>());
+        }
+        for (Mounted<?> m : t.getEquipment()) {
+            // Ignore Mounted's that represent a WeaponGroup
+            // BA anti-personnel weapon are written just after the mount
+            if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
+                continue;
+            }
+
+            // Infantry primary and secondary are written separately
+            if (t.isConventionalInfantry() && m.getType() instanceof InfantryWeapon) {
+                continue;
+            }
+
+            // Ignore ammo for one-shot launchers
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().isOneShot())) {
+                continue;
+            }
+
+            // A weapon enhancement links to the nearest weapon above it, so it is written right after its weapon
+            if (isWrittenWithItsWeapon(t, m)) {
+                continue;
+            }
+
+            if (m.getType() instanceof BayWeapon) {
+                int loc = m.getLocation();
+                if (loc == Entity.LOC_NONE) {
+                    continue;
+                }
+                boolean rear = m.isRearMounted();
+                List<WeaponMounted> bayWeapons = ((WeaponMounted) m).getBayWeapons();
+                for (int i = 0; i < bayWeapons.size(); i++) {
+                    String name = bayWeapons.get(i).getType().getInternalName();
+                    if (i == 0) {
+                        name = "(B) " + name;
+                    }
+                    if (rear) {
+                        name = "(R) " + name;
+                    }
+                    layout.add(loc, name, bayWeapons.get(i));
+                    if (i == 0) {
+                        // Reading the first weapon of a bay mounts the bay
+                        layout.mounts().get(loc).add(m);
+                    }
+                    addEnhancements(layout, bayWeapons.get(i));
+                }
+                for (AmmoMounted a : ((WeaponMounted) m).getBayAmmo()) {
+                    String name = a.getType().getInternalName();
+                    name += ":" + a.getBaseShotsLeft();
+                    if (rear) {
+                        name = "(R) " + name;
+                    }
+                    layout.add(loc, name, a);
+                }
+                continue;
+            }
+
+            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType) || (m.getType() instanceof AmmoType))) {
+                continue;
+            }
+
+            String name = encodeEquipmentLine(m);
+            int loc = m.getLocation();
+            if (loc != Entity.LOC_NONE) {
+                layout.add(loc, name, m);
+                addEnhancements(layout, m);
+            }
+            if ((m.getLinked() != null) && m.getLinked().isAPMMounted()) {
+                layout.add(loc, encodeEquipmentLine(m.getLinked()), m.getLinked());
+            }
+        }
+        return layout;
+    }
+
     /** @return True for a weapon enhancement that {@link #addEnhancements} writes after its weapon */
     private static boolean isWrittenWithItsWeapon(Entity entity, Mounted<?> mount) {
         Mounted<?> weapon = mount.getLinked();
-        if ((weapon == null) || !weapon.getEnhancements().contains(mount)) {
+        // An enhancement still linked to a weapon removed from the unit is written on its own
+        if ((weapon == null) || !weapon.getEnhancements().contains(mount) || (entity.getEquipmentNum(weapon) < 0)) {
             return false;
         }
         // A unit with weapon bays writes only the weapons in its bays
@@ -1489,10 +1519,10 @@ public class BLKFile {
     }
 
     /** Writes the enhancements of a weapon right after it, so that they link to it again when the file is read */
-    private static void addEnhancements(List<Vector<String>> eq, Mounted<?> weapon) {
+    private static void addEnhancements(EquipmentLayout layout, Mounted<?> weapon) {
         for (Mounted<?> enhancement : weapon.getEnhancements()) {
             if (enhancement.getLocation() != Entity.LOC_NONE) {
-                eq.get(enhancement.getLocation()).add(encodeEquipmentLine(enhancement));
+                layout.add(enhancement.getLocation(), encodeEquipmentLine(enhancement), enhancement);
             }
         }
     }

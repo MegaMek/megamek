@@ -143,6 +143,13 @@ class WeaponEnhancementTest {
     }
 
     @Test
+    void insulatorsBeforeAnyLaserStackOnTheFirstLaser() throws Exception {
+        List<Mounted<?>> mounts = loadRightTorso(INSULATOR, INSULATOR, MEDIUM_LASER);
+
+        assertEquals(List.of(mounts.get(0), mounts.get(1)), mounts.get(2).getEnhancements());
+    }
+
+    @Test
     void anEnhancementMovedToAnotherWeaponLeavesTheFirst() throws Exception {
         List<Mounted<?>> mounts = loadRightTorso(MEDIUM_LASER, INSULATOR, MEDIUM_LASER);
 

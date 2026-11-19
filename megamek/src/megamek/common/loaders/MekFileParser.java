@@ -138,7 +138,7 @@ public class MekFileParser {
      * Finds the weapon for a weapon enhancement, which unit files tell by their order: an enhancement belongs to the
      * nearest weapon before it in its location that can take it. Laser insulators can share a laser; the other
      * enhancements pass over a weapon that has one of their kind. An enhancement without such a weapon before it
-     * gets the first weapon in its location that has none of its kind.
+     * gets the first weapon in its location that has none of its kind, or, being a laser insulator, the first laser.
      *
      * @param enhancement The weapon enhancement
      * @param equipment   The equipment around the enhancement, in the order the unit file lists it (see
@@ -154,9 +154,9 @@ public class MekFileParser {
                 return mount;
             }
         }
-        return equipment.stream()
-              .filter(mount -> isEnhancementTarget(enhancement, mount) && !hasEnhancementOfKind(mount, enhancement))
-              .findFirst().orElse(null);
+        List<Mounted<?>> targets = equipment.stream().filter(mount -> isEnhancementTarget(enhancement, mount)).toList();
+        return targets.stream().filter(mount -> !hasEnhancementOfKind(mount, enhancement)).findFirst()
+              .orElse((stacks && !targets.isEmpty()) ? targets.getFirst() : null);
     }
 
     /**

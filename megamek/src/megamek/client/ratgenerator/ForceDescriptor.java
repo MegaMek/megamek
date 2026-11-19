@@ -74,6 +74,8 @@ public class ForceDescriptor {
      * cover could only be discovered by reading {@link CrewDescriptor}'s tables.
      */
     public static final int EXP_ELITE = 3;
+    public static final int EXP_HEROIC = 4;
+    public static final int EXP_LEGENDARY = 5;
 
     // Mapped to Dragoon Rating in MHQ
     public static final int RATING_0 = 0;

@@ -137,6 +137,77 @@ class FrankenMekTest {
     }
 
     @Test
+    void changingCenterTorsoClassPreservesTheArmDonorAndReportsIllegalTonnage() {
+        String superheavyMessage = "Left Arm is 100 or less while the center torso is superheavy";
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(100.0);
+        mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_ARM, 50);
+        mek.linkFrankenMekLocationToSource(Mek.LOC_LEFT_ARM, "Centurion CN9-A");
+
+        mek.setFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO, 105);
+        assertEquals(50, mek.getFrankenMekStructureTonnage(Mek.LOC_LEFT_ARM));
+        mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_ARM, 50);
+        assertTrue(getMekVerifierReport(mek).contains(superheavyMessage));
+
+        mek.setFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO, 100);
+        assertEquals(50, mek.getFrankenMekStructureTonnage(Mek.LOC_LEFT_ARM));
+        assertEquals("Centurion CN9-A", mek.getFrankenMekLocationSourceDisplayName(Mek.LOC_LEFT_ARM));
+        assertFalse(getMekVerifierReport(mek).contains(superheavyMessage));
+    }
+
+    @Test
+    void changingALocationTonnageClearsItsDonor() {
+        Mek mek = newFrankenMek();
+        mek.setWeight(100);
+        mek.syncFrankenMekStructureTonnageToChassis();
+        mek.linkFrankenMekLocationToSource(Mek.LOC_LEFT_ARM, "Atlas AS7-D", "BattleMek");
+
+        // The chassis changes weight: a location without a donor follows it, the Atlas arm stays an Atlas arm.
+        mek.setWeight(95);
+        mek.syncMatchingFrankenMekStructureTonnageToChassis(100);
+        assertEquals(95, mek.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM));
+        assertEquals(100, mek.getFrankenMekStructureTonnage(Mek.LOC_LEFT_ARM));
+        assertEquals("Atlas AS7-D", mek.getFrankenMekLocationSourceDisplayName(Mek.LOC_LEFT_ARM));
+
+        // The arm itself changes weight: it is no longer the Atlas's.
+        mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_ARM, 95);
+        assertEquals("", mek.getFrankenMekLocationSourceDisplayName(Mek.LOC_LEFT_ARM));
+        assertEquals("", mek.getFrankenMekLocationSourceType(Mek.LOC_LEFT_ARM));
+    }
+
+    @Test
+    void changingChassisWeightAndBackPreservesSuperheavyAndLegDonors() {
+        Mek mek = newFrankenMek();
+        mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
+        mek.setWeight(110);
+        mek.syncFrankenMekCenterTorsoTonnageToChassis();
+        mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_LEG, 100);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM, 110);
+        mek.linkFrankenMekLocationToSource(Mek.LOC_RIGHT_ARM, "Superheavy donor");
+        mek.linkFrankenMekLocationToSource(Mek.LOC_LEFT_LEG, "Assault donor");
+        assertTrue(getMekVerifierReport(mek).contains("Left Leg is lower than the center torso"));
+        mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_ARM, 110);
+
+        mek.setWeight(100);
+        mek.syncMatchingFrankenMekStructureTonnageToChassis(110);
+        // An unlinked location at the old chassis weight follows the chassis
+        assertEquals(100, mek.getFrankenMekStructureTonnage(Mek.LOC_LEFT_ARM));
+        assertEquals(110, mek.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM));
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM, 110);
+        assertTrue(getMekVerifierReport(mek).contains("Right Arm exceeds 100 while the center torso is 100 tons or less"));
+
+        mek.setWeight(110);
+        mek.syncMatchingFrankenMekStructureTonnageToChassis(100);
+        assertEquals(100, mek.getFrankenMekStructureTonnage(Mek.LOC_LEFT_LEG));
+        assertEquals(110, mek.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM));
+        assertEquals("Superheavy donor", mek.getFrankenMekLocationSourceDisplayName(Mek.LOC_RIGHT_ARM));
+        assertEquals("Assault donor", mek.getFrankenMekLocationSourceDisplayName(Mek.LOC_LEFT_LEG));
+    }
+
+    @Test
     void legMismatchDetectsStructureTonnage() {
         Mek mek = newFrankenMek();
 

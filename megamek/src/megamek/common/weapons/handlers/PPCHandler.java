@@ -64,16 +64,16 @@ import megamek.server.totalWarfare.TWGameManager;
 public class PPCHandler extends EnergyWeaponHandler {
     @Serial
     private static final long serialVersionUID = 5545991061428671743L;
-    /** The extra damage a charged PPC Capacitor adds to its PPC's shot. */
-    private static final int PPC_CAPACITOR_DAMAGE_BONUS = 5;
+    /** The capacitor was charged in an earlier turn: firing releases it, and a to-hit roll of 2 burns it out */
     private boolean chargedCapacitor = false;
+    /** The shot adds the capacitor's 5 damage: a charged capacitor, or any in a weapon bay (TO:AUE p.149) */
+    private boolean firesCapacitorCharge = false;
 
     public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
-        // remember capacitor state and turn it off here,
-        // so a crit in the firing phase does not cause an explosion, per the
-        // rules in TO
         chargedCapacitor = weapon.hasChargedCapacitor() == 1;
+        firesCapacitorCharge = weapon.firesCapacitorCharge();
+        // Firing releases the charge, so the capacitor holds none from the next turn on
         if (chargedCapacitor) {
             weapon.getLinkedBy().setMode("Off");
         }
@@ -87,7 +87,7 @@ public class PPCHandler extends EnergyWeaponHandler {
      */
     @Override
     protected int getAttackValueBonus() {
-        return chargedCapacitor ? PPC_CAPACITOR_DAMAGE_BONUS : 0;
+        return firesCapacitorCharge ? Mounted.CAPACITOR_DAMAGE_BONUS : 0;
     }
 
     /*
@@ -104,8 +104,8 @@ public class PPCHandler extends EnergyWeaponHandler {
             toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
 
-        if (chargedCapacitor) {
-            toReturn += PPC_CAPACITOR_DAMAGE_BONUS;
+        if (firesCapacitorCharge) {
+            toReturn += Mounted.CAPACITOR_DAMAGE_BONUS;
         }
         // during a swarm, all damage gets applied as one block to one location
         if ((attackingEntity instanceof BattleArmor)
@@ -230,8 +230,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        // resolve roll for charged capacitor
-        if (chargedCapacitor) {
+        // A bay weapon under Aero Sanity has no to-hit roll of its own: the bay rolled
+        if (chargedCapacitor && (parentBayHandler == null)) {
             Report r = Game.rulesManager.getRulesWeapons().checkPPCCapacitor(roll.getIntValue(), attackingEntity,
                   weapon);
             if (r != null) {

@@ -81,6 +81,10 @@ public class CLIATMHandler extends ATMHandler {
     @Serial
     private static final long serialVersionUID = 5476183194060709574L;
     boolean isAngelECMAffected;
+    /** IMP warheads of this attack that struck the target rather than its partial cover or a building */
+    private int impWarheadsStruck = 0;
+    /** IMP warheads of the group being resolved that get past the building around the target, 1 point each */
+    private int impGroupWarheadsStruck = 0;
 
     public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
@@ -893,9 +897,9 @@ public class CLIATMHandler extends ATMHandler {
                 vPhaseReport.addElement(report);
             }
 
-            // The IMP effect scales with the total warheads that hit, so capture it before the
-            // damage loop decrements the running count.
-            int impWarheads = Math.max(0, hits - Math.max(0, bldgAbsorbs));
+            // The IMP effect scales with the warheads that strike the target; groups that strike partial cover
+            // do not count, and the warheads a building absorbs don't either (see applyHeatOnStrike)
+            impWarheadsStruck = 0;
 
             // for each cluster of hits, do a chunk of damage
             while (hits > 0) {
@@ -933,6 +937,7 @@ public class CLIATMHandler extends ATMHandler {
             // Apply the IMP effect once, based on the total warheads that hit. Battle armor and
             // conventional infantry have their own rules; IMP has no effect against large craft
             // (DropShip/JumpShip/WarShip/SpaceStation).
+            int impWarheads = impWarheadsStruck;
             if (entityTarget instanceof BattleArmor battleArmor) {
                 // Each warhead disables one trooper through the End Phase of the following turn.
                 boolean wasDisabled = battleArmor.getImprovedMagneticPulseDisabledTroopers() > 0;
@@ -980,6 +985,34 @@ public class CLIATMHandler extends ATMHandler {
         } else {
             return super.handle(phase, vPhaseReport);
         }
+    }
+
+    /**
+     * Each group of IMP warheads that strikes the target counts toward the IMP effects, and brings its heat where it
+     * strikes, judged against the armor there before the group's damage (IO:AE p.61, Core p.201).
+     */
+    @Override
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget) {
+        // A group that strikes a covering DropShip instead is not counted against the target
+        if (ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP) && (entityTarget == target)) {
+            impWarheadsStruck += impGroupWarheadsStruck;
+            if (appliesImprovedMagneticPulseMovementInterference(entityTarget)) {
+                entityTarget.addImprovedMagneticPulseHeat(impGroupWarheadsStruck, hit);
+            }
+        }
+        return super.applyHeatOnStrike(entityTarget);
+    }
+
+    /**
+     * The building absorbs the same amount from each group that strikes (TW p. 171), only where it shields the
+     * target. An IMP missile inflicts 1 point (IO:AE p. 61), so the damage that gets through is the warheads that strike.
+     */
+    @Override
+    protected int absorbBuildingDamage(int nDamage, Entity entityTarget, int bldgAbsorbs, Vector<Report> vPhaseReport,
+          IBuilding bldg, boolean targetStickingOutOfBuilding) {
+        impGroupWarheadsStruck = super.absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, vPhaseReport, bldg,
+              targetStickingOutOfBuilding);
+        return impGroupWarheadsStruck;
     }
 
     /**

@@ -46,6 +46,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -89,19 +90,7 @@ public class BayWeaponHandler extends WeaponHandler {
         int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
 
         for (WeaponMounted m : weapon.getBayWeapons()) {
-            if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                WeaponType bayWType = m.getType();
-                // need to cycle through weapons and add av
-                if (range == WeaponType.RANGE_SHORT) {
-                    av = av + bayWType.getShortAV();
-                } else if (range == WeaponType.RANGE_MED) {
-                    av = av + bayWType.getMedAV();
-                } else if (range == WeaponType.RANGE_LONG) {
-                    av = av + bayWType.getLongAV();
-                } else if (range == WeaponType.RANGE_EXT) {
-                    av = av + bayWType.getExtAV();
-                }
-            }
+            av += getAv(m, range);
         }
         if (bDirect) {
             av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
@@ -351,21 +340,19 @@ public class BayWeaponHandler extends WeaponHandler {
     }
 
     private static double getAv(WeaponMounted m, int range) {
-        double av = 0;
-        if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-            WeaponType bayWType = m.getType();
-            // need to cycle through weapons and add av
-            if (range == WeaponType.RANGE_SHORT) {
-                av = bayWType.getShortAV();
-            } else if (range == WeaponType.RANGE_MED) {
-                av = bayWType.getMedAV();
-            } else if (range == WeaponType.RANGE_LONG) {
-                av = bayWType.getLongAV();
-            } else if (range == WeaponType.RANGE_EXT) {
-                av = bayWType.getExtAV();
+        return (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) ? m.getAttackValue(range) : 0;
+    }
+
+    /** The bay's weapons fire with it, so a PPC's shot releases its capacitor's charge (TO:AUE p.149) */
+    @Override
+    protected void setDone() {
+        super.setDone();
+        for (WeaponMounted m : weapon.getBayWeapons()) {
+            m.setUsedThisRound(true);
+            if (m.hasChargedCapacitor() != 0) {
+                m.getLinkedBy().setMode(Mounted.MODE_OFF);
             }
         }
-        return av;
     }
 
     /**

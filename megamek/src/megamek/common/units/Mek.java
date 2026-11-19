@@ -42,6 +42,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 import jakarta.annotation.Nullable;
 import megamek.SuiteConstants;
@@ -333,6 +334,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
           .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private boolean frankenMek = false;
+
+    // Movement heat is resolved after landing, so the jets that could fire are kept from the takeoff, their thrust in
+    // ascending order. Null until a jump starts this round.
+    private double[] jumpTakeoffThrust;
 
     private int[] frankenMekStructureTonnage = null;
 
@@ -673,105 +678,39 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return;
         }
         initializeFrankenMekStructure();
-        int sanitizedTonnage = Math.max(10, tonnage);
-        frankenMekStructureTonnage[location] = sanitizedTonnage;
+        frankenMekStructureTonnage[location] = Math.max(10, tonnage);
         if (isFrankenMek()) {
             applyFrankenMekInternalStructure();
         }
         unlinkFrankenMekLocationSourceIfChanged(location);
     }
 
-    public void setFrankenMekStructureTonnageForConstruction(int location, int tonnage) {
-        if (!hasFrankenMekStructureLocation(location)) {
-            return;
-        }
-        initializeFrankenMekStructure();
-        int sanitizedTonnage = Math.max(10, tonnage);
-        int centerTorsoTonnage = location == Mek.LOC_CENTER_TORSO
-              ? sanitizedTonnage
-              : getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
-        if (location != Mek.LOC_CENTER_TORSO) {
-            sanitizedTonnage = Math.min(sanitizedTonnage,
-                  getMaximumFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage));
-        }
-        frankenMekStructureTonnage[location] = locationIsLeg(location)
-              ? Math.max(sanitizedTonnage, centerTorsoTonnage)
-              : sanitizedTonnage;
-        if (location == Mek.LOC_CENTER_TORSO) {
-            updateFrankenMekCenterTorsoStructureTonnage(centerTorsoTonnage);
-        } else {
-            applyFrankenMekInternalStructureIfNeeded();
-            unlinkFrankenMekLocationSourceIfChanged(location);
-        }
-    }
-
     public void syncFrankenMekStructureTonnageToChassis() {
-        syncMatchingFrankenMekStructureTonnageToChassis(getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
+        syncMatchingFrankenMekStructureTonnageToChassis(getFrankenMekStructureTonnage(LOC_CENTER_TORSO));
     }
 
+    /** Unlinked locations built at the old chassis weight follow the new one; linked donors keep their own. */
     public void syncMatchingFrankenMekStructureTonnageToChassis(int matchingTonnage) {
-        if (!hasFrankenMekStructureLocation(Mek.LOC_CENTER_TORSO)) {
-            return;
-        }
         initializeFrankenMekStructure();
-        int centerTorsoTonnage = getDefaultFrankenMekStructureTonnage();
+        int chassisTonnage = getDefaultFrankenMekStructureTonnage();
         for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
-            if (frankenMekStructureTonnage[location] == matchingTonnage) {
-                frankenMekStructureTonnage[location] = centerTorsoTonnage;
+            if ((location != LOC_CENTER_TORSO) && (frankenMekStructureTonnage[location] == matchingTonnage)
+                  && !getFrankenMekLocationSourceSnapshot(location).isLinked()) {
+                setFrankenMekStructureTonnage(location, chassisTonnage);
             }
         }
-        updateFrankenMekCenterTorsoStructureTonnage(centerTorsoTonnage);
+        syncFrankenMekCenterTorsoTonnageToChassis();
     }
 
     public void syncFrankenMekCenterTorsoTonnageToChassis() {
-        if (!hasFrankenMekStructureLocation(Mek.LOC_CENTER_TORSO)) {
-            return;
-        }
-        initializeFrankenMekStructure();
-        updateFrankenMekCenterTorsoStructureTonnage(getDefaultFrankenMekStructureTonnage());
+        setFrankenMekStructureTonnage(LOC_CENTER_TORSO, getDefaultFrankenMekStructureTonnage());
     }
 
     public int getMaximumFrankenMekStructureTonnageForConstruction(int location) {
         if (!hasFrankenMekStructureLocation(location) || (location == Mek.LOC_CENTER_TORSO)) {
             return 200;
         }
-        return getMaximumFrankenMekNonCenterTorsoStructureTonnage(
-              getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
-    }
-
-    private void updateFrankenMekCenterTorsoStructureTonnage(int centerTorsoTonnage) {
-        frankenMekStructureTonnage[Mek.LOC_CENTER_TORSO] = centerTorsoTonnage;
-        clampFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage);
-        clampFrankenMekLegStructureTonnage(centerTorsoTonnage);
-        applyFrankenMekInternalStructureIfNeeded();
-        unlinkChangedFrankenMekLocationSources();
-    }
-
-    private void applyFrankenMekInternalStructureIfNeeded() {
-        if (isFrankenMek()) {
-            applyFrankenMekInternalStructure();
-        }
-    }
-
-    private int getMaximumFrankenMekNonCenterTorsoStructureTonnage(int centerTorsoTonnage) {
-        return centerTorsoTonnage <= 100 ? 100 : 200;
-    }
-
-    private void clampFrankenMekNonCenterTorsoStructureTonnage(int centerTorsoTonnage) {
-        int maximumTonnage = getMaximumFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage);
-        for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
-            if ((location != Mek.LOC_CENTER_TORSO) && (frankenMekStructureTonnage[location] > maximumTonnage)) {
-                frankenMekStructureTonnage[location] = maximumTonnage;
-            }
-        }
-    }
-
-    private void clampFrankenMekLegStructureTonnage(int centerTorsoTonnage) {
-        for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
-            if (locationIsLeg(location) && (frankenMekStructureTonnage[location] < centerTorsoTonnage)) {
-                frankenMekStructureTonnage[location] = centerTorsoTonnage;
-            }
-        }
+        return getFrankenMekStructureTonnage(LOC_CENTER_TORSO) <= 100 ? 100 : 200;
     }
 
     public int getFrankenMekStructureType(int location) {
@@ -932,15 +871,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         }
         for (int location = 0; location < frankenMekLocationSources.length; location++) {
             clearFrankenMekLocationSource(location);
-        }
-    }
-
-    private void unlinkChangedFrankenMekLocationSources() {
-        if (frankenMekLocationSources == null) {
-            return;
-        }
-        for (int location = 0; location < frankenMekLocationSources.length; location++) {
-            unlinkFrankenMekLocationSourceIfChanged(location);
         }
     }
 
@@ -1237,6 +1167,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         } // Check the next piece of equipment.
 
         super.newRound(roundNumber);
+        jumpTakeoffThrust = null;
         incrementMASCAndSuperchargerLevels();
 
         // If emergency cooling system was used last turn, increment the counter,
@@ -1840,16 +1771,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return 0;
         }
 
-        int mp = getJumpJetMovementPoints(false);
-
-        if (!mpCalculationSetting.ignoreSubmergedJumpJets() && hasOccupiedHex() && getElevation() < 0) {
-            int waterLevel = game.getHexOf(this).terrainLevel(Terrains.WATER);
-            if (waterLevel > 1) {
-                return 0;
-            } else if (waterLevel == 1) {
-                mp = torsoJumpJets();
-            }
-        }
+        int waterDepth = mpCalculationSetting.ignoreSubmergedJumpJets() ? 0 : getJumpJetWaterDepth();
+        int mp = getJumpJetMovementPoints(waterDepth);
 
         // apply Partial Wing bonus if we have the ability to jump
         if (mp > 0) {
@@ -2044,6 +1967,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 break;
             }
         }
+        // CO p. 213: a FrankenMek generates jump heat per jet fired, not per hex jumped
+        if (isFrankenMek()) {
+            movedMP = getFrankenMekJumpJetsFired(movedMP);
+        }
 
         return switch (getJumpType()) {
             case JUMP_IMPROVED -> extra
@@ -2061,7 +1988,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      * Returns the number of (working) jump jets mounted in the torsos.
      */
     public int torsoJumpJets() {
-        int jump = getJumpJetMovementPoints(true);
+        int jump = getJumpJetMovementPoints(1);
 
         // apply Partial Wing bonus if we have the ability to jump
         if (jump > 0) {
@@ -2076,49 +2003,87 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return jump;
     }
 
-    private int getJumpJetMovementPoints(boolean torsoOnly) {
-        if (!isFrankenMek()) {
-            return (int) getMisc().stream()
-                  .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
-                  .filter(Mounted::isOperable)
-                  .filter(m -> !torsoOnly || locationIsTorso(m.getLocation()))
-                  .count();
-        }
-
-        /*
-         CO:213
-         Jump jet performance depends on the weight class of the FrankenMek.
-         Smaller jump jets can be retained on larger ’Meks, but their performance is reduced and fractional
-         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance
-         as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
-        */
-        int centerTorsoTonnage = getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
-        if (centerTorsoTonnage <= 0) {
+    private int getJumpJetWaterDepth() {
+        if (game == null || isOffBoard() || getElevation() >= 0) {
             return 0;
         }
+        Hex hex = game.getHexOf(this);
+        return hex == null ? 0 : hex.terrainLevel(Terrains.WATER);
+    }
 
-        double movement = 0.0;
-        for (Mounted<?> mounted : getMisc()) {
-            if (!mounted.getType().hasFlag(MiscType.F_JUMP_JET)
-                  || !mounted.isOperable()
-                  || (torsoOnly && !locationIsTorso(mounted.getLocation()))) {
-                continue;
-            }
+    /** Keeps the jets that can fire as the jump starts, before any of them is damaged on landing. */
+    public void recordJumpTakeoff() {
+        jumpTakeoffThrust = getJumpJetThrust(getJumpJetWaterDepth()).filter(movement -> movement > 0).sorted()
+              .toArray();
+    }
 
-            MiscType jumpJetType = (MiscType) mounted.getType();
-            double centerTorsoJumpJetTonnage = jumpJetType.getTonnage(this, Mek.LOC_CENTER_TORSO, mounted.getSize());
-            if (centerTorsoJumpJetTonnage <= 0) {
-                continue;
-            }
+    /** Only torso jets can fire in depth-one water, and no jets can fire deeper (TW p. 53). */
+    private DoubleStream getJumpJetThrust(int waterDepth) {
+        return getMisc().stream()
+              .filter(m -> m.isOperable() && m.getType().hasFlag(MiscType.F_JUMP_JET))
+              .filter(m -> waterDepth <= 0 || (waterDepth == 1 && locationIsTorso(m.getLocation())))
+              .mapToDouble(this::getJumpJetMovement);
+    }
 
-            double locationJumpJetTonnage = jumpJetType.getTonnage(this, mounted.getLocation(), mounted.getSize());
-            movement += locationJumpJetTonnage / centerTorsoJumpJetTonnage;
+    private int getJumpJetMovementPoints(int waterDepth) {
+        return capJumpJetMovement(getJumpJetThrust(waterDepth).sum());
+    }
+
+    /**
+     * A Mek's Jumping MP is what its installed jump jets give, before damage, water and gravity: one per jet, less for a
+     * FrankenMek's lighter donor jets (CO p. 213). Modular armor takes one off unless ignored. A Mek stores no jump MP
+     * of its own; mechanical jump boosters keep theirs as the booster's size.
+     */
+    @Override
+    public int getOriginalJumpMP(boolean ignoreModularArmor) {
+        int jumpMP = capJumpJetMovement(getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+              .mapToDouble(this::getJumpJetMovement).sum());
+        return (!ignoreModularArmor && hasModularArmor()) ? Math.max(0, jumpMP - 1) : jumpMP;
+    }
+
+    /** @return The jump jets the Mek mounts, working or not */
+    public int getJumpJetCount() {
+        return (int) getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET)).count();
+    }
+
+    /** @return The Jumping MP one jet gives: one, or a fraction of one for a FrankenMek's lighter donor jet */
+    private double getJumpJetMovement(MiscMounted jumpJet) {
+        return isFrankenMek() ? getFrankenMekJumpJetMovement(jumpJet) : 1;
+    }
+
+    private int capJumpJetMovement(double thrust) {
+        int movement = (int) thrust;
+        return isFrankenMek() ? Math.min(movement, getJumpJetMovementCap()) : movement;
+    }
+
+    /** Fraction of a Jumping MP provided by a donor jet of this tonnage (CO p. 213). */
+    private double getFrankenMekJumpJetMovement(MiscMounted mounted) {
+        if (getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO) <= 0) {
+            return 0;
         }
+        MiscType jumpJetType = mounted.getType();
+        double centerTorsoJumpJetTonnage = jumpJetType.getTonnage(this, Mek.LOC_CENTER_TORSO, mounted.getSize());
+        if (centerTorsoJumpJetTonnage <= 0) {
+            return 0;
+        }
+        return jumpJetType.getTonnage(this, mounted.getLocation(), mounted.getSize()) / centerTorsoJumpJetTonnage;
+    }
 
-        // A FrankenMek might have more jump jets than the standard limitation
-        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets)
-        // so, we clamp it to that limitation.
-        return Math.min((int) Math.floor(movement), getJumpJetMovementCap());
+    /**
+     * @return the fewest working jump jets that cover the given distance; jets beyond the installed ones count one per
+     *       MP, so the result is never lower than an ordinary Mek's
+     */
+    private int getFrankenMekJumpJetsFired(int movedMP) {
+        // BV and previews have no takeoff. Use the installed jets regardless of the current hex.
+        double[] thrust = (jumpTakeoffThrust != null) ? jumpTakeoffThrust
+              : getJumpJetThrust(0).filter(movement -> movement > 0).sorted().toArray();
+        double remaining = movedMP;
+        int fired = 0;
+        for (int index = thrust.length - 1; (index >= 0) && (remaining > 0); index--) {
+            remaining -= thrust[index];
+            fired++;
+        }
+        return fired + (int) Math.max(0, Math.ceil(remaining));
     }
 
     private int getJumpJetMovementCap() {
@@ -2285,18 +2250,20 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     public int heatSinks(boolean countPrototypes) {
         int sinks = 0;
         for (Mounted<?> mounted : getMisc()) {
-            EquipmentType etype = mounted.getType();
-            if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
-                  && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || (etype
-                  .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
-                sinks += 2;
-            } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                  || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
-                sinks++;
-            }
+            sinks += physicalHeatSinks(mounted, countPrototypes);
         }
         return sinks;
+    }
+
+    private static int physicalHeatSinks(Mounted<?> mounted, boolean countPrototypes) {
+        if (!(mounted.getType() instanceof MiscType type)) {
+            return 0;
+        }
+        if (type.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+              || (countPrototypes && type.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE))) {
+            return type.hasFlag(MiscType.F_COMPACT_HEAT_SINK) ? 2 : 1;
+        }
+        return type.hasFlag(MiscType.F_HEAT_SINK) ? 1 : 0;
     }
 
     /**
@@ -2308,16 +2275,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             if (!mounted.isDestroyed()) {
                 continue;
             }
-            EquipmentType etype = mounted.getType();
-            if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
-                  && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || etype
-                  .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE))) {
-                sinks += 2;
-            } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                  || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
-                sinks++;
-            }
+            sinks += physicalHeatSinks(mounted, true);
         }
         return sinks;
     }
@@ -4629,6 +4587,20 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return activeSinks;
     }
 
+    /**
+     * @return the number of operable heat sinks of every type (prototype double heat sinks and Freezers included) that
+     *       are switched on; a Coolant Pod adds 1 point of cooling to each of them (TO:AUE p. 116)
+     */
+    public int getActiveSinksOfAnyType() {
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.isOperable() && !mounted.isModeTurnedOff()) {
+                activeSinks += physicalHeatSinks(mounted, true);
+            }
+        }
+        return activeSinks;
+    }
+
     /** Switches every heat sink mount (including prototype double heat sinks and Freezers) back on. */
     public void resetSinks() {
         for (MiscMounted mounted : getMisc()) {
@@ -4857,6 +4829,18 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     @Override
     public int getGyroType() {
         return gyroType;
+    }
+
+    /** Gyro tonnage before any optional verifier rounding (TM p. 50). */
+    public double getGyroWeight() {
+        double baseWeight = hasEngine() ? Math.ceil(getEngine().getRating() / 100.0) : 0;
+        return switch (getGyroType()) {
+            case GYRO_XL -> baseWeight * 0.5;
+            case GYRO_COMPACT -> baseWeight * 1.5;
+            case GYRO_HEAVY_DUTY, GYRO_SUPERHEAVY -> baseWeight * 2;
+            case GYRO_NONE -> 0;
+            default -> baseWeight;
+        };
     }
 
     public int getCockpitType() {
@@ -5378,7 +5362,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         }
 
         sb.append(MtfFile.WALK_MP).append(walkMP).append(newLine);
-        sb.append(MtfFile.JUMP_MP).append(jumpMP).append(newLine);
+        sb.append(MtfFile.JUMP_MP).append(getOriginalJumpMP(true)).append(newLine);
         sb.append(newLine);
 
         if (hasPatchworkArmor()) {
@@ -6399,6 +6383,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         nCoolantSystemLevel = 0;
         bCoolantWentUp = false;
         bUsedCoolantSystem = false;
+        jumpTakeoffThrust = null;
         // Fortifying and rubble clearing in progress refer to hexes of the last game's map
         cancelFortify();
         cancelClearingRubble();
@@ -7227,6 +7212,19 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             }
         }
         return true;
+    }
+
+    /**
+     * @return true if any location still has heat-dissipating armor, front or rear
+     */
+    public boolean hasAnyHeatDissipatingArmor() {
+        for (int loc = 0; loc < locations(); ++loc) {
+            if ((getArmorType(loc) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)
+                  && ((getArmor(loc) > 0) || (hasRearArmor(loc) && (getArmor(loc, true) > 0)))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

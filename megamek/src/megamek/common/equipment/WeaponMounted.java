@@ -139,6 +139,21 @@ public class WeaponMounted extends Mounted<WeaponType> {
         return Game.rulesManager.getRulesExplosions().equipmentDamage(this, getType());
     }
 
+    /**
+     * @return This weapon's Attack Value at the given range bracket, with the 5 of a PPC capacitor that fires its
+     *       charge (a capacitor in a weapon bay counts as charged, TO:AUE p.149), or 0 out of range
+     */
+    public double getAttackValue(int range) {
+        double attackValue = switch (range) {
+            case WeaponType.RANGE_SHORT -> getType().getShortAV();
+            case WeaponType.RANGE_MED -> getType().getMedAV();
+            case WeaponType.RANGE_LONG -> getType().getLongAV();
+            case WeaponType.RANGE_EXT -> getType().getExtAV();
+            default -> 0;
+        };
+        return ((attackValue > 0) && firesCapacitorCharge()) ? (attackValue + CAPACITOR_DAMAGE_BONUS) : attackValue;
+    }
+
     @Override
     public int getCurrentHeat() {
         int heat = getType().getHeat();
@@ -176,19 +191,24 @@ public class WeaponMounted extends Mounted<WeaponType> {
         if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING)) {
             heat += 2;
         }
-        if (hasChargedCapacitor() == 1) {
+        if (firesCapacitorCharge()) {
             heat += 5;
         }
-        if (curMode().getName().startsWith("Pulse")) {
-            heat += 2;
-        }
-        // The insulator lowers the laser's total heat, pulse module included, to a minimum of 1
-        Mounted<?> insulator = getEnhancement(MiscType.F_LASER_INSULATOR);
-        if ((insulator != null) && !insulator.isInoperable()) {
-            heat = Math.max(1, heat - 1);
-        }
+        return (int) laserEnhancedHeat(heat, curMode().getName().startsWith("Pulse"));
+    }
 
-        return heat;
+    /**
+     * @return The heat of this weapon with its laser enhancements: 2 more in the pulse mode of a RISC laser pulse
+     *       module (IO:AE p. 87), then, with a working laser insulator, 1 less to a minimum of 1 (TO:AUE p. 134)
+     *
+     * @param heat      The heat before the enhancements
+     * @param pulseMode True for the heat of the pulse mode
+     */
+    public double laserEnhancedHeat(double heat, boolean pulseMode) {
+        MiscMounted pulseModule = pulseMode ? getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE) : null;
+        double enhancedHeat = (pulseModule != null) ? (heat + pulseModule.getType().getHeat()) : heat;
+        Mounted<?> insulator = getEnhancement(MiscType.F_LASER_INSULATOR);
+        return ((insulator != null) && !insulator.isInoperable()) ? Math.max(1, enhancedHeat - 1) : enhancedHeat;
     }
 
     /**

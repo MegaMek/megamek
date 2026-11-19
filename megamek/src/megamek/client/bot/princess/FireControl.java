@@ -2580,11 +2580,7 @@ public class FireControl {
         }
 
         if (conditions.getTemperature() > 50) {
-            int heatToAdd = temperatureDifference;
-            if ((shooter instanceof Mek mek) && mek.hasIntactHeatDissipatingArmor()) {
-                heatToAdd /= 2;
-            }
-            return heatToAdd;
+            return Game.rulesManager.getRulesArmor().reduceExtremeHeat(shooter, temperatureDifference);
         }
 
         // Extreme cold: the engine removes heat, so treat it as extra tolerance.

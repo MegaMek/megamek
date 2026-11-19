@@ -1523,11 +1523,11 @@ public final class UnitToolTip {
 
         if (entity.hasActivatedRadicalHS()) {
             if (entity instanceof Mek mek) {
-                heatCap += mek.getActiveSinks();
-                heatCapWater += mek.getActiveSinks();
+                heatCap += mek.getActiveSinksOfAnyType();
+                heatCapWater += mek.getActiveSinksOfAnyType();
             } else if (entity instanceof Aero aero) {
-                heatCap += aero.getHeatSinks();
-                heatCapWater += aero.getHeatSinks();
+                heatCap += aero.getActiveSinks();
+                heatCapWater += aero.getActiveSinks();
             }
         }
 

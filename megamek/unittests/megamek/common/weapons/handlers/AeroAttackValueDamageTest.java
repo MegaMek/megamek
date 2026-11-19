@@ -33,6 +33,7 @@
 package megamek.common.weapons.handlers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -195,6 +196,42 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
         fire(dropShip, bay);
 
         assertEquals(2 * PPC_ATTACK_VALUE, armorLost(), "the bay deals the Attack Value of both PPCs");
+    }
+
+    /** A capacitor in a bay counts as charged for the bay's damage and heat (TO:AUE p.149) */
+    @Test
+    void dropShipPpcBayCountsItsCapacitorsAsCharged() throws Exception {
+        Dropship dropShip = addDropShip();
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PPC_BAY),
+              Aero.LOC_NOSE);
+        for (int count = 0; count < 2; count++) {
+            WeaponMounted ppc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
+            dropShip.addEquipment(EquipmentType.get("ISPPCCapacitor"), Aero.LOC_NOSE).setLinked(ppc);
+            bay.addWeaponToBay(ppc);
+        }
+
+        fire(dropShip, bay);
+
+        assertEquals(2 * (PPC_ATTACK_VALUE + PPC_CAPACITOR_BONUS), armorLost(), "each capacitor adds 5");
+        assertEquals(2 * (10 + 5), dropShip.heatBuildup, "each PPC makes 10 heat and its capacitor 5");
+    }
+
+    /** Firing a bay releases the charge of its PPCs' capacitors, as firing one PPC does (TO:AUE p.149) */
+    @Test
+    void firingABayReleasesItsChargedCapacitors() throws Exception {
+        Dropship dropShip = addDropShip();
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PPC_BAY),
+              Aero.LOC_NOSE);
+        WeaponMounted ppc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
+        Mounted<?> capacitor = dropShip.addEquipment(EquipmentType.get("ISPPCCapacitor"), Aero.LOC_NOSE);
+        capacitor.setLinked(ppc);
+        capacitor.setModeImmediately(Mounted.MODE_CAPACITOR_CHARGE);
+        bay.addWeaponToBay(ppc);
+
+        fire(dropShip, bay);
+
+        assertFalse(ppc.holdsCapacitorCharge(), "a hit after the shot finds no charge");
+        assertEquals(Mounted.MODE_OFF, capacitor.pendingMode().getName(), "the capacitor is empty next turn");
     }
 
     @Test

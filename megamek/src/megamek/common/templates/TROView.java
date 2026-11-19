@@ -66,12 +66,10 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponType;
-import megamek.common.loaders.UnitFluffLoader;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.units.*;
-import megamek.common.units.EntityFluff;
 import megamek.common.units.System;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
@@ -208,25 +206,24 @@ public class TROView {
     protected void addEntityFluff(Entity entity) {
         model.put("year", String.valueOf(entity.getYear()));
         model.put("techRating", entity.getFullRatingName());
-        EntityFluff fluff = UnitFluffLoader.displayFluff(entity);
-        if (!fluff.getOverview().isBlank()) {
-            model.put("fluffOverview", fluff.getOverview());
+        if (!entity.getFluff().getOverview().isBlank()) {
+            model.put("fluffOverview", entity.getFluff().getOverview());
         }
 
-        if (!fluff.getCapabilities().isBlank()) {
-            model.put("fluffCapabilities", fluff.getCapabilities());
+        if (!entity.getFluff().getCapabilities().isBlank()) {
+            model.put("fluffCapabilities", entity.getFluff().getCapabilities());
         }
 
-        if (!fluff.getDeployment().isBlank()) {
-            model.put("fluffDeployment", fluff.getDeployment());
+        if (!entity.getFluff().getDeployment().isBlank()) {
+            model.put("fluffDeployment", entity.getFluff().getDeployment());
         }
 
-        if (!fluff.getHistory().isBlank()) {
-            model.put("fluffHistory", fluff.getHistory());
+        if (!entity.getFluff().getHistory().isBlank()) {
+            model.put("fluffHistory", entity.getFluff().getHistory());
         }
 
-        String manufacturerRaw = fluff.getManufacturer();
-        String factoryRaw = fluff.getPrimaryFactory();
+        String manufacturerRaw = entity.getFluff().getManufacturer();
+        String factoryRaw = entity.getFluff().getPrimaryFactory();
 
         if (!manufacturerRaw.isBlank()) {
             String[] manufacturers = manufacturerRaw.split("\\|");
@@ -282,9 +279,8 @@ public class TROView {
         addEntityFluff(entity);
         model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
               + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
-        EntityFluff fluff = UnitFluffLoader.displayFluff(entity);
         if (entity.hasEngine()) {
-            model.put("engineDesc", formatSystemFluff(System.ENGINE, fluff,
+            model.put("engineDesc", formatSystemFluff(System.ENGINE, entity.getFluff(),
                   () -> stripNotes(entity.getEngine().getEngineName())));
         } else {
             model.put("engineDesc", "None");
@@ -294,11 +290,11 @@ public class TROView {
             model.put("maxSpeed", entity.getRunMP() * 10.8);
         }
         if (entity.isMek() || (entity.isProtoMek() && entity.getOriginalJumpMP() > 0)) {
-            model.put("jumpDesc", formatSystemFluff(System.JUMP_JET, fluff,
+            model.put("jumpDesc", formatSystemFluff(System.JUMP_JET, entity.getFluff(),
                   () -> Messages.getString("TROView.Unknown")));
         }
         model.put("armorDesc",
-              formatSystemFluff(System.ARMOR, fluff, () -> formatArmorType(entity, false)));
+              formatSystemFluff(System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
         final Map<String, Integer> weaponCount = new HashMap<>();
         double podSpace = 0.0;
         for (final Mounted<?> m : entity.getEquipment()) {
@@ -316,9 +312,9 @@ public class TROView {
             armaments.add(String.format(Messages.getString("TROView.podspace.format"), podSpace));
         }
         model.put("armamentList", armaments);
-        model.put("communicationDesc", formatSystemFluff(System.COMMUNICATIONS, fluff,
+        model.put("communicationDesc", formatSystemFluff(System.COMMUNICATIONS, entity.getFluff(),
               () -> Messages.getString("TROView.Unknown")));
-        model.put("targetingDesc", formatSystemFluff(System.TARGETING, fluff,
+        model.put("targetingDesc", formatSystemFluff(System.TARGETING, entity.getFluff(),
               () -> Messages.getString("TROView.Unknown")));
     }
 

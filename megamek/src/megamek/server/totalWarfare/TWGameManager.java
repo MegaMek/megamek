@@ -31401,7 +31401,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * destroy all wheeled and tracked Tanks that got displaced into water
+     * destroy all wheeled, tracked and hover Tanks that are immobile in water. Unbroken ice holds them up, so a hex
+     * with ice is skipped; once the ice breaks the ice terrain is removed and the Tank sinks.
      */
     void resolveSinkVees() {
         Iterator<Entity> sinkableTanks = game.getSelectedEntities(entity -> {
@@ -31415,6 +31416,7 @@ public class TWGameManager extends AbstractGameManager {
             return entity.getMovementMode().isTrackedWheeledOrHover() &&
                   entity.isImmobile() &&
                   (hex.terrainLevel(Terrains.WATER) > 0) &&
+                  !hex.containsTerrain(Terrains.ICE) &&
                   !onBridge &&
                   !(entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
                   !(entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL));

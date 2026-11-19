@@ -143,20 +143,6 @@ class EngineTests(unittest.TestCase):
         # The Docker token is used by its own step only.
         self.assertEqual(1, self.workflow.count("steps.docker_app.outputs.token"))
 
-    def test_unit_fluff_is_attached_last_with_the_stamp_token(self):
-        attach = self.steps["Attach the unit fluff download to the MegaMek release"]
-        self.assertIn("inputs.dry_run && github.token || steps.stamp_app.outputs.token", attach)
-        self.assertIn("--sources sources --state suite-state", attach)
-        self.assertIn("--dry-run", attach)
-        self.assertIn("set -o pipefail", attach)
-        # Runs on no-ops too, so a rerun repairs a missed upload.
-        self.assertNotIn("if: ", attach.split("run: |")[0])
-        self.assertLess(self.position("Move main to the next line"),
-                        self.position("Attach the unit fluff download"))
-        self.assertLess(self.position("Attach the unit fluff download"),
-                        self.position("Keep the plan and seal"))
-        self.assertEqual(1, self.workflow.count("suite_release_fluff.py"))
-
     def test_cut_dry_run_rehearses_main(self):
         prepare = self.steps["prepare"]
         self.assertIn('if [[ -n "$CUT_LINE" && "$DRY_RUN" == "true" ]]', prepare)

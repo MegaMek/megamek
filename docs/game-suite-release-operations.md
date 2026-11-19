@@ -132,16 +132,6 @@ Run **Game suite release - Experimental** with `dry_run=false` and approve the
 6. Mints a MegaMek-only write token and commits the released build number to
    the built branch's `Version.properties` (see [Version numbers](#version-numbers)).
    This also runs after a no-op, so rerunning repairs a stamp that failed.
-7. With the same token, attaches the unit fluff download
-   (`unit-fluff-<version>.zip`) to the MegaMek release of the channel's latest
-   suite, built with `git archive` from the record's pinned mm-data commit.
-   It holds mm-data's top-level `unitfluff/` folder as `data/unitfluff/<uuid>.yml`;
-   users extract it into their user directory or the install's `userdata/`
-   folder. The product archives deliberately do not contain it, the record
-   does not list it and the launcher ignores it. The step is skipped for
-   suites whose mm-data has no `unitfluff/` folder, keeps an existing upload,
-   and also runs after a no-op, so rerunning repairs a missed upload. A dry
-   run only builds the zip.
 
 The suite is published only when its record exists; the launcher and website
 use the record's `channel`, not GitHub's prerelease badge. Later merges to the
@@ -172,8 +162,7 @@ step requests the narrowest token it needs:
 
 - branch creation: the four repositories;
 - publication: megamek, megameklab and mekhq;
-- stamping the released revision, moving `main` and attaching the unit fluff
-  download: megamek only.
+- stamping the released revision and moving `main`: megamek only.
 
 To start the Docker image build, the App must also be installed on
 megamek-docker-image with Actions write. That token is limited to that
@@ -210,11 +199,6 @@ not build, tag or publish anything, and works while releases are disabled.
 - **Broken published build**: do not replace its assets. Fix it on the
   branch and publish a new build; the launcher moves to the newest record of
   its channel.
-- **Unit fluff upload failed**: the suite itself is published and unaffected.
-  Rerun the same workflow; it finds nothing to publish and only uploads the
-  missing `unit-fluff-<version>.zip`. If the step reports an incomplete
-  upload, delete that asset from the MegaMek release first. Only the
-  channel's latest suite is repaired.
 
 ## Diagnosing failures
 

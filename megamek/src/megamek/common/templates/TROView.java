@@ -69,6 +69,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.*;
 import megamek.common.units.System;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -84,12 +85,18 @@ import megamek.logging.MMLogger;
 public class TROView {
     private static final MMLogger logger = MMLogger.create(TROView.class);
 
+    /** The template model keys holding the narrative fluff text, as opposed to the technical fluff. */
+    private static final List<String> FLUFF_TEXT_KEYS = List.of("fluffOverview", "fluffCapabilities",
+          "fluffDeployment", "fluffHistory");
+
     private Template template;
     private final Map<String, Object> model = new HashMap<>();
     private final EntityVerifier verifier = EntityVerifier
           .getInstance(new MegaMekFile(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
 
     private boolean includeFluff = true;
+
+    private boolean includeFluffText = PreferenceManager.getClientPreferences().getShowUnitFluffText();
 
     protected TROView() {
     }
@@ -158,9 +165,14 @@ public class TROView {
     public String processTemplate() {
         if (template != null) {
             model.put("includeFluff", includeFluff);
+            Map<String, Object> templateModel = model;
+            if (!includeFluffText) {
+                templateModel = new HashMap<>(model);
+                templateModel.keySet().removeAll(FLUFF_TEXT_KEYS);
+            }
             try (final ByteArrayOutputStream os = new ByteArrayOutputStream();
                   final Writer out = new OutputStreamWriter(os)) {
-                template.process(model, out);
+                template.process(templateModel, out);
                 return os.toString();
             } catch (Exception ex) {
                 logger.error("", ex);
@@ -824,6 +836,24 @@ public class TROView {
      */
     public boolean getIncludeFluff() {
         return includeFluff;
+    }
+
+    /**
+     * Sets whether to include the narrative fluff text (overview, capabilities, deployment and history). Unlike
+     * {@link #setIncludeFluff(boolean)}, this keeps the technical fluff such as the engine, armor and manufacturers.
+     * Defaults to {@link megamek.common.preference.ClientPreferences#getShowUnitFluffText()}.
+     *
+     * @param includeFluffText Whether to include the narrative fluff text
+     */
+    public void setIncludeFluffText(boolean includeFluffText) {
+        this.includeFluffText = includeFluffText;
+    }
+
+    /**
+     * @return Whether the narrative fluff text will be included when processing the template
+     */
+    public boolean getIncludeFluffText() {
+        return includeFluffText;
     }
 
     /**

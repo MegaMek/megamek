@@ -63,10 +63,8 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
-import megamek.common.loaders.UnitFluffLoader;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
-import megamek.common.units.EntityFluff;
 import megamek.common.units.IBomber;
 import megamek.common.units.Mek;
 import megamek.common.verifier.TestEntity;
@@ -262,22 +260,21 @@ class GeneralEntityReadout implements EntityReadout {
 
     protected List<ViewElement> createFluffBlock() {
         List<ViewElement> result = new ArrayList<>();
-        EntityFluff fluff = UnitFluffLoader.displayFluff(entity);
-        if (!fluff.getOverview().isEmpty()) {
+        if (!entity.getFluff().getOverview().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextLine("Overview", fluff.getOverview()));
+            result.add(new FluffTextLine("Overview", entity.getFluff().getOverview()));
         }
-        if (!fluff.getCapabilities().isEmpty()) {
+        if (!entity.getFluff().getCapabilities().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextLine("Capabilities", fluff.getCapabilities()));
+            result.add(new FluffTextLine("Capabilities", entity.getFluff().getCapabilities()));
         }
-        if (!fluff.getDeployment().isEmpty()) {
+        if (!entity.getFluff().getDeployment().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextLine("Deployment", fluff.getDeployment()));
+            result.add(new FluffTextLine("Deployment", entity.getFluff().getDeployment()));
         }
-        if (!fluff.getHistory().isEmpty()) {
+        if (!entity.getFluff().getHistory().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextLine("History", fluff.getHistory()));
+            result.add(new FluffTextLine("History", entity.getFluff().getHistory()));
         }
         return result;
     }

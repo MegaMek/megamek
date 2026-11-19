@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.List;
 
@@ -55,6 +56,7 @@ import megamek.common.enums.Faction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
 import megamek.common.units.DropShuttleBay;
@@ -494,6 +496,41 @@ class BLKFileTest {
         assertEquals(List.of(front.get(1), front.get(2)), front.get(0).getEnhancements());
         assertEquals(List.of(front.get(4), front.get(5)), front.get(3).getEnhancements());
         assertTrue(front.get(6).getEnhancements().isEmpty());
+    }
+
+    @Test
+    void enhancementsAddedAfterTheirWeaponsAreWrittenWithThem() throws Exception {
+        Tank tank = createMinimalTank();
+        Mounted<?> first = tank.addEquipment(EquipmentType.get("Medium Laser"), Tank.LOC_FRONT);
+        Mounted<?> second = tank.addEquipment(EquipmentType.get("Medium Laser"), Tank.LOC_FRONT);
+        tank.addEquipment(EquipmentType.get("ISLaserInsulator"), Tank.LOC_FRONT).setLinked(first);
+        tank.addEquipment(EquipmentType.get("ISLaserInsulator"), Tank.LOC_FRONT).setLinked(second);
+        String blk = String.join("\n", BLKFile.getBlock(tank).getAllDataAsString());
+
+        Entity loaded = new MekFileParser(blk).getEntity();
+
+        assertEquals(1, loaded.getWeaponList().get(0).getEnhancements().size());
+        assertEquals(1, loaded.getWeaponList().get(1).getEnhancements().size());
+    }
+
+    @Test
+    void bayEnhancementsAreWrittenWithTheirWeapon() throws Exception {
+        File file = new File("testresources/megamek/common/units/Lion (3005) (WD).blk");
+        String blk = Files.readString(file.toPath()).replaceAll("(?s)<Nose Equipment>.*?</Nose Equipment>",
+              "<Nose Equipment>\n(B) ISLightPPC\nISPPCCapacitor\nISHeavyPPC\n</Nose Equipment>");
+        Entity loaded = new MekFileParser(blk).getEntity();
+        assertEquals("Light PPC", capacitorTarget(loaded));
+
+        String resaved = String.join("\n", BLKFile.getBlock(loaded).getAllDataAsString());
+
+        assertEquals("Light PPC", capacitorTarget(new MekFileParser(resaved).getEntity()));
+    }
+
+    private static String capacitorTarget(Entity entity) {
+        return entity.getMisc().stream()
+              .filter(mount -> mount.getType().hasFlag(MiscType.F_PPC_CAPACITOR))
+              .map(capacitor -> capacitor.getLinked().getType().getInternalName())
+              .findFirst().orElseThrow();
     }
 
     /**

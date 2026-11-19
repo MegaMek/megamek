@@ -995,6 +995,11 @@ public class BLKFile {
                 continue;
             }
 
+            // A weapon enhancement links to the nearest weapon above it, so it is written right after its weapon
+            if (isWrittenWithItsWeapon(t, m)) {
+                continue;
+            }
+
             if (m.getType() instanceof BayWeapon) {
                 int loc = m.getLocation();
                 if (loc == Entity.LOC_NONE) {
@@ -1011,6 +1016,7 @@ public class BLKFile {
                         name = "(R) " + name;
                     }
                     eq.get(loc).add(name);
+                    addEnhancements(eq, bayWeapons.get(i));
                 }
                 for (AmmoMounted a : ((WeaponMounted) m).getBayAmmo()) {
                     String name = a.getType().getInternalName();
@@ -1031,6 +1037,7 @@ public class BLKFile {
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {
                 eq.get(loc).add(name);
+                addEnhancements(eq, m);
             }
             if ((m.getLinked() != null) && m.getLinked().isAPMMounted()) {
                 eq.get(loc).add(encodeEquipmentLine(m.getLinked()));
@@ -1468,6 +1475,26 @@ public class BLKFile {
             }
         }
         return quirk.getName();
+    }
+
+    /** @return True for a weapon enhancement that {@link #addEnhancements} writes after its weapon */
+    private static boolean isWrittenWithItsWeapon(Entity entity, Mounted<?> mount) {
+        Mounted<?> weapon = mount.getLinked();
+        if ((weapon == null) || !weapon.getEnhancements().contains(mount)) {
+            return false;
+        }
+        // A unit with weapon bays writes only the weapons in its bays
+        Mounted<?> written = entity.usesWeaponBays() ? entity.whichBay(weapon.getEquipmentNum()) : weapon;
+        return (written != null) && (written.getLocation() != Entity.LOC_NONE);
+    }
+
+    /** Writes the enhancements of a weapon right after it, so that they link to it again when the file is read */
+    private static void addEnhancements(List<Vector<String>> eq, Mounted<?> weapon) {
+        for (Mounted<?> enhancement : weapon.getEnhancements()) {
+            if (enhancement.getLocation() != Entity.LOC_NONE) {
+                eq.get(enhancement.getLocation()).add(encodeEquipmentLine(enhancement));
+            }
+        }
     }
 
     private static String encodeEquipmentLine(Mounted<?> m) {

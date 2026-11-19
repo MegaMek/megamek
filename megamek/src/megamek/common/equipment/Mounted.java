@@ -1321,16 +1321,19 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @see #setLinkedBy(Mounted)
      */
     public void setLinked(@Nullable Mounted<?> linked) {
-        Mounted<?> unlinked = (linked == null) ? this.linked : null;
+        Mounted<?> previous = this.linked;
 
         this.linked = linked;
 
         if (linked != null) {
             linked.setLinkedBy(this);
-        } else if (unlinked != null) {
-            // a weapon stays linked by another of its enhancements
-            List<MiscMounted> enhancements = unlinked.getEnhancements();
-            unlinked.setLinkedBy(enhancements.isEmpty() ? null : enhancements.getFirst());
+        }
+        // The weapon that an enhancement leaves stays linked by another of its enhancements
+        boolean enhancementMoves = (linked != null) && (previous != linked) && (getType() instanceof MiscType)
+              && getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT);
+        if ((previous != null) && ((linked == null) || (enhancementMoves && (previous.linkedBy == this)))) {
+            List<MiscMounted> enhancements = previous.getEnhancements();
+            previous.setLinkedBy(enhancements.isEmpty() ? null : enhancements.getFirst());
         }
     }
 

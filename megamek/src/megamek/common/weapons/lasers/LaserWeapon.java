@@ -51,7 +51,6 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
-import megamek.common.weapons.handlers.InsulatedLaserWeaponHandler;
 import megamek.common.weapons.handlers.PulseLaserWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -141,14 +140,11 @@ public abstract class LaserWeapon extends EnergyWeapon {
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         try {
-            // A laser with a pulse module and an insulator has the checks of both; the pulse handler makes them
+            // Every energy weapon handler makes the insulator check; the pulse handler adds the pulse module's
             Mounted<?> laser = waa.getEntity(game).getEquipment(waa.getWeaponId());
             Mounted<?> pulseModule = laser.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE);
-            Mounted<?> insulator = laser.getEnhancement(MiscType.F_LASER_INSULATOR);
             if ((pulseModule != null) && !pulseModule.isInoperable()) {
                 return new PulseLaserWeaponHandler(toHit, waa, game, manager);
-            } else if ((insulator != null) && !insulator.isInoperable()) {
-                return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
             }
 
             return new EnergyWeaponHandler(toHit, waa, game, manager);

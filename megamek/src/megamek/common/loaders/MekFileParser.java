@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
 import jakarta.annotation.Nullable;
@@ -450,10 +449,10 @@ public class MekFileParser {
             if (m.getLinked() != null) {
                 continue;
             }
-            // link weapon enhancements; a PPC capacitor that finds no PPC here may be for one in a weapon bay
+            // link weapon enhancements, including those of the weapons in weapon bays
             if (isWeaponEnhancement(m)) {
                 m.setLinked(findEnhancementTarget(m, fileOrder(m)));
-                if ((m.getLinked() == null) && !m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                if (m.getLinked() == null) {
                     LOGGER.error("Unable to match {} to weapon for {}", m.getName(), ent.getShortName());
                 }
             } else if (m.is(EquipmentTypeLookup.BA_DWP)) {
@@ -588,22 +587,6 @@ public class MekFileParser {
             }
 
         } // Check the next piece of equipment.
-
-        // A PPC capacitor that no PPC in its location took above may be for a PPC of a weapon bay there. Like the
-        // order above, it only goes to a PPC that has no capacitor yet.
-        for (Mounted<?> m : ent.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && (m.getLinked() == null)) {
-                ent.getWeaponList().stream()
-                      .flatMap(weapon -> Stream.concat(weapon.getBayWeapons().stream(), Stream.of(weapon)))
-                      .filter(ppc -> ppc.getType().hasFlag(WeaponType.F_PPC)
-                            && (ppc.getLocation() == m.getLocation())
-                            && canLinkPpcCapacitor(ppc.getType(), ent.getYear())
-                            && !hasEnhancementOfKind(ppc, m))
-                      .findFirst()
-                      .ifPresentOrElse(m::setCrossLinked,
-                            () -> LOGGER.error("No available PPC to match Capacitor for {}!", ent.getShortName()));
-            }
-        }
 
         // For BattleArmor, we have to ensure that all ammo that is DWP mounted
         // is linked to it's DWP mounted weapon, so that TestBattleArmor

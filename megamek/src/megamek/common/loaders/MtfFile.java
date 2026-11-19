@@ -856,7 +856,8 @@ public class MtfFile implements IMekLoader {
         if (MOUNT_TAG.matcher(tag).matches()) {
             return new TaggedRow(row.substring(0, hash), Integer.parseInt(tag));
         }
-        logger.warn("The critical row {} of {} {} has an unreadable mount tag; it loads without it", row, chassis, model);
+        logger.warn("The critical row {} of {} {} has an unreadable mount tag; it loads without it",
+              row, chassis, model);
         return new TaggedRow(row.substring(0, hash), 0);
     }
 

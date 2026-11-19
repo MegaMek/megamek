@@ -71,7 +71,6 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
 
         WeaponMounted laser = weaponAttackAction.getEntity(game).getWeapon(weaponAttackAction.getWeaponId());
         Mounted<?> pulseModule = laser.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE);
-        InsulatedLaserWeaponHandler.checkInsulator(roll.getIntValue(), laser, subjectId, vPhaseReport);
 
         if ((roll.getIntValue() == 2) && laser.curMode().getName().startsWith("Pulse")) {
             // The RISC Laser Pulse Module explodes on a 2. Edge may reroll the malfunction check.

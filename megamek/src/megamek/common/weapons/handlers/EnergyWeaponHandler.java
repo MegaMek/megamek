@@ -46,6 +46,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.enums.HitDamageType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -66,6 +68,31 @@ public class EnergyWeaponHandler extends WeaponHandler {
           throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitDamageType.DAMAGE_ENERGY;
+    }
+
+    @Override
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        checkInsulator(roll.getIntValue(), weapon, subjectId, vPhaseReport);
+        return false;
+    }
+
+    /**
+     * On an unmodified attack roll of 2, an insulated laser suffers a critical hit on 2D6 8+ (TO:AUE p.134). Every
+     * handler of a laser that can take an insulator makes this check; it does nothing for a weapon without a working
+     * insulator.
+     */
+    static void checkInsulator(int attackRoll, Mounted<?> laser, int subjectId, Vector<Report> vPhaseReport) {
+        Mounted<?> insulator = laser.getEnhancement(MiscType.F_LASER_INSULATOR);
+        if ((attackRoll == 2) && (insulator != null) && !insulator.isInoperable()) {
+            int damageRoll = Compute.d6(2);
+            if (damageRoll >= 8) {
+                Report report = new Report();
+                report.subject = subjectId;
+                report.messageId = 3172;
+                vPhaseReport.addElement(report);
+                laser.setHit(true);
+            }
+        }
     }
 
     /**

@@ -33,20 +33,31 @@
 package megamek.common.weapons.handlers;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.MMRandom;
+import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Mek;
+import megamek.common.weapons.Weapon;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,6 +74,26 @@ class LaserInsulatorCheckTest {
         @Override
         public int randomInt(int maxValue) {
             return maxValue / 2;
+        }
+
+        @Override
+        public float randomFloat() {
+            return 0.5f;
+        }
+    }
+
+    /** Dice that roll the given d6 results in turn. */
+    private static final class SequenceDice extends MMRandom {
+        private final int[] results;
+        private int next;
+
+        private SequenceDice(int... results) {
+            this.results = results;
+        }
+
+        @Override
+        public int randomInt(int maxValue) {
+            return results[next++ % results.length] - 1;
         }
 
         @Override
@@ -98,29 +129,58 @@ class LaserInsulatorCheckTest {
         return weapon;
     }
 
+    /** The canon Pandion (3140 Upgrade) insulates medium re-engineered lasers, which have a handler of their own */
+    @Test
+    void aReengineeredLaserHandlerMakesTheInsulatorCheck() throws Exception {
+        Mounted<?> laser = laserWith("Medium Re-engineered Laser", "ISLaserInsulator");
+        Mek attacker = (Mek) laser.getEntity();
+        Mek target = new BipedMek();
+        Game game = new Game();
+        game.setBoard(Board.createEmptyBoard(1, 3));
+        Player owner = new Player(0, "Player");
+        game.addPlayer(0, owner);
+        for (Mek mek : List.of(attacker, target)) {
+            mek.setOwner(owner);
+            game.addEntity(mek);
+        }
+        attacker.setPosition(new Coords(0, 0));
+        target.setPosition(new Coords(0, 2));
+        WeaponAttackAction attack = new WeaponAttackAction(attacker.getId(), target.getId(),
+              attacker.getEquipmentNum(laser));
+        // The attack roll is a 2, the insulator check an 8
+        Compute.setRNG(new SequenceDice(1, 1, 4, 4));
+
+        AttackHandler handler = ((Weapon) laser.getType()).getCorrectHandler(new ToHitData(), attack, game,
+              mock(TWGameManager.class));
+
+        assertInstanceOf(ReengineeredLaserWeaponHandler.class, handler);
+        ((WeaponHandler) handler).doChecks(new Vector<>());
+        assertTrue(laser.isHit());
+    }
+
     @Test
     void anInsulatedPulseLaserFailsOnARollOfTwo() throws Exception {
         Mounted<?> laser = laserWith("ISMediumPulseLaser", "ISLaserInsulator");
-        InsulatedLaserWeaponHandler.checkInsulator(2, laser, 0, new Vector<Report>());
+        EnergyWeaponHandler.checkInsulator(2, laser, 0, new Vector<Report>());
         assertTrue(laser.isHit());
     }
 
     @Test
     void aLaserWithoutAWorkingInsulatorIsLeftAlone() throws Exception {
         Mounted<?> bare = laserWith("ISMediumPulseLaser");
-        InsulatedLaserWeaponHandler.checkInsulator(2, bare, 0, new Vector<Report>());
+        EnergyWeaponHandler.checkInsulator(2, bare, 0, new Vector<Report>());
         assertFalse(bare.isHit());
 
         Mounted<?> broken = laserWith("ISMediumPulseLaser", "ISLaserInsulator");
         broken.getEnhancement(MiscType.F_LASER_INSULATOR).setDestroyed(true);
-        InsulatedLaserWeaponHandler.checkInsulator(2, broken, 0, new Vector<Report>());
+        EnergyWeaponHandler.checkInsulator(2, broken, 0, new Vector<Report>());
         assertFalse(broken.isHit());
     }
 
     @Test
     void onlyARollOfTwoChecksTheInsulator() throws Exception {
         Mounted<?> laser = laserWith("ISMediumPulseLaser", "ISLaserInsulator");
-        InsulatedLaserWeaponHandler.checkInsulator(3, laser, 0, new Vector<Report>());
+        EnergyWeaponHandler.checkInsulator(3, laser, 0, new Vector<Report>());
         assertFalse(laser.isHit());
     }
 }

@@ -135,6 +135,24 @@ class WeaponEnhancementTest {
     }
 
     @Test
+    void insulatorsStackOnTheNearestLaserAbove() throws Exception {
+        List<Mounted<?>> mounts = loadRightTorso(MEDIUM_LASER, MEDIUM_LASER, INSULATOR, INSULATOR);
+
+        assertTrue(mounts.get(0).getEnhancements().isEmpty());
+        assertEquals(List.of(mounts.get(2), mounts.get(3)), mounts.get(1).getEnhancements());
+    }
+
+    @Test
+    void anEnhancementMovedToAnotherWeaponLeavesTheFirst() throws Exception {
+        List<Mounted<?>> mounts = loadRightTorso(MEDIUM_LASER, INSULATOR, MEDIUM_LASER);
+
+        mounts.get(1).setLinked(mounts.get(2));
+
+        assertTrue(mounts.get(0).getLinkedEquipment().isEmpty());
+        assertEquals(List.of(mounts.get(1)), mounts.get(2).getLinkedEquipment());
+    }
+
+    @Test
     void oneArtemisForEachLauncher() throws Exception {
         List<Mounted<?>> mounts = loadRightTorso(LRM, LRM, ARTEMIS, ARTEMIS);
 

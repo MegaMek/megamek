@@ -1321,15 +1321,81 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @see #setLinkedBy(Mounted)
      */
     public void setLinked(@Nullable Mounted<?> linked) {
-        if (linked == null && this.linked != null) {
-            this.linked.setLinkedBy(null);
-        }
+        Mounted<?> unlinked = (linked == null) ? this.linked : null;
 
         this.linked = linked;
 
         if (linked != null) {
             linked.setLinkedBy(this);
+        } else if (unlinked != null) {
+            // a weapon stays linked by another of its enhancements
+            List<MiscMounted> enhancements = unlinked.getEnhancements();
+            unlinked.setLinkedBy(enhancements.isEmpty() ? null : enhancements.getFirst());
         }
+    }
+
+    /**
+     * @return The weapon enhancements that are linked to this weapon. A weapon can have any number of laser
+     *       insulators and one other enhancement: a RISC laser pulse module, an Artemis or Apollo FCS or a PPC
+     *       capacitor. {@link #getLinkedBy()} is one of them.
+     *
+     * @see #getEnhancement(EquipmentFlag)
+     */
+    public List<MiscMounted> getEnhancements() {
+        List<MiscMounted> enhancements = new ArrayList<>();
+        if ((entity != null) && ((linkedBy != null) || (crossLinkedBy != null))) {
+            for (MiscMounted misc : entity.getMisc()) {
+                if ((misc.getLinked() == this) && misc.getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT)) {
+                    enhancements.add(misc);
+                }
+            }
+        }
+        return enhancements;
+    }
+
+    /**
+     * Finds the weapon enhancement of the given kind that is linked to this weapon, among the others it may have. Of
+     * several laser insulators, this is one that works when there is any.
+     *
+     * @param kind The MiscType flag of the enhancement, such as {@link MiscType#F_LASER_INSULATOR}
+     *
+     * @return The enhancement, or null when this weapon has none of the kind
+     */
+    public @Nullable MiscMounted getEnhancement(EquipmentFlag kind) {
+        MiscMounted enhancement = null;
+        if ((entity != null) && ((linkedBy != null) || (crossLinkedBy != null))) {
+            for (MiscMounted misc : entity.getMisc()) {
+                if ((misc.getLinked() == this) && misc.getType().hasFlag(kind)
+                      && ((enhancement == null) || enhancement.isInoperable())) {
+                    enhancement = misc;
+                }
+            }
+        }
+        return enhancement;
+    }
+
+    /**
+     * @return Everything linked to this weapon: all its weapon enhancements (a laser may carry several) and any other
+     *       equipment that links it, such as an AP mount
+     */
+    public List<Mounted<?>> getLinkedEquipment() {
+        List<Mounted<?>> linked = new ArrayList<>(getEnhancements());
+        if ((linkedBy != null) && !linked.contains(linkedBy)) {
+            linked.add(linkedBy);
+        }
+        return linked;
+    }
+
+    /**
+     * @return True when the same kinds of equipment are linked to this weapon and the other one, so that the two count
+     *       as equal weapons where weapons are summed up
+     */
+    public boolean hasSameLinkedEquipment(Mounted<?> other) {
+        return linkedTypeNames(this).equals(linkedTypeNames(other));
+    }
+
+    private static List<String> linkedTypeNames(Mounted<?> weapon) {
+        return weapon.getLinkedEquipment().stream().map(linked -> linked.getType().getInternalName()).sorted().toList();
     }
 
     /**

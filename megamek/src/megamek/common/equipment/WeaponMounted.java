@@ -182,18 +182,13 @@ public class WeaponMounted extends Mounted<WeaponType> {
         if (hasChargedCapacitor() == 1) {
             heat += 5;
         }
-        if ((getLinkedBy() != null)
-              && !getLinkedBy().isInoperable()
-              && (getLinkedBy().getType() instanceof MiscType)
-              && getLinkedBy().getType().hasFlag(
-              MiscType.F_LASER_INSULATOR)) {
-            heat -= 1;
-            if (heat == 0) {
-                heat++;
-            }
-        }
         if (curMode().getName().startsWith("Pulse")) {
             heat += 2;
+        }
+        // The insulator lowers the laser's total heat, pulse module included, to a minimum of 1
+        Mounted<?> insulator = getEnhancement(MiscType.F_LASER_INSULATOR);
+        if ((insulator != null) && !insulator.isInoperable()) {
+            heat = Math.max(1, heat - 1);
         }
 
         return heat;

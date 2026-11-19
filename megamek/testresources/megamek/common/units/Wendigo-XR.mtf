@@ -1,0 +1,202 @@
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+uuid:019f583e-e02b-766e-9ec2-46d57e948688
+generator:MegaMek Suite 0.51.01-nightly-2026-08-14 on 2026-08-16
+chassis:Wendigo-XR
+model:(Prime)
+
+Config:Biped OmniMek
+techbase:Mixed (Clan Chassis)
+era:3151
+source:XTR:RISC
+published:XTR:RISC
+rules level:4
+role:Brawler
+
+quirk:distracting
+quirk:prototype
+
+mass:50
+engine:250 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Super-Cooled
+cockpit:Torso-Mounted Cockpit
+gyro:Standard Gyro
+
+heat sinks:12 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:0
+
+armor:Reflective(Clan)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:22
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:8
+
+Weapons:7
+Streak SRM 6, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ProtoMech AC/2, Right Arm
+LRM 10, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+ISRISCLaserPulseModule (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+ISRISCLaserPulseModule (OMNIPOD)
+ISSuperCooledMyomer
+Clan Reflective
+Clan Reflective
+Clan Reflective
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser (OMNIPOD)
+ISRISCLaserPulseModule (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+ISRISCLaserPulseModule (OMNIPOD)
+CLProtoMechAC2 (OMNIPOD)
+CLProtoMechAC2 (OMNIPOD)
+ISSuperCooledMyomer
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Left Torso:
+Life Support
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+ISSuperCooledMyomer
+Clan Endo Steel
+Clan Endo Steel
+Clan Reflective
+-Empty-
+-Empty-
+
+Right Torso:
+Life Support
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Clan ProtoMech AC/2 Ammo (OMNIPOD)
+ISRISCEmergencyCoolantSystem
+ISSuperCooledMyomer
+Clan Endo Steel
+Clan Endo Steel
+Clan Reflective
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+CLLRM10 (OMNIPOD)
+Clan Ammo LRM-10 (OMNIPOD)
+ISReconCamera (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:<p>The Wendigo-XR is an experimental 50-ton mixed-technology OmniMech developed by Clan Sea Fox in 3151, built on the foundation of the discontinued Wendigo-VP chassis. Following the Republic of the Sphere's collapse, Clan Sea Fox's Spina Khanate gained restricted access to RISC facilities at Sandhurst, where scientists began salvaging critical technology and research data. The earlier acquisition of several Wendigo Stars through Trials of Possession provided ideal test platforms for integrating this recovered technology.</p><p>Developed at Development Annex SFF-IT3-Upsilon under the supervision of Scientist David, the Wendigo-XR is a work-in-progress that serves as a proof of concept rather than a production design. The prototype integrates RISC emergency coolant systems and super-cooled myomer into the VP chassis, testing whether these Republic-era innovations can be adapted for Clan manufacturing. Initial simulation results have been mixed, with promising performance offset by significant reliability concerns.</p>
+
+capabilities:<p>The Wendigo-XR retains the Wendigo-VP's 250-rated XL engine and endo steel chassis, maintaining the prototype's slower but structurally sound platform. The fixed integration of a RISC Emergency Coolant System provides a critical safety valve for managing heat spikes, while RISC Super-Cooled Myomer enhances the chassis's physical performance when operating at elevated temperatures. Together, these systems create a design that can push its heat curve further than conventional OmniMechs, theoretically allowing sustained fire from weapons that would normally force a standard chassis to throttle back.</p><p>The armament reflects the design's experimental nature, mixing Clan and Inner Sphere technology in unusual combinations. An LRM-10, Streak SRM-6, and ProtoMech AC/2 provide conventional firepower, while four Inner Sphere ER medium lasers fitted with RISC Laser Pulse Modules test whether multi-modal laser technology can be adapted to Clan-grade weapons. A recon camera mounted on the frame explores the potential for low-cost artillery spotting, adding a reconnaissance dimension to the design. However, simulation testing revealed significant reliability concerns, including cascade failures between the super-cooled myomer and emergency coolant systems, and catastrophic weapon explosions during laser pulse mode switching.</p>
+
+deployment:<p>The sole configuration of the Wendigo-XR integrates recovered RISC technology into a combat-capable weapons platform. Fixed RISC Emergency Coolant System and Super-Cooled Myomer installations form the experimental core, while the pod-mounted armament includes an LRM-10, Streak SRM-6, ProtoMech AC/2, and four Inner Sphere ER medium lasers equipped with RISC Laser Pulse Modules that allow switching between standard and pulse firing modes. A recon camera tests the feasibility of low-cost artillery spotting equipment. When functioning properly, the combination of superior heat management and multi-modal lasers allows devastating close-range performance, but the prototype has experienced cascade failures between its cooling and myomer systems during extended testing, and the laser pulse modules have proven unreliable at Clan power levels.</p>
+
+history:<p>The Wendigo-XR emerged from the convergence of two opportunities following the Republic of the Sphere's collapse. Clan Sea Fox's Spina Khanate secured restricted access to RISC research facilities at Sandhurst, where Republic scientists had developed advanced combat technologies including emergency coolant systems, super-cooled myomer, and laser pulse modules. Simultaneously, the Sea Fox acquisition of Clan Nova Cat assets through Trials of Possession had yielded several Wendigo-VP chassis that were too slow for frontline service but structurally ideal for experimental modification.</p><p>Scientist David of the Tarquin bloodname line was assigned to lead the integration project at Development Annex SFF-IT3-Upsilon, beginning in 3151. The project aimed to determine whether RISC technologies could be adapted for Clan manufacturing, using the Wendigo-VP as a testbed. Early results showed promise, with the emergency coolant system and super-cooled myomer functioning as intended under controlled conditions. The integration of RISC laser pulse modules onto Inner Sphere ER medium lasers proved more problematic, with simulations producing mixed results that included both impressive combat performance and catastrophic technical failures.</p><p>Despite these setbacks, Clan Sea Fox scientists see potential for scaled manufacturing should reliability improvements prove viable, particularly for the myomer systems. The Clan's access to RISC research data and existing manufacturing infrastructure positions them to capitalize on future technological breakthroughs. Current projections suggest the Wendigo-XR will remain limited to test platforms for the foreseeable future, though the knowledge gained from the program may influence the design of future Clan OmniMechs.</p>
+
+manufacturer:Field Refit
+
+primaryfactory:Various
+
+fluffdate:2026-02-21 18:24:59
+
+systemmanufacturer:CHASSIS:Unknown
+systemmode:CHASSIS:Mynx Type Medium Endo Steel
+systemmanufacturer:ENGINE:Unknown
+systemmode:ENGINE:250 XL
+systemmanufacturer:ARMOR:Unknown
+systemmode:ARMOR:Reflective
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
+

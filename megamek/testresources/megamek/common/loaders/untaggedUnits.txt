@@ -1,0 +1,188 @@
+The mounts, locations, critical slots and links of the unit files below, as MegaMek loaded them before MTF mount tags existed (see MtfMountTagTest)
+== King Crab KGC-0000.mtf
+0 Standard Armor loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+1 Heat Sink loc=7 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+2 Heat Sink loc=6 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+3 Autocannon/20 loc=3 loc2=5 split size=1.0 linked=6 linkedBy=-1
+4 Autocannon/20 loc=2 loc2=4 split size=1.0 linked=6 linkedBy=-1
+5 LRM 15 loc=3 loc2=-1 size=1.0 linked=7 linkedBy=-1
+6 IS Ammo AC/20 loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=4
+7 IS Ammo LRM-15 loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=5
+8 Large Laser loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+9 IS Ammo AC/20 loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+10 Heat Sink loc=1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+11 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+12 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+13 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+14 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+15 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+16 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+17 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+18 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+19 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+20 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+21 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+22 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+HD: S0 S1 S2 - S1 S0
+CT: S3 S3 S3 S4 S4 S4 S4 S3 S3 S3 10 -
+RT: 4 4 8 8 9 - - - - - - -
+LT: 3 3 5 5 5 6 7 - - - - -
+RA: S7 S8 S9 S10 4 4 4 4 4 4 4 4
+LA: S7 S8 S9 S10 3 3 3 3 3 3 3 3
+RL: S11 S12 S13 S14 2 -
+LL: S11 S12 S13 S14 1 -
+== Exterminator EXT-4DX Caine.mtf
+0 Standard Armor loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+1 ISMediumPulseLaser loc=5 loc2=-1 size=1.0 linked=-1 linkedBy=2
+2 ISLaserInsulator loc=5 loc2=-1 size=1.0 linked=1 linkedBy=-1
+3 ISMediumPulseLaser loc=5 loc2=-1 size=1.0 linked=-1 linkedBy=4
+4 ISLaserInsulator loc=5 loc2=-1 size=1.0 linked=3 linkedBy=-1
+5 ISMediumPulseLaser loc=5 loc2=-1 size=1.0 linked=-1 linkedBy=6
+6 ISLaserInsulator loc=5 loc2=-1 size=1.0 linked=5 linkedBy=-1
+7 ISMediumPulseLaser loc=4 loc2=-1 size=1.0 linked=-1 linkedBy=8
+8 ISLaserInsulator loc=4 loc2=-1 size=1.0 linked=7 linkedBy=-1
+9 ISMediumPulseLaser loc=4 loc2=-1 size=1.0 linked=-1 linkedBy=10
+10 ISLaserInsulator loc=4 loc2=-1 size=1.0 linked=9 linkedBy=-1
+11 ISMediumPulseLaser loc=4 loc2=-1 size=1.0 linked=-1 linkedBy=12
+12 ISLaserInsulator loc=4 loc2=-1 size=1.0 linked=11 linkedBy=-1
+13 Jump Jet loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+14 Jump Jet loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+15 ISMASC loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+16 Jump Jet loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+17 Jump Jet loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+18 ISAMS Ammo loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=21
+19 Jump Jet loc=1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+20 Supercharger loc=1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+21 ISAntiMissileSystem loc=0 loc2=-1 size=1.0 linked=18 linkedBy=-1
+22 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+23 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+24 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+25 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+26 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+27 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+28 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+29 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+30 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+31 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+HD: S0 S1 S2 21 S1 S0
+CT: S3 S3 S3 S4 S4 S4 S4 S3 S3 S3 19 20
+RT: S3 S3 S3 16 17 18 - - - - - -
+LT: S3 S3 S3 13 14 15 15 15 - - - -
+RA: S7 S8 S9 S10 7 8 9 10 11 12 - -
+LA: S7 S8 S9 S10 1 2 3 4 5 6 - -
+RL: S11 S12 S13 S14 - -
+LL: S11 S12 S13 S14 - -
+== Wendigo-XR.mtf
+0 ISSuperCooledMyomer loc=7 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+1 CLStreakSRM6 loc=5 loc2=-1 pod size=1.0 linked=14 linkedBy=-1
+2 ISERMediumLaser loc=5 loc2=-1 pod size=1.0 linked=-1 linkedBy=3
+3 ISRISCLaserPulseModule loc=5 loc2=-1 pod size=1.0 linked=2 linkedBy=-1
+4 ISERMediumLaser loc=5 loc2=-1 pod size=1.0 linked=-1 linkedBy=5
+5 ISRISCLaserPulseModule loc=5 loc2=-1 pod size=1.0 linked=4 linkedBy=-1
+6 Clan Reflective loc=5 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+7 ISERMediumLaser loc=4 loc2=-1 pod size=1.0 linked=-1 linkedBy=8
+8 ISRISCLaserPulseModule loc=4 loc2=-1 pod size=1.0 linked=7 linkedBy=-1
+9 ISERMediumLaser loc=4 loc2=-1 pod size=1.0 linked=-1 linkedBy=10
+10 ISRISCLaserPulseModule loc=4 loc2=-1 pod size=1.0 linked=9 linkedBy=-1
+11 CLProtoMechAC2 loc=4 loc2=-1 pod size=1.0 linked=16 linkedBy=-1
+12 Clan Endo Steel loc=4 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+13 CLDoubleHeatSink loc=3 loc2=-1 pod size=1.0 linked=-1 linkedBy=-1
+14 Clan Streak SRM 6 Ammo loc=3 loc2=-1 pod size=1.0 linked=-1 linkedBy=1
+15 CLDoubleHeatSink loc=2 loc2=-1 pod size=1.0 linked=-1 linkedBy=-1
+16 Clan ProtoMech AC/2 Ammo loc=2 loc2=-1 pod size=1.0 linked=-1 linkedBy=11
+17 ISRISCEmergencyCoolantSystem loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+18 CLLRM10 loc=0 loc2=-1 pod size=1.0 linked=19 linkedBy=-1
+19 Clan Ammo LRM-10 loc=0 loc2=-1 pod size=1.0 linked=-1 linkedBy=18
+20 ISReconCamera loc=0 loc2=-1 pod size=1.0 linked=-1 linkedBy=-1
+21 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+22 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+23 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+24 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+25 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+26 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+27 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+28 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+29 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+30 CLDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+31 CLCASE loc=0 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+32 CLCASE loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+33 CLCASE loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+34 CLCASE loc=4 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+35 CLCASE loc=5 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+HD: S1 S1 18 19 20 -
+CT: S3 S3 S3 S4 S4 S4 S4 S3 S3 S3 S2 S1
+RT: S0 S3 S3 15 15 16 17 0 12 12 6 -
+LT: S0 S3 S3 13 13 14 0 12 12 6 - -
+RA: S7 S8 7 8 9 10 11 11 0 12 12 12
+LA: S7 S8 1 1 2 3 4 5 0 6 6 6
+RL: S11 S12 S13 S14 0 -
+LL: S11 S12 S13 S14 0 -
+== Barghest BGS-1T.mtf
+0 Standard Armor loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+1 IS LB 20-X AC Ammo loc=7 loc2=-1 size=1.0 linked=-1 linkedBy=7
+2 IS LB 20-X Cluster Ammo loc=7 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+3 IS LB 20-X AC Ammo loc=6 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+4 IS LB 20-X Cluster Ammo loc=6 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+5 ISERLargeLaser loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+6 ISERLargeLaser loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+7 ISLBXAC20 loc=1 loc2=2 split size=1.0 linked=1 linkedBy=-1
+8 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+9 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+10 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+11 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+12 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+13 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+14 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+15 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+16 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+17 ISDoubleHeatSink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+HD: S0 S1 S2 - S1 S0
+CT: S3 S3 S3 S4 S4 S4 S4 S3 S3 S3 7 7
+RT: S3 S3 S3 7 7 7 7 7 7 7 7 7
+LT: S3 S3 S3 5 5 6 6 - - - - -
+FRL: S11 S12 S13 S14 - -
+FLL: S11 S12 S13 S14 - -
+RRL: S11 S12 S13 S14 3 4
+RLL: S11 S12 S13 S14 1 2
+== Atlas AS7-D.mtf
+0 Standard Armor loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+1 Heat Sink loc=7 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+2 Heat Sink loc=7 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+3 Heat Sink loc=6 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+4 Heat Sink loc=6 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+5 Heat Sink loc=5 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+6 Medium Laser loc=5 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+7 Heat Sink loc=4 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+8 Medium Laser loc=4 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+9 Heat Sink loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+10 LRM 20 loc=3 loc2=-1 size=1.0 linked=12 linkedBy=-1
+11 SRM 6 loc=3 loc2=-1 size=1.0 linked=14 linkedBy=-1
+12 IS Ammo LRM-20 loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=10
+13 IS Ammo LRM-20 loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+14 IS Ammo SRM-6 loc=3 loc2=-1 size=1.0 linked=-1 linkedBy=11
+15 Autocannon/20 loc=2 loc2=-1 size=1.0 linked=16 linkedBy=-1
+16 IS Ammo AC/20 loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=15
+17 IS Ammo AC/20 loc=2 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+18 Medium Laser loc=1 loc2=-1 rear size=1.0 linked=-1 linkedBy=-1
+19 Medium Laser loc=1 loc2=-1 rear size=1.0 linked=-1 linkedBy=-1
+20 Heat Sink loc=0 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+21 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+22 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+23 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+24 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+25 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+26 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+27 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+28 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+29 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+30 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+31 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+32 Heat Sink loc=-1 loc2=-1 size=1.0 linked=-1 linkedBy=-1
+HD: S0 S1 S2 20 S1 S0
+CT: S3 S3 S3 S4 S4 S4 S4 S3 S3 S3 18 19
+RT: 15 15 15 15 15 15 15 15 15 15 16 17
+LT: 9 10 10 10 10 10 11 11 12 13 14 -
+RA: S7 S8 S9 S10 7 8 - - - - - -
+LA: S7 S8 S9 S10 5 6 - - - - - -
+RL: S11 S12 S13 S14 3 4
+LL: S11 S12 S13 S14 1 2

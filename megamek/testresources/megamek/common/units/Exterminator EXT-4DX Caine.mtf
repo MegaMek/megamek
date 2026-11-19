@@ -1,0 +1,197 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+uuid:019f583e-df85-7f88-aa1e-ec19e7c8580b
+generator:MegaMek Suite 0.51.01 on 2026-07-12
+chassis:Exterminator
+model:EXT-4DX
+mul id:7321
+
+Config:Biped
+techbase:Inner Sphere
+era:2754
+source:XTR:Gunslingers
+published:XTR:Gunslingers
+rules level:4
+role:Skirmisher
+
+quirk:difficult_maintain
+
+mass:65
+engine:325 XL Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:32
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:6
+RTR armor:6
+RTC armor:10
+
+Weapons:7
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Anti-Missile System, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumPulseLaser
+ISLaserInsulator
+ISMediumPulseLaser
+ISLaserInsulator
+ISMediumPulseLaser
+ISLaserInsulator
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumPulseLaser
+ISLaserInsulator
+ISMediumPulseLaser
+ISLaserInsulator
+ISMediumPulseLaser
+ISLaserInsulator
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISMASC
+ISMASC
+ISMASC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISAMS Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Supercharger
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISAntiMissileSystem
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:<p>The Exterminator was designed in 2630 by General Systems as a dedicated headhunter BattleMech for the Star League Defense Force. Built on Caph, the sixty-five-ton heavy 'Mech was purpose-built to infiltrate enemy lines and eliminate command structures, mobile headquarters, and senior officers. What set the Exterminator apart from conventional assault designs was its suite of advanced stealth technologies, including a Null-Signature System, heat baffles, and a Chameleon Light Polarization Shield that rendered the 'Mech virtually invisible on sensors and difficult to detect visually.</p><p>Rather than serving in standard formations, Exterminators were attached at regimental level or higher, often operating as a fifth member of command lances before being dispatched on specific elimination missions. A regiment considered itself fortunate to field even a single Exterminator. The destruction of General Systems' factory on Caph in 2793 and dedicated hunter-killer lances targeting surviving examples led to the widespread belief that the design had been rendered extinct during the First Succession War.</p>
+
+capabilities:<p>The Exterminator's true lethality lies not in its weapons but in its electronic warfare suite. The Null-Signature System cloaks heat emissions and electronic signatures, while the Chameleon Light Polarization Shield bends light around the chassis, making visual detection extremely difficult. Combined with the AR-12 Sheathed Directional Beacon communications system and DLK Type Phased Array Sensors, the Exterminator can approach targets undetected at all but the shortest ranges.</p><p>The conventional armament is adequate for the 'Mech's assassination role without being exceptional. Four Averell Highpoint medium lasers provide reliable close-range firepower, backed by a Deadeye-10 LRM-10 launcher for standoff engagement capability. A Dinatech Mark III small laser serves as a last-resort weapon, while a Buzzsaw anti-missile system provides limited defense against incoming missiles.</p><p>A Magna 390 XL engine drives the chassis to speeds of nearly one hundred kilometers per hour, and six Chevron II jump jets allow leaps of up to one hundred eighty meters, giving the Exterminator mobility rivaling 'Mechs half its weight. Ten and a half tons of Fibrolyte Armorscale armor provides reasonable protection for close-quarters engagements, though the design trades heavy protection for stealth and speed.</p>
+
+deployment:<p>Produced by Briden BattleMechs Unlimited on Errai beginning in October 2574, this custom modification stripped the Exterminator of its Null-Signature System, Chameleon Light Polarization Shield, and all original weaponry. In their place, six medium pulse lasers with experimental laser insulators were mounted in the arms, alongside a supercharger and MASC system. A smaller 325 XL engine reduced base cruising speed, but the combined MASC and supercharger systems allowed extraordinary burst speeds exceeding one hundred thirty kilometers per hour. An anti-missile system was retained for defensive purposes. The design was optimized for close-range dueling engagements, exploiting devastating burst-speed attacks to overwhelm opponents before they could effectively respond.</p>
+
+history:<p>The Exterminator's history is defined by secrecy, loss, and periodic rediscovery. Entering production in 2630 at General Systems' facility on Caph, the design served exclusively with the Star League Defense Force as its premier headhunter 'Mech. Individual Exterminators were assigned at regimental level or higher, often pooled for specific assassination missions against enemy command structures. The combination of the Null-Signature System, Chameleon Light Polarization Shield, and the speed of a heavy 'Mech made it one of the most feared weapons in the Star League arsenal. A regiment was considered fortunate to field even a single example.</p><p>The fall of the Star League proved catastrophic for the Exterminator program. The General Systems factory on Caph was destroyed in 2793 during the First Succession War, ending all production. Successor State armies organized dedicated hunter-killer lances whose sole mission was to track down and destroy surviving examples, recognizing the existential threat stealth-capable headhunters posed to their command structures. By the early thirty-first century, the Exterminator was widely believed to be completely extinct.</p><p>In 3007, Kallon Industries on Thermopolis in the Free Worlds League recovered partial blueprints and attempted to revive the design as a replacement for their aging Wolverine line. Unable to replicate the stealth technologies or even the original's extralight engine, Kallon produced the EXT-4A using readily available components. The result was a 'Mech that bore the Exterminator's name but lacked everything that had made the original exceptional. Many MechWarriors found the Wolverine it was meant to replace more effective. Only twenty-five were produced before Kallon abandoned the effort, and none survived past the Fourth Succession War.</p><p>Unknown to the Inner Sphere at large, the Exterminator had not truly gone extinct. ComStar's Com Guard secretly maintained a small number of examples, though even ComStar possessed few fully operational stealth-equipped models. The Clans also retained Exterminators taken during the Exodus, but the design's emphasis on stealth and assassination clashed with Clan honor culture. Most Clan warriors viewed its methods as inherently dishonorable, and surviving examples were relegated to garrison Clusters and solahma units. Clan Jade Falcon proved a notable exception, producing a Golden Century refit with prototype extended-range lasers that found favor in Trial combat.</p><p>The recovery of Star League technology brought renewed interest. In 3059, Dr. Gerhardt Marks of the NAIS Research Coordinator staff presented research on the Null-Signature System at the Interstellar Symposium on Military Technology, suggesting work on the Chameleon Light Polarization Shield would follow. ComStar introduced the rebuilt EXT-5E in 3060, trading the traditional headhunter role for close-range reconnaissance with MASC and an improved C3 computer. The Jihad brought further evolution with the EXT-5F field refit in 3074 and the experimental EXT-6CS in 3079, which restored both stealth systems alongside modern weaponry. ComStar's reintroduction of stealth-capable Exterminators fueled speculation about new death squads targeting notable figures across the Inner Sphere.</p><p>In the Dark Age, the Exterminator's legacy of mystery deepened with the appearance of the EXT-7X. Carrying stealth armor and advanced weaponry with no confirmed manufacturer, the 7X conducted successful headhunter operations against commanders from Clans Wolf and Jade Falcon as well as Capellan and Combine officers. Analysis of scant battleROM footage suggested an XXL engine and variable-speed pulse lasers, technologies whose varied origins complicated identification of the responsible faction. Intelligence analysts speculated the variant may originate from a rebuilt facility connected to the Fortress Republic protocols, with its false-flag operations matching Republic special operations doctrine.</p>
+
+manufacturer:Field Refit
+
+primaryfactory:Various
+
+fluffdate:2026-02-26 19:50:04
+
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmode:ENGINE:325 XL
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMP_JET:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown

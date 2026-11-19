@@ -5414,6 +5414,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                   .append(getLocationName(m.getLocation())).append(newLine);
         }
         sb.append(newLine);
+        Map<Mounted<?>, String> mountTags = MtfFile.mountTags(this);
         for (int l : MtfFile.locationOrder) {
             if ((l == Mek.LOC_CENTER_LEG) && !(this instanceof TripodMek)) {
                 continue;
@@ -5423,7 +5424,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             sb.append(newLine);
             for (int y = 0; y < 12; y++) {
                 if (y < getNumberOfCriticalSlots(l)) {
-                    sb.append(decodeCritical(getCritical(l, y)))
+                    sb.append(decodeCritical(getCritical(l, y), mountTags))
                           .append(newLine);
                 } else {
                     sb.append(MtfFile.EMPTY).append(newLine);
@@ -5535,7 +5536,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return sb.toString();
     }
 
-    private String decodeCritical(CriticalSlot cs) {
+    private String decodeCritical(CriticalSlot cs, Map<Mounted<?>, String> mountTags) {
         if (cs == null) {
             return MtfFile.EMPTY;
         }
@@ -5601,6 +5602,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (cs.isArmored()) {
             toReturn.append(" ").append(MtfFile.ARMORED);
         }
+        // the mount tag always ends the row
+        toReturn.append(mountTags.getOrDefault(cs.getMount(), ""));
         return toReturn.toString();
     }
 

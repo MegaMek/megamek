@@ -42,10 +42,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
 import megamek.common.QuirkEntry;
@@ -132,6 +135,8 @@ public class MtfFile implements IMekLoader {
     private final Map<EquipmentType, Mounted<?>> hSharedEquip = new HashMap<>();
     private final List<Mounted<?>> vSplitWeapons = new ArrayList<>();
 
+    private final Map<MountTag, Mounted<?>> taggedMounts = new HashMap<>();
+
     private final List<String> quirkLines = new ArrayList<>();
 
     public static final int[] locationOrder = { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_TORSO,
@@ -209,6 +214,18 @@ public class MtfFile implements IMekLoader {
 
     private static final Pattern LEGACY_SIZE_PATTERN = Pattern.compile("\\((\\d+(?:\\.\\d+)?)\\s*(?:ton|tons|m|kg)\\)",
           Pattern.CASE_INSENSITIVE);
+
+    /**
+     * A critical row may end with a mount tag to tell which mount of its equipment it belongs to, as in
+     * {@code Autocannon/20#1}. The tags number the mounts of that equipment from 1. They are only written for
+     * equipment that is split over two locations, where the rows alone do not tell the mounts apart.
+     */
+    private static final Pattern MOUNT_TAG = Pattern.compile("[1-9][0-9]{0,8}");
+
+    private record MountTag(EquipmentType type, int id) {}
+
+    /** A critical row without its mount tag, and the tag (0 when it has none). */
+    private record TaggedRow(String row, int tag) {}
 
     /**
      * Modern unit files store resizable equipment like Cargo:SIZE:4.0 Old equipment stores it like Cargo (4 tons) This
@@ -825,6 +842,24 @@ public class MtfFile implements IMekLoader {
         }
     }
 
+    /**
+     * Takes the mount tag off a critical row. A tag is {@code #} and a positive number without leading zeros; a
+     * {@code #} with nothing or a space after it is not a tag, and anything else after the last {@code #} is an
+     * unreadable tag, which is dropped so that the row loads as if it had none.
+     */
+    private TaggedRow splitMountTag(String row) {
+        int hash = row.lastIndexOf('#');
+        if ((hash < 0) || (hash == row.length() - 1) || Character.isWhitespace(row.charAt(hash + 1))) {
+            return new TaggedRow(row, 0);
+        }
+        String tag = row.substring(hash + 1);
+        if (MOUNT_TAG.matcher(tag).matches()) {
+            return new TaggedRow(row.substring(0, hash), Integer.parseInt(tag));
+        }
+        logger.warn("The critical row {} of {} {} has an unreadable mount tag; it loads without it", row, chassis, model);
+        return new TaggedRow(row.substring(0, hash), 0);
+    }
+
     private void setTechLevel(Mek mek) throws EntityLoadingException {
         String techBase = this.techBase.substring(9).trim();
         if (techBase.equalsIgnoreCase("Inner Sphere")) {
@@ -939,7 +974,9 @@ public class MtfFile implements IMekLoader {
         for (int i = 0; i < mek.getNumberOfCriticalSlots(loc); i++) {
 
             // parse out and add the critical
-            String critName = critData[loc][i];
+            TaggedRow taggedRow = splitMountTag(critData[loc][i]);
+            String critName = taggedRow.row();
+            int mountId = taggedRow.tag();
 
             critName = critName.trim();
             String critNameUpper = critName.toUpperCase();
@@ -1085,42 +1122,14 @@ public class MtfFile implements IMekLoader {
 
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplittableOverCriticalSlots())
                           || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
-                        // do we already have this one in this or an outer location?
-                        Mounted<?> m = null;
-                        boolean bFound = false;
-                        for (Mounted<?> vSplitWeapon : vSplitWeapons) {
-                            m = vSplitWeapon;
-                            int nLoc = m.getLocation();
-                            if ((((nLoc == loc) || (loc == Mek.getInnerLocation(nLoc)))
-                                  || ((nLoc == Mek.LOC_CENTER_TORSO) && (loc == Mek.LOC_HEAD)))
-                                  && (m.getType() == etype)) {
-                                bFound = true;
-                                break;
-                            }
-                        }
-                        if (bFound) {
-                            m.setFoundCrits(m.getFoundCrits() + (mek.isSuperHeavy() ? 2 : 1));
-                            if (m.getFoundCrits() >= m.getNumCriticalSlots()) {
-                                vSplitWeapons.remove(m);
-                            }
-                            // if we're in a new location, set the weapon as
-                            // split
-                            if (loc != m.getLocation()) {
-                                m.setSplit(true);
-                            }
-                            // give the most restrictive location for arcs
-                            int help = m.getLocation();
-                            m.setLocation(Mek.mostRestrictiveLoc(loc, help));
-                            if (loc != help) {
-                                m.setSecondLocation(Mek.leastRestrictiveLoc(loc, help));
-                            }
+                        Mounted<?> m;
+                        if (mountId > 0) {
+                            // the rows with this tag are one mount, wherever they are
+                            MountTag mountTag = new MountTag(etype, mountId);
+                            m = addSplitRow(mek, taggedMounts.get(mountTag), etype, loc);
+                            taggedMounts.put(mountTag, m);
                         } else {
-                            // make a new one
-                            m = Mounted.createMounted(mek, etype);
-                            m.setFoundCrits(1);
-                            m.setArmored(isArmored);
-                            m.setMekTurretMounted(isTurreted);
-                            vSplitWeapons.add(m);
+                            m = addUntaggedSplitRow(mek, vSplitWeapons, etype, loc);
                         }
                         m.setArmored(isArmored);
                         m.setMekTurretMounted(isTurreted);
@@ -1209,6 +1218,120 @@ public class MtfFile implements IMekLoader {
 
     private EquipmentType getEquipmentType(Mek mek, String equipmentName) {
         return EquipmentType.get(equipmentName, mek.isMixedTech() ? null : mek.getTechBase());
+    }
+
+    /**
+     * Adds a critical row to a mount that can be split over two locations.
+     *
+     * @param m The mount of the row, or null to make a new one
+     *
+     * @return The mount
+     */
+    private static Mounted<?> addSplitRow(Mek mek, @Nullable Mounted<?> m, EquipmentType etype, int loc) {
+        if (m == null) {
+            m = Mounted.createMounted(mek, etype);
+            m.setFoundCrits(1);
+            m.setLocation(loc);
+            return m;
+        }
+        m.setFoundCrits(m.getFoundCrits() + (mek.isSuperHeavy() ? 2 : 1));
+        // if we're in a new location, set the weapon as split
+        if (loc != m.getLocation()) {
+            m.setSplit(true);
+        }
+        // give the most restrictive location for arcs
+        int help = m.getLocation();
+        m.setLocation(Mek.mostRestrictiveLoc(loc, help));
+        if (loc != help) {
+            m.setSecondLocation(Mek.leastRestrictiveLoc(loc, help));
+        }
+        return m;
+    }
+
+    /**
+     * Adds a critical row without mount tag to a mount that can be split over two locations: the first mount of its
+     * equipment that still waits for criticalSlots in this or an outer location, otherwise a new one. This may give
+     * the row to the wrong mount when there are several mounts of the equipment; {@link #mountTags(Mek)} then writes
+     * mount tags.
+     *
+     * @param waiting The mounts that wait for more criticalSlots
+     *
+     * @return The mount
+     */
+    private static Mounted<?> addUntaggedSplitRow(Mek mek, List<Mounted<?>> waiting, EquipmentType etype, int loc) {
+        // do we already have this one in this or an outer location?
+        for (Mounted<?> m : waiting) {
+            int nLoc = m.getLocation();
+            if ((((nLoc == loc) || (loc == Mek.getInnerLocation(nLoc)))
+                  || ((nLoc == Mek.LOC_CENTER_TORSO) && (loc == Mek.LOC_HEAD)))
+                  && (m.getType() == etype)) {
+                addSplitRow(mek, m, etype, loc);
+                if (m.getFoundCrits() >= m.getNumCriticalSlots()) {
+                    waiting.remove(m);
+                }
+                return m;
+            }
+        }
+        Mounted<?> m = addSplitRow(mek, null, etype, loc);
+        waiting.add(m);
+        return m;
+    }
+
+    /**
+     * Finds the mount tags that the critical rows of a Mek need in its unit file. All mounts of an equipment get one
+     * when rows without it would not form the same mounts, which happens with equipment that is split over two
+     * locations. Other unit files are written without tags.
+     *
+     * @return The mount tag that follows the critical rows of a mount, for the mounts that need one
+     */
+    public static Map<Mounted<?>, String> mountTags(Mek mek) {
+        // The split mounts as their rows are read without tags, to compare them with the real ones
+        Set<EquipmentType> tagged = new HashSet<>();
+        List<Mounted<?>> waiting = new ArrayList<>();
+        Map<Mounted<?>, Mounted<?>> readMounts = new HashMap<>();
+        Map<Mounted<?>, Mounted<?>> realMounts = new HashMap<>();
+        for (int loc = mek.locations() - 1; loc >= 0; loc--) {
+            for (Mounted<?> mount : rowMounts(mek, loc)) {
+                if (!mount.getType().isSpreadable() && mount.isSplitable()) {
+                    Mounted<?> read = addUntaggedSplitRow(mek, waiting, mount.getType(), loc);
+                    if ((readMounts.computeIfAbsent(mount, m -> read) != read)
+                          || (realMounts.computeIfAbsent(read, m -> mount) != mount)) {
+                        tagged.add(mount.getType());
+                    }
+                }
+            }
+        }
+        // The tags number the mounts in the order their rows are written, top to bottom
+        Map<Mounted<?>, String> tags = new HashMap<>();
+        Map<EquipmentType, Integer> ids = new HashMap<>();
+        for (int loc : locationOrder) {
+            if (loc >= mek.locations()) {
+                continue;
+            }
+            for (Mounted<?> mount : rowMounts(mek, loc)) {
+                if (tagged.contains(mount.getType()) && !tags.containsKey(mount)) {
+                    tags.put(mount, "#" + ids.merge(mount.getType(), 1, Integer::sum));
+                }
+            }
+        }
+        return tags;
+    }
+
+    /**
+     * @return The mounts of the critical rows of a location, top to bottom
+     */
+    private static List<Mounted<?>> rowMounts(Mek mek, int loc) {
+        List<Mounted<?>> mounts = new ArrayList<>();
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(loc); slot++) {
+            CriticalSlot cs = mek.getCritical(loc, slot);
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                mounts.add(cs.getMount());
+                if (cs.getMount2() != null) {
+                    mounts.add(cs.getMount2());
+                }
+            }
+        }
+        return mounts;
     }
 
     private void clearSystemCriticalIfAbsent(Mek mek, int loc, int slot, String expectedCritical) {

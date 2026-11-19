@@ -955,9 +955,8 @@ public abstract class TestEntity implements TestEntityOption {
                 heat += wt.getHeat();
             }
             // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
-                  && !m.getLinkedBy().isInoperable()
-                  && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+            Mounted<?> insulator = m.getEnhancement(MiscType.F_LASER_INSULATOR);
+            if (wt.hasFlag(WeaponType.F_LASER) && (insulator != null) && !insulator.isInoperable()) {
                 heat -= 1;
                 if (heat == 0) {
                     heat++;

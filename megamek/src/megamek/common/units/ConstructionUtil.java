@@ -255,6 +255,7 @@ public class ConstructionUtil {
             if (eq.getLinkedBy() != null) {
                 eq.getLinkedBy().setLinked(null);
             }
+            eq.getEnhancements().forEach(enhancement -> enhancement.setLinked(null));
         }
         eq.setLocation(location, rear);
         eq.setSecondLocation(secondaryLocation, rear);

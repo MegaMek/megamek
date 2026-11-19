@@ -478,6 +478,24 @@ class BLKFileTest {
 
     }
 
+    @Test
+    void weaponEnhancementsFollowTheirWeapon() throws Exception {
+        Tank tank = createMinimalTank();
+        for (String name : List.of("Medium Laser", "ISLaserInsulator", "ISLaserInsulator", "Medium Laser",
+              "ISLaserInsulator", "ISRISCLaserPulseModule", "Medium Laser")) {
+            tank.addEquipment(EquipmentType.get(name), Tank.LOC_FRONT);
+        }
+        String blk = String.join("\n", BLKFile.getBlock(tank).getAllDataAsString());
+
+        Entity loaded = new MekFileParser(blk).getEntity();
+
+        List<Mounted<?>> front = loaded.getEquipment().stream()
+              .filter(mount -> mount.getLocation() == Tank.LOC_FRONT).toList();
+        assertEquals(List.of(front.get(1), front.get(2)), front.get(0).getEnhancements());
+        assertEquals(List.of(front.get(4), front.get(5)), front.get(3).getEnhancements());
+        assertTrue(front.get(6).getEnhancements().isEmpty());
+    }
+
     /**
      * Creates a minimal Tank entity for roundtrip testing.
      */

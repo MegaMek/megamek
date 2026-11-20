@@ -222,10 +222,10 @@ public class MtfFile implements IMekLoader {
      * {@code Autocannon/20#1}. The tags number the mounts of that equipment from 1. They are only written for
      * equipment that is split over two locations, where the rows alone do not tell the mounts apart.
      */
-    private record MountTag(EquipmentType type, int id) {}
+    private record MountTag(EquipmentType type, String number) {}
 
     /** The mount tag that ends a critical row: {@code #} and a positive number without leading zeros */
-    private static final Pattern MOUNT_TAG = Pattern.compile("#([1-9]\\d{0,8})$");
+    private static final Pattern MOUNT_TAG = Pattern.compile("#([1-9]\\d*)$");
 
     /**
      * Modern unit files store resizable equipment like Cargo:SIZE:4.0 Old equipment stores it like Cargo (4 tons) This
@@ -957,9 +957,9 @@ public class MtfFile implements IMekLoader {
 
             // parse out and add the critical
             Matcher tagMatcher = MOUNT_TAG.matcher(critData[loc][i]);
-            boolean tagged = tagMatcher.find();
-            int mountId = tagged ? Integer.parseInt(tagMatcher.group(1)) : 0;
-            String critName = tagged ? critData[loc][i].substring(0, tagMatcher.start()) : critData[loc][i];
+            String tagNumber = tagMatcher.find() ? tagMatcher.group(1) : null;
+            String critName = (tagNumber != null) ? critData[loc][i].substring(0, tagMatcher.start())
+                  : critData[loc][i];
 
             critName = critName.trim();
             String critNameUpper = critName.toUpperCase();
@@ -1105,19 +1105,19 @@ public class MtfFile implements IMekLoader {
 
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplittableOverCriticalSlots())
                           || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
-                        Mounted<?> m;
-                        if (mountId > 0) {
+                        Mounted<?> mount;
+                        if (tagNumber != null) {
                             // the rows with this tag are one mount, wherever they are
-                            MountTag mountTag = new MountTag(etype, mountId);
-                            m = addSplitRow(mek, taggedMounts.get(mountTag), etype, loc);
-                            taggedMounts.put(mountTag, m);
+                            MountTag mountTag = new MountTag(etype, tagNumber);
+                            mount = addSplitRow(mek, taggedMounts.get(mountTag), etype, loc);
+                            taggedMounts.put(mountTag, mount);
                         } else {
-                            m = addUntaggedSplitRow(mek, etype, loc);
+                            mount = addUntaggedSplitRow(mek, etype, loc);
                         }
-                        m.setArmored(isArmored);
-                        m.setMekTurretMounted(isTurreted);
-                        m.setOmniPodMounted(isOmniPod);
-                        mek.addEquipment(m, loc, rearMounted);
+                        mount.setArmored(isArmored);
+                        mount.setMekTurretMounted(isTurreted);
+                        mount.setOmniPodMounted(isOmniPod);
+                        mek.addEquipment(mount, loc, rearMounted);
                     } else {
                         Mounted<?> mount;
                         if (etype2 == null) {

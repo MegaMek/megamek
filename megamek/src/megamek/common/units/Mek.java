@@ -5536,12 +5536,12 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return sb.toString();
     }
 
-    private String decodeCritical(CriticalSlot cs, Map<Mounted<?>, String> mountTags) {
-        if (cs == null) {
+    private String decodeCritical(CriticalSlot criticalSlot, Map<Mounted<?>, String> mountTags) {
+        if (criticalSlot == null) {
             return MtfFile.EMPTY;
         }
-        int type = cs.getType();
-        int index = cs.getIndex();
+        int type = criticalSlot.getType();
+        int index = criticalSlot.getIndex();
 
         StringBuilder toReturn = new StringBuilder();
         if (type == CriticalSlot.TYPE_SYSTEM) {
@@ -5556,15 +5556,15 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 toReturn.append(getRawSystemName(index));
             }
         } else if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            final Mounted<?> m = cs.getMount();
-            toReturn.append(m.getType().getInternalName());
+            final Mounted<?> mounted = criticalSlot.getMount();
+            toReturn.append(mounted.getType().getInternalName());
             // Superheavy Meks can have a second ammo bin or heat sink in the same slot
-            if (cs.getMount2() != null) {
-                toReturn.append("|").append(cs.getMount2().getType().getInternalName());
+            if (criticalSlot.getMount2() != null) {
+                toReturn.append("|").append(criticalSlot.getMount2().getType().getInternalName());
             }
-            if ((m.getType() instanceof WeaponType)
-                  && m.getType().hasFlag(WeaponType.F_VGL)) {
-                switch (m.getFacing()) {
+            if ((mounted.getType() instanceof WeaponType)
+                  && mounted.getType().hasFlag(WeaponType.F_VGL)) {
+                switch (mounted.getFacing()) {
                     case 1:
                         toReturn.append(" (FR)");
                         break;
@@ -5584,26 +5584,26 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                         break;
                 }
             }
-            if (m.isRearMounted()) {
+            if (mounted.isRearMounted()) {
                 toReturn.append(" (R)");
             }
-            if (m.isMekTurretMounted()) {
+            if (mounted.isMekTurretMounted()) {
                 toReturn.append(" (T)");
             }
-            if (m.isOmniPodMounted()) {
+            if (mounted.isOmniPodMounted()) {
                 toReturn.append(" ").append(MtfFile.OMNI_POD);
             }
-            if (m.getType().isVariableSize()) {
-                toReturn.append(MtfFile.SIZE).append(m.getSize());
+            if (mounted.getType().isVariableSize()) {
+                toReturn.append(MtfFile.SIZE).append(mounted.getSize());
             }
         } else {
             return "?" + index;
         }
-        if (cs.isArmored()) {
+        if (criticalSlot.isArmored()) {
             toReturn.append(" ").append(MtfFile.ARMORED);
         }
         // the mount tag always ends the row
-        toReturn.append(mountTags.getOrDefault(cs.getMount(), ""));
+        toReturn.append(mountTags.getOrDefault(criticalSlot.getMount(), ""));
         return toReturn.toString();
     }
 

@@ -131,6 +131,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private JComboBox<String> cbExperience;
     private JComboBox<Integer> cbWeightClass;
+    /** Every class Target Weight can offer, lightest first. {@link #weightClassesFor} narrows it per unit type. */
+    private static final List<Integer> ALL_TARGET_WEIGHTS = List.of(EntityWeightClass.WEIGHT_LIGHT,
+          EntityWeightClass.WEIGHT_MEDIUM, EntityWeightClass.WEIGHT_HEAVY, EntityWeightClass.WEIGHT_ASSAULT);
     // Shown in Target Weight's place when the unit type is conventional infantry, which has no weight class
     private JComboBox<InfantryClass> cbInfantryClass;
     private JLabel lblWeightClass;
@@ -378,10 +381,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
               EntityWeightClass::getClassName));
         cbWeightClass.addItem(null);
-        cbWeightClass.addItem(EntityWeightClass.WEIGHT_LIGHT);
-        cbWeightClass.addItem(EntityWeightClass.WEIGHT_MEDIUM);
-        cbWeightClass.addItem(EntityWeightClass.WEIGHT_HEAVY);
-        cbWeightClass.addItem(EntityWeightClass.WEIGHT_ASSAULT);
+        for (Integer weightClass : ALL_TARGET_WEIGHTS) {
+            cbWeightClass.addItem(weightClass);
+        }
         constraints.gridx = 3;
         constraints.gridy = row;
         add(cbWeightClass, constraints);
@@ -1726,10 +1728,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Greys out Target Weight for unit types whose units are never picked by weight class. VTOLs and conventional
-     * fighters draw from one table whatever the weight says, so offering Heavy or Assault only promises something the
-     * roll ignores. The selection goes back to Random so a greyed-out "Assault" is not left showing; a ruleset that
-     * varies a formation by weight still rolls one itself.
+     * Greys out Target Weight for unit types with none of its weight classes. VTOLs and conventional fighters draw
+     * from one table whatever the weight says, and large craft have size classes of their own, so offering Heavy or
+     * Assault only promises something the roll ignores. The selection goes back to Random so a greyed-out "Assault"
+     * is not left showing; a ruleset that varies a formation by weight still rolls one itself.
      */
     private void refreshWeightClassEnabled() {
         if (cbWeightClass == null) {
@@ -1751,6 +1753,67 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             logger.debug("[ForceGen][Weight] Target Weight greyed out: unit type {} is not picked by weight class",
                   unitTypeLabel(forceDesc.getUnitType()));
         }
+        refreshWeightClassesOffered();
+    }
+
+    /**
+     * Lists in Target Weight only the weight classes the picked unit type has. Aerospace fighters top out at Heavy,
+     * and the fighter rules have no Assault option: an Assault Squadron built no Flights and came out as a single
+     * fighter (MegaMek/megamek#9646). A selection the new type does not have goes back to Random. A unit type with
+     * none of these classes keeps the list as it is, greyed out by {@link #refreshWeightClassEnabled()}.
+     */
+    private void refreshWeightClassesOffered() {
+        List<Integer> offered = weightClassesFor(forceDesc.getUnitType());
+        if (offered.isEmpty()) {
+            return;
+        }
+        Object selected = cbWeightClass.getSelectedItem();
+        if ((selected instanceof Integer weightClass) && !offered.contains(weightClass)) {
+            // Index 0 is the Random entry. Fires the weight listener, which clears the descriptor's weight too.
+            cbWeightClass.setSelectedIndex(0);
+            logger.info("[ForceGen][Weight] {} has no {} class; Target Weight reset to Random",
+                  unitTypeLabel(forceDesc.getUnitType()), EntityWeightClass.getClassName(weightClass));
+        }
+        for (int index = cbWeightClass.getItemCount() - 1; index > 0; index--) {
+            Integer item = cbWeightClass.getItemAt(index);
+            if ((item != null) && !offered.contains(item)) {
+                cbWeightClass.removeItemAt(index);
+            }
+        }
+        // Index 0 is Random, so the classes follow it in the order the table gives them.
+        for (int position = 0; position < offered.size(); position++) {
+            Integer weightClass = offered.get(position);
+            int index = position + 1;
+            if ((index >= cbWeightClass.getItemCount()) || !weightClass.equals(cbWeightClass.getItemAt(index))) {
+                cbWeightClass.insertItemAt(weightClass, index);
+            }
+        }
+        logger.debug("[ForceGen][Weight] Target Weight offers {} for unit type {}", offered,
+              unitTypeLabel(forceDesc.getUnitType()));
+    }
+
+    /**
+     * The weight classes a unit type comes in, out of Light, Medium, Heavy and Assault, lightest first.
+     *
+     * <p>Aerospace fighters stop at Heavy. VTOLs and conventional fighters are not picked by weight, and DropShips,
+     * JumpShips, WarShips, Small Craft and space stations have size classes of their own, so they get none and
+     * Target Weight is greyed out for them.</p>
+     *
+     * @param unitType the unit type picked, or {@code null} for a combined-arms force
+     *
+     * @return the weight classes to offer, empty when none of them applies
+     */
+    static List<Integer> weightClassesFor(@Nullable Integer unitType) {
+        if (unitType == null) {
+            return ALL_TARGET_WEIGHTS;
+        }
+        return switch (unitType) {
+            case UnitType.AEROSPACE_FIGHTER -> List.of(EntityWeightClass.WEIGHT_LIGHT,
+                  EntityWeightClass.WEIGHT_MEDIUM, EntityWeightClass.WEIGHT_HEAVY);
+            case UnitType.VTOL, UnitType.CONV_FIGHTER, UnitType.SMALL_CRAFT, UnitType.DROPSHIP, UnitType.JUMPSHIP,
+                 UnitType.WARSHIP, UnitType.SPACE_STATION -> List.of();
+            default -> ALL_TARGET_WEIGHTS;
+        };
     }
 
     /**
@@ -1800,11 +1863,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return (InfantryClass) cbInfantryClass.getSelectedItem();
     }
 
+    /**
+     * Whether Target Weight means nothing for a unit type, because it has none of Light, Medium, Heavy or Assault
+     * (see {@link #weightClassesFor}).
+     */
     private static boolean ignoresWeightClass(@Nullable Integer unitType) {
-        if (unitType == null) {
-            return false;
-        }
-        return (unitType == UnitType.VTOL) || (unitType == UnitType.CONV_FIGHTER);
+        return weightClassesFor(unitType).isEmpty();
     }
 
     /**

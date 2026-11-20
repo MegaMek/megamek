@@ -126,7 +126,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private Mounted<?> linked = null; // for ammo, or artemis
     private Mounted<?> linkedBy = null; // reverse link for convenience
 
-    private Mounted<?> crossLinkedBy = null; // Weapons with crossLinked capacitors
     private final int linkedBayId = -1;
 
     private final Entity entity; // what I'm mounted on
@@ -1185,15 +1184,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns 1 or 2 if this Mounted has a linked and charged (= set to charge in an earlier turn) PPC Capacitor.
+     * Returns 1 if this Mounted has a linked and charged (= set to charge in an earlier turn) PPC Capacitor, else 0.
      */
     public int hasChargedCapacitor() {
-        if (getCrossLinkedBy() != null &&
-              isWorkingCapacitor(getCrossLinkedBy()) &&
-              getCrossLinkedBy().curMode().equals("Charge")) {
-            return 2;
-        }
-
         if (getLinkedBy() != null && isWorkingCapacitor(getLinkedBy()) && getLinkedBy().curMode().equals("Charge")) {
             return 1;
         }
@@ -1201,8 +1194,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns 1 or 2 if this Mounted has a linked and charged (= set to charge in an earlier turn) or charging (= set
-     * to charge this turn) PPC Capacitor. Used to determine heat.
+     * Returns 1 if this Mounted has a linked and charged (= set to charge in an earlier turn) or charging (= set to
+     * charge this turn) PPC Capacitor, else 0. Used to determine heat.
      */
     public int hasChargedOrChargingCapacitor() {
         int isCharged = hasChargedCapacitor();
@@ -1211,12 +1204,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         } else {
             // When it has been set to charge this turn,
             // pendingMode is set
-            if (getCrossLinkedBy() != null &&
-                  isWorkingCapacitor(getCrossLinkedBy()) &&
-                  getCrossLinkedBy().pendingMode().equals("Charge")) {
-                return 2;
-            }
-
             if (getLinkedBy() != null &&
                   isWorkingCapacitor(getLinkedBy()) &&
                   getLinkedBy().pendingMode().equals("Charge")) {
@@ -1307,10 +1294,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return linkedBy;
     }
 
-    public @Nullable Mounted<?> getCrossLinkedBy() {
-        return crossLinkedBy;
-    }
-
     /**
      * Link this Mounted equipment to the given other equipment (or remove the link, if that other is null). When the
      * other is not null, that equipment's linkedBy is set to the present Mounted. Typically, weapons link to their
@@ -1329,8 +1312,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             linked.setLinkedBy(this);
         }
         // The weapon that an enhancement leaves stays linked by another of its enhancements
-        boolean enhancementMoves = (linked != null) && (previous != linked) && (getType() instanceof MiscType)
-              && getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT);
+        boolean enhancementMoves = (linked != null) && (previous != linked) && MiscType.isWeaponEnhancement(getType());
         if ((previous != null) && ((linked == null) || (enhancementMoves && (previous.linkedBy == this)))) {
             List<MiscMounted> enhancements = previous.getEnhancements();
             previous.setLinkedBy(enhancements.isEmpty() ? null : enhancements.getFirst());
@@ -1346,9 +1328,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public List<MiscMounted> getEnhancements() {
         List<MiscMounted> enhancements = new ArrayList<>();
-        if ((entity != null) && ((linkedBy != null) || (crossLinkedBy != null))) {
+        if ((entity != null) && (linkedBy != null)) {
             for (MiscMounted misc : entity.getMisc()) {
-                if ((misc.getLinked() == this) && misc.getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT)) {
+                if ((misc.getLinked() == this) && MiscType.isWeaponEnhancement(misc.getType())) {
                     enhancements.add(misc);
                 }
             }
@@ -1365,16 +1347,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @return The enhancement, or null when this weapon has none of the kind
      */
     public @Nullable MiscMounted getEnhancement(EquipmentFlag kind) {
-        MiscMounted enhancement = null;
-        if ((entity != null) && ((linkedBy != null) || (crossLinkedBy != null))) {
-            for (MiscMounted misc : entity.getMisc()) {
-                if ((misc.getLinked() == this) && misc.getType().hasFlag(kind)
-                      && ((enhancement == null) || enhancement.isInoperable())) {
-                    enhancement = misc;
-                }
-            }
-        }
-        return enhancement;
+        List<MiscMounted> ofKind = getEnhancements().stream().filter(misc -> misc.getType().hasFlag(kind)).toList();
+        return ofKind.stream().filter(misc -> !misc.isInoperable()).findFirst()
+              .orElse(ofKind.isEmpty() ? null : ofKind.getFirst());
     }
 
     /**
@@ -1409,18 +1384,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private void setLinkedBy(@Nullable Mounted<?> linkedBy) {
         if (linkedBy == null || linkedBy.getLinked() == this) {
             this.linkedBy = linkedBy;
-        }
-    }
-
-    public void setCrossLinked(Mounted<?> linked) {
-        this.linked = linked;
-        linked.setCrossLinkedBy(this);
-    }
-
-    // called by setCrossLinked() when using cross-linked capacitors.
-    private void setCrossLinkedBy(Mounted<?> crossLinkedBy) {
-        if (crossLinkedBy == null || crossLinkedBy.getLinked() == this) {
-            this.crossLinkedBy = crossLinkedBy;
         }
     }
 
@@ -2250,17 +2213,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                       "]");
             } else {
                 state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
-            }
-        }
-        if (crossLinkedBy != null) {
-            if (crossLinkedBy.getEntity().getId() != entity.getId()) {
-                state.add("CrossLinkedBy: [" +
-                      crossLinkedBy.getEntity() +
-                      ":" +
-                      crossLinkedBy.getEntity().getEquipment().indexOf(crossLinkedBy) +
-                      "]");
-            } else {
-                state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
             }
         }
         if (linkedBayId != -1) {

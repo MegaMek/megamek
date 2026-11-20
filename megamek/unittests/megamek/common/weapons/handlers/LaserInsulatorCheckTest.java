@@ -34,8 +34,15 @@ package megamek.common.weapons.handlers;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Vector;
@@ -68,19 +75,7 @@ import org.junit.jupiter.api.Test;
  * without a working insulator alone (TO:AUE p.134).
  */
 class LaserInsulatorCheckTest {
-
-    /** Dice that always roll the middle: every d6 is a 4, so a 2D6 roll is 8. */
-    private static final class MiddleDice extends MMRandom {
-        @Override
-        public int randomInt(int maxValue) {
-            return maxValue / 2;
-        }
-
-        @Override
-        public float randomFloat() {
-            return 0.5f;
-        }
-    }
+    private TWGameManager gameManager;
 
     /** Dice that roll the given d6 results in turn. */
     private static final class SequenceDice extends MMRandom {
@@ -108,8 +103,12 @@ class LaserInsulatorCheckTest {
     }
 
     @BeforeEach
-    void fixDice() {
-        Compute.setRNG(new MiddleDice());
+    void setUp() {
+        // every d6 is a 4, so the insulator check rolls 8
+        Compute.setRNG(new SequenceDice(4));
+        gameManager = mock(TWGameManager.class);
+        when(gameManager.applyCriticalHit(any(), anyInt(), any(), anyBoolean(), anyInt(), anyBoolean()))
+              .thenReturn(new Vector<>());
     }
 
     @AfterEach
@@ -151,36 +150,48 @@ class LaserInsulatorCheckTest {
         Compute.setRNG(new SequenceDice(1, 1, 4, 4));
 
         AttackHandler handler = ((Weapon) laser.getType()).getCorrectHandler(new ToHitData(), attack, game,
-              mock(TWGameManager.class));
+              gameManager);
 
         assertInstanceOf(ReengineeredLaserWeaponHandler.class, handler);
         ((WeaponHandler) handler).doChecks(new Vector<>());
-        assertTrue(laser.isHit());
+        verifyCriticalHitOn(laser);
     }
 
+    /** The failure is a critical hit on a slot of the laser, which the manager resolves like any other */
     @Test
     void anInsulatedPulseLaserFailsOnARollOfTwo() throws Exception {
         Mounted<?> laser = laserWith("ISMediumPulseLaser", "ISLaserInsulator");
-        EnergyWeaponHandler.checkInsulator(2, laser, 0, new Vector<Report>());
-        assertTrue(laser.isHit());
+        EnergyWeaponHandler.checkInsulator(gameManager, 2, laser, 0, new Vector<Report>());
+        verifyCriticalHitOn(laser);
     }
 
     @Test
     void aLaserWithoutAWorkingInsulatorIsLeftAlone() throws Exception {
         Mounted<?> bare = laserWith("ISMediumPulseLaser");
-        EnergyWeaponHandler.checkInsulator(2, bare, 0, new Vector<Report>());
-        assertFalse(bare.isHit());
+        EnergyWeaponHandler.checkInsulator(gameManager, 2, bare, 0, new Vector<Report>());
 
         Mounted<?> broken = laserWith("ISMediumPulseLaser", "ISLaserInsulator");
         broken.getEnhancement(MiscType.F_LASER_INSULATOR).setDestroyed(true);
-        EnergyWeaponHandler.checkInsulator(2, broken, 0, new Vector<Report>());
-        assertFalse(broken.isHit());
+        EnergyWeaponHandler.checkInsulator(gameManager, 2, broken, 0, new Vector<Report>());
+
+        verifyNoCriticalHit();
+        assertFalse(bare.isHit() || broken.isHit());
     }
 
     @Test
     void onlyARollOfTwoChecksTheInsulator() throws Exception {
         Mounted<?> laser = laserWith("ISMediumPulseLaser", "ISLaserInsulator");
-        EnergyWeaponHandler.checkInsulator(3, laser, 0, new Vector<Report>());
+        EnergyWeaponHandler.checkInsulator(gameManager, 3, laser, 0, new Vector<Report>());
+        verifyNoCriticalHit();
         assertFalse(laser.isHit());
+    }
+
+    private void verifyCriticalHitOn(Mounted<?> laser) {
+        verify(gameManager).applyCriticalHit(eq(laser.getEntity()), eq(laser.getLocation()),
+              argThat(slot -> slot.getMount() == laser), eq(true), eq(0), eq(false));
+    }
+
+    private void verifyNoCriticalHit() {
+        verify(gameManager, never()).applyCriticalHit(any(), anyInt(), any(), anyBoolean(), anyInt(), anyBoolean());
     }
 }

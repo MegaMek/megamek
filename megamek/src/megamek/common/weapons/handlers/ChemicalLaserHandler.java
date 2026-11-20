@@ -67,7 +67,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        EnergyWeaponHandler.checkInsulator(roll.getIntValue(), weapon, subjectId, vPhaseReport);
+        EnergyWeaponHandler.checkInsulator(gameManager, roll.getIntValue(), weapon, subjectId, vPhaseReport);
         return super.doChecks(vPhaseReport);
     }
 

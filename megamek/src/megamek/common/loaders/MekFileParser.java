@@ -93,19 +93,11 @@ public class MekFileParser {
     }
 
     /**
-     * @return True for the equipment that is attached to a single weapon: Artemis and Apollo fire control systems,
-     *       PPC capacitors, laser insulators and RISC laser pulse modules
-     */
-    static boolean isWeaponEnhancement(Mounted<?> mounted) {
-        return (mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT);
-    }
-
-    /**
      * @return True when the weapon enhancement may be attached to the equipment: a weapon of the right kind in the
      *       same location
      */
-    static boolean isEnhancementTarget(Mounted<?> enhancement, Mounted<?> mount) {
-        if (!isWeaponEnhancement(enhancement) || !(mount.getType() instanceof WeaponType weapon)
+    public static boolean isEnhancementTarget(Mounted<?> enhancement, Mounted<?> mount) {
+        if (!MiscType.isWeaponEnhancement(enhancement.getType()) || !(mount.getType() instanceof WeaponType weapon)
               || (mount.getLocation() != enhancement.getLocation())) {
             return false;
         }
@@ -166,23 +158,8 @@ public class MekFileParser {
      */
     private static List<Mounted<?>> fileOrder(Mounted<?> enhancement) {
         Entity entity = enhancement.getEntity();
-        if (!(entity instanceof Mek)) {
-            return entity.getEquipment();
-        }
-        List<Mounted<?>> mounts = new ArrayList<>();
-        int location = enhancement.getLocation();
-        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
-            CriticalSlot critical = entity.getCritical(location, slot);
-            if (critical == null) {
-                continue;
-            }
-            for (Mounted<?> mount : new Mounted<?>[] { critical.getMount(), critical.getMount2() }) {
-                if ((mount != null) && !mounts.contains(mount)) {
-                    mounts.add(mount);
-                }
-            }
-        }
-        return mounts;
+        return (entity instanceof Mek mek) ? MtfFile.rowMounts(mek, enhancement.getLocation()).stream().distinct().toList()
+              : entity.getEquipment();
     }
 
     public MekFileParser(File f) throws EntityLoadingException {
@@ -450,7 +427,7 @@ public class MekFileParser {
                 continue;
             }
             // link weapon enhancements, including those of the weapons in weapon bays
-            if (isWeaponEnhancement(m)) {
+            if (MiscType.isWeaponEnhancement(m.getType())) {
                 m.setLinked(findEnhancementTarget(m, fileOrder(m)));
                 if (m.getLinked() == null) {
                     LOGGER.error("Unable to match {} to weapon for {}", m.getName(), ent.getShortName());

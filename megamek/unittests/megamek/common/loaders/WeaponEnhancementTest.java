@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -92,14 +91,7 @@ class WeaponEnhancementTest {
             mek.addEquipment(EquipmentType.get(name), Mek.LOC_RIGHT_TORSO);
         }
         Mek loaded = (Mek) new MekFileParser(mek.getMtf()).getEntity();
-        List<Mounted<?>> mounts = new ArrayList<>();
-        for (int slot = 0; slot < loaded.getNumberOfCriticalSlots(Mek.LOC_RIGHT_TORSO); slot++) {
-            if ((loaded.getCritical(Mek.LOC_RIGHT_TORSO, slot) != null)
-                  && !mounts.contains(loaded.getCritical(Mek.LOC_RIGHT_TORSO, slot).getMount())) {
-                mounts.add(loaded.getCritical(Mek.LOC_RIGHT_TORSO, slot).getMount());
-            }
-        }
-        return mounts;
+        return MtfFile.rowMounts(loaded, Mek.LOC_RIGHT_TORSO).stream().distinct().toList();
     }
 
     /**
@@ -209,7 +201,8 @@ class WeaponEnhancementTest {
 
     @Test
     void insulatorLowersThePulseModeHeatToAMinimumOfOne() throws Exception {
-        // a small laser makes 1 heat, 3 in pulse mode; the insulator saves a point of that total (TO:AUE p.134)
+        // a small laser makes 1 heat, 3 in pulse mode (IO:AE p.87). TO:AUE p.134 doesn't say which comes first; we take
+        // the insulator's point off the total, to a minimum of 1
         WeaponMounted laser = laserWith(new ISLaserSmall(), PULSE_MODULE, INSULATOR);
         assertEquals(1, laser.getCurrentHeat());
         laser.setModeImmediately("Pulse");

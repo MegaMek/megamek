@@ -165,7 +165,6 @@ public final class UnitRulesRefUtil {
         addMountedRulesRefs(componentRulesRefs, mounted.getLinkedBy(), visitedMounts);
         mounted.getEnhancements().forEach(enhancement ->
               addMountedRulesRefs(componentRulesRefs, enhancement, visitedMounts));
-        addMountedRulesRefs(componentRulesRefs, mounted.getCrossLinkedBy(), visitedMounts);
 
         if (mounted instanceof WeaponMounted bay) {
             bay.getBayWeapons().forEach(member -> addMountedRulesRefs(componentRulesRefs, member, visitedMounts));

@@ -176,9 +176,6 @@ public class WeaponMounted extends Mounted<WeaponType> {
         if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING)) {
             heat += 2;
         }
-        if (hasChargedCapacitor() == 2) {
-            heat += 10;
-        }
         if (hasChargedCapacitor() == 1) {
             heat += 5;
         }

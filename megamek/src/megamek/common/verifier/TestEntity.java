@@ -64,10 +64,10 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.CeilNotProvidedForWeightException;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
+import megamek.common.loaders.MekFileParser;
 import megamek.common.units.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.battleArmor.BAFlamerWeapon;
-import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -1750,24 +1750,13 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
 
-            if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) &&
-                  ((m.getLinked() == null)
-                        || (m.getLinked().getLocation() != m.getLocation())
-                        || !(m.getLinked().getType() instanceof WeaponType)
-                        || !(
-                        m.getLinked().getType().hasFlag(WeaponType.F_LASER)
-                              || m.getLinked().getType() instanceof CLChemicalLaserWeapon
-                  ))) {
+            boolean linkedToItsWeapon = (m.getLinked() != null) && MekFileParser.isEnhancementTarget(m, m.getLinked());
+            if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) && !linkedToItsWeapon) {
                 buff.append("Laser insulator requires a laser in the same location.\n");
                 illegal = true;
             }
-            if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) &&
-                  ((m.getLinked() == null)
-                        || (m.getLinked().getLocation() != m.getLocation())
-                        || !(m.getLinked().getType() instanceof WeaponType)
-                        || !m.getLinked().getType().hasFlag(WeaponType.F_LASER)
-                        || m.getLinked().getType().hasFlag(WeaponType.F_PULSE))) {
-                buff.append("RISC Laser Pulse Module requires a non-pulse laser in the same location.\n");
+            if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) && !linkedToItsWeapon) {
+                buff.append("RISC Laser Pulse Module requires an Inner Sphere non-pulse laser in the same location.\n");
                 illegal = true;
             }
         }

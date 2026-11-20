@@ -38,8 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -293,21 +291,17 @@ class MtfMountTagTest {
     }
 
     @Test
-    void unitFilesWithoutTagsLoadAndSaveAsBefore() throws Exception {
-        // The mounts, locations, slots and links that MegaMek loaded from these files before mount tags existed
-        List<String> expected = Files.readAllLines(Path.of("testresources/megamek/common/loaders/untaggedUnits.txt"));
-        List<Integer> units = IntStream.range(0, expected.size())
-              .filter(line -> expected.get(line).startsWith("== ")).boxed().toList();
-        for (int unit = 0; unit < units.size(); unit++) {
-            String name = expected.get(units.get(unit)).substring(3);
-            int end = (unit + 1 < units.size()) ? units.get(unit + 1) : expected.size();
-            String description = String.join("\n", expected.subList(units.get(unit) + 1, end)) + "\n";
+    void untaggedSplitWeaponLoadsAndSavesWithoutTags() throws Exception {
+        // The Barghest BGS-1T's LB 20-X AC has 9 rows in the right torso and 2 in the center torso
+        Mek loaded = (Mek) new MekFileParser(new File(UNITS + "Barghest BGS-1T.mtf")).getEntity();
+        Mounted<?> lbx = loaded.getWeaponList().stream().filter(Mounted::isSplit).findFirst().orElseThrow();
 
-            Mek loaded = (Mek) new MekFileParser(new File(UNITS + name)).getEntity();
-
-            assertEquals(description, describe(loaded), name);
-            assertTrue(MtfFile.mountTags(loaded).isEmpty(), name);
-            assertEquals(description, describe(load(loaded.getMtf())), name);
-        }
+        assertEquals("ISLBXAC20", lbx.getType().getInternalName());
+        assertEquals(Mek.LOC_CENTER_TORSO, lbx.getLocation());
+        assertEquals(Mek.LOC_RIGHT_TORSO, lbx.getSecondLocation());
+        assertEquals(lbx.getNumCriticalSlots(), slots(loaded, Mek.LOC_CENTER_TORSO, lbx).size()
+              + slots(loaded, Mek.LOC_RIGHT_TORSO, lbx).size());
+        assertTrue(MtfFile.mountTags(loaded).isEmpty());
+        assertEquals(describe(loaded), describe(load(loaded.getMtf())));
     }
 }

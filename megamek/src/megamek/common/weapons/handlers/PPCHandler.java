@@ -73,15 +73,9 @@ public class PPCHandler extends EnergyWeaponHandler {
         // remember capacitor state and turn it off here,
         // so a crit in the firing phase does not cause an explosion, per the
         // rules in TO
-        if (weapon.hasChargedCapacitor() != 0) {
-            if (weapon.hasChargedCapacitor() == 2) {
-                chargedCapacitor = 2;
-                weapon.getCrossLinkedBy().setMode("Off");
-            }
-            if (weapon.hasChargedCapacitor() == 1) {
-                chargedCapacitor = 1;
-                weapon.getLinkedBy().setMode("Off");
-            }
+        if (weapon.hasChargedCapacitor() == 1) {
+            chargedCapacitor = 1;
+            weapon.getLinkedBy().setMode("Off");
         }
     }
 

@@ -1135,7 +1135,7 @@ public class MtfFile implements IMekLoader {
                             m = addSplitRow(mek, taggedMounts.get(mountTag), etype, loc);
                             taggedMounts.put(mountTag, m);
                         } else {
-                            m = addUntaggedSplitRow(mek, vSplitWeapons, etype, loc);
+                            m = addUntaggedSplitRow(mek, etype, loc);
                         }
                         m.setArmored(isArmored);
                         m.setMekTurretMounted(isTurreted);
@@ -1238,7 +1238,6 @@ public class MtfFile implements IMekLoader {
         if (mount == null) {
             Mounted<?> newMount = Mounted.createMounted(mek, equipmentType);
             newMount.setFoundCrits(1);
-            newMount.setLocation(location);
             return newMount;
         }
         mount.setFoundCrits(mount.getFoundCrits() + (mek.isSuperHeavy() ? 2 : 1));
@@ -1261,27 +1260,24 @@ public class MtfFile implements IMekLoader {
      * the row to the wrong mount when there are several mounts of the equipment; {@link #mountTags(Mek)} then writes
      * mount tags.
      *
-     * @param waiting The mounts that wait for more criticalSlots
-     *
      * @return The mount
      */
-    private static Mounted<?> addUntaggedSplitRow(Mek mek, List<Mounted<?>> waiting, EquipmentType equipmentType,
-          int location) {
+    private Mounted<?> addUntaggedSplitRow(Mek mek, EquipmentType equipmentType, int location) {
         // do we already have this one in this or an outer location?
-        for (Mounted<?> mount : waiting) {
+        for (Mounted<?> mount : vSplitWeapons) {
             int mountLocation = mount.getLocation();
             if ((((mountLocation == location) || (location == Mek.getInnerLocation(mountLocation)))
                   || ((mountLocation == Mek.LOC_CENTER_TORSO) && (location == Mek.LOC_HEAD)))
                   && (mount.getType() == equipmentType)) {
                 addSplitRow(mek, mount, equipmentType, location);
                 if (mount.getFoundCrits() >= mount.getNumCriticalSlots()) {
-                    waiting.remove(mount);
+                    vSplitWeapons.remove(mount);
                 }
                 return mount;
             }
         }
         Mounted<?> mount = addSplitRow(mek, null, equipmentType, location);
-        waiting.add(mount);
+        vSplitWeapons.add(mount);
         return mount;
     }
 
@@ -1328,7 +1324,7 @@ public class MtfFile implements IMekLoader {
     /**
      * @return The mounts of the critical rows of a location, top to bottom
      */
-    private static List<Mounted<?>> rowMounts(Mek mek, int location) {
+    static List<Mounted<?>> rowMounts(Mek mek, int location) {
         List<Mounted<?>> mounts = new ArrayList<>();
         for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot criticalSlot = mek.getCritical(location, slot);

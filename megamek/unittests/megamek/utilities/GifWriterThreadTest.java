@@ -176,6 +176,65 @@ class GifWriterThreadTest {
     }
 
     /**
+     * Regression guard: a stop that arrives just as a frame finishes encoding must not interrupt the save
+     * prompt. The stop has to interrupt the thread before it marks the thread as stopped. In the other order
+     * the writer can leave its loop and open the prompt before the interrupt lands, and the interrupt then
+     * closes the prompt. The overridden {@code interrupt()} holds the interrupt back for a moment, as a busy
+     * machine can, to give the writer that chance.
+     */
+    @Test
+    void testDelayedInterruptDoesNotReachSavePrompt() throws Exception {
+        CountDownLatch encodingStarted = new CountDownLatch(1);
+        CountDownLatch releaseEncode = new CountDownLatch(1);
+        CountDownLatch promptShowing = new CountDownLatch(1);
+        CountDownLatch playerAnswers = new CountDownLatch(1);
+        AtomicBoolean promptInterrupted = new AtomicBoolean(false);
+
+        GifWriter gifWriter = mock(GifWriter.class);
+        doAnswer(invocation -> {
+            encodingStarted.countDown();
+            releaseEncode.await(5, TimeUnit.SECONDS);
+            return null;
+        }).when(gifWriter).appendFrame(any(), anyLong());
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            public void interrupt() {
+                // The frame finishes encoding while the stop request is still on its way.
+                releaseEncode.countDown();
+                try {
+                    promptShowing.await(250, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException interruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                super.interrupt();
+            }
+
+            @Override
+            void saveGifNag() {
+                promptShowing.countDown();
+                try {
+                    // Stands in for the modal dialog waiting on the player.
+                    playerAnswers.await(5, TimeUnit.SECONDS);
+                } catch (InterruptedException interruptedException) {
+                    promptInterrupted.set(true);
+                }
+            }
+        };
+        thread.start();
+        thread.addFrame(new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB), 100);
+        assertTrue(encodingStarted.await(2, TimeUnit.SECONDS), "Encoder should have started");
+
+        thread.stopThread();
+        assertTrue(promptShowing.await(2, TimeUnit.SECONDS), "A normal stop should offer to save the GIF");
+        playerAnswers.countDown();
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        assertFalse(promptInterrupted.get(), "The stop request must not interrupt the open save prompt");
+    }
+
+    /**
      * Regression guard: frames still queued when the game ends must be encoded, not dropped, so the
      * last turns of the game appear in the GIF.
      */

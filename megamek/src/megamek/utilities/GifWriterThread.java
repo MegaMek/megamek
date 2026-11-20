@@ -308,7 +308,9 @@ public class GifWriterThread extends Thread {
         }
         LOGGER.info("Stopping GIF writer (discard={})", forceInterrupt);
         this.forceInterrupt = forceInterrupt;
-        isLive = false;
+        // Interrupt first. If isLive went false first, the thread could leave its loop and open the save
+        // prompt before the interrupt landed, and the interrupt would then close the prompt.
         interrupt();
+        isLive = false;
     }
 }

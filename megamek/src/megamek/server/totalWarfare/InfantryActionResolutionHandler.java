@@ -203,7 +203,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
 
         reportCombatHeader(building);
         narrator.narrate(outcomeOf(result, withdrawing, defendersWithdrawing, attackersGone, defendersGone),
-              attackers, defenders, captured ? building : null);
+              attackers, defenders, building, captured);
         reportRoll(ratio, attackerStrength, defenderStrength, roll, result);
         if (withdrawing) {
             reportWithdrawal(attackerPercent, defenderPercent);

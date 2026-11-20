@@ -421,6 +421,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.regular"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.veteran"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.elite"));
+        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.heroic"));
+        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.legendary"));
         constraints.gridx = 3;
         constraints.gridy = row++;
         add(cbExperience, constraints);

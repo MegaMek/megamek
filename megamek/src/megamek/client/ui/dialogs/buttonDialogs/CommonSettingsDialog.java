@@ -270,6 +270,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final SettingsCheckBox showIPAddressesInChat = createShowIpAddressesInChatCheckBox();
     private final JCheckBox spritesOnly = new JCheckBox(Messages.getString(
         "CommonSettingsDialog.spritesOnly"));
+    private final JCheckBox showUnitFluffText = new JCheckBox(Messages.getString(
+        "CommonSettingsDialog.showUnitFluffText"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
     private final JCheckBox showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
     private final JCheckBox showMapSheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
@@ -2709,9 +2711,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         showIPAddressesInChat.addItemListener(this);
         configureCheckBox(spritesOnly, Messages.getString("CommonSettingsDialog.spritesOnly.tooltip"));
+        configureCheckBox(showUnitFluffText, Messages.getString("CommonSettingsDialog.showUnitFluffText.tooltip"));
         row = new ArrayList<>();
         row.add(createBehaviorOptionsGrid("CommonSettingsPrivacyRenderingGrid",
-              showIPAddressesInChat, spritesOnly));
+              showIPAddressesInChat, spritesOnly, showUnitFluffText));
         comps.add(row);
         return createSettingsPanel(comps);
     }
@@ -2836,6 +2839,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             reportFilterKeywordsTextArea.setText(CLIENT_PREFERENCES.getReportFilterKeywords());
             showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
             spritesOnly.setSelected(CLIENT_PREFERENCES.getSpritesOnly());
+            showUnitFluffText.setSelected(CLIENT_PREFERENCES.getShowUnitFluffText());
 
             defaultAutoEjectDisabled.setSelected(CLIENT_PREFERENCES.defaultAutoEjectDisabled());
             useAverageSkills.setSelected(CLIENT_PREFERENCES.useAverageSkills());
@@ -3340,6 +3344,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setReportFilterKeywords(reportFilterKeywordsTextArea.getText());
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
         CLIENT_PREFERENCES.setSpritesOnly(spritesOnly.isSelected());
+        CLIENT_PREFERENCES.setShowUnitFluffText(showUnitFluffText.isSelected());
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
         CLIENT_PREFERENCES.setDefaultAutoEjectDisabled(defaultAutoEjectDisabled.isSelected());
         CLIENT_PREFERENCES.setUseAverageSkills(useAverageSkills.isSelected());

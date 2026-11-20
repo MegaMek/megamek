@@ -109,7 +109,7 @@ class EngineTests(unittest.TestCase):
             self.assertIn(f"inputs.dry_run && github.token || steps.{token}.outputs.token",
                           self.steps[step])
             self.assertIn("--dry-run", self.steps[step])
-        self.assertEqual(4, self.workflow.count("actions/create-github-app-token@v3"))
+        self.assertEqual(5, self.workflow.count("actions/create-github-app-token@v3"))
         self.assertEqual(4, self.workflow.count("permission-contents: write"))
 
     def test_stamp_follows_publication_with_a_megamek_only_token(self):
@@ -124,6 +124,24 @@ class EngineTests(unittest.TestCase):
         self.assertNotIn("if: ", stamp.split("run: |")[0])
         self.assertLess(self.position("--publish"), self.position("id: stamp_app"))
         self.assertLess(self.position("Stamp the released revision"), self.position("id: bump_app"))
+
+    def test_docker_build_starts_after_publication_and_never_fails_the_release(self):
+        docker_app = self.steps["docker_app"]
+        self.assertIn("repositories: megamek-docker-image\n", docker_app)
+        self.assertIn("permission-actions: write", docker_app)
+        self.assertNotIn("permission-contents", docker_app)
+        self.assertIn("continue-on-error: true", docker_app)
+        self.assertIn("if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}", docker_app)
+        start = self.steps["Start the Docker image build for the published release"]
+        self.assertIn("continue-on-error: true", start)
+        self.assertIn("!inputs.dry_run && steps.prepare.outputs.noop == 'false' "
+                      "&& steps.docker_app.outcome == 'success'", start)
+        self.assertIn("GH_TOKEN: ${{ steps.docker_app.outputs.token }}", start)
+        self.assertIn("megamek-docker-image/actions/workflows/docker-image.yml/dispatches", start)
+        self.assertLess(self.position("--publish"), self.position("id: docker_app"))
+        self.assertLess(self.position("Start the Docker image build"), self.position("id: stamp_app"))
+        # The Docker token is used by its own step only.
+        self.assertEqual(1, self.workflow.count("steps.docker_app.outputs.token"))
 
     def test_cut_dry_run_rehearses_main(self):
         prepare = self.steps["prepare"]

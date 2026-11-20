@@ -9546,7 +9546,8 @@ public class TWGameManager extends AbstractGameManager {
                 violation = faller;
                 displacementRoll = null;
             }
-            Coords displacedTo = Compute.getValidDisplacement(game, violation.getId(), fallPosition, direction);
+            Coords displacedTo = Compute.getAccidentalFallDisplacement(game, violation.getId(), fallPosition,
+                  direction);
             if (displacedTo != null) {
                 reports.addAll(doEntityDisplacement(violation, fallPosition, displacedTo, displacementRoll));
                 // Update the violating entity's position on the
@@ -9674,7 +9675,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             // ok, we missed, let's fall into a valid other hex and not cause an
             // AFFA while doing so
-            Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+            Coords targetDest = Compute.getAccidentalFallDisplacement(game, entity.getId(), dest, direction);
             if (targetDest != null) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
                       entitySrcElevation,
@@ -31400,7 +31401,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * destroy all wheeled and tracked Tanks that got displaced into water
+     * destroy all wheeled, tracked and hover Tanks that are immobile in water. Unbroken ice holds them up, so a hex
+     * with ice is skipped; once the ice breaks the ice terrain is removed and the Tank sinks.
      */
     void resolveSinkVees() {
         Iterator<Entity> sinkableTanks = game.getSelectedEntities(entity -> {
@@ -31414,6 +31416,7 @@ public class TWGameManager extends AbstractGameManager {
             return entity.getMovementMode().isTrackedWheeledOrHover() &&
                   entity.isImmobile() &&
                   (hex.terrainLevel(Terrains.WATER) > 0) &&
+                  !hex.containsTerrain(Terrains.ICE) &&
                   !onBridge &&
                   !(entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
                   !(entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL));

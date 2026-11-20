@@ -456,7 +456,7 @@ public class TestInfantry extends TestEntity {
 
         if (mount == null) {
             int squads = switch (movementMode) {
-                case VTOL, HOVER, WHEELED, TRACKED, SUBMARINE -> 4;
+                case VTOL, SUBMARINE -> 4;
                 case INF_UMU -> alt ? 2 : 4;
                 default -> 5;
             };

@@ -40,6 +40,7 @@ import javax.swing.JMenuItem;
 
 import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.MenuScroller;
@@ -54,7 +55,8 @@ import megamek.logging.MMLogger;
  *
  * <p>Only CASPAR bots take unit orders (see {@link OrderEligibility}). Princess keeps her own waypoints, which she
  * takes by chat command. These menus send those chat commands, so a Princess bot's buttons offer what she can follow
- * instead of doing nothing: set, add and clear a unit's waypoints, clear them all, and hold position or resume.</p>
+ * instead of doing nothing: set, add, remove and clear a unit's waypoints, clear them all, hold position or resume,
+ * and retreat to a board edge.</p>
  *
  * <p>Princess answers each command in the chat, so the player sees the result even in the Commander window, which
  * has no toasts.</p>
@@ -65,6 +67,10 @@ public class PrincessWaypointMenuBuilder {
 
     /** How many units a menu shows before it scrolls. */
     private static final int UNIT_SCROLL_THRESHOLD = 20;
+
+    /** The edges of the Retreat menu, in menu order. {@link CardinalEdge#NONE} is its own item: Cancel retreat. */
+    private static final List<CardinalEdge> RETREAT_EDGES = List.of(CardinalEdge.NORTH, CardinalEdge.EAST,
+          CardinalEdge.SOUTH, CardinalEdge.WEST, CardinalEdge.NEAREST);
 
     private final AbstractClient client;
     private final BotOrdersMenuBuilder.HexPicker hexPicker;
@@ -83,8 +89,8 @@ public class PrincessWaypointMenuBuilder {
     }
 
     /**
-     * Adds one submenu per unit of the bot, each with Set waypoints, Add waypoint and Clear waypoints, then a Clear all
-     * waypoints item for the whole bot.
+     * Adds one submenu per unit of the bot, each with Set waypoints, Add waypoint, Remove last waypoint and Clear
+     * waypoints, then a Clear all waypoints item for the whole bot.
      *
      * @param botMenu   the menu to fill
      * @param botPlayer the Princess bot
@@ -99,6 +105,8 @@ public class PrincessWaypointMenuBuilder {
                   unit.getDisplayName()));
             addWaypointPickItem(unitMenu, botPlayer, unit, "setWaypoints", ChatCommands.SET_WAYPOINT);
             addWaypointPickItem(unitMenu, botPlayer, unit, "addWaypoint", ChatCommands.ADD_WAYPOINT);
+            addCommandItem(unitMenu, botPlayer, "removeLastWaypoint", ChatCommands.REMOVE_WAYPOINT,
+                  String.valueOf(unit.getId()));
             addCommandItem(unitMenu, botPlayer, "clearWaypoints", ChatCommands.CLEAR_WAYPOINT,
                   String.valueOf(unit.getId()));
             botMenu.add(unitMenu);
@@ -111,7 +119,8 @@ public class PrincessWaypointMenuBuilder {
     }
 
     /**
-     * Adds Hold position and Resume moving. Princess holds or moves as a whole bot, so these are not per unit.
+     * Adds Hold position and Resume moving, then a Retreat menu with the board edges and Cancel retreat. Princess
+     * holds, moves and retreats as a whole bot, so these are not per unit.
      *
      * @param botMenu   the menu to fill
      * @param botPlayer the Princess bot
@@ -122,6 +131,27 @@ public class PrincessWaypointMenuBuilder {
         }
         addCommandItem(botMenu, botPlayer, "holdPosition", ChatCommands.HOLD_POSITION, "true");
         addCommandItem(botMenu, botPlayer, "resume", ChatCommands.HOLD_POSITION, "false");
+        botMenu.addSeparator();
+        botMenu.add(createRetreatMenu(botPlayer));
+        addCommandItem(botMenu, botPlayer, "retreat.NONE", ChatCommands.FLEE, CardinalEdge.NONE.name());
+    }
+
+    /**
+     * Creates the Retreat menu: one item per board edge, and the nearest edge. Each sends Princess's flee command, on
+     * which her units head for that edge and leave the board.
+     *
+     * @param botPlayer the Princess bot
+     *
+     * @return the menu
+     */
+    private JMenu createRetreatMenu(Player botPlayer) {
+        JMenu retreatMenu = new JMenu(Messages.getString("BotCommandPanel.PrincessOrders.retreat"));
+        retreatMenu.setToolTipText(Messages.getString("BotCommandPanel.PrincessOrders.retreat.tooltip"));
+        for (CardinalEdge retreatEdge : RETREAT_EDGES) {
+            addCommandItem(retreatMenu, botPlayer, "retreat." + retreatEdge.name(), ChatCommands.FLEE,
+                  retreatEdge.name());
+        }
+        return retreatMenu;
     }
 
     /**

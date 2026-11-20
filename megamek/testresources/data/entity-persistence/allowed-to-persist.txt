@@ -526,7 +526,6 @@ Mounted.location                                KEEP        design
 Mounted.rearMounted                             KEEP        design
 Mounted.linked                                  KEEP        configuration
 Mounted.linkedBy                                KEEP        configuration
-Mounted.crossLinkedBy                           KEEP        configuration
 Mounted.linkedBayId                             KEEP        design
 Mounted.entity                                  KEEP        the unit this equipment is mounted on
 Mounted.quirks                                  KEEP        design

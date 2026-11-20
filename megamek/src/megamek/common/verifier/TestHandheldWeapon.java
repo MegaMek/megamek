@@ -39,7 +39,6 @@ import java.util.Set;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.HandheldWeapon;
-import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -138,8 +137,7 @@ public class TestHandheldWeapon extends TestEntity {
             var items = hhw.getEquipment().stream()
                   // Ammo and weapon enhancements (artemis, ppc capacitors, etc.) don't count towards the
                   // item limit
-                  .filter(m -> !(m.getType() instanceof AmmoType) && !(m instanceof MiscMounted && m.getType()
-                        .hasFlag(MiscType.F_WEAPON_ENHANCEMENT)))
+                  .filter(m -> !(m.getType() instanceof AmmoType) && !MiscType.isWeaponEnhancement(m.getType()))
                   .count();
             if (items > 6) {
                 buff.append("Handheld Weapon can only mount up to 6 items!\n");

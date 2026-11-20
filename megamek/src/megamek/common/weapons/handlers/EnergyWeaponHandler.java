@@ -39,6 +39,7 @@ import static java.lang.Math.floor;
 import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.CriticalSlot;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -46,6 +47,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.enums.HitDamageType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -53,6 +56,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class EnergyWeaponHandler extends WeaponHandler {
@@ -66,6 +70,37 @@ public class EnergyWeaponHandler extends WeaponHandler {
           throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitDamageType.DAMAGE_ENERGY;
+    }
+
+    @Override
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        checkInsulator(gameManager, roll.getIntValue(), weapon, subjectId, vPhaseReport);
+        return false;
+    }
+
+    /**
+     * On an unmodified attack roll of 2, an insulated laser suffers a critical hit on 2D6 8+ (TO:AUE p.134): a critical
+     * slot of the laser on a Mek, the laser itself on the units that count the insulator as part of the weapon. Every
+     * handler of a laser that can take an insulator makes this check; it does nothing for a weapon without a working
+     * insulator.
+     */
+    static void checkInsulator(TWGameManager gameManager, int attackRoll, Mounted<?> laser, int subjectId,
+          Vector<Report> vPhaseReport) {
+        Mounted<?> insulator = laser.getEnhancement(MiscType.F_LASER_INSULATOR);
+        if ((attackRoll == 2) && (insulator != null) && !insulator.isInoperable() && (Compute.d6(2) >= 8)) {
+            Report report = new Report(3172);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
+            Entity entity = laser.getEntity();
+            CriticalSlot slot = (entity instanceof Mek) ? entity.getCriticalSlots(laser.getLocation()).stream()
+                  .filter(critical -> (critical != null) && (critical.getMount() == laser) && critical.isHittable())
+                  .findFirst().orElse(null) : null;
+            if (slot == null) {
+                laser.setHit(true);
+            } else {
+                vPhaseReport.addAll(gameManager.applyCriticalHit(entity, laser.getLocation(), slot, true, 0, false));
+            }
+        }
     }
 
     /**

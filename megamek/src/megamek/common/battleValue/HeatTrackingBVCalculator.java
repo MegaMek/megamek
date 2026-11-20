@@ -186,18 +186,14 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         weaponHeat += wType.getHeatAdjustmentForBvCalculation();
 
         // RISC laser pulse module adds 2 heat
-        if ((wType.hasFlag(WeaponType.F_LASER)) && (weapon.getLinkedBy() != null)
-              && (weapon.getLinkedBy().getType() instanceof MiscType)
-              && (weapon.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+        if ((wType.hasFlag(WeaponType.F_LASER))
+              && (weapon.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE) != null)) {
             weaponHeat += 2;
         }
 
         // laser insulator reduce heat by 1, to a minimum of 1
-        if (wType.hasFlag(WeaponType.F_LASER)
-              && (weapon.getLinkedBy() != null)
-              && !weapon.getLinkedBy().isInoperable()
-              && (weapon.getLinkedBy().getType() instanceof MiscType)
-              && weapon.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+        Mounted<?> insulator = weapon.getEnhancement(MiscType.F_LASER_INSULATOR);
+        if (wType.hasFlag(WeaponType.F_LASER) && (insulator != null) && !insulator.isInoperable()) {
             weaponHeat = Math.max(1, weaponHeat - 1);
         }
 

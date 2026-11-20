@@ -1763,14 +1763,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
               && unitDisplayPanel.getClientGUI().getClient().getGame().getOptions().booleanOption(
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)) {
             if (mounted.hasChargedCapacitor() != 0) {
-                if (mounted.hasChargedCapacitor() == 1) {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
-                          mounted, weaponType) + 5));
-                }
-                if (mounted.hasChargedCapacitor() == 2) {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
-                          mounted, weaponType) + 10));
-                }
+                wDamR.setText(Integer.toString(Compute.dialDownDamage(
+                      mounted, weaponType) + 5));
             } else {
                 wDamR.setText(Integer.toString(Compute.dialDownDamage(
                       mounted, weaponType)));

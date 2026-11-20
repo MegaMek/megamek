@@ -450,9 +450,6 @@ class HeatResolver extends AbstractTWRuleHandler {
                 if ((m.hasChargedOrChargingCapacitor() == 1) && !m.isUsedThisRound()) {
                     capHeat += 5;
                 }
-                if ((m.hasChargedOrChargingCapacitor() == 2) && !m.isUsedThisRound()) {
-                    capHeat += 10;
-                }
             }
             if (capHeat > 0) {
                 report = new Report(5019);

@@ -406,6 +406,14 @@ public class MiscType extends EquipmentType {
         return hasFlag(F_BOOBY_TRAP);
     }
 
+    /**
+     * @return True for the equipment that is attached to a single weapon: Artemis and Apollo fire control systems,
+     *       PPC capacitors, laser insulators and RISC laser pulse modules
+     */
+    public static boolean isWeaponEnhancement(EquipmentType type) {
+        return (type instanceof MiscType) && type.hasFlag(F_WEAPON_ENHANCEMENT);
+    }
+
     public boolean isVibroblade() {
         return hasFlag(F_CLUB)
               && hasAnyFlag(

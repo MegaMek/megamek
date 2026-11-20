@@ -45,6 +45,8 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -68,6 +70,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
         }
 
         WeaponMounted laser = weaponAttackAction.getEntity(game).getWeapon(weaponAttackAction.getWeaponId());
+        Mounted<?> pulseModule = laser.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE);
 
         if ((roll.getIntValue() == 2) && laser.curMode().getName().startsWith("Pulse")) {
             // The RISC Laser Pulse Module explodes on a 2. Edge may reroll the malfunction check.
@@ -75,7 +78,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             if (riscStillMalfunctions(edgeReroll, 2)) {
                 vPhaseReport.addAll(gameManager.explodeEquipment(laser.getEntity(),
                       laser.getLocation(),
-                      laser.getLinkedBy()));
+                      pulseModule));
             }
         }
         return false;

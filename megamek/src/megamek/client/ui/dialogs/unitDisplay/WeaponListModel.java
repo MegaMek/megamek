@@ -154,10 +154,9 @@ class WeaponListModel extends AbstractListModel<String> {
 
         Entity entityMounted = mounted.getEntity();
         StringBuilder wn = new StringBuilder(mounted.getDesc());
-        if ((mounted.getLinkedBy() != null)
-              && (mounted.getLinkedBy().getType() instanceof MiscType)
-              && (mounted.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
-            wn.append("+").append(mounted.getLinkedBy().getShortName());
+        Mounted<?> pulseModule = mounted.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE);
+        if (pulseModule != null) {
+            wn.append("+").append(pulseModule.getShortName());
         }
         wn.append(" [");
         wn.append(entityMounted.getLocationAbbr(mounted.getLocation()));

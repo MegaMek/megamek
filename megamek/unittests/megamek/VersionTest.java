@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ResourceBundle;
 
 import megamek.codeUtilities.MathUtility;
+import megamek.release.ReleaseChannel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,28 @@ class VersionTest {
         int parsed = MathUtility.parseInt(value, -1);
         assertNotEquals(-1, parsed, "Nonrepresentable packaged version component: " + value);
         return parsed;
+    }
+
+    @Test
+    void buildChannelReadsPackagedProperties() {
+        ResourceBundle packaged = ResourceBundle.getBundle("Version");
+        ReleaseChannel expected = packaged.containsKey("channel")
+              ? ReleaseChannel.fromKey(packaged.getString("channel")) : null;
+        assertEquals(expected, Version.getBuildChannel());
+        assertEquals(expected == ReleaseChannel.CORE, Version.isCoreBuild());
+    }
+
+    @Test
+    void parseBuildChannelAcceptsStampedChannels() {
+        assertEquals(ReleaseChannel.CORE, Version.parseBuildChannel("core"));
+        assertEquals(ReleaseChannel.EXPERIMENTAL, Version.parseBuildChannel(" Experimental "));
+    }
+
+    @Test
+    void parseBuildChannelTreatsUnstampedOrUnknownAsDevelopmentBuild() {
+        assertNull(Version.parseBuildChannel(null));
+        assertNull(Version.parseBuildChannel(""));
+        assertNull(Version.parseBuildChannel("nightly"));
     }
 
     @BeforeEach

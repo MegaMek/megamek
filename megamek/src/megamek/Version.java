@@ -390,13 +390,19 @@ public final class Version implements Comparable<Version>, Serializable {
      * @return the configured channel, or {@code null} when the key is absent, blank or unknown
      */
     private static @Nullable ReleaseChannel readOptionalChannelFromBundle() {
-        final String configuredChannel = readOptionalEntryFromBundle(CHANNEL_BUNDLE_KEY);
-        if (configuredChannel == null) {
-            return null;
-        }
+        return parseBuildChannel(readOptionalEntryFromBundle(CHANNEL_BUNDLE_KEY));
+    }
 
+    /**
+     * Interprets the {@code channel} entry of {@code Version.properties}.
+     *
+     * @param configuredChannel the entry's value, or {@code null} when the build has none
+     *
+     * @return the matching channel, or {@code null} when the value is absent, blank or unknown
+     */
+    static @Nullable ReleaseChannel parseBuildChannel(@Nullable String configuredChannel) {
         final ReleaseChannel channel = ReleaseChannel.fromKey(configuredChannel);
-        if (channel == null) {
+        if ((channel == null) && (configuredChannel != null) && !configuredChannel.isBlank()) {
             LOGGER.warn("[Version] Version.properties sets channel to '{}', which is not a known release channel. "
                   + "The build is treated as a development build.", configuredChannel);
         }

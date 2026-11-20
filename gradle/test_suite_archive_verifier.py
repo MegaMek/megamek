@@ -298,6 +298,7 @@ class SuiteArchiveTests(unittest.TestCase):
                 ("suiteMekHQCommit", "mekhq"),
                 ("suiteMmDataCommit", "mm-data"))}
         flags = ["-PsuiteReleaseVersion=0.51.03",
+                 "-PsuiteReleaseChannel=experimental",
                  "-PsuiteMegaMekVersion=0.51.01",
                  "-PsuiteMegaMekLabVersion=0.51.02",
                  "-PsuiteMekHQVersion=0.51.03"]

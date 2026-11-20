@@ -1347,6 +1347,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @return The enhancement, or null when this weapon has none of the kind
      */
     public @Nullable MiscMounted getEnhancement(EquipmentFlag kind) {
+        if (linkedBy == null) {
+            return null;
+        }
         List<MiscMounted> ofKind = getEnhancements().stream().filter(misc -> misc.getType().hasFlag(kind)).toList();
         return ofKind.stream().filter(misc -> !misc.isInoperable()).findFirst()
               .orElse(ofKind.isEmpty() ? null : ofKind.getFirst());

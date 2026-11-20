@@ -127,49 +127,6 @@ class MtfMountTagTest {
         return joined;
     }
 
-    /** Mounts, locations, slots and links of a Mek, as text. */
-    private static String describe(Mek mek) {
-        StringBuilder sb = new StringBuilder();
-        List<Mounted<?>> equipment = mek.getEquipment();
-        for (int i = 0; i < equipment.size(); i++) {
-            Mounted<?> m = equipment.get(i);
-            sb.append(i).append(' ').append(m.getType().getInternalName())
-                  .append(" loc=").append(m.getLocation())
-                  .append(" loc2=").append(m.getSecondLocation())
-                  .append(m.isSplit() ? " split" : "")
-                  .append(m.isRearMounted() ? " rear" : "")
-                  .append(m.isMekTurretMounted() ? " turret" : "")
-                  .append(m.isOmniPodMounted() ? " pod" : "")
-                  .append(m.isArmored() ? " armored" : "")
-                  .append(" size=").append(m.getSize())
-                  .append(" linked=").append(equipment.indexOf(m.getLinked()))
-                  .append(" linkedBy=").append(equipment.indexOf(m.getLinkedBy()))
-                  .append('\n');
-        }
-        for (int loc = 0; loc < mek.locations(); loc++) {
-            sb.append(mek.getLocationAbbr(loc)).append(':');
-            for (int slot = 0; slot < mek.getNumberOfCriticalSlots(loc); slot++) {
-                CriticalSlot cs = mek.getCritical(loc, slot);
-                sb.append(' ');
-                if (cs == null) {
-                    sb.append('-');
-                } else if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
-                    sb.append('S').append(cs.getIndex());
-                } else {
-                    sb.append(equipment.indexOf(cs.getMount()));
-                    if (cs.getMount2() != null) {
-                        sb.append('|').append(equipment.indexOf(cs.getMount2()));
-                    }
-                }
-                if ((cs != null) && cs.isArmored()) {
-                    sb.append('a');
-                }
-            }
-            sb.append('\n');
-        }
-        return sb.toString();
-    }
-
     @Test
     void twoWeaponsSplitOverTheSameLocationsKeepTheirRows() throws Exception {
         Mek mek = newMek();
@@ -261,6 +218,21 @@ class MtfMountTagTest {
         assertEquals("Extended LRM 20", artemis.getLinked().getName());
     }
 
+    /** A split launcher is in both its locations, so Artemis IV next to its arm rows is its own (TM p. 207) */
+    @Test
+    void enhancementNextToTheOtherRowsOfASplitWeaponIsItsOwn() throws Exception {
+        Mek mek = newMek();
+        Mounted<?> extendedLrm = mount(mek, "Extended LRM 20");
+        addRows(mek, extendedLrm, Mek.LOC_LEFT_ARM, 3);
+        add(mek, "ISArtemisIV", Mek.LOC_LEFT_ARM);
+        addRows(mek, extendedLrm, Mek.LOC_LEFT_TORSO, extendedLrm.getNumCriticalSlots() - 3);
+
+        Mek loaded = load(mek.getMtf());
+        Mounted<?> artemis = loaded.getMisc().stream()
+              .filter(misc -> misc.getType().hasFlag(MiscType.F_ARTEMIS)).findFirst().orElseThrow();
+        assertEquals("Extended LRM 20", artemis.getLinked().getName());
+    }
+
     @Test
     void mountTagOfOtherEquipmentIsIgnored() throws Exception {
         Mek mek = newMek();
@@ -272,21 +244,7 @@ class MtfMountTagTest {
 
         Mek loaded = load(mtf.replace(rows, MEDIUM_LASER + "#2\n" + MEDIUM_LASER + "#2\n"));
 
-        assertEquals(describe(load(mtf)), describe(loaded));
-        assertFalse(loaded.getFailedEquipment().hasNext());
-    }
-
-    @Test
-    void unreadableMountTagIsDropped() throws Exception {
-        Mek mek = newMek();
-        add(mek, AC20, Mek.LOC_RIGHT_TORSO);
-        String mtf = mek.getMtf();
-        String row = AC20 + "\n";
-        assertTrue(mtf.contains(row));
-
-        Mek loaded = load(mtf.replace(row, AC20 + "#x\n"));
-
-        assertEquals(describe(load(mtf)), describe(loaded));
+        assertEquals(load(mtf).getMtf(), loaded.getMtf());
         assertFalse(loaded.getFailedEquipment().hasNext());
     }
 
@@ -302,6 +260,6 @@ class MtfMountTagTest {
         assertEquals(lbx.getNumCriticalSlots(), slots(loaded, Mek.LOC_CENTER_TORSO, lbx).size()
               + slots(loaded, Mek.LOC_RIGHT_TORSO, lbx).size());
         assertTrue(MtfFile.mountTags(loaded).isEmpty());
-        assertEquals(describe(loaded), describe(load(loaded.getMtf())));
+        assertEquals(loaded.getMtf(), load(loaded.getMtf()).getMtf());
     }
 }

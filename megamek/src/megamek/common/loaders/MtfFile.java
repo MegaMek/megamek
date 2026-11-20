@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jakarta.annotation.Nullable;
@@ -224,7 +225,8 @@ public class MtfFile implements IMekLoader {
     private record MountTag(EquipmentType type, int id) {}
 
     /** A critical row without its mount tag, and the tag (0 when it has none). */
-    private record TaggedRow(String row, int tag) {}
+    /** The mount tag that ends a critical row: {@code #} and a positive number without leading zeros */
+    private static final Pattern MOUNT_TAG = Pattern.compile("#([1-9]\\d{0,8})$");
 
     /**
      * Modern unit files store resizable equipment like Cargo:SIZE:4.0 Old equipment stores it like Cargo (4 tons) This
@@ -841,31 +843,6 @@ public class MtfFile implements IMekLoader {
         }
     }
 
-    /**
-     * Takes the mount tag off a critical row. A tag is {@code #} and a positive number without leading zeros; a
-     * {@code #} with nothing or a space after it is not a tag, and anything else after the last {@code #} is an
-     * unreadable tag, which is dropped so that the row loads as if it had none.
-     */
-    private TaggedRow splitMountTag(String row) {
-        int hash = row.lastIndexOf('#');
-        if ((hash < 0) || (hash == row.length() - 1) || Character.isWhitespace(row.charAt(hash + 1))) {
-            return new TaggedRow(row, 0);
-        }
-        String tag = row.substring(hash + 1);
-        try {
-            int mountId = Integer.parseInt(tag);
-            // written without sign or leading zeros
-            if ((mountId > 0) && tag.equals(Integer.toString(mountId))) {
-                return new TaggedRow(row.substring(0, hash), mountId);
-            }
-        } catch (NumberFormatException ignored) {
-            // unreadable, as below
-        }
-        logger.warn("The critical row {} of {} {} has an unreadable mount tag; it loads without it",
-              row, chassis, model);
-        return new TaggedRow(row.substring(0, hash), 0);
-    }
-
     private void setTechLevel(Mek mek) throws EntityLoadingException {
         String techBase = this.techBase.substring(9).trim();
         if (techBase.equalsIgnoreCase("Inner Sphere")) {
@@ -980,9 +957,10 @@ public class MtfFile implements IMekLoader {
         for (int i = 0; i < mek.getNumberOfCriticalSlots(loc); i++) {
 
             // parse out and add the critical
-            TaggedRow taggedRow = splitMountTag(critData[loc][i]);
-            String critName = taggedRow.row();
-            int mountId = taggedRow.tag();
+            Matcher tagMatcher = MOUNT_TAG.matcher(critData[loc][i]);
+            boolean tagged = tagMatcher.find();
+            int mountId = tagged ? Integer.parseInt(tagMatcher.group(1)) : 0;
+            String critName = tagged ? critData[loc][i].substring(0, tagMatcher.start()) : critData[loc][i];
 
             critName = critName.trim();
             String critNameUpper = critName.toUpperCase();

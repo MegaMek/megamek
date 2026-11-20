@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -576,11 +577,13 @@ class BLKFileTest {
     void anEnhancementOfARemovedWeaponIsStillWritten() throws Exception {
         Tank tank = createMinimalTank();
         Mounted<?> laser = tank.addEquipment(EquipmentType.get("Medium Laser"), Tank.LOC_FRONT);
-        tank.addEquipment(EquipmentType.get("ISLaserInsulator"), Tank.LOC_FRONT).setLinked(laser);
+        Mounted<?> insulator = tank.addEquipment(EquipmentType.get("ISLaserInsulator"), Tank.LOC_FRONT);
+        insulator.setLinked(laser);
         ConstructionUtil.removeMounted(tank, laser);
 
         String blk = String.join("\n", BLKFile.getBlock(tank).getAllDataAsString());
 
+        assertNull(insulator.getLinked());
         assertTrue(blk.contains("ISLaserInsulator"), blk);
     }
 

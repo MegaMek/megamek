@@ -94,11 +94,12 @@ public class MekFileParser {
 
     /**
      * @return True when the weapon enhancement may be attached to the equipment: a weapon of the right kind in the
-     *       same location
+     *       same location, either one for a weapon split over two (TM pp. 57, 207)
      */
     public static boolean isEnhancementTarget(Mounted<?> enhancement, Mounted<?> mount) {
+        int location = enhancement.getLocation();
         if (!MiscType.isWeaponEnhancement(enhancement.getType()) || !(mount.getType() instanceof WeaponType weapon)
-              || (mount.getLocation() != enhancement.getLocation())) {
+              || ((mount.getLocation() != location) && !(mount.isSplit() && (mount.getSecondLocation() == location)))) {
             return false;
         }
         EquipmentType type = enhancement.getType();

@@ -1509,8 +1509,7 @@ public class BLKFile {
     /** @return True for a weapon enhancement that {@link #addEnhancements} writes after its weapon */
     private static boolean isWrittenWithItsWeapon(Entity entity, Mounted<?> mount) {
         Mounted<?> weapon = mount.getLinked();
-        // An enhancement still linked to a weapon removed from the unit is written on its own
-        if ((weapon == null) || !weapon.getEnhancements().contains(mount) || (entity.getEquipmentNum(weapon) < 0)) {
+        if ((weapon == null) || !weapon.getEnhancements().contains(mount)) {
             return false;
         }
         // A unit with weapon bays writes only the weapons in its bays

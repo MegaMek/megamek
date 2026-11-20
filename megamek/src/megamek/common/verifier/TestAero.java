@@ -954,12 +954,7 @@ public class TestAero extends TestEntity {
             }
         } else if (eq instanceof MiscType) {
             // Weapon enhancements go in the same location as the weapon
-            if ((eq.hasFlag(MiscType.F_ARTEMIS)
-                  || eq.hasFlag(MiscType.F_ARTEMIS_V)
-                  || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
-                  || eq.hasFlag(MiscType.F_APOLLO)
-                  || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
-                  || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))
+            if (MiscType.isWeaponEnhancement(eq)
                   && (location == Aero.LOC_WINGS
                   || (entity.isFixedWingSupport() && location == FixedWingSupport.LOC_BODY)
                   || (!entity.isFixedWingSupport() && location == Aero.LOC_FUSELAGE))) {
@@ -1385,16 +1380,7 @@ public class TestAero extends TestEntity {
      */
     public static boolean eqRequiresLocation(EquipmentType eq, boolean fighter) {
         if (!fighter) {
-            return (eq instanceof WeaponType)
-                  || (eq instanceof AmmoType)
-                  || ((eq instanceof MiscType)
-                  && (eq.hasFlag(MiscType.F_ARTEMIS)
-                  || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
-                  || eq.hasFlag(MiscType.F_ARTEMIS_V)
-                  || eq.hasFlag(MiscType.F_APOLLO)
-                  || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
-                  || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
-                  || eq.hasFlag(MiscType.F_LASER_INSULATOR)));
+            return (eq instanceof WeaponType) || (eq instanceof AmmoType) || MiscType.isWeaponEnhancement(eq);
         } else if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_CASE)) {
                 return eq.isClan();

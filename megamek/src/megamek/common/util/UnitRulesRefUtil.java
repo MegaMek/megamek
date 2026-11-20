@@ -162,9 +162,7 @@ public final class UnitRulesRefUtil {
 
         addEquipmentRulesRefs(componentRulesRefs, mounted.getType());
         addMountedRulesRefs(componentRulesRefs, mounted.getLinked(), visitedMounts);
-        addMountedRulesRefs(componentRulesRefs, mounted.getLinkedBy(), visitedMounts);
-        mounted.getEnhancements().forEach(enhancement ->
-              addMountedRulesRefs(componentRulesRefs, enhancement, visitedMounts));
+        mounted.getLinkedEquipment().forEach(linked -> addMountedRulesRefs(componentRulesRefs, linked, visitedMounts));
 
         if (mounted instanceof WeaponMounted bay) {
             bay.getBayWeapons().forEach(member -> addMountedRulesRefs(componentRulesRefs, member, visitedMounts));

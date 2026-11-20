@@ -1274,9 +1274,8 @@ class HeatResolver extends AbstractTWRuleHandler {
     }
 
     /**
-     * Uses the first coolant pod whose mode calls for it this turn (TO:AUE p. 116): it adds 1 point of cooling to each
-     * active heat sink, but none while a radical heat sink is engaged (Core pp. 103, 208; a unit built under IO:AE p. 83
-     * can't mount both); a pod set to dump empties anyway.
+     * Uses the first coolant pod whose mode calls for it this turn: it adds 1 point of cooling to each active heat sink
+     * (TO:AUE p. 116).
      *
      * @param activeSinks the active heat sinks the pod cools
      * @param toSink      the heat dissipated without the pod
@@ -1284,7 +1283,6 @@ class HeatResolver extends AbstractTWRuleHandler {
      * @return the heat the pod dissipates
      */
     private int useCoolantPod(Entity entity, int activeSinks, int toSink, List<Report> reports) {
-        int possibleSinkage = entity.hasActivatedRadicalHS() ? 0 : activeSinks;
         int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
         for (Mounted<?> mounted : entity.getEquipment()) {
             if (!(mounted.getType() instanceof AmmoType ammoType)
@@ -1295,10 +1293,9 @@ class HeatResolver extends AbstractTWRuleHandler {
             int messageId = 0;
             if (mode.equals("dump")) {
                 messageId = 5260;
-            } else if (mode.equals("safe") && (possibleSinkage > 0) && ((entity.heat - toSink) > safeHeat)) {
+            } else if (mode.equals("safe") && (activeSinks > 0) && ((entity.heat - toSink) > safeHeat)) {
                 messageId = 5265;
-            } else if (mode.equals("efficient") && (possibleSinkage > 0)
-                  && ((entity.heat - toSink) >= possibleSinkage)) {
+            } else if (mode.equals("efficient") && (activeSinks > 0) && ((entity.heat - toSink) >= activeSinks)) {
                 messageId = 5270;
             }
             if (messageId != 0) {
@@ -1306,11 +1303,10 @@ class HeatResolver extends AbstractTWRuleHandler {
                 report.subject = entity.getId();
                 reports.add(report);
                 mounted.setShotsLeft(0);
-                if (possibleSinkage > 0) {
-                    entity.getHeatBreakdown().addDissipation(possibleSinkage,
-                          Messages.getString("HeatBreakdown.coolantPod"));
+                if (activeSinks > 0) {
+                    entity.getHeatBreakdown().addDissipation(activeSinks, Messages.getString("HeatBreakdown.coolantPod"));
                 }
-                return possibleSinkage;
+                return activeSinks;
             }
         }
         return 0;

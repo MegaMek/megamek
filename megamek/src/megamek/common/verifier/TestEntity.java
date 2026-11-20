@@ -1667,9 +1667,13 @@ public abstract class TestEntity implements TestEntityOption {
                 hasCoolantPod = true;
             }
         }
+        boolean hasRadicalHeatSink = false;
         for (Mounted<?> m : getEntity().getMisc()) {
             if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
                 emergencyCoolantCount++;
+            }
+            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                hasRadicalHeatSink = true;
             }
             if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 fieldKitchenCount++;
@@ -1807,6 +1811,11 @@ public abstract class TestEntity implements TestEntityOption {
 
         if (hasCoolantPod && (emergencyCoolantCount > 0)) {
             buff.append("Unit has coolant pod and RISC emergency coolant system\n");
+            illegal = true;
+        }
+        // IO:AE p. 83
+        if (hasCoolantPod && hasRadicalHeatSink) {
+            buff.append("Unit has coolant pod and radical heat sink system\n");
             illegal = true;
         }
         if (emergencyCoolantCount > 1) {

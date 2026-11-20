@@ -95,6 +95,7 @@ class PinnedBuildTests(unittest.TestCase):
             self.assertNotIn("--offline", command)
             self.assertIn("--no-daemon", command)
             self.assertIn("-PsuiteReleaseVersion=0.51.02.1", command)
+            self.assertIn("-PsuiteReleaseChannel=experimental", command)
             for key, repo in (("suiteMegaMekCommit", "megamek"),
                               ("suiteMegaMekLabCommit", "megameklab"),
                               ("suiteMekHQCommit", "mekhq"), ("suiteMmDataCommit", "mm-data")):
@@ -120,6 +121,7 @@ class PinnedBuildTests(unittest.TestCase):
         self.assertEqual(ancestry, {"refs/remotes/origin/releases/0.51.02"})
         checkouts = [c[-1] for c, _ in self.calls if "checkout" in c]
         self.assertEqual(checkouts, [branch[r] for r in pinned.SOURCES])
+        self.assertTrue(all("-PsuiteReleaseChannel=core" in c for c in self.gradle_calls()))
 
     def test_noop_and_unsafe_inventories_fail_before_clone(self):
         self.github.add_suite("experimental", "0.51.02.4", support.SHA)

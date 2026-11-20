@@ -134,6 +134,9 @@ ext.verifySuiteArchiveShared = { String product, File archive, File copyJar = nu
     if (product == 'MekHQ') {
         args += ['--dependency-version', "megameklabVersion=${labVersion}"]
     }
+    if (rootProject.hasProperty('suiteReleaseChannel')) {
+        args += ['--channel', rootProject.property('suiteReleaseChannel').toString()]
+    }
     if (rootProject.hasProperty('suiteArchiveFile') && product != 'MegaMek') {
         def companion = rootProject.findProperty('suiteMegaMekArchiveFile')
         if (companion == null) {

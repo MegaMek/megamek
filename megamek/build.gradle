@@ -166,15 +166,29 @@ gradle.taskGraph.whenReady { graph ->
 }
 if (suiteReleaseVersion != null) {
     def components = suiteProductVersion.toString().split(/\./)
+    def suiteReleaseChannel = rootProject.findProperty('suiteReleaseChannel')?.toString()
     tasks.named('processResources') {
         inputs.property('suiteMegaMekVersion', suiteProductVersion.toString())
+        inputs.property('suiteReleaseChannel', suiteReleaseChannel ?: '')
+        doFirst {
+            // The channel cannot be derived from the version: Core and Experimental share one build counter per line.
+            if (!(suiteReleaseChannel in ['core', 'experimental'])) {
+                throw new GradleException("Supply -PsuiteReleaseChannel=core or experimental for a suite release; got ${suiteReleaseChannel}")
+            }
+        }
         filesMatching('Version.properties') {
             filter { line ->
                 if (line ==~ /(?:major|minor|patch)=.*/) {
                     def key = line.substring(0, line.indexOf('='))
                     def value = "${key}=${components[['major': 0, 'minor': 1, 'patch': 2][key]]}"
                     // A Weekly carries its fourth component (0.51.00.2); other suite releases have none.
-                    return key == 'patch' && components.length > 3 ? "${value}\nrevision=${components[3]}" : value
+                    if (key == 'patch' && components.length > 3) {
+                        value = "${value}\nrevision=${components[3]}"
+                    }
+                    return key == 'patch' ? "${value}\nchannel=${suiteReleaseChannel}" : value
+                }
+                if (line ==~ /\s*channel=.*/) {
+                    return '# channel replaced by suiteReleaseChannel'
                 }
                 return line ==~ /\s*revision=.*/ ? '# revision replaced by suiteReleaseVersion' : line
             }
@@ -202,6 +216,10 @@ tasks.register('verifySuiteVersion') {
         def expected = project.version.toString().split('-', 2)[0]
         if (actual != expected) {
             throw new GradleException("Packaged version ${actual} does not match project version ${expected}")
+        }
+        def expectedChannel = rootProject.findProperty('suiteReleaseChannel')?.toString()
+        if (suiteReleaseVersion != null && packaged.getProperty('channel') != expectedChannel) {
+            throw new GradleException("Packaged channel ${packaged.getProperty('channel')} does not match ${expectedChannel}")
         }
     }
 }

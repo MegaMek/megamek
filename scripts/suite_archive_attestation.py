@@ -84,6 +84,7 @@ def attest_archives(record, paths, runner=subprocess.run, worktrees=WORKTREES, *
         own_meta = meta[product]
         flags = {
             "suiteReleaseVersion": record["version"],
+            "suiteReleaseChannel": record["channel"],
             "suiteMegaMekVersion": mm["version"],
             "suiteMegaMekLabVersion": lab["version"],
             "suiteMekHQVersion": hq["version"],

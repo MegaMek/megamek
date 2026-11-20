@@ -298,6 +298,7 @@ class SuiteArchiveTests(unittest.TestCase):
                 ("suiteMekHQCommit", "mekhq"),
                 ("suiteMmDataCommit", "mm-data"))}
         flags = ["-PsuiteReleaseVersion=0.51.03",
+                 "-PsuiteReleaseChannel=experimental",
                  "-PsuiteMegaMekVersion=0.51.01",
                  "-PsuiteMegaMekLabVersion=0.51.02",
                  "-PsuiteMekHQVersion=0.51.03"]
@@ -370,10 +371,42 @@ class SuiteArchiveTests(unittest.TestCase):
         path = self.base / "weekly.jar"
         for content, expected in ((b"major=0\nminor=51\npatch=00\nrevision=2\n", "0.51.00.2"),
                                   (b"major=0\nminor=51\npatch=01\nrevision=\n", "0.51.01"),
-                                  (b"major=0\nminor=51\npatch=01\n# revision=1\n", "0.51.01")):
+                                  (b"major=0\nminor=51\npatch=01\n# revision=1\n", "0.51.01"),
+                                  (b"major=0\nminor=51\npatch=01\nrevision=3\nchannel=core\n",
+                                   "0.51.01.3")):
             with self.subTest(expected=expected):
                 path.write_bytes(zipped({"Version.properties": content}))
                 self.assertEqual(expected, verifier.jar_version(path, "MegaMek"))
+
+    def test_megamek_jar_channel(self):
+        path = self.base / "channel.jar"
+        for content, expected in ((b"major=0\nminor=51\npatch=01\nchannel=core\n", "core"),
+                                  (b"major=0\nminor=51\npatch=01\nchannel=experimental\n",
+                                   "experimental"),
+                                  (b"major=0\nminor=51\npatch=01\n# channel=core\n", None)):
+            with self.subTest(expected=expected):
+                path.write_bytes(zipped({"Version.properties": content}))
+                self.assertEqual(expected, verifier.jar_channel(path))
+        for content in (b"major=0\nminor=51\npatch=01\nchannel=stable\n",
+                        b"major=0\nminor=51\npatch=01\nchannel=core\nchannel=core\n"):
+            with self.subTest(content=content):
+                path.write_bytes(zipped({"Version.properties": content}))
+                with self.assertRaises(verifier.VerificationError):
+                    verifier.jar_channel(path)
+
+    def test_release_channel_of_every_packaged_megamek_jar(self):
+        self.jar["MegaMek"] = zipped({"Version.properties":
+                                      b"major=0\nminor=51\npatch=01\nchannel=core\n"})
+        versions = {"megamekVersion": VERSIONS["MegaMek"],
+                    "megameklabVersion": VERSIONS["MegaMekLab"]}
+        for product in verifier.PRODUCTS:
+            self.write(product)
+            with self.subTest(product=product):
+                verifier.verify(self.archives[product], product, VERSIONS[product],
+                                self.pins, versions, self.data, channel="core")
+                with self.assertRaisesRegex(verifier.VerificationError, "release channel"):
+                    verifier.verify(self.archives[product], product, VERSIONS[product],
+                                    self.pins, versions, self.data, channel="experimental")
 
     def test_packaged_runtime_and_built_source_jar(self):
         for product in verifier.PRODUCTS:

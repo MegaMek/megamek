@@ -76,9 +76,10 @@ def stage(sources, commits, parent, runner, *, branch="main"):
     return {product: parent / repo for product, repo in REPOS.items()}
 
 
-def flags(version, versions, commits, archive=None, companions=None):
+def flags(version, versions, commits, archive=None, companions=None, *, channel):
     result = {
         "suiteReleaseVersion": version,
+        "suiteReleaseChannel": channel,
         "suiteMegaMekVersion": versions["MegaMek"],
         "suiteMegaMekLabVersion": versions["MegaMekLab"],
         "suiteMekHQVersion": versions["MekHQ"],
@@ -115,6 +116,7 @@ def build(inventory, sources, output, *, runner=subprocess.run):
         raise UnsafeInventory("output directory must not exist")
     commits = proposal["frozenCommits"]
     version = proposal["versionCandidate"]
+    channel = proposal["channel"]
     versions = {product: version for product in REPOS}
     paths = {}
     with tempfile.TemporaryDirectory(prefix="suite-pinned-") as temporary:
@@ -125,7 +127,7 @@ def build(inventory, sources, output, *, runner=subprocess.run):
                 clean(root / source, commits[source], runner)
             # Downstream producers consume the exact bytes built earlier in this run.
             companions = dict(paths)
-            common = flags(version, versions, commits, companions=companions)
+            common = flags(version, versions, commits, companions=companions, channel=channel)
             gradle(product, TASKS[product][0], worktrees, common, runner)
             gradle(product, TASKS[product][1], worktrees, common, runner)
             archive = root / repo / PROJECT_DIRS[product] / "build" / "distributions" / (
@@ -133,7 +135,8 @@ def build(inventory, sources, output, *, runner=subprocess.run):
             if not archive.is_file() or archive.is_symlink() or archive.stat().st_size == 0:
                 raise UnsafeInventory(f"missing produced archive: {product}")
             gradle(product, TASKS[product][2], worktrees,
-                   flags(version, versions, commits, archive.resolve(), companions), runner)
+                   flags(version, versions, commits, archive.resolve(), companions, channel=channel),
+                   runner)
             metadata, jars = archive_identity(archive, product, version)
             own = {"MegaMek": "megamekCommit", "MegaMekLab": "megameklabCommit",
                    "MekHQ": "mekhqCommit"}[product]

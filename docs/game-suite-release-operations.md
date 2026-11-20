@@ -48,6 +48,13 @@ out until that line's first release. This commit changes only the revision, so
 it alone does not count as a change: the next run stays a no-op. Do not edit
 the revision by hand; the stamp only raises it, never lowers it.
 
+Because both channels share the build counter, a version number alone cannot
+say whether a build is Core or Experimental. Release builds therefore stamp
+`channel=core` or `channel=experimental` into the packaged copy of
+`Version.properties` (Gradle property `suiteReleaseChannel`), and the archive
+verifier checks it against the channel being published. The game reads it
+through `Version.getBuildChannel()`; development builds have no channel.
+
 ## The four procedures
 
 ### First Core release and the next Experimental

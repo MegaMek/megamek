@@ -99,6 +99,7 @@ class AttestationTests(unittest.TestCase):
             flags = dict(argument[2:].split("=", 1) for argument in command if argument.startswith("-P"))
             self.assertEqual(flags["suiteArchiveFile"], str(self.paths[product].resolve()))
             self.assertEqual(flags["suiteReleaseVersion"], self.record["version"])
+            self.assertEqual(flags["suiteReleaseChannel"], self.record["channel"])
             self.assertEqual(flags["suiteMegaMekVersion"], self.props["MegaMek"]["version"])
             self.assertEqual(flags["suiteMegaMekLabVersion"], self.props["MegaMekLab"]["version"])
             versions = [release.numbers(flags[k]) for k in (

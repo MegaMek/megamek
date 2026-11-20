@@ -42,6 +42,7 @@ import jakarta.annotation.Nullable;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.logging.MMLogger;
+import megamek.release.ReleaseChannel;
 import megamek.utilities.xml.MMXMLUtility;
 
 /**
@@ -78,6 +79,12 @@ public final class Version implements Comparable<Version>, Serializable {
 
     /** Key of the optional revision entry in {@code Version.properties}. Absent for ordinary releases. */
     private static final String REVISION_BUNDLE_KEY = "revision";
+
+    /**
+     * Key of the release channel entry in {@code Version.properties}. Only suite release builds carry it; development
+     * builds leave it out.
+     */
+    private static final String CHANNEL_BUNDLE_KEY = "channel";
 
     /** Key of the optional build note entry in {@code Version.properties}. Absent for ordinary releases. */
     private static final String NOTES_BUNDLE_KEY = "notes";
@@ -137,6 +144,12 @@ public final class Version implements Comparable<Version>, Serializable {
     private static final String SPLASH_TAG = readOptionalEntryFromBundle(SPLASH_TAG_BUNDLE_KEY);
     private static final String SPLASH_TAG_COLOR_NAME = readOptionalEntryFromBundle(SPLASH_TAG_COLOR_BUNDLE_KEY);
     private static final double SPLASH_TAG_ROTATION = readOptionalSplashTagRotationFromBundle();
+
+    /**
+     * The release channel this build was published on, or {@code null} for a development build. Like the build note,
+     * this describes the running build rather than any one {@code Version} object.
+     */
+    private static final ReleaseChannel BUILD_CHANNEL = readOptionalChannelFromBundle();
 
     private int major;
     private int minor;
@@ -372,6 +385,31 @@ public final class Version implements Comparable<Version>, Serializable {
     }
 
     /**
+     * Reads the {@code channel} entry from {@code Version.properties}.
+     *
+     * @return the configured channel, or {@code null} when the key is absent, blank or unknown
+     */
+    private static @Nullable ReleaseChannel readOptionalChannelFromBundle() {
+        return parseBuildChannel(readOptionalEntryFromBundle(CHANNEL_BUNDLE_KEY));
+    }
+
+    /**
+     * Interprets the {@code channel} entry of {@code Version.properties}.
+     *
+     * @param configuredChannel the entry's value, or {@code null} when the build has none
+     *
+     * @return the matching channel, or {@code null} when the value is absent, blank or unknown
+     */
+    static @Nullable ReleaseChannel parseBuildChannel(@Nullable String configuredChannel) {
+        final ReleaseChannel channel = ReleaseChannel.fromKey(configuredChannel);
+        if ((channel == null) && (configuredChannel != null) && !configuredChannel.isBlank()) {
+            LOGGER.warn("[Version] Version.properties sets channel to '{}', which is not a known release channel. "
+                  + "The build is treated as a development build.", configuredChannel);
+        }
+        return channel;
+    }
+
+    /**
      * Reads an optional entry from {@code Version.properties}, treating an absent key and a blank value alike.
      *
      * @param bundleKey the key to read
@@ -494,6 +532,24 @@ public final class Version implements Comparable<Version>, Serializable {
      */
     public static double getSplashTagRotation() {
         return SPLASH_TAG_ROTATION;
+    }
+
+    /**
+     * Returns the suite release channel this build was published on. The version number alone cannot tell, because
+     * Core and Experimental builds share one build counter per line.
+     *
+     * @return {@link ReleaseChannel#CORE} or {@link ReleaseChannel#EXPERIMENTAL} for a suite release, or
+     *       {@code null} for a development build
+     */
+    public static @Nullable ReleaseChannel getBuildChannel() {
+        return BUILD_CHANNEL;
+    }
+
+    /**
+     * @return {@code true} if this build is a Core suite release, otherwise {@code false}
+     */
+    public static boolean isCoreBuild() {
+        return BUILD_CHANNEL == ReleaseChannel.CORE;
     }
 
     // region Getters

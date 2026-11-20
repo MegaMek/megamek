@@ -612,8 +612,8 @@ public class TestMek extends TestEntity {
                 continue;
             }
             int locationTonnage = mek.getFrankenMekStructureTonnage(location);
-            // A unit has one critical slot scale, so superheavy and standard donors can't be mixed. This is a limit of
-            // the model; CO p. 213 only restricts the legs.
+            // A superheavy Mek may use only superheavy structure, made for 105 to 200 tons, so superheavy and standard
+            // donors can't be mixed (IO:AE p. 155)
             if ((centerTorsoTonnage <= 100) && (locationTonnage > 100)) {
                 buff.append("The FrankenMek structure tonnage of ")
                       .append(mek.getLocationName(location))

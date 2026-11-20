@@ -224,7 +224,6 @@ public class MtfFile implements IMekLoader {
      */
     private record MountTag(EquipmentType type, int id) {}
 
-    /** A critical row without its mount tag, and the tag (0 when it has none). */
     /** The mount tag that ends a critical row: {@code #} and a positive number without leading zeros */
     private static final Pattern MOUNT_TAG = Pattern.compile("#([1-9]\\d{0,8})$");
 

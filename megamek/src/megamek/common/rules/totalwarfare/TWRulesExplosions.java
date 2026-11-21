@@ -41,7 +41,6 @@ import megamek.common.Report;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;

@@ -33,6 +33,11 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.board.Coords;
@@ -40,11 +45,6 @@ import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Sensor;
 import megamek.common.units.Entity;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
 
 public abstract class RulesEquipment {
     /**

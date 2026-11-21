@@ -33,11 +33,16 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.MiscType;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesEquipment;
@@ -45,12 +50,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.SupportTank;
 import megamek.common.units.SupportVTOL;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
 
 public class TWRulesEquipment extends RulesEquipment {
 
@@ -180,8 +179,8 @@ public class TWRulesEquipment extends RulesEquipment {
     public ArrayList<Coords> getECMCoordsAffected(Coords a, Coords b) {
         return Coords.intervening(a, b);
     }
-    
-    
+
+
     /**
      * Is there an init bonus for the command console or tripod tech officer?
      * Command console and tech officer return bonus to init.

@@ -53,7 +53,7 @@ public class CoreRulesC3 extends RulesC3 {
         }
         return RangeType.RANGE_OUT;
     }
-    
+
     /**
      * {@inheritDoc}
      * C3 and ECM can interact to lower values. Core p.199
@@ -92,14 +92,14 @@ public class CoreRulesC3 extends RulesC3 {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      * C3 spotters require LOS to target. Core p.198
      */
     @Override
     public boolean c3SpotterLOSRequired() { return true; }
-    
+
     /**
      * {@inheritDoc}
      * C3 can work with ECM, it is just reduced. Core p.199

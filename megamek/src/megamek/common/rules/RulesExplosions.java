@@ -34,6 +34,8 @@ package megamek.common.rules;
  */
 
 
+import java.util.Vector;
+
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.equipment.AmmoType;
@@ -41,8 +43,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-
-import java.util.Vector;
 
 public abstract class RulesExplosions {
     /**
@@ -127,7 +127,7 @@ public abstract class RulesExplosions {
     public abstract boolean arePodsExplosive(Mounted<?> mounted);
 
     /**
-     * Should explosions be reduced? 
+     * Should explosions be reduced?
      * @return false by default
      */
     public boolean explosionsAreReduced() {

@@ -37,7 +37,7 @@ import megamek.common.rules.RulesTerrain;
 import megamek.common.units.Entity;
 
 public class TWRulesTerrain extends RulesTerrain {
-    
+
     /**
      * Do we change the road elevation cost? No
      *

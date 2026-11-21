@@ -43,7 +43,6 @@ import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesEquipment;

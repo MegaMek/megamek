@@ -92,6 +92,8 @@ public class BayWeaponHandler extends WeaponHandler {
         for (WeaponMounted m : weapon.getBayWeapons()) {
             av += getAv(m, range);
         }
+        // A bay's Damage Value is its weapons' total rounded normally: three NL55s make 17 (SO p.88)
+        av = Math.round(av);
         if (bDirect) {
             av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
         }

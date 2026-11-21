@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,11 +35,11 @@ package megamek.client.ui.panels.phaseDisplay.lobby.sorters;
 import java.util.Comparator;
 
 import megamek.client.Client;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 
 /** A Comparator for the top level entries of the Mek Tree (forces and force-less entities). */
 public record MekTreeTopLevelSorter(Client client) implements Comparator<Object> {
@@ -98,6 +98,8 @@ public record MekTreeTopLevelSorter(Client client) implements Comparator<Object>
             return -1;
         } else if (a instanceof Entity && b instanceof Force) {
             return 1;
+        } else if ((a instanceof Force forceA) && (b instanceof Force forceB)) {
+            return Forces.TOP_LEVEL_ORDER.compare(forceA, forceB);
         }
 
         return idA - idB;

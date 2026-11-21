@@ -37,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
@@ -53,6 +55,10 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Aero;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.Crew;
@@ -61,9 +67,12 @@ import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 /**
@@ -88,6 +97,7 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
         );
     }
 
+    private final RulesManager originalRules = Game.rulesManager;
     private TWGameManager gameManager;
     private Game game;
     private Player attackerOwner;
@@ -124,6 +134,11 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
             target.initializeArmor(STARTING_ARMOR, location);
         }
         placeAirborne(target, new Coords(4, 4));
+    }
+
+    @AfterEach
+    void restoreRules() {
+        Game.rulesManager = originalRules;
     }
 
     private void placeAirborne(Entity entity, Coords position) {
@@ -256,5 +271,35 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
         fire(fighter, ppc);
 
         assertEquals(PPC_ATTACK_VALUE + PPC_CAPACITOR_BONUS, armorLost(), "the capacitor adds 5 to the Attack Value");
+    }
+
+    /**
+     * A to-hit roll of 2 burns out a capacitor-charged PPC before it fires, and a bay's capacitors count as charged
+     * (TO:AUE p.149): the bay's own roll checks them, with or without Aero Sanity
+     */
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void aBayRollOfTwoBurnsOutItsCapacitorPpcs(boolean aeroSanity) throws Exception {
+        Game.rulesManager = new TWRulesManager();
+        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY).setValue(aeroSanity);
+        Dropship dropShip = addDropShip();
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PPC_BAY),
+              Aero.LOC_NOSE);
+        WeaponMounted ppc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
+        dropShip.addEquipment(EquipmentType.get("ISPPCCapacitor"), Aero.LOC_NOSE).setLinked(ppc);
+        bay.addWeaponToBay(ppc);
+        WeaponAttackAction attack = new WeaponAttackAction(dropShip.getId(), target.getId(),
+              dropShip.getEquipmentNum(bay));
+        WeaponHandler handler = (WeaponHandler) ((Weapon) bay.getType())
+              .getCorrectHandler(new ToHitData(3, "test"), attack, game, gameManager);
+        Roll two = mock(Roll.class);
+        when(two.getIntValue()).thenReturn(2);
+        when(two.getReport()).thenReturn("2");
+        handler.roll = two;
+
+        handler.handle(GamePhase.FIRING, new Vector<>());
+
+        assertTrue(ppc.isHit(), "the PPC burns out");
+        assertEquals(0, armorLost(), "the bay misses");
     }
 }

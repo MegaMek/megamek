@@ -230,7 +230,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        // A bay weapon under Aero Sanity has no to-hit roll of its own: the bay rolled
+        // A bay's PPC is checked on the bay's to-hit roll by the bay (BayWeaponHandler#doChecks); this roll is not one
         if (chargedCapacitor && (parentBayHandler == null)) {
             Report r = Game.rulesManager.getRulesWeapons().checkPPCCapacitor(roll.getIntValue(), attackingEntity,
                   weapon);

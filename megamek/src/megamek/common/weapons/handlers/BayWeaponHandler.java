@@ -109,6 +109,24 @@ public class BayWeaponHandler extends WeaponHandler {
         return bracketBayDamage(av, getBracketingMultiplier());
     }
 
+    /**
+     * A to-hit roll of 2 burns out a capacitor-charged PPC, and a capacitor in a bay counts as always charged (TO:AUE
+     * p.149): the bay's own roll checks each of its PPCs, whether the bay hits or misses.
+     */
+    @Override
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        for (WeaponMounted m : weapon.getBayWeapons()) {
+            if (m.firesCapacitorCharge()) {
+                Report report = Game.rulesManager.getRulesWeapons().checkPPCCapacitor(roll.getIntValue(),
+                      attackingEntity, m);
+                if (report != null) {
+                    vPhaseReport.add(report);
+                }
+            }
+        }
+        return false;
+    }
+
     /** A bay's Damage Value is its weapons' total rounded normally: three NL55s make 17 (SO p.88) */
     public static long roundBayDamage(double summedValue) {
         return Math.round(summedValue);

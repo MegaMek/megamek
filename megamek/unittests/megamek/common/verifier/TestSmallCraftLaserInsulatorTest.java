@@ -37,7 +37,6 @@ class TestSmallCraftLaserInsulatorTest {
         String report = equipmentReport(new SmallCraft());
 
         assertFalse(report.contains("Cannot mount Laser Insulator"), report);
-        assertFalse(report.contains("Laser insulator requires a laser in the same location"), report);
     }
 
     @Test

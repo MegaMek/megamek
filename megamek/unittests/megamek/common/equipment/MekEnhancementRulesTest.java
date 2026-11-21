@@ -107,6 +107,29 @@ class MekEnhancementRulesTest {
         assertFalse(report.toString().contains(message));
     }
 
+    /** IO:AE p. 156: superheavy Meks "may not mount jump jets, improved jump jets, jump boosters, or partial wings" */
+    @Test
+    void verifierRejectsMechanicalJumpBoostersOnSuperheavyMeks() throws LocationFullException {
+        String message = "Superheavy may not mount "
+              + EquipmentType.get(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER).getName();
+
+        assertTrue(mechanicalJumpBoosterReport(105).contains(message));
+        assertFalse(mechanicalJumpBoosterReport(100).contains(message));
+    }
+
+    private static String mechanicalJumpBoosterReport(double weight) throws LocationFullException {
+        Mek mek = new BipedMek();
+        mek.setWeight(weight);
+        mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+        mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
+        mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER), Mek.LOC_NONE);
+        EntityVerifier verifier = EntityVerifier.getInstance(
+              new File("testresources/data/mekfiles/UnitVerifierOptions.xml"));
+        StringBuffer report = new StringBuffer();
+        new TestMek(mek, verifier.mekOption, null).hasIllegalEquipmentCombinations(report);
+        return report.toString();
+    }
+
     @Test
     void coolantPodCountsEveryActiveHeatSinkType() throws LocationFullException {
         // TO:AUE p. 116: +1 per active heat sink, regardless of type

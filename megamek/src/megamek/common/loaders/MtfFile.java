@@ -1099,10 +1099,14 @@ public class MtfFile implements IMekLoader {
                         if (etype.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER)) {
                             if (size == 0) {
                                 // legacy MTF loading: MJB gave their MP as the jump MP
+                                if (jumpMP == null) {
+                                    throw new EntityLoadingException(
+                                          "A mechanical jump booster without a size needs the jump MP line");
+                                }
                                 try {
                                     size = Integer.parseInt(jumpMP.substring(8).trim());
-                                } catch (NumberFormatException ex) {
-                                    throw new EntityLoadingException("Invalid jump MP: " + jumpMP, ex);
+                                } catch (NumberFormatException exception) {
+                                    throw new EntityLoadingException("Invalid jump MP: " + jumpMP, exception);
                                 }
                             }
 

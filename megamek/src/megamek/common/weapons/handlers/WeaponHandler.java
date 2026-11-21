@@ -1505,9 +1505,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         av = applyGlancingBlowModifier(av, false);
 
-        av = (int) Math.floor(getBracketingMultiplier() * av);
-
-        return av;
+        return BayWeaponHandler.bracketBayDamage(av, getBracketingMultiplier());
     }
 
     /**
@@ -1521,10 +1519,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * * adjustment factor on attack value for fighter squadrons
+     * The share of its damage this attack deals in a Bracketing fire mode (SO p.87). Under Aero Sanity a bay's weapon
+     * resolves on its own but fires in its bay's mode.
      */
     protected double getBracketingMultiplier() {
-        return bracketingMultiplier(weapon);
+        return bracketingMultiplier((parentBayHandler != null) ? parentBayHandler.weapon : weapon);
     }
 
     /** @return the share of its damage a bay deals in its Bracketing fire mode, or 1 when not bracketing (SO p.87) */

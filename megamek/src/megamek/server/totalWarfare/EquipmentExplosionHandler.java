@@ -109,12 +109,15 @@ public class EquipmentExplosionHandler extends AbstractTWRuleHandler {
         return Outcome.EXPLODED;
     }
 
-    /** Marks every critical slot of the location that holds the equipment as hit. */
+    /**
+     * Marks every critical slot of the location that holds the equipment as hit, including a superheavy slot that holds
+     * it as its second item.
+     */
     static void markCriticalSlotsHit(Entity entity, Mounted<?> mounted, int location) {
         for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot criticalSlot = entity.getCritical(location, slot);
             if ((criticalSlot != null) && (criticalSlot.getType() == CriticalSlot.TYPE_EQUIPMENT)
-                  && mounted.equals(criticalSlot.getMount())) {
+                  && (mounted.equals(criticalSlot.getMount()) || mounted.equals(criticalSlot.getMount2()))) {
                 criticalSlot.setHit(true);
             }
         }

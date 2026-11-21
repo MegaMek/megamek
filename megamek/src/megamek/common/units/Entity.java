@@ -4119,7 +4119,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Sets this entity's original jump movement points
+     * Sets this entity's original jump movement points. A Mek ignores the stored value: its Jump MP comes from its
+     * installed jets (see {@link Mek#getOriginalJumpMP(boolean)}).
      */
     public void setOriginalJumpMP(int jumpMP) {
         this.jumpMP = jumpMP;

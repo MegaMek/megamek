@@ -34,18 +34,25 @@ package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Player;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.rules.RulesManager;
@@ -53,6 +60,8 @@ import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Mek;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.handlers.PPCHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +69,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * A charged PPC capacitor explodes with its PPC when either takes a critical hit, unless the PPC fired this turn and
- * released the charge, and the explosion destroys both (TO:AUE p.149, Core p.188).
+ * released the charge, and the explosion destroys both (TO:AUE p.149, Core p.188). A to-hit roll of 2 burns the
+ * charged system out instead (TO:AUE p.149).
  */
 class PPCCapacitorExplosionTest {
     private final RulesManager originalRules = Game.rulesManager;
@@ -141,5 +151,64 @@ class PPCCapacitorExplosionTest {
                 assertTrue(criticalSlot.isHit(), "slot " + slot);
             }
         }
+    }
+
+    /**
+     * A PPC fired in this Attack Phase "is considered to have discharged before the critical hit, and the critical hit
+     * simply destroys the affected slot with no explosive effects" (TO:AUE p.149)
+     */
+    @Test
+    void aCriticalHitAfterThePpcFiresDoesNotExplodeTheCapacitor() {
+        Game game = manager.getGame();
+        game.setBoard(Board.createEmptyBoard(1, 3));
+        Mek target = new BipedMek();
+        target.setOwner(mek.getOwner());
+        target.setPosition(new Coords(0, 2));
+        game.addEntity(target);
+        WeaponAttackAction attack = new WeaponAttackAction(mek.getId(), target.getId(), mek.getEquipmentNum(ppc));
+
+        assertInstanceOf(PPCHandler.class,
+              ((Weapon) ppc.getType()).getCorrectHandler(new ToHitData(), attack, game, manager));
+        assertTrue(ppc.isUsedThisRound(), "Firing marks the PPC used this round");
+        assertTrue(capacitor.curMode().equals(Mounted.MODE_CAPACITOR_CHARGE),
+              "The capacitor's switch off takes effect next turn");
+        int internalBefore = mek.getInternal(Mek.LOC_RIGHT_TORSO);
+
+        manager.applyCriticalHit(mek, Mek.LOC_RIGHT_TORSO, slotsOf(mek, capacitor).get(0), true, 0, false);
+
+        assertTrue(capacitor.isHit());
+        assertFalse(ppc.isHit(), "Nothing exploded to destroy the PPC");
+        assertEquals(internalBefore, mek.getInternal(Mek.LOC_RIGHT_TORSO));
+    }
+
+    /**
+     * A to-hit roll of 2 "burns out the system before it can fire, damaging the capacitor slot as well as the first
+     * critical slot of the corresponding weapon" (TO:AUE p.149)
+     */
+    @Test
+    void aBurnoutDamagesTheCapacitorSlotAndThePpcsFirstSlot() {
+        Game.rulesManager.getRulesWeapons().checkPPCCapacitor(2, mek, (WeaponMounted) ppc);
+
+        assertTrue(ppc.isHit());
+        assertTrue(capacitor.isHit());
+        assertEquals(List.of(true, false, false, false), damagedSlots(mek, ppc));
+        assertEquals(List.of(true), damagedSlots(mek, capacitor));
+    }
+
+    /** @return The critical slots in its location that hold the equipment */
+    private static List<CriticalSlot> slotsOf(Mek unit, Mounted<?> mounted) {
+        List<CriticalSlot> slots = new ArrayList<>();
+        for (int slot = 0; slot < unit.getNumberOfCriticalSlots(mounted.getLocation()); slot++) {
+            CriticalSlot criticalSlot = unit.getCritical(mounted.getLocation(), slot);
+            if ((criticalSlot != null) && (criticalSlot.getMount() == mounted)) {
+                slots.add(criticalSlot);
+            }
+        }
+        return slots;
+    }
+
+    /** @return Whether each slot of the equipment, in slot order, is damaged */
+    private static List<Boolean> damagedSlots(Mek unit, Mounted<?> mounted) {
+        return slotsOf(unit, mounted).stream().map(CriticalSlot::isDamaged).toList();
     }
 }

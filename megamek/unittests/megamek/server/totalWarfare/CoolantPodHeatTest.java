@@ -11,21 +11,52 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Vector;
 
+import megamek.common.MMRandom;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.units.Aero;
 import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Mek;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 class CoolantPodHeatTest {
+    /** Dice that roll the same face on every d6. */
+    private static final class FixedDice extends MMRandom {
+        private final int face;
+
+        private FixedDice(int face) {
+            this.face = face;
+        }
+
+        @Override
+        public int randomInt(int maxValue) {
+            return face - 1;
+        }
+
+        @Override
+        public float randomFloat() {
+            return 0.5f;
+        }
+    }
+
+    @AfterEach
+    void restoreDice() {
+        Compute.setRNG(MMRandom.R_DEFAULT);
+    }
+
     @Test
     void fighterCoolantPodAddsOnePointPerActiveSink() throws Exception {
         TWGameManager manager = new TWGameManager();
@@ -77,6 +108,84 @@ class CoolantPodHeatTest {
 
         assertEquals(0, pod.getBaseShotsLeft());
         assertEquals(7, fighter.heat);
+    }
+
+    /**
+     * A coolant pod "increases the cooling capacity of all of the Mek's active heat sinks by 1 point each
+     * (regardless of heat sink type)" (Core p. 208, TO:AUE p. 116): 1 per double heat sink, not 2
+     */
+    @Test
+    void aMekCoolantPodAddsOnePointPerActiveHeatSinkOfAnyType() throws Exception {
+        TWGameManager manager = new TWGameManager();
+        Mek mek = deployMek(manager);
+        Mounted<?> pod = mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.COOLANT_POD), Mek.LOC_RIGHT_TORSO);
+        pod.setModeImmediately("dump");
+
+        new HeatResolver(manager).resolveHeat();
+
+        assertEquals(0, pod.getBaseShotsLeft());
+        assertEquals(12 - 6 - 3, mek.heat); // three doubles sink six, plus three from the pod
+        assertTrue(reported(manager, 5260));
+    }
+
+    /** Core p. 208: with the radical heat sink system engaged, the pod "is triggered but has no effect" */
+    @Test
+    void aMekCoolantPodHasNoEffectWithAnEngagedRadicalHeatSink() throws Exception {
+        TWGameManager manager = new TWGameManager();
+        Mek mek = deployMek(manager);
+        mek.addEquipment(EquipmentType.get("Radical Heat Sink System"), Mek.LOC_RIGHT_TORSO).setModeImmediately("On");
+        Mounted<?> pod = mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.COOLANT_POD), Mek.LOC_RIGHT_TORSO);
+        pod.setModeImmediately("dump");
+        // The activation roll is a 12, so the radical system adds its 3
+        Compute.setRNG(new FixedDice(6));
+
+        new HeatResolver(manager).resolveHeat();
+
+        assertEquals(0, pod.getBaseShotsLeft(), "The pod is spent");
+        assertEquals(12 - 6 - 3, mek.heat, "The sinks and the radical system cool; the pod adds nothing");
+        assertTrue(reported(manager, 5261));
+    }
+
+    /** Core p. 208: "On a failed activation, the Mek's cooling capacity is not increased this turn" */
+    @Test
+    void aFailedRadicalHeatSinkActivationCoolsNothingExtra() throws Exception {
+        TWGameManager manager = new TWGameManager();
+        Mek mek = deployMek(manager);
+        Mounted<?> radicalHeatSink = mek.addEquipment(EquipmentType.get("Radical Heat Sink System"),
+              Mek.LOC_RIGHT_TORSO);
+        radicalHeatSink.setModeImmediately("On");
+        // The activation roll is a 2, below the first use's target of 3
+        Compute.setRNG(new FixedDice(1));
+
+        new HeatResolver(manager).resolveHeat();
+
+        assertEquals(12 - 6, mek.heat, "Only the heat sinks cool");
+        assertTrue(radicalHeatSink.isDestroyed(), "The failed system takes a critical hit");
+    }
+
+    private static boolean reported(TWGameManager manager, int messageId) {
+        return manager.getMainPhaseReport().stream().anyMatch(report -> report.messageId == messageId);
+    }
+
+    /** @return A Mek at 12 heat with three active double heat sinks, which dissipate 6 */
+    private static Mek deployMek(TWGameManager manager) throws Exception {
+        EquipmentType.initializeTypes();
+        Game game = manager.getGame();
+        game.setBoard(Board.createEmptyBoard(1, 1));
+        Player owner = new Player(0, "Player");
+        game.addPlayer(0, owner);
+        Mek mek = new BipedMek();
+        mek.setOwner(owner);
+        mek.setPosition(new Coords(0, 0));
+        mek.setWeight(50);
+        mek.setEngine(new Engine(200, Engine.NORMAL_ENGINE, 0));
+        mek.autoSetInternal();
+        game.addEntity(mek);
+        for (int sink = 0; sink < 3; sink++) {
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.IS_DOUBLE_HS), Mek.LOC_LEFT_TORSO);
+        }
+        mek.heat = 12;
+        return mek;
     }
 
     private static Aero deployFighter(TWGameManager manager) {

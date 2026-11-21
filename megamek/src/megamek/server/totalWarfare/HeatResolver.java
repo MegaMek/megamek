@@ -1276,7 +1276,8 @@ class HeatResolver extends AbstractTWRuleHandler {
     /**
      * Uses the first coolant pod whose mode calls for it this turn (TO:AUE p. 116): it adds 1 point of cooling to each
      * active heat sink, but none while a radical heat sink is engaged (Core pp. 103, 208; a unit built under IO:AE p. 83
-     * can't mount both); a pod set to dump empties anyway.
+     * can't mount both). A pod set to dump is then "triggered but has no effect" (Core p. 208), and the report says so;
+     * safe and efficient trigger only when the pod would cool.
      *
      * @param activeSinks the active heat sinks the pod cools
      * @param toSink      the heat dissipated without the pod
@@ -1294,7 +1295,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             EquipmentMode mode = mounted.curMode();
             int messageId = 0;
             if (mode.equals("dump")) {
-                messageId = 5260;
+                messageId = entity.hasActivatedRadicalHS() ? 5261 : 5260;
             } else if (mode.equals("safe") && (possibleSinkage > 0) && ((entity.heat - toSink) > safeHeat)) {
                 messageId = 5265;
             } else if (mode.equals("efficient") && (possibleSinkage > 0)

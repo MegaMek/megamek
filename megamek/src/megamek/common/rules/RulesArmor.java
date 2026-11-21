@@ -110,7 +110,7 @@ public abstract class RulesArmor {
         return heatAfterDissipatingArmor(target, heat, Entity.LOC_NONE, false);
     }
 
-    /** Outside heat from extreme (above 50°C) temperatures: heat-dissipating armor reduces it like other outside heat */
+    /** Outside heat from extreme (above 50 degrees C) temperatures: heat-dissipating armor reduces it like other outside heat */
     public int reduceExtremeHeat(Entity target, int heat) {
         return reduceNonLocationHeat(target, heat);
     }

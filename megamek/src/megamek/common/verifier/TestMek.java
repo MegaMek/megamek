@@ -1023,7 +1023,7 @@ public class TestMek extends TestEntity {
                 for (int loc = 0; loc < mek.locations(); loc++) {
                     if (mek.locationIsLeg(loc) && countCriticalSlotsFromEquipInLocation(mek, m, loc) != slots) {
                         illegal = true;
-                        buff.append(misc.getName()).append(" require ").append(slots)
+                        buff.append(misc.getName()).append(" requires ").append(slots)
                               .append(slots == 1 ? " critical slot" : " critical slots").append(" in each leg.\n");
                         break;
                     }

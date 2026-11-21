@@ -129,7 +129,7 @@ public class MekFileParser {
      * @return True when the weapon has an enhancement of the kind of the given one. A weapon can have any number of
      *       laser insulators and one other enhancement.
      */
-    private static boolean hasEnhancementOfKind(Mounted<?> weapon, Mounted<?> enhancement) {
+    public static boolean hasEnhancementOfKind(Mounted<?> weapon, Mounted<?> enhancement) {
         boolean insulator = enhancement.getType().hasFlag(MiscType.F_LASER_INSULATOR);
         return weapon.getEnhancements().stream()
               .anyMatch(other -> other.getType().hasFlag(MiscType.F_LASER_INSULATOR) == insulator);

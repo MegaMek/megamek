@@ -227,6 +227,23 @@ class MtfFileTest {
     }
 
     @Test
+    void aLegacyMechanicalJumpBoosterWithoutAJumpLineIsALoadingError() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(50.0);
+        mek.setEngine(new Engine(200, Engine.NORMAL_ENGINE, 0));
+        for (int location : new int[] { Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG }) {
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER), location).setSize(4);
+        }
+        String mtf = mek.getMtf().replaceAll(":SIZE:[0-9.]+", "").replaceAll("(?m)^jump mp:\\d+\n", "");
+        assertFalse(mtf.contains("jump mp:"), mtf);
+        MtfFile loader = toMtfFile(mtf);
+
+        Exception exception = Objects.requireNonNull(assertThrowsExactly(Exception.class, loader::getEntity));
+
+        assertEquals(EntityLoadingException.class, exception.getCause().getClass());
+    }
+
+    @Test
     void missingUnitFileUUIDGeneratesVersion7UUID() throws Exception {
         Mek mek = new BipedMek();
         String originalUUID = mek.getUnitFileUUID();

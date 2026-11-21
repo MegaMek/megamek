@@ -2020,8 +2020,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     /** Only torso jets can fire in depth-one water, and no jets can fire deeper (TW p. 53). */
     private DoubleStream getJumpJetThrust(int waterDepth) {
         return getMisc().stream()
-              .filter(m -> m.isOperable() && m.getType().hasFlag(MiscType.F_JUMP_JET))
-              .filter(m -> waterDepth <= 0 || (waterDepth == 1 && locationIsTorso(m.getLocation())))
+              .filter(jet -> jet.isOperable() && jet.getType().hasFlag(MiscType.F_JUMP_JET))
+              .filter(jet -> waterDepth <= 0 || (waterDepth == 1 && locationIsTorso(jet.getLocation())))
               .mapToDouble(this::getJumpJetMovement);
     }
 
@@ -2045,17 +2045,17 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      *       per jet, fractions of a lighter donor jet dropped (CO p. 213)
      */
     public int getInstalledJumpJetMP() {
-        return (int) getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+        return (int) getMisc().stream().filter(misc -> misc.getType().hasFlag(MiscType.F_JUMP_JET))
               .mapToDouble(this::getJumpJetMovement).sum();
     }
 
     /** @return The jump jets the Mek mounts, working or not */
     public int getJumpJetCount() {
-        return (int) getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET)).count();
+        return (int) getMisc().stream().filter(misc -> misc.getType().hasFlag(MiscType.F_JUMP_JET)).count();
     }
 
     /** @return The Jumping MP one jet gives: one, or a fraction of one for a FrankenMek's lighter donor jet */
-    private double getJumpJetMovement(MiscMounted jumpJet) {
+    public double getJumpJetMovement(MiscMounted jumpJet) {
         return isFrankenMek() ? getFrankenMekJumpJetMovement(jumpJet) : 1;
     }
 

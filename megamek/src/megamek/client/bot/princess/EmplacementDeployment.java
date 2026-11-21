@@ -220,11 +220,13 @@ public final class EmplacementDeployment {
         }
         int standoff = EmplacementFirepower.standoff(weapons, isIndirectFireInUse);
         LOGGER.info("[Emplacement] {}: defending {} out to {} hexes; {} hexes on the enemy's routes in from {}, "
-                    + "{} of them the front line; belongs {} hexes behind it; indirect fire {}",
+                    + "{} of them the front line; belongs {} hexes behind it and guards neighbours within {}; "
+                    + "indirect fire {}",
               emplacement.getShortName(), approach.defended().toFriendlyString(), approach.radius(),
               approach.routes().size(),
               (enemyCentre == null) ? "an unknown direction" : enemyCentre.toFriendlyString(),
-              approach.front().size(), standoff, isIndirectFireInUse ? "counted" : "not counted");
+              approach.front().size(), standoff, EmplacementFirepower.guardRange(weapons),
+              isIndirectFireInUse ? "counted" : "not counted");
 
         List<Coords> mostPromisingFirst = mostPromisingFirst(approach.withinTheDefence(legalCoords), board,
               emplacement, approach, standoff);
@@ -292,11 +294,11 @@ public final class EmplacementDeployment {
             }
         }
         LOGGER.info("[Emplacement] {}: chose {} (level {}, score {}, {}, depth {} percent) from {} spaced of {} "
-                    + "candidate hexes (crowding {}, {} other emplacements, guards neighbours within {} hexes)",
+                    + "candidate hexes (crowding {}, {} other emplacements)",
               emplacement.getShortName(), best, bestLevel, bestScore,
               isIndirectFire ? "artillery: least seen" : "most firepower over ground under interlocking fire",
               (best == null) ? 0 : depthPercent.applyAsInt(best), spaced.size(), candidates.size(), bestSpacing,
-              otherEmplacements.size(), guardRange);
+              otherEmplacements.size());
         return best;
     }
 

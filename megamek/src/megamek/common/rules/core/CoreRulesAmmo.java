@@ -32,8 +32,6 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import java.util.EnumSet;
-
 import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
 import megamek.common.rules.RulesAmmo;
@@ -42,33 +40,32 @@ import megamek.server.totalWarfare.TWDamageManager;
 public class CoreRulesAmmo extends RulesAmmo {
 
     /**
-     * {@inheritDoc} Core p.191 prints AC/2, LAC/2, PAC/2: -3; AC/5, LAC/5, PAC/4: -2; AC/10, AC/20, PAC/8: -1, and
-     * improved autocannons use the value of their caliber. Weapons and calibers Core does not print keep the Total
-     * Warfare modifier.
+     * {@inheritDoc} Different modifiers. Core Rules p.191
      */
     @Override
     public int armorPiercingMod(AmmoType inType) {
-        boolean corePrintedWeapon = (inType.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
-              || (inType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
-              || (inType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
-              || (inType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC);
-        if (!corePrintedWeapon) {
-            return super.armorPiercingMod(inType);
+        switch (inType.getRackSize()) {
+            case 2:
+                return -3;
+            case 4:
+            case 5:
+                return -2;
+            case 6:
+            case 8:
+            case 10:
+            case 15:
+            case 20:
+                return -1;
         }
-        return switch (inType.getRackSize()) {
-            case 2 -> -3;
-            case 4, 5 -> -2;
-            case 8, 10, 20 -> -1;
-            default -> super.armorPiercingMod(inType);
-        };
+        return 0;
     }
 
     /**
-     * {@inheritDoc} Core armor-piercing ammunition has no attack modifier, improved autocannons included (Core p.191).
+     * {@inheritDoc} There is no modifier in Core. p.190
      */
     @Override
     public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
-        // Do nothing: there is no attack modifier
+        // Do nothing. there is no attack modifier
     }
 
     /**
@@ -139,37 +136,21 @@ public class CoreRulesAmmo extends RulesAmmo {
 
     /**
      * {@inheritDoc}
-     * The printed Core Rulebook prices no special munitions: ammo slots can be switched to any munition the weapon can
-     * use (Core p.190), and "no other alternate ammunition types in the Core Rulebook, including Semi-Guided LRMs,
-     * currently have an additional BV surcharge" beyond the TAG surcharge for Homing Arrow IV (Core errata v0.2 p.1).
-     * This applies to the munition and launcher pairs Core prints: Inner Sphere caseless (AC, LAC, RAC; p.192) and AX
-     * (SRM, MML; p.192), Thunder (LRM, MML, NLRM, Thunderbolt; pp.186, 193) and Thunder IV (Arrow IV; p.191). Other
-     * munitions keep their Total Warfare BV.
+     * Core has no special ammo BVs (Core errata v0.2 p.1)
      *
      * @param munition AmmoType of the item being considered
-     * @return the munition's BV
+     * @return Call the super for any ammos not in core
      */
     @Override
     public double getAmmoBVAdjusted(final AmmoType munition) {
-        if ((munition != null) && (munition.getBaseAmmo() != null) && isPricedLikeStandardInCore(munition)) {
-            return munition.getBaseAmmo().getBaseBV();
+        if (munition == null) {
+            return 0;
         }
-        return super.getAmmoBVAdjusted(munition);
-    }
+        // If there is no base munition, no need to check this
+        if (munition.getBaseAmmo() == null) {
+            return munition.getBaseBV();
+        }
 
-    private static boolean isPricedLikeStandardInCore(AmmoType munition) {
-        EnumSet<AmmoType.Munitions> munitions = munition.getMunitionType();
-        // Core prints caseless (p.192) and AX (p.192) ammunition for the Inner Sphere only
-        boolean innerSphere = !munition.isClan();
-        return switch (munition.getAmmoType()) {
-            case AC, LAC, AC_ROTARY -> innerSphere && munitions.contains(AmmoType.Munitions.M_CASELESS);
-            case SRM -> innerSphere && munitions.contains(AmmoType.Munitions.M_AX_HEAD);
-            // An MML uses the SRM and LRM munitions (Core p.186)
-            case MML -> (innerSphere && munitions.contains(AmmoType.Munitions.M_AX_HEAD))
-                  || munitions.contains(AmmoType.Munitions.M_THUNDER);
-            case LRM, NLRM, TBOLT_10, TBOLT_15, TBOLT_20 -> munitions.contains(AmmoType.Munitions.M_THUNDER);
-            case ARROW_IV -> munitions.contains(AmmoType.Munitions.M_FASCAM);
-            default -> false;
-        };
+        return super.getAmmoBVAdjusted(munition);
     }
 }

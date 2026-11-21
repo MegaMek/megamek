@@ -57,6 +57,14 @@ public class CoreRulesGame extends RulesGame {
 
     private static final MMLogger logger = MMLogger.create(CoreRulesGame.class);
 
+    /**
+     * {@inheritDoc} Ammo dumping is not in Core
+     */
+    @Override
+    public boolean ammoDumping() {
+        return false;
+    }
+
     /** TAG surcharge per launcher with Homing ammo (Core errata v0.2 p.1). */
     public static final int HOMING_TAG_BV = 50;
 

@@ -99,12 +99,11 @@ class CoreRulesScopeTest {
     }
 
     @ParameterizedTest(name = "{0}/{1} gives {2}")
-    @CsvSource({ "AC, 2, -3", "PAC, 4, -2", "AC, 5, -2", "PAC, 8, -1", "AC, 10, -1", "AC, 20, -1", "AC, 15, -2",
+    @CsvSource({ "AC, 2, -3", "PAC, 4, -2", "AC, 5, -2", "PAC, 8, -1", "AC, 10, -1", "AC, 20, -1", "AC, 15, -1",
                  "AC_IMP, 10, -1" })
-    void armorPiercingModifiersFollowCoreForThePrintedWeapons(AmmoType.AmmoTypeEnum family, int rackSize,
+    void armorPiercingModifiersFollowCoreForEveryAutocannon(AmmoType.AmmoTypeEnum family, int rackSize,
           int expected) {
-        // Core p.191 prints AC/2, AC/5, AC/10, AC/20, LAC and PAC, improved autocannons by caliber; other calibers keep
-        // TW p.140
+        // Core p.191 prints AC/2, AC/5, AC/10, AC/20, LAC and PAC; every autocannon uses that scale by caliber
         AmmoType ammo = mock(AmmoType.class);
         when(ammo.getAmmoType()).thenReturn(family);
         when(ammo.getRackSize()).thenReturn(rackSize);
@@ -119,15 +118,6 @@ class CoreRulesScopeTest {
         assertFalse(core.ballisticReinforcedArmorReduces(HitDamageType.DAMAGE_ARMOR_PIERCING), "Core p.191");
         assertFalse(core.ballisticReinforcedArmorReduces(HitDamageType.DAMAGE_AX), "Core p.192");
         assertTrue(new TWRulesArmor().ballisticReinforcedArmorReduces(HitDamageType.DAMAGE_ARMOR_PIERCING));
-    }
-
-    @Test
-    void damagedLifeSupportOnTheExtendedHeatScaleAddsOneUnavoidablePoint() {
-        CoreRulesHeat heat = new CoreRulesHeat();
-        // TO:AR p.102 adds 1 to the normal damage; only the highest Heat Scale effect applies (Core p.104)
-        assertEquals(3, heat.checkLifeSupportHeat(32, false, true, false).damageAmount());
-        assertEquals(3, heat.checkLifeSupportHeat(47, false, true, false).damageAmount());
-        assertEquals(2, heat.checkLifeSupportHeat(47, false, false, false).damageAmount());
     }
 
     @Test

@@ -33,12 +33,60 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
 import megamek.common.rules.RulesAmmo;
 import megamek.server.totalWarfare.TWDamageManager;
 
 public class TWRulesAmmo extends RulesAmmo {
+
+    /**
+     * Return the modifier for armor piercing based on size.
+     *
+     * @param inType the ammo type to check
+     * @return the armor piercing modifier
+     */
+    @Override
+    public int armorPiercingMod(AmmoType inType) {
+        switch (inType.getRackSize()) {
+            case 2:
+                return -4;
+            case 4:
+            case 5:
+            case 6:
+                return -3;
+            case 8:
+            case 10:
+            case 15:
+                return -2;
+            case 20:
+                return -1;
+        }
+        return 0;
+    }
+
+    /**
+     * Armor Piercing attack modifiers.
+     *
+     * @param ammoType the type of ammunition
+     * @param toHit    the to-hit data to modify
+     * @param AP       true if armor piercing is in effect
+     */
+    @Override
+    public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType,
+                                       ToHitData toHit,
+                                       boolean AP) {
+        switch (ammoType) {
+            case AmmoType.AmmoTypeEnum.AC:
+            case AmmoType.AmmoTypeEnum.LAC:
+            case AmmoType.AmmoTypeEnum.AC_IMP:
+            case AmmoType.AmmoTypeEnum.PAC:
+                if (AP) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
+                }
+        }
+    }
 
     /**
      * Do nothing. Not in TW.
@@ -114,5 +162,65 @@ public class TWRulesAmmo extends RulesAmmo {
     public int getSemiGuidedNMissiles(boolean taggedTarget,
                                       boolean indirect) {
         return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     * This sets values which only exist in TW. It calls the super to check for common ones
+     *
+     * @param munition AmmoType of the item being considered
+     * @return the BV for the munition.
+     */
+    @Override
+    public double getAmmoBVAdjusted(final AmmoType munition) {
+        if (munition == null) {
+            return 0;
+        }
+        // If there is no base munition, no need to check this
+        if (munition.getBaseAmmo() == null) {
+            return munition.getBaseBV();
+        }
+
+        AmmoType.AmmoTypeEnum ammoTypeEnum = munition.getAmmoType();
+        AmmoType baseAmmoType = munition.getBaseAmmo();
+
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.AC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LAC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.PAC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.AC_ROTARY)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_CASELESS))) {
+            return baseAmmoType.getBaseBV() * 2.0;
+        }
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_AX_HEAD))) {
+            return baseAmmoType.getBaseBV() * 2;
+        }
+
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER))) {
+            // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
+            return baseAmmoType.getRackSize() * munition.getShots() / 5.0 * 4;
+        }
+
+        if (munition.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
+            // TO:AR, p.152 and TO:AUE, pp.197,198
+            int rackSize = baseAmmoType.getRackSize();
+            if (ammoTypeEnum == AmmoType.AmmoTypeEnum.ARROW_IV) {
+                rackSize = munition.isClan() ? 30 : 20;
+            }
+            return rackSize * munition.getShots() / 5.0 * 4;
+        }
+
+        return super.getAmmoBVAdjusted(munition);
     }
 }

@@ -928,11 +928,11 @@ class SystemPanel extends PicMap
                       && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) <= client
                       .getGame().getRoundCount())
                       && !carryingBAsOnBack && !invalidEnvironment) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                 } else if ((mounted != null) && bOwner
                       && (mounted.getType() instanceof WeaponType)
                       && !mounted.isMissing() && mounted.isDWPMounted()) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                     // Allow dumping of body-mounted missile launchers on BA
                 } else if ((mounted != null) && bOwner
                       && (en instanceof BattleArmor)
@@ -941,7 +941,7 @@ class SystemPanel extends PicMap
                       && mounted.getType().hasFlag(WeaponType.F_MISSILE)
                       && (mounted.getLinked() != null)
                       && (mounted.getLinked().getUsableShotsLeft() > 0)) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                 }
                 int round = client.getGame().getRoundCount();
                 boolean inSquadron = en.isPartOfFighterSquadron();

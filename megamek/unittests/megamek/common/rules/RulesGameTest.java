@@ -49,6 +49,8 @@ class RulesGameTest {
         Mockito.when(game.getCurrentRound()).thenReturn(2);
         Mockito.when(entity.isImmobile()).thenReturn(false);
 
+        assertTrue(core.ammoDumping() == false);
+        assertTrue(total.ammoDumping());
         assertTrue(core.eligibleForPhase(entity, GamePhase.MOVEMENT));
         assertTrue(total.eligibleForPhase(entity, GamePhase.MOVEMENT));
         assertTrue(core.getInitiativeOrder(new int[] {6, 3}, 0, 3, false) >= 1);

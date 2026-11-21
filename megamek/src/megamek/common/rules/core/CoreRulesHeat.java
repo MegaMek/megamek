@@ -74,17 +74,16 @@ public class CoreRulesHeat extends RulesHeat {
         if (bPainShunt) {
             return null;
         }
-        LifeSupportHeat lifeSupportHeat = coreLifeSupportHeat(damageHeat, torsoMountedCockpit);
-        if (mtHeat && (damageHeat >= 32) && (lifeSupportHeat != null)) {
-            // The extended heat scale's pilot damage cannot be avoided with damaged life support and adds 1 to the
-            // normal damage (TO:AR p.102); only the highest Heat Scale effect applies (Core p.104)
-            return new LifeSupportHeat(32, lifeSupportHeat.damageAmount() + 1);
-        }
-        return lifeSupportHeat;
-    }
-
-    private static @Nullable LifeSupportHeat coreLifeSupportHeat(int damageHeat, boolean torsoMountedCockpit) {
-        if (damageHeat >= 20) {
+        if ((damageHeat >= 47) && mtHeat) {
+            // mekwarrior takes 5 damage
+            return new LifeSupportHeat(47, 5);
+        } else if ((damageHeat >= 39) && mtHeat) {
+            // mekwarrior takes 4 damage
+            return new LifeSupportHeat(39, 4);
+        } else if ((damageHeat >= 32) && mtHeat) {
+            // mekwarrior takes 3 damage
+            return new LifeSupportHeat(32, 3);
+        } else if (damageHeat >= 20) {
             // mekwarrior takes 2 damage
             return new LifeSupportHeat(20, 2);
         } else if (damageHeat >= 15 && torsoMountedCockpit) {

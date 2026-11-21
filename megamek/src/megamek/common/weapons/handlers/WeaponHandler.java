@@ -1524,6 +1524,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * * adjustment factor on attack value for fighter squadrons
      */
     protected double getBracketingMultiplier() {
+        return bracketingMultiplier(weapon);
+    }
+
+    /** @return the share of its damage a bay deals in its Bracketing fire mode, or 1 when not bracketing (SO p.87) */
+    public static double bracketingMultiplier(WeaponMounted weapon) {
         double multiplier = 1.0;
         if (weapon.hasModes() && weapon.curMode().equals("Bracket 80%")) {
             multiplier = 0.8;

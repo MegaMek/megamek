@@ -98,7 +98,9 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.gaussRifles.HAGWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
+import megamek.common.weapons.handlers.BayWeaponHandler;
 import megamek.common.weapons.handlers.DamageFalloff;
+import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 
@@ -2447,21 +2449,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
-        // check for bracketing
-        double multiplier = 1.0;
-        if (weapon.hasModes() && weapon.curMode().equals("Bracket 80%")) {
-            multiplier = 0.8;
-        }
-        if (weapon.hasModes() && weapon.curMode().equals("Bracket 60%")) {
-            multiplier = 0.6;
-        }
-        if (weapon.hasModes() && weapon.curMode().equals("Bracket 40%")) {
-            multiplier = 0.4;
-        }
-        avShort = multiplier * avShort;
-        avMed = multiplier * avMed;
-        avLong = multiplier * avLong;
-        avExt = multiplier * avExt;
+        // As the game resolves the bay: its total rounds normally, then bracketing drops the fractions
+        double multiplier = WeaponHandler.bracketingMultiplier(weapon);
+        avShort = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avShort), multiplier);
+        avMed = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avMed), multiplier);
+        avLong = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avLong), multiplier);
+        avExt = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avExt), multiplier);
 
         if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
               && weaponType.isCapital()) {

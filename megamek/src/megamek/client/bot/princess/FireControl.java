@@ -4504,7 +4504,7 @@ public class FireControl {
      *
      * @return Mode switch result.
      */
-    private int switchMissileMode(Mounted<?> weapon) {
+    int switchMissileMode(Mounted<?> weapon) {
         // check that we're operating a missile weapon that can switch direct/indirect
         // modes
         // don't bother checking non-missile weapons

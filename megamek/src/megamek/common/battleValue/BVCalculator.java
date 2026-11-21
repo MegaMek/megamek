@@ -1245,11 +1245,11 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Adjust the BV with force bonuses (TAG, C3) and pilot skill.
+     * Adjust the BV with force bonuses (TAG, then C3 on the BV including TAG) and pilot skill, in that order
+     * (TechManual p.315; Core errata v0.2 p.1).
      */
     protected void adjustBV() {
         adjustedBV = (int) Math.round(baseBV);
-        double c3Bonus = ignoreC3 ? 0 : entity.getExtraC3BV((int) Math.round(adjustedBV));
         List<String> pilotModifiers = new ArrayList<>();
         double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(entity, pilotModifiers);
 
@@ -1257,6 +1257,7 @@ public abstract class BVCalculator {
             processTagBonus();
         }
 
+        double c3Bonus = ignoreC3 ? 0 : entity.getExtraC3BV((int) Math.round(adjustedBV));
         if (c3Bonus > 0) {
             adjustedBV += c3Bonus;
             bvReport.addLine("Force Bonus (C3):", "+ " + formatForReport(c3Bonus), "= " + formatForReport(adjustedBV));

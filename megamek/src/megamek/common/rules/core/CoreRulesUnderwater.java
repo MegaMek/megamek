@@ -112,7 +112,9 @@ public class CoreRulesUnderwater extends RulesUnderwater {
     @Override
     public int getExtremeRange(WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
-            return weaponType.getLongRange();
+            // An attack that would be at the weapon's long range "cannot be made" underwater (Core p.127), so there is
+            // no bracket beyond the shifted long one, even with extreme range in play
+            return weaponType.getMediumRange();
         } else {
             return weaponType.getWExtremeRange();
         }

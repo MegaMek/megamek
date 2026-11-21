@@ -1151,20 +1151,38 @@ public class LosEffects {
         if ((targetCover != COVER_NONE) && !targetIsOversized) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER)) {
                 if ((targetCover == COVER_75LEFT) || (targetCover == COVER_75RIGHT)) {
-                    modifiers.addModifier(1, "target has 75% cover");
+                    modifiers.addModifier(partialCoverModifier(game), "target has 75% cover");
                 } else if (targetCover >= COVER_HORIZONTAL) {
-                    modifiers.addModifier(1, "target has 50% cover");
+                    modifiers.addModifier(partialCoverModifier(game), "target has 50% cover");
                 } else {
                     // no bth mod for 25% cover
-                    modifiers.addModifier(0, "target has 25% cover");
+                    modifiers.addModifier(partialCoverModifier(game), "target has 25% cover");
                 }
             } else {
-                modifiers.addModifier(1, Messages.getString("WeaponAttackAction.AeTargetHasPartialCover"));
+                modifiers.addModifier(partialCoverModifier(game),
+                      Messages.getString("WeaponAttackAction.AeTargetHasPartialCover"));
                 modifiers.setHitTable(ToHitData.HIT_PARTIAL_COVER);
             }
         }
 
         return modifiers;
+    }
+
+    /**
+     * @param game the game, for the partial cover option
+     *
+     * @return the to-hit modifier {@link #losModifiers(Game, int, boolean)} applies for the target's partial cover
+     */
+    public int partialCoverModifier(Game game) {
+        if ((targetCover == COVER_NONE) || targetIsOversized) {
+            return 0;
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER)) {
+            // no bth mod for 25% cover
+            return ((targetCover == COVER_75LEFT) || (targetCover == COVER_75RIGHT)
+                  || (targetCover >= COVER_HORIZONTAL)) ? 1 : 0;
+        }
+        return 1;
     }
 
     /**

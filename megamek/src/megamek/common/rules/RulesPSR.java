@@ -57,8 +57,9 @@ public abstract class RulesPSR {
      * @param gyroDamage the amount of gyro damage
      * @param overallMoveType the type of overall movement
      * @param distance the distance traveled
+     * @return how many PSRs the unit must make, each with the same roll
      */
-    public abstract void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
+    public abstract int checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType, int distance);
 
     /**
@@ -201,17 +202,6 @@ public abstract class RulesPSR {
      * @return the gyro jump modifier
      */
     public abstract int getGyroJumpModifier(final int gyroHits, final int gyroType);
-
-    /**
-     * Do you need a PSR for walking with a leg destroyed.
-     *
-     * @param entity the entity attempting to walk
-     * @param overallMoveType the type of overall movement
-     * @param hexesMoved the number of hexes moved
-     * @return the piloting roll data for the PSR, or null if no PSR required
-     */
-    public abstract PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
-          int hexesMoved);
 
     /**
      * What is the water level modifier for PSR entering the hex?

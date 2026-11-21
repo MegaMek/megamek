@@ -37,6 +37,7 @@ import java.util.Vector;
 import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.RulesWeapons;
@@ -65,12 +66,15 @@ public class TWRulesWeapons extends RulesWeapons {
     public int getATMClusterSize() { return 5; }
 
     /**
-     * Can ultra autocannons jam? Yes.
+     * Can ultra autocannons jam? Yes (TW p.114).
      *
+     * @param ammoType the weapon's ammunition type
      * @return true if ultra autocannons can jam
      */
     @Override
-    public boolean canUACsJam() { return true; }
+    public boolean canUACsJam(AmmoType.AmmoTypeEnum ammoType) {
+        return true;
+    }
 
     /**
      * What happens when an AC is hit? nothing extra

@@ -42,7 +42,7 @@ public class CoreRulesC3 extends RulesC3 {
 
     /**
      * {@inheritDoc}
-     * C3 can be used with ECM affecting it. Core p.198
+     * C3 can be used with ECM affecting it. Core p.199
      */
     @Override
     public int getC3RangeToUse(int range, int c3range, int c3ecmRange) {
@@ -56,7 +56,7 @@ public class CoreRulesC3 extends RulesC3 {
     
     /**
      * {@inheritDoc}
-     * C3 and ECM can interact to lower values. Core p.198
+     * C3 and ECM can interact to lower values. Core p.199
      */
     @Override
     public void getC3RangeModifier(ToHitData mods, int range, int usingRange, int c3ecmRange, int c3range,
@@ -102,7 +102,7 @@ public class CoreRulesC3 extends RulesC3 {
     
     /**
      * {@inheritDoc}
-     * C3 can work with ECM, it is just reduced. Core p.198
+     * C3 can work with ECM, it is just reduced. Core p.199
      */
     @Override
     public boolean c3AllowedWithECM() { return true; }

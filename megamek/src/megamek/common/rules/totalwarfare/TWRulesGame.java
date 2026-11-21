@@ -51,14 +51,6 @@ public class TWRulesGame extends RulesGame {
 
     private boolean walkOn = false;
 
-    /**
-     * Ammo dumping is allowed
-     *
-     * @return true if ammo dumping is allowed
-     */
-    @Override
-    public boolean ammoDumping() {return true;}
-
 
     /**
      * Is an entity eligible for a phase

@@ -39,7 +39,6 @@ import java.util.Vector;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -150,26 +149,6 @@ public class TWRulesExplosions extends RulesExplosions {
         return 0;
     }
 
-
-    /**
-     * How much damage to equipment explosions do.
-     *
-     * @param mounted the mounted equipment
-     * @param weaponType the weapon type
-     * @return the damage amount
-     */
-    @Override
-    public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
-        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
-            return mounted.isFired() ? 0 : 15;
-        }
-
-        if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {
-            return 0;
-        }
-
-        return weaponType.getExplosionDamage();
-    }
 
     /**
      * Pods are explosive if they have not shot yet

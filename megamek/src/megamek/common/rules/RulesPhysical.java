@@ -239,11 +239,13 @@ public abstract class RulesPhysical {
     public abstract int getClubFindInRubble();
 
     /**
-     * What is the lance's base to-hit modifier?
+     * Lance attacks apply a +1 Target Number modifier (Core p.194; TO:AUE p.102).
      *
-     * @return
+     * @return the lance's base to-hit modifier
      */
-    public abstract int getLanceToHitModifier();
+    public int getLanceToHitModifier() {
+        return 1;
+    }
 
     /**
      * Check if you can mule kick if you fired weapons from the non-kicking leg.

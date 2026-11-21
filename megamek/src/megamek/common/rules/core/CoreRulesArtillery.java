@@ -40,7 +40,8 @@ public class CoreRulesArtillery extends RulesArtillery {
 
     /**
      * {@inheritDoc}
-     * Core p. 63, 68-69, etc.
+     * "All attacks classified as artillery apply a +4 TN modifier, whether fired directly or indirectly" (Core p.63);
+     * Arrow IV (Core p.182)
      * 
      */
     @Override

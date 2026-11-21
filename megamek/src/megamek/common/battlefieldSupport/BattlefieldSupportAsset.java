@@ -751,6 +751,18 @@ public class BattlefieldSupportAsset extends Entity {
         return new HitData(Entity.LOC_DESTROYED);
     }
 
+    /** "Assets cannot charge or perform any other physical attack" (Core p.145). */
+    @Override
+    public boolean canCharge() {
+        return false;
+    }
+
+    /** "Assets cannot charge or perform any other physical attack" (Core p.145). */
+    @Override
+    public boolean canDFA() {
+        return false;
+    }
+
     @Override
     public boolean canChangeSecondaryFacing() {
         return false;

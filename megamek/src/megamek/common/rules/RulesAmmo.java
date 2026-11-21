@@ -35,6 +35,7 @@ package megamek.common.rules;
 
 import java.util.List;
 
+import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -43,13 +44,22 @@ import megamek.server.totalWarfare.TWDamageManager;
 public abstract class RulesAmmo {
 
     /**
-     * Return the Armor Piercing modifier for crit checks.
+     * Return the Armor Piercing modifier for crit checks: -1 for an AC/20, -2 for an AC/10, -3 for an AC/5 or -4 for
+     * an AC/2 (TW p.140), with the other calibers placed between them.
      *
      * @param inType The ammo type of the weapon
      *
      * @return the modifier for the crit roll
      */
-    public abstract int armorPiercingMod(AmmoType inType);
+    public int armorPiercingMod(AmmoType inType) {
+        return switch (inType.getRackSize()) {
+            case 2 -> -4;
+            case 4, 5, 6 -> -3;
+            case 8, 10, 15 -> -2;
+            case 20 -> -1;
+            default -> 0;
+        };
+    }
 
     public void updateAmmoBVs() {
         List<EquipmentType> equipmentTypes = EquipmentType.allTypes();
@@ -68,9 +78,19 @@ public abstract class RulesAmmo {
      * @param toHit    to-hit object
      * @param AP       is it armor piercing
      */
-    public abstract void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType,
+    public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType,
           ToHitData toHit,
-          boolean AP);
+          boolean AP) {
+        switch (ammoType) {
+            case AC, LAC, AC_IMP, PAC -> {
+                if (AP) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
+                }
+            }
+            default -> {
+            }
+        }
+    }
 
     /**
      * Does NARC affect the target number.
@@ -160,6 +180,44 @@ public abstract class RulesAmmo {
 
         AmmoType.AmmoTypeEnum ammoTypeEnum = munition.getAmmoType();
         AmmoType baseAmmoType = munition.getBaseAmmo();
+
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.AC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LAC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.PAC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.AC_ROTARY)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_CASELESS))) {
+            return baseAmmoType.getBaseBV() * 2.0;
+        }
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_AX_HEAD))) {
+            return baseAmmoType.getBaseBV() * 2;
+        }
+
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER))) {
+            // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
+            return baseAmmoType.getRackSize() * munition.getShots() / 5.0 * 4;
+        }
+
+        if (munition.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
+            // TO:AR, p.152 and TO:AUE, pp.197,198
+            int rackSize = baseAmmoType.getRackSize();
+            if (ammoTypeEnum == AmmoType.AmmoTypeEnum.ARROW_IV) {
+                rackSize = munition.isClan() ? 30 : 20;
+            }
+            return rackSize * munition.getShots() / 5.0 * 4;
+        }
+
 
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LONG_TOM) ||
               (ammoTypeEnum == AmmoType.AmmoTypeEnum.LONG_TOM_CANNON) ||

@@ -47,13 +47,6 @@ import megamek.common.units.Entity;
 public abstract class RulesGame {
 
     /**
-     * Allow ammo dumping.
-     *
-     * @return true if ammo dumping is allowed
-     */
-    public abstract boolean ammoDumping();
-
-    /**
      * Is an entity eligible for a phase
      *
      * @param entity the unit being considered

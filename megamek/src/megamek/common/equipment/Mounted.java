@@ -1047,11 +1047,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public void setPendingDump(boolean b) {
-        if (Game.rulesManager.getRulesGame().ammoDumping()) {
-            m_bPendingDump = b;
-        } else {
-            m_bPendingDump = false;
-        }
+        m_bPendingDump = b;
     }
 
     public boolean isDumping() {
@@ -1059,11 +1055,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public void setDumping(boolean b) {
-        if (Game.rulesManager.getRulesGame().ammoDumping()) {
-            m_bDumping = b;
-        } else {
-            m_bDumping = false;
-        }
+        m_bDumping = b;
     }
 
     /**

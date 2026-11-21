@@ -36,6 +36,7 @@ package megamek.common.rules;
 
 import megamek.common.HitData;
 import megamek.common.Report;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.units.Entity;
@@ -56,6 +57,26 @@ public abstract class RulesExplosions {
      */
     public abstract int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec);
+
+    /**
+     * A rotary autocannon that suffers a critical hit while jammed explodes for a single shot (TW p.140).
+     *
+     * @return true if a jammed rotary autocannon explodes when hit
+     */
+    public boolean jammedRotaryAutocannonExplodes() {
+        return true;
+    }
+
+    /**
+     * Called for the location where the last point of an internal explosion that {@link #explosionDamageReduction}
+     * capped is applied, if that location survives it. Only rules that cap explosion damage do anything here.
+     *
+     * @param mek the Mek taking damage
+     * @param hit the location the last point of explosion damage was applied to
+     * @param reportVec vector of reports
+     */
+    public void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec) {
+    }
 
     /**
      * CASE II damage reduction.
@@ -80,13 +101,23 @@ public abstract class RulesExplosions {
     public abstract int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion);
 
     /**
-     * How much damage to equipment explosions do.
+     * How much damage to equipment explosions do: the item's own explosion damage.
      *
      * @param mounted the mounted equipment
      * @param weaponType the weapon type
      * @return the damage amount
      */
-    public abstract int equipmentDamage(Mounted<?> mounted, WeaponType weaponType);
+    public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
+        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
+            return mounted.isFired() ? 0 : 15;
+        }
+
+        if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {
+            return 0;
+        }
+
+        return weaponType.getExplosionDamage();
+    }
 
     /**
      * Are M and B pods explosive?

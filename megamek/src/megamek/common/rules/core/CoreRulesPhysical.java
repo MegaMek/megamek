@@ -55,7 +55,7 @@ import megamek.common.units.Mek;
 public class CoreRulesPhysical extends RulesPhysical {
 
     /**
-     * {@inheritDoc} Shield rules for damage while punching. Core p.195
+     * {@inheritDoc} Shield rules for damage while punching. Core p.82, p.195
      */
     @Override
     public int getShieldDamageBoost(Entity entity,
@@ -103,15 +103,6 @@ public class CoreRulesPhysical extends RulesPhysical {
     public void getShieldToHitModifier(ToHitData toHit,
                                        Entity attacker,
                                        Mounted<?> weapon) {
-    }
-
-
-    /**
-     * {@inheritDoc} core p.194
-     */
-    @Override
-    public int getLanceToHitModifier() {
-        return 0;
     }
 
     /**
@@ -171,7 +162,7 @@ public class CoreRulesPhysical extends RulesPhysical {
     }
 
     /**
-     * {@inheritDoc} Charge with shield allocated damage to shield. Core p.195
+     * {@inheritDoc} Charge with shield allocated damage to shield. Core p.78, p.195
      */
     @Nullable
     @Override
@@ -336,7 +327,7 @@ public class CoreRulesPhysical extends RulesPhysical {
     }
 
     /**
-     * {@inheritDoc} Falls from above if the target is prone changes table. Core p.115
+     * {@inheritDoc} Falls from above if the target is prone changes table. Core p.116
      */
     @Override
     public HitData getFallFromAboveTable(Entity affaTarget) {

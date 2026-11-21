@@ -33,6 +33,8 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.Hex;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.rules.RulesTerrain;
 import megamek.common.units.Entity;
 import megamek.common.units.Terrains;
@@ -41,11 +43,12 @@ public class CoreRulesTerrain extends RulesTerrain {
 
     /**
      * {@inheritDoc}
-     * Road to road elevation change is -1 MP
+     * A level change between two road hexes costs 1 MP less (Core p.53). Assets get no discount: their road level
+     * change "still costs 2 MP per level change" (Core p.142).
      */
     @Override
-    public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) {
-        if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && deltaElevation > 0) {
+    public int getRoadElevationCostDifference(Entity entity, Hex srcHex, Hex destHex, int deltaElevation) {
+        if (!entity.isBattlefieldSupportAsset() && isRoadToRoad(srcHex, destHex) && (deltaElevation > 0)) {
             return 1;
         }
         return 0;
@@ -53,13 +56,19 @@ public class CoreRulesTerrain extends RulesTerrain {
 
     /**
      * {@inheritDoc}
-     * Using roads can increase the max elevation change by 1. Core p.53
+     * Travelling between two road hexes, vehicle and infantry Assets "can make a level change of up to two levels,
+     * instead of one" (Core p.142). Meks get no extra level on roads (Core p.53); other units keep Total Warfare.
      */
     @Override
-    public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
-        if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD)) {
-            return (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN) ? maxElevationChange + 1 : maxElevationChange;
+    public int getMaxElevationChangeAllowed(Entity entity, Hex srcHex, Hex destHex, int maxElevationChange) {
+        if ((entity instanceof BattlefieldSupportAsset asset) && (asset.getAssetType() != BFSAssetType.EMPLACEMENT)
+              && isRoadToRoad(srcHex, destHex) && (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN)) {
+            return maxElevationChange + 1;
         }
         return maxElevationChange;
+    }
+
+    private static boolean isRoadToRoad(Hex srcHex, Hex destHex) {
+        return srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD);
     }
 }

@@ -927,7 +927,7 @@ public class Compute {
               && (entity.getMovementMode() != EntityMovementMode.HOVER)
               && (entity.getMovementMode() != EntityMovementMode.WIGE)
               && isTurning && !isInfantry
-              && Game.rulesManager.getRulesMovement().skidEnabled()) {
+              && Game.rulesManager.getRulesMovement().skidEnabled(entity)) {
             return true;
         }
 
@@ -1082,15 +1082,17 @@ public class Compute {
 
     /**
      * Gets the hex a unit is displaced into by an accidental fall from above. The rules in play decide how the hex is
-     * picked: Total Warfare looks nearest to the given direction first, the Core rules pick at random (Core p.116).
+     * picked: Total Warfare looks nearest to the given direction first; the Core rules put a faller that missed as
+     * close as possible to the hex it fell from and push the unit fallen on into a random legal hex (Core p.116).
      * Every other displacement follows its direction and uses {@link #getValidDisplacement(Game, int, Coords, int)}.
      *
      * @return valid displacement coords, or {@code null} if none
      */
     @Nullable
-    public static Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction) {
+    public static Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
+          boolean fallerMissed) {
         return Game.rulesManager.getRulesMovement().getAccidentalFallDisplacement(game, entityId, src, direction,
-              getDisplacementRange(game, src));
+              getDisplacementRange(game, src), fallerMissed);
     }
 
     /**

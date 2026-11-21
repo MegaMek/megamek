@@ -149,10 +149,25 @@ class DisplacementDirectionTest extends GameBoardTestCase {
         Game.rulesManager = new CoreRulesManager();
         placeTargetInCentre();
 
-        Coords destination = Compute.getAccidentalFallDisplacement(getGame(), TARGET_ID, CENTRE, 0);
+        Coords destination = Compute.getAccidentalFallDisplacement(getGame(), TARGET_ID, CENTRE, 0, false);
 
         assertNotNull(destination, "Every neighbouring hex is open, so a displacement hex should be found");
         assertEquals(1, CENTRE.distance(destination), "The unit should be displaced into an adjacent hex");
+    }
+
+    @Test
+    void coreRulesMissedFallLandsNextToTheHexItFellFrom() {
+        Game.rulesManager = new CoreRulesManager();
+        placeTargetInCentre();
+        // Falling in direction 0 means the faller came from the hex in direction 3
+        Coords fellFrom = CENTRE.translated(3);
+
+        Coords destination = Compute.getAccidentalFallDisplacement(getGame(), TARGET_ID, CENTRE, 0, true);
+
+        assertNotNull(destination);
+        assertEquals(1, CENTRE.distance(destination), "A missed faller lands in a hex adjacent to its target");
+        assertEquals(1, fellFrom.distance(destination),
+              "Core p.116: it lands as close as possible to the hex from which it fell");
     }
 
     @Test
@@ -160,6 +175,7 @@ class DisplacementDirectionTest extends GameBoardTestCase {
         Game.rulesManager = new TWRulesManager();
         placeTargetInCentre();
 
-        assertEquals(CENTRE.translated(3), Compute.getAccidentalFallDisplacement(getGame(), TARGET_ID, CENTRE, 3));
+        assertEquals(CENTRE.translated(3), Compute.getAccidentalFallDisplacement(getGame(), TARGET_ID, CENTRE, 3,
+              false));
     }
 }

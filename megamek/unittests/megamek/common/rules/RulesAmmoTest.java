@@ -35,6 +35,7 @@ class RulesAmmoTest {
         CoreRulesAmmo core = new CoreRulesAmmo();
         TWRulesAmmo total = new TWRulesAmmo();
         AmmoType ammo = Mockito.mock(AmmoType.class);
+        Mockito.when(ammo.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.PAC);
         Mockito.when(ammo.getRackSize()).thenReturn(4);
 
         assertEquals(-2, core.armorPiercingMod(ammo));

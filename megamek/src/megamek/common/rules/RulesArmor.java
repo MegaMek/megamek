@@ -50,12 +50,16 @@ public abstract class RulesArmor {
     public abstract boolean allowHeatWeapon(boolean heat_weapon);
 
     /**
-     * Does armor allow armor piercing.
+     * Does armor allow armor piercing. Hardened, ferro-lamellor and reactive armor negate the armor-piercing check
+     * (TO:AUE pp.92-94).
      *
      * @param mods the modifications info
+     * @param damageType the general damage type of the hit, to tell armor-piercing ammunition from missiles
      * @return true if armor piercing is allowed
      */
-    public abstract boolean allowArmorPiercing(TWDamageManager.ModsInfo mods);
+    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType) {
+        return !(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor);
+    }
 
     /**
      * Impact resistant armor.
@@ -67,9 +71,10 @@ public abstract class RulesArmor {
     /**
      * Impact Resistant Armor breach.
      *
+     * @param vacuum true for a vacuum breach check, false for an underwater one
      * @return the breach value modifier
      */
-    public abstract int impactArmorBreach();
+    public abstract int impactArmorBreach(boolean vacuum);
 
     /**
      * Does a lance penetrate the armor.
@@ -97,7 +102,7 @@ public abstract class RulesArmor {
     public abstract boolean reflectiveAP(boolean reflectiveArmor);
 
     /**
-     * Block TAC (Targeting Auto-Correlator).
+     * Does this armor negate through-armor critical (TAC) checks? Asked only while the location struck has armor.
      *
      * @param armorType the type of armor
      * @return true if TAC is blocked
@@ -105,7 +110,9 @@ public abstract class RulesArmor {
     public abstract boolean blockTAC(int armorType);
 
     /**
-     * How does impact armor reduce damage.
+     * How does impact armor reduce damage. While the location has armor, impact-resistant armor reduces damage "by 1
+     * point for every 3 points delivered (or fraction thereof), to a minimum of 1 damage point" (IO:AE p.82; Core
+     * p.202 for physical attacks).
      *
      * @param entityId the entity ID
      * @param hit the hit data
@@ -114,8 +121,16 @@ public abstract class RulesArmor {
      * @param damageType the type of damage
      * @return the reduced damage amount
      */
-    public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
-                                           HitDamageType damageType);
+    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
+          HitDamageType damageType) {
+        damage = Math.max(1, damage - (int) Math.ceil(damage / 3.0));
+        Report report = new Report(6089);
+        report.subject = entityId;
+        report.indent(3);
+        report.add(damage);
+        reportVec.addElement(report);
+        return damage;
+    }
 
     /**
      * Reflective armor reduction
@@ -141,4 +156,12 @@ public abstract class RulesArmor {
      * @return the reduced damage amount
      */
     public abstract int ballisticReinforcedArmorReduction(final int damage);
+
+    /**
+     * Does ballistic-reinforced armor reduce damage of this type?
+     *
+     * @param damageType the general damage type of the hit
+     * @return true if {@link #ballisticReinforcedArmorReduction(int)} applies
+     */
+    public abstract boolean ballisticReinforcedArmorReduces(HitDamageType damageType);
 }

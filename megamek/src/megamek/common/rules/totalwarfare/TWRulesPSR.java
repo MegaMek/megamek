@@ -58,7 +58,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param distance the distance traveled
      */
     @Override
-    public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
+    public int checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType, int distance) {
         if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
@@ -68,9 +68,10 @@ public class TWRulesPSR extends RulesPSR {
               ((gyroDamage > 0) || entity.hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
+            return 1;
         }
+        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
+        return 0;
     }
 
     /**
@@ -255,23 +256,6 @@ public class TWRulesPSR extends RulesPSR {
     @Override
     public int getGyroJumpModifier(final int gyroHits, final int gyroType) {
         return 0;
-    }
-
-    /**
-     * We don't care about walking meks with legs destroyed
-     *
-     * @param entity the entity attempting to walk
-     * @param overallMoveType the type of overall movement
-     * @param hexesMoved the number of hexes moved
-     * @return the piloting roll data for the PSR, or null if no PSR required
-     */
-    @Override
-    public PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
-          int hexesMoved) {
-        PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: does not apply");
-        entity.addPilotingModifierForTerrain(roll);
-        return roll;
     }
 
     /**

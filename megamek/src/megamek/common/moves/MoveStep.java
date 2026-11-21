@@ -3539,9 +3539,9 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int deltaElevation = Math.abs(nSrcEl - nDestEl);
-            if (isMek && (deltaElevation > Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex,
-                                                                                                            destHex,
-                                                                                                            getEntity().getMaxElevationChange()))) {
+            int maxElevationChange = Game.rulesManager.getRulesTerrain()
+                  .getMaxElevationChangeAllowed(entity, srcHex, destHex, entity.getMaxElevationChange());
+            if (isMek && (deltaElevation > maxElevationChange)) {
                 LOGGER.debug("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
                              "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
                              prevEl, elevation, srcHex.getLevel(), destHex.getLevel(),
@@ -3549,9 +3549,7 @@ public class MoveStep implements Serializable {
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING) &&
                 isMek &&
-                (deltaElevation > Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex,
-                                                                                                   destHex,
-                                                                                                   getEntity().getMaxElevationChange())) &&
+                (deltaElevation > maxElevationChange) &&
                 (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
@@ -3582,11 +3580,7 @@ public class MoveStep implements Serializable {
             // as a walk. One level, the cheapest climb-down, costs no more than the old walk price of a 3+ level
             // drop, so no step that showed the dialog before is pushed past walking MP now. Like a leap,
             // it replaces the hex and terrain cost: the server bills an edge descent only per level descended.
-            boolean isCliffDrop = (nDestEl < nSrcEl)
-                                  && (deltaElevation > Game.rulesManager.getRulesTerrain()
-                                                                        .getMaxElevationChangeAllowed(srcHex,
-                                                                                                      destHex,
-                                                                                                      entity.getMaxElevationChange()));
+            boolean isCliffDrop = (nDestEl < nSrcEl) && (deltaElevation > maxElevationChange);
             boolean isEdgeDescent = canUseClimbing && isCliffDrop && !isClimbing;
             if (isEdgeDescent) {
                 int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
@@ -3632,7 +3626,7 @@ public class MoveStep implements Serializable {
                 deltaElevation *= 2;
             }
             int elevationCostReduction = Game.rulesManager.getRulesTerrain()
-                                                          .getRoadElevationCostDifference(srcHex, destHex,
+                                                          .getRoadElevationCostDifference(entity, srcHex, destHex,
                                                                                                    deltaElevation);
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 mp += Math.max(0, deltaElevation - 1 - elevationCostReduction);
@@ -4015,7 +4009,7 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
 
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
-            int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex, destHex,
+            int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, srcHex, destHex,
                                                                                            entity.getMaxElevationDown(
                                                                                                    srcAlt));
             if (movementMode == EntityMovementMode.WIGE &&
@@ -4043,8 +4037,10 @@ public class MoveStep implements Serializable {
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 
+            int maxUp = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, srcHex, destHex,
+                  entity.getMaxElevationChange());
             if (((elevationDown > 0) && (elevationDown > maxDown)) ||
-                ((elevationUp > 0) && (elevationUp > entity.getMaxElevationChange()))) {
+                ((elevationUp > 0) && (elevationUp > maxUp))) {
                 // Allow climbing UP if the option is enabled and entity can climb;
                 // allow climbing DOWN (edge descent) if the entity can dangle.
                 boolean allowUp = canUseClimbing && (elevationUp > 0);

@@ -36,6 +36,7 @@ import java.util.Vector;
 
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Entity;
@@ -56,14 +57,16 @@ public abstract class RulesWeapons {
     public abstract int getATMClusterSize();
 
     /**
-     * Can ultra autocannons jam?
+     * Can ultra autocannons of this ammunition type jam?
      *
+     * @param ammoType the weapon's ammunition type
      * @return true if ultra autocannons can jam
      */
-    public abstract boolean canUACsJam();
+    public abstract boolean canUACsJam(AmmoType.AmmoTypeEnum ammoType);
 
     /**
-     * What happens when an AC is hit.
+     * What happens when a critical hit strikes a weapon. Called for every weapon critical hit; the rules decide which
+     * weapons are affected.
      *
      * @param cs the critical slot being hit
      * @param mounted the mounted weapon

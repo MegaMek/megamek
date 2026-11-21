@@ -56,27 +56,32 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Hardened and ABA armor prevent AP. Core p.201
+     * Anti-penetrative ablation, ballistic-reinforced and hardened armor "negate AP ammo armor-piercing checks"
+     * (Core p.191). Armor-piercing missiles, such as tandem-charge SRMs, are not in Core and keep the TO:AUE rules.
      */
     @Override
-    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
-        return (mods.hardenedArmor || mods.abaArmor) ? false : true;
+    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType) {
+        if (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING) {
+            return super.allowArmorPiercing(mods, damageType);
+        }
+        return !(mods.hardenedArmor || mods.abaArmor || mods.ballisticArmor);
     }
 
     /**
      * {@inheritDoc}
-     * Impact armor does not reduce anything. Core p.201
+     * Impact-resistant armor gives no other modifier. Core p.191, p.202
      */
     @Override
     public int impactArmorMod() {return 0;}
 
     /**
      * {@inheritDoc}
-     * Impact Resistant Armor breach. Does not apply in Core. p.201
+     * Core writes impact-resistant armor without a breach modifier (Core p.202), and Core breaches are underwater only
+     * (Core p.127). Vacuum breaches are not in Core and keep the +1 "including underwater and vacuum" (IO:AE p.82).
      */
     @Override
-    public int impactArmorBreach() {
-        return 0;
+    public int impactArmorBreach(boolean vacuum) {
+        return vacuum ? 1 : 0;
     }
 
     /**
@@ -99,14 +104,14 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Reflective armor does not have a modifier on AP rounds
+     * Laser-reflective armor has no modifier against armor-piercing rounds (Core p.191, p.202)
      */
     @Override
     public boolean reflectiveAP(boolean reflectiveArmor) {return false;}
 
     /**
      * {@inheritDoc}
-     * ABA armor stops TACs from generating a crit. Core p.201
+     * Anti-penetrative ablation armor ignores through-armor critical checks (Core p.91, p.201).
      */
     @Override
     public boolean blockTAC(int armorType) {
@@ -115,7 +120,8 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Impact armor reduces damage from falls, collisions, and buildings by half. 1/3 for physical
+     * Impact-resistant armor halves damage from building collapses, collisions and falls (rounding remaining damage
+     * down) and reduces physical attack damage as {@link RulesArmor#reduceImpactDamage} does (Core p.202).
      */
     @Override
     public int reduceImpactDamage(int entityId,
@@ -134,17 +140,7 @@ public class CoreRulesArmor extends RulesArmor {
 
             return damage;
         }
-        // CORE collision and building damage currently are as below, need to be as above
-
-        // As long as there is even 1 point of armor in this location, reduce _all_ damage
-        // to 2 points for every whole 3 points applied (IntOps pg 88).
-        damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));
-        report = new Report(6089);
-        report.subject = entityId;
-        report.indent(3);
-        report.add(damage);
-        reportVec.addElement(report);
-        return damage;
+        return super.reduceImpactDamage(entityId, hit, damage, reportVec, damageType);
     }
 
     /**
@@ -167,10 +163,23 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Ballistic reinforced armor reduces damage by half, rounded up. Core p.202
+     * Ballistic reinforced armor reduces damage by half, rounded up. Core p.201
      */
     @Override
     public int ballisticReinforcedArmorReduction(final int damage) {
         return (int) Math.ceil(((double) damage) / 2);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Attacks of the DB or M types (Core p.201), except armor-piercing ammunition, against which it provides "no
+     * damage reduction" (Core p.191), and acid (AX) missiles, whose damage "is not reduced by special armor rules"
+     * (Core p.192). Armor-piercing missiles are not in Core and keep the IO:AE p.81 reduction.
+     */
+    @Override
+    public boolean ballisticReinforcedArmorReduces(HitDamageType damageType) {
+        return (damageType == HitDamageType.DAMAGE_BALLISTIC)
+              || (damageType == HitDamageType.DAMAGE_MISSILE)
+              || (damageType == HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE);
     }
 }

@@ -75,10 +75,12 @@ class RulesMovementTest {
         assertEquals(3, total.getUnderwaterMPCost());
         assertTrue(core.isMoveIntoWaterDangerous(EntityMovementType.MOVE_RUN, EntityMovementMode.BIPED));
         assertTrue(total.isMoveIntoWaterDangerous(EntityMovementType.MOVE_RUN, EntityMovementMode.BIPED));
-        assertEquals(2, core.getAccidentalFallElevation(5, 3));
+        // Core p.116: levels fallen minus the target's height, which is one more than MegaMek's (Core p.57)
+        assertEquals(1, core.getAccidentalFallElevation(5, 3));
         assertEquals(4, total.getAccidentalFallElevation(4, 3));
-        assertEquals(3, core.getDFAElevation(game, 1, 2, coreStep));
-        assertEquals(3, total.getDFAElevation(game, 1, 2, totalStep));
+        // Core p.79: the higher level (the target's, at elevation 2) plus the target's 2-level height
+        assertEquals(4, core.getDFAElevation(game, 1, 2, coreStep, new Coords(0, 0)));
+        assertEquals(3, total.getDFAElevation(game, 1, 2, totalStep, new Coords(0, 0)));
         assertTrue(core.enableBackwardsElevationChange(true, mek));
         assertTrue(total.enableBackwardsElevationChange(true, mek));
         assertFalse(core.reduceMaxElevation(mek));

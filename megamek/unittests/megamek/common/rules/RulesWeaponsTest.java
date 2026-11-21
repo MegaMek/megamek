@@ -18,9 +18,11 @@
  */
 package megamek.common.rules;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.equipment.AmmoType;
 import megamek.common.rules.core.CoreRulesWeapons;
 import megamek.common.rules.totalwarfare.TWRulesWeapons;
 import org.junit.jupiter.api.Test;
@@ -37,8 +39,10 @@ class RulesWeaponsTest {
         assertTrue(total.getRACUnjamRestriction() == false || total.getRACUnjamRestriction() == true);
         assertTrue(core.getATMClusterSize() >= 0);
         assertTrue(total.getATMClusterSize() >= 0);
-        assertTrue(core.canUACsJam() == false || core.canUACsJam() == true);
-        assertTrue(total.canUACsJam() == false || total.canUACsJam() == true);
+        // Core p.183 writes the ultra autocannon without a jam; the unofficial THB ultras keep TW p.114
+        assertFalse(core.canUACsJam(AmmoType.AmmoTypeEnum.AC_ULTRA));
+        assertTrue(core.canUACsJam(AmmoType.AmmoTypeEnum.AC_ULTRA_THB));
+        assertTrue(total.canUACsJam(AmmoType.AmmoTypeEnum.AC_ULTRA));
         assertTrue(core.getELRMMinimumRackSize(4) >= 0);
         assertTrue(total.getELRMMinimumRackSize(4) >= 0);
         assertTrue(core.getMRMModifier(2) >= 0);

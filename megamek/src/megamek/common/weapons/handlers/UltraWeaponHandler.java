@@ -165,7 +165,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         if ((roll.getIntValue() == 2)
               && (howManyShots == 2)
               && !weaponEntity.isConventionalInfantry()
-              && Game.rulesManager.getRulesWeapons().canUACsJam()) {
+              && Game.rulesManager.getRulesWeapons().canUACsJam(weaponType.getAmmoType())) {
             // Ultra ACs jam on a 2. Edge may reroll the jam check; if Edge wasn't used the jam stands, otherwise
             // the reroll decides (an Ultra AC still jams only on another 2).
             int edgeReroll = rerollJamCheckWithEdge(attackingEntity, subjectId, vPhaseReport);

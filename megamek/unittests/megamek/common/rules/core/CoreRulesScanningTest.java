@@ -216,7 +216,7 @@ class CoreRulesScanningTest {
     void testInfantryScanTheirOwnHexAutomaticallyAndRollForAnythingElse() {
         Infantry platoon = mock(Infantry.class);
         Crew crew = mock(Crew.class);
-        when(crew.getPiloting()).thenReturn(5);
+        when(crew.getPiloting()).thenReturn(4);
         when(platoon.getCrew()).thenReturn(crew);
         when(platoon.isInfantry()).thenReturn(true);
         when(platoon.getPosition()).thenReturn(new Coords(3, 3));
@@ -228,7 +228,8 @@ class CoreRulesScanningTest {
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, ownHexRoll.getValue());
         assertFalse(ownHexRoll.needsRoll());
 
-        assertEquals(8, rules.scanTargetRoll(platoon, hexTarget).getValue(), "a target two hexes away is a roll");
+        assertEquals(8, rules.scanTargetRoll(platoon, hexTarget).getValue(),
+              "Core p.233: infantry scan a target outside their hex at the ground Asset TN of 8, whatever their skill");
     }
 
     /**

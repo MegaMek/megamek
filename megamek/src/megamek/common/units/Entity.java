@@ -3649,7 +3649,7 @@ public abstract class Entity extends TurnOrdered
                 mounted.isJammed() &&
                 !mounted.isDestroyed() &&
                 gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC) &&
-                game.rulesManager.getRulesWeapons().canUACsJam()) {
+                game.rulesManager.getRulesWeapons().canUACsJam(ammoType)) {
                 return true;
             }
         }
@@ -6822,15 +6822,12 @@ public abstract class Entity extends TurnOrdered
                     continue;
                 }
                 if (type.hasFlag(MiscType.F_ECM) && !m.isInoperable() && !m.isModeTurnedOff()) {
-                    if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                    int toReturn = Game.rulesManager.getRulesEquipment().getECMRanges(type);
+                    if (toReturn == 0) {
                         return 0;
                     }
-                    int toReturn = 6;
                     if (type.hasFlag(MiscType.F_ANGEL_ECM) && (this instanceof BattleArmor)) {
                         toReturn = 2;
-                    }
-                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
-                        toReturn = 3;
                     }
                     PlanetaryConditions conditions = game.getPlanetaryConditions();
                     if (conditions.getEMI().isEMI()) {
@@ -8506,8 +8503,11 @@ public abstract class Entity extends TurnOrdered
                 attacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
             } else if (ams.getType().hasFlag(WeaponType.F_PD_BAY)) {
                 // Point defense bays are assigned to the attack with the greatest threat Unlike single AMS, PD bays
-                // can gang up on 1 attack
-                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
+                // can gang up on 1 attack. They engage the missile attacks StratOps p.84 lists, not Narc pods.
+                List<WeaponAttackAction> missileAttacks = attacksInArc.stream()
+                      .filter(attack -> !attack.firesNarcPods(getGame()))
+                      .toList();
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), missileAttacks, true);
                 if (waa != null) {
                     waa.addCounterEquipment(ams);
                 }
@@ -9133,19 +9133,21 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Checks if the entity is attempting to run with damage that would force a PSR. If so, returns the target roll for
-     * the piloting skill check.
+     * Checks if the entity is attempting to run with damage that would force PSRs.
+     *
+     * @return one target roll per required piloting skill check, in the order they are rolled; empty if none
      */
-    public PilotingRollData checkRunningWithDamage(EntityMovementType overallMoveType,
-                                                   int distance) {
+    public List<PilotingRollData> checkRunningWithDamage(EntityMovementType overallMoveType,
+                                                         int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroDamage = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
 
-        Game.rulesManager.getRulesPSR().checkRunningWithDamage(this, roll, gyroDamage, overallMoveType, distance);
+        int checks = Game.rulesManager.getRulesPSR()
+              .checkRunningWithDamage(this, roll, gyroDamage, overallMoveType, distance);
 
         addPilotingModifierForTerrain(roll);
-        return roll;
+        return Collections.nCopies(checks, roll);
     }
 
     /**
@@ -9481,9 +9483,8 @@ public abstract class Entity extends TurnOrdered
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "units don't skid from getting up");
         }
 
-        if (!Game.rulesManager.getRulesMovement().skidEnabled()) {
-            return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "skidding not enabled");
-        }
+        // Black ice (TO:AR) is not ruleset dependent; pavement and ice skids are
+        boolean skidsOnPavementAndIce = Game.rulesManager.getRulesMovement().skidEnabled(this);
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -9512,17 +9513,19 @@ public abstract class Entity extends TurnOrdered
                                          prevHex.terrainLevel(Terrains.BRIDGE_ELEV))));
         boolean isMoveAndTurn = (prevFacing != curFacing) && !Objects.equals(curPos, lastPos);
 
-        if (unitTouchesIce && affectedByIce && isMoveAndTurn) {
+        if (unitTouchesIce && affectedByIce && isMoveAndTurn && skidsOnPavementAndIce) {
             // Turning on ice
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
 
-        } else if (unitTouchesBlackIce && affectedByIce && isMoveAndTurn) {
+        } else if (unitTouchesBlackIce && affectedByIce && isMoveAndTurn && !isBattlefieldSupportAsset()) {
+            // Terrain never forces Assets to make Piloting Skill Rolls (Core p.142)
             // Turning on black ice
             roll.append(new PilotingRollData(getId(),
                                              getMovementBeforeSkidPSRModifier(distance),
                                              "turning on black ice"));
 
-        } else if (prevStepPavement && runOrSprint && !movementMode.isHoverOrWiGE() && isMoveAndTurn) {
+        } else if (prevStepPavement && runOrSprint && !movementMode.isHoverOrWiGE() && isMoveAndTurn
+              && skidsOnPavementAndIce) {
             // Running & turning on pavement
             String description = isMek() ? "running & turning on pavement" : "reckless driving on pavement";
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), description));
@@ -16535,13 +16538,11 @@ public abstract class Entity extends TurnOrdered
             int rollValue = diceRoll.getIntValue();
             String rollCalc = String.valueOf(rollValue);
             boolean isSupercharger = masc.getType().hasFlag(MiscTypeFlag.S_SUPERCHARGER);
-            // WHY is this -1 here?
-            if (isSupercharger &&
-                (((this instanceof Mek) && ((Mek) this).isIndustrial()) ||
-                 (this instanceof SupportTank) ||
-                 (this instanceof SupportVTOL))) {
-                rollValue -= 1;
-                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " - 1]";
+            int activationModifier = isSupercharger
+                  ? Game.rulesManager.getRulesEquipment().getSuperchargerActivationModifier(this) : 0;
+            if (activationModifier != 0) {
+                rollValue += activationModifier;
+                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " - " + (-activationModifier) + "]";
             }
 
             if (isSupercharger) {

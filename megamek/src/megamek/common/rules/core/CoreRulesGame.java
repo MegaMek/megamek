@@ -54,14 +54,6 @@ public class CoreRulesGame extends RulesGame {
     private static final MMLogger logger = MMLogger.create(CoreRulesGame.class);
 
     /**
-     * {@inheritDoc} Ammo dumping is not in Core
-     */
-    @Override
-    public boolean ammoDumping() {
-        return false;
-    }
-
-    /**
      * {@inheritDoc} Immobile not eligible in movement Core p.49 RAC Unjamming does not prevent usage (only limits
      * movement) Core p.183 Finding a club can use in physical phase Core p.79
      */
@@ -160,7 +152,7 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc} Core rules allows minefields
+     * {@inheritDoc} Core rules allows minefields (Core p.156)
      */
     @Override
     public boolean allowMinefields(boolean toMinefields) {
@@ -168,7 +160,7 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc} Core has walk on deployment by default
+     * {@inheritDoc} Core has walk on deployment by default (Core p.37)
      *
      * @return true
      */
@@ -178,7 +170,7 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc} Core omits immobile units from movement/initiative
+     * {@inheritDoc} Core omits immobile units from movement/initiative (Core pp.41, 49)
      *
      * @return false if it should not include them
      */

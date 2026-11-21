@@ -23,12 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import megamek.common.Hex;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.rules.core.CoreRulesTerrain;
 import megamek.common.rules.totalwarfare.TWRulesTerrain;
+import megamek.common.units.Mek;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
  * Tests for terrain-specific rule differences between Core and Total Warfare rule sets.
@@ -56,13 +60,21 @@ class RulesTerrainTest {
         assertInstanceOf(RulesTerrain.class, core, "Core rules should extend the base rules type.");
         assertInstanceOf(RulesTerrain.class, totalWarfare, "Total warfare rules should extend the base rules type.");
 
-        assertEquals(1, core.getRoadElevationCostDifference(roadA, roadB, 2),
-                "Core road movement should reduce elevation cost by one when traversing roads upward.");
-        assertEquals(0, totalWarfare.getRoadElevationCostDifference(roadA, roadB, 2),
+        Mek mek = Mockito.mock(Mek.class);
+        BattlefieldSupportAsset vehicleAsset = new BattlefieldSupportAsset();
+        vehicleAsset.setAssetType(BFSAssetType.VEHICLE);
+
+        assertEquals(1, core.getRoadElevationCostDifference(mek, roadA, roadB, 2),
+                "Core p.53: a level change between road hexes costs 1 MP less.");
+        assertEquals(0, core.getRoadElevationCostDifference(vehicleAsset, roadA, roadB, 2),
+                "Core p.142: an Asset's road level change still costs 2 MP per level.");
+        assertEquals(0, totalWarfare.getRoadElevationCostDifference(mek, roadA, roadB, 2),
                 "Total Warfare does not change road elevation cost.");
-        assertEquals(4, core.getMaxElevationChangeAllowed(roadA, roadB, 3),
-                "Core roads allow one more elevation change than the normal max.");
-        assertEquals(3, totalWarfare.getMaxElevationChangeAllowed(roadA, roadB, 3),
+        assertEquals(2, core.getMaxElevationChangeAllowed(mek, roadA, roadB, 2),
+                "Core p.53 gives Meks no extra level on roads.");
+        assertEquals(2, core.getMaxElevationChangeAllowed(vehicleAsset, roadA, roadB, 1),
+                "Core p.142: vehicle and infantry Assets change up to two levels between road hexes.");
+        assertEquals(3, totalWarfare.getMaxElevationChangeAllowed(vehicleAsset, roadA, roadB, 3),
                 "Total Warfare keeps the normal elevation cap even on roads.");
     }
 }

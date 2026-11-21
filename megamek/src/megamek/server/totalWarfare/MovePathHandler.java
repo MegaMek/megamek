@@ -1288,17 +1288,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             entity.setPassedThroughBoardId(location.boardId());
         }
 
-        // if we ran with destroyed hip or gyro, we need a psr
-        rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved());
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-            gameManager.doSkillCheckInPlace(entity, rollTarget);
-        }
-
-        // if we moved a hex with a destroyed leg, but it was not a run
-        rollTarget = Game.rulesManager.getRulesPSR()
-                                      .checkWalkWithLegDestroyed(entity, overallMoveType, md.getHexesMoved());
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-            gameManager.doSkillCheckInPlace(entity, rollTarget);
+        // if we ran with destroyed hip or gyro, we need a psr; with several, a failed one ends the sequence
+        if (entity.canFall()) {
+            for (PilotingRollData runningRoll : entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved())) {
+                if (!gameManager.doSkillCheckInPlace(entity, runningRoll)) {
+                    break;
+                }
+            }
         }
 
         // if we sprinted with MASC or a supercharger, then we need a PSR
@@ -3232,7 +3228,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                          .getDFAElevation(entity.getGame(),
                                                                           entity.getId(),
                                                                           targetID,
-                                                                          step));
+                                                                          step,
+                                                                          curPos));
                     getGame().addDisplacementAttack(daa);
                     charge = daa;
 
@@ -4693,7 +4690,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                             curPos,
                                                             lastPos,
                                                             rollTarget,
-                                                            false) < 0) {
+                                                            false) > 0) {
+                        // A failed check returns its margin of failure; the vehicle stays put (TO:AR p.20)
                         curPos = lastPos;
                     }
                 }

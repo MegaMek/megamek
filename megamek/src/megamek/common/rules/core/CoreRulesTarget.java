@@ -101,7 +101,8 @@ public class CoreRulesTarget extends RulesTarget {
 
     /**
      * {@inheritDoc}
-     * Only upper arm actuators increase the to hit for shooting. Core p.97
+     * A destroyed upper arm actuator adds +1 to that arm's weapon attacks (Core p.98); the shoulder's +4 is applied
+     * elsewhere (Core p.97)
      */
     @Override
     public int getArmActuatorHitMod(Entity attacker, int location) {

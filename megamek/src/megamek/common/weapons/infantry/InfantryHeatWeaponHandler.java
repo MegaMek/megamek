@@ -43,6 +43,8 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.ComputeSideTable;
+import megamek.common.equipment.InfantryWeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -72,6 +74,15 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
           TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
         bSalvo = true;
+    }
+
+    /** A platoon's heat comes from its flame-based weapon, whether that is its primary or its secondary one */
+    @Override
+    protected Report applyExternalHeat(Entity entityTarget, int heat) {
+        WeaponType heatWeapon = ((weapon instanceof InfantryWeaponMounted platoonWeapons)
+              && !((weaponType instanceof InfantryWeapon primary) && primary.isFlameBased())
+              && platoonWeapons.getOtherWeapon().isFlameBased()) ? platoonWeapons.getOtherWeapon() : weaponType;
+        return externalHeatReport(entityTarget, hit, heat, subjectId, heatWeapon);
     }
 
     @Override

@@ -228,8 +228,9 @@ class MagneticPulseTest {
         }
 
         /**
-         * An LRM-15 hits with 9 warheads: a group of 5 on a leg with heat-dissipating armor, 4 on the bare center
-         * torso. The armor acts on its group's share of the heat (Core p.201), and the turn's total rounds down once.
+         * An LRM-20 hits with 10 warheads: a group of 5 on a leg with heat-dissipating armor, 5 on the bare center
+         * torso, giving +2 without the armor. The armor acts on its group's share of the heat (Core p.201), and the
+         * turn's total rounds down once.
          */
         @Test
         @DisplayName("Heat-dissipating armor where a group strikes halves (TW) or negates (Core) its share")
@@ -237,20 +238,23 @@ class MagneticPulseTest {
             RulesManager originalRules = Game.rulesManager;
             try {
                 Game.rulesManager = new TWRulesManager();
-                assertEquals(1, lrmHeatOnALegWithHeatDissipatingArmor(), "TW: (4 + 5/2) / 5 = 1.3 -> +1");
+                assertEquals(2, lrmHeat(false), "no special armor: 10 / 5 = +2");
+                assertEquals(1, lrmHeat(true), "TW: (5/2 + 5) / 5 = 1.5 -> +1");
                 Game.rulesManager = new CoreRulesManager();
-                assertEquals(0, lrmHeatOnALegWithHeatDissipatingArmor(), "Core: (4 + 0) / 5 = 0.8 -> +0");
+                assertEquals(1, lrmHeat(true), "Core: (0 + 5) / 5 = +1");
             } finally {
                 Game.rulesManager = originalRules;
             }
         }
 
-        private int lrmHeatOnALegWithHeatDissipatingArmor() {
+        private int lrmHeat(boolean heatDissipatingLeg) {
             Mek mek = fusionMek();
-            mek.setArmorType(EquipmentType.T_ARMOR_HEAT_DISSIPATING, Mek.LOC_LEFT_LEG);
+            if (heatDissipatingLeg) {
+                mek.setArmorType(EquipmentType.T_ARMOR_HEAT_DISSIPATING, Mek.LOC_LEFT_LEG);
+            }
             mek.initializeArmor(5, Mek.LOC_LEFT_LEG);
             mek.applyMagneticPulse(5, 5, new HitData(Mek.LOC_LEFT_LEG));
-            mek.applyMagneticPulse(4, 5, CENTER_TORSO);
+            mek.applyMagneticPulse(5, 5, CENTER_TORSO);
             return mek.heatFromExternal;
         }
     }

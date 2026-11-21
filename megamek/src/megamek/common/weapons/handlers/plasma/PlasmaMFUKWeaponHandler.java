@@ -73,7 +73,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     }
 
     @Override
-    protected @Nullable Report applyHeatOnStrike(Entity entityTarget) {
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
         return (entityTarget instanceof Mek) ? applyExternalHeat(entityTarget, 5) : null;
     }
 

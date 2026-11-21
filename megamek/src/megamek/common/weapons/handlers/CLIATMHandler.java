@@ -81,10 +81,8 @@ public class CLIATMHandler extends ATMHandler {
     @Serial
     private static final long serialVersionUID = 5476183194060709574L;
     boolean isAngelECMAffected;
-    /** IMP warheads of this attack that struck the target rather than its partial cover or a building */
+    /** IMP warheads of this attack that struck the target rather than its partial cover, a building or terrain */
     private int impWarheadsStruck = 0;
-    /** IMP warheads of the group being resolved that get past the building around the target, 1 point each */
-    private int impGroupWarheadsStruck = 0;
 
     public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
@@ -989,30 +987,19 @@ public class CLIATMHandler extends ATMHandler {
 
     /**
      * Each group of IMP warheads that strikes the target counts toward the IMP effects, and brings its heat where it
-     * strikes, judged against the armor there before the group's damage (IO:AE p.61, Core p.201).
+     * strikes, judged against the armor there before the group's damage (IO:AE p.61, Core p.201). An IMP missile
+     * inflicts 1 point, so the damage left after buildings and terrain absorbed theirs is the warheads that strike.
      */
     @Override
-    protected @Nullable Report applyHeatOnStrike(Entity entityTarget) {
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
         // A group that strikes a covering DropShip instead is not counted against the target
         if (ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP) && (entityTarget == target)) {
-            impWarheadsStruck += impGroupWarheadsStruck;
+            impWarheadsStruck += damageThatStrikes;
             if (appliesImprovedMagneticPulseMovementInterference(entityTarget)) {
-                entityTarget.addImprovedMagneticPulseHeat(impGroupWarheadsStruck, hit);
+                entityTarget.addImprovedMagneticPulseHeat(damageThatStrikes, hit);
             }
         }
-        return super.applyHeatOnStrike(entityTarget);
-    }
-
-    /**
-     * The building absorbs the same amount from each group that strikes (TW p. 171), only where it shields the
-     * target. An IMP missile inflicts 1 point (IO:AE p. 61), so the damage that gets through is the warheads that strike.
-     */
-    @Override
-    protected int absorbBuildingDamage(int nDamage, Entity entityTarget, int bldgAbsorbs, Vector<Report> vPhaseReport,
-          IBuilding bldg, boolean targetStickingOutOfBuilding) {
-        impGroupWarheadsStruck = super.absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, vPhaseReport, bldg,
-              targetStickingOutOfBuilding);
-        return impGroupWarheadsStruck;
+        return super.applyHeatOnStrike(entityTarget, damageThatStrikes);
     }
 
     /**

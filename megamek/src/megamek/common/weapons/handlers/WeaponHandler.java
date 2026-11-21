@@ -1746,6 +1746,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
+        Report heatReport = applyHeatOnStrike(entityTarget, nDamage);
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);
@@ -1754,6 +1755,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.addDesc(entityTarget);
             vPhaseReport.addElement(r);
             missed = true;
+            if (heatReport != null) {
+                vPhaseReport.add(heatReport);
+            }
         } else {
             if (bGlancing) {
                 hit.makeGlancingBlow();
@@ -1763,7 +1767,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hit.makeGlancingBlow();
             }
 
-            Report heatReport = applyHeatOnStrike(entityTarget);
             vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
                   attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                   false, false, throughFront, underWater, nukeS2S));
@@ -2104,11 +2107,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     /**
      * Applies the outside heat this hit carries as it strikes, before its damage removes armor: armor with special
-     * effects acts while the location struck has armor at the time the hit is applied (Core p.201).
+     * effects acts while the location struck has armor at the time the hit is applied (Core p.201). Heat isn't damage,
+     * so it strikes even when a building or terrain absorbs all the hit's damage (TW p.171).
+     *
+     * @param damageThatStrikes the hit's damage left after buildings and terrain absorbed theirs
      *
      * @return the report of that heat, or null when the hit carries none
      */
-    protected @Nullable Report applyHeatOnStrike(Entity entityTarget) {
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
         return null;
     }
 

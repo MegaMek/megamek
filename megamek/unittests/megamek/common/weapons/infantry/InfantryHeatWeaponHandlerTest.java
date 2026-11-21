@@ -55,6 +55,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.InfantryWeaponMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -213,6 +214,35 @@ class InfantryHeatWeaponHandlerTest {
 
                 assertEquals(expectedHeat, mockEntityTarget.heatFromExternal);
                 assertEquals(heat == expectedHeat ? 3400 : 3406, reports.lastElement().messageId);
+            } finally {
+                Game.rulesManager = original;
+            }
+        }
+
+        /** A platoon whose flamer is its secondary weapon delivers flamer heat, which reflective armor halves */
+        @Test
+        void aSecondaryFlamerIsThePlatoonsHeatWeapon() throws Exception {
+            RulesManager original = Game.rulesManager;
+            try {
+                Game.rulesManager = new TWRulesManager();
+                InfantryWeaponMounted platoonWeapons = mock(InfantryWeaponMounted.class);
+                InfantryWeapon flamer = mock(InfantryWeapon.class);
+                doReturn(true).when(flamer).isFlameBased();
+                doReturn(true).when(flamer).hasFlag(WeaponType.F_FLAMER);
+                doReturn(flamer).when(platoonWeapons).getOtherWeapon();
+                doReturn(mockWeapon.getCalledShot()).when(platoonWeapons).getCalledShot();
+                doReturn(mockWeaponType).when(platoonWeapons).getType();
+                doReturn(platoonWeapons).when(mockAttacker).getEquipment(0);
+                when(mockAttacker.getWeapon(0)).thenReturn(platoonWeapons);
+                InfantryHeatWeaponHandler secondaryFlamer = new InfantryHeatWeaponHandler(mockToHit, mockAction,
+                      mockGame, mockGameManager);
+                setField(secondaryFlamer, "nDamPerHit", 5);
+                doReturn(1).when(mockEntityTarget).getArmor(any(HitData.class));
+                doReturn(EquipmentType.T_ARMOR_REFLECTIVE).when(mockEntityTarget).getArmorType(Mek.LOC_CENTER_TORSO);
+
+                secondaryFlamer.handleEntityDamage(mockEntityTarget, new Vector<>(), null, 1, 1, 0);
+
+                assertEquals(2, mockEntityTarget.heatFromExternal);
             } finally {
                 Game.rulesManager = original;
             }

@@ -274,8 +274,9 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
     }
 
     /**
-     * A to-hit roll of 2 burns out a capacitor-charged PPC before it fires, and a bay's capacitors count as charged
-     * (TO:AUE p.149): the bay's own roll checks them, with or without Aero Sanity
+     * A to-hit roll of 2 burns out a capacitor-charged PPC before it fires, inflicting no damage, and a bay's
+     * capacitors count as charged (TO:AUE p.149): the bay's own roll checks them, with or without Aero Sanity. At a
+     * to-hit number of 2 the bay still hits with its other weapons.
      */
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
@@ -287,11 +288,13 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
               Aero.LOC_NOSE);
         WeaponMounted ppc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
         dropShip.addEquipment(EquipmentType.get("ISPPCCapacitor"), Aero.LOC_NOSE).setLinked(ppc);
+        WeaponMounted plainPpc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
         bay.addWeaponToBay(ppc);
+        bay.addWeaponToBay(plainPpc);
         WeaponAttackAction attack = new WeaponAttackAction(dropShip.getId(), target.getId(),
               dropShip.getEquipmentNum(bay));
         WeaponHandler handler = (WeaponHandler) ((Weapon) bay.getType())
-              .getCorrectHandler(new ToHitData(3, "test"), attack, game, gameManager);
+              .getCorrectHandler(new ToHitData(2, "test"), attack, game, gameManager);
         Roll two = mock(Roll.class);
         when(two.getIntValue()).thenReturn(2);
         when(two.getReport()).thenReturn("2");
@@ -299,7 +302,8 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
 
         handler.handle(GamePhase.FIRING, new Vector<>());
 
-        assertTrue(ppc.isHit(), "the PPC burns out");
-        assertEquals(0, armorLost(), "the bay misses");
+        assertTrue(ppc.isHit(), "the capacitor PPC burns out");
+        assertFalse(plainPpc.isHit(), "a PPC without a capacitor can't burn out");
+        assertEquals(PPC_ATTACK_VALUE, armorLost(), "the bay hits with only the PPC that didn't burn out");
     }
 }

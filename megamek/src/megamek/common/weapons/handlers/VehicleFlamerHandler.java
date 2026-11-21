@@ -126,7 +126,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected @Nullable Report applyHeatOnStrike(Entity entityTarget) {
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
         return FlamerHandlerHelper.heatWithDamage(game, entityTarget, weaponType, subjectId, hit);
     }
 

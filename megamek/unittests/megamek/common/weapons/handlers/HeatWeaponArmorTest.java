@@ -16,6 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
 
@@ -38,6 +39,7 @@ import megamek.common.rules.RulesManager;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.BipedMek;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.plasma.PlasmaCannonHandler;
@@ -45,6 +47,7 @@ import megamek.common.weapons.handlers.plasma.PlasmaMFUKWeaponHandler;
 import megamek.common.weapons.handlers.plasma.PlasmaRifleHandler;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -181,6 +184,35 @@ class HeatWeaponArmorTest {
             // The hit's damage stripped the single armor point it met
             assertTrue(target.getArmor(Mek.LOC_LEFT_TORSO) <= 0);
             assertEquals(expectedHeat, target.heatFromExternal);
+        } finally {
+            Game.rulesManager = originalRules;
+        }
+    }
+
+    /** Heat isn't damage: a flamer whose damage the building around its target absorbs still heats the Mek (TW p.171) */
+    @Test
+    void aFlamerHeatsAMekWhoseBuildingAbsorbsTheDamage() throws Exception {
+        RulesManager originalRules = Game.rulesManager;
+        try {
+            TWGameManager manager = spy(new TWGameManager());
+            doReturn(new Vector<Report>()).when(manager).damageBuilding(any(), anyInt(), any());
+            Game game = manager.getGame();
+            // Under Core a flamer always deals heat along with its damage
+            Game.rulesManager = new CoreRulesManager();
+            game.setBoard(Board.createEmptyBoard(2, 1));
+            Mek attacker = deployMek(game, 0);
+            Mek target = deployMek(game, 1);
+            WeaponMounted flamer = (WeaponMounted) attacker.addEquipment(EquipmentType.get("ISFlamer"),
+                  Mek.LOC_LEFT_ARM);
+            WeaponAttackAction attack = new WeaponAttackAction(attacker.getId(), target.getId(),
+                  flamer.getEquipmentNum());
+            WeaponHandler handler = (WeaponHandler) ((Weapon) flamer.getType()).getCorrectHandler(new ToHitData(),
+                  attack, game, manager);
+            handler.nDamPerHit = 2;
+
+            handler.handleEntityDamage(target, new Vector<>(), mock(IBuilding.class), 1, 1, 10);
+
+            assertEquals(2, target.heatFromExternal);
         } finally {
             Game.rulesManager = originalRules;
         }

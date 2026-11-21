@@ -2036,9 +2036,17 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      */
     @Override
     public int getOriginalJumpMP(boolean ignoreModularArmor) {
-        int jumpMP = capJumpJetMovement(getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
-              .mapToDouble(this::getJumpJetMovement).sum());
+        int jumpMP = capJumpJetMovement(getInstalledJumpJetMP());
         return (!ignoreModularArmor && hasModularArmor()) ? Math.max(0, jumpMP - 1) : jumpMP;
+    }
+
+    /**
+     * @return The Jumping MP the installed jets give before a FrankenMek's is held to its Walking or Running MP: one
+     *       per jet, fractions of a lighter donor jet dropped (CO p. 213)
+     */
+    public int getInstalledJumpJetMP() {
+        return (int) getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+              .mapToDouble(this::getJumpJetMovement).sum();
     }
 
     /** @return The jump jets the Mek mounts, working or not */

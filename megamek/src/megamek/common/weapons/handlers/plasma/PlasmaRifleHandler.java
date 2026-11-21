@@ -76,7 +76,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected @Nullable Report applyHeatOnStrike(Entity entityTarget) {
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
         if (!entityTarget.tracksHeat()) {
             return null;
         }

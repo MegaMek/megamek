@@ -2414,9 +2414,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         double avLong = 0;
         double avExt = 0;
         int maxRange = WeaponType.RANGE_SHORT;
-        double multiplier = WeaponHandler.bracketingMultiplier(weapon);
-        boolean aeroSanity = entity.getGame().getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY);
 
         for (WeaponMounted m : bayWeapons) {
             if (!m.isBreached()
@@ -2442,14 +2439,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     mAVExt = changes[3];
                     mMaxR = (int) changes[4];
                 }
-                if (aeroSanity) {
-                    // Each of the bay's weapons resolves on its own: its value rounded up, then its bay's bracketing
-                    // drops the fractions
-                    mAVShort = BayWeaponHandler.bracketBayDamage(Math.ceil(mAVShort), multiplier);
-                    mAVMed = BayWeaponHandler.bracketBayDamage(Math.ceil(mAVMed), multiplier);
-                    mAVLong = BayWeaponHandler.bracketBayDamage(Math.ceil(mAVLong), multiplier);
-                    mAVExt = BayWeaponHandler.bracketBayDamage(Math.ceil(mAVExt), multiplier);
-                }
 
                 avShort = avShort + mAVShort;
                 avMed = avMed + mAVMed;
@@ -2460,9 +2449,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
-        if (aeroSanity) {
-            // A capital weapon's damage lands at standard scale
-            double scale = weaponType.isCapital() ? 10 : 1;
+        double multiplier = WeaponHandler.bracketingMultiplier(weapon);
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+            // Each of the bay's weapons resolves on its own, a capital one at standard scale
+            double scale = weaponType.isCapital() ? (multiplier * 10) : multiplier;
             avShort *= scale;
             avMed *= scale;
             avLong *= scale;

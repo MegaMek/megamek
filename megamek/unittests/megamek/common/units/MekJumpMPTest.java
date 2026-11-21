@@ -119,6 +119,24 @@ class MekJumpMPTest {
     }
 
     @Test
+    void frankenMekJumpHeatCountsTheJetsALowGravityJumpFires() throws Exception {
+        // At 0.5 G six half-ton jets carry a 60-ton FrankenMek six hexes (TO:AR p. 53), one jet each (CO p. 213)
+        Mek mek = createFrankenMek(60, 240);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_TORSO, 25);
+        for (int jet = 0; jet < 6; jet++) {
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.JUMP_JET), Mek.LOC_RIGHT_TORSO);
+        }
+        Game game = new Game();
+        game.getPlanetaryConditions().setGravity(0.5f);
+        mek.setGame(game);
+
+        // BV passes the Jumping MP, which gravity doesn't change
+        assertEquals(6, mek.getJumpHeat(3));
+        mek.recordJumpTakeoff();
+        assertEquals(6, mek.getJumpHeat(6));
+    }
+
+    @Test
     void frankenMekJumpHeatUsesOnlyJetsAboveWaterAtTakeoff() throws Exception {
         Mek mek = createFrankenMek(60, 240);
         EquipmentType jet = EquipmentType.get(EquipmentTypeLookup.JUMP_JET);

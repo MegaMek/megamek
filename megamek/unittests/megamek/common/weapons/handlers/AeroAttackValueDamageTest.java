@@ -274,39 +274,6 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
     }
 
     /**
-     * Under Aero Sanity a bay's weapons resolve one by one, each fired in its bay's Bracketing mode (SO p.87): an NL55
-     * (5.5, rounded up to 6) in a bay at Bracket 80% deals floor(0.8 x 6) = 4
-     */
-    @Test
-    void anAeroSanityBayWeaponBracketsAsItsBayDoes() throws Exception {
-        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY).setValue(true);
-        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BRACKET_FIRE).setValue(true);
-        Weapon bayType = (Weapon) EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
-        try {
-            bayType.adaptToGameOptions(game.getOptions());
-            Dropship dropShip = addDropShip();
-            WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(bayType, Aero.LOC_NOSE);
-            WeaponMounted laser = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("Naval Laser 55"),
-                  Aero.LOC_NOSE);
-            bay.addWeaponToBay(laser);
-            bay.setModeImmediately(Weapon.MODE_CAPITAL_BRACKET_80);
-            WeaponHandler bayHandler = (WeaponHandler) bayType.getCorrectHandler(new ToHitData(2, "test"),
-                  new WeaponAttackAction(dropShip.getId(), target.getId(), dropShip.getEquipmentNum(bay)), game,
-                  gameManager);
-            WeaponHandler laserHandler = (WeaponHandler) ((Weapon) laser.getType()).getCorrectHandler(
-                  new ToHitData(2, "test"),
-                  new WeaponAttackAction(dropShip.getId(), target.getId(), dropShip.getEquipmentNum(laser)), game,
-                  gameManager);
-            laserHandler.setParentBayHandler(bayHandler);
-
-            assertEquals(4, laserHandler.calcAttackValue());
-        } finally {
-            game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BRACKET_FIRE).setValue(false);
-            bayType.adaptToGameOptions(game.getOptions());
-        }
-    }
-
-    /**
      * A to-hit roll of 2 burns out a capacitor-charged PPC before it fires, inflicting no damage, and a bay's
      * capacitors count as charged (TO:AUE p.149): the bay's own roll checks them, with or without Aero Sanity. At a
      * to-hit number of 2 the bay still hits with its other weapons.

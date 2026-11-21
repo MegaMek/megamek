@@ -174,14 +174,6 @@ class HeatResolver extends AbstractTWRuleHandler {
                 // Mark that RHS was used this turn (for tracking consecutive uses in newRound)
                 entity.setUsedRHSLastTurn(true);
 
-                // RHS activation report
-                report = new Report(5540);
-                report.subject = entity.getId();
-                report.indent();
-                report.addDesc(entity);
-                report.add(radicalHSBonus);
-                rhsReports.add(report);
-
                 Roll diceRoll = Compute.rollD6(2);
                 // Increment consecutive RHS uses for this activation attempt (success or failure),
                 // then look up the target number based on the updated count.
@@ -198,8 +190,16 @@ class HeatResolver extends AbstractTWRuleHandler {
                 report.choose(rhsFailure);
                 rhsReports.add(report);
 
-                // Show RHS stress level and next activation TN (only if RHS didn't fail)
+                // Show the cooling and the RHS stress level and next activation TN (only if RHS didn't fail; a failed
+                // activation cools nothing, Core p.208)
                 if (!rhsFailure) {
+                    report = new Report(5540);
+                    report.subject = entity.getId();
+                    report.indent();
+                    report.addDesc(entity);
+                    report.add(radicalHSBonus);
+                    rhsReports.add(report);
+
                     int nextTargetNumber =
                           Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses() + 1);
                     report = new Report(5547);

@@ -11,6 +11,7 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Vector;
@@ -144,6 +145,7 @@ class CoolantPodHeatTest {
         assertEquals(0, pod.getBaseShotsLeft(), "The pod is spent");
         assertEquals(12 - 6 - 3, mek.heat, "The sinks and the radical system cool; the pod adds nothing");
         assertTrue(reported(manager, 5261));
+        assertTrue(reported(manager, 5540), "The successful activation reports its cooling");
     }
 
     /** Core p. 208: "On a failed activation, the Mek's cooling capacity is not increased this turn" */
@@ -161,6 +163,7 @@ class CoolantPodHeatTest {
 
         assertEquals(12 - 6, mek.heat, "Only the heat sinks cool");
         assertTrue(radicalHeatSink.isDestroyed(), "The failed system takes a critical hit");
+        assertFalse(reported(manager, 5540), "A failed activation reports no cooling");
     }
 
     private static boolean reported(TWGameManager manager, int messageId) {

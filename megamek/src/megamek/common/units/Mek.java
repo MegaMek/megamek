@@ -2077,21 +2077,28 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return jumpJetType.getTonnage(this, mounted.getLocation(), mounted.getSize()) / centerTorsoJumpJetTonnage;
     }
 
+    /** Absorbs float error in a gravity such as 0.2, so that jets exactly covering a jump fire no extra jet */
+    private static final double JUMP_THRUST_EPSILON = 1e-6;
+
     /**
-     * @return the fewest working jump jets that cover the given distance; jets beyond the installed ones count one per
-     *       MP, so the result is never lower than an ordinary Mek's
+     * @return the fewest working jump jets that cover the given distance; hexes beyond the installed jets count one
+     *       each, so the result is never lower than an ordinary Mek's
      */
     private int getFrankenMekJumpJetsFired(int movedMP) {
         // BV and previews have no takeoff. Use the installed jets regardless of the current hex.
         double[] thrust = (jumpTakeoffThrust != null) ? jumpTakeoffThrust
               : getJumpJetThrust(0).filter(movement -> movement > 0).sorted().toArray();
-        double remaining = movedMP;
+        // A jump moves hexes under the game's gravity, which divides the Jumping MP (TO:AR p.53), so its jets must cover
+        // the distance times the gravity; BV and previews pass the MP itself
+        double gravity = ((jumpTakeoffThrust != null) && (game != null)) ? game.getPlanetaryConditions().getGravity()
+              : 1;
+        double remaining = movedMP * gravity;
         int fired = 0;
-        for (int index = thrust.length - 1; (index >= 0) && (remaining > 0); index--) {
+        for (int index = thrust.length - 1; (index >= 0) && (remaining > JUMP_THRUST_EPSILON); index--) {
             remaining -= thrust[index];
             fired++;
         }
-        return fired + (int) Math.max(0, Math.ceil(remaining));
+        return fired + (int) Math.max(0, Math.ceil((remaining / gravity) - JUMP_THRUST_EPSILON));
     }
 
     private int getJumpJetMovementCap() {

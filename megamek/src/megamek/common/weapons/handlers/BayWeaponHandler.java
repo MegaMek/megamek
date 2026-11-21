@@ -73,10 +73,19 @@ public class BayWeaponHandler extends WeaponHandler {
     private static final long serialVersionUID = -1618484541772117621L;
     protected AmmoMounted ammo;
     /** The bay's capacitor PPCs that this attack's to-hit roll burned out */
-    private final Set<WeaponMounted> burnedOut = new HashSet<>();
+    private Set<WeaponMounted> burnedOut = new HashSet<>();
 
     protected BayWeaponHandler() {
         // deserialization only
+    }
+
+    @Override
+    public void restore() {
+        super.restore();
+        // A handler saved before this set existed comes back without it
+        if (burnedOut == null) {
+            burnedOut = new HashSet<>();
+        }
     }
 
     public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {

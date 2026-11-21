@@ -92,14 +92,31 @@ public class BayWeaponHandler extends WeaponHandler {
         for (WeaponMounted m : weapon.getBayWeapons()) {
             av += getAv(m, range);
         }
-        // A bay's Damage Value is its weapons' total rounded normally: three NL55s make 17 (SO p.88)
-        av = Math.round(av);
+        return bayAttackValue(av);
+    }
+
+    /**
+     * @param summedValue the bay's weapons' summed attack values
+     *
+     * @return the bay's damage: the rounded total, adjusted for a direct or glancing blow, then cut by bracketing
+     */
+    protected int bayAttackValue(double summedValue) {
+        double av = roundBayDamage(summedValue);
         if (bDirect) {
             av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
-        av = (int) Math.floor(getBracketingMultiplier() * av);
-        return (int) Math.ceil(av);
+        return bracketBayDamage(av, getBracketingMultiplier());
+    }
+
+    /** A bay's Damage Value is its weapons' total rounded normally: three NL55s make 17 (SO p.88) */
+    public static long roundBayDamage(double summedValue) {
+        return Math.round(summedValue);
+    }
+
+    /** Bracketing fire deals 80, 60 or 40 percent of a bay's damage, with all fractions rounded down (SO p.87) */
+    public static int bracketBayDamage(double damage, double bracketingMultiplier) {
+        return (int) Math.floor(bracketingMultiplier * damage);
     }
 
     @Override

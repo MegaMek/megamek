@@ -34,8 +34,6 @@
 
 package megamek.common.weapons.handlers;
 
-import static java.lang.Math.floor;
-
 import java.io.Serial;
 
 import megamek.common.RangeType;
@@ -130,12 +128,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 }
             }
         }
-        if (bDirect) {
-            av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
-        }
-        av = applyGlancingBlowModifier(av, false);
-        av = (int) Math.floor(getBracketingMultiplier() * av);
-        return (int) Math.ceil(av);
+        return bayAttackValue(av);
     }
 
     /*

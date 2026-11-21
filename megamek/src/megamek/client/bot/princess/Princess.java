@@ -1458,8 +1458,8 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Picks the hex for a TO:AR gun emplacement: dry ground, spaced from the other emplacements, with the widest field
-     * of fire. See {@link EmplacementDeployment}.
+     * Picks the hex for a TO:AR gun emplacement: clear ground beside the streets, where its guns are worth the most
+     * and interlock with the other emplacements'. See {@link EmplacementDeployment}.
      *
      * @param deployedUnit         The emplacement being deployed
      * @param possibleDeployCoords The coordinates being considered for deployment
@@ -1472,14 +1472,12 @@ public class Princess extends BotClient {
         final List<Coords> legalCoords = possibleDeployCoords.stream()
               .filter(c -> super.getFirstValidCoords(deployedUnit, List.of(c)) != null)
               .toList();
-        final List<Coords> otherEmplacements = getEntitiesOwned().stream()
+        final List<Entity> otherEmplacements = getEntitiesOwned().stream()
               .filter(e -> (e != deployedUnit) && e.isDeployed() && (e.getPosition() != null)
                     && (e.getBoardId() == board.getBoardId()) && EmplacementDeployment.isGunEmplacementBuilding(e))
-              .map(Entity::getPosition)
               .toList();
         final Coords enemyCentre = getEnemyDeploymentCenter(board).orElse(null);
-        return EmplacementDeployment.choose(deployedUnit, legalCoords, board, otherEmplacements,
-              c -> EmplacementDeployment.fieldOfFire(game, board, c, deployedUnit, enemyCentre));
+        return EmplacementDeployment.site(game, board, deployedUnit, legalCoords, otherEmplacements, enemyCentre);
     }
 
     /**

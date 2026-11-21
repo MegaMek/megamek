@@ -36,8 +36,8 @@ import java.io.File;
 
 import jakarta.annotation.Nullable;
 import megamek.common.Configuration;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.AbstractDirectory;
+import megamek.common.util.fileUtils.DataFolders;
 import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.util.fileUtils.ScaledImageFileFactory;
@@ -92,9 +92,8 @@ public class MMStaticDirectoryManager {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
                       new ImageFileFactory());
 
-                String userDir = PreferenceManager.getClientPreferences().getUserDir();
-                File portraitUserDir = new File(userDir + "/" + Configuration.portraitImagesDir());
-                if (!userDir.isBlank() && portraitUserDir.isDirectory()) {
+                for (File portraitUserDir : DataFolders.current()
+                      .subfolders(Configuration.portraitImagesDir().toString())) {
                     DirectoryItems userDirPortraits = new DirectoryItems(portraitUserDir, new ImageFileFactory());
                     portraitDirectory.merge(userDirPortraits);
                 }
@@ -139,9 +138,7 @@ public class MMStaticDirectoryManager {
                 camouflageDirectory = new DirectoryItems(Configuration.camoDir(),
                       new ScaledImageFileFactory());
 
-                String userDir = PreferenceManager.getClientPreferences().getUserDir();
-                File camoUserDir = new File(userDir + "/" + Configuration.camoDir());
-                if (!userDir.isBlank() && camoUserDir.isDirectory()) {
+                for (File camoUserDir : DataFolders.current().subfolders(Configuration.camoDir().toString())) {
                     DirectoryItems userDirCamo = new DirectoryItems(camoUserDir, new ScaledImageFileFactory());
                     camouflageDirectory.merge(userDirCamo);
                 }

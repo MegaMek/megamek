@@ -58,11 +58,11 @@ import megamek.common.Configuration;
 import megamek.common.enums.Faction;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.UnitType;
 import megamek.common.universe.Faction2;
 import megamek.common.universe.Factions2;
+import megamek.common.util.fileUtils.DataFolders;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
@@ -2128,16 +2128,13 @@ public class RATGenerator {
     }
 
     /**
-     * @return the logo file at the given relative address in the user directory if it exists there, else the
+     * @return the logo file at the given relative address in the player's data folders if it exists there, else the
      *       installed one if that exists, else {@code null}
      */
     private static @Nullable File findFactionLogoFile(String address) {
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        if ((userDir != null) && !userDir.isBlank()) {
-            File userFile = new File(userDir, address);
-            if (userFile.isFile()) {
-                return userFile;
-            }
+        File userFile = DataFolders.current().findFile(address);
+        if (userFile != null) {
+            return userFile;
         }
         File file = new File(address);
         return file.isFile() ? file : null;

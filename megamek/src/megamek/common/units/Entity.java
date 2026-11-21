@@ -4172,6 +4172,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * @return the heat this Entity generates jumping the given number of hexes, which planetary gravity can make differ
+     *       from the MP that carries it (TO:AR p.53)
+     */
+    public int getJumpHeatForDistance(int hexes) {
+        return getJumpHeat(hexes);
+    }
+
+    /**
      * Returns this entity's current jumping MP, affected by terrain (like water.)
      */
     public int getJumpMPWithTerrain() {

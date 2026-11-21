@@ -130,10 +130,14 @@ class MekJumpMPTest {
         game.getPlanetaryConditions().setGravity(0.5f);
         mek.setGame(game);
 
-        // BV passes the Jumping MP, which gravity doesn't change
-        assertEquals(6, mek.getJumpHeat(3));
+        assertEquals(6, mek.getJumpHeatForDistance(6));
+        // BV passes the Jumping MP, which gravity doesn't change, also after a jump
         mek.recordJumpTakeoff();
-        assertEquals(6, mek.getJumpHeat(6));
+        assertEquals(6, mek.getJumpHeat(3));
+
+        // At 1.6 G the 3 MP carry it 1.875 hexes, rounded to 2: a two-hex jump fires all six jets, five reaching 1
+        game.getPlanetaryConditions().setGravity(1.6f);
+        assertEquals(6, mek.getJumpHeatForDistance(2));
     }
 
     @Test

@@ -101,7 +101,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                       Messages.getString("HeatBreakdown.movementRunning"));
             } else if ((entity.moved == EntityMovementType.MOVE_JUMP)
                   && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance),
+                entity.changeHeatBuildup(entity.getJumpHeatForDistance(entity.delta_distance),
                       Messages.getString("HeatBreakdown.movementJumping"));
             } else if ((entity.moved == EntityMovementType.MOVE_SPRINT) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)) {

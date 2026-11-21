@@ -1957,20 +1957,31 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public int getJumpHeat(int movedMP) {
+        return getJumpHeat(movedMP, false);
+    }
 
+    @Override
+    public int getJumpHeatForDistance(int hexes) {
+        return getJumpHeat(hexes, true);
+    }
+
+    /**
+     * @param distance The Jumping MP, or the hexes of an actual jump, whose count the game's gravity sets from the MP
+     *                 (TO:AR p.53)
+     */
+    private int getJumpHeat(int distance, boolean hexes) {
         int extra = bDamagedCoolantSystem ? 1 : 0;
 
         // don't count movement granted by Partial Wing
+        int wingBonus = 0;
         for (Mounted<?> mount : getMisc()) {
             if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
-                movedMP -= getPartialWingJumpBonus(mount);
+                wingBonus = getPartialWingJumpBonus(mount);
                 break;
             }
         }
         // CO p. 213: a FrankenMek generates jump heat per jet fired, not per hex jumped
-        if (isFrankenMek()) {
-            movedMP = getFrankenMekJumpJetsFired(movedMP);
-        }
+        int movedMP = isFrankenMek() ? getFrankenMekJumpJetsFired(distance, wingBonus, hexes) : (distance - wingBonus);
 
         return switch (getJumpType()) {
             case JUMP_IMPROVED -> extra
@@ -2077,28 +2088,31 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return jumpJetType.getTonnage(this, mounted.getLocation(), mounted.getSize()) / centerTorsoJumpJetTonnage;
     }
 
-    /** Absorbs float error in a gravity such as 0.2, so that jets exactly covering a jump fire no extra jet */
-    private static final double JUMP_THRUST_EPSILON = 1e-6;
-
     /**
-     * @return the fewest working jump jets that cover the given distance; hexes beyond the installed jets count one
+     * @return the fewest working jump jets that cover the distance; distance beyond the installed jets counts one jet
      *       each, so the result is never lower than an ordinary Mek's
      */
-    private int getFrankenMekJumpJetsFired(int movedMP) {
+    private int getFrankenMekJumpJetsFired(int distance, int wingBonus, boolean hexes) {
         // BV and previews have no takeoff. Use the installed jets regardless of the current hex.
         double[] thrust = (jumpTakeoffThrust != null) ? jumpTakeoffThrust
               : getJumpJetThrust(0).filter(movement -> movement > 0).sorted().toArray();
-        // A jump moves hexes under the game's gravity, which divides the Jumping MP (TO:AR p.53), so its jets must cover
-        // the distance times the gravity; BV and previews pass the MP itself
-        double gravity = ((jumpTakeoffThrust != null) && (game != null)) ? game.getPlanetaryConditions().getGravity()
-              : 1;
-        double remaining = movedMP * gravity;
+        double total = 0;
         int fired = 0;
-        for (int index = thrust.length - 1; (index >= 0) && (remaining > JUMP_THRUST_EPSILON); index--) {
-            remaining -= thrust[index];
+        for (int index = thrust.length - 1; (index >= 0) && (frankenMekJumpReach(total, wingBonus, hexes) < distance);
+              index--) {
+            total += thrust[index];
             fired++;
         }
-        return fired + (int) Math.max(0, Math.ceil((remaining / gravity) - JUMP_THRUST_EPSILON));
+        return fired + Math.max(0, distance - frankenMekJumpReach(total, wingBonus, hexes));
+    }
+
+    /**
+     * @return How far jets of the given thrust carry the Mek: their Jumping MP with the fractions dropped (CO p. 213)
+     *       and the partial wing's added, in hexes under the game's gravity when asked (TO:AR p.53)
+     */
+    private int frankenMekJumpReach(double thrust, int wingBonus, boolean hexes) {
+        int jumpMP = (int) thrust + wingBonus;
+        return hexes ? applyGravityEffectsOnMP(jumpMP) : jumpMP;
     }
 
     private int getJumpJetMovementCap() {

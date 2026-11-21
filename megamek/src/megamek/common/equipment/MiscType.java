@@ -9098,6 +9098,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "MASH Equipment";
+        misc.shortName = "MASH";
         misc.setInternalName(misc.name);
         misc.addLookupName("MASH Core Component");
         misc.addLookupName("MASH Operation Theater");

@@ -1,0 +1,211 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+uuid:019f583e-c802-7259-a8f7-ed7896f766d5
+generator:MegaMek Suite 0.51.01 on 2026-07-12
+chassis:Komodo
+model:KIM-2
+mul id:1810
+
+Config:Biped
+techbase:Inner Sphere
+era:3053
+source:TR:3055U,TR:J
+published:RS:J
+rules level:2
+role:Striker
+
+quirk:ext_twist
+quirk:low_profile
+quirk:weak_head_2
+quirk:pro_actuator
+
+mass:45
+engine:225 XL Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:12
+RT armor:12
+CT armor:13
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:4
+RTR armor:4
+RTC armor:6
+
+Weapons:13
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Anti-Missile System, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Anti-Missile System, Right Arm
+TAG, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+ISAntiMissileSystem
+ISAMS Ammo
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+ISAntiMissileSystem
+ISAMS Ammo
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISGuardianECMSuite
+ISGuardianECMSuite
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTAG
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:<p>The Komodo was conceived by the Draconis Combine in 3051 as a direct response to the devastating effectiveness of Clan Elemental battle armor during the initial waves of the Clan Invasion. Produced at Luthien Armor Works on the Combine capital, the forty-five-ton medium BattleMech entered service in 3053 as a purpose-built hunter designed to track down and destroy Clan Elemental infantry, filling a critical gap in the DCMS order of battle where conventional forces had repeatedly proven inadequate against armored battle armor formations. Among the first dedicated anti-battle-armor designs fielded by any Inner Sphere power, the Komodo set the standard for an entirely new class of specialist BattleMech.</p>
+
+capabilities:<p>Built expressly to pursue and eliminate entire Points of Elementals in a single engagement, the Komodo's mobility, armor, and armament are all optimized around the destruction of Clan battle armor in the field. A VOX 225 XL engine provides a top speed of eighty-six kilometers per hour, while five Icarus 81 jump jets grant the 'Mech a one-hundred-fifty-meter jump capability, allowing it to negotiate the urban terrain and dense woodland environments where Elemental units typically seek cover. The design's primary armament of ten Victory 23R medium lasers, mounted in twin five-laser clusters on each arm, delivers devastating close-range firepower capable of annihilating a full Point of standard Elementals in seconds.</p><p>Complementing its anti-infantry role, the Komodo carries a Sipher Security Plus communications system integrated with a Guardian ECM suite to disrupt enemy electronic warfare, a pair of Yori Flyswatter anti-missile systems to defend against SRM-equipped Elementals, and a Forward-1 TAG unit for designating targets for Arrow IV artillery support. Seven and a half tons of Valiant Lamellor standard armor provide adequate protection against the lighter direct-fire weapons typically carried by battle armor, though the design remains vulnerable to concentrated fire from heavier 'Mechs. The Komodo's average land speed and limited weapons range compared to most medium-weight designs represent deliberate trade-offs accepted in favor of maximizing close-quarters lethality against its intended prey.</p>
+
+deployment:<p>The base KIM-2 configuration represents the original anti-Elemental hunter concept in its purest form. Its ten medium lasers provide overwhelming short-range firepower against battle armor targets, while integrated electronic warfare and anti-missile systems ensure the 'Mech can close to effective range with minimal interference. A TAG designator allows Komodo pilots to call in artillery strikes on Elemental formations too dispersed or well-entrenched for direct engagement, giving the design a secondary fire-support coordination role. The KIM-2 set the standard for dedicated anti-infantry BattleMech design within the DCMS and remains the benchmark against which subsequent variants are measured.</p>
+
+history:<p>Rushed into the field as soon as production lines were operational in 3053, the Komodo appeared in the ranks of virtually every DCMS unit stationed along the Clan front. Many were initially deployed on Wolcott for raiding missions against Clan Smoke Jaguar and Clan Nova Cat forces, where their specialized anti-Elemental capabilities proved invaluable in disrupting Clan combined-arms formations. The design's effectiveness in these early engagements cemented its reputation as one of the Combine's most successful Clan Invasion-era designs and generated demand that consistently outpaced Luthien Armor Works' production capacity.</p><p>During Operation Bulldog in 3059, Komodos served extensively in the liberation of worlds held by Clan Smoke Jaguar, where their purpose-built anti-Elemental capabilities proved particularly valuable during urban combat operations. The subsequent Ghost Bear/Combine War and the border flare-ups surrounding the FedCom Civil War further demonstrated the design's versatility, and DCMS generals increasingly sought to place at least one dedicated Komodo lance in every front-line command. The introduction of the C3-equipped KIM-2C and KIM-3C variants in 3064 gave the Komodo new relevance as a networked anti-infantry platform, with paired lances of slave and master variants providing heavier and more capable DCMS forces with specialized protection against armored infantry threats.</p><p>The Jihad dealt a severe blow to Komodo production when the Word of Blake's assault on Luthien destroyed the production line at Luthien Armor Works. With the sole manufacturing facility eliminated, surviving Komodos became increasingly rare assets carefully husbanded by DCMS quartermasters throughout the conflict and its aftermath. The production line was eventually restored to limited capacity around 3096, allowing a trickle of new-build Komodos to reach front-line units during the Republic era and beyond. Despite the interruption, the Komodo's proven track record against battle armor ensured continued demand, and the design's influence extended beyond the Combine when Independence Weaponry purchased surplus Komodo chassis and modified them to carry additional mass, ultimately developing the heavier Shugenja BattleMech as a derivative design.</p>
+
+manufacturer:Luthien Armor Works
+
+primaryfactory:Luthien
+
+fluffdate:2026-02-26 19:50:04
+
+systemmanufacturer:CHASSIS:Alshain
+systemmode:CHASSIS:Type Chi
+systemmanufacturer:ENGINE:VOX
+systemmode:ENGINE:225 XL
+systemmanufacturer:ARMOR:Valiant
+systemmode:ARMOR:Lamellor
+systemmanufacturer:JUMP_JET:Icarus Unlimited
+systemmode:JUMP_JET:81
+systemmanufacturer:COMMUNICATIONS:Sipher
+systemmode:COMMUNICATIONS:Security Plus with Guardian ECM Suite
+systemmanufacturer:TARGETING:Eagle Eye
+systemmode:TARGETING:410 XX with TAG

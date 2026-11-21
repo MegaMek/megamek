@@ -1,0 +1,196 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+uuid:019f583e-ce6d-7150-b5a1-0b8bfea442a1
+generator:MegaMek Suite 0.51.01 on 2026-07-12
+chassis:Gladiator
+model:GLD-3R
+mul id:1200
+
+Config:Biped
+techbase:Inner Sphere
+era:2490
+source:TR:3075,TR:SW
+published:RS:SW
+rules level:1
+role:Missile Boat
+
+quirk:bad_rep_is
+quirk:cowl
+
+mass:55
+engine:275 Fusion Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:12 Single
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:15
+RA armor:15
+LT armor:19
+RT armor:19
+CT armor:26
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:3
+RTR armor:3
+RTC armor:5
+
+Weapons:4
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+LRM 10, Left Torso
+LRM 10, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Jump Jet
+Jump Jet
+LRM 10
+LRM 10
+IS Ammo LRM-10
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+Jump Jet
+LRM 10
+LRM 10
+IS Ammo LRM-10
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:<p>The Gladiator holds the distinction of being the first BattleMech produced entirely within the Draconis Combine. Developed in extreme secrecy at New Samarkand Armor Works under the direct oversight of Coordinator Kozo Von Rohrs, the 55-ton 'Mech entered production in 2468 after seven years of troubled development. Plagued by mechanical failures and electronic malfunctions stemming from its reliance on primitive technology, the design was dishonored following a catastrophic early battlefield showing and officially retired from Combine service by 2488.</p><p>Despite its ignoble beginnings, the Gladiator has experienced an unlikely resurrection across several eras. Retrotech production during the Jihad briefly revived the primitive design, while StarCorps Industries on Son Hoa subsequently developed modernized variants that transformed the chassis into a viable garrison platform for independent Periphery forces.</p>
+
+capabilities:<p>The GLD-4R represents the definitive production standard for the Gladiator. Built on an MW240 chassis powered by a CoreTek 275 fusion engine, the 'Mech achieves a respectable top speed of eighty-six kilometers per hour, keeping pace with many medium designs of similar tonnage. Five GE-2200 jump jets (a feature first introduced on the -4R) provide additional tactical mobility for clearing obstacles and gaining advantageous positioning, enabling jumps of up to one hundred fifty meters.</p><p>The weapons loadout balances range and close-quarters capability. A Lord's Light P1 PPC serves as the primary offensive weapon, delivering punishing fire at extended range, while two Argra 1L medium lasers provide reliable secondary firepower and a Thunderstroke SRM-6 exploits any breaches in enemy armor during close engagements. Nine and a half tons of Kemplar 5000 standard armor offers solid protection for the design's weight class, though dedicated fire support or assault 'Mechs will outgun it in prolonged exchanges. Thirteen single heat sinks manage the thermal load adequately, though sustained PPC fire combined with jumping generates noticeable heat buildup.</p>
+
+deployment:<p>This variant was Merryweather Industries' first independently produced BattleMech variant, representing the Terran Hegemony company's attempt to break into military manufacturing without government sponsorship. Retaining the speed of the GLD-2R, the design replaced the large laser with twin LRM-10 launchers, shifting the 'Mech toward a fire support role. The first production run completed in 2490, but the lackluster design attracted only planetary militia buyers. Merryweather's lack of access to cutting-edge technology and their precarious financial position meant this variant was outclassed by most contemporary designs from the moment it reached the field.</p>
+
+history:<p>The Gladiator's origins lie in the Draconis Combine's desperate effort to enter the BattleMech era. After the 2461 raid on Coventry netted the technical specifications for BattleMech construction, Coordinator Kozo Von Rohrs established New Samarkand Armor Works as a secret division to develop the Combine's first indigenous design. The seven-year development process, conducted under DEST surveillance and extreme secrecy, produced a deeply flawed machine. NSAW pushed Gladiators into service despite known mechanical and electronic problems, sending techs and upgrade kits into the field to address issues as work-arounds and fixes could be made.</p><p>The Battle of Nox in 2475 proved catastrophic for the Gladiator's reputation. While the 'Mech was reasonably armed and armored for its era, it could not stand against the Terran Hegemony's massive designs like the Mackie or the Banshee, and inexperienced Combine MechWarriors lacked the skill to compete against their more experienced Davion and Steiner counterparts. The Gladiator fell permanently out of favor, and New Samarkand Armor Works ceased production in 2488 after the Von Rohrs was adopted as the Combine's new standard BattleMech.</p><p>Merryweather Industries' brief foray into Gladiator production on Alula Australis between 2490 and 2495 demonstrated the enormous financial barriers to private BattleMech manufacturing without government backing. The small Terran Hegemony company was already behind the technological curve, and their GLD-3R attracted only planetary militia customers. The incomplete GLD-4R production run ended when the company transitioned to IndustrialMech manufacturing, eventually becoming a casualty of the Succession Wars. Salvaged Gladiators lingered in militia and mercenary inventories across the Inner Sphere and Periphery for decades before the last known examples were finally destroyed during the Reunification War.</p><p>The Jihad's voracious appetite for war matériel unexpectedly revived the ancient design. Multiple manufacturers established retrotech production lines to build primitive GLD-1R models, exploiting the design's simplicity to rapidly produce desperately needed 'Mechs. Rastaban Agricultural Products, Metals of the Earth, Sword of the Prophet Enterprises, and Freedom Foundries Inc. all operated short-lived Gladiator lines during this period, though most had closed by 3080. On the Periphery world of Son Hoa, StarCorps Industries took a different approach, developing the modernized GLD-5R based on an extensively customized Gladiator fielded by a mercenary officer of the Devil's Brigade.</p><p>This modest Jihad-era production line evolved over subsequent decades into a family of variants tailored for Son Hoa's unique position as an independent Periphery manufacturing hub. Marian Arms Incorporated on Alphard also contributed to the design's revival, upgrading their primitive production capability to Succession Wars standards in the early 3130s. The increased presence of Clan Sea Fox traders on Son Hoa drove the development of mixed-technology variants like the GLD-7R/SF and GLD-9SF, designs that serve both conventional military roles and unique utility functions for Sea Fox merchant operations. By the ilClan era, the once-dishonored Gladiator had found an unlikely second life as a valued garrison and multi-role platform across the Periphery and independent worlds.</p>
+
+manufacturer:Merryweather Industries
+
+primaryfactory:Alula Australis
+
+fluffdate:2026-02-28 17:47:08
+
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:CoreTek
+systemmode:ENGINE:CoreTek 275
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:COMMUNICATIONS:Fujika
+systemmode:COMMUNICATIONS:Fujika Multiband
+systemmanufacturer:TARGETING:General Systems
+systemmode:TARGETING:General Systems AV-12

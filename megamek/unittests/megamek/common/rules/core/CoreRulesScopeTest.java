@@ -100,10 +100,11 @@ class CoreRulesScopeTest {
 
     @ParameterizedTest(name = "{0}/{1} gives {2}")
     @CsvSource({ "AC, 2, -3", "PAC, 4, -2", "AC, 5, -2", "PAC, 8, -1", "AC, 10, -1", "AC, 20, -1", "AC, 15, -2",
-                 "AC_IMP, 10, -2" })
+                 "AC_IMP, 10, -1" })
     void armorPiercingModifiersFollowCoreForThePrintedWeapons(AmmoType.AmmoTypeEnum family, int rackSize,
           int expected) {
-        // Core p.191 prints AC/2, AC/5, AC/10, AC/20, LAC and PAC; other weapons and calibers keep TW p.140
+        // Core p.191 prints AC/2, AC/5, AC/10, AC/20, LAC and PAC, improved autocannons by caliber; other calibers keep
+        // TW p.140
         AmmoType ammo = mock(AmmoType.class);
         when(ammo.getAmmoType()).thenReturn(family);
         when(ammo.getRackSize()).thenReturn(rackSize);

@@ -46,16 +46,6 @@ import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.common.weapons.gaussRifles.HAGWeapon;
-import megamek.common.weapons.gaussRifles.clan.CLAPGaussRifle;
-import megamek.common.weapons.gaussRifles.clan.CLGaussRifle;
-import megamek.common.weapons.gaussRifles.innerSphere.ISGaussRifle;
-import megamek.common.weapons.gaussRifles.innerSphere.ISHGaussRifle;
-import megamek.common.weapons.gaussRifles.innerSphere.ISImpHGaussRifle;
-import megamek.common.weapons.gaussRifles.innerSphere.ISLGaussRifle;
-import megamek.common.weapons.gaussRifles.innerSphere.ISMagshotGaussRifle;
-import megamek.common.weapons.gaussRifles.innerSphere.ISSilverBulletGauss;
-import megamek.common.weapons.lasers.ImprovedHeavyLaserWeapon;
 
 public class CoreRulesExplosions extends RulesExplosions {
     /**
@@ -230,18 +220,11 @@ public class CoreRulesExplosions extends RulesExplosions {
 
     /**
      * {@inheritDoc}
-     * A component explosion "does 2 points of damage, multiplied by the number of slots that item occupies" (Core p.96).
-     * This covers the explosive components Core prints: its Gauss rifles (Core p.184), improved heavy lasers (p.185)
-     * and PPCs with a charged capacitor (p.188). Explosive equipment Core does not print, such as Hyper-Velocity Autocannons,
-     * incendiary autocannon ammunition, the Clan Improved and Prototype Gauss Rifles or the RISC Hyper Laser, keeps
-     * its own explosion damage.
+     * A component explosion "does 2 points of damage, multiplied by the number of slots that item occupies" (Core p.96),
+     * for every explosive component.
      */
     @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
-        if (!isCoreComponentExplosion(weaponType)) {
-            return super.equipmentDamage(mounted, weaponType);
-        }
-
         // Charged PPC capacitors when hit can cause an explosion.
         if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
             if (mounted.isFired()) {
@@ -276,23 +259,6 @@ public class CoreRulesExplosions extends RulesExplosions {
         }
 
         return mounted.getNumCriticalSlots() * 2;
-    }
-
-    /**
-     * @return true for the explosive weapons the Core Rulebook prints (Core pp.184, 185, 188)
-     */
-    private static boolean isCoreComponentExplosion(WeaponType weaponType) {
-        return (weaponType instanceof ISGaussRifle)
-              || (weaponType instanceof CLGaussRifle)
-              || (weaponType instanceof CLAPGaussRifle)
-              || (weaponType instanceof HAGWeapon)
-              || (weaponType instanceof ISHGaussRifle)
-              || (weaponType instanceof ISImpHGaussRifle)
-              || (weaponType instanceof ISLGaussRifle)
-              || (weaponType instanceof ISMagshotGaussRifle)
-              || (weaponType instanceof ISSilverBulletGauss)
-              || (weaponType instanceof ImprovedHeavyLaserWeapon)
-              || weaponType.hasFlag(WeaponType.F_PPC);
     }
 
     /**

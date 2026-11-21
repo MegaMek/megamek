@@ -42,12 +42,14 @@ import megamek.server.totalWarfare.TWDamageManager;
 public class CoreRulesAmmo extends RulesAmmo {
 
     /**
-     * {@inheritDoc} Core p.191 prints AC/2, LAC/2, PAC/2: -3; AC/5, LAC/5, PAC/4: -2; AC/10, AC/20, PAC/8: -1. Weapons
-     * and calibers Core does not print, such as improved autocannons, keep the Total Warfare modifier.
+     * {@inheritDoc} Core p.191 prints AC/2, LAC/2, PAC/2: -3; AC/5, LAC/5, PAC/4: -2; AC/10, AC/20, PAC/8: -1, and
+     * improved autocannons use the value of their caliber. Weapons and calibers Core does not print keep the Total
+     * Warfare modifier.
      */
     @Override
     public int armorPiercingMod(AmmoType inType) {
         boolean corePrintedWeapon = (inType.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
+              || (inType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
               || (inType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
               || (inType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC);
         if (!corePrintedWeapon) {
@@ -62,14 +64,11 @@ public class CoreRulesAmmo extends RulesAmmo {
     }
 
     /**
-     * {@inheritDoc} Core armor-piercing ammunition, for the AC, LAC and PAC, has no attack modifier (Core p.191).
-     * Improved autocannons are not in Core and keep theirs.
+     * {@inheritDoc} Core armor-piercing ammunition has no attack modifier, improved autocannons included (Core p.191).
      */
     @Override
     public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
-        if (ammoType == AmmoType.AmmoTypeEnum.AC_IMP) {
-            super.armorPiercingAttackMod(ammoType, toHit, AP);
-        }
+        // Do nothing: there is no attack modifier
     }
 
     /**

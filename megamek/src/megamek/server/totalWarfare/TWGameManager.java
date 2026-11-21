@@ -11788,7 +11788,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
         final int TN = entity.getCrew().getGunnery() + 3;
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)
-              && game.rulesManager.getRulesWeapons().canUACsJam(AmmoType.AmmoTypeEnum.AC_ULTRA)) {
+              && game.rulesManager.getRulesWeapons().canUACsJam()) {
             r = new Report(3026);
         } else {
             r = new Report(3025);
@@ -11825,7 +11825,7 @@ public class TWGameManager extends AbstractGameManager {
                       (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC) ||
                       (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)) &&
                       game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC) &&
-                      game.rulesManager.getRulesWeapons().canUACsJam(weaponType.getAmmoType())) {
+                      game.rulesManager.getRulesWeapons().canUACsJam()) {
                     Roll diceRoll = Compute.rollD6(2);
                     r = new Report(3030);
                     r.indent();

@@ -37,7 +37,6 @@ import java.util.Vector;
 import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -67,12 +66,11 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     /**
      * {@inheritDoc}
-     * Core writes the ultra autocannon without a jam (Core p.183). The unofficial Tactical Handbook ultra autocannons
-     * are not in Core and keep the Total Warfare jam (TW p.114).
+     * Core writes the ultra autocannon, of every kind, without a jam (Core p.183).
      */
     @Override
-    public boolean canUACsJam(AmmoType.AmmoTypeEnum ammoType) {
-        return ammoType == AmmoType.AmmoTypeEnum.AC_ULTRA_THB;
+    public boolean canUACsJam() {
+        return false;
     }
 
     /**

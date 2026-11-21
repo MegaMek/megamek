@@ -3649,7 +3649,7 @@ public abstract class Entity extends TurnOrdered
                 mounted.isJammed() &&
                 !mounted.isDestroyed() &&
                 gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC) &&
-                game.rulesManager.getRulesWeapons().canUACsJam(ammoType)) {
+                game.rulesManager.getRulesWeapons().canUACsJam()) {
                 return true;
             }
         }

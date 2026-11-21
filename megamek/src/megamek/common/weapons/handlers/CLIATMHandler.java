@@ -89,15 +89,6 @@ public class CLIATMHandler extends ATMHandler {
               target.getPosition());
     }
 
-    /**
-     * Improved ATMs (and Fusillades) are not in the Core Rulebook. They resolve "in the same way as a standard ATM"
-     * (IO:AE p.60), in 5-point groupings (TW p.138; IO:AE p.212 prints C5).
-     */
-    @Override
-    protected int calculateNumCluster() {
-        return 5;
-    }
-
     @Override
     protected int calcDamagePerHit() {
         double toReturn;

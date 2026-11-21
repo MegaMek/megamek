@@ -120,10 +120,11 @@ final class EmplacementStreetCheck {
             Hex currentHex = board.getHex(current);
             for (int direction = 0; direction < 6; direction++) {
                 Coords next = current.translated(direction);
-                boolean isNewGround = !next.equals(site) && !reached.contains(next)
-                      && (next.distance(site) <= DETOUR_RADIUS);
-                if (isNewGround && isDrivable(board, next, otherEmplacements)
-                      && canStep(currentHex, board.getHex(next))) {
+                boolean isNewGround = !next.equals(site) && !reached.contains(next);
+                boolean isShortDetour = next.distance(site) <= DETOUR_RADIUS;
+                boolean isReachable = isDrivable(board, next, otherEmplacements)
+                      && canStep(currentHex, board.getHex(next));
+                if (isNewGround && isShortDetour && isReachable) {
                     reached.add(next);
                     frontier.add(next);
                 }

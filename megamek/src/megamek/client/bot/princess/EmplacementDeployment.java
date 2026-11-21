@@ -323,8 +323,13 @@ public final class EmplacementDeployment {
             LOGGER.warn("[Emplacement] {}: no clear ground among {} legal hexes, which sort as {}; the best "
                   + "available is {}", emplacement.getShortName(), candidates.size(), tally, mildest);
         }
-        final SiteProblem accepted = mildest;
-        return candidates.stream().filter(candidate -> problems.get(candidate) == accepted).toList();
+        List<Coords> accepted = new ArrayList<>();
+        for (Coords candidate : candidates) {
+            if (problems.get(candidate) == mildest) {
+                accepted.add(candidate);
+            }
+        }
+        return accepted;
     }
 
     /**
@@ -500,8 +505,7 @@ public final class EmplacementDeployment {
         List<WeaponReach> weapons = EmplacementFirepower.weaponsOf(emplacement);
         int gunnery = EmplacementFirepower.gunneryOf(emplacement);
         for (Coords sample : origin.allAtDistanceOrLess(reach(emplacement))) {
-            Hex sampleHex = (isSampleHex(sample) && !sample.equals(origin) && board.contains(sample))
-                  ? board.getHex(sample) : null;
+            Hex sampleHex = sampleHexAt(board, origin, sample);
             if (sampleHex == null) {
                 continue;
             }
@@ -558,14 +562,24 @@ public final class EmplacementDeployment {
           EmplacementApproach approach) {
         int promise = 0;
         for (Coords sample : origin.allAtDistanceOrLess(reach)) {
-            Hex sampleHex = (isSampleHex(sample) && !sample.equals(origin) && board.contains(sample))
-                  ? board.getHex(sample) : null;
+            Hex sampleHex = sampleHexAt(board, origin, sample);
             if (sampleHex != null) {
                 int firepower = EmplacementFirepower.valueAtRange(weapons, origin.distance(sample), gunnery);
                 promise += groundValue(firepower, sample, sampleHex, approach);
             }
         }
         return promise;
+    }
+
+    /**
+     * @return the hex at {@code sample} when it is one the rule checks, on the board and not the hex being judged;
+     *       otherwise {@code null}
+     */
+    private static @Nullable Hex sampleHexAt(Board board, Coords origin, Coords sample) {
+        if (!isSampleHex(sample) || sample.equals(origin)) {
+            return null;
+        }
+        return board.contains(sample) ? board.getHex(sample) : null;
     }
 
     private static int groundValue(int firepower, Coords ground, Hex groundHex, EmplacementApproach approach) {

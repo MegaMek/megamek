@@ -189,9 +189,9 @@ record EmplacementApproach(Coords defended, int radius, Set<Coords> routes, Set<
 
     private static List<Coords> buildingHexes(Board board) {
         List<Coords> builtUp = new ArrayList<>();
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
-                Coords coords = new Coords(x, y);
+        for (int column = 0; column < board.getWidth(); column++) {
+            for (int row = 0; row < board.getHeight(); row++) {
+                Coords coords = new Coords(column, row);
                 Hex hex = board.getHex(coords);
                 if ((hex != null) && hex.containsTerrain(Terrains.BUILDING)) {
                     builtUp.add(coords);
@@ -271,8 +271,9 @@ record EmplacementApproach(Coords defended, int radius, Set<Coords> routes, Set<
             for (int direction = 0; direction < 6; direction++) {
                 Coords next = current.translated(direction);
                 boolean isNewGround = board.contains(next) && !distances.containsKey(next);
-                if (isNewGround && EmplacementStreetCheck.isDrivable(board, next, Set.of())
-                      && EmplacementStreetCheck.canStep(currentHex, board.getHex(next))) {
+                boolean isReachable = EmplacementStreetCheck.isDrivable(board, next, Set.of())
+                      && EmplacementStreetCheck.canStep(currentHex, board.getHex(next));
+                if (isNewGround && isReachable) {
                     distances.put(next, distances.get(current) + 1);
                     frontier.add(next);
                 }

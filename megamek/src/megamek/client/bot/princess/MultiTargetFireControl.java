@@ -207,7 +207,7 @@ public class MultiTargetFireControl extends FireControl {
         WeaponFireInfo shotInOtherMode = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);
         if (shotInOtherMode.getExpectedDamage() > 0) {
             shotInOtherMode.setUpdatedFiringMode(otherMode);
-            logger.debug("[IndirectFire] {}: {} has no direct shot at {}, switching mode gives {} expected damage",
+            logger.trace("[IndirectFire] {}: {} has no direct shot at {}, switching mode gives {} expected damage",
                   shooter.getDisplayName(), weapon.getName(), target.getDisplayName(),
                   shotInOtherMode.getExpectedDamage());
             return shotInOtherMode;

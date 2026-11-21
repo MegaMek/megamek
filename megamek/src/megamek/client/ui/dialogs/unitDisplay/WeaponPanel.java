@@ -2449,19 +2449,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
-        // As the game resolves the bay: its total rounds normally, then bracketing drops the fractions
         double multiplier = WeaponHandler.bracketingMultiplier(weapon);
-        avShort = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avShort), multiplier);
-        avMed = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avMed), multiplier);
-        avLong = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avLong), multiplier);
-        avExt = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avExt), multiplier);
-
-        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
-              && weaponType.isCapital()) {
-            avShort *= 10;
-            avMed *= 10;
-            avLong *= 10;
-            avExt *= 10;
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+            // Each of the bay's weapons resolves on its own, a capital one at standard scale
+            double scale = weaponType.isCapital() ? (multiplier * 10) : multiplier;
+            avShort *= scale;
+            avMed *= scale;
+            avLong *= scale;
+            avExt *= scale;
+        } else {
+            // As the game resolves the bay: its total rounds normally, then bracketing drops the fractions
+            avShort = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avShort), multiplier);
+            avMed = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avMed), multiplier);
+            avLong = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avLong), multiplier);
+            avExt = BayWeaponHandler.bracketBayDamage(BayWeaponHandler.roundBayDamage(avExt), multiplier);
         }
 
         wHeatR.setText(Integer.toString(heat));

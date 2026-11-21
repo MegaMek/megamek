@@ -927,7 +927,7 @@ public class Compute {
               && (entity.getMovementMode() != EntityMovementMode.HOVER)
               && (entity.getMovementMode() != EntityMovementMode.WIGE)
               && isTurning && !isInfantry
-              && Game.rulesManager.getRulesMovement().skidEnabled(entity)) {
+              && Game.rulesManager.getRulesMovement().skidEnabled()) {
             return true;
         }
 

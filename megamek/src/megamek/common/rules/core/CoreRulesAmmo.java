@@ -141,11 +141,11 @@ public class CoreRulesAmmo extends RulesAmmo {
     /**
      * {@inheritDoc}
      * The printed Core Rulebook prices no special munitions: ammo slots can be switched to any munition the weapon can
-     * use (Core p.190) and the Battle Value adjustments cover only C3 networks and skills (Core p.220). The Core errata
-     * (v0.1/v0.2) list special-ammo BV surcharges that are not applied here. This applies to the munition and launcher
-     * pairs Core prints: caseless (AC, LAC, RAC; p.192), AX (SRM, MML; p.192), Thunder (LRM,
-     * MML, NLRM, Thunderbolt; pp.186, 193) and Thunder IV (Arrow IV; p.191). Other munitions keep their Total Warfare
-     * BV.
+     * use (Core p.190), and "no other alternate ammunition types in the Core Rulebook, including Semi-Guided LRMs,
+     * currently have an additional BV surcharge" beyond the TAG surcharge for Homing Arrow IV (Core errata v0.2 p.1).
+     * This applies to the munition and launcher pairs Core prints: Inner Sphere caseless (AC, LAC, RAC; p.192) and AX
+     * (SRM, MML; p.192), Thunder (LRM, MML, NLRM, Thunderbolt; pp.186, 193) and Thunder IV (Arrow IV; p.191). Other
+     * munitions keep their Total Warfare BV.
      *
      * @param munition AmmoType of the item being considered
      * @return the munition's BV

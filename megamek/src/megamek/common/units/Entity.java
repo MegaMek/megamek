@@ -9483,8 +9483,9 @@ public abstract class Entity extends TurnOrdered
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "units don't skid from getting up");
         }
 
-        // Black ice (TO:AR) is not ruleset dependent; pavement and ice skids are
-        boolean skidsOnPavementAndIce = Game.rulesManager.getRulesMovement().skidEnabled(this);
+        if (!Game.rulesManager.getRulesMovement().skidEnabled()) {
+            return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "skidding not enabled");
+        }
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
@@ -9513,19 +9514,17 @@ public abstract class Entity extends TurnOrdered
                                          prevHex.terrainLevel(Terrains.BRIDGE_ELEV))));
         boolean isMoveAndTurn = (prevFacing != curFacing) && !Objects.equals(curPos, lastPos);
 
-        if (unitTouchesIce && affectedByIce && isMoveAndTurn && skidsOnPavementAndIce) {
+        if (unitTouchesIce && affectedByIce && isMoveAndTurn) {
             // Turning on ice
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
 
-        } else if (unitTouchesBlackIce && affectedByIce && isMoveAndTurn && !isBattlefieldSupportAsset()) {
-            // Terrain never forces Assets to make Piloting Skill Rolls (Core p.142)
+        } else if (unitTouchesBlackIce && affectedByIce && isMoveAndTurn) {
             // Turning on black ice
             roll.append(new PilotingRollData(getId(),
                                              getMovementBeforeSkidPSRModifier(distance),
                                              "turning on black ice"));
 
-        } else if (prevStepPavement && runOrSprint && !movementMode.isHoverOrWiGE() && isMoveAndTurn
-              && skidsOnPavementAndIce) {
+        } else if (prevStepPavement && runOrSprint && !movementMode.isHoverOrWiGE() && isMoveAndTurn) {
             // Running & turning on pavement
             String description = isMek() ? "running & turning on pavement" : "reckless driving on pavement";
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), description));

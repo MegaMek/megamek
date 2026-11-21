@@ -46,12 +46,11 @@ import megamek.common.units.Mek;
 
 public abstract class RulesMovement {
     /**
-     * Can this unit skid on pavement or ice?
+     * Can units skid?
      *
-     * @param entity the moving unit
      * @return true if skidding is enabled
      */
-    public abstract boolean skidEnabled(Entity entity);
+    public abstract boolean skidEnabled();
 
     /**
      * Can a unit use run / flank MP in water.

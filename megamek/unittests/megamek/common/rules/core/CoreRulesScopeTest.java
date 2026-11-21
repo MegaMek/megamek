@@ -39,15 +39,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Vector;
 
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.HitData;
+import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.HitDamageType;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.WeaponTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.rules.totalwarfare.TWRulesArmor;
 import megamek.common.rules.totalwarfare.TWRulesEquipment;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.SupportTank;
 import org.junit.jupiter.api.Test;
@@ -125,6 +135,47 @@ class CoreRulesScopeTest {
         // Core pp.180, 204: an unmodified Escalating Failure roll; TO:AUE p.157 gives support vehicles -1
         assertEquals(0, new CoreRulesEquipment().getSuperchargerActivationModifier(supportVehicle));
         assertEquals(-1, new TWRulesEquipment().getSuperchargerActivationModifier(supportVehicle));
+    }
+
+    @Test
+    void theTagSurchargeIsFiftyPerHomingArrowIVLauncherPerTag() {
+        Game game = mock(Game.class);
+        Player player = mock(Player.class);
+        Entity spotter = mock(Entity.class);
+        Entity artillery = mock(Entity.class);
+        when(spotter.getGame()).thenReturn(game);
+        when(spotter.getOwner()).thenReturn(player);
+        when(artillery.getOwner()).thenReturn(player);
+        when(game.getEntitiesVector()).thenReturn(List.of(spotter, artillery));
+
+        WeaponType arrowIV = mock(WeaponType.class);
+        when(arrowIV.hasFlag(WeaponTypeFlag.F_ARROW_IV)).thenReturn(true);
+        when(arrowIV.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.ARROW_IV);
+        when(arrowIV.getRackSize()).thenReturn(20);
+        WeaponMounted launcher = mock(WeaponMounted.class);
+        when(launcher.getType()).thenReturn(arrowIV);
+        when(artillery.getTotalWeaponList()).thenReturn(List.of(launcher, launcher));
+        AmmoType homing = mock(AmmoType.class);
+        when(homing.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_HOMING));
+        when(homing.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.ARROW_IV);
+        when(homing.getRackSize()).thenReturn(20);
+        AmmoMounted homingBin = mock(AmmoMounted.class);
+        when(homingBin.getType()).thenReturn(homing);
+        when(homingBin.getUsableShotsLeft()).thenReturn(5);
+        when(artillery.getAmmo()).thenReturn(List.of(homingBin));
+
+        WeaponType tagType = mock(WeaponType.class);
+        when(tagType.hasFlag(WeaponTypeFlag.F_TAG)).thenReturn(true);
+        WeaponMounted tag = mock(WeaponMounted.class);
+        when(tag.getType()).thenReturn(tagType);
+        when(spotter.getWeaponList()).thenReturn(List.of(tag));
+
+        // Core errata v0.2 p.1: 50 BV per launcher with Homing ammo, once per TAG; half for a rear-mounted TAG only
+        CoreRulesGame core = new CoreRulesGame();
+        assertEquals(1100, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 1, false));
+        assertEquals(1200, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 2, false));
+        when(tag.isRearMounted()).thenReturn(true);
+        assertEquals(1050, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 1, false));
     }
 
     @Test

@@ -51,11 +51,10 @@ public class TWRulesMovement extends RulesMovement {
     /**
      * Units can skid (TW p.62)
      *
-     * @param entity the moving unit
      * @return true if skidding is enabled
      */
     @Override
-    public boolean skidEnabled(Entity entity) {
+    public boolean skidEnabled() {
         return true;
     }
 

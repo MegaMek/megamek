@@ -56,6 +56,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.rules.core.CoreRulesGame;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
@@ -655,7 +656,23 @@ public class BattlefieldSupportAsset extends Entity {
           CalculationReport calculationReport) {
         // Asset BV is a designer-set cost (BSP x 20), not an equipment/skill computation. The Regular/Veteran crew
         // level selects between the two static costs; ignoreSkill forces the Regular (base) value.
-        return (!ignoreSkill && isVeteranCrew()) ? getVeteranBv() : getBv();
+        boolean veteran = !ignoreSkill && isVeteranCrew();
+        return (veteran ? getVeteranBv() : getBv()) + (ignoreTAG ? 0 : tagSurchargeBv(veteran));
+    }
+
+    /**
+     * @param veteran true for the improved (Veteran) Skill
+     *
+     * @return the TAG surcharge: an Asset with the TAG Special adds 3, 5 or 7 BSP (Skill 6, 5 or 4) per Arrow IV
+     *       launcher with Homing ammo in its force (Core errata v0.2 p.1), at 20 BV per BSP
+     */
+    public int tagSurchargeBv(boolean veteran) {
+        if (!hasSpecial(BFSSpecialType.TAG)) {
+            return 0;
+        }
+        int assetSkill = (veteran && (veteranSkill != null)) ? veteranSkill : skill;
+        int bspPerLauncher = Math.max(0, 15 - (2 * assetSkill));
+        return CoreRulesGame.homingArrowIVLaunchers(this) * bspPerLauncher * BV_PER_BSP;
     }
 
     public List<BFSSpecial> getSpecials() {

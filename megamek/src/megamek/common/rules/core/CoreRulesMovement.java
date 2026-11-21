@@ -53,13 +53,12 @@ import megamek.common.units.Mek;
 public class CoreRulesMovement extends RulesMovement {
     /**
      * {@inheritDoc}
-     * Core gives Meks no skid on pavement (Core p.122) or ice (Core p.124), and terrain never forces Assets to make
-     * Piloting Skill Rolls (Core p.142). Other units, such as combat vehicles, are not in Core and keep the Total
-     * Warfare skid (TW p.62).
+     * Core removed skidding: pavement forces no PSR (Core p.122), nor does entering ice (Core p.124; errata v0.2), and
+     * terrain never forces Assets to make PSRs (Core p.142). No unit skids under Core.
      */
     @Override
-    public boolean skidEnabled(Entity entity) {
-        return !(entity instanceof Mek) && !entity.isBattlefieldSupportAsset();
+    public boolean skidEnabled() {
+        return false;
     }
 
     /**

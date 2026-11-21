@@ -35,13 +35,17 @@ package megamek.common.rules.core;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
-import java.util.EnumSet;
+import java.util.List;
 
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.battlefieldSupport.BFSSpecialType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
@@ -52,6 +56,9 @@ import megamek.logging.MMLogger;
 public class CoreRulesGame extends RulesGame {
 
     private static final MMLogger logger = MMLogger.create(CoreRulesGame.class);
+
+    /** TAG surcharge per Arrow IV launcher with Homing ammo (Core errata v0.2 p.1). */
+    public static final int HOMING_ARROW_IV_TAG_BV = 50;
 
     /**
      * {@inheritDoc} Immobile not eligible in movement Core p.49 RAC Unjamming does not prevent usage (only limits
@@ -83,9 +90,11 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * TAG can increase BV when homing arrow IV is present {@inheritDoc}
-     * <p>
-     * Core rules errata v0.1 https://www.battletech.com/forums/index.php/topic,91365.0.html
+     * {@inheritDoc}
+     * 50 BV, multiplied by the number of Arrow IV launchers with access to Homing Artillery ammo in the force (Asset
+     * launchers included), once per TAG on the unit; half that when the unit's only TAG is rear-mounted (Core errata
+     * v0.2 p.1). No other Core munition, semi-guided LRMs included, adds a surcharge. Homing bombs are not in Core and
+     * keep their Tactical Operations cost.
      */
     @Override
     public double tagBVBump(Entity entity,
@@ -93,41 +102,19 @@ public class CoreRulesGame extends RulesGame {
           double adjustedBV,
           long tagCount,
           boolean hasGuided) {
+        int launchers = homingArrowIVLaunchers(entity);
+        if (launchers > 0) {
+            double perTag = HOMING_ARROW_IV_TAG_BV * launchers * (hasOnlyRearTag(entity) ? 0.5 : 1);
+            adjustedBV += perTag * tagCount;
+            bvReport.addLine("- Homing Arrow IV launchers: " + launchers,
+                  "+ " + tagCount + " x " + formatForReport(perTag),
+                  "= " + formatForReport(adjustedBV));
+        }
+
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
             if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
-            for (Mounted<?> mounted : otherEntity.getWeaponList()) {
-                boolean foundHoming = false;
-                if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV) || mounted.getType()
-                      .hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
-                    for (Mounted<?> mountedAmmo : otherEntity.getAmmo()) {
-                        AmmoType ammoType = (AmmoType) mountedAmmo.getType();
-                        EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
-                        if ((mountedAmmo.getUsableShotsLeft() > 0) &&
-                              (munitionType.contains(AmmoType.Munitions.M_HOMING))) {
-                            // Once we know it has homing ammo on this unit, we can break out
-                            foundHoming = true;
-                            break;
-                        }
-                    }
-                    if (foundHoming) {
-                        // Each Arrow IV or artillery launcher with homing ammo adds 50 BV per TAG in the force
-                        adjustedBV += 50 * tagCount;
-                        bvReport.addLine("- " + equipmentDescriptor(mounted, entity),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(50) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
-                        hasGuided = true;
-                    }
-                }
-            }
-
             if (otherEntity instanceof IBomber asBomber) {
                 BombType bomb = BombType.createBombByType(BombType.BombTypeEnum.HOMING);
                 if (bomb != null) {
@@ -149,6 +136,51 @@ public class CoreRulesGame extends RulesGame {
             }
         }
         return adjustedBV;
+    }
+
+    /**
+     * @param entity a unit of the force
+     *
+     * @return the Arrow IV launchers in the unit's force that have Homing Artillery ammo they can fire, counting each
+     *       Asset with the Arrow IV Special, whose attacks need friendly TAG (Core p.148), as one (Core errata v0.2
+     *       p.1)
+     */
+    public static int homingArrowIVLaunchers(Entity entity) {
+        if ((entity.getGame() == null) || (entity.getOwner() == null)) {
+            return 0;
+        }
+        int launchers = 0;
+        for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
+            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+                continue;
+            }
+            if (otherEntity instanceof BattlefieldSupportAsset asset) {
+                launchers += asset.hasSpecial(BFSSpecialType.ARROW_IV) ? 1 : 0;
+                continue;
+            }
+            for (WeaponMounted launcher : otherEntity.getTotalWeaponList()) {
+                if (launcher.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV) && !launcher.isDestroyed()
+                      && hasHomingAmmoFor(otherEntity, launcher.getType())) {
+                    launchers++;
+                }
+            }
+        }
+        return launchers;
+    }
+
+    private static boolean hasHomingAmmoFor(Entity unit, WeaponType launcher) {
+        return unit.getAmmo().stream()
+              .anyMatch(ammo -> (ammo.getUsableShotsLeft() > 0)
+                    && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING)
+                    && (ammo.getType().getAmmoType() == launcher.getAmmoType())
+                    && (ammo.getType().getRackSize() == launcher.getRackSize()));
+    }
+
+    private static boolean hasOnlyRearTag(Entity entity) {
+        List<WeaponMounted> tags = entity.getWeaponList().stream()
+              .filter(weapon -> weapon.getType().hasFlag(WeaponTypeFlag.F_TAG) && !weapon.isDestroyed())
+              .toList();
+        return !tags.isEmpty() && tags.stream().allMatch(Mounted::isRearMounted);
     }
 
     /**

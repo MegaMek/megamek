@@ -138,7 +138,7 @@ class CoreRulesScopeTest {
     }
 
     @Test
-    void theTagSurchargeIsFiftyPerHomingArrowIVLauncherPerTag() {
+    void theTagSurchargeIsFiftyPerHomingLauncherPerTag() {
         Game game = mock(Game.class);
         Player player = mock(Player.class);
         Entity spotter = mock(Entity.class);
@@ -150,15 +150,15 @@ class CoreRulesScopeTest {
 
         WeaponType arrowIV = mock(WeaponType.class);
         when(arrowIV.hasFlag(WeaponTypeFlag.F_ARROW_IV)).thenReturn(true);
-        when(arrowIV.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.ARROW_IV);
-        when(arrowIV.getRackSize()).thenReturn(20);
-        WeaponMounted launcher = mock(WeaponMounted.class);
-        when(launcher.getType()).thenReturn(arrowIV);
-        when(artillery.getTotalWeaponList()).thenReturn(List.of(launcher, launcher));
+        WeaponMounted arrowIVLauncher = mock(WeaponMounted.class);
+        when(arrowIVLauncher.getType()).thenReturn(arrowIV);
+        WeaponType longTom = mock(WeaponType.class);
+        when(longTom.hasFlag(WeaponTypeFlag.F_ARTILLERY)).thenReturn(true);
+        WeaponMounted longTomLauncher = mock(WeaponMounted.class);
+        when(longTomLauncher.getType()).thenReturn(longTom);
+        when(artillery.getWeaponList()).thenReturn(List.of(arrowIVLauncher, longTomLauncher));
         AmmoType homing = mock(AmmoType.class);
         when(homing.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_HOMING));
-        when(homing.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.ARROW_IV);
-        when(homing.getRackSize()).thenReturn(20);
         AmmoMounted homingBin = mock(AmmoMounted.class);
         when(homingBin.getType()).thenReturn(homing);
         when(homingBin.getUsableShotsLeft()).thenReturn(5);
@@ -170,7 +170,8 @@ class CoreRulesScopeTest {
         when(tag.getType()).thenReturn(tagType);
         when(spotter.getWeaponList()).thenReturn(List.of(tag));
 
-        // Core errata v0.2 p.1: 50 BV per launcher with Homing ammo, once per TAG; half for a rear-mounted TAG only
+        // Core errata v0.2 p.1, applied to all Homing: 50 BV per launcher on a unit with Homing ammo, once per TAG;
+        // half for a rear-mounted TAG only
         CoreRulesGame core = new CoreRulesGame();
         assertEquals(1100, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 1, false));
         assertEquals(1200, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 2, false));

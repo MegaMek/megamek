@@ -663,8 +663,8 @@ public class BattlefieldSupportAsset extends Entity {
     /**
      * @param veteran true for the improved (Veteran) Skill
      *
-     * @return the TAG surcharge: an Asset with the TAG Special adds 3, 5 or 7 BSP (Skill 6, 5 or 4) per Arrow IV
-     *       launcher with Homing ammo in its force (Core errata v0.2 p.1), at 20 BV per BSP
+     * @return the TAG surcharge: an Asset with the TAG Special adds 3, 5 or 7 BSP (Skill 6, 5 or 4) per launcher with
+     *       Homing ammo in its force (Core errata v0.2 p.1), at 20 BV per BSP
      */
     public int tagSurchargeBv(boolean veteran) {
         if (!hasSpecial(BFSSpecialType.TAG)) {
@@ -672,7 +672,7 @@ public class BattlefieldSupportAsset extends Entity {
         }
         int assetSkill = (veteran && (veteranSkill != null)) ? veteranSkill : skill;
         int bspPerLauncher = Math.max(0, 15 - (2 * assetSkill));
-        return CoreRulesGame.homingArrowIVLaunchers(this) * bspPerLauncher * BV_PER_BSP;
+        return CoreRulesGame.homingLauncherCount(this) * bspPerLauncher * BV_PER_BSP;
     }
 
     public List<BFSSpecial> getSpecials() {

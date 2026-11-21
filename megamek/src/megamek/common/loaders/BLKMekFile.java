@@ -108,11 +108,6 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         }
         mek.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
-        if (!dataFile.exists("jumpingMP")) {
-            throw new EntityLoadingException("Could not find block.");
-        }
-        mek.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
-
         // I keep internal(integral) heat sinks separate...
         if (!dataFile.exists("heatsinks")) {
             throw new EntityLoadingException("Could not find block.");

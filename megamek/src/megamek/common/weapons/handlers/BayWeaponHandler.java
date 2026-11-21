@@ -37,6 +37,8 @@ package megamek.common.weapons.handlers;
 import static java.lang.Math.floor;
 
 import java.io.Serial;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.RangeType;
@@ -46,6 +48,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -69,6 +72,8 @@ public class BayWeaponHandler extends WeaponHandler {
     @Serial
     private static final long serialVersionUID = -1618484541772117621L;
     protected AmmoMounted ammo;
+    /** The bay's capacitor PPCs that this attack's to-hit roll burned out */
+    private final Set<WeaponMounted> burnedOut = new HashSet<>();
 
     protected BayWeaponHandler() {
         // deserialization only
@@ -89,26 +94,62 @@ public class BayWeaponHandler extends WeaponHandler {
         int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
 
         for (WeaponMounted m : weapon.getBayWeapons()) {
-            if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                WeaponType bayWType = m.getType();
-                // need to cycle through weapons and add av
-                if (range == WeaponType.RANGE_SHORT) {
-                    av = av + bayWType.getShortAV();
-                } else if (range == WeaponType.RANGE_MED) {
-                    av = av + bayWType.getMedAV();
-                } else if (range == WeaponType.RANGE_LONG) {
-                    av = av + bayWType.getLongAV();
-                } else if (range == WeaponType.RANGE_EXT) {
-                    av = av + bayWType.getExtAV();
-                }
-            }
+            av += getAv(m, range);
         }
+        return bayAttackValue(av);
+    }
+
+    /**
+     * @param summedValue the bay's weapons' summed attack values
+     *
+     * @return the bay's damage: the rounded total, adjusted for a direct or glancing blow, then cut by bracketing
+     */
+    protected int bayAttackValue(double summedValue) {
+        double av = roundBayDamage(summedValue);
         if (bDirect) {
             av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
-        av = (int) Math.floor(getBracketingMultiplier() * av);
-        return (int) Math.ceil(av);
+        return bracketBayDamage(av, getBracketingMultiplier());
+    }
+
+    /**
+     * A to-hit roll of 2 burns out a capacitor-charged PPC before it can fire, inflicting no damage, and a capacitor in
+     * a bay counts as always charged (TO:AUE p.149): the bay's own roll checks each of its PPCs, and a bay that still
+     * hits deals only its other weapons' damage.
+     */
+    @Override
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        for (WeaponMounted m : weapon.getBayWeapons()) {
+            if (firesWithBay(m) && m.firesCapacitorCharge()) {
+                Report report = Game.rulesManager.getRulesWeapons().checkPPCCapacitor(roll.getIntValue(),
+                      attackingEntity, m);
+                if (report != null) {
+                    vPhaseReport.add(report);
+                    burnedOut.add(m);
+                }
+            }
+        }
+        if (!burnedOut.isEmpty()) {
+            // WeaponHandler.handle resolves an airborne target with the attack value it computed before these checks
+            attackValue = calcAttackValue();
+        }
+        return false;
+    }
+
+    /** Whether a bay weapon fires with the bay: working, and not burned out by this attack's roll */
+    private boolean firesWithBay(WeaponMounted m) {
+        return !m.isBreached() && !m.isDestroyed() && !m.isJammed() && !burnedOut.contains(m);
+    }
+
+    /** A bay's Damage Value is its weapons' total rounded normally: three NL55s make 17 (SO p.88) */
+    public static long roundBayDamage(double summedValue) {
+        return Math.round(summedValue);
+    }
+
+    /** Bracketing fire deals 80, 60 or 40 percent of a bay's damage, with all fractions rounded down (SO p.87) */
+    public static int bracketBayDamage(double damage, double bracketingMultiplier) {
+        return (int) Math.floor(bracketingMultiplier * damage);
     }
 
     @Override
@@ -259,6 +300,9 @@ public class BayWeaponHandler extends WeaponHandler {
         if (missReported) {
             bMissed = true;
         }
+        if (!burnedOut.isEmpty()) {
+            nDamPerHit = attackValue;
+        }
 
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {
@@ -350,22 +394,20 @@ public class BayWeaponHandler extends WeaponHandler {
         return false;
     }
 
-    private static double getAv(WeaponMounted m, int range) {
-        double av = 0;
-        if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-            WeaponType bayWType = m.getType();
-            // need to cycle through weapons and add av
-            if (range == WeaponType.RANGE_SHORT) {
-                av = bayWType.getShortAV();
-            } else if (range == WeaponType.RANGE_MED) {
-                av = bayWType.getMedAV();
-            } else if (range == WeaponType.RANGE_LONG) {
-                av = bayWType.getLongAV();
-            } else if (range == WeaponType.RANGE_EXT) {
-                av = bayWType.getExtAV();
+    private double getAv(WeaponMounted m, int range) {
+        return firesWithBay(m) ? m.getAttackValue(range) : 0;
+    }
+
+    /** The bay's weapons fire with it, so a PPC's shot releases its capacitor's charge (TO:AUE p.149) */
+    @Override
+    protected void setDone() {
+        super.setDone();
+        for (WeaponMounted m : weapon.getBayWeapons()) {
+            m.setUsedThisRound(true);
+            if (m.hasChargedCapacitor() != 0) {
+                m.getLinkedBy().setMode(Mounted.MODE_OFF);
             }
         }
-        return av;
     }
 
     /**
@@ -588,7 +630,7 @@ public class BayWeaponHandler extends WeaponHandler {
         autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
         int replaceReport;
         for (WeaponMounted m : weapon.getBayWeapons()) {
-            if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+            if (firesWithBay(m)) {
                 WeaponType bayWType = m.getType();
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();

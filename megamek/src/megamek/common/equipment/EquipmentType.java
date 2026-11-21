@@ -528,14 +528,13 @@ public class EquipmentType implements ITechnology {
                 return true;
             }
         }
-        if ((mounted.getType() instanceof MiscType) &&
-              mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
-              !mounted.curMode().equals("Charge")) {
-            return false;
+        // A PPC and its capacitor explode together while the capacitor holds its charge (TO:AUE p.149, Core p.188)
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            return (mounted.getLinked() != null) && mounted.getLinked().holdsCapacitorCharge();
         }
 
-        if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
-            return false;
+        if (mounted.getType() instanceof PPCWeapon) {
+            return mounted.holdsCapacitorCharge();
         }
 
         // If we're here, then none of the special cases apply, and we should

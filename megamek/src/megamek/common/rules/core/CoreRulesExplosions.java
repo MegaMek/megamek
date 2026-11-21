@@ -202,19 +202,21 @@ public class CoreRulesExplosions extends RulesExplosions {
      */
     @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
-        // Charged PPC capacitors when hit can cause an explosion.
-        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
-            if (mounted.isFired()) {
-                return 0;
-            }
+        // A charged PPC capacitor explodes with its PPC for twice their combined slots (Core p.188)
+        if (mounted.holdsCapacitorCharge()) {
+            return (explodingSlots(mounted) + explodingSlots(mounted.getLinkedBy())) * 2;
         }
+        return explodingSlots(mounted) * 2;
+    }
 
+    /** @return The critical slots the exploding equipment fills */
+    private static int explodingSlots(Mounted<?> mounted) {
         if (mounted.getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
             // Superheavies have compressed criticals. They only explode based on the number of Crit Slots they take
             // up, not the base amount of crits they need. Core p.240
             int critSlots = 0;
             // Only do this if the weapon can cross locations
-            if (weaponType.isSpreadable()) {
+            if (mounted.getType().isSpreadable()) {
                 for (int loc = 0; loc < mounted.getEntity().locations(); loc++) {
                     for (int slot = 0; slot < mounted.getEntity().getNumberOfCriticalSlots(loc); slot++) {
                         final CriticalSlot crit = mounted.getEntity().getCritical(loc, slot);
@@ -232,10 +234,10 @@ public class CoreRulesExplosions extends RulesExplosions {
                     }
                 }
             }
-            return (critSlots * 2);
+            return critSlots;
         }
 
-        return mounted.getNumCriticalSlots() * 2;
+        return mounted.getNumCriticalSlots();
     }
 
     /**

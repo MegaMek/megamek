@@ -46,6 +46,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -70,6 +71,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -1494,7 +1496,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 av = weaponType.getRoundExtAV();
             }
         }
-        av += getAttackValueBonus();
+        if (av > 0) {
+            av += getAttackValueBonus();
+        }
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -1520,6 +1524,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * * adjustment factor on attack value for fighter squadrons
      */
     protected double getBracketingMultiplier() {
+        return bracketingMultiplier(weapon);
+    }
+
+    /** @return the share of its damage a bay deals in its Bracketing fire mode, or 1 when not bracketing (SO p.87) */
+    public static double bracketingMultiplier(WeaponMounted weapon) {
         double multiplier = 1.0;
         if (weapon.hasModes() && weapon.curMode().equals("Bracket 80%")) {
             multiplier = 0.8;
@@ -1679,27 +1688,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         initHit(entityTarget);
 
-        boolean isIndirect = weapon.hasModes() && weapon.curMode().equals("Indirect");
-
         Hex targetHex = game.getHexOf(target);
-        boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
-
-        // a very specific situation where a mek is standing in a height 1 building
-        // or its upper torso is otherwise somehow poking out of said building
-        boolean targetInShortBuilding = WeaponAttackAction.targetInShortCoverBuilding(target);
-        boolean legHit = entityTarget.locationIsLeg(hit.getLocation());
-        boolean shortBuildingBlocksLegHit = targetInShortBuilding && legHit;
-
-        boolean partialCoverForIndirectFire = isIndirect && (mechPokingOutOfShallowWater || shortBuildingBlocksLegHit);
-
-        // For indirect fire, remove leg hits only if target is in water partial cover
-        // Per TW errata for indirect fire
-        if ((!isIndirect || partialCoverForIndirectFire)
-              && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(),
-              ComputeSideTable.sideTable(attackingEntity, entityTarget,
-                    weapon.getCalledShot().getCall()))) {
-            // Weapon strikes Partial Cover.
+        if (hitStrikesPartialCover(entityTarget, targetHex)) {
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                   nCluster, bldgAbsorbs);
             return;
@@ -1756,6 +1746,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
+        Report heatReport = applyHeatOnStrike(entityTarget, nDamage);
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);
@@ -1764,6 +1755,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.addDesc(entityTarget);
             vPhaseReport.addElement(r);
             missed = true;
+            if (heatReport != null) {
+                vPhaseReport.add(heatReport);
+            }
         } else {
             if (bGlancing) {
                 hit.makeGlancingBlow();
@@ -1789,12 +1783,37 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 vPhaseReport.lastElement().newlines = 0;
                 vPhaseReport.addElement(r);
             }
+            if (heatReport != null) {
+                vPhaseReport.add(heatReport);
+            }
         }
         // If a BA squad is shooting at infantry, damage may be random and need
         // to be rerolled for the next hit (if any) from the same attack.
         if ((attackingEntity instanceof BattleArmor) && (target instanceof Infantry)) {
             nDamPerHit = calcDamagePerHit();
         }
+    }
+
+    /**
+     * @return true when this hit strikes the target's partial cover instead of the target (TW p.102)
+     */
+    protected boolean hitStrikesPartialCover(Entity entityTarget, Hex targetHex) {
+        boolean isIndirect = weapon.hasModes() && weapon.curMode().equals("Indirect");
+        boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
+
+        // a very specific situation where a mek is standing in a height 1 building
+        // or its upper torso is otherwise somehow poking out of said building
+        boolean targetInShortBuilding = WeaponAttackAction.targetInShortCoverBuilding(target);
+        boolean legHit = entityTarget.locationIsLeg(hit.getLocation());
+        boolean shortBuildingBlocksLegHit = targetInShortBuilding && legHit;
+
+        boolean partialCoverForIndirectFire = isIndirect && (mechPokingOutOfShallowWater || shortBuildingBlocksLegHit);
+
+        // For indirect fire, remove leg hits only if target is in water partial cover
+        // Per TW errata for indirect fire
+        return (!isIndirect || partialCoverForIndirectFire)
+              && entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+              ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()));
     }
 
     /**
@@ -2084,6 +2103,62 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     protected void setDone() {
         weapon.setUsedThisRound(true);
+    }
+
+    /**
+     * Applies the outside heat this hit carries as it strikes, before its damage removes armor: armor with special
+     * effects acts while the location struck has armor at the time the hit is applied (Core p.201). Heat isn't damage,
+     * so it strikes even when a building or terrain absorbs all the hit's damage (TW p.171).
+     *
+     * @param damageThatStrikes the hit's damage left after buildings and terrain absorbed theirs
+     *
+     * @return the report of that heat, or null when the hit carries none
+     */
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
+        return null;
+    }
+
+    /** Applies weapon heat that strikes where this hit does; see {@link #externalHeatReport}. */
+    protected Report applyExternalHeat(Entity entityTarget, int heat) {
+        return externalHeatReport(entityTarget, hit, heat, subjectId, weaponType);
+    }
+
+    /**
+     * Adds weapon heat that strikes a location through the armor there as it is now: laser-reflective armor halves the
+     * heat of flamers and plasma weapons (BMM p.114), and heat-dissipating armor acts on all outside heat (see
+     * {@link Entity#addOutsideHeat(int, HitData)}).
+     *
+     * @return the report of the heat and of any armor that reduced it
+     */
+    public static Report externalHeatReport(Entity entityTarget, HitData hit, int heat, int subjectId,
+          WeaponType weaponType) {
+        HitData struck = entityTarget.heatReceivingLocation(hit);
+        boolean reflected = weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA)
+              || (weaponType.getAtClass() == WeaponType.CLASS_PLASMA);
+        int reflectedHeat = (reflected && (entityTarget.getArmor(struck) > 0))
+              ? Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(
+                    entityTarget.getArmorType(struck.getLocation()), heat)
+              : heat;
+        int appliedHeat = entityTarget.addOutsideHeat(reflectedHeat, struck);
+        return heatReport(subjectId, appliedHeat, heat,
+              (appliedHeat == heat) ? null : ArmorType.forEntity(entityTarget, struck.getLocation()).getName());
+    }
+
+    /**
+     * @return the report of outside heat that struck a unit: the heat added and, when armor reduced it, the full heat
+     *       and that armor
+     */
+    public static Report heatReport(int subjectId, int heat, int fullHeat, @Nullable String reducedBy) {
+        Report report = new Report((reducedBy == null) ? 3400 : 3406);
+        report.subject = subjectId;
+        report.indent(2);
+        report.add(heat);
+        report.choose(true);
+        if (reducedBy != null) {
+            report.add(fullHeat);
+            report.add(reducedBy);
+        }
+        return report;
     }
 
     protected void addHeat() {

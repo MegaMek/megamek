@@ -75,8 +75,8 @@ public class EquipmentExplosionHandler extends AbstractTWRuleHandler {
      * @return what happened, for the gamemaster to be told
      */
     public Outcome explode(Entity entity, Mounted<?> mounted) {
-        if (mounted.isDestroyed()) {
-            LOGGER.info("[Explode] refused: {} on {} is already destroyed", mounted.getName(),
+        if (mounted.isDestroyed() || mounted.isHit()) {
+            LOGGER.info("[Explode] refused: {} on {} is already destroyed or hit", mounted.getName(),
                   entity.getDisplayName());
             return Outcome.ALREADY_DESTROYED;
         }
@@ -110,7 +110,7 @@ public class EquipmentExplosionHandler extends AbstractTWRuleHandler {
     }
 
     /** Marks every critical slot of the location that holds the equipment as hit. */
-    private void markCriticalSlotsHit(Entity entity, Mounted<?> mounted, int location) {
+    static void markCriticalSlotsHit(Entity entity, Mounted<?> mounted, int location) {
         for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot criticalSlot = entity.getCritical(location, slot);
             if ((criticalSlot != null) && (criticalSlot.getType() == CriticalSlot.TYPE_EQUIPMENT)

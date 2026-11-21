@@ -3884,41 +3884,15 @@ public class Compute {
 
                 // Convert AV to fDamage for bay weapons, fighters, etc
                 if (attacker.usesWeaponBays()) {
+                    // Capital weapons have their own range scale. Capital missiles get higher priority than standard
+                    // missiles: damage plus a bonus for the critical hit threat they represent
+                    double threat = wt.isCapital() ? 12 : 1;
+                    int range = RangeType.rangeBracket(rangeToTarget, wt.getATRanges(), true, false);
                     double av = 0;
-                    double threat = 1;
                     for (WeaponMounted bayW : weapon.getBayWeapons()) {
-                        WeaponType bayWType = bayW.getType();
-                        // Capital weapons have a different range scale
-                        if (wt.isCapital()) {
-                            // Capital missiles get higher priority than standard missiles:
-                            // damage plus a bonus for the critical hit threat they represent
-                            threat = 12;
-                            if (rangeToTarget > 50) {
-                                av = 0;
-                            } else if (rangeToTarget > 40) {
-                                av += bayWType.getExtAV();
-                            } else if (rangeToTarget > 25) {
-                                av += bayWType.getLongAV();
-                            } else if (rangeToTarget > 12) {
-                                av += bayWType.getMedAV();
-                            } else {
-                                av += bayWType.getShortAV();
-                            }
-                        } else {
-                            if (rangeToTarget > 25) {
-                                av = 0;
-                            } else if (rangeToTarget > 20) {
-                                av += bayWType.getExtAV();
-                            } else if (rangeToTarget > 12) {
-                                av += bayWType.getLongAV();
-                            } else if (rangeToTarget > 6) {
-                                av += bayWType.getMedAV();
-                            } else {
-                                av += bayWType.getShortAV();
-                            }
-                        }
-                        fDamage = (float) (av * threat);
+                        av += bayW.getAttackValue(range);
                     }
+                    fDamage = (float) (av * threat);
                 } else if (attacker.isCapitalFighter()) {
                     double av = 0;
                     double threat = 1;

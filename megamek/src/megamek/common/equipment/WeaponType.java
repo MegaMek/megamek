@@ -695,6 +695,8 @@ public class WeaponType extends EquipmentType {
     /** Missile weapon that can be linked to an Artemis fire control system */
     public static final WeaponTypeFlag F_ARTEMIS_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
     public static final WeaponTypeFlag F_PPC_CAPACITOR_COMPATIBLE = WeaponTypeFlag.F_PPC_CAPACITOR_COMPATIBLE;
+    /** Inner Sphere standard or ER laser that a RISC Laser Pulse Module can modify (IO:AE p. 87) */
+    public static final WeaponTypeFlag F_RISC_LASER_PULSE_COMPATIBLE = WeaponTypeFlag.F_RISC_LASER_PULSE_COMPATIBLE;
 
     public static final WeaponTypeFlag S_IMPROVED = WeaponTypeFlag.S_IMPROVED;
 

@@ -210,6 +210,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public static final String MODE_CAPACITOR_CHARGE = "Charge";
 
+    /** The damage a charged PPC capacitor adds to its PPC's shot (TO:AUE p.149, Core p.188) */
+    public static final int CAPACITOR_DAMAGE_BONUS = 5;
+
     /**
      * Internal name of the sentinel mode reported when equipment has no current or pending mode set.
      *
@@ -905,10 +908,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @return {@code true} if exploding this equipment now would do something
      */
     public boolean wouldExplodeWhenHit() {
-        if (isDestroyed()) {
+        // A hit this phase already had its chance to explode
+        if (isDestroyed() || isHit()) {
             return false;
         }
-        boolean isExplosiveNow = getType().isExplosive(this) || isHotLoaded() || (hasChargedCapacitor() != 0);
+        boolean isExplosiveNow = getType().isExplosive(this) || isHotLoaded();
         return isExplosiveNow && (getExplosionDamage() > 0);
     }
 
@@ -1194,6 +1198,23 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
+     * @return True when this PPC's capacitor holds its charge, so that a critical hit on either sets it off: charged in
+     *       an earlier turn and not released by firing the PPC this turn (TO:AUE p.149, Core p.188)
+     */
+    public boolean holdsCapacitorCharge() {
+        return (hasChargedCapacitor() != 0) && !isUsedThisRound();
+    }
+
+    /**
+     * @return True when this weapon fires with the charge of a PPC capacitor: one charged in an earlier turn, or any
+     *       working one in a weapon bay, which counts as always charged for the bay's damage and heat (TO:AUE p.149)
+     */
+    public boolean firesCapacitorCharge() {
+        return (getLinkedBy() != null) && isWorkingCapacitor(getLinkedBy())
+              && (getLinkedBy().curMode().equals(MODE_CAPACITOR_CHARGE) || entity.usesWeaponBays());
+    }
+
+    /**
      * Returns 1 if this Mounted has a linked and charged (= set to charge in an earlier turn) or charging (= set to
      * charge this turn) PPC Capacitor, else 0. Used to determine heat.
      */
@@ -1414,9 +1435,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public int getExplosionDamage() {
         if (type instanceof MiscType miscType) {
             if (miscType.hasFlag(MiscTypeFlag.F_PPC_CAPACITOR)) {
-                if (curMode().equals("Charge") && (linked != null) && !linked.isFired()) {
-                    return 15;
-                }
+                // A charged capacitor explodes together with its PPC
+                return ((linked != null) && linked.holdsCapacitorCharge()) ? linked.getExplosionDamage() : 0;
             }
             if (miscType.hasFlag(MiscTypeFlag.F_FUEL)) {
                 return 20;

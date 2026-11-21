@@ -193,15 +193,20 @@ public class ComputeTerrainMods {
         }
 
         // Semi-guided direct fire at a TAGged target ignores partial cover "unless provided by being in water or
-        // inside a building", and reduces the target's terrain modifier by 2, minimum 0 (Core p.193)
+        // inside a building", and reduces the target's terrain modifier by 2, minimum 0 (Core p.193). Kept partial
+        // cover "counts as a terrain modifier for the purposes of attacks that ignore or reduce terrain modifiers"
+        // (Core p.66), so it is reduced too.
         if (semiGuidedDirectVsTaggedTarget) {
             Hex semiGuidedTargetHex = game.getHexOf(target);
             boolean coverFromWater = PartialCover.isInPartialWater(entityTarget, semiGuidedTargetHex, targEl);
-            boolean insideBuilding = Compute.isInBuilding(game, entityTarget);
+            boolean coverKept = coverFromWater || Compute.isInBuilding(game, entityTarget);
             int coverMod = los.partialCoverModifier(game);
+            // Water cover the LOS did not already give is added below as +1
+            int keptCover = !coverKept ? 0
+                  : (coverFromWater && (los.getTargetCover() == LosEffects.COVER_NONE)) ? 1 : coverMod;
             int semiGuidedTerrain = Game.rulesManager.getRulesAmmo()
-                  .getSemiGuidedAdjustment(terrainModifier.getValue(), false, true);
-            if (!coverFromWater && !insideBuilding) {
+                  .getSemiGuidedAdjustment(terrainModifier.getValue() + keptCover, false, true);
+            if (!coverKept) {
                 semiGuidedTerrain += coverMod;
             }
             if (semiGuidedTerrain > 0) {

@@ -4691,8 +4691,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                             lastPos,
                                                             rollTarget,
                                                             false) > 0) {
-                        // A failed check returns its margin of failure; the vehicle stays put (TO:AR p.20)
+                        // A failed check returns its margin of failure: the vehicle "stays in its current hex"
+                        // (TO:AR p.20). The rest of the plotted path started from the hex it did not reach, so the
+                        // move ends here.
                         curPos = lastPos;
+                        turnOver = true;
+                        break;
                     }
                 }
             }

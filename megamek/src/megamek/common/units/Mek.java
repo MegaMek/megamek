@@ -3147,7 +3147,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * Gets the location that excess damage transfers to
+     * Gets the location that excess damage transfers to. Transferred damage does not trigger a new armor-piercing
+     * critical check (TW p.140; Core p.191, errata v0.2), so the transferred hit drops that check.
      */
     @Override
     public HitData getTransferLocation(HitData hit) {
@@ -3155,15 +3156,15 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             case LOC_RIGHT_TORSO, LOC_LEFT_TORSO, LOC_CENTER_LEG ->
                   new HitData(LOC_CENTER_TORSO, hit.isRear(), hit.getEffect(),
                         hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.getSpecCrit(), hit.isFromFront(),
+                        false, hit.isFromFront(),
                         hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_LEFT_LEG, LOC_LEFT_ARM -> new HitData(LOC_LEFT_TORSO, hit.isRear(), hit.getEffect(),
                   hit.hitAimedLocation(), hit.getSpecCritMod(),
-                  hit.getSpecCrit(), hit.isFromFront(),
+                  false, hit.isFromFront(),
                   hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_RIGHT_LEG, LOC_RIGHT_ARM -> new HitData(LOC_RIGHT_TORSO, hit.isRear(), hit.getEffect(),
                   hit.hitAimedLocation(), hit.getSpecCritMod(),
-                  hit.getSpecCrit(), hit.isFromFront(),
+                  false, hit.isFromFront(),
                   hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_HEAD -> {
                 if (hasTorsoMountedCockpit()) {
@@ -4224,10 +4225,15 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public int getMaxElevationChange() {
-        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement()
-              .reduceMaxElevation(this))
-              ? 1
-              : 2;
+        return Game.rulesManager.getRulesMovement().reduceMaxElevation(this) ? 1 : getMaxDisplacementElevationChange();
+    }
+
+    /**
+     * @return the levels this Mek can be displaced upward into a hex: hip damage and a destroyed leg limit its own
+     *       level changes but not this (Core pp.99, 114; errata v0.2 p.2)
+     */
+    public int getMaxDisplacementElevationChange() {
+        return (movementMode.isTracked() || movementMode.isWiGE()) ? 1 : 2;
     }
 
     @Override

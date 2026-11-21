@@ -1027,6 +1027,8 @@ public class Compute {
         }
 
         // can't go up more levels than normally possible
+        int maxElevationChange = (entity instanceof Mek mek) ? mek.getMaxDisplacementElevationChange()
+              : entity.getMaxElevationChange();
         for (Coords c : intervening) {
             // ignore off-board hexes
             if (!game.getBoard().contains(c)) {
@@ -1035,7 +1037,7 @@ public class Compute {
             final Hex hex = game.getBoard().getHex(c);
             int change = entity.elevationOccupied(hex)
                   - entity.elevationOccupied(srcHex);
-            if (change > entity.getMaxElevationChange()) {
+            if (change > maxElevationChange) {
                 return false;
             }
         }

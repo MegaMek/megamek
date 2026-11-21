@@ -168,7 +168,11 @@ public class CoreRulesGame extends RulesGame {
                 continue;
             }
             if (otherEntity instanceof BattlefieldSupportAsset asset) {
-                if (asset.hasSpecial(BFSSpecialType.ARROW_IV)) {
+                // "ARROW2" is two launchers (Core p.149)
+                int assetLaunchers = asset.findSpecial(BFSSpecialType.ARROW_IV)
+                      .map(special -> special.intValue().orElse(1))
+                      .orElse(0);
+                for (int launcher = 0; launcher < assetLaunchers; launcher++) {
                     launchers.add("Arrow IV (" + asset.getShortName() + ")");
                 }
                 continue;
@@ -177,9 +181,14 @@ public class CoreRulesGame extends RulesGame {
                 continue;
             }
             for (WeaponMounted weapon : otherEntity.getWeaponList()) {
-                if (weapon.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV)
-                      || weapon.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
-                    launchers.add(weapon.getType().getShortName() + " (" + otherEntity.getShortName() + ")");
+                // A bay counts each launcher in it
+                List<WeaponMounted> mounts = weapon.getBayWeapons().isEmpty() ? List.of(weapon)
+                      : weapon.getBayWeapons();
+                for (WeaponMounted mount : mounts) {
+                    if (mount.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV)
+                          || mount.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+                        launchers.add(mount.getType().getShortName() + " (" + otherEntity.getShortName() + ")");
+                    }
                 }
             }
         }
@@ -194,7 +203,8 @@ public class CoreRulesGame extends RulesGame {
 
     private static boolean hasOnlyRearTag(Entity entity) {
         List<WeaponMounted> tags = entity.getWeaponList().stream()
-              .filter(weapon -> weapon.getType().hasFlag(WeaponTypeFlag.F_TAG) && !weapon.isDestroyed())
+              .filter(weapon -> weapon.getType().hasFlag(WeaponTypeFlag.F_TAG) && !weapon.isMissing()
+                    && !weapon.isDestroyed())
               .toList();
         return !tags.isEmpty() && tags.stream().allMatch(Mounted::isRearMounted);
     }

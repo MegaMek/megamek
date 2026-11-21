@@ -90,7 +90,9 @@ public class CoreRulesWeapons extends RulesWeapons {
             return;
         }
         if (!mounted.isAutocannonHit()) {
-            if (mounted.getNumCriticalSlots() == 1 || !(mounted.getEntity() instanceof Mek)) {
+            // A superheavy Mek can hold a two-slot autocannon in one slot, which then needs "two hits to the same
+            // slot" (Core pp.183, 240)
+            if (!(mounted.getEntity() instanceof Mek) || (mounted.getEntity().occupiedCriticalSlots(mounted) == 1)) {
                 cs.setHit(false);
             }
             mounted.setHit(false);

@@ -741,6 +741,9 @@ public class ProtoMek extends Entity {
         return false;
     }
 
+    /**
+     * Transferred damage does not trigger a new armor-piercing critical check (TW p.140; Core p.191, errata v0.2).
+     */
     @Override
     public HitData getTransferLocation(HitData hit) {
         return switch (hit.getLocation()) {
@@ -750,7 +753,7 @@ public class ProtoMek extends Entity {
                   hit.getEffect(),
                   hit.hitAimedLocation(),
                   hit.getSpecCritMod(),
-                  hit.getSpecCrit(),
+                  false,
                   hit.isFromFront(),
                   hit.getGeneralDamageType(),
                   hit.glancingMod());

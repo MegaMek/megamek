@@ -164,6 +164,10 @@ public class TWGameManager extends AbstractGameManager {
 
     /** Equipment activation/deactivation diagnostics ([EquipOff] tag; shared feature logger, see Mounted). */
     private static final MMLogger EQUIP_OFF_LOGGER = MMLogger.create(Mounted.EQUIP_OFF_DIAGNOSTIC_LOGGER);
+
+    /** Arrow IV ammunition of every kind: production, prototype and air-launched (Core p.182) */
+    private static final Set<AmmoTypeEnum> ARROW_IV_AMMO = EnumSet.of(AmmoTypeEnum.ARROW_IV,
+          AmmoTypeEnum.ARROWIV_PROTO, AmmoTypeEnum.ARROW_IV_BOMB);
     static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -10707,11 +10711,15 @@ public class TWGameManager extends AbstractGameManager {
 
                 Mounted<?> weapon = artilleryFirer.getEquipment(waa.getWeaponId());
 
-                // Arrow IV, from a launcher or a bay and whatever its munition, may be immune to all anti-missile
-                // defenses (Core pp.182, 190)
-                AmmoMounted firedAmmo = artilleryFirer.getAmmo(waa.getAmmoId());
+                // Arrow IV of every kind (production, prototype or air-launched), from a launcher or a bay and
+                // whatever its munition, may be immune to all anti-missile defenses (Core pp.182, 190). The ammo can
+                // come from another unit, such as an attached trailer.
+                Entity ammoCarrier = game.getEntity(waa.getAmmoCarrier());
+                AmmoMounted firedAmmo = ((ammoCarrier != null) ? ammoCarrier : artilleryFirer).getAmmo(waa.getAmmoId());
                 boolean firesArrowIV = weapon.getType().hasFlag(WeaponType.F_ARROW_IV)
-                      || ((firedAmmo != null) && (firedAmmo.getType().getAmmoType() == AmmoTypeEnum.ARROW_IV));
+                      || ((weapon.getType() instanceof WeaponType weaponType)
+                      && ARROW_IV_AMMO.contains(weaponType.getAmmoType()))
+                      || ((firedAmmo != null) && ARROW_IV_AMMO.contains(firedAmmo.getType().getAmmoType()));
                 if (firesArrowIV && !Game.rulesManager.getRulesEquipment().antiMissileSystemsEngageArrowIV()) {
                     continue;
                 }

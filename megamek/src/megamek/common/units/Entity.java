@@ -19112,6 +19112,25 @@ public abstract class Entity extends TurnOrdered
         return -1;
     }
 
+    /**
+     * @param mounted the equipment to count
+     *
+     * @return the critical slots of this unit, in every location, that hold the given equipment; on a superheavy Mek
+     *       this can be fewer than the equipment's own slot count
+     */
+    public int occupiedCriticalSlots(Mounted<?> mounted) {
+        int occupied = 0;
+        for (int location = 0; location < locations(); location++) {
+            for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
+                CriticalSlot cs = getCritical(location, slot);
+                if ((cs != null) && ((cs.getMount() == mounted) || (cs.getMount2() == mounted))) {
+                    occupied++;
+                }
+            }
+        }
+        return occupied;
+    }
+
     @Override
     public @Nullable Image getFluffImage() {
         return fluff.getFluffImage();

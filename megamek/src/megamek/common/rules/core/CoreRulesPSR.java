@@ -290,7 +290,7 @@ public class CoreRulesPSR extends RulesPSR {
     /**
      * {@inheritDoc}
      * Heavy-duty gyro jump modifier (Core p.98, p.204). A superheavy gyro is not in Core and damages like a standard
-     * gyro (IO:AE p.155).
+     * gyro (IO:AE p.154).
      */
     @Override
     public int getGyroJumpModifier(final int gyroHits, final int gyroType) {

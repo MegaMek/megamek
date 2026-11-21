@@ -57,6 +57,7 @@ import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.rules.totalwarfare.TWRulesArmor;
 import megamek.common.rules.totalwarfare.TWRulesEquipment;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.SupportTank;
@@ -168,6 +169,45 @@ class CoreRulesScopeTest {
         assertEquals(1200, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 2, false));
         when(tag.isRearMounted()).thenReturn(true);
         assertEquals(1050, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 1, false));
+    }
+
+    @Test
+    void eachLauncherInABayPaysTheTagSurcharge() {
+        Game game = mock(Game.class);
+        Player player = mock(Player.class);
+        Entity spotter = mock(Entity.class);
+        Entity dropShip = mock(Entity.class);
+        when(spotter.getGame()).thenReturn(game);
+        when(spotter.getOwner()).thenReturn(player);
+        when(dropShip.getOwner()).thenReturn(player);
+        when(game.getEntitiesVector()).thenReturn(List.of(spotter, dropShip));
+
+        WeaponType arrowIV = mock(WeaponType.class);
+        when(arrowIV.hasFlag(WeaponTypeFlag.F_ARROW_IV)).thenReturn(true);
+        WeaponMounted launcher = mock(WeaponMounted.class);
+        when(launcher.getType()).thenReturn(arrowIV);
+        WeaponMounted bay = mock(WeaponMounted.class);
+        when(bay.getType()).thenReturn(mock(WeaponType.class));
+        when(bay.getBayWeapons()).thenReturn(List.of(launcher, launcher));
+        when(dropShip.getWeaponList()).thenReturn(List.of(bay));
+        AmmoType homing = mock(AmmoType.class);
+        when(homing.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_HOMING));
+        AmmoMounted homingBin = mock(AmmoMounted.class);
+        when(homingBin.getType()).thenReturn(homing);
+        when(homingBin.getUsableShotsLeft()).thenReturn(5);
+        when(dropShip.getAmmo()).thenReturn(List.of(homingBin));
+
+        // Core errata v0.2 p.1 charges by the number of launchers, so a bay of two pays twice
+        assertEquals(2, CoreRulesGame.homingLauncherCount(spotter));
+    }
+
+    @Test
+    void transferredDamageDropsTheArmorPiercingCheck() {
+        HitData hit = new HitData(Mek.LOC_LEFT_ARM);
+        hit.setSpecCriticalModifier(-2);
+        // "Damage that transfers to a location with armor does not trigger a new critical damage check" (TW p.140;
+        // Core p.191, errata v0.2)
+        assertFalse(new BipedMek().getTransferLocation(hit).getSpecCrit());
     }
 
     @Test

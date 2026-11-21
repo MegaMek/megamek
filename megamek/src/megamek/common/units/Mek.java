@@ -2093,8 +2093,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      *       each, so the result is never lower than an ordinary Mek's
      */
     private int getFrankenMekJumpJetsFired(int distance, int wingBonus, boolean hexes) {
-        // BV and previews have no takeoff. Use the installed jets regardless of the current hex.
-        double[] thrust = (jumpTakeoffThrust != null) ? jumpTakeoffThrust
+        // A jump fires the jets that could fire at its takeoff; BV and previews use the installed jets regardless of
+        // the current hex
+        double[] thrust = (hexes && (jumpTakeoffThrust != null)) ? jumpTakeoffThrust
               : getJumpJetThrust(0).filter(movement -> movement > 0).sorted().toArray();
         double total = 0;
         int fired = 0;
@@ -2108,10 +2109,12 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     /**
      * @return How far jets of the given thrust carry the Mek: their Jumping MP with the fractions dropped (CO p. 213)
-     *       and the partial wing's added, in hexes under the game's gravity when asked (TO:AR p.53)
+     *       and the partial wing's added once they give any (TO:AUE p.105), in hexes under the game's gravity when
+     *       asked (TO:AR p.53)
      */
     private int frankenMekJumpReach(double thrust, int wingBonus, boolean hexes) {
-        int jumpMP = (int) thrust + wingBonus;
+        int jumpMP = (int) thrust;
+        jumpMP += (jumpMP > 0) ? wingBonus : 0;
         return hexes ? applyGravityEffectsOnMP(jumpMP) : jumpMP;
     }
 

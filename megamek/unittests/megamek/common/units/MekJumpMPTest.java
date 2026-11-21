@@ -161,16 +161,18 @@ class MekJumpMPTest {
         assertEquals(3, mek.getJumpMP(MPCalculationSetting.DEDUCT_SUBMERGED_JJ));
         assertEquals(5, mek.getJumpHeat(3));
 
+        // Taking off from depth-one water fires only the torso jets; BV keeps counting the installed ones
         mek.recordJumpTakeoff();
         mek.setPosition(new Coords(3, 0));
         mek.setElevation(0);
-        assertEquals(6, mek.getJumpHeat(3));
+        assertEquals(6, mek.getJumpHeatForDistance(3));
+        assertEquals(5, mek.getJumpHeat(3));
 
         mek.recordJumpTakeoff();
         mek.setPosition(new Coords(0, 1));
         mek.setElevation(-2);
         assertEquals(0, mek.getJumpMP(MPCalculationSetting.DEDUCT_SUBMERGED_JJ));
-        assertEquals(5, mek.getJumpHeat(3));
+        assertEquals(5, mek.getJumpHeatForDistance(3));
     }
 
     @Test
@@ -185,7 +187,7 @@ class MekJumpMPTest {
         mek.recordJumpTakeoff();
         jets.subList(0, 3).forEach(jet -> jet.setDestroyed(true));
 
-        assertEquals(6, mek.getJumpHeat(3));
+        assertEquals(6, mek.getJumpHeatForDistance(3));
     }
 
     @Test

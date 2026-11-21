@@ -291,8 +291,8 @@ public final class EmplacementDeployment {
                 best = site;
             }
         }
-        LOGGER.info("[Emplacement] {}: chose {} (level {}, score {}, {}, depth {}%) from {} spaced of {} candidate "
-                    + "hexes (crowding {}, {} other emplacements, guards neighbours within {} hexes)",
+        LOGGER.info("[Emplacement] {}: chose {} (level {}, score {}, {}, depth {} percent) from {} spaced of {} "
+                    + "candidate hexes (crowding {}, {} other emplacements, guards neighbours within {} hexes)",
               emplacement.getShortName(), best, bestLevel, bestScore,
               isIndirectFire ? "artillery: least seen" : "most firepower over ground under interlocking fire",
               (best == null) ? 0 : depthPercent.applyAsInt(best), spaced.size(), candidates.size(), bestSpacing,

@@ -180,12 +180,8 @@ public class WeaponMounted extends Mounted<WeaponType> {
             heat = Math.max(0, heat / 2);
         }
 
-        // multiply by number of shots and number of weapons; an airborne aerospace unit fires its rapid-fire weapons at
-        // their maximum rate
-        Entity entity = getEntity();
-        int shots = ((entity != null) && entity.isAero() && entity.isAirborne())
-              ? Math.max(getCurrentShots(), aerospaceShots(getType())) : getCurrentShots();
-        heat = heat * shots * getNWeapons();
+        // multiply by number of shots and number of weapons
+        heat = heat * getCurrentShots() * getNWeapons();
         if (hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_IMP_COOLING)) {
             heat = Math.max(1, heat - 1);
         }
@@ -199,17 +195,6 @@ public class WeaponMounted extends Mounted<WeaponType> {
             heat += 5;
         }
         return (int) laserEnhancedHeat(heat, curMode().getName().startsWith("Pulse"));
-    }
-
-    /**
-     * @return The shots an airborne aerospace unit fires the weapon with: Ultra and rotary autocannons "always fire at
-     *       their maximum rate" (TW p.238), each shot making the weapon's heat (TW p.114), and other weapons one
-     */
-    public static int aerospaceShots(WeaponType type) {
-        AmmoType.AmmoTypeEnum ammoType = type.getAmmoType();
-        boolean rapidFire = (ammoType == AmmoType.AmmoTypeEnum.AC_ULTRA)
-              || (ammoType == AmmoType.AmmoTypeEnum.AC_ULTRA_THB) || (ammoType == AmmoType.AmmoTypeEnum.AC_ROTARY);
-        return rapidFire ? getNumShots(type, null, true) : 1;
     }
 
     /**

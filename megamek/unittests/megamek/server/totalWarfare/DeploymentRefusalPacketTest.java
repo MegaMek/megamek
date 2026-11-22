@@ -48,11 +48,15 @@ import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
 import megamek.common.units.Mek;
 import megamek.server.Server;
 import org.junit.jupiter.api.AfterEach;
@@ -173,6 +177,32 @@ class DeploymentRefusalPacketTest extends GameBoardTestCase {
         assertTrue(handsTheTurnBack(packets), "the turn is handed back so the player can pick another hex");
         assertEquals(List.of(DEPLOYING_MEK_ID), unitIdsSentIn(packets),
               "only the refused unit is resent; the hidden enemy must not reach the player");
+    }
+
+    /**
+     * A unit walking on from the map edge deploys as part of its move. A refused walk-on must leave the turn where it
+     * was. Before the fix the server handed the turn back and then ended it, so a bot answered a turn that had already
+     * passed and the game hung.
+     */
+    @Test
+    void aWalkOnOntoAnotherUnitIsRefusedWithoutEndingTheTurn() {
+        game.setPhase(GamePhase.MOVEMENT);
+        deployingMek.setCrew(new Crew(CrewType.SINGLE));
+        // The client stands its own copy of the unit on the hex to build the path; the server's copy has no position
+        deployingMek.setPosition(TARGET_HEX);
+        MovePath walkOnPath = new MovePath(game, deployingMek);
+        walkOnPath.addStep(MoveStepType.DEPLOY);
+        deployingMek.setPosition(null);
+        deployingMek.setDeployed(false);
+
+        gameManager.handlePacket(PLAYER_ID, new Packet(PacketCommand.ENTITY_MOVE, DEPLOYING_MEK_ID, walkOnPath));
+
+        ArgumentCaptor<Packet> sentPackets = ArgumentCaptor.forClass(Packet.class);
+        verify(server, atLeast(0)).send(eq(PLAYER_ID), sentPackets.capture());
+        assertFalse(deployingMek.isDeployed(), "the server must refuse to stack on the unit in the hex");
+        assertTrue(handsTheTurnBack(sentPackets.getAllValues()), "the turn is handed back to pick another hex");
+        assertEquals(0, game.getTurnIndex(), "the turn that was handed back must not also be ended");
+        assertEquals(GamePhase.MOVEMENT, game.getPhase());
     }
 
     @Test

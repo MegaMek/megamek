@@ -4623,6 +4623,12 @@ public class TWGameManager extends AbstractGameManager {
             Coords positionBeforeMovement = entity.getPosition();
             MovePathHandler handler = new MovePathHandler(this, entity, movePath, losCache);
             handler.processMovement();
+            if (handler.isDeploymentRefused() && !getGame().getPhase().isSimultaneous(getGame())) {
+                // The sender has been handed this turn back to pick another hex. Ending it as well would cost the
+                // unit its move, and leave a bot answering a turn that has already passed. In a simultaneous phase a
+                // bot cannot tell a handed-back turn from the other players' turn changes, so the turn still ends
+                return;
+            }
             new ObjectiveResolutionHandler(this).toastZoneEntry(entity, positionBeforeMovement);
             datasetLogger.append(movePath, true);
 

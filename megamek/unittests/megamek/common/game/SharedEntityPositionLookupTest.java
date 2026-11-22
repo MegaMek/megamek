@@ -94,6 +94,30 @@ class SharedEntityPositionLookupTest {
     }
 
     /**
+     * A unit that walks on and stays in its entry hex ends where the bot already put its copy. The bot's own game must
+     * still list it there, or the next unit is sent to deploy on top of it. Another unit is already on the board, so
+     * the bot's record of positions is not rebuilt from scratch.
+     */
+    @Test
+    void aUnitThatStaysOnItsEntryHexIsListedThere() {
+        Game botGame = new Game();
+        Game plannerGame = new Game();
+        Entity unitOnBoard = new BipedMek();
+        unitOnBoard.setId(UNIT_ID + 1);
+        unitOnBoard.setPosition(SCORED_HEX, false);
+        Entity undeployedUnit = createUnit(null);
+        botGame.setEntitiesVector(new ArrayList<>(List.of(unitOnBoard, undeployedUnit)));
+        plannerGame.setEntitiesVector(new ArrayList<>(List.of(unitOnBoard, undeployedUnit)));
+
+        undeployedUnit.setPosition(WALK_ON_HEX);
+        botGame.setEntity(UNIT_ID, createUnit(WALK_ON_HEX));
+
+        List<Entity> unitsOnEntryHex = botGame.getEntitiesVector(WALK_ON_HEX, true);
+        assertEquals(1, unitsOnEntryHex.size(), "The bot's own game has lost the unit that stayed on its entry hex");
+        assertEquals(UNIT_ID, unitsOnEntryHex.getFirst().getId());
+    }
+
+    /**
      * Plays the bot side of one walk-on. The server sends the undeployed unit to both copies of the game, the bot's
      * own first. The bot stands it on a hex it is scoring, and its own game builds its record of positions at that
      * moment, because it is still empty while nothing is on the board. The bot then puts the unit on the hex it

@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.IntUnaryOperator;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -2184,10 +2185,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private void updateAttackValues(WeaponMounted weapon, AmmoMounted ammo) {
         WeaponType weaponType = weapon.getType();
         // update Attack Values and change range
-        int avShort = (int) Math.ceil(weapon.getAttackValue(WeaponType.RANGE_SHORT));
-        int avMed = (int) Math.ceil(weapon.getAttackValue(WeaponType.RANGE_MED));
-        int avLong = (int) Math.ceil(weapon.getAttackValue(WeaponType.RANGE_LONG));
-        int avExt = (int) Math.ceil(weapon.getAttackValue(WeaponType.RANGE_EXT));
+        // Each attack value rounds as its weapon type rounds it (TM p. 136); a charged capacitor adds 5 (TO:AUE p. 149)
+        IntUnaryOperator charged = av -> ((av > 0) && weapon.firesCapacitorCharge())
+              ? (av + Mounted.CAPACITOR_DAMAGE_BONUS) : av;
+        int avShort = charged.applyAsInt(weaponType.getRoundShortAV());
+        int avMed = charged.applyAsInt(weaponType.getRoundMedAV());
+        int avLong = charged.applyAsInt(weaponType.getRoundLongAV());
+        int avExt = charged.applyAsInt(weaponType.getRoundExtAV());
         int maxRange = weaponType.getMaxRange(weapon);
 
         // change range and attack values based upon ammo

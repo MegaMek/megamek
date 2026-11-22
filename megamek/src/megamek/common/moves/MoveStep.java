@@ -3627,7 +3627,8 @@ public class MoveStep implements Serializable {
                 deltaElevation *= 2;
             }
             int elevationCostReduction = Game.rulesManager.getRulesTerrain()
-                  .getRoadElevationCostDifference(entity, elevationMoveMode, isPavementStep, deltaElevation);
+                  .getRoadElevationCostDifference(entity, elevationMoveMode, srcHex, destHex, isPavementStep,
+                        deltaElevation);
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 mp += Math.max(0, deltaElevation - 1 - elevationCostReduction);
             } else {

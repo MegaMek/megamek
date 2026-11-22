@@ -32,23 +32,26 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Hex;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 
 public abstract class RulesTerrain {
 
     /**
-     * Do we change the road elevation cost.
+     * Returns the reduction in MP charged for this step's elevation change.
      *
      * @param entity the moving unit
      * @param movementMode the mode used for this step, including a conversion earlier in the path
+     * @param srcHex the hex the unit leaves
+     * @param destHex the hex the unit enters
      * @param pavementStep true if the unit moves from one hex to the next on pavement, which roads and paved bridges
      *       count as (Core p.53)
      * @param deltaElevation the change in elevation
      * @return the road elevation cost difference
      */
     public abstract int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
-          boolean pavementStep, int deltaElevation);
+          Hex srcHex, Hex destHex, boolean pavementStep, int deltaElevation);
 
     /**
      * Can we change more levels than normally allowed?

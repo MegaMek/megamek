@@ -931,6 +931,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
+            // Linked guns share the bay's roll. Their automatic-success rolls have no margin of their own.
+            if (parentBayHandler instanceof BayWeaponHandler bay && bay.resolvesGunInStandardScale(weapon)) {
+                toHit.setMoS(bay.toHit.getMoS());
+                bDirect = bay.bDirect;
+                bGlancing = bay.bGlancing;
+                bLowProfileGlancing = bay.bLowProfileGlancing;
+            }
+
             // This has to be up here so that we don't screw up glancing/direct blow reports
             attackValue = calcAttackValue();
 
@@ -1041,6 +1049,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // Do this stuff first, because some weapon's miss report reference
             // the amount of shots fired and stuff.
             nDamPerHit = calcDamagePerHit();
+            if (usesStandardScaleBayDamage() && !target.isConventionalInfantry()) {
+                nDamPerHit = BayWeaponHandler.bracketBayDamage(nDamPerHit, getBracketingMultiplier());
+            }
             if (!heatAdded) {
                 addHeat();
                 heatAdded = true;
@@ -1389,6 +1400,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                   weaponType.getBADamageClass(), (BattleArmor) target);
         }
 
+        toReturn = directBlowDamageAtTargetScale(toReturn);
+
         // we default to direct fire weapons for anti-infantry damage
         if (target.isConventionalInfantry()) {
             // Flechette ammo is treated "as though attack were from infantry unit" (TW p.208)
@@ -1401,8 +1414,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   isNonInfantryVsMechanized,
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
-        } else if (bDirect) {
-            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
@@ -1520,11 +1531,28 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return 0;
     }
 
-    /**
-     * * adjustment factor on attack value for fighter squadrons
-     */
+    /** The selected bracketing mode belongs to the firing bay. */
     protected double getBracketingMultiplier() {
-        return bracketingMultiplier(weapon);
+        return bracketingMultiplier(parentBayHandler instanceof BayWeaponHandler ? parentBayHandler.weapon : weapon);
+    }
+
+    /** Aero Sanity resolves the guns of a capital bay individually against standard-scale armor. */
+    protected boolean usesStandardScaleBayDamage() {
+        return parentBayHandler instanceof BayWeaponHandler bay && bay.resolvesGunInStandardScale(weapon);
+    }
+
+    /** Apply a direct blow in the weapon's native scale, before glancing hits or infantry casualties are rounded. */
+    protected double directBlowDamageAtTargetScale(double damage) {
+        if (bDirect && !target.isConventionalInfantry()) {
+            damage = Math.min(damage + (int) floor(toHit.getMoS() / 3.0), damage * 2);
+        }
+        if (!usesStandardScaleBayDamage()) {
+            return damage;
+        }
+        double standardDamage = 10 * damage;
+        // The infantry table must receive the bracketed weapon damage before it converts the hit to casualties.
+        return target.isConventionalInfantry()
+              ? BayWeaponHandler.bracketBayDamage(standardDamage, getBracketingMultiplier()) : standardDamage;
     }
 
     /** @return the share of its damage a bay deals in its Bracketing fire mode, or 1 when not bracketing (SO p.87) */
@@ -2072,6 +2100,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
               weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setCapital(weaponType.isCapital());
+        hit.setDamageInStandardScale(usesStandardScaleBayDamage());
         hit.setBoxCars(roll.getIntValue() == 12);
         hit.setCapMisCritMod(getCapMisMod());
         hit.setFirstHit(firstHit);

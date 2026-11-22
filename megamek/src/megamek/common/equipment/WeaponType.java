@@ -1198,6 +1198,14 @@ public class WeaponType extends EquipmentType {
         return capital;
     }
 
+    /** The capital and sub-capital direct-fire gun bays allowed to bracket (SO pp. 87-88). */
+    public boolean canBracketFire() {
+        return switch (getAtClass()) {
+            case CLASS_CAPITAL_LASER, CLASS_CAPITAL_PPC, CLASS_CAPITAL_AC, CLASS_CAPITAL_GAUSS -> true;
+            default -> false;
+        };
+    }
+
     public boolean isSubCapital() {
         return subCapital;
     }

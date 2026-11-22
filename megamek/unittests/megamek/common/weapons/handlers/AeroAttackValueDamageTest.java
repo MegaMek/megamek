@@ -41,6 +41,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.GameBoardTestCase;
@@ -77,7 +79,18 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
+import megamek.common.units.Warship;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalACBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalLaserBayWeapon;
+import megamek.common.weapons.bayWeapons.capital.CapitalMDBayWeapon;
+import megamek.common.weapons.bayWeapons.subCapital.SubCapLaserBayWeapon;
+import megamek.common.weapons.capitalWeapons.CapMissKillerWhaleWeapon;
+import megamek.common.weapons.capitalWeapons.naval.NAC10Weapon;
+import megamek.common.weapons.capitalWeapons.naval.NL35Weapon;
+import megamek.common.weapons.capitalWeapons.naval.NL45Weapon;
+import megamek.common.weapons.capitalWeapons.naval.NL55Weapon;
+import megamek.common.weapons.subCapitalWeapons.SubCapLaserWeapon1;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -352,6 +365,133 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
               any(), anyBoolean(), anyInt(), any());
     }
 
+    /** Bracketing and waypoint launch are separate optional rules with different eligible weapons (SO pp. 87–88). */
+    @Test
+    void massDriverCannotSelectBracketingOrMissileModes() {
+        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BRACKET_FIRE).setValue(true);
+        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_WAYPOINT_LAUNCH).setValue(true);
+        Weapon massDriverBay = new CapitalMDBayWeapon();
+        Weapon capitalMissile = new CapMissKillerWhaleWeapon();
+        Weapon navalAutocannon = new NAC10Weapon();
+        for (Weapon type : List.of(massDriverBay, capitalMissile, navalAutocannon)) {
+            type.adaptToGameOptions(game.getOptions());
+        }
+
+        assertFalse(massDriverBay.hasModeType(Weapon.MODE_CAPITAL_BRACKET_80));
+        assertFalse(massDriverBay.hasModeType(Weapon.MODE_CAP_MISSILE_WAYPOINT));
+        assertFalse(capitalMissile.hasModeType(Weapon.MODE_CAPITAL_BRACKET_80));
+        assertTrue(capitalMissile.hasModeType(Weapon.MODE_CAP_MISSILE_WAYPOINT));
+        assertTrue(navalAutocannon.hasModeType(Weapon.MODE_CAPITAL_BRACKET_80));
+    }
+
+    /** Bracketing changes a capital bay's damage. Aero Sanity applies each weapon in standard-scale points. */
+    @ParameterizedTest
+    @CsvSource({ "false, 3, 100, 170", "false, 3, 80, 130", "false, 3, 60, 100", "false, 4, 40, 80",
+                 "true, 3, 100, 165", "true, 3, 80, 132", "true, 3, 60, 99", "true, 4, 40, 88" })
+    void navalLaserBayBracketsDamageOnImpact(boolean aeroSanity, int laserCount, int percent, int expectedDamage)
+          throws Exception {
+        Warship warship = setUpBracketingAttack(aeroSanity);
+        WeaponMounted bay = addBracketingBay(warship, new CapitalLaserBayWeapon(), percent,
+              Collections.nCopies(laserCount, new NL55Weapon()));
+        int startingArmor = target.getTotalArmor();
+
+        fireBayOnTwo(warship, bay, target, 2);
+
+        assertEquals(expectedDamage, startingArmor - target.getTotalArmor());
+    }
+
+    /** Each laser strikes a separate location. A glancing bay hit halves each laser before bracketing drops fractions. */
+    @ParameterizedTest
+    @CsvSource({ "false, 28, 36, 44", "true, 13, 17, 21" })
+    void mixedBracketedLasersHitDifferentLocations(boolean glancing, int nose, int leftWing, int rightWing)
+          throws Exception {
+        Warship warship = setUpBracketingAttack(true);
+        game.getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS).setValue(glancing);
+        target = Mockito.spy(target);
+        game.setEntity(target.getId(), target);
+        Mockito.doReturn(new HitData(Aero.LOC_NOSE), new HitData(Aero.LOC_LEFT_WING), new HitData(Aero.LOC_RIGHT_WING))
+              .when(target).rollHitLocation(anyInt(), anyInt(), anyInt(), any(), anyInt());
+        WeaponMounted bay = addBracketingBay(warship, new CapitalLaserBayWeapon(), 80,
+              List.of(new NL35Weapon(), new NL45Weapon(), new NL55Weapon()));
+
+        fireBayOnTwo(warship, bay, target, 2);
+
+        assertEquals(nose, target.getOArmor(Aero.LOC_NOSE) - target.getArmor(Aero.LOC_NOSE));
+        assertEquals(leftWing, target.getOArmor(Aero.LOC_LEFT_WING) - target.getArmor(Aero.LOC_LEFT_WING));
+        assertEquals(rightWing, target.getOArmor(Aero.LOC_RIGHT_WING) - target.getArmor(Aero.LOC_RIGHT_WING));
+    }
+
+    @Test
+    void bracketedNavalAutocannonsEachDealEightyStandardDamageAndSpendTheirRound() throws Exception {
+        Warship warship = setUpBracketingAttack(true);
+        WeaponMounted bay = addBracketingBay(warship, new CapitalACBayWeapon(), 80,
+              List.of(new NAC10Weapon(), new NAC10Weapon()));
+        for (WeaponMounted gun : bay.getBayWeapons()) {
+            AmmoMounted ammo = (AmmoMounted) warship.addEquipment(EquipmentType.get("Ammo NAC/10"), Aero.LOC_NOSE);
+            ammo.setShotsLeft(1);
+            bay.addAmmoToBay(ammo);
+            gun.setLinked(ammo);
+        }
+        target = Mockito.spy(target);
+        game.setEntity(target.getId(), target);
+        Mockito.doReturn(new HitData(Aero.LOC_NOSE), new HitData(Aero.LOC_AFT))
+              .when(target).rollHitLocation(anyInt(), anyInt(), anyInt(), any(), anyInt());
+
+        fireBayOnTwo(warship, bay, target, 2);
+
+        assertEquals(80, target.getOArmor(Aero.LOC_NOSE) - target.getArmor(Aero.LOC_NOSE));
+        assertEquals(80, target.getOArmor(Aero.LOC_AFT) - target.getArmor(Aero.LOC_AFT));
+        assertTrue(bay.getBayAmmo().stream().allMatch(ammo -> ammo.getBaseShotsLeft() == 0));
+    }
+
+    @Test
+    void twoSubCapitalLasersRetainEightStandardDamageEachAtBracketEighty() throws Exception {
+        Warship warship = setUpBracketingAttack(true);
+        WeaponMounted bay = addBracketingBay(warship, new SubCapLaserBayWeapon(), 80,
+              List.of(new SubCapLaserWeapon1(), new SubCapLaserWeapon1()));
+        int startingArmor = target.getTotalArmor();
+
+        fireBayOnTwo(warship, bay, target, 2);
+
+        assertEquals(16, startingArmor - target.getTotalArmor());
+    }
+
+    private Warship setUpBracketingAttack(boolean aeroSanity) {
+        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY).setValue(aeroSanity);
+        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BRACKET_FIRE).setValue(true);
+        game.setBoard(Board.getSpaceBoard(16, 17));
+        // Bracketing a fighter is legal beyond short range (SO p. 88).
+        target.setPosition(new Coords(4, 13));
+        for (int location = 0; location < target.locations(); location++) {
+            target.initializeArmor(500, location);
+        }
+
+        Warship warship = new Warship();
+        warship.setGame(game);
+        warship.setId(game.getNextEntityId());
+        warship.setCrew(new Crew(CrewType.VESSEL));
+        warship.setOwner(attackerOwner);
+        warship.setWeight(500000);
+        placeAirborne(warship, new Coords(4, 0));
+        warship.setFacing(3);
+        return warship;
+    }
+
+    private WeaponMounted addBracketingBay(Warship warship, Weapon bayType, int percent, List<? extends Weapon> guns)
+          throws Exception {
+        WeaponMounted bay = (WeaponMounted) warship.addEquipment(bayType, Aero.LOC_NOSE);
+        for (Weapon gun : guns) {
+            bay.addWeaponToBay((WeaponMounted) warship.addEquipment(gun, Aero.LOC_NOSE));
+        }
+        warship.setGameOptions();
+        if (percent < 100) {
+            String bracket = "Bracket " + percent + "%";
+            assertTrue(bay.setModeImmediately(bracket) >= 0);
+            assertEquals(bracket, bay.curMode().getName());
+        }
+        return bay;
+    }
+
     /** A plasma rifle's heat meets the armor at impact, even when the same hit removes its last point. */
     @ParameterizedTest
     @CsvSource({ "false, false, 2", "false, true, 0", "true, false, 2", "true, true, 0" })
@@ -494,13 +634,13 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
         return member;
     }
 
-    private void fireBayOnTwo(Dropship dropShip, WeaponMounted bay, Targetable attackTarget, int toHitNumber) {
-        fireBayOnTwo(dropShip, bay, attackTarget, new ToHitData(toHitNumber, "test"));
+    private void fireBayOnTwo(Entity attacker, WeaponMounted bay, Targetable attackTarget, int toHitNumber) {
+        fireBayOnTwo(attacker, bay, attackTarget, new ToHitData(toHitNumber, "test"));
     }
 
-    private void fireBayOnTwo(Dropship dropShip, WeaponMounted bay, Targetable attackTarget, ToHitData toHit) {
-        WeaponAttackAction attack = new WeaponAttackAction(dropShip.getId(), attackTarget.getTargetType(),
-              attackTarget.getId(), dropShip.getEquipmentNum(bay));
+    private void fireBayOnTwo(Entity attacker, WeaponMounted bay, Targetable attackTarget, ToHitData toHit) {
+        WeaponAttackAction attack = new WeaponAttackAction(attacker.getId(), attackTarget.getTargetType(),
+              attackTarget.getId(), attacker.getEquipmentNum(bay));
         WeaponHandler handler = (WeaponHandler) ((Weapon) bay.getType())
               .getCorrectHandler(toHit, attack, game, gameManager);
         Roll two = mock(Roll.class);

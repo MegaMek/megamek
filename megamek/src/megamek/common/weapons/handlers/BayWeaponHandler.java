@@ -423,6 +423,14 @@ public class BayWeaponHandler extends WeaponHandler {
         return nDamPerHit > 0;
     }
 
+    /** Linked capital guns use standard damage in aerospace combat. Surface bombardment has its own rules. */
+    boolean resolvesGunInStandardScale(WeaponMounted member) {
+        return member.getType().canBracketFire() && target instanceof Entity
+              && ((game.isOnSpaceMap(attackingEntity) && game.isOnSpaceMap(target))
+                    || (attackingEntity.isAirborne() && target.isAirborne()
+                          && attackingEntity.getBoardId() == target.getBoardId()));
+    }
+
     private double getAv(WeaponMounted m, int range) {
         return firesWithBay(m) ? m.getAttackValue(range) : 0;
     }
@@ -661,8 +669,9 @@ public class BayWeaponHandler extends WeaponHandler {
         ToHitData autoHit = new ToHitData();
         autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
         int replaceReport;
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
         for (WeaponMounted m : weapon.getBayWeapons()) {
-            if (firesWithBay(m)) {
+            if (firesWithBay(m) && (!resolvesGunInStandardScale(m) || m.getAttackValue(range) > 0)) {
                 WeaponType bayWType = m.getType();
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();

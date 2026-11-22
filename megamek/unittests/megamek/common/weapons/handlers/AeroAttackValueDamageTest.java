@@ -45,13 +45,17 @@ import java.util.Vector;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.HexTarget;
+import megamek.common.HitData;
+import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
@@ -61,13 +65,17 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesManager;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Aero;
 import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
+import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
@@ -344,11 +352,157 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
               any(), anyBoolean(), anyInt(), any());
     }
 
+    /** A plasma rifle's heat meets the armor at impact, even when the same hit removes its last point. */
+    @ParameterizedTest
+    @CsvSource({ "false, false, 2", "false, true, 0", "true, false, 2", "true, true, 0" })
+    void plasmaBayHeatMeetsTheLastArmorBeforeDamage(boolean aeroSanity, boolean core, int expectedHeat)
+          throws Exception {
+        Game.rulesManager = core ? new CoreRulesManager() : new TWRulesManager();
+        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY).setValue(aeroSanity);
+        Mek mek = addPlasmaTarget(EquipmentType.T_ARMOR_HEAT_DISSIPATING, 1);
+        Dropship dropShip = addDropShip();
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY),
+              Aero.LOC_NOSE);
+        addPlasmaWeapon(dropShip, bay, "ISPlasmaRifle");
+        try (var dice = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            dice.when(Compute::d6).thenReturn(5);
+            fireBayOnTwo(dropShip, bay, mek, 2);
+        }
+
+        assertTrue(mek.getArmor(Mek.LOC_LEFT_TORSO) <= 0);
+        assertEquals(expectedHeat, mek.heatFromExternal);
+    }
+
+    /** A plasma cannon heats a Mek without doing armor damage (TW pp. 139, 238). */
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void plasmaCannonBayHeatsAMekWithoutDamagingItsArmor(boolean aeroSanity) throws Exception {
+        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY).setValue(aeroSanity);
+        Mek mek = addPlasmaTarget(EquipmentType.T_ARMOR_STANDARD, STARTING_ARMOR);
+        Dropship dropShip = addDropShip();
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY),
+              Aero.LOC_NOSE);
+        addPlasmaWeapon(dropShip, bay, "CLPlasmaCannon");
+        try (var dice = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            dice.when(() -> Compute.d6(2)).thenReturn(8);
+            fireBayOnTwo(dropShip, bay, mek, 2);
+        }
+
+        assertEquals(8, mek.heatFromExternal);
+        assertEquals(STARTING_ARMOR, mek.getArmor(Mek.LOC_LEFT_TORSO));
+    }
+
+    @Test
+    void mixedPlasmaBayRollsHeatForEachRifleThatFires() throws Exception {
+        Mek mek = addPlasmaTarget(EquipmentType.T_ARMOR_STANDARD, STARTING_ARMOR);
+        Dropship dropShip = addDropShip();
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY),
+              Aero.LOC_NOSE);
+        addPlasmaWeapon(dropShip, bay, "ISLightPlasmaRifle");
+        addPlasmaWeapon(dropShip, bay, "ISPlasmaRifle");
+        addPlasmaWeapon(dropShip, bay, "ISHeavyPlasmaRifle");
+        addPlasmaWeapon(dropShip, bay, "CLPlasmaCannon").getLinkedAmmo().setShotsLeft(0);
+        try (var dice = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            dice.when(Compute::d6).thenReturn(5);
+            dice.when(() -> Compute.d6(2)).thenReturn(6);
+            fireBayOnTwo(dropShip, bay, mek, 2);
+        }
+
+        assertEquals(3 + 5 + 6, mek.heatFromExternal);
+        assertEquals(STARTING_ARMOR - 4 - 10 - 12, mek.getArmor(Mek.LOC_LEFT_TORSO));
+    }
+
+    /** A space bay resolves as one hit, including heat from a cannon whose physical AV against a fighter is zero. */
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void spacePlasmaBayAppliesHeatFromTheLastRoundOfEachFiringWeapon(boolean includeRifle) throws Exception {
+        game.setBoard(Board.getSpaceBoard(16, 17));
+        Dropship dropShip = addDropShip();
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY),
+              Aero.LOC_NOSE);
+        AmmoMounted cannonAmmo = addPlasmaWeapon(dropShip, bay, "CLPlasmaCannon").getLinkedAmmo();
+        cannonAmmo.setShotsLeft(1);
+        if (includeRifle) {
+            addPlasmaWeapon(dropShip, bay, "ISPlasmaRifle").getLinkedAmmo().setShotsLeft(1);
+        }
+
+        try (var dice = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            dice.when(Compute::d6).thenReturn(5);
+            dice.when(() -> Compute.d6(2)).thenReturn(8);
+            fireBayOnTwo(dropShip, bay, target, 2);
+        }
+
+        assertEquals(includeRifle ? 13 : 8, target.heatFromExternal);
+        assertEquals(includeRifle ? 10 : 0, armorLost());
+        assertTrue(bay.getBayAmmo().stream().allMatch(ammo -> ammo.getBaseShotsLeft() == 0));
+    }
+
+    @Test
+    void buildingInPartialCoverTakesPlasmaCannonDamageAndShieldsTheMekFromHeat() throws Exception {
+        Board board = new Board();
+        board.load("""
+              size 1 3
+              hex 0101 0 "" ""
+              hex 0102 0 "building:2;bldg_elev:1;bldg_cf:40" ""
+              hex 0103 0 "" ""
+              end""", null);
+        game.setBoard(board);
+        Coords cover = new Coords(0, 1);
+        IBuilding building = board.getBuildingAt(cover);
+        Mek mek = addPlasmaTarget(EquipmentType.T_ARMOR_STANDARD, STARTING_ARMOR);
+        mek.setPosition(new Coords(0, 2));
+        Mockito.doReturn(new HitData(Mek.LOC_LEFT_LEG)).when(mek)
+              .rollHitLocation(anyInt(), anyInt(), anyInt(), any(), anyInt());
+        Dropship dropShip = addDropShip();
+        dropShip.setPosition(new Coords(0, 0));
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY),
+              Aero.LOC_NOSE);
+        addPlasmaWeapon(dropShip, bay, "CLPlasmaCannon");
+
+        ToHitData toHit = new ToHitData(2, "partial cover");
+        toHit.setCover(LosEffects.COVER_HORIZONTAL);
+        toHit.setDamagableCoverTypePrimary(LosEffects.DAMAGABLE_COVER_BUILDING);
+        toHit.setCoverBuildingPrimary(building);
+        toHit.setCoverLocPrimary(cover);
+        fireBayOnTwo(dropShip, bay, mek, toHit);
+
+        assertEquals(30, building.getCurrentCF(cover));
+        assertEquals(0, mek.heatFromExternal);
+        assertEquals(STARTING_ARMOR, mek.getTotalArmor());
+    }
+
+    private Mek addPlasmaTarget(int armorType, int torsoArmor) {
+        Mek mek = Mockito.spy(new BipedMek());
+        mek.setOwner(target.getOwner());
+        mek.setWeight(50);
+        mek.autoSetInternal();
+        mek.setArmorType(armorType);
+        mek.initializeArmor(torsoArmor, Mek.LOC_LEFT_TORSO);
+        game.addEntity(mek);
+        mek.setPosition(target.getPosition());
+        Mockito.doReturn(new HitData(Mek.LOC_LEFT_TORSO)).when(mek)
+              .rollHitLocation(anyInt(), anyInt(), anyInt(), any(), anyInt());
+        return mek;
+    }
+
+    private WeaponMounted addPlasmaWeapon(Dropship dropShip, WeaponMounted bay, String type) throws Exception {
+        WeaponMounted member = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(type), Aero.LOC_NOSE);
+        AmmoMounted ammo = (AmmoMounted) dropShip.addEquipment(EquipmentType.get(type + "Ammo"), Aero.LOC_NOSE);
+        bay.addWeaponToBay(member);
+        bay.addAmmoToBay(ammo);
+        member.setLinked(ammo);
+        return member;
+    }
+
     private void fireBayOnTwo(Dropship dropShip, WeaponMounted bay, Targetable attackTarget, int toHitNumber) {
+        fireBayOnTwo(dropShip, bay, attackTarget, new ToHitData(toHitNumber, "test"));
+    }
+
+    private void fireBayOnTwo(Dropship dropShip, WeaponMounted bay, Targetable attackTarget, ToHitData toHit) {
         WeaponAttackAction attack = new WeaponAttackAction(dropShip.getId(), attackTarget.getTargetType(),
               attackTarget.getId(), dropShip.getEquipmentNum(bay));
         WeaponHandler handler = (WeaponHandler) ((Weapon) bay.getType())
-              .getCorrectHandler(new ToHitData(toHitNumber, "test"), attack, game, gameManager);
+              .getCorrectHandler(toHit, attack, game, gameManager);
         Roll two = mock(Roll.class);
         when(two.getIntValue()).thenReturn(2);
         when(two.getReport()).thenReturn("2");

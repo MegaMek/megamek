@@ -1721,8 +1721,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.lastElement().newlines = 0;
             vPhaseReport.addElement(r);
         }
-        // Resolve damage normally.
-        int nDamage = nDamPerHit * Math.min(nCluster, hits);
+        // Resolve damage against the unit actually struck, after partial cover has been checked.
+        int nDamage = damagePerHitAgainst(entityTarget) * Math.min(nCluster, hits);
 
         if (bDirect) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
@@ -1793,6 +1793,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((attackingEntity instanceof BattleArmor) && (target instanceof Infantry)) {
             nDamPerHit = calcDamagePerHit();
         }
+    }
+
+    /** Physical damage per hit against the unit struck. Partial cover may redirect a hit to another unit. */
+    protected int damagePerHitAgainst(Entity entityTarget) {
+        return nDamPerHit;
     }
 
     /**

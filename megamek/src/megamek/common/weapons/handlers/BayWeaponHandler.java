@@ -372,10 +372,7 @@ public class BayWeaponHandler extends WeaponHandler {
         int hits = 1;
         int nCluster = 1;
         for (WeaponMounted m : weapon.getBayWeapons()) {
-            double av = getAv(m, range);
-            nDamPerHit = (int) Math.ceil(av);
-
-            if (nDamPerHit <= 0) {
+            if (!prepareGroundWeaponHit(m, range)) {
                 continue;
             }
 
@@ -418,6 +415,12 @@ public class BayWeaponHandler extends WeaponHandler {
         } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport);
         return false;
+    }
+
+    /** Sets the damage for one bay member's ground hit. A heat-only hit can strike for zero damage. */
+    protected boolean prepareGroundWeaponHit(WeaponMounted member, int range) {
+        nDamPerHit = (int) Math.ceil(getAv(member, range));
+        return nDamPerHit > 0;
     }
 
     private double getAv(WeaponMounted m, int range) {

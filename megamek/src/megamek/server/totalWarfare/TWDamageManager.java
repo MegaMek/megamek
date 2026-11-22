@@ -274,7 +274,8 @@ public class TWDamageManager implements IDamageManager {
         if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) {
             // Special armor only works while the location or facing struck has armor left (Core p.201)
             if ((entity.getArmor(hit) > 0)
-                  && Game.rulesManager.getRulesArmor().blockTAC(entity.getArmorType(hit.getLocation()))) {
+                  && Game.rulesManager.getRulesArmor().blockTAC(entity.getArmorType(hit.getLocation()))
+                  && Game.rulesManager.getRulesArmor().criticalProtectionsApplyAgainst(hit.getGeneralDamageType())) {
                 crits = 0;
                 Report tacBlockedReport = new Report(6266);
                 tacBlockedReport.subject = entityId;
@@ -3681,7 +3682,8 @@ public class TWDamageManager implements IDamageManager {
 
                 // if the armor is hardened, any penetrating crits are
                 // rolled at -2
-                if (hardenedArmor) {
+                if (hardenedArmor
+                      && Game.rulesManager.getRulesArmor().criticalProtectionsApplyAgainst(hit.getGeneralDamageType())) {
                     mods.critBonus = critBonus - 2;
                 }
 

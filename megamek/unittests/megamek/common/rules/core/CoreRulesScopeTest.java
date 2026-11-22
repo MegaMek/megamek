@@ -119,6 +119,10 @@ class CoreRulesScopeTest {
         assertFalse(core.ballisticReinforcedArmorReduces(HitDamageType.DAMAGE_ARMOR_PIERCING), "Core p.191");
         assertFalse(core.ballisticReinforcedArmorReduces(HitDamageType.DAMAGE_AX), "Core p.192");
         assertTrue(new TWRulesArmor().ballisticReinforcedArmorReduces(HitDamageType.DAMAGE_ARMOR_PIERCING));
+        // Nor do ablation and hardened armor keep their critical-hit protections against it (Core p.191)
+        assertFalse(core.criticalProtectionsApplyAgainst(HitDamageType.DAMAGE_ARMOR_PIERCING));
+        assertTrue(core.criticalProtectionsApplyAgainst(HitDamageType.DAMAGE_BALLISTIC));
+        assertTrue(new TWRulesArmor().criticalProtectionsApplyAgainst(HitDamageType.DAMAGE_ARMOR_PIERCING));
     }
 
     @Test

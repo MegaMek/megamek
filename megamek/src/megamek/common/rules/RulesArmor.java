@@ -110,6 +110,17 @@ public abstract class RulesArmor {
     public abstract boolean blockTAC(int armorType);
 
     /**
+     * Do ablation and hardened armor keep their critical-hit protections (the ablation TAC block, the hardened -2)
+     * against damage of this type? By default always.
+     *
+     * @param damageType the general damage type of the hit
+     * @return true if those protections apply
+     */
+    public boolean criticalProtectionsApplyAgainst(HitDamageType damageType) {
+        return true;
+    }
+
+    /**
      * How does impact armor reduce damage. While the location has armor, impact-resistant armor reduces damage "by 1
      * point for every 3 points delivered (or fraction thereof), to a minimum of 1 damage point" (IO:AE p.82; Core
      * p.202 for physical attacks).

@@ -137,6 +137,16 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
+     * Against armor-piercing ammunition, ablation, ballistic-reinforced and hardened armor "provide no damage reduction
+     * or other special protective bonuses of any kind" (Core p.191).
+     */
+    @Override
+    public boolean criticalProtectionsApplyAgainst(HitDamageType damageType) {
+        return damageType != HitDamageType.DAMAGE_ARMOR_PIERCING;
+    }
+
+    /**
+     * {@inheritDoc}
      * Impact-resistant armor halves damage from building collapses, collisions and falls (rounding remaining damage
      * down) and reduces physical attack damage as {@link RulesArmor#reduceImpactDamage} does (Core p.202).
      */

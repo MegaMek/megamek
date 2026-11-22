@@ -23301,11 +23301,8 @@ public class TWGameManager extends AbstractGameManager {
             critMod += 2;
         }
 
-        // Apply modifiers for Anti-penetrative ablation armor
-        if ((en.getArmor(loc, isRear) > 0) &&
-              (en.getArmorType(loc) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
-            critMod -= 2;
-        }
+        // Ablation armor's -2 applies only to armor-piercing and through-armor checks while the armor holds, see
+        // RulesArmor#ablationArmorCriticalModifier (IO:AE p.80)
 
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod, damage, damageType.equals(DamageType.INFERNO));

@@ -444,6 +444,14 @@ public class QuadVee extends QuadMek {
         return (getConversionMode() == CONV_MODE_VEHICLE) ? 1 : 2;
     }
 
+    /**
+     * {@inheritDoc} In vehicle mode a QuadVee moves, and is displaced, as a vehicle (IO:AE p.127; TW p.151).
+     */
+    @Override
+    public int getMaxDisplacementElevationChange() {
+        return getMaxElevationChange();
+    }
+
     @Override
     public boolean canChangeSecondaryFacing() {
         return true;

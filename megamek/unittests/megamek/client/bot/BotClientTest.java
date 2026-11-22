@@ -472,8 +472,9 @@ class BotClientTest {
         addMek(bot, 86, BOT_PLAYER_ID);
         bot.getGame().setPhase(GamePhase.MOVEMENT);
         bot.getGame().setTurnVector(List.of(new GameTurn(BOT_PLAYER_ID)));
-        bot.getGame().setTurnIndex(0, ENEMY_PLAYER_ID);
+        // Set before the turn change, so the bot does not answer this turn on a calculation thread of its own
         bot.lastCalculatedTurnIndex = 0;
+        bot.getGame().setTurnIndex(0, ENEMY_PLAYER_ID);
         Method worker = BotClient.class.getDeclaredMethod("calculateMyTurnWorker", boolean.class);
         worker.setAccessible(true);
 

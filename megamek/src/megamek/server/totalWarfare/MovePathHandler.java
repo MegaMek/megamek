@@ -353,16 +353,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             boolean isLegalLocation = deploymentProcess.isLegalDeployment(position, boardId, entity, facing);
             if (!isLegalLocation) {
-                String msg = "server got invalid deployment packet from connection " + entity.getOwnerId();
-                msg += ", Entity: " + entity.getShortName();
-                logger.error(msg);
                 deploymentRefused = true;
-                // The client already marked the unit deployed, so it is resent along with the turn
-                int ownerId = entity.getOwnerId();
-                gameManager.send(ownerId, gameManager.createEntityPacket(entity.getId(), null));
-                gameManager.send(ownerId, gameManager.getPacketHelper().createTurnListPacket());
-                gameManager.send(ownerId, gameManager.getPacketHelper().createTurnIndexPacket(ownerId));
-
+                deploymentProcess.refuseIllegalDeployment(entity.getOwnerId(), entity, position, entity.getOwnerId());
                 return;
             }
 

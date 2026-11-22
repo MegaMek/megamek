@@ -26775,8 +26775,18 @@ public class TWGameManager extends AbstractGameManager {
         // stale (for example a unit that has not moved yet but whose client snapshot is marked done). Swapping it
         // in would overwrite the server's live turn state and could rob the owner of a move they still have. A
         // gamemaster editing damage must not spend the owner's action, so keep the server's turn/move state.
+        boolean isPlannedWalkOn = false;
         if (!game.getPhase().isLounge()) {
             preserveInPlayTurnState(oldEntity, entity);
+            // While a player plans a walk-on, their client already shows the unit deployed on the chosen hex. Only the
+            // move itself may deploy it, after its checks; taking the placement from here would skip those checks, and
+            // the move would then be refused for deploying the unit a second time.
+            isPlannedWalkOn = !oldEntity.isDeployed() && entity.isDeployed();
+            if (isPlannedWalkOn) {
+                LOGGER.debug("Update for {} from {} places a unit that has not deployed yet; keeping it off the board",
+                      entity.getDisplayName(), sender.getName());
+                preserveUndeployedState(oldEntity, entity);
+            }
             // A pending traitor switch is server-side state: /changeOwner sets it on the server's copy only, so a
             // client-sent copy never carries it. An update that does not itself order a switch (the Traitor button
             // does, and wins here) must not erase the pending one while it waits for the END phase.
@@ -26789,7 +26799,11 @@ public class TWGameManager extends AbstractGameManager {
         }
         game.setEntity(entity.getId(), entity);
         CarriedUnitRelinker.relinkAfterUpdate(game, entity);
-        entityUpdate(entity.getId());
+        // A planned walk-on is sent out once its move is processed; sending it now would lift the unit off the hex its
+        // player is still planning from
+        if (!isPlannedWalkOn) {
+            entityUpdate(entity.getId());
+        }
         if (entity.isPartOfFighterSquadron()) {
             // Update the stats of any Squadrons that the new units are part of
             FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
@@ -26871,6 +26885,21 @@ public class TWGameManager extends AbstractGameManager {
         if (oldEntity.getDisplacementAttack() != null) {
             newEntity.setDisplacementAttack(oldEntity.getDisplacementAttack());
         }
+    }
+
+    /**
+     * Puts a client-sent unit back off the board, where the server still has it. Everything else the client sent, such
+     * as a Mek's switch to its underwater maneuvering units, is kept.
+     *
+     * @param oldEntity the server's authoritative unit, which has not deployed yet
+     * @param newEntity the client-sent replacement, whose deployment state is overwritten
+     */
+    private void preserveUndeployedState(Entity oldEntity, Entity newEntity) {
+        newEntity.setDeployed(false);
+        // Marking the unit deployed cleared this on the client, and a first deployment is handled differently
+        newEntity.setNeverDeployed(oldEntity.wasNeverDeployed());
+        newEntity.setPosition(oldEntity.getPosition());
+        newEntity.setBoardId(oldEntity.getBoardId());
     }
 
     /**

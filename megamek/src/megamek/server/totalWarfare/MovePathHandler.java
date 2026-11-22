@@ -147,6 +147,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private boolean continueTurnFromCliffAscent = false;
     // Track if we already sent a special report popup for EMP mines during this move
     private boolean sentEMPPopupThisMove = false;
+    private boolean deploymentRefused = false;
 
     // get a list of coordinates that the unit passed through this turn
     // so that I can later recover potential bombing targets
@@ -305,6 +306,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                && (entity.moved == EntityMovementType.MOVE_NONE);
     }
 
+    /**
+     * Whether {@link #processMovement()} refused the path because the unit may not walk on where the path deploys it.
+     * Nothing was moved and the sender has been handed the same turn back, so outside simultaneous phases the caller
+     * must not end the turn.
+     *
+     * @return {@code true} if the walk-on deployment was refused
+     */
+    boolean isDeploymentRefused() {
+        return deploymentRefused;
+    }
+
     void processMovement() {
         // Do the deployment first, avoids future issues
         // Since the step DEPLOY is only used by WoD, just process if it has it.
@@ -341,11 +353,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             boolean isLegalLocation = deploymentProcess.isLegalDeployment(position, boardId, entity, facing);
             if (!isLegalLocation) {
-                String msg = "server got invalid deployment packet from connection " + entity.getOwnerId();
-                msg += ", Entity: " + entity.getShortName();
-                logger.error(msg);
-                gameManager.send(entity.getOwnerId(), gameManager.getPacketHelper().createTurnListPacket());
-
+                deploymentRefused = true;
+                deploymentProcess.refuseIllegalDeployment(entity.getOwnerId(), entity, position, entity.getOwnerId());
                 return;
             }
 
@@ -353,6 +362,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             Entity blocker = deploymentProcess.findDeploymentStackingViolation(entity, position, boardId,
                   entityElevation, assaultDrop);
             if (blocker != null) {
+                deploymentRefused = true;
                 deploymentProcess.refuseStackedDeployment(entity.getOwnerId(), entity, blocker, position,
                       entity.getOwnerId());
                 return;

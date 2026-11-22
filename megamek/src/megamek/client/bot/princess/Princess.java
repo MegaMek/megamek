@@ -3143,9 +3143,9 @@ public class Princess extends BotClient {
      * This unit should have already moved due to the isImmobilized check. via the
      * {@link #calculateMoveIndex(Entity, StringBuilder)} method.  The highest index value is moved first.
      *
-     * @return The entity that should be moved next.
+     * @return The entity that should be moved next, or {@code null} if no unit can take this turn.
      */
-    Entity getEntityToMove() {
+    @Nullable Entity getEntityToMove() {
         final Game currentGame = getGame();
 
         if ((currentGame != null) && (currentGame.getPhase() == GamePhase.MOVEMENT)) {
@@ -3163,16 +3163,19 @@ public class Princess extends BotClient {
                         return deployEntity;
                     }
                 }
-            }
 
-            for (final Entity entity : getEntitiesOwned()) {
-                // A carried unit enters with its transport; the server refuses a move for it
-                if (entity.isDone() || entity.isOffBoard() || entity.isTransported() || isRefusedThisPhase(entity)) {
-                    continue;
-                }
-                if (((entity.getPosition() == null) || !entity.isDeployed()) && canWalkOnThisRound(entity)) {
-                    LOGGER.info("Choosing {} to deploy during the movement phase.", entity.getDisplayName());
-                    return entity;
+                // The first deployable unit is out of the running, so look at the others. Not at getEntitiesOwned():
+                // that leaves out every unit without a position, which is every unit still waiting to walk on.
+                for (final Entity entity : currentGame.inGameTWEntities()) {
+                    // A carried unit enters with its transport; the server refuses a move for it
+                    if (entity.isDone() || entity.isOffBoard() || entity.isTransported()
+                          || isRefusedThisPhase(entity) || !turn.isValidEntity(entity, currentGame)) {
+                        continue;
+                    }
+                    if (!entity.isDeployed() && canWalkOnThisRound(entity)) {
+                        LOGGER.info("Choosing {} to deploy during the movement phase.", entity.getDisplayName());
+                        return entity;
+                    }
                 }
             }
         }
@@ -3258,14 +3261,19 @@ public class Princess extends BotClient {
     @Override
     protected @Nullable MovePath calculateMoveTurn() {
         try {
-            MovePath path = continueMovementFor(getEntityToMove());
+            final Entity entity = getEntityToMove();
+            if (entity == null) {
+                LOGGER.warn("{}: no unit can take this movement turn", getName());
+                return null;
+            }
+            MovePath path = continueMovementFor(entity);
             // Update the friendly heat map with movement of ground units
             if (path != null && path.getEntity().isGround()) {
                 getMemory().getFriendlyHeatMap().updateTrackers(path);
             }
             return path;
-        } catch (Exception ignored) {
-            LOGGER.error("Error while calculating movement");
+        } catch (Exception exception) {
+            LOGGER.error(exception, "Error while calculating movement");
             return null;
         }
     }

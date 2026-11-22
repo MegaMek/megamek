@@ -158,15 +158,12 @@ public class WeaponMounted extends Mounted<WeaponType> {
     public int getCurrentHeat() {
         int heat = getType().getHeat();
 
-        // AR10's have heat based upon the loaded missile
-        if (getType().getName().equals("AR10")) {
-            AmmoType ammoType = (AmmoType) getLinked().getType();
-            if (ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                return 10;
-            } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-                return 15;
-            } else { // AmmoType.F_AR10_KILLER_WHALE
-                return 20;
+        // The AR10's heat depends on the loaded missile (SO:AA p. 104, TW p. 304).
+        if ((getType().getAmmoType() == AmmoType.AmmoTypeEnum.AR10) && (getLinked() instanceof AmmoMounted ammo)) {
+            if (ammo.getType().hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                heat = 10;
+            } else if (ammo.getType().hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                heat = 15;
             }
         }
 

@@ -124,6 +124,8 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.AltitudeBombAttack;
 import megamek.common.weapons.attacks.DiveBombAttack;
 import megamek.common.weapons.attacks.SpaceBombAttack;
+import megamek.common.weapons.autoCannons.RACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.bayWeapons.AR10BayWeapon;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
@@ -14607,18 +14609,20 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Force rapid fire mode to the highest level on RAC and UAC - this is for aerospace
+     * Sets rapid-fire weapons on an aerospace unit to their maximum firing rate (TW p. 238).
      */
     public void setRapidFire() {
-        for (WeaponMounted m : getTotalWeaponList()) {
-            AmmoType.AmmoTypeEnum ammoType = m.getType().getAmmoType();
-            if (ammoType == AmmoType.AmmoTypeEnum.AC_ROTARY) {
-                m.setMode("6-shot");
-                m.setModeSwitchable(false);
-            } else if (ammoType == AmmoType.AmmoTypeEnum.AC_ULTRA) {
-                m.setMode("Ultra");
-                m.setModeSwitchable(false);
-            }
+        getTotalWeaponList().forEach(Entity::setRapidFire);
+    }
+
+    /**
+     * Locks an aerospace rotary or Ultra autocannon at its maximum firing rate (TW p. 238).
+     */
+    public static void setRapidFire(WeaponMounted weapon) {
+        if (weapon.getType() instanceof UACWeapon) {
+            String mode = (weapon.getType() instanceof RACWeapon) ? Weapon.MODE_RAC_SIX_SHOT : Weapon.MODE_UAC_ULTRA;
+            weapon.setModeImmediately(mode);
+            weapon.setModeSwitchable(false);
         }
     }
 

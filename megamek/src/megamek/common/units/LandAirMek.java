@@ -67,6 +67,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.logging.MMLogger;
 
 public class LandAirMek extends BipedMek implements IAero, IBomber {
@@ -579,16 +580,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             if (getConversionMode() == CONV_MODE_FIGHTER) {
                 setRapidFire();
             } else if (prevMode == CONV_MODE_FIGHTER) {
-                for (Mounted<?> m : getTotalWeaponList()) {
-                    WeaponType weaponType = (WeaponType) m.getType();
-                    if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
-                        m.setMode("");
-                        m.setModeSwitchable(true);
-                    } else if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) {
-                        m.setMode("");
-                        m.setModeSwitchable(true);
-                    } else if (weaponType.hasIndirectFire()) {
-                        m.setModeSwitchable(true);
+                for (WeaponMounted weapon : getTotalWeaponList()) {
+                    if ((weapon.getType() instanceof UACWeapon) || weapon.getType().hasIndirectFire()) {
+                        weapon.setModeSwitchable(true);
                     }
                 }
             }

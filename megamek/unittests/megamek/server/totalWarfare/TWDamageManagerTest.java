@@ -554,6 +554,22 @@ class TWDamageManagerTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"", "invalid", "2147483648", "0"})
+    void unreadableOrZeroReinforcedStructureMaskIsOmittedOnResave(String savedMask) {
+        BipedMek mek = new BipedMek();
+        int arm = Mek.LOC_RIGHT_ARM;
+        mek.initializeInternal(10, arm);
+        mek.setReinforcedStructureDamaged(arm, true);
+        var writer = SerializationHelper.getSaveGameXStream();
+        String xml = writer.toXML(mek).replace(">" + (1 << arm) + "</reinforcedStructureDamaged>",
+              ">" + savedMask + "</reinforcedStructureDamaged>");
+
+        BipedMek restored = (BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(xml);
+        assertEquals(20, restored.getReinforcedStructureCapacity(arm));
+        assertFalse(writer.toXML(restored).contains("reinforcedStructureDamaged"));
+    }
+
+    @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void earlierReinforcedStructureArraysRetainOnlyPendingDamage(boolean pending) {
         BipedMek mek = new BipedMek();

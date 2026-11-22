@@ -13180,14 +13180,8 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        Entity te = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY && target instanceof Entity targetedEntity) {
-            te = targetedEntity;
-        }
-        boolean throughFront = true;
-        if (te != null) {
-            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
-        }
+        Entity te = target.getTargetType() == Targetable.TYPE_ENTITY && target instanceof Entity entity ? entity : null;
+        boolean throughFront = te == null || Compute.isThroughFrontHex(ae.getPosition(), te);
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
@@ -13341,10 +13335,17 @@ public class TWGameManager extends AbstractGameManager {
                     damage += toHit.getMoS() / 3;
                     hit.makeDirectBlow(toHit.getMoS() / 3);
                 }
-                int armorBefore = te.getArmor(hit);
                 addReport(damageEntity(te, hit, damage, false, DamageType.NONE, false, false, throughFront));
                 if (((ProtoMek) ae).isEDPCharged()) {
-                    TaserEffects.EDP.resolve(this, te, hit, armorBefore, mainPhaseReport);
+                    ((ProtoMek) ae).setEDPCharged(false);
+                    if (!te.isConventionalInfantry()) {
+                        // IO:AE p.59. The Frenzy already includes the discharge damage against infantry.
+                        HitData discharge = new HitData(hit.getLocation(), hit.isRear());
+                        discharge.setAttackerId(ae.getId());
+                        TaserEffects.EDP.resolve(this, te, discharge, 1,
+                              points -> addReport(damageEntity(te, discharge, points, false, DamageType.NONE, false,
+                                    false, throughFront)), mainPhaseReport);
+                    }
                 }
             }
         }

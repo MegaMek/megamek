@@ -433,12 +433,11 @@ public class ProtoMek extends Entity {
         if (hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && !edpCharged) {
             for (Mounted<?> misc : getMisc()) {
                 if (misc.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && misc.curMode().equals("charging")) {
-                    if (edpChargeTurns == 6) {
+                    edpChargeTurns++;
+                    if (edpChargeTurns >= 6) {
                         setEDPCharged(true);
                         misc.setMode("not charging");
                         edpChargeTurns = 0;
-                    } else {
-                        edpChargeTurns++;
                     }
                 }
             }

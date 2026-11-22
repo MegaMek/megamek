@@ -36,11 +36,13 @@ package megamek.common.weapons;
 
 import java.util.OptionalInt;
 import java.util.Vector;
+import java.util.function.IntConsumer;
 
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.rolls.Roll;
@@ -56,35 +58,52 @@ import megamek.server.totalWarfare.TWGameManager;
 public enum TaserEffects {
     MEK, BATTLE_ARMOR, EDP;
 
-    public void resolve(TWGameManager gameManager, Entity entityTarget, HitData hit, int armorBefore,
-          Vector<Report> reports) {
-        if (entityTarget.getWeight() > 100 || entityTarget.isConventionalInfantry()) {
+    /** Applies the hit before rolling, using the struck facing's protection at impact (TO:AUE pp.92-94, 157). */
+    public void resolve(TWGameManager gameManager, Entity entityTarget, HitData hit, int damage,
+          IntConsumer applyDamage, Vector<Report> reports) {
+        if (entityTarget.getWeight() > 100) {
             return;
         }
-        int modifier = this == EDP ? -2 : 0;
-        if (armorBefore > 0 && entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) {
-            // Core p.201 negates the special effect. IO:AE p.80 modifies the effects roll if armor remains.
-            OptionalInt ablation = Game.rulesManager.getRulesArmor().ablationArmorPiercingModifier();
-            if (ablation.isEmpty()) {
-                Report blocked = new Report(3702);
-                blocked.subject = entityTarget.getId();
-                reports.add(blocked);
-                return;
+        int armorType = entityTarget.getArmor(hit) > 0 ? entityTarget.getArmorType(hit.getLocation())
+              : EquipmentType.T_ARMOR_UNKNOWN;
+        // Hardened loses a full pip to either weapon. Ferro-lamellor's exception names only Mek tasers.
+        boolean fullPip = armorType == EquipmentType.T_ARMOR_HARDENED
+              || (armorType == EquipmentType.T_ARMOR_FERRO_LAMELLOR && this != BATTLE_ARMOR);
+        hit.setGeneralDamageType(fullPip ? HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION : HitDamageType.DAMAGE_BALLISTIC);
+        applyDamage.accept(fullPip ? Math.min(1, damage) : damage);
+        if (entityTarget.isConventionalInfantry()) {
+            return;
+        }
+        OptionalInt armorModifier = switch (armorType) {
+            case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION -> {
+                // Core p.201 negates the effect at impact. IO:AE p.80 gives -2 only if armor remains.
+                OptionalInt ablation = Game.rulesManager.getRulesArmor().ablationArmorPiercingModifier();
+                yield ablation.isPresent() && entityTarget.getArmor(hit) <= 0 ? OptionalInt.of(0) : ablation;
             }
-            if (entityTarget.getArmor(hit) > 0) {
-                modifier += ablation.getAsInt();
-            }
+            case EquipmentType.T_ARMOR_REACTIVE, EquipmentType.T_ARMOR_BA_REACTIVE -> OptionalInt.empty();
+            // Battle armor-grade reflective armor has none of the drawbacks (TO:AUE p.93).
+            case EquipmentType.T_ARMOR_REFLECTIVE -> OptionalInt.of(2);
+            case EquipmentType.T_ARMOR_IMPACT_RESISTANT -> OptionalInt.of(1); // IO:AE p.82, tasers of all kinds
+            default -> fullPip ? OptionalInt.empty() : OptionalInt.of(0);
+        };
+        if (armorModifier.isEmpty()) {
+            Report blocked = new Report(3702);
+            blocked.subject = entityTarget.getId();
+            blocked.add(EquipmentType.getArmorTypeName(armorType));
+            reports.add(blocked);
+            return;
         }
 
         // Taser Effects Table, TO:AUE pp.157-158. Damage has already been applied to this location.
         boolean baTaser = this == BATTLE_ARMOR;
         Roll roll = Compute.rollD6(2);
+        int modifier = armorModifier.getAsInt() + (this == EDP ? -2 : 0);
         int result = roll.getIntValue() + modifier;
         Report report = new Report(this == EDP ? 3701 : 3700);
         if (modifier == 0) {
             report.add(roll);
         } else {
-            report.addDataWithTooltip(result + " [" + roll.getIntValue() + " - " + -modifier + "]", roll.getReport());
+            report.addDataWithTooltip("%d [%d %+d]".formatted(result, roll.getIntValue(), modifier), roll.getReport());
         }
         report.newlines = 0;
         reports.add(report);

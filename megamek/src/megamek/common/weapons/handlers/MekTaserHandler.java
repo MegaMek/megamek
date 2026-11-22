@@ -40,7 +40,6 @@ import java.util.Vector;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -54,14 +53,12 @@ public class MekTaserHandler extends AmmoWeaponHandler {
 
     public MekTaserHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
-        generalDamageType = HitDamageType.DAMAGE_ENERGY;
     }
 
     @Override
     protected void applyEntityDamage(Entity entityTarget, int damage, Vector<Report> reports) {
-        int armorBefore = entityTarget.getArmor(hit);
-        super.applyEntityDamage(entityTarget, damage, reports);
         TaserEffects taser = weaponType.hasFlag(WeaponType.F_BA_WEAPON) ? TaserEffects.BATTLE_ARMOR : TaserEffects.MEK;
-        taser.resolve(gameManager, entityTarget, hit, armorBefore, reports);
+        taser.resolve(gameManager, entityTarget, hit, damage,
+              points -> super.applyEntityDamage(entityTarget, points, reports), reports);
     }
 }

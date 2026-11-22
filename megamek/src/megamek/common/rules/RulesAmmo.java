@@ -51,6 +51,11 @@ public abstract class RulesAmmo {
      */
     public abstract int armorPiercingMod(AmmoType inType);
 
+    /** TW p.140 exempts aerospace units from the special effect of armor-piercing ammunition. */
+    public boolean armorPiercingAffectsAerospace() {
+        return false;
+    }
+
     public void updateAmmoBVs() {
         List<EquipmentType> equipmentTypes = EquipmentType.allTypes();
         for (EquipmentType equipmentType : equipmentTypes) {

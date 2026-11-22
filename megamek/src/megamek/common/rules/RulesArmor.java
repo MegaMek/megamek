@@ -33,6 +33,7 @@ package megamek.common.rules;
  */
 
 
+import java.util.OptionalInt;
 import java.util.Vector;
 
 import megamek.common.HitData;
@@ -109,6 +110,11 @@ public abstract class RulesArmor {
      */
     public abstract boolean blockTAC(int armorType);
 
+    /** Hardened armor modifies penetrating critical checks, including the vehicle tables (TO:AUE p.93). */
+    public int hardenedLocationCriticalModifier(HitData hit) {
+        return -2;
+    }
+
     /**
      * Do ablation and hardened armor keep their critical-hit protections (the ablation TAC block, the hardened -2)
      * against damage of this type? By default always.
@@ -135,10 +141,10 @@ public abstract class RulesArmor {
      * hit check for all attacks made by weapons with armor-piercing abilities" and to the critical check for a hit
      * location roll of 2 (IO:AE p.80).
      *
-     * @return the modifier to those critical checks
+     * @return the modifier, or empty if ablation armor negates the armor-piercing effect
      */
-    public int ablationArmorCriticalModifier() {
-        return -2;
+    public OptionalInt ablationArmorPiercingModifier() {
+        return OptionalInt.of(-2);
     }
 
     /**

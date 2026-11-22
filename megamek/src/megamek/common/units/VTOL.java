@@ -229,7 +229,7 @@ public class VTOL extends Tank implements IBomber {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                    rv.setEffect(HitData.EFFECT_TAC);
                     break;
                 case 3, 10, 11:
                     rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);

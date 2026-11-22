@@ -2773,7 +2773,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         // Note: Edge use is _recorded_ here via setUndoneLocation(), but is _logged_ in the Damage Manager
 
         // Was this a TAC or Special Critical (AP, Tandem Charge warhead)
-        if (originalHit.getEffect() == HitData.EFFECT_CRITICAL || originalHit.getSpecCrit()) {
+        if ((originalHit.getEffect() & HitData.EFFECT_CRITICAL) != 0 || originalHit.getSpecCrit()) {
             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
                   && !gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_NO_TAC)) {
                 getCrew().decreaseEdge();
@@ -3159,10 +3159,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 hd = rollHitLocation(table, side);
                 i++;
             }
-            return new HitData(hd.getLocation(), hd.isRear(),
-                  HitData.EFFECT_CRITICAL);
+            return new HitData(hd.getLocation(), hd.isRear(), HitData.EFFECT_TAC);
         } else {
-            return new HitData(location, rear, HitData.EFFECT_CRITICAL);
+            return new HitData(location, rear, HitData.EFFECT_TAC);
         }
     }
 

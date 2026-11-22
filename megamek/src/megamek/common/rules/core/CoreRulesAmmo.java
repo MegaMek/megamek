@@ -38,6 +38,12 @@ import megamek.common.rules.RulesAmmo;
 import megamek.server.totalWarfare.TWDamageManager;
 
 public class CoreRulesAmmo extends RulesAmmo {
+    /** Core p.191 gives armor-only damage an AP check for every target. */
+    @Override
+    public boolean armorPiercingAffectsAerospace() {
+        return true;
+    }
+
 
     /**
      * {@inheritDoc} Different modifiers. Core Rules p.191

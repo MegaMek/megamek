@@ -36,8 +36,18 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -70,10 +80,15 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
+import megamek.common.rules.RulesManager;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.LargeSupportTank;
 import megamek.common.units.Mek;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
 import megamek.common.weapons.DamageType;
 import megamek.server.Server;
 import megamek.utils.ServerFactory;
@@ -83,6 +98,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
@@ -165,6 +181,85 @@ class TWDamageManagerTest {
         game.addEntity(asf);
         asf.setOwner(player);
         return asf;
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {2, 8, 12})
+    void vehicleHitLocationTablesIdentifyTheThroughArmorRoll(int roll) {
+        try (var dice = mockStatic(Compute.class)) {
+            dice.when(() -> Compute.d6(2)).thenReturn(roll);
+            for (Tank tank : List.of(new Tank(), new LargeSupportTank(), new SuperHeavyTank(), new VTOL())) {
+                tank.setGame(game);
+                int side = tank instanceof LargeSupportTank || tank instanceof SuperHeavyTank
+                      ? ToHitData.SIDE_FRONT_RIGHT : ToHitData.SIDE_RIGHT;
+                HitData hit = tank.rollHitLocation(ToHitData.HIT_NORMAL, side);
+                assertTrue((hit.getEffect() & HitData.EFFECT_CRITICAL) != 0, tank.getClass().getSimpleName());
+                assertEquals(roll == 2, hit.isThroughArmorCritical());
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+          "true,true,2,0,0", "true,true,8,1,0", "true,true,12,1,0",
+          "false,true,2,1,-2", "false,true,8,1,0", "false,true,12,1,0",
+          "true,false,2,1,-2", "true,false,8,1,0", "false,false,12,1,-2"
+    })
+    void vehicleArmorModifiesOnlyTheAppropriateLocationCheck(boolean core, boolean ablation, int roll,
+          int count, int modifier) throws EntityLoadingException {
+        Tank tank = (Tank) loadEntityFromFile("Bulldog Medium Tank.blk");
+        tank.setId(game.getNextEntityId());
+        game.addEntity(tank);
+        tank.setOwner(player);
+        tank.setArmorType(ablation ? EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION : EquipmentType.T_ARMOR_HARDENED);
+        HitData hit;
+        try (var dice = mockStatic(Compute.class)) {
+            dice.when(() -> Compute.d6(2)).thenReturn(roll);
+            hit = tank.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_RIGHT);
+        }
+        TWGameManager gm = spy(gameMan);
+        doReturn(new Vector<Report>()).when(gm).criticalEntity(any(), anyInt(), anyBoolean(), anyInt(), anyInt(), any());
+        RulesManager saved = Game.rulesManager;
+        try {
+            game.getOptions().getOption(OptionsConstants.RULES_SYSTEM)
+                  .setValue(core ? OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW);
+            new TWDamageManager(gm, game).damageEntity(new DamageInfo(tank, hit, 1));
+            verify(gm, times(count)).criticalEntity(tank, hit.getLocation(), false, modifier, 1, DamageType.NONE);
+            if (count == 0) {
+                verify(gm, never()).criticalEntity(any(), anyInt(), anyBoolean(), anyInt(), anyInt(), any());
+            }
+        } finally {
+            Game.rulesManager = saved;
+            saved.getRulesAmmo().updateAmmoBVs();
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({"true,10,1,1", "false,10,0,1", "true,23,0,1", "true,2,1,0"})
+    void fighterArmorPiercingIsSeparateFromTheThresholdCheck(boolean core, int damage, int ap, int threshold)
+          throws EntityLoadingException {
+        AeroSpaceFighter fighter = loadASF("Cheetah F-11.blk");
+        HitData hit = new HitData(AeroSpaceFighter.LOC_NOSE);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_ARMOR_PIERCING);
+        hit.setSpecCriticalModifier(-2);
+        hit.setBoxCars(true);
+        TWGameManager gm = spy(gameMan);
+        doReturn(new Vector<Report>()).when(gm).criticalAero(any(), anyInt(), anyInt(), anyString(), anyInt(),
+              anyInt(), anyBoolean());
+        RulesManager saved = Game.rulesManager;
+        try {
+            game.getOptions().getOption(OptionsConstants.RULES_SYSTEM)
+                  .setValue(core ? OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW);
+            new TWDamageManager(gm, game).damageEntity(new DamageInfo(fighter, hit, damage));
+            verify(gm, times(ap)).criticalAero(eq(fighter), eq(hit.getLocation()), eq(-2),
+                  eq("Armor-piercing ammunition"), eq(8), anyInt(), eq(false));
+            verify(gm, times(threshold)).criticalAero(fighter, hit.getLocation(), 0, "Damage threshold exceeded",
+                  8, damage, false);
+            verify(gm).criticalAero(fighter, hit.getLocation(), 0, "12 to hit", 8, damage, false);
+        } finally {
+            Game.rulesManager = saved;
+            saved.getRulesAmmo().updateAmmoBVs();
+        }
     }
 
     BipedMek createFrankenMekForInternalDamage() {

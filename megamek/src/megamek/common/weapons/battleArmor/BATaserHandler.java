@@ -40,109 +40,35 @@ import java.util.Vector;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
-import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.Roll;
-import megamek.common.units.Aero;
 import megamek.common.units.Entity;
-import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
-import megamek.common.units.Tank;
-import megamek.common.weapons.handlers.AmmoWeaponHandler;
+import megamek.common.weapons.handlers.MekTaserHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
-public class BATaserHandler extends AmmoWeaponHandler {
+public class BATaserHandler extends MekTaserHandler {
     @Serial
     private static final long serialVersionUID = 1308895663099714573L;
 
     public BATaserHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
           TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
-        generalDamageType = HitDamageType.DAMAGE_ENERGY;
     }
 
     @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
-        boolean done = false;
+    protected int calcHits(Vector<Report> reports) {
+        // Only one trooper fires a taser per attack, including squad-mounted launchers (TO:AUE p.158).
+        return 1;
+    }
 
-        if (bMissed) {
-            return false;
-        }
-
-        Report report = new Report(3700);
-        Roll diceRoll = Compute.rollD6(2);
-
-        report.add(diceRoll);
-        report.newlines = 0;
-        vPhaseReport.add(report);
-        if (entityTarget instanceof BattleArmor) {
-            if (diceRoll.getIntValue() >= 9) {
-                initHit(entityTarget);
-
-                report = new Report(3706);
-                report.addDesc(entityTarget);
-                // shut down for rest of scenario, so we actually kill it
-                // TODO: fix for salvage purposes
-                report.add(entityTarget.getLocationAbbr(hit));
-                vPhaseReport.add(report);
-                entityTarget.destroyLocation(hit.getLocation());
-                // Check to see if the squad has been eliminated
-                if (entityTarget.getTransferLocation(hit).getLocation() ==
-                      Entity.LOC_DESTROYED) {
-                    vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
-                          "all troopers eliminated", false));
-                }
-                done = true;
-            }
-        } else if (entityTarget instanceof Mek) {
-            if (((Mek) entityTarget).isIndustrial()) {
-                if (diceRoll.getIntValue() >= 11) {
-                    entityTarget.taserShutdown(3, true);
-                } else {
-                    // suffer +1 to piloting and gunnery for 3 rounds
-                    entityTarget.setTaserInterference(1, 3, true);
-                }
-            } else {
-                if (diceRoll.getIntValue() >= 12) {
-                    report = new Report(3705);
-                    report.addDesc(entityTarget);
-                    report.add(3);
-                    vPhaseReport.add(report);
-                    entityTarget.taserShutdown(3, true);
-                } else {
-                    report = new Report(3710);
-                    report.addDesc(entityTarget);
-                    report.add(1);
-                    report.add(3);
-                    vPhaseReport.add(report);
-                    entityTarget.setTaserInterference(1, 3, true);
-                }
-            }
-        } else if ((entityTarget instanceof ProtoMek)
-              || (entityTarget instanceof Tank)
-              || (entityTarget instanceof Aero)) {
-            if (diceRoll.getIntValue() >= 11) {
-                report = new Report(3705);
-                report.addDesc(entityTarget);
-                report.add(3);
-                vPhaseReport.add(report);
-                entityTarget.taserShutdown(3, true);
-            } else {
-                report = new Report(3710);
-                report.addDesc(entityTarget);
-                report.add(1);
-                report.add(3);
-                vPhaseReport.add(report);
-                entityTarget.setTaserInterference(1, 3, true);
-            }
-        }
-
-
+    @Override
+    protected void applyEntityDamage(Entity entityTarget, int damage, Vector<Report> vPhaseReport) {
+        super.applyEntityDamage(entityTarget, damage, vPhaseReport);
+        // Feedback is a separate roll on a successful hit regardless of the target effect (TO:AUE p.158).
         Roll diceRoll2 = Compute.rollD6(2);
-        report = new Report(3715);
+        Report report = new Report(3715);
         report.addDesc(attackingEntity);
         report.add(diceRoll2);
         report.newlines = 0;
@@ -161,6 +87,5 @@ public class BATaserHandler extends AmmoWeaponHandler {
             vPhaseReport.addAll(gameManager.criticalEntity(attackingEntity, weapon.getLocation(),
                   false, 0, false, false, 0));
         }
-        return done;
     }
 }

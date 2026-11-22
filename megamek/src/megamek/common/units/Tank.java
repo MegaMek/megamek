@@ -1376,7 +1376,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                    rv.setEffect(HitData.EFFECT_TAC);
                     break;
                 case 3, 4:
                     rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);

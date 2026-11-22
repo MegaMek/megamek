@@ -269,11 +269,11 @@ public class TWDamageManager implements IDamageManager {
             reportVec.addElement(report);
         }
 
-        // TACs from the hit location table
+        // Critical checks from the hit location table
         int crits;
         if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) {
             // Special armor only works while the location or facing struck has armor left (Core p.201)
-            if ((entity.getArmor(hit) > 0)
+            if (hit.isThroughArmorCritical() && (entity.getArmor(hit) > 0)
                   && Game.rulesManager.getRulesArmor().blockTAC(entity.getArmorType(hit.getLocation()))
                   && Game.rulesManager.getRulesArmor().criticalProtectionsApplyAgainst(hit.getGeneralDamageType())) {
                 crits = 0;
@@ -286,7 +286,8 @@ public class TWDamageManager implements IDamageManager {
             }
             // Damage Interrupt Circuit (IO p.39) is disabled by any hit that rolls "2" on
             // the hit location table (TAC), regardless of whether a critical actually occurs
-            if ((entity instanceof Mek mek) && (mek.hasDamageInterruptCircuit()) && (!mek.isDICDisabled())) {
+            if (hit.isThroughArmorCritical() && (entity instanceof Mek mek) && mek.hasDamageInterruptCircuit()
+                  && !mek.isDICDisabled()) {
                 mek.setDICDisabled(true);
                 Report damageInterruptCircuitReport = new Report(6268);
                 damageInterruptCircuitReport.subject = entity.getId();
@@ -300,11 +301,10 @@ public class TWDamageManager implements IDamageManager {
         // Store information to pass around
         ModsInfo mods = createDamageModifiers(entity, hit, damageIS, damage, crits);
         mods.critBonus = calcCritBonus(game.getEntity(hit.getAttackerId()), entity, damage, areaSatArty);
-        // Hardened armor modifies the TAC check of a hit on a location or facing that has armor when the hit is
-        // applied, not the check for structure damage (Core p.91, errata v0.2; TO:AUE p.93)
+        // Hardened armor protects the struck facing at impact (Core p.91, errata v0.2; TO:AUE p.93).
         if (mods.hardenedArmor && (entity.getArmor(hit) > 0)
               && Game.rulesManager.getRulesArmor().criticalProtectionsApplyAgainst(hit.getGeneralDamageType())) {
-            mods.tacModifier = -2;
+            mods.locationCritModifier = Game.rulesManager.getRulesArmor().hardenedLocationCriticalModifier(hit);
         }
 
         // Battle Armor takes full damage to each trooper from area-effect.
@@ -872,7 +872,7 @@ public class TWDamageManager implements IDamageManager {
             // was the section destroyed earlier this phase?
             if (mek.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so
-                mods.crits = 0;
+                mods.clearCriticalChecks();
             }
 
             // here goes the fun :)
@@ -897,7 +897,7 @@ public class TWDamageManager implements IDamageManager {
                     reportVec.addElement(report);
 
                     if (damage <= 0) {
-                        mods.crits = 0;
+                        mods.clearCriticalChecks();
                         mods.specCrits = 0;
                         mods.isHeadHit = false;
                     }
@@ -1521,6 +1521,10 @@ public class TWDamageManager implements IDamageManager {
                 aero.setCritThresh(true);
             }
             // check for aero crits from natural 12 or threshold; LAMs take damage as meks
+            int armorDamage = damage + aero.damageThisPhase - damageThisAttack;
+            if (armorDamage > 0 && aero.getCapArmor() > 0) {
+                checkAeroArmorPiercing(reportVec, aero, hit, armorDamage, mods);
+            }
             manager.checkAeroCrits(reportVec, aero, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
 
             // Return early
@@ -1528,6 +1532,10 @@ public class TWDamageManager implements IDamageManager {
         }
 
         damage = applyEntityArmorDamage(aero, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
+        int armorDamage = aero.damageThisPhase - damageThisAttack;
+        if (damage == 0 && armorDamage > 0) {
+            checkAeroArmorPiercing(reportVec, aero, hit, armorDamage, mods);
+        }
 
         if (damage > 0) {
             // If this is an Aero, then I need to apply internal damage
@@ -1668,6 +1676,16 @@ public class TWDamageManager implements IDamageManager {
         }
 
         manager.checkAeroCrits(reportVec, aero, hit, damageThisAttack, critThresh, critSI, ammoExplosion, nukeS2S);
+    }
+
+    /** Core p.191 adds an independent ammo check using the struck location's aerospace critical (TW pp.237-239). */
+    private void checkAeroArmorPiercing(Vector<Report> reports, Aero aero, HitData hit, int damage, ModsInfo mods) {
+        if (hit.getSpecCrit() && hit.getGeneralDamageType() == HitDamageType.DAMAGE_ARMOR_PIERCING
+              && Game.rulesManager.getRulesAmmo().armorPiercingAffectsAerospace()
+              && Game.rulesManager.getRulesArmor().allowArmorPiercing(mods, hit.getGeneralDamageType())) {
+            reports.addAll(manager.criticalAero(aero, hit.getLocation(), hit.getSpecCritMod(),
+                  "Armor-piercing ammunition", 8, damage, hit.isCapital()));
+        }
     }
 
     /**
@@ -2137,8 +2155,12 @@ public class TWDamageManager implements IDamageManager {
         newHit.setCapital(hit.isCapital());
         newHit.setCapMisCritMod(hit.getCapMisCritMod());
         newHit.setSingleAV(hit.getSingleAV());
+        newHit.setFirstHit(hit.isFirstHit());
+        if (hit.getSpecCrit()) {
+            newHit.setSpecCriticalModifier(hit.getSpecCritMod());
+        }
         newHit.setAttackerId(hit.getAttackerId());
-        reportVec.addAll(damageEntity(fighter,
+        damageEntity(fighter,
               newHit,
               damage,
               ammoExplosion,
@@ -2148,7 +2170,7 @@ public class TWDamageManager implements IDamageManager {
               throughFront,
               underWater,
               nukeS2S,
-              reportVec));
+              reportVec);
     }
 
     /**
@@ -2234,7 +2256,7 @@ public class TWDamageManager implements IDamageManager {
             report.indent(2);
             reportVec.addElement(report);
 
-            mods.crits = 0;
+            mods.clearCriticalChecks();
 
             damage = Math.max(battleArmor.getInternal(hit.getLocation()) + battleArmor.getArmor(hit.getLocation()),
                   damage);
@@ -2261,7 +2283,7 @@ public class TWDamageManager implements IDamageManager {
             // was the section destroyed earlier this phase?
             if (battleArmor.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so
-                mods.crits = 0;
+                mods.clearCriticalChecks();
             }
             if (!ammoExplosion && (battleArmor.getArmor(hit) > 0) && !damageIS) {
                 damage = applyEntityArmorDamage(battleArmor,
@@ -3068,7 +3090,7 @@ public class TWDamageManager implements IDamageManager {
                 critReport.addDesc(entity);
                 reportVec.addElement(critReport);
             }
-            mods.crits = 0;
+            mods.clearCriticalChecks();
             mods.specCrits = 0;
         }
 
@@ -3186,28 +3208,25 @@ public class TWDamageManager implements IDamageManager {
         // While the location struck keeps armor, ablation armor modifies the armor-piercing checks and the critical
         // check for a hit location roll of 2, not the critical check of a swarm attack (IO:AE p.80; TW p.223)
         int ablationModifier = (mods.abaArmor && (entity.getArmor(hit) > 0))
-              ? Game.rulesManager.getRulesArmor().ablationArmorCriticalModifier() : 0;
-        Entity attacker = game.getEntity(hit.getAttackerId());
-        boolean swarmCritical = (attacker != null) && (attacker.getSwarmTargetId() == entity.getId());
+              ? Game.rulesManager.getRulesArmor().ablationArmorPiercingModifier().orElse(0) : 0;
 
         // roll all critical hits against this location
         // unless the section destroyed in a previous phase?
         // Cause a crit.
         if ((entity.getInternal(hit) != IArmorState.ARMOR_DESTROYED) &&
               ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS)) {
-            // The first checks are the hit's TAC; the others are for structure damage
-            int tacChecks = Math.min(mods.tacCrits, crits);
+            // The first check comes from the hit location table. Structure damage has its own check.
+            int locationModifier = mods.locationCritModifier + (hit.isThroughArmorCritical() ? ablationModifier : 0);
             for (int i = 0; i < crits; i++) {
-                int tacModifier = (i < tacChecks) ? mods.tacModifier + (swarmCritical ? 0 : ablationModifier) : 0;
                 reportVec.addAll(manager.criticalEntity(entity,
                       hit.getLocation(),
                       hit.isRear(),
-                      hit.glancingMod() + mods.critBonus + tacModifier,
+                      hit.glancingMod() + mods.critBonus + (i < mods.locationCrits ? locationModifier : 0),
                       mods.damageOriginal,
                       damageType));
             }
             crits = 0;
-            mods.tacCrits = 0;
+            mods.locationCrits = 0;
 
             for (int i = 0; i < mods.specCrits; i++) {
                 // against BAR or reflective armor, we get a +2 mod
@@ -3269,7 +3288,7 @@ public class TWDamageManager implements IDamageManager {
         ModsInfo mods = new ModsInfo();
 
         mods.crits = crits;
-        mods.tacCrits = crits;
+        mods.locationCrits = crits;
         mods.damageOriginal = damageOriginal;
         mods.damageIS = damageIS;
         mods.tookInternalDamage = damageIS;
@@ -3297,7 +3316,7 @@ public class TWDamageManager implements IDamageManager {
         mods.ferroLamellorArmor = ((entity instanceof Mek) || (entity instanceof Tank) || (entity instanceof Aero)) &&
               (entity.getArmorType(hit.getLocation()) ==
                     EquipmentType.T_ARMOR_FERRO_LAMELLOR);
-        mods.hardenedArmor = ((entity instanceof Mek) || (entity instanceof Tank)) &&
+        mods.hardenedArmor = ((entity instanceof Mek) || (entity instanceof Tank) || (entity instanceof Aero)) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
         mods.impactArmor = (entity instanceof Mek) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
@@ -3558,7 +3577,7 @@ public class TWDamageManager implements IDamageManager {
                     // An attack reduced to zero damages no armor, so it makes no armor-piercing check either (Core
                     // pp.191, 202)
                     mods.isHeadHit = false;
-                    mods.crits = 0;
+                    mods.clearCriticalChecks();
                     hit.clearArmorPiercing();
                 }
                 report = new Report(6073);
@@ -3853,13 +3872,18 @@ public class TWDamageManager implements IDamageManager {
         public boolean tookInternalDamage = false;
         public int critBonus = 0;
         public int crits = 0;
-        /** How many of the crits are the hit's TAC check (or a swarm attack's critical check) */
-        public int tacCrits = 0;
-        /** Modifier to the TAC check from the armor struck */
-        public int tacModifier = 0;
+        /** Number of critical checks from the hit location table, before any structure damage */
+        public int locationCrits = 0;
+        /** Modifier to a location critical check from the armor struck */
+        public int locationCritModifier = 0;
         public int specCrits = 0;
         public int damageOriginal = 0;
         public boolean heatArmor = false;
         public boolean abaArmor = false;
+
+        private void clearCriticalChecks() {
+            crits = 0;
+            locationCrits = 0;
+        }
     }
 }

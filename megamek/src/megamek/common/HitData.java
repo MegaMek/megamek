@@ -45,6 +45,8 @@ import megamek.common.units.Entity;
 public class HitData {
     public static final int EFFECT_NONE = 0;
     public static final int EFFECT_CRITICAL = 0x0001;
+    /** A critical check specifically from rolling a 2 on the hit location table (Core p.91). */
+    public static final int EFFECT_TAC = EFFECT_CRITICAL | 0x0004;
     public static final int EFFECT_VEHICLE_MOVE_DAMAGED = 0x0002;
     public static final int EFFECT_NO_CRITICAL_SLOTS = 0x0020;
 
@@ -204,6 +206,10 @@ public class HitData {
 
     public int getEffect() {
         return effect;
+    }
+
+    public boolean isThroughArmorCritical() {
+        return (effect & EFFECT_TAC) == EFFECT_TAC;
     }
 
     public int getMotiveMod() {

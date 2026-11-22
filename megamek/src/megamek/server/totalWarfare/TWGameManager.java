@@ -134,6 +134,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.voting.Poll;
 import megamek.common.voting.VoteThreshold;
 import megamek.common.weapons.DamageType;
+import megamek.common.weapons.TaserEffects;
 import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
@@ -13340,79 +13341,10 @@ public class TWGameManager extends AbstractGameManager {
                     damage += toHit.getMoS() / 3;
                     hit.makeDirectBlow(toHit.getMoS() / 3);
                 }
+                int armorBefore = te.getArmor(hit);
                 addReport(damageEntity(te, hit, damage, false, DamageType.NONE, false, false, throughFront));
                 if (((ProtoMek) ae).isEDPCharged()) {
-                    r = new Report(3701);
-                    Roll diceRoll2 = Compute.rollD6(2);
-                    int rollValue2 = diceRoll2.getIntValue() - 2;
-                    String rollCalc2 = rollValue2 + " [" + diceRoll2.getIntValue() + " - 2]";
-                    r.addDataWithTooltip(rollCalc2, diceRoll2.getReport());
-                    r.newlines = 0;
-                    mainPhaseReport.add(r);
-
-                    if (te instanceof BattleArmor) {
-                        r = new Report(3706);
-                        r.addDesc(te);
-                        // shut down for rest of scenario, so we actually kill it
-                        // TODO : fix for salvage purposes
-                        HitData targetTrooper = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                        r.add(te.getLocationAbbr(targetTrooper));
-                        mainPhaseReport.add(r);
-                        mainPhaseReport.addAll(criticalEntity(ae,
-                              targetTrooper.getLocation(),
-                              targetTrooper.isRear(),
-                              0,
-                              false,
-                              false,
-                              0));
-                    } else if (te instanceof Mek) {
-                        if (((Mek) te).isIndustrial()) {
-                            if (rollValue2 >= 8) {
-                                r = new Report(3705);
-                                r.addDesc(te);
-                                r.add(4);
-                                te.taserShutdown(4, false);
-                            } else {
-                                // suffer +2 to piloting and gunnery for 4 rounds
-                                r = new Report(3710);
-                                r.addDesc(te);
-                                r.add(2);
-                                r.add(4);
-                                te.setTaserInterference(2, 4, true);
-                            }
-                        } else {
-                            if (rollValue2 >= 11) {
-                                r = new Report(3705);
-                                r.addDesc(te);
-                                r.add(3);
-                                mainPhaseReport.add(r);
-                                te.taserShutdown(3, false);
-                            } else {
-                                r = new Report(3710);
-                                r.addDesc(te);
-                                r.add(2);
-                                r.add(3);
-                                mainPhaseReport.add(r);
-                                te.setTaserInterference(2, 3, true);
-                            }
-                        }
-                    } else if ((te instanceof ProtoMek) || (te instanceof Tank) || (te instanceof Aero)) {
-                        if (rollValue2 >= 8) {
-                            r = new Report(3705);
-                            r.addDesc(te);
-                            r.add(4);
-                            mainPhaseReport.add(r);
-                            te.taserShutdown(4, false);
-                        } else {
-                            r = new Report(3710);
-                            r.addDesc(te);
-                            r.add(2);
-                            r.add(4);
-                            mainPhaseReport.add(r);
-                            te.setTaserInterference(2, 4, false);
-                        }
-                    }
-
+                    TaserEffects.EDP.resolve(this, te, hit, armorBefore, mainPhaseReport);
                 }
             }
         }
@@ -23166,7 +23098,7 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    private Vector<Report> criticalAero(Aero a, int loc, int critMod, String reason, int target, int damage,
+    Vector<Report> criticalAero(Aero a, int loc, int critMod, String reason, int target, int damage,
           boolean isCapital) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
@@ -23278,7 +23210,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Ablation armor's -2 applies only to armor-piercing and through-armor checks while the armor holds, see
-        // RulesArmor#ablationArmorCriticalModifier (IO:AE p.80)
+        // RulesArmor#ablationArmorPiercingModifier (IO:AE p.80)
 
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod, damage, damageType.equals(DamageType.INFERNO));

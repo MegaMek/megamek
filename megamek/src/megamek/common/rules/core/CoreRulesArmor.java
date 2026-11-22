@@ -33,6 +33,7 @@ package megamek.common.rules.core;
  */
 
 
+import java.util.OptionalInt;
 import java.util.Vector;
 
 import megamek.common.HitData;
@@ -63,7 +64,7 @@ public class CoreRulesArmor extends RulesArmor {
     @Override
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType) {
         if (mods.abaArmor) {
-            return false;
+            return ablationArmorPiercingModifier().isPresent();
         }
         if (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING) {
             return super.allowArmorPiercing(mods, damageType);
@@ -107,7 +108,7 @@ public class CoreRulesArmor extends RulesArmor {
      */
     @Override
     public boolean checkLancePenetration(int armorType) {
-        return (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) ? false : true;
+        return armorType != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION || ablationArmorPiercingModifier().isPresent();
     }
 
     /**
@@ -135,6 +136,12 @@ public class CoreRulesArmor extends RulesArmor {
         return (armorType == ArmorType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
 
+    @Override
+    public int hardenedLocationCriticalModifier(HitData hit) {
+        // Core p.91, errata v0.2: the modifier applies to the TAC check only.
+        return hit.isThroughArmorCritical() ? -2 : 0;
+    }
+
     /**
      * {@inheritDoc}
      * Against armor-piercing ammunition, ablation, ballistic-reinforced and hardened armor "provide no damage reduction
@@ -151,8 +158,8 @@ public class CoreRulesArmor extends RulesArmor {
      * and gives no protection against armor-piercing ammunition (Core p.191).
      */
     @Override
-    public int ablationArmorCriticalModifier() {
-        return 0;
+    public OptionalInt ablationArmorPiercingModifier() {
+        return OptionalInt.empty();
     }
 
     /**

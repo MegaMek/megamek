@@ -40,17 +40,12 @@ import java.util.Vector;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.compute.Compute;
 import megamek.common.enums.HitDamageType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.rolls.Roll;
-import megamek.common.units.Aero;
 import megamek.common.units.Entity;
-import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
-import megamek.common.units.Tank;
+import megamek.common.weapons.TaserEffects;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class MekTaserHandler extends AmmoWeaponHandler {
@@ -63,85 +58,10 @@ public class MekTaserHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
-        boolean done = false;
-
-        if (bMissed) {
-            return false;
-        }
-        Report report = new Report(3700);
-        Roll diceRoll = Compute.rollD6(2);
-        report.add(diceRoll);
-        report.newlines = 0;
-        vPhaseReport.add(report);
-
-        if (entityTarget.getWeight() > 100) {
-            return false;
-        }
-
-        if (entityTarget instanceof BattleArmor) {
-            report = new Report(3706);
-            report.addDesc(entityTarget);
-            // shut down for rest of scenario, so we actually kill it
-            // TODO: fix for salvage purposes
-            report.add(entityTarget.getLocationAbbr(hit));
-            vPhaseReport.add(report);
-            entityTarget.destroyLocation(hit.getLocation());
-            // Check to see if the squad has been eliminated
-            if (entityTarget.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
-                vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
-                      "all troopers eliminated", false));
-            }
-            done = true;
-        } else if (entityTarget instanceof Mek) {
-            if (((Mek) entityTarget).isIndustrial()) {
-                if (diceRoll.getIntValue() >= 8) {
-                    report = new Report(3705);
-                    report.addDesc(entityTarget);
-                    report.add(4);
-                    entityTarget.taserShutdown(4, false);
-                } else {
-                    // suffer +2 to piloting and gunnery for 4 rounds
-                    report = new Report(3710);
-                    report.addDesc(entityTarget);
-                    report.add(2);
-                    report.add(4);
-                    entityTarget.setTaserInterference(2, 4, true);
-                }
-            } else {
-                if (diceRoll.getIntValue() >= 11) {
-                    report = new Report(3705);
-                    report.addDesc(entityTarget);
-                    report.add(3);
-                    vPhaseReport.add(report);
-                    entityTarget.taserShutdown(3, false);
-                } else {
-                    report = new Report(3710);
-                    report.addDesc(entityTarget);
-                    report.add(2);
-                    report.add(3);
-                    vPhaseReport.add(report);
-                    entityTarget.setTaserInterference(2, 3, true);
-                }
-            }
-        } else if ((entityTarget instanceof ProtoMek)
-              || (entityTarget instanceof Tank)
-              || (entityTarget instanceof Aero)) {
-            if (diceRoll.getIntValue() >= 8) {
-                report = new Report(3705);
-                report.addDesc(entityTarget);
-                report.add(4);
-                vPhaseReport.add(report);
-                entityTarget.taserShutdown(4, false);
-            } else {
-                report = new Report(3710);
-                report.addDesc(entityTarget);
-                report.add(2);
-                report.add(4);
-                vPhaseReport.add(report);
-                entityTarget.setTaserInterference(2, 4, false);
-            }
-        }
-        return done;
+    protected void applyEntityDamage(Entity entityTarget, int damage, Vector<Report> reports) {
+        int armorBefore = entityTarget.getArmor(hit);
+        super.applyEntityDamage(entityTarget, damage, reports);
+        TaserEffects taser = weaponType.hasFlag(WeaponType.F_BA_WEAPON) ? TaserEffects.BATTLE_ARMOR : TaserEffects.MEK;
+        taser.resolve(gameManager, entityTarget, hit, armorBefore, reports);
     }
 }

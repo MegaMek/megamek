@@ -177,7 +177,7 @@ public class SuperHeavyTank extends Tank {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                    rv.setEffect(HitData.EFFECT_TAC);
                     break;
                 case 3:
                     if (bSide) {

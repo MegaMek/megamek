@@ -142,8 +142,9 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
     void process(InfantryCombatAction action) {
         Entity entity = getGame().getEntity(action.getEntityId());
         Entity targetEntity = getGame().getEntity(action.getTargetId());
-        if (!(entity instanceof Infantry unit)) {
-            LOGGER.debug("[InfantryAction] action from {} ignored: not infantry", action.getEntityId());
+        if (!InfantryActionStrengths.fightsInInfantryActions(entity) || !(entity instanceof Infantry unit)) {
+            LOGGER.debug("[InfantryAction] action from {} ignored: not infantry, or an ejected crew",
+                  action.getEntityId());
             return;
         }
         if (!(targetEntity instanceof AbstractBuildingEntity building)) {
@@ -324,7 +325,8 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
         List<Infantry> units = new ArrayList<>();
         for (int unitId : unitIds) {
             Entity entity = getGame().getEntity(unitId);
-            boolean ownInfantry = (entity instanceof Infantry) && (entity.getOwnerId() == player.getId());
+            boolean ownInfantry = InfantryActionStrengths.fightsInInfantryActions(entity)
+                  && (entity.getOwnerId() == player.getId());
             boolean free = (entity != null) && (entity.getInfantryCombatTargetId() == Entity.NONE);
             if (ownInfantry && free && InfantryActionStrengths.isInside(entity, building)) {
                 units.add((Infantry) entity);

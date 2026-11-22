@@ -40,6 +40,7 @@ import megamek.common.Player;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.EjectedCrew;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 
@@ -71,6 +72,19 @@ public final class InfantryActionStrengths {
     }
 
     /**
+     * Whether a unit takes part in infantry actions at all. An ejected crew does not: a MekWarrior, a vehicle crew
+     * or a pilot on foot inside an enemy building is taken prisoner by its crew in the End Phase instead (TO:AR
+     * p. 165 for MekWarriors, extended to every ejected crew), so it neither threatens the building nor defends it.
+     *
+     * @param unit the unit
+     *
+     * @return {@code true} for infantry other than an ejected crew
+     */
+    public static boolean fightsInInfantryActions(@Nullable Entity unit) {
+        return (unit instanceof Infantry) && !(unit instanceof EjectedCrew);
+    }
+
+    /**
      * The infantry standing in the building that could fight for the given player: not the player's enemies, not
      * already in an action. The book makes everyone present the attacking force and lets the player hold units back,
      * so this is the list to offer.
@@ -85,7 +99,7 @@ public final class InfantryActionStrengths {
           AbstractBuildingEntity building) {
         List<Infantry> units = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
-            boolean candidate = (entity instanceof Infantry)
+            boolean candidate = fightsInInfantryActions(entity)
                   && !entity.getOwner().isEnemyOf(player)
                   && (entity.getInfantryCombatTargetId() == Entity.NONE)
                   && isInside(entity, building);
@@ -108,7 +122,7 @@ public final class InfantryActionStrengths {
     public static List<Infantry> enemyInfantryInside(Game game, Player player, AbstractBuildingEntity building) {
         List<Infantry> units = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
-            boolean enemyInside = (entity instanceof Infantry)
+            boolean enemyInside = fightsInInfantryActions(entity)
                   && entity.getOwner().isEnemyOf(player)
                   && isInside(entity, building);
             if (enemyInside) {
@@ -252,6 +266,9 @@ public final class InfantryActionStrengths {
         }
         if (unit.getInfantryCombatTargetId() != Entity.NONE) {
             return unit.isInfantryCombatAttacker() && !unit.isInfantryCombatWantsWithdrawal();
+        }
+        if (unit instanceof EjectedCrew) {
+            return false;
         }
         for (Entity entity : game.getEntitiesVector()) {
             boolean insideWithStake = (entity instanceof AbstractBuildingEntity building)

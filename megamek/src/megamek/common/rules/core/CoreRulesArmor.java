@@ -147,6 +147,16 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
+     * Core ablation armor ignores through-armor critical checks and negates armor-piercing checks instead (Core p.201),
+     * and gives no protection against armor-piercing ammunition (Core p.191).
+     */
+    @Override
+    public int ablationArmorCriticalModifier() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
      * Impact-resistant armor halves damage from building collapses, collisions and falls (rounding remaining damage
      * down) and reduces physical attack damage as {@link RulesArmor#reduceImpactDamage} does (Core p.202).
      */

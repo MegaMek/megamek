@@ -123,6 +123,9 @@ class CoreRulesScopeTest {
         assertFalse(core.criticalProtectionsApplyAgainst(HitDamageType.DAMAGE_ARMOR_PIERCING));
         assertTrue(core.criticalProtectionsApplyAgainst(HitDamageType.DAMAGE_BALLISTIC));
         assertTrue(new TWRulesArmor().criticalProtectionsApplyAgainst(HitDamageType.DAMAGE_ARMOR_PIERCING));
+        // Ablation armor: -2 to those critical checks under TW (IO:AE p.80); Core ignores the TAC instead (Core p.201)
+        assertEquals(-2, new TWRulesArmor().ablationArmorCriticalModifier());
+        assertEquals(0, core.ablationArmorCriticalModifier());
     }
 
     @Test

@@ -121,6 +121,17 @@ public abstract class RulesArmor {
     }
 
     /**
+     * While the location struck still has armor, ablation armor "applies an additional -2 roll modifier to the critical
+     * hit check for all attacks made by weapons with armor-piercing abilities" and to the critical check for a hit
+     * location roll of 2 (IO:AE p.80).
+     *
+     * @return the modifier to those critical checks
+     */
+    public int ablationArmorCriticalModifier() {
+        return -2;
+    }
+
+    /**
      * How does impact armor reduce damage. While the location has armor, impact-resistant armor reduces damage "by 1
      * point for every 3 points delivered (or fraction thereof), to a minimum of 1 damage point" (IO:AE p.82; Core
      * p.202 for physical attacks).

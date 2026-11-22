@@ -3686,6 +3686,10 @@ public class TWDamageManager implements IDamageManager {
                       && Game.rulesManager.getRulesArmor().criticalProtectionsApplyAgainst(hit.getGeneralDamageType())) {
                     mods.critBonus = critBonus - 2;
                 }
+                // Ablation armor that holds modifies the hit's armor-piercing and through-armor critical checks
+                if (abaArmor) {
+                    mods.critBonus += Game.rulesManager.getRulesArmor().ablationArmorCriticalModifier();
+                }
 
                 // We should only record the applied damage, although original and tmpDamageHold
                 // damage may be needed for other calculations

@@ -1744,9 +1744,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
         nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
 
-        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
-
+        // Count what strikes before a building scales the damage it deals: an IMP missile strikes whole (IO:AE p.61)
         Report heatReport = applyHeatOnStrike(entityTarget, nDamage);
+
+        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);

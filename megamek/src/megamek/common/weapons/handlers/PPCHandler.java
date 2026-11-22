@@ -236,6 +236,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                   weapon);
             if (r != null) {
                 vPhaseReport.add(r);
+                // It burns out before it can fire, inflicting no damage (TO:AUE p.149)
+                return true;
             }
         }
         return false;

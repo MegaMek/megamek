@@ -31413,17 +31413,18 @@ public class TWGameManager extends AbstractGameManager {
                         continue;
                     }
                     // Capture the unit.
-                    pe.pickUp(e);
-                    // The captured unit is being carried by the loader.
-                    e.setCaptured(true);
-                    e.setPickedUpById(pe.getId());
-                    e.setPickedUpByExternalId(pe.getExternalIdAsString());
+                    captureMekWarrior(e, pe);
                     pickedUp = true;
-                    r = new Report(6420, Report.PUBLIC);
-                    r.add(e.getDisplayName());
-                    r.addDesc(pe);
-                    addReport(r);
                     break;
+                }
+            }
+            // Finally, check for a crewed enemy turret or building. These are never targetable as units (they are
+            // attacked through their hex), so the checks above never see them.
+            if (!pickedUp) {
+                Entity capturingBuilding = new EjectedCrewCaptureHandler(this).findCapturingBuilding(e);
+                if (capturingBuilding != null) {
+                    captureMekWarrior(e, capturingBuilding);
+                    pickedUp = true;
                 }
             }
             if (pickedUp) {
@@ -31433,6 +31434,25 @@ public class TWGameManager extends AbstractGameManager {
                 entityUpdate(e.getId());
             }
         }
+    }
+
+    /**
+     * Makes an ejected MekWarrior the prisoner of an enemy unit and reports it.
+     *
+     * @param mekWarrior the ejected MekWarrior
+     * @param captor     the unit that takes them prisoner
+     */
+    private void captureMekWarrior(MekWarrior mekWarrior, Entity captor) {
+        captor.pickUp(mekWarrior);
+        // The captured unit is being carried by the loader.
+        mekWarrior.setCaptured(true);
+        mekWarrior.setPickedUpById(captor.getId());
+        mekWarrior.setPickedUpByExternalId(captor.getExternalIdAsString());
+
+        Report report = new Report(6420, Report.PUBLIC);
+        report.add(mekWarrior.getDisplayName());
+        report.addDesc(captor);
+        addReport(report);
     }
 
     /**

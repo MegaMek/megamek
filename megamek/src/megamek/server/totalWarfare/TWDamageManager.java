@@ -1761,6 +1761,12 @@ public class TWDamageManager implements IDamageManager {
             // Apply Tank CASE here
             damage = applyTankCASEDamageReduction(tank, hit, damage, ammoExplosion, reportVec);
 
+            // Then the explosion cap of the rules in play; a location that survives a capped explosion vents its armor
+            int uncappedTankDamage = damage;
+            damage = Game.rulesManager.getRulesExplosions().capVehicleExplosion(tank, hit, damage, ammoExplosion,
+                  reportVec);
+            boolean tankExplosionCapped = damage < uncappedTankDamage;
+
             // is there damage remaining?
             if (damage > 0) {
 
@@ -1769,6 +1775,9 @@ public class TWDamageManager implements IDamageManager {
 
                     // Now we need to consider alternate structure types!
                     if ((tank.getInternal(hit) > damage)) {
+                        if (tankExplosionCapped) {
+                            Game.rulesManager.getRulesExplosions().ventCappedExplosion(tank, hit, reportVec);
+                        }
                         // internal structure absorbs all damage
                         tank.setInternal(tank.getInternal(hit) - damage, hit);
                         // Triggers a critical hit on Vehicles and Meks.
@@ -3260,7 +3269,7 @@ public class TWDamageManager implements IDamageManager {
                           EquipmentType.T_ARMOR_BA_REFLECTIVE);
         mods.heatArmor = (entity instanceof Mek) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
-        mods.abaArmor = (entity instanceof Mek) &&
+        mods.abaArmor = ((entity instanceof Mek) || (entity instanceof Tank) || (entity instanceof Aero)) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
 
@@ -3498,11 +3507,8 @@ public class TWDamageManager implements IDamageManager {
             // (Core pp.201-202; IO:AE p.81; TO:AUE pp.93-94), so damage beyond that capacity reaches the structure
             boolean absorbsTwoPerPip = false;
 
-            if (ferroLamellorArmor &&
-                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
-                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION) &&
-                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_AX)) {
+            if (ferroLamellorArmor
+                  && Game.rulesManager.getRulesArmor().ferroLamellorArmorReduces(hit.getGeneralDamageType())) {
                 tmpDamageHold = damage;
                 damage = (int) Math.floor((((double) damage) * 4) / 5);
                 if (damage <= 0) {
@@ -3706,6 +3712,7 @@ public class TWDamageManager implements IDamageManager {
             } else {
                 // damage goes on to internal
                 int absorbed = Math.max(entity.getArmor(hit), 0);
+                int pipsRemoved = absorbed;
                 if (hardenedArmor &&
                     (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
                     (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)) {
@@ -3718,11 +3725,9 @@ public class TWDamageManager implements IDamageManager {
                     tmpDamageHold = 0;
                 }
                 entity.setArmor(IArmorState.ARMOR_DESTROYED, hit);
-                if (tmpDamageHold >= 0) {
-                    entity.damageThisPhase += 2 * absorbed;
-                } else {
-                    entity.damageThisPhase += absorbed;
-                }
+                // Only the armor pips removed count toward the 20-damage PSR, for armor that absorbs two points per
+                // pip as for any other (Core p.201; TO:AUE p.93)
+                entity.damageThisPhase += pipsRemoved;
                 damage = absorbsTwoPerPip ? (tmpDamageHold - (2 * absorbed)) : (damage - absorbed);
                 report = new Report(6090);
                 report.subject = entityId;

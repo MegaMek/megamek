@@ -340,6 +340,15 @@ public class CoreRulesPhysical extends RulesPhysical {
     }
 
     /**
+     * {@inheritDoc} "Divide the damage to both attacker and target by 2 (rounding down) if the target Mek is fully
+     * submerged" (Core p.116); the attacker's side is its fall into the water.
+     */
+    @Override
+    public int fallFromAboveDamage(int damage, Entity affaTarget) {
+        return affaTarget.isUnderwater() ? damage / 2 : damage;
+    }
+
+    /**
      * {@inheritDoc} We can find clubs in any rubble. Core p.79
      */
     @Override

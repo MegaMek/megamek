@@ -128,6 +128,27 @@ public class LRMHandlerSemiGuidedTest {
     }
 
     @Test
+    void hexTaggedByAnEnemyGivesNoBonus() throws EntityLoadingException {
+        Game.rulesManager = new CoreRulesManager();
+        Entity attacker = createMockEntity();
+        Game game = createMockGame(attacker);
+        Entity enemy = createMockEntity();
+        Player enemyOwner = enemy.getOwner();
+        Player attackerOwner = attacker.getOwner();
+        doReturn(true).when(enemyOwner).isEnemyOf(attackerOwner);
+        doReturn(enemy).when(game).getEntity(TAGGING_UNIT_ID);
+        HexTarget target = createHexTarget();
+        Vector<TagInfo> tagInfo = new Vector<>();
+        tagInfo.add(new TagInfo(TAGGING_UNIT_ID, target.getTargetType(), target, false));
+        doReturn(tagInfo).when(game).getTagInfo();
+
+        LRMHandler handler = createHandler(attacker, target, game);
+
+        assertEquals(-1, handler.getSemiGuidedClusterModifier(),
+              "Only friendly TAG designates targets for Semi-Guided missiles (Core p.193)");
+    }
+
+    @Test
     void hexTargetUnderTotalWarfareRulesIsUnmodified() throws EntityLoadingException {
         Game.rulesManager = new TWRulesManager();
         Entity attacker = createMockEntity();
@@ -241,6 +262,9 @@ public class LRMHandlerSemiGuidedTest {
         int attackerId = attacker.getId();
         doReturn(attacker).when(game).getEntity(attackerId);
         doReturn(game).when(attacker).getGame();
+        // The designating unit is on the attacker's side: semi-guided missiles need "friendly TAG" (Core p.193)
+        Entity tagger = createMockEntity();
+        doReturn(tagger).when(game).getEntity(TAGGING_UNIT_ID);
 
         return game;
     }

@@ -164,7 +164,8 @@ public class CoreRulesGame extends RulesGame {
             return launchers;
         }
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+            // Launchers "in the player's force" (Core errata v0.2 p.1), not an ally's
+            if (otherEntity.getOwnerId() != entity.getOwnerId()) {
                 continue;
             }
             if (otherEntity instanceof BattlefieldSupportAsset asset) {

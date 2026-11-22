@@ -32,7 +32,6 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-import megamek.common.Hex;
 import megamek.common.units.Entity;
 
 public abstract class RulesTerrain {
@@ -41,21 +40,21 @@ public abstract class RulesTerrain {
      * Do we change the road elevation cost.
      *
      * @param entity the moving unit
-     * @param srcHex the source hexagon
-     * @param destHex the destination hexagon
+     * @param pavementStep true if the unit moves from one hex to the next on pavement, which roads and paved bridges
+     *       count as (Core p.53)
      * @param deltaElevation the change in elevation
      * @return the road elevation cost difference
      */
-    public abstract int getRoadElevationCostDifference(Entity entity, Hex srcHex, Hex destHex, int deltaElevation);
+    public abstract int getRoadElevationCostDifference(Entity entity, boolean pavementStep, int deltaElevation);
 
     /**
      * Can we change more levels than normally allowed?
      *
      * @param entity the moving unit
-     * @param srcHex the source hexagon
-     * @param destHex the destination hexagon
+     * @param pavementStep true if the unit moves from one hex to the next on pavement, which roads and paved bridges
+     *       count as (Core p.53)
      * @param maxElevationChange the maximum elevation change normally allowed
      * @return the adjusted maximum elevation change allowed
      */
-    public abstract int getMaxElevationChangeAllowed(Entity entity, Hex srcHex, Hex destHex, int maxElevationChange);
+    public abstract int getMaxElevationChangeAllowed(Entity entity, boolean pavementStep, int maxElevationChange);
 }

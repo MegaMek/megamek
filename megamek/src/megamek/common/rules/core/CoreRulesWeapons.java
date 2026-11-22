@@ -92,7 +92,9 @@ public class CoreRulesWeapons extends RulesWeapons {
         if (!mounted.isAutocannonHit()) {
             // A superheavy Mek can hold a two-slot autocannon in one slot, which then needs "two hits to the same
             // slot" (Core pp.183, 240)
-            if (!(mounted.getEntity() instanceof Mek) || (mounted.getEntity().occupiedCriticalSlots(mounted) == 1)) {
+            // A unit without critical slots, such as a building, passes none
+            if ((cs != null)
+                  && (!(mounted.getEntity() instanceof Mek) || (mounted.getEntity().occupiedCriticalSlots(mounted) == 1))) {
                 cs.setHit(false);
             }
             mounted.setHit(false);

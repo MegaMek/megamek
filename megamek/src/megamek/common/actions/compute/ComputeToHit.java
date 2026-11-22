@@ -174,7 +174,7 @@ public class ComputeToHit {
               (ammoType != null) &&
               ammoType.getMunitionType()
                     .contains(AmmoType.Munitions.M_SEMIGUIDED) &&
-              Compute.isTargetTagged(target, game);
+              Compute.isTargetTaggedByFriend(ae, target, game);
 
         boolean isInferno = ((ammoType != null) &&
               ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
@@ -1685,7 +1685,7 @@ public class ComputeToHit {
             // semi guided ammo negates this modifier, if TAG succeeded
             if ((ammoType != null) &&
                   bSemiGuided &&
-                  (Compute.isTargetTagged(target, game))) {
+                  (Compute.isTargetTaggedByFriend(ae, target, game))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
             } else if (!narcSpotter && (spotter != null)) {
                 // Unless the target has been tagged, or the spotter has an active command
@@ -1695,7 +1695,7 @@ public class ComputeToHit {
                 if (spotter.isAttackingThisTurn() &&
                       !spotter.getCrew().hasActiveCommandConsole() &&
                       !ReconCameraRules.isCameraSpotting(spotter, target) &&
-                      !Compute.isTargetTagged(target, game)) {
+                      !Compute.isTargetTaggedByFriend(ae, target, game)) {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
                 }
                 // Comm implant provides -1 bonus when spotting for indirect LRM

@@ -216,7 +216,10 @@ public class CoreRulesMovement extends RulesMovement {
         List<Coords> legalHexes = new ArrayList<>();
         for (int checkDirection = 0; checkDirection < 6; checkDirection++) {
             Coords dest = src.translated(checkDirection, range);
-            if (Compute.isValidDisplacement(game, entityId, src, dest) && !(fallerMissed && dest.equals(fellFrom))) {
+            // A faller that missed lands "in an adjacent hex", which an off-board hex is not
+            boolean landsOnBoard = !fallerMissed || game.getBoard(entity.getBoardId()).contains(dest);
+            if (Compute.isValidDisplacement(game, entityId, src, dest) && !(fallerMissed && dest.equals(fellFrom))
+                  && landsOnBoard) {
                 legalHexes.add(dest);
             }
         }

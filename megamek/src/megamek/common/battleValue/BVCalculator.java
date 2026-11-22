@@ -1447,8 +1447,9 @@ public abstract class BVCalculator {
               .filter(Objects::nonNull)
               .filter(t -> t.hasFlag(WeaponType.F_TAG))
               .count();
-        if (entity instanceof IBomber asBomber) {
-            tagCount += asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
+        // A carried TAG pod is a TAG, a Homing missile is not. Once the bombs are mounted, the pod is in the weapon list.
+        if ((entity instanceof IBomber asBomber) && entity.getBombs().isEmpty()) {
+            tagCount += asBomber.getBombChoices().getCount(BombTypeEnum.TAG);
         }
         return tagCount;
     }

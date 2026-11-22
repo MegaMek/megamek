@@ -56,15 +56,32 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Anti-penetrative ablation, ballistic-reinforced and hardened armor "negate AP ammo armor-piercing checks"
-     * (Core p.191). Armor-piercing missiles, such as tandem-charge SRMs, are not in Core and keep the TO:AUE rules.
+     * Anti-penetrative ablation armor negates "any armor-piercing special effects" (Core p.201). Ballistic-reinforced
+     * and hardened armor also "negate AP ammo armor-piercing checks" (Core p.191). Against armor-piercing missiles, such
+     * as tandem-charge SRMs, which are not in Core, the other armors keep the TO:AUE rules.
      */
     @Override
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType) {
+        if (mods.abaArmor) {
+            return false;
+        }
         if (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING) {
             return super.allowArmorPiercing(mods, damageType);
         }
-        return !(mods.hardenedArmor || mods.abaArmor || mods.ballisticArmor);
+        return !(mods.hardenedArmor || mods.ballisticArmor);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Ferro-lamellor armor reduces damage "by 1 point for every 5 points (or fraction thereof) delivered per hit"
+     * (Core p.202), armor-piercing ammunition included: only ablation, ballistic-reinforced and hardened armor treat it
+     * as standard damage (Core p.191). Acid (AX) damage "is not reduced by special armor rules" (Core p.192).
+     */
+    @Override
+    public boolean ferroLamellorArmorReduces(HitDamageType damageType) {
+        return (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
+              && (damageType != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)
+              && (damageType != HitDamageType.DAMAGE_AX);
     }
 
     /**

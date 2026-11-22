@@ -68,14 +68,32 @@ public abstract class RulesExplosions {
     }
 
     /**
-     * Called for the location where the last point of an internal explosion that {@link #explosionDamageReduction}
-     * capped is applied, if that location survives it. Only rules that cap explosion damage do anything here.
+     * Called for the location where the last point of an internal explosion that {@link #explosionDamageReduction} or
+     * {@link #capVehicleExplosion} capped is applied, if that location survives it. Only rules that cap explosion
+     * damage do anything here.
      *
-     * @param mek the Mek taking damage
+     * @param entity the unit taking damage
      * @param hit the location the last point of explosion damage was applied to
      * @param reportVec vector of reports
      */
-    public void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec) {
+    public void ventCappedExplosion(Entity entity, HitData hit, Vector<Report> reportVec) {
+    }
+
+    /**
+     * Caps an internal explosion in a vehicle location without CASE, after CASE II and vehicle CASE have taken their
+     * share. Only rules that cap explosion damage do anything here.
+     *
+     * @param vehicle       the vehicle taking damage
+     * @param hit           the location hit
+     * @param damage        the explosion damage left
+     * @param ammoExplosion whether the damage comes from an internal explosion
+     * @param reportVec     vector of reports
+     *
+     * @return the damage to apply
+     */
+    public int capVehicleExplosion(Entity vehicle, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec) {
+        return damage;
     }
 
     /**

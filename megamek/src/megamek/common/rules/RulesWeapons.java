@@ -66,7 +66,7 @@ public abstract class RulesWeapons {
      * What happens when a critical hit strikes a weapon. Called for every weapon critical hit; the rules decide which
      * weapons are affected.
      *
-     * @param cs the critical slot being hit
+     * @param cs the critical slot being hit, or null for a unit without critical slots
      * @param mounted the mounted weapon
      * @param reports vector of reports describing the hit
      * @param entityId the ID of the entity being hit

@@ -164,4 +164,18 @@ public abstract class RulesArmor {
      * @return true if {@link #ballisticReinforcedArmorReduction(int)} applies
      */
     public abstract boolean ballisticReinforcedArmorReduces(HitDamageType damageType);
+
+    /**
+     * Does ferro-lamellor armor (TO:AUE p.92) reduce damage of this type? By default not armor-piercing ammunition or
+     * missiles, acid (AX) missiles or damage that ignores reductions.
+     *
+     * @param damageType the general damage type of the hit
+     * @return true if the ferro-lamellor reduction applies
+     */
+    public boolean ferroLamellorArmorReduces(HitDamageType damageType) {
+        return (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING)
+              && (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
+              && (damageType != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)
+              && (damageType != HitDamageType.DAMAGE_AX);
+    }
 }

@@ -70,19 +70,18 @@ public class CoreRulesExplosions extends RulesExplosions {
             if (damage <= cap) {
                 return damage;
             }
-
-            report = new Report(caseIId ? 6134 : cased ? 6133 : 6132);
-            report.subject = mek.getId();
-            report.indent(3);
-            report.add(damage);
-            reportVec.addElement(report);
+            reportCap(mek, damage, caseIId ? 6134 : cased ? 6133 : 6132, reportVec);
 
             // Torso locations damage out the rear armor
             boolean torso = mek.locationIsTorso(loc);
 
             // With CASE or CASE II, a location that survives takes up to 10 points to its armor (Core pp.96-97).
-            // Without CASE the armor is vented where the last point lands, see ventCappedExplosion.
-            if ((caseIId || cased) && (mek.getInternal(loc) > cap)) {
+            // Without CASE the armor is vented where the last point lands, see ventCappedExplosion. Whether the
+            // location survives is judged after composite or reinforced structure modifies the capped damage, as
+            // modifiers apply "after any damage cap is applied" (Core p.96; Core p.205).
+            int structureDamage = mek.hasCompositeStructure(loc) ? cap * 2
+                  : mek.hasReinforcedStructure(loc) ? (cap + 1) / 2 : cap;
+            if ((caseIId || cased) && (mek.getInternal(loc) > structureDamage)) {
                 int armorDamage = Math.min(damage - cap, 10);
                 if (mek.getArmor(loc, torso) > armorDamage) {
                     mek.setArmor(mek.getArmor(loc, torso) - armorDamage, loc, torso);
@@ -118,17 +117,40 @@ public class CoreRulesExplosions extends RulesExplosions {
      * it, loses all its armor; a torso loses only its rear armor (Core p.96).
      */
     @Override
-    public void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec) {
+    public void ventCappedExplosion(Entity entity, HitData hit, Vector<Report> reportVec) {
         int loc = hit.getLocation();
-        boolean torso = mek.locationIsTorso(loc);
-        int armorDamage = Math.max(0, mek.getArmor(loc, torso));
-        mek.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
-        mek.damageThisPhase += armorDamage;
+        boolean torso = (entity instanceof Mek mek) && mek.locationIsTorso(loc);
+        int armorDamage = Math.max(0, entity.getArmor(loc, torso));
+        entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
+        entity.damageThisPhase += armorDamage;
         Report report = new Report(6131);
-        report.subject = mek.getId();
+        report.subject = entity.getId();
         report.indent(3);
-        report.add((torso ? "Rear " : "") + mek.getLocationAbbr(loc));
+        report.add((torso ? "Rear " : "") + entity.getLocationAbbr(loc));
         report.add(armorDamage);
+        reportVec.addElement(report);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Internal explosion damage "is capped at 20" (Core p.96), for every unit under Core; CASE and CASE II in vehicles
+     * keep their own handling.
+     */
+    @Override
+    public int capVehicleExplosion(Entity vehicle, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec) {
+        if (!ammoExplosion || (damage <= 20)) {
+            return damage;
+        }
+        reportCap(vehicle, damage, 6132, reportVec);
+        return 20;
+    }
+
+    private static void reportCap(Entity entity, int damage, int messageId, Vector<Report> reportVec) {
+        Report report = new Report(messageId);
+        report.subject = entity.getId();
+        report.indent(3);
+        report.add(damage);
         reportVec.addElement(report);
     }
 

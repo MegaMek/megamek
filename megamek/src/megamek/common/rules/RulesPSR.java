@@ -41,7 +41,6 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
-import megamek.common.units.MekWithArms;
 import megamek.common.units.QuadMek;
 
 /*
@@ -78,13 +77,14 @@ public abstract class RulesPSR {
     public abstract void facingChangeAfterFall(Entity entity, int facing);
 
     /**
-     * Apply leg damage modifiers to PSR.
+     * Apply leg damage modifiers to PSR, for every leg of a biped, tripod or quad Mek. A quad's destroyed legs are
+     * handled by {@link RulesUnits#quadPilotModForLegsDestroyed}.
      *
-     * @param unit the unit with arms to check
+     * @param unit the Mek to check
      * @param roll the piloting roll data to modify
      * @param toLegDamage true if applying leg damage
      */
-    public abstract void legDamageModifiers(MekWithArms unit, PilotingRollData roll, boolean toLegDamage);
+    public abstract void legDamageModifiers(Mek unit, PilotingRollData roll, boolean toLegDamage);
 
     /**
      * Do we need to reduce potential PSR rolls.

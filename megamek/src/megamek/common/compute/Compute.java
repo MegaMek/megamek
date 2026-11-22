@@ -1279,6 +1279,33 @@ public class Compute {
     }
 
     /**
+     * @param attacker the unit attacking the target
+     * @param target   the target
+     * @param game     the game
+     *
+     * @return true if a unit friendly to the attacker designated the target with TAG and hit ("friendly TAG", Core
+     *       p.193)
+     */
+    public static boolean isTargetTaggedByFriend(Entity attacker, Targetable target, Game game) {
+        if (target instanceof Entity taggedEntity) {
+            return isFriendlyTagger(attacker, taggedEntity.getTaggedBy(), game);
+        }
+        for (TagInfo tagInfo : game.getTagInfo()) {
+            if (!tagInfo.missed && (target.getId() == tagInfo.target.getId())
+                  && isFriendlyTagger(attacker, tagInfo.attackerId, game)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isFriendlyTagger(Entity attacker, int taggerId, Game game) {
+        Entity tagger = game.getEntity(taggerId);
+        return (tagger != null) && (tagger.getOwner() != null) && (attacker.getOwner() != null)
+              && !tagger.getOwner().isEnemyOf(attacker.getOwner());
+    }
+
+    /**
      * Worker function to determine if the target has been tagged by the specific attacker.
      *
      * @param attacker The attacker.
@@ -1479,6 +1506,7 @@ public class Compute {
 
         if (weaponUnderwater) {
             weaponRanges = weaponType.getWRanges();
+            useLOSRange &= Game.rulesManager.getRulesUnderwater().allowsLosRange();
             boolean MPM = false;
             if ((weaponType.getAmmoType() == AmmoTypeEnum.SRM)
                   || (weaponType.getAmmoType() == AmmoTypeEnum.SRM_IMP)

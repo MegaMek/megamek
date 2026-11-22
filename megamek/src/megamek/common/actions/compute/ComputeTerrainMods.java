@@ -164,12 +164,12 @@ public class ComputeTerrainMods {
         boolean semiGuidedIndirectVsTaggedTarget = isIndirect
               && (ammoType != null)
               && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
-              && Compute.isTargetTagged(target, game);
+              && Compute.isTargetTaggedByFriend(attacker, target, game);
 
         boolean semiGuidedDirectVsTaggedTarget = (!isIndirect
               && (ammoType != null)
               && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
-              && Compute.isTargetTagged(target, game) &&
+              && Compute.isTargetTaggedByFriend(attacker, target, game) &&
               Game.rulesManager.getRulesAmmo().semiGuidedIgnoresCover());
 
 

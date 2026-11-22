@@ -3540,7 +3540,7 @@ public class MoveStep implements Serializable {
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int deltaElevation = Math.abs(nSrcEl - nDestEl);
             int maxElevationChange = Game.rulesManager.getRulesTerrain()
-                  .getMaxElevationChangeAllowed(entity, srcHex, destHex, entity.getMaxElevationChange());
+                  .getMaxElevationChangeAllowed(entity, isPavementStep, entity.getMaxElevationChange());
             if (isMek && (deltaElevation > maxElevationChange)) {
                 LOGGER.debug("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
                              "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
@@ -3621,12 +3621,14 @@ public class MoveStep implements Serializable {
                           (getMovementType(false) == EntityMovementType.MOVE_VTOL_RUN))) ||
                        ((moveMode == EntityMovementMode.TRACKED) ||
                         (moveMode == EntityMovementMode.WHEELED) ||
-                        (moveMode == EntityMovementMode.HOVER))) {
-                // non-flying Infantry and ground vehicles are charged double.
+                        (moveMode == EntityMovementMode.HOVER)) ||
+                       // Assets pay 2 MP per level, infantry Assets too (Core p.141)
+                       (entity.isBattlefieldSupportAsset() && (moveMode != EntityMovementMode.VTOL))) {
+                // non-flying Infantry, ground vehicles and Assets are charged double.
                 deltaElevation *= 2;
             }
             int elevationCostReduction = Game.rulesManager.getRulesTerrain()
-                                                          .getRoadElevationCostDifference(entity, srcHex, destHex,
+                                                          .getRoadElevationCostDifference(entity, isPavementStep,
                                                                                                    deltaElevation);
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 mp += Math.max(0, deltaElevation - 1 - elevationCostReduction);
@@ -4009,7 +4011,8 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
 
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
-            int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, srcHex, destHex,
+            boolean onPavement = Compute.canMoveOnPavement(srcHex, destHex, this);
+            int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, onPavement,
                                                                                            entity.getMaxElevationDown(
                                                                                                    srcAlt));
             if (movementMode == EntityMovementMode.WIGE &&
@@ -4037,7 +4040,7 @@ public class MoveStep implements Serializable {
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 
-            int maxUp = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, srcHex, destHex,
+            int maxUp = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, onPavement,
                   entity.getMaxElevationChange());
             if (((elevationDown > 0) && (elevationDown > maxDown)) ||
                 ((elevationUp > 0) && (elevationUp > maxUp))) {

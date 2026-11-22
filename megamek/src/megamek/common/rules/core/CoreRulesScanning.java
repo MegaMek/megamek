@@ -70,13 +70,16 @@ public class CoreRulesScanning extends RulesScanning {
     public static final int GROUND_ASSET_SCAN_TARGET = 8;
     /** Scanning range without a working active probe. */
     public static final int DEFAULT_SCANNING_RANGE = 2;
+    /** "Assume an Asset with the Probe Special has a probe range of 4" (Core p.150). */
+    public static final int PROBE_SPECIAL_RANGE = 4;
 
     @Override
     public int scanningRange(Entity scanner, @Nullable Targetable target) {
         if (refusalReason(scanner) != null) {
             return 0;
         }
-        int probeRange = hasWorkingProbeAgainst(scanner, target) ? scanner.getBAPRange() : 0;
+        int probeRange = !hasWorkingProbeAgainst(scanner, target) ? 0
+              : hasProbeSpecial(scanner) ? PROBE_SPECIAL_RANGE : scanner.getBAPRange();
         return Math.max(DEFAULT_SCANNING_RANGE, probeRange);
     }
 
@@ -91,7 +94,11 @@ public class CoreRulesScanning extends RulesScanning {
      * @return {@code true} when the probe gives its range and its target number bonus against this target
      */
     boolean hasWorkingProbeAgainst(Entity scanner, @Nullable Targetable target) {
-        if (!scanner.hasBAP(true)) {
+        // An Asset's Probe Special is a standard probe, negated by hostile ECM like any other (Core pp.150, 233)
+        boolean probeWorks = hasProbeSpecial(scanner)
+              ? !ComputeECM.isAffectedByECM(scanner, scanner.getPosition(), scanner.getPosition())
+              : scanner.hasBAP(true);
+        if (!probeWorks) {
             return false;
         }
         if ((target == null) || (target.getPosition() == null)) {
@@ -101,6 +108,10 @@ public class CoreRulesScanning extends RulesScanning {
             return !isTargetInsideHostileAngelEcm(scanner, target);
         }
         return !isTargetInsideHostileEcm(scanner, target);
+    }
+
+    private static boolean hasProbeSpecial(Entity scanner) {
+        return (scanner instanceof BattlefieldSupportAsset asset) && asset.hasSpecial(BFSSpecialType.PROBE);
     }
 
     /**
@@ -141,10 +152,6 @@ public class CoreRulesScanning extends RulesScanning {
                 return new TargetRoll(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("RulesScanning.infantryOwnHex"));
             }
             roll = new TargetRoll(GROUND_ASSET_SCAN_TARGET, Messages.getString("RulesScanning.infantryScan"));
-            if ((scanner instanceof BattlefieldSupportAsset asset) && asset.hasSpecial(BFSSpecialType.PROBE)) {
-                roll.addModifier(-PROBE_LEVEL_STANDARD,
-                      Messages.getString("RulesScanning.activeProbe", PROBE_LEVEL_STANDARD));
-            }
         } else {
             // ProtoMeks have no Piloting Skill (TW p.187); such units scan with Gunnery (Core p.233)
             roll = (scanner instanceof ProtoMek)
@@ -155,7 +162,8 @@ public class CoreRulesScanning extends RulesScanning {
                 roll.addModifier(SENSOR_HIT_MODIFIER, Messages.getString("RulesScanning.sensorHit"));
             }
         }
-        int probeLevel = hasWorkingProbeAgainst(scanner, target) ? activeProbeLevel(scanner) : PROBE_LEVEL_NONE;
+        int probeLevel = !hasWorkingProbeAgainst(scanner, target) ? PROBE_LEVEL_NONE
+              : hasProbeSpecial(scanner) ? PROBE_LEVEL_STANDARD : activeProbeLevel(scanner);
         if (probeLevel > PROBE_LEVEL_NONE) {
             roll.addModifier(-probeLevel, Messages.getString("RulesScanning.activeProbe", probeLevel));
         }

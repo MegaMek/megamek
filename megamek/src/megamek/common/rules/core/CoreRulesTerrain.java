@@ -32,23 +32,21 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.Hex;
 import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.rules.RulesTerrain;
 import megamek.common.units.Entity;
-import megamek.common.units.Terrains;
 
 public class CoreRulesTerrain extends RulesTerrain {
 
     /**
      * {@inheritDoc}
-     * A level change between two road hexes costs 1 MP less (Core p.53). Assets get no discount: their road level
+     * A level change between two road hexes, moving on pavement, costs 1 MP less (Core p.53). Assets get no discount: their road level
      * change "still costs 2 MP per level change" (Core p.142).
      */
     @Override
-    public int getRoadElevationCostDifference(Entity entity, Hex srcHex, Hex destHex, int deltaElevation) {
-        if (!entity.isBattlefieldSupportAsset() && isRoadToRoad(srcHex, destHex) && (deltaElevation > 0)) {
+    public int getRoadElevationCostDifference(Entity entity, boolean pavementStep, int deltaElevation) {
+        if (!entity.isBattlefieldSupportAsset() && pavementStep && (deltaElevation > 0)) {
             return 1;
         }
         return 0;
@@ -60,15 +58,11 @@ public class CoreRulesTerrain extends RulesTerrain {
      * instead of one" (Core p.142). Meks get no extra level on roads (Core p.53); other units keep Total Warfare.
      */
     @Override
-    public int getMaxElevationChangeAllowed(Entity entity, Hex srcHex, Hex destHex, int maxElevationChange) {
+    public int getMaxElevationChangeAllowed(Entity entity, boolean pavementStep, int maxElevationChange) {
         if ((entity instanceof BattlefieldSupportAsset asset) && (asset.getAssetType() != BFSAssetType.EMPLACEMENT)
-              && isRoadToRoad(srcHex, destHex) && (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN)) {
+              && pavementStep && (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN)) {
             return maxElevationChange + 1;
         }
         return maxElevationChange;
-    }
-
-    private static boolean isRoadToRoad(Hex srcHex, Hex destHex) {
-        return srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD);
     }
 }

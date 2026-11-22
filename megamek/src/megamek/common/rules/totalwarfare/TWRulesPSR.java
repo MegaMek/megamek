@@ -34,7 +34,6 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import java.util.List;
 
 import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
@@ -44,7 +43,7 @@ import megamek.common.rules.RulesPSR;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
-import megamek.common.units.MekWithArms;
+import megamek.common.units.QuadMek;
 
 public class TWRulesPSR extends RulesPSR {
 
@@ -102,10 +101,16 @@ public class TWRulesPSR extends RulesPSR {
      * @param toLegDamage true if applying leg damage
      */
     @Override
-    public void legDamageModifiers(MekWithArms unit, final PilotingRollData roll, final boolean toLegDamage) {
-        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
+    public void legDamageModifiers(Mek unit, final PilotingRollData roll, final boolean toLegDamage) {
+        boolean quad = unit instanceof QuadMek;
+        for (int loc = 0; loc < unit.locations(); loc++) {
+            if (!unit.locationIsLeg(loc)) {
+                continue;
+            }
             if (unit.isLocationBad(loc)) {
-                roll.addModifier(5, unit.getLocationName(loc) + " destroyed");
+                if (!quad) {
+                    roll.addModifier(5, unit.getLocationName(loc) + " destroyed");
+                }
             } else {
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, unit.getLocationName(loc) + " Hip Actuator destroyed");

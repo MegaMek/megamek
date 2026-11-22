@@ -9514,8 +9514,10 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
         // deal damage to target
-        int damage = Compute.getAccidentalFallFromAboveDamageFor(faller,
-              Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation, target.getHeight()));
+        int damage = Game.rulesManager.getRulesPhysical().fallFromAboveDamage(
+              Compute.getAccidentalFallFromAboveDamageFor(faller,
+                    Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation, target.getHeight())),
+              target);
         report = new Report(2220);
         report.subject = target.getId();
         report.addDesc(target);
@@ -9678,7 +9680,10 @@ public class TWGameManager extends AbstractGameManager {
             // ok, we missed, let's fall into a valid other hex and not cause an
             // AFFA while doing so
             Coords targetDest = Compute.getAccidentalFallDisplacement(game, entity.getId(), dest, direction, true);
-            if (targetDest != null) {
+            if ((targetDest != null) && !game.getBoard(entity).contains(targetDest)) {
+                // Off the board there is no hex to fall into: the unit is forced from the field
+                vPhaseReport.addAll(doEntityDisplacement(entity, dest, targetDest, null));
+            } else if (targetDest != null) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
                       entitySrcElevation,
                       src,
@@ -23725,8 +23730,10 @@ public class TWGameManager extends AbstractGameManager {
             int breachRoll = 12;
             boolean lowFail = true;
             // Core breach checks are for underwater locations only (Core pp.88, 127); a vacuum breach happens on a
-            // roll of 10 or greater (TO:AR p.52) under every ruleset
-            boolean vacuumBreach = entity.getLocationStatus(loc) == ILocationExposureStatus.VACUUM;
+            // roll of 10 or greater (TO:AR p.52) under every ruleset, and tainted or toxic air breaches "in the same
+            // manner as under Vacuum" (TO:AR p.54)
+            boolean vacuumBreach = (entity.getLocationStatus(loc) == ILocationExposureStatus.VACUUM)
+                  || (entity.getLocationStatus(loc) == ILocationExposureStatus.TAINTED);
 
             if (vacuumBreach || (Game.rulesManager.getRulesUnderwater() instanceof TWRulesUnderwater)) {
                 breachRoll = 0;

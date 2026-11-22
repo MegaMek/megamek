@@ -119,4 +119,14 @@ public class CoreRulesUnderwater extends RulesUnderwater {
             return weaponType.getWExtremeRange();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * Underwater, an attack beyond the weapon's shifted long range "cannot be made"; the snub-nose PPC example "could
+     * not attack anything at a range of 14+" (Core p.127).
+     */
+    @Override
+    public boolean allowsLosRange() {
+        return false;
+    }
 }

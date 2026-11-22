@@ -35,7 +35,6 @@ package megamek.common.rules.core;
  */
 
 import java.util.ArrayList;
-import java.util.List;
 
 import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
@@ -45,7 +44,7 @@ import megamek.common.rules.RulesPSR;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
-import megamek.common.units.MekWithArms;
+import megamek.common.units.QuadMek;
 
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
@@ -99,15 +98,26 @@ public class CoreRulesPSR extends RulesPSR {
      * modifier (Core pp.110-111). The Tactical Operations leg damage option does not change this.
      */
     @Override
-    public void legDamageModifiers(MekWithArms unit, final PilotingRollData roll, final boolean toLegDamage) {
-        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
+    public void legDamageModifiers(Mek unit, final PilotingRollData roll, final boolean toLegDamage) {
+        // A tripod follows the biped rules (Core p.237); a quad ignores its first hip hit (Core p.238)
+        boolean quad = unit instanceof QuadMek;
+        boolean quadHipIgnored = false;
+        for (int loc = 0; loc < unit.locations(); loc++) {
+            if (!unit.locationIsLeg(loc)) {
+                continue;
+            }
             if (unit.isLocationBad(loc)) {
-                roll.addModifier(4, unit.getLocationName(loc) + " destroyed");
-
+                if (!quad) {
+                    roll.addModifier(4, unit.getLocationName(loc) + " destroyed");
+                }
             } else {
                 // "The modifiers from each destroyed actuator are all applied" (Core p.110)
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
-                    roll.addModifier(1, unit.getLocationName(loc) + " Hip Actuator destroyed");
+                    if (quad && !quadHipIgnored) {
+                        quadHipIgnored = true;
+                    } else {
+                        roll.addModifier(1, unit.getLocationName(loc) + " Hip Actuator destroyed");
+                    }
                 }
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
                     roll.addModifier(1, unit.getLocationName(loc) + " Upper Leg Actuator destroyed");

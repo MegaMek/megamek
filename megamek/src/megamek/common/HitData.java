@@ -167,6 +167,13 @@ public class HitData {
         specCritMod += modifier;
     }
 
+    /**
+     * The hit no longer makes an armor-piercing check, as when armor reduces its damage to zero.
+     */
+    public void clearArmorPiercing() {
+        specCrit = false;
+    }
+
     public void makeGlancingBlow() {
         glancing = -2;
     }

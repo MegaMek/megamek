@@ -68,6 +68,8 @@ import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.weapons.Weapon;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
@@ -302,10 +304,17 @@ class ReconCameraRulesTest {
         assertEquals(standardToHit, semiGuidedToHit.getValue(),
               "a camera spot treats semi-guided missiles as standard LRMs: " + semiGuidedToHit.getDesc());
 
-        // the control: a real TAG designation does change the semi-guided shot, so the comparison above can see one
-        game.addTagInfo(new TagInfo(camera.getId(), Targetable.TYPE_ENTITY, target, false));
-        target.setTaggedBy(camera.getId());
-        assertNotEquals(semiGuidedToHit.getValue(), indirectToHit(semiGuidedCarrier, target).getValue());
+        // the control: under Total Warfare a real TAG designation drops the indirect fire modifier (TW p.142), so the
+        // comparison above could see a TAG benefit; Core keeps that modifier (Core p.193)
+        RulesManager rulesInPlay = Game.rulesManager;
+        Game.rulesManager = new TWRulesManager();
+        try {
+            int untagged = indirectToHit(semiGuidedCarrier, target).getValue();
+            game.addTagInfo(new TagInfo(camera.getId(), Targetable.TYPE_ENTITY, target, false));
+            assertNotEquals(untagged, indirectToHit(semiGuidedCarrier, target).getValue());
+        } finally {
+            Game.rulesManager = rulesInPlay;
+        }
     }
 
     private BipedMek lrmCarrier(Coords position, AmmoType ammo) throws LocationFullException {

@@ -78,6 +78,31 @@ public class CoreRulesPSR extends RulesPSR {
 
     /**
      * {@inheritDoc}
+     * One PSR for gyro damage and one per leg that is destroyed or has an actuator hit (Core pp.90, 99, 110), with a
+     * quad's leg damage in biped terms (Core p.238).
+     */
+    @Override
+    public int landingWithDamageChecks(Entity entity, int gyroHits) {
+        if (!(entity instanceof Mek mek)) {
+            return super.landingWithDamageChecks(entity, gyroHits);
+        }
+        return ((gyroHits > 0) ? 1 : 0) + CoreRulesUnits.legsForcingLandingChecks(mek);
+    }
+
+    /**
+     * {@inheritDoc}
+     * A quad's first hip hit has none of the standard effects, so it forces no PSR (Core p.238).
+     */
+    @Override
+    public void hitActuator(final Game game, Entity entity, int loc, int hitPart) {
+        if ((hitPart == Mek.ACTUATOR_HIP) && (entity instanceof QuadMek quad) && (CoreRulesUnits.hipHits(quad) <= 1)) {
+            return;
+        }
+        super.hitActuator(game, entity, loc, hitPart);
+    }
+
+    /**
+     * {@inheritDoc}
      * Trying to stand is a -1 modifier Core p.111
      */
     @Override

@@ -122,11 +122,11 @@ public class CoreRulesUnderwater extends RulesUnderwater {
 
     /**
      * {@inheritDoc}
-     * Underwater, an attack beyond the weapon's shifted long range "cannot be made"; the snub-nose PPC example "could
-     * not attack anything at a range of 14+" (Core p.127).
+     * Underwater, an energy weapon's attack beyond its shifted long range "cannot be made"; the snub-nose PPC example
+     * "could not attack anything at a range of 14+" (Core p.127). Torpedoes keep the launcher's ranges (Core p.187).
      */
     @Override
-    public boolean allowsLosRange() {
-        return false;
+    public boolean allowsLosRange(WeaponType weaponType) {
+        return !weaponType.hasFlag(WeaponType.F_ENERGY);
     }
 }

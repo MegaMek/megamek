@@ -80,8 +80,17 @@ public abstract class RulesExplosions {
     }
 
     /**
-     * Caps an internal explosion in a vehicle location without CASE, after CASE II and vehicle CASE have taken their
-     * share. Only rules that cap explosion damage do anything here.
+     * Vehicle CASE sends an internal explosion to the rear armor, dissipates the rest and stuns the crew (TW p.194).
+     *
+     * @return true if vehicle CASE handles internal explosions this way
+     */
+    public boolean vehicleCaseVentsExplosion() {
+        return true;
+    }
+
+    /**
+     * Caps an internal explosion in a vehicle location, after CASE II and vehicle CASE have taken their share. Only
+     * rules that cap explosion damage do anything here.
      *
      * @param vehicle       the vehicle taking damage
      * @param hit           the location hit

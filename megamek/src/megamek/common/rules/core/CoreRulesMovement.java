@@ -49,6 +49,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
+import megamek.common.units.QuadVee;
 
 public class CoreRulesMovement extends RulesMovement {
     /**
@@ -105,12 +106,15 @@ public class CoreRulesMovement extends RulesMovement {
     /**
      * {@inheritDoc}
      * A walking Mek can make a backward level change (Core p.46), unless hip damage or a destroyed leg prevents it
-     * (Core pp.47, 90, 238). "An Asset cannot change levels on a turn that it moves backward" (Core p.141). Other units
-     * are not in Core and keep the Tactical Operations option (TO:AR p.20).
+     * (Core pp.47, 90, 238). "An Asset cannot change levels on a turn that it moves backward" (Core p.141). Other units,
+     * a QuadVee in vehicle mode included (IO:AE p.127), are not in Core and keep the Tactical Operations option (TO:AR
+     * p.20).
      */
     @Override
     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
-        if (entity instanceof Mek mek) {
+        boolean vehicleMode = (entity instanceof QuadVee quadVee)
+              && (quadVee.getConversionMode() == QuadVee.CONV_MODE_VEHICLE);
+        if ((entity instanceof Mek mek) && !vehicleMode) {
             return !CoreRulesUnits.hasHipOrLegLevelRestriction(mek);
         }
         if (entity.isBattlefieldSupportAsset()) {
@@ -202,7 +206,8 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}
      * A faller that misses "lands in an adjacent hex as close as possible to the hex from which it fell"; the unit
      * fallen on is "displaced to a random neighboring legal hex". Ties are random, "but empty hexes must be prioritized
-     * over occupied hexes" (Core p.116).
+     * over occupied hexes" (Core p.116). Off the board, where the mission allows displacement there (Core p.114), is
+     * only its last resort.
      */
     @Nullable
     @Override
@@ -214,14 +219,17 @@ public class CoreRulesMovement extends RulesMovement {
         }
         Coords fellFrom = src.translated((direction + 3) % 6, range);
         List<Coords> legalHexes = new ArrayList<>();
+        List<Coords> offBoardHexes = new ArrayList<>();
         for (int checkDirection = 0; checkDirection < 6; checkDirection++) {
             Coords dest = src.translated(checkDirection, range);
-            // A faller that missed lands "in an adjacent hex", which an off-board hex is not
-            boolean landsOnBoard = !fallerMissed || game.getBoard(entity.getBoardId()).contains(dest);
-            if (Compute.isValidDisplacement(game, entityId, src, dest) && !(fallerMissed && dest.equals(fellFrom))
-                  && landsOnBoard) {
-                legalHexes.add(dest);
+            if (Compute.isValidDisplacement(game, entityId, src, dest) && !(fallerMissed && dest.equals(fellFrom))) {
+                // A faller that missed lands "in an adjacent hex", which an off-board hex is not
+                boolean offBoard = fallerMissed && !game.getBoard(entity.getBoardId()).contains(dest);
+                (offBoard ? offBoardHexes : legalHexes).add(dest);
             }
+        }
+        if (legalHexes.isEmpty()) {
+            legalHexes = offBoardHexes;
         }
         List<Coords> candidates = legalHexes;
         if (fallerMissed && !legalHexes.isEmpty()) {

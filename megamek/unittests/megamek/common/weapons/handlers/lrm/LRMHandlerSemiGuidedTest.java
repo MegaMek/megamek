@@ -169,7 +169,9 @@ public class LRMHandlerSemiGuidedTest {
         Game game = createMockGame(attacker);
         Entity target = createMockEntity();
         doReturn(200).when(target).getId();
-        doReturn(TAGGING_UNIT_ID).when(target).getTaggedBy();
+        Vector<TagInfo> tagInfo = new Vector<>();
+        tagInfo.add(new TagInfo(TAGGING_UNIT_ID, target.getTargetType(), target, false));
+        doReturn(tagInfo).when(game).getTagInfo();
 
         LRMHandler handler = createHandler(attacker, target, game);
 

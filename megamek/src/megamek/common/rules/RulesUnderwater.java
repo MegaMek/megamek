@@ -87,9 +87,10 @@ public abstract class RulesUnderwater {
     public abstract int getExtremeRange(WeaponType weaponType);
 
     /**
-     * @return true if an underwater attack can use line-of-sight range beyond its extreme range
+     * @param weaponType the weapon firing underwater
+     * @return true if the underwater attack can use line-of-sight range beyond its extreme range
      */
-    public boolean allowsLosRange() {
+    public boolean allowsLosRange(WeaponType weaponType) {
         return true;
     }
 }

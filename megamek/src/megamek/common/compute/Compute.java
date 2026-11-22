@@ -1284,19 +1284,53 @@ public class Compute {
      * @param game     the game
      *
      * @return true if a unit friendly to the attacker designated the target with TAG and hit ("friendly TAG", Core
-     *       p.193)
+     *       p.193; TW p.142)
      */
     public static boolean isTargetTaggedByFriend(Entity attacker, Targetable target, Game game) {
-        if (target instanceof Entity taggedEntity) {
-            return isFriendlyTagger(attacker, taggedEntity.getTaggedBy(), game);
+        return findFriendlyTagger(attacker, target, game) != null;
+    }
+
+    /**
+     * Every TAG attack of the phase is recorded, hit or miss, so a later hostile designation does not hide an earlier
+     * friendly one.
+     *
+     * @param attacker the unit attacking the target
+     * @param target   the target
+     * @param game     the game
+     *
+     * @return a unit friendly to the attacker that designated the target with TAG and hit, or null
+     */
+    public static @Nullable Entity findFriendlyTagger(Entity attacker, Targetable target, Game game) {
+        for (TagInfo tagInfo : game.getTagInfo()) {
+            if (!tagInfo.missed && isTagOn(tagInfo, target) && isFriendlyTagger(attacker, tagInfo.attackerId, game)) {
+                return game.getEntity(tagInfo.attackerId);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param tagger the unit that may have fired TAG
+     * @param target the target
+     * @param game   the game
+     *
+     * @return true if the unit designated the target with TAG and hit; after a miss, spotting proceeds "in the normal
+     *       fashion" (Core p.70)
+     */
+    public static boolean hasTagged(Entity tagger, @Nullable Targetable target, Game game) {
+        if (target == null) {
+            return false;
         }
         for (TagInfo tagInfo : game.getTagInfo()) {
-            if (!tagInfo.missed && (target.getId() == tagInfo.target.getId())
-                  && isFriendlyTagger(attacker, tagInfo.attackerId, game)) {
+            if (!tagInfo.missed && (tagInfo.attackerId == tagger.getId()) && isTagOn(tagInfo, target)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean isTagOn(TagInfo tagInfo, Targetable target) {
+        return (tagInfo.target.getTargetType() == target.getTargetType()) && (tagInfo.target.getId() == target.getId());
     }
 
     private static boolean isFriendlyTagger(Entity attacker, int taggerId, Game game) {
@@ -1506,7 +1540,7 @@ public class Compute {
 
         if (weaponUnderwater) {
             weaponRanges = weaponType.getWRanges();
-            useLOSRange &= Game.rulesManager.getRulesUnderwater().allowsLosRange();
+            useLOSRange &= Game.rulesManager.getRulesUnderwater().allowsLosRange(weaponType);
             boolean MPM = false;
             if ((weaponType.getAmmoType() == AmmoTypeEnum.SRM)
                   || (weaponType.getAmmoType() == AmmoTypeEnum.SRM_IMP)

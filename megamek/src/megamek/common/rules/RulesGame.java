@@ -33,6 +33,8 @@ package megamek.common.rules;
  */
 
 
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.Player;
@@ -42,7 +44,9 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
 
 public abstract class RulesGame {
 
@@ -83,15 +87,47 @@ public abstract class RulesGame {
      * @param entity     The entity being considered
      * @param bvReport   the report
      * @param adjustedBV the adjusted BV so far
-     * @param tagCount   how many tags in the force
-     * @param hasGuided  does it have guided? (default false)
+     * @param tagCount   how many working TAGs the unit has
+     * @param onlyRearTag true if the unit's only TAG is rear-mounted, which pays half (TechManual p.315)
      * @return adjusted BV value with bump if applicable
      */
     public abstract double tagBVBump(Entity entity,
                                      CalculationReport bvReport,
                                      double adjustedBV,
                                      long tagCount,
-                                     boolean hasGuided);
+                                     boolean onlyRearTag);
+
+    /**
+     * Adds the cost of a friendly unit's Homing bombs, chosen in the lobby or mounted and not yet dropped. They are
+     * "dropped as bombs, not fired as artillery" (TO:AUE p.171) and cost the bomb's BV per TAG whether mounted or not.
+     *
+     * @param otherEntity the friendly unit that may carry Homing bombs
+     * @param bvReport    the report
+     * @param adjustedBV  the adjusted BV so far
+     * @param tags        the TAGs paying, halved for a rear-only TAG
+     * @return the adjusted BV
+     */
+    protected static double addHomingBombBV(Entity otherEntity, CalculationReport bvReport, double adjustedBV,
+          double tags) {
+        int homingBombs = (otherEntity instanceof IBomber asBomber)
+              ? asBomber.getBombChoices().getCount(BombType.BombTypeEnum.HOMING) : 0;
+        for (Mounted<?> ammo : otherEntity.getAmmo()) {
+            if ((ammo.getType() instanceof BombType bomb) && (bomb.getBombType() == BombType.BombTypeEnum.HOMING)
+                  && (ammo.getUsableShotsLeft() > 0)) {
+                homingBombs++;
+            }
+        }
+        BombType bomb = BombType.createBombByType(BombType.BombTypeEnum.HOMING);
+        if ((homingBombs == 0) || (bomb == null)) {
+            return adjustedBV;
+        }
+        adjustedBV += bomb.getBV(otherEntity) * homingBombs * tags;
+        bvReport.addLine("- " + bomb.getName(),
+              "+ " + formatForReport(tags) + " x " + homingBombs + " x " + formatForReport(bomb.getBV(otherEntity))
+                    + " (" + otherEntity.getShortName() + ")",
+              "= " + formatForReport(adjustedBV));
+        return adjustedBV;
+    }
 
     /**
      * Allow minefields or not

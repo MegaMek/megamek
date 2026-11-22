@@ -50,6 +50,8 @@ import megamek.common.ECMComparator;
 import megamek.common.ECMInfo;
 import megamek.common.TemporaryECMField;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BFSSpecialType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Coords;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
@@ -662,6 +664,14 @@ public class ComputeECM {
                 if ((bestInfo == null) || (ecmComparator.compare(newInfo, bestInfo) > 0)) {
                     bestInfo = newInfo;
                 }
+            }
+        }
+        // An Asset's ECM Special emits "a 6-hex radius ECM bubble equivalent to that from a Guardian ECM system"
+        // (Core p.149)
+        if ((entity instanceof BattlefieldSupportAsset asset) && asset.hasSpecial(BFSSpecialType.ECM)) {
+            ECMInfo assetInfo = new ECMInfo(6, 1, entity);
+            if ((bestInfo == null) || (ecmComparator.compare(assetInfo, bestInfo) > 0)) {
+                bestInfo = assetInfo;
             }
         }
         return applyEmiRangeBonus(bestInfo, game);

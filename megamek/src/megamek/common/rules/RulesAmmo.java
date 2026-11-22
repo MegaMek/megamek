@@ -120,6 +120,16 @@ public abstract class RulesAmmo {
     public abstract boolean semiGuidedIgnoresCover();
 
     /**
+     * Does semi-guided indirect fire at a target designated by friendly TAG ignore the indirect fire modifier? Total
+     * Warfare ignores "indirect fire, terrain and spotter movement modifiers" (TW p.142).
+     *
+     * @return true if the indirect fire modifier is ignored
+     */
+    public boolean semiGuidedIndirectIgnoresIndirectFireModifier() {
+        return true;
+    }
+
+    /**
      * Does the semi-guided impact the number of missiles.
      *
      * @param taggedTarget whether the target is tagged

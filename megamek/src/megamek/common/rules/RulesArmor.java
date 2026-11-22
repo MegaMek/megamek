@@ -121,6 +121,16 @@ public abstract class RulesArmor {
     }
 
     /**
+     * Does damage that passes through a location destroyed before this attack keep its armor-piercing check? Under TW
+     * "Damage that transfers to a location with armor does not trigger a new critical damage check" (TW p.140).
+     *
+     * @return true if the check passes through such a location
+     */
+    public boolean armorPiercingCheckPassesDestroyedLocation() {
+        return false;
+    }
+
+    /**
      * While the location struck still has armor, ablation armor "applies an additional -2 roll modifier to the critical
      * hit check for all attacks made by weapons with armor-piercing abilities" and to the critical check for a hit
      * location roll of 2 (IO:AE p.80).

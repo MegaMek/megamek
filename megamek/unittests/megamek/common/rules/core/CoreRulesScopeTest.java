@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.EnumSet;
@@ -57,10 +58,13 @@ import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.rules.totalwarfare.TWRulesArmor;
 import megamek.common.rules.totalwarfare.TWRulesEquipment;
+import megamek.common.rules.totalwarfare.TWRulesExplosions;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 import megamek.common.units.SupportTank;
+import megamek.common.units.Tank;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -174,8 +178,7 @@ class CoreRulesScopeTest {
         CoreRulesGame core = new CoreRulesGame();
         assertEquals(1100, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 1, false));
         assertEquals(1200, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 2, false));
-        when(tag.isRearMounted()).thenReturn(true);
-        assertEquals(1050, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 1, false));
+        assertEquals(1050, core.tagBVBump(spotter, mock(CalculationReport.class), 1000, 1, true));
     }
 
     @Test
@@ -215,6 +218,38 @@ class CoreRulesScopeTest {
         // "Damage that transfers to a location with armor does not trigger a new critical damage check" (TW p.140;
         // Core p.191, errata v0.2)
         assertFalse(new BipedMek().getTransferLocation(hit).getSpecCrit());
+    }
+
+    @Test
+    void jumpingWithDamageInTwoLegsTakesTwoLandingRollsAndAQuadIgnoresItsFirstHip() {
+        // Core p.110: an upper leg actuator lost in one leg and a lower leg actuator in the other make two PSRs
+        BipedMek biped = new BipedMek();
+        biped.getCritical(Mek.LOC_LEFT_LEG, 1).setDestroyed(true);
+        assertEquals(1, CoreRulesUnits.legsForcingLandingChecks(biped));
+        biped.getCritical(Mek.LOC_RIGHT_LEG, 2).setDestroyed(true);
+        assertEquals(2, CoreRulesUnits.legsForcingLandingChecks(biped));
+        // Core p.238: a quad's first hip hit has no standard effects; the second counts as a biped's hip hit
+        QuadMek quad = new QuadMek();
+        quad.getCritical(Mek.LOC_LEFT_LEG, 0).setDestroyed(true);
+        assertEquals(0, CoreRulesUnits.legsForcingLandingChecks(quad));
+        quad.getCritical(Mek.LOC_RIGHT_LEG, 0).setDestroyed(true);
+        assertEquals(1, CoreRulesUnits.legsForcingLandingChecks(quad));
+    }
+
+    @Test
+    void coreVehicleCaseCapsAnExplosionAtTenToStructureAndTenToArmor() {
+        Tank tank = mock(Tank.class);
+        when(tank.locationHasCase(Tank.LOC_BODY)).thenReturn(true);
+        when(tank.getInternal(Tank.LOC_FRONT)).thenReturn(15);
+        when(tank.getArmor(Tank.LOC_FRONT)).thenReturn(20);
+        when(tank.getLocationAbbr(Tank.LOC_FRONT)).thenReturn("FR");
+        // Core p.96: an explosion in a CASE-protected location deals "maximum 10 to internal structure, maximum 10 to
+        // armor"; TW p.194 vehicle CASE vents to the rear armor instead
+        assertEquals(10, new CoreRulesExplosions().capVehicleExplosion(tank, new HitData(Tank.LOC_FRONT), 40, true,
+              new Vector<>()));
+        verify(tank).setArmor(10, Tank.LOC_FRONT);
+        assertFalse(new CoreRulesExplosions().vehicleCaseVentsExplosion());
+        assertTrue(new TWRulesExplosions().vehicleCaseVentsExplosion());
     }
 
     @Test

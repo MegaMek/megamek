@@ -9313,10 +9313,11 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Checks if the entity is landing (from a jump) with damage that would force a PSR. If so, returns the target roll
-     * for the piloting skill check.
+     * Checks if the entity is landing (from a jump) with damage that would force PSRs.
+     *
+     * @return one target roll per required piloting skill check, in the order they are rolled; empty if none
      */
-    public PilotingRollData checkLandingWithDamage(EntityMovementType overallMoveType) {
+    public List<PilotingRollData> checkLandingWithDamage(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
@@ -9329,20 +9330,18 @@ public abstract class Entity extends TurnOrdered
             gyroHits--;
         }
 
-        if (gyroHits > 0 || hasLegActuatorCrit() || Game.rulesManager.getRulesUnits().hasBadLegs(this)) {
-            // append the reason modifier
-            if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
-                roll.append(new PilotingRollData(getId(), gyroModifier, "landing with damaged leg or heavy-duty gyro"));
-            } else {
-                roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg or gyro"));
-            }
-            addPilotingModifierForTerrain(roll);
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Entity does not have gyro or leg damage -- checking for purposes of determining PSR " +
-                             "after jump.");
+        int checks = Game.rulesManager.getRulesPSR().landingWithDamageChecks(this, gyroHits);
+        if (checks == 0) {
+            return List.of();
         }
-        return roll;
+        // append the reason modifier
+        if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
+            roll.append(new PilotingRollData(getId(), gyroModifier, "landing with damaged leg or heavy-duty gyro"));
+        } else {
+            roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg or gyro"));
+        }
+        addPilotingModifierForTerrain(roll);
+        return Collections.nCopies(checks, roll);
     }
 
     /**
@@ -17351,7 +17350,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public Hex getOccupiedHex() {
-        return game.getBoard().getHex(getPosition());
+        return game.getBoard(getBoardId()).getHex(getPosition());
     }
 
     /**
@@ -17361,8 +17360,8 @@ public abstract class Entity extends TurnOrdered
         return !isOffBoard() &&
                (getPosition() != null) &&
                (game != null) &&
-               (game.getBoard() != null) &&
-               (game.getBoard().getHex(getPosition()) != null);
+               (game.getBoard(getBoardId()) != null) &&
+               (game.getBoard(getBoardId()).getHex(getPosition()) != null);
     }
 
     public int getTechLevelYear() {

@@ -21141,6 +21141,24 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * A critical hit to a ProtoMek torso weapon destroys it, except an autocannon's first (Core pp.92, 183).
+     */
+    private void hitProtoMekTorsoWeapon(ProtoMek pm, CriticalSlot cs, int reportId, Vector<Report> reports) {
+        Mounted<?> weapon = pm.getTorsoWeapon(cs.getIndex());
+        if (weapon == null) {
+            return;
+        }
+        weapon.setHit(true);
+        Game.rulesManager.getRulesWeapons().setACHit(cs, weapon, reports, pm.getId());
+        if (weapon.isHit()) {
+            Report r = new Report(reportId);
+            r.subject = pm.getId();
+            r.newlines = 0;
+            reports.addElement(r);
+        }
+    }
+
+    /**
      * Apply a single critical hit to a ProtoMek.
      *
      * @param pm               the <code>Protomek</code> that is being damaged. This value may not be
@@ -21331,64 +21349,22 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_A:
-                Mounted<?> weaponA = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponA != null) {
-                    weaponA.setHit(true);
-                    r = new Report(6245);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6245, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_B:
-                Mounted<?> weaponB = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponB != null) {
-                    weaponB.setHit(true);
-                    r = new Report(6246);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6246, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_C:
-                Mounted<?> weaponC = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponC != null) {
-                    weaponC.setHit(true);
-                    r = new Report(6247);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6247, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_D:
-                Mounted<?> weaponD = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponD != null) {
-                    weaponD.setHit(true);
-                    r = new Report(6248);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6248, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_E:
-                Mounted<?> weaponE = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponE != null) {
-                    weaponE.setHit(true);
-                    r = new Report(6249);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6249, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_F:
-                Mounted<?> weaponF = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponF != null) {
-                    weaponF.setHit(true);
-                    r = new Report(6250);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6250, reports);
                 break;
         }
 
@@ -29284,10 +29260,17 @@ public class TWGameManager extends AbstractGameManager {
             if (!weapons.isEmpty()) {
                 Mounted<?> weapon = weapons.elementAt(Compute.randomInt(weapons.size()));
                 weapon.setHit(true);
-                r = new Report(3840);
-                r.type = Report.PUBLIC;
-                r.indent(1);
-                r.add(weapon.getDesc());
+                // An autocannon can ignore its first critical hit, whatever unit mounts it (Core pp.92, 183)
+                Vector<Report> autocannonReports = new Vector<>();
+                Game.rulesManager.getRulesWeapons().setACHit(null, weapon, autocannonReports, weapon.getEntity().getId());
+                if (weapon.isHit()) {
+                    r = new Report(3840);
+                    r.type = Report.PUBLIC;
+                    r.indent(1);
+                    r.add(weapon.getDesc());
+                } else {
+                    r = autocannonReports.firstElement();
+                }
             } else {
                 r = new Report(3841);
                 r.type = Report.PUBLIC;

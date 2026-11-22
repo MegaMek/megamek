@@ -583,9 +583,13 @@ public class BattlefieldSupportAsset extends Entity {
         return cost;
     }
 
-    /** @return the BSP cost for the current crew level: the Veteran BSP when Veteran is selected, else the Regular BSP. */
+    /**
+     * @return the BSP cost for the current crew level: the Veteran BSP when Veteran is selected, else the Regular BSP,
+     *       plus the TAG surcharge
+     */
     public int getEffectiveBsp() {
-        return isVeteranCrew() ? veteranCost : cost;
+        boolean veteran = isVeteranCrew();
+        return (veteran ? veteranCost : cost) + tagSurchargeBsp(veteran);
     }
 
     /** @return the Veteran cost in Battlefield Support Points, or {@code null} if there is no Veteran variant */
@@ -663,16 +667,25 @@ public class BattlefieldSupportAsset extends Entity {
     /**
      * @param veteran true for the improved (Veteran) Skill
      *
-     * @return the TAG surcharge: an Asset with the TAG Special adds 3, 5 or 7 BSP (Skill 6, 5 or 4) per launcher with
-     *       Homing ammo in its force (Core errata v0.2 p.1), at 20 BV per BSP
+     * @return the TAG surcharge in BSP: an Asset with the TAG Special adds 3, 5 or 7 BSP (Skill 6, 5 or 4) per launcher
+     *       with Homing ammo in its force (Core errata v0.2 p.1)
      */
-    public int tagSurchargeBv(boolean veteran) {
+    public int tagSurchargeBsp(boolean veteran) {
         if (!hasSpecial(BFSSpecialType.TAG)) {
             return 0;
         }
         int assetSkill = (veteran && (veteranSkill != null)) ? veteranSkill : skill;
         int bspPerLauncher = Math.max(0, 15 - (2 * assetSkill));
-        return CoreRulesGame.homingLauncherCount(this) * bspPerLauncher * BV_PER_BSP;
+        return CoreRulesGame.homingLauncherCount(this) * bspPerLauncher;
+    }
+
+    /**
+     * @param veteran true for the improved (Veteran) Skill
+     *
+     * @return the TAG surcharge in BV, at 20 BV per BSP
+     */
+    public int tagSurchargeBv(boolean veteran) {
+        return tagSurchargeBsp(veteran) * BV_PER_BSP;
     }
 
     public List<BFSSpecial> getSpecials() {

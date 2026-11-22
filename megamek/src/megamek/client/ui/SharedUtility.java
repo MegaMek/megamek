@@ -617,8 +617,9 @@ public class SharedUtility {
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             // check for damaged critical slots
-            rollTarget = entity.checkLandingWithDamage(overallMoveType);
-            checkNag(rollTarget, nagReport, psrList);
+            for (PilotingRollData landingRoll : entity.checkLandingWithDamage(overallMoveType)) {
+                checkNag(landingRoll, nagReport, psrList);
+            }
             // check for landing with prototype JJs
             rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
             checkNag(rollTarget, nagReport, psrList);

@@ -157,6 +157,16 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
+     * The errata limits the exception to "If an attack destroys a location, remaining damage from that attack that
+     * transfers" (Core p.191, errata v0.2), so a location destroyed before passes the check on.
+     */
+    @Override
+    public boolean armorPiercingCheckPassesDestroyedLocation() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
      * Impact-resistant armor halves damage from building collapses, collisions and falls (rounding remaining damage
      * down) and reduces physical attack damage as {@link RulesArmor#reduceImpactDamage} does (Core p.202).
      */

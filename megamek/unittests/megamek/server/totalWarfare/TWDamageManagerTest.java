@@ -415,7 +415,9 @@ class TWDamageManagerTest {
 
         assertFalse(mek.hasReinforcedStructure(Mek.LOC_CENTER_TORSO));
         assertTrue(mek.hasReinforcedStructure(Mek.LOC_RIGHT_ARM));
-        assertEquals(8, mek.getInternal(Mek.LOC_RIGHT_ARM));
+        // Two points destroy a reinforced pip and the third is recorded on the next (Core p.205; TO:AUE p.155)
+        assertEquals(9, mek.getInternal(Mek.LOC_RIGHT_ARM));
+        assertEquals(17, mek.getReinforcedStructureCapacity(Mek.LOC_RIGHT_ARM));
     }
 
     @Test
@@ -435,7 +437,9 @@ class TWDamageManagerTest {
 
         assertTrue(mek.hasCompositeStructure(Mek.LOC_LEFT_ARM));
         assertTrue(mek.hasReinforcedStructure(Mek.LOC_LEFT_TORSO));
-        assertEquals(7, mek.getInternal(Mek.LOC_LEFT_TORSO));
+        // The 5 transferred points destroy two reinforced pips and are recorded on a third (Core p.205)
+        assertEquals(8, mek.getInternal(Mek.LOC_LEFT_TORSO));
+        assertEquals(15, mek.getReinforcedStructureCapacity(Mek.LOC_LEFT_TORSO));
     }
 
     /**

@@ -45,6 +45,7 @@ import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 
 public class CoreRulesExplosions extends RulesExplosions {
     /**
@@ -79,14 +80,15 @@ public class CoreRulesExplosions extends RulesExplosions {
             // Without CASE the armor is vented where the last point lands, see ventCappedExplosion. Whether the
             // location survives is judged after composite or reinforced structure modifies the capped damage, as
             // modifiers apply "after any damage cap is applied" (Core p.96; Core p.205).
-            int structureDamage = mek.hasCompositeStructure(loc) ? cap * 2
-                  : mek.hasReinforcedStructure(loc) ? (cap + 1) / 2 : cap;
-            if ((caseIId || cased) && (mek.getInternal(loc) > structureDamage)) {
+            boolean survives = mek.hasCompositeStructure(loc) ? (mek.getInternal(loc) > cap * 2)
+                  : mek.hasReinforcedStructure(loc) ? (mek.getReinforcedStructureCapacity(loc) > cap)
+                  : (mek.getInternal(loc) > cap);
+            if ((caseIId || cased) && survives) {
                 int armorDamage = Math.min(damage - cap, 10);
                 if (mek.getArmor(loc, torso) > armorDamage) {
                     mek.setArmor(mek.getArmor(loc, torso) - armorDamage, loc, torso);
                 } else {
-                    armorDamage = mek.getArmor(loc, torso);
+                    armorDamage = Math.max(0, mek.getArmor(loc, torso));
                     mek.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
                 }
 
@@ -133,17 +135,42 @@ public class CoreRulesExplosions extends RulesExplosions {
 
     /**
      * {@inheritDoc}
-     * Internal explosion damage "is capped at 20" (Core p.96), for every unit under Core; CASE and CASE II in vehicles
-     * keep their own handling.
+     * Core vehicle CASE caps an internal explosion like any CASE instead (Core p.96).
+     */
+    @Override
+    public boolean vehicleCaseVentsExplosion() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Internal explosion damage "is capped at 20" (Core p.96), for every unit under Core. With CASE, the structure takes
+     * at most 10 and a location that survives takes up to 10 more to its armor (Core p.96); CASE II keeps its own
+     * handling.
      */
     @Override
     public int capVehicleExplosion(Entity vehicle, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec) {
-        if (!ammoExplosion || (damage <= 20)) {
+        boolean cased = vehicle.locationHasCase(Tank.LOC_BODY);
+        int cap = cased ? 10 : 20;
+        if (!ammoExplosion || (damage <= cap)) {
             return damage;
         }
-        reportCap(vehicle, damage, 6132, reportVec);
-        return 20;
+        reportCap(vehicle, damage, cased ? 6133 : 6132, reportVec);
+        int loc = hit.getLocation();
+        if (cased && (vehicle.getInternal(loc) > cap)) {
+            int armorDamage = Math.min(Math.min(damage - cap, 10), Math.max(0, vehicle.getArmor(loc)));
+            vehicle.setArmor((vehicle.getArmor(loc) > armorDamage) ? vehicle.getArmor(loc) - armorDamage
+                  : IArmorState.ARMOR_DESTROYED, loc);
+            vehicle.damageThisPhase += armorDamage;
+            Report report = new Report(6131);
+            report.subject = vehicle.getId();
+            report.indent(3);
+            report.add(vehicle.getLocationAbbr(loc));
+            report.add(armorDamage);
+            reportVec.addElement(report);
+        }
+        return cap;
     }
 
     private static void reportCap(Entity entity, int damage, int messageId, Vector<Report> reportVec) {

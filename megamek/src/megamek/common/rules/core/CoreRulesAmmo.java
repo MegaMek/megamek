@@ -122,6 +122,15 @@ public class CoreRulesAmmo extends RulesAmmo {
     }
 
     /**
+     * {@inheritDoc} Core waives only "Spotter Attacking, Spotter LOS, and Spotter Movement" for semi-guided indirect
+     * fire (Core p.193); the indirect fire +1 stays (Core p.70).
+     */
+    @Override
+    public boolean semiGuidedIndirectIgnoresIndirectFireModifier() {
+        return false;
+    }
+
+    /**
      * {@inheritDoc} Semi-guided changes number of missiles depending on tag and direct/indirect. Core p.193
      */
     @Override

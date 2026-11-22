@@ -170,10 +170,11 @@ public abstract class RulesScanning {
      * @param scanner the scanning unit
      * @param target  the target, or {@code null}
      *
-     * @return {@code true} when the target is in the scanner's own hex
+     * @return {@code true} when the target is the hex the scanner occupies or a building there, not a unit
      */
-    protected static boolean isInOwnHex(Entity scanner, @Nullable Targetable target) {
+    protected static boolean isOwnHexOrBuilding(Entity scanner, @Nullable Targetable target) {
         boolean bothPlaced = (target != null) && (target.getPosition() != null) && (scanner.getPosition() != null);
-        return bothPlaced && scanner.getPosition().equals(target.getPosition());
+        return bothPlaced && (target.getTargetType() != Targetable.TYPE_ENTITY)
+              && scanner.getPosition().equals(target.getPosition());
     }
 }

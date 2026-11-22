@@ -32,6 +32,7 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.RulesUnits;
@@ -158,16 +159,59 @@ public class CoreRulesUnits extends RulesUnits {
      *       treats two destroyed legs as a hip hit (Core p.238). Hips in destroyed legs do not count.
      */
     static int bipedEquivalentHipHits(Mek mek) {
+        int hipHits = hipHits(mek);
+        if (mek instanceof QuadMek) {
+            return Math.max(0, hipHits - 1) + ((mek.countBadLegs() == 2) ? 1 : 0);
+        }
+        return hipHits;
+    }
+
+    /**
+     * @param mek the Mek
+     *
+     * @return the hip hits in legs that are not destroyed
+     */
+    static int hipHits(Mek mek) {
         int hipHits = 0;
         for (int loc = 0; loc < mek.locations(); loc++) {
             if (mek.legHasHipCrit(loc)) {
                 hipHits++;
             }
         }
-        if (mek instanceof QuadMek) {
-            return Math.max(0, hipHits - 1) + ((mek.countBadLegs() == 2) ? 1 : 0);
-        }
         return hipHits;
+    }
+
+    /**
+     * @param mek the Mek
+     *
+     * @return the legs forcing a PSR when the Mek jumps, one per leg that is destroyed or has an actuator hit (Core
+     *       pp.90, 99, 110). A quad ignores its first hip hit, in location order as hit order is not recorded, and
+     *       counts destroyed legs in biped terms (Core p.238).
+     */
+    static int legsForcingLandingChecks(Mek mek) {
+        boolean quad = mek instanceof QuadMek;
+        boolean hipIgnored = !quad;
+        int legs = quad ? ((hasBipedEquivalentDestroyedLeg(mek) ? 1 : 0) + ((mek.countBadLegs() == 2) ? 1 : 0)) : 0;
+        for (int loc = 0; loc < mek.locations(); loc++) {
+            if (!mek.locationIsLeg(loc)) {
+                continue;
+            }
+            if (mek.isLocationBad(loc)) {
+                legs += quad ? 0 : 1;
+                continue;
+            }
+            boolean hip = mek.legHasHipCrit(loc);
+            if (hip && !hipIgnored) {
+                hipIgnored = true;
+                hip = false;
+            }
+            if (hip || (mek.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0)
+                  || (mek.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0)
+                  || (mek.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0)) {
+                legs++;
+            }
+        }
+        return legs;
     }
 
     /**

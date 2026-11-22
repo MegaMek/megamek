@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -1417,41 +1416,30 @@ public abstract class BVCalculator {
         if (entity.getGame() == null) {
             return;
         }
-        long tagCount = workingTAGCount(entity);
-        // CORE if we need to adapt this for only SG, replace (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
-        // (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) && Game.rulesManager.getRulesGame().tagBVBump())
-        if ((tagCount == 0)) {
+        // One list of working TAGs decides both the count and the facing; a TAG pod still to be mounted is not
+        // rear-mounted
+        List<WeaponMounted> workingTags = entity.getWeaponList().stream()
+              .filter(m -> !m.isInoperable() && !m.isBreached() && m.getType().hasFlag(WeaponType.F_TAG))
+              .toList();
+        int pendingTagPods = ((entity instanceof IBomber asBomber) && entity.getBombs().isEmpty())
+              ? asBomber.getBombChoices().getCount(BombTypeEnum.TAG) : 0;
+        long tagCount = workingTags.size() + pendingTagPods;
+        if (tagCount == 0) {
             return;
         }
+        // Units "whose only such piece of equipment is rear-mounted add half" (TechManual p.315; Core errata v0.2 p.1)
+        boolean onlyRearTag = (pendingTagPods == 0) && workingTags.stream().allMatch(rearWeaponFilter());
 
         bvReport.startTentativeSection();
         bvReport.addLine("TAG Bonus (" + tagCount + " Tag" + (tagCount == 1 ? "" : "s") + "):", "", "");
         // In the lobby, bombs are represented as a bombChoices array, only later is it
         // real Mounted.
-        boolean hasGuided = false;
         double modifiedBV = Game.rulesManager.getRulesGame().tagBVBump(entity, bvReport, adjustedBV, tagCount,
-              hasGuided);
-        if (modifiedBV != adjustedBV) {
-            hasGuided = true;
-            adjustedBV = modifiedBV;
-        }
+              onlyRearTag);
+        boolean hasGuided = modifiedBV != adjustedBV;
+        adjustedBV = modifiedBV;
 
         bvReport.finalizeTentativeSection(hasGuided);
-    }
-
-    protected long workingTAGCount(Entity entity) {
-        long tagCount = entity.getWeaponList()
-              .stream()
-              .filter(m -> !m.isMissing() && !m.isDestroyed())
-              .map(Mounted::getType)
-              .filter(Objects::nonNull)
-              .filter(t -> t.hasFlag(WeaponType.F_TAG))
-              .count();
-        // A carried TAG pod is a TAG, a Homing missile is not. Once the bombs are mounted, the pod is in the weapon list.
-        if ((entity instanceof IBomber asBomber) && entity.getBombs().isEmpty()) {
-            tagCount += asBomber.getBombChoices().getCount(BombTypeEnum.TAG);
-        }
-        return tagCount;
     }
 
     protected void processExternalStores() {

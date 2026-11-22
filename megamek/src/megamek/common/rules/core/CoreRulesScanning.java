@@ -147,8 +147,8 @@ public class CoreRulesScanning extends RulesScanning {
         TargetRoll roll;
         if (scanner.isInfantry() || scanner.isBattlefieldSupportAsset()) {
             // Ground Assets, and non-Asset infantry, scan at TN 8 regardless of skill, modified only by a probe or the
-            // PRB Special; infantry scan the hex they occupy automatically (Core pp.150, 233)
-            if (isInfantryScanner(scanner) && isInOwnHex(scanner, target)) {
+            // PRB Special; infantry automatically scan "any building and/or hex they occupy" (Core pp.150, 233)
+            if (isInfantryScanner(scanner) && isOwnHexOrBuilding(scanner, target)) {
                 return new TargetRoll(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("RulesScanning.infantryOwnHex"));
             }
             roll = new TargetRoll(GROUND_ASSET_SCAN_TARGET, Messages.getString("RulesScanning.infantryScan"));
@@ -207,6 +207,10 @@ public class CoreRulesScanning extends RulesScanning {
         }
         if (scanner.getCrew() == null) {
             return Messages.getString("RulesScanning.noCrew");
+        }
+        // "A scan is a sensor check" (Core p.233), and shutdown Meks "cannot make sensor checks" (Core p.105)
+        if (scanner.isShutDown()) {
+            return Messages.getString("RulesScanning.shutdown");
         }
         if (sensorCriticalHits(scanner) >= BLOCKING_SENSOR_HITS) {
             return Messages.getString("RulesScanning.sensorsOut");

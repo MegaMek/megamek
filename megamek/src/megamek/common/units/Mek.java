@@ -273,6 +273,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     private final boolean[] rearHardenedArmorDamaged;
 
+    private final boolean[] reinforcedStructureDamaged;
+
     // for Harjel II/III
     private final boolean[] armorDamagedThisTurn;
 
@@ -395,6 +397,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         rearArmor = new int[locations()];
         orig_rearArmor = new int[locations()];
         rearHardenedArmorDamaged = new boolean[locations()];
+        reinforcedStructureDamaged = new boolean[locations()];
         armorDamagedThisTurn = new boolean[locations()];
 
         for (int i = 0; i < locations(); i++) {
@@ -1509,6 +1512,23 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      */
     public boolean hasReinforcedStructure(int location) {
         return hasStructureType(location, EquipmentType.T_STRUCTURE_REINFORCED);
+    }
+
+    /**
+     * A pip of reinforced structure is destroyed by its second full point of damage; a single point is recorded on it
+     * (Core p.205; TO:AUE p.155).
+     *
+     * @return the damage points the reinforced structure in the location still takes before it is destroyed
+     */
+    public int getReinforcedStructureCapacity(int location) {
+        return (2 * getInternal(location)) - (reinforcedStructureDamaged[location] ? 1 : 0);
+    }
+
+    /**
+     * Records whether a pip of the reinforced structure in the location carries a single point of damage.
+     */
+    public void setReinforcedStructureDamaged(int location, boolean damaged) {
+        reinforcedStructureDamaged[location] = damaged;
     }
 
     private boolean hasStructureType(int location, int structureType) {

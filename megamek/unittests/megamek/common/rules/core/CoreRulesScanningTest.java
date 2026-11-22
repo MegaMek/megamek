@@ -224,9 +224,16 @@ class CoreRulesScanningTest {
 
         Targetable ownHex = mock(Targetable.class);
         when(ownHex.getPosition()).thenReturn(new Coords(3, 3));
+        when(ownHex.getTargetType()).thenReturn(Targetable.TYPE_HEX_CLEAR);
         TargetRoll ownHexRoll = rules.scanTargetRoll(platoon, ownHex);
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, ownHexRoll.getValue());
         assertFalse(ownHexRoll.needsRoll());
+
+        Targetable unitInOwnHex = mock(Targetable.class);
+        when(unitInOwnHex.getPosition()).thenReturn(new Coords(3, 3));
+        when(unitInOwnHex.getTargetType()).thenReturn(Targetable.TYPE_ENTITY);
+        assertEquals(8, rules.scanTargetRoll(platoon, unitInOwnHex).getValue(),
+              "Core p.233: only 'any building and/or hex they occupy' is automatic, not a unit there");
 
         assertEquals(8, rules.scanTargetRoll(platoon, hexTarget).getValue(),
               "Core p.233: infantry scan a target outside their hex at the ground Asset TN of 8, whatever their skill");

@@ -44,13 +44,11 @@ import megamek.common.battlefieldSupport.BFSSpecialType;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
-import megamek.common.units.IBomber;
 import megamek.logging.MMLogger;
 
 public class CoreRulesGame extends RulesGame {
@@ -99,22 +97,22 @@ public class CoreRulesGame extends RulesGame {
 
     /**
      * {@inheritDoc}
-     * 50 BV for every Arrow IV or artillery launcher in the force on a unit with Homing ammo, Asset Arrow IV
-     * launchers included, once per TAG on the unit; half that when the unit's only TAG is rear-mounted (Core errata
-     * v0.2 p.1, applied to all Homing per the rules team). No other Core munition, semi-guided LRMs included, adds a
-     * surcharge. Homing bombs keep their Tactical Operations cost.
+     * 50 BV for every Arrow IV or artillery launcher on a friendly unit with Homing ammo, Asset Arrow IV launchers
+     * included, once per TAG on the unit; half that when the unit's only TAG is rear-mounted (Core errata v0.2 p.1,
+     * applied to all Homing per the rules team). No other Core munition, semi-guided LRMs included, adds a surcharge.
+     * Homing bombs keep their Tactical Operations cost.
      */
     @Override
     public double tagBVBump(Entity entity,
           CalculationReport bvReport,
           double adjustedBV,
           long tagCount,
-          boolean hasGuided) {
-        double perLauncher = HOMING_TAG_BV * (hasOnlyRearTag(entity) ? 0.5 : 1);
+          boolean onlyRearTag) {
+        double tags = tagCount * (onlyRearTag ? 0.5 : 1);
         for (String launcher : homingLaunchers(entity)) {
-            adjustedBV += perLauncher * tagCount;
+            adjustedBV += HOMING_TAG_BV * tags;
             bvReport.addLine("- " + launcher,
-                  "+ " + tagCount + " x " + formatForReport(perLauncher),
+                  "+ " + formatForReport(tags) + " x " + HOMING_TAG_BV,
                   "= " + formatForReport(adjustedBV));
         }
 
@@ -122,25 +120,7 @@ public class CoreRulesGame extends RulesGame {
             if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
-            if (otherEntity instanceof IBomber asBomber) {
-                BombType bomb = BombType.createBombByType(BombType.BombTypeEnum.HOMING);
-                if (bomb != null) {
-                    int homingCount = asBomber.getBombChoices().getCount(BombType.BombTypeEnum.HOMING);
-                    if (homingCount > 0) {
-                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
-                        bvReport.addLine("- " + bomb.getName(),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(bomb.getBV(otherEntity)) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
-                        hasGuided = true;
-                    }
-                }
-            }
+            adjustedBV = addHomingBombBV(otherEntity, bvReport, adjustedBV, tags);
         }
         return adjustedBV;
     }
@@ -182,6 +162,10 @@ public class CoreRulesGame extends RulesGame {
                 continue;
             }
             for (WeaponMounted weapon : otherEntity.getWeaponList()) {
+                // A mounted Homing bomb is "dropped as a bomb, not fired as artillery" (TO:AUE p.171), priced above
+                if (weapon.isBombMounted()) {
+                    continue;
+                }
                 // A bay counts each launcher in it
                 List<WeaponMounted> mounts = weapon.getBayWeapons().isEmpty() ? List.of(weapon)
                       : weapon.getBayWeapons();
@@ -198,16 +182,8 @@ public class CoreRulesGame extends RulesGame {
 
     private static boolean hasUsableHomingAmmo(Entity unit) {
         return unit.getAmmo().stream()
-              .anyMatch(ammo -> (ammo.getUsableShotsLeft() > 0)
+              .anyMatch(ammo -> (ammo.getUsableShotsLeft() > 0) && !(ammo.getType() instanceof BombType)
                     && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING));
-    }
-
-    private static boolean hasOnlyRearTag(Entity entity) {
-        List<WeaponMounted> tags = entity.getWeaponList().stream()
-              .filter(weapon -> weapon.getType().hasFlag(WeaponTypeFlag.F_TAG) && !weapon.isMissing()
-                    && !weapon.isDestroyed())
-              .toList();
-        return !tags.isEmpty() && tags.stream().allMatch(Mounted::isRearMounted);
     }
 
     /**

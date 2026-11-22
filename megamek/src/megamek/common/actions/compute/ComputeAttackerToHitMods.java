@@ -213,7 +213,7 @@ public class ComputeAttackerToHitMods {
         // if we're spotting for indirect fire, add +1
         if (attacker.isSpotting() &&
               !attacker.getCrew().hasActiveCommandConsole() &&
-              game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == attacker.getId())) {
+              !Compute.hasTagged(attacker, game.getEntity(attacker.getSpotTargetId()), game)) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
         }
 

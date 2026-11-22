@@ -273,7 +273,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     private final boolean[] rearHardenedArmorDamaged;
 
-    private final boolean[] reinforcedStructureDamaged;
+    // Each set bit is a location with one point marked on a reinforced structure pip. Omit the field when empty.
+    private @Nullable Integer reinforcedStructureDamaged;
 
     // for Harjel II/III
     private final boolean[] armorDamagedThisTurn;
@@ -397,7 +398,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         rearArmor = new int[locations()];
         orig_rearArmor = new int[locations()];
         rearHardenedArmorDamaged = new boolean[locations()];
-        reinforcedStructureDamaged = new boolean[locations()];
         armorDamagedThisTurn = new boolean[locations()];
 
         for (int i = 0; i < locations(); i++) {
@@ -1521,14 +1521,18 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      * @return the damage points the reinforced structure in the location still takes before it is destroyed
      */
     public int getReinforcedStructureCapacity(int location) {
-        return (2 * getInternal(location)) - (reinforcedStructureDamaged[location] ? 1 : 0);
+        boolean halfDamaged = reinforcedStructureDamaged != null && (reinforcedStructureDamaged & (1 << location)) != 0;
+        return (2 * getInternal(location)) - (halfDamaged ? 1 : 0);
     }
 
     /**
      * Records whether a pip of the reinforced structure in the location carries a single point of damage.
      */
     public void setReinforcedStructureDamaged(int location, boolean damaged) {
-        reinforcedStructureDamaged[location] = damaged;
+        int mask = reinforcedStructureDamaged == null ? 0 : reinforcedStructureDamaged;
+        int locationBit = 1 << location;
+        mask = damaged ? mask | locationBit : mask & ~locationBit;
+        reinforcedStructureDamaged = mask == 0 ? null : mask;
     }
 
     private boolean hasStructureType(int location, int structureType) {
@@ -6301,6 +6305,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (getInternal(loc) < 0) {
             return;
         }
+        setReinforcedStructureDamaged(loc, false);
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {

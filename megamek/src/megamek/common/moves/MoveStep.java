@@ -3614,22 +3614,20 @@ public class MoveStep implements Serializable {
             // elevation cost by 1 MP. Combined, a 1-level change can cost 0 MP elevation.
             boolean isMountainTroop = entity instanceof ConvInfantry convInfantry
                                       && convInfantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS);
+            EntityMovementMode elevationMoveMode = prevStep.getMovementMode();
             if (isMountainTroop) {
                 deltaElevation = (int) Math.ceil(deltaElevation / 2.0);
             } else if ((isInfantry &&
                         !((getMovementType(false) == EntityMovementType.MOVE_VTOL_WALK) ||
                           (getMovementType(false) == EntityMovementType.MOVE_VTOL_RUN))) ||
-                       ((moveMode == EntityMovementMode.TRACKED) ||
-                        (moveMode == EntityMovementMode.WHEELED) ||
-                        (moveMode == EntityMovementMode.HOVER)) ||
+                       elevationMoveMode.isTrackedWheeledOrHover() ||
                        // Assets pay 2 MP per level, infantry Assets too (Core p.141)
-                       (entity.isBattlefieldSupportAsset() && (moveMode != EntityMovementMode.VTOL))) {
+                       (entity.isBattlefieldSupportAsset() && !elevationMoveMode.isVTOL())) {
                 // non-flying Infantry, ground vehicles and Assets are charged double.
                 deltaElevation *= 2;
             }
             int elevationCostReduction = Game.rulesManager.getRulesTerrain()
-                                                          .getRoadElevationCostDifference(entity, isPavementStep,
-                                                                                                   deltaElevation);
+                  .getRoadElevationCostDifference(entity, elevationMoveMode, isPavementStep, deltaElevation);
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 mp += Math.max(0, deltaElevation - 1 - elevationCostReduction);
             } else {

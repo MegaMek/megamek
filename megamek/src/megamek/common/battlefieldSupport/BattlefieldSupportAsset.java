@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.ECMInfo;
 import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
 import megamek.common.Report;
@@ -716,6 +717,23 @@ public class BattlefieldSupportAsset extends Entity {
      */
     public boolean hasSpecial(BFSSpecialType type) {
         return findSpecial(type).isPresent();
+    }
+
+    @Override
+    public int getECMRange() {
+        ECMInfo field = getGroundECMSpecialField();
+        return field == null ? super.getECMRange() : field.getRange();
+    }
+
+    @Override
+    public boolean hasActiveECM(boolean stealth) {
+        return getGroundECMSpecialField() != null || super.hasActiveECM(stealth);
+    }
+
+    private @Nullable ECMInfo getGroundECMSpecialField() {
+        // Ground Assets use the same field for jamming, the map and double-blind updates.
+        // Space ECM resolves separately and already queries getECMRange().
+        return hasSpecial(BFSSpecialType.ECM) && !isSpaceborne() ? getECMInfo() : null;
     }
 
     /**

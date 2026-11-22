@@ -242,6 +242,30 @@ class ReconCameraRulesTest {
     }
 
     @Test
+    void onlyTheAttackingSpotterWhoDesignatedTheTargetAvoidsTheSpottingPenalty() throws LocationFullException {
+        BipedMek target = enemyAt(6);
+        BipedMek other = placeMek("Second spotter", cameraOwner, new Coords(6, 5));
+        BipedMek attacker = placeMek("LRM carrier", cameraOwner, new Coords(6, 2));
+        game.setPhase(GamePhase.FIRING);
+        for (BipedMek spotter : List.of(camera, other)) {
+            spotter.setSpotting(true);
+            spotter.setSpotTargetId(target.getId());
+            Mounted<?> laser = spotter.addEquipment(EquipmentType.get("ISMediumLaser"), Mek.LOC_RIGHT_ARM);
+            game.addAction(new WeaponAttackAction(spotter.getId(), target.getId(), spotter.getEquipmentNum(laser)));
+        }
+        // Both declared attacks and have identical movement and clear LOS. Give TAG to whichever lost the tie.
+        Entity first = Compute.findSpotter(game, attacker, target);
+        assertTrue((first == camera) || (first == other));
+        Entity tagger = (first == camera) ? other : camera;
+        game.addTagInfo(new TagInfo(tagger.getId(), Targetable.TYPE_ENTITY, target, true));
+        assertSame(first, Compute.findSpotter(game, attacker, target), "a missed designation leaves the tie in place");
+
+        game.addTagInfo(new TagInfo(tagger.getId(), Targetable.TYPE_ENTITY, target, false));
+        target.setTaggedBy(tagger.getId());
+        assertSame(tagger, Compute.findSpotter(game, attacker, target), "only the successful tagger avoids +1");
+    }
+
+    @Test
     void testACameraHitMakesTheUnitTheSpotter() {
         BipedMek target = enemyAt(7);
         BipedMek lrmCarrier = placeMek("LRM carrier", cameraOwner, new Coords(2, 2));

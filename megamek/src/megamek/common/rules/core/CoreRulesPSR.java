@@ -95,10 +95,22 @@ public class CoreRulesPSR extends RulesPSR {
      */
     @Override
     public void hitActuator(final Game game, Entity entity, int loc, int hitPart) {
-        if ((hitPart == Mek.ACTUATOR_HIP) && (entity instanceof QuadMek quad) && (CoreRulesUnits.hipHits(quad) <= 1)) {
+        if ((hitPart == Mek.ACTUATOR_HIP) && (entity instanceof QuadMek quad) && !hasOtherHitHip(quad, loc)) {
             return;
         }
         super.hitActuator(game, entity, loc, hitPart);
+    }
+
+    private boolean hasOtherHitHip(QuadMek quad, int hitLocation) {
+        for (int loc = 0; loc < quad.locations(); loc++) {
+            // Include hits from this phase, before their critical slots are marked destroyed.
+            if ((loc != hitLocation) && quad.locationIsLeg(loc)
+                  && !quad.isLocationBad(loc) && !quad.isLocationDoomed(loc)
+                  && (quad.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

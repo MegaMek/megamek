@@ -251,7 +251,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // if we're spotting for indirect fire, add +1
         if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()
-              && !Compute.hasTagged(ae, game.getEntity(ae.getSpotTargetId()), game)) {
+              && !Compute.hasTagged(ae, ae.getSpotTarget(game), game)) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 

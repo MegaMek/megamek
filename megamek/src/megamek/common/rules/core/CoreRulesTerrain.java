@@ -36,20 +36,25 @@ import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.rules.RulesTerrain;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Mek;
 
 public class CoreRulesTerrain extends RulesTerrain {
 
     /**
      * {@inheritDoc}
-     * A level change between two road hexes, moving on pavement, costs 1 MP less (Core p.53). Assets get no discount: their road level
-     * change "still costs 2 MP per level change" (Core p.142).
+     * A Mek moving on its legs pays 1 MP less for a level change between road hexes (Core p.53).
      */
     @Override
-    public int getRoadElevationCostDifference(Entity entity, boolean pavementStep, int deltaElevation) {
-        if (!entity.isBattlefieldSupportAsset() && pavementStep && (deltaElevation > 0)) {
-            return 1;
+    public int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
+          boolean pavementStep, int deltaElevation) {
+        if (!(entity instanceof Mek) || !pavementStep || (deltaElevation <= 0)) {
+            return 0;
         }
-        return 0;
+        return switch (movementMode) {
+            case BIPED, QUAD, TRIPOD -> 1;
+            default -> 0;
+        };
     }
 
     /**

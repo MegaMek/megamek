@@ -34,6 +34,7 @@ package megamek.common.rules.totalwarfare;
 
 import megamek.common.rules.RulesTerrain;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 
 public class TWRulesTerrain extends RulesTerrain {
 
@@ -41,13 +42,15 @@ public class TWRulesTerrain extends RulesTerrain {
      * Do we change the road elevation cost? No
      *
      * @param entity the moving unit
+     * @param movementMode the mode used for this step
      * @param pavementStep true if the unit moves from one hex to the next on pavement, which roads and paved bridges
      *       count as (Core p.53)
      * @param deltaElevation the change in elevation
      * @return the road elevation cost difference
      */
     @Override
-    public int getRoadElevationCostDifference(Entity entity, boolean pavementStep, int deltaElevation) {
+    public int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
+          boolean pavementStep, int deltaElevation) {
         return 0;
     }
 

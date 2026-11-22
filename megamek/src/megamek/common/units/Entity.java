@@ -944,6 +944,8 @@ public abstract class Entity extends TurnOrdered
      * The entity id of our current spot-target
      */
     private int spotTargetId = Entity.NONE;
+    /** Non-entity spot orders also identify what occupies the target hex. Absent in earlier saves. */
+    private @Nullable Integer spotTargetType;
 
     /** The unit this unit's Recon Camera spotted this turn, or {@link Entity#NONE} (TO:AUE p.150). */
     private int reconCameraSpotTargetId = Entity.NONE;
@@ -6848,14 +6850,13 @@ public abstract class Entity extends TurnOrdered
         return hasBAP(true);
     }
 
+    /** Shutdown and planetary electromagnetic interference disable even an Asset's Probe Special (TO:AR p.53). */
+    public boolean canUseActiveProbe() {
+        return !isShutDown() && (game == null || !game.getPlanetaryConditions().getEMI().isEMI());
+    }
+
     public boolean hasBAP(boolean checkECM) {
-        if (game != null) {
-            PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (conditions.getEMI().isEMI()) {
-                return false;
-            }
-        }
-        if (isShutDown()) {
+        if (!canUseActiveProbe()) {
             return false;
         }
         for (MiscMounted m : getMisc()) {
@@ -6909,8 +6910,7 @@ public abstract class Entity extends TurnOrdered
      * <code>Entity.NONE</code> if no BAP is active.
      */
     public int getBAPRange() {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI() || isShutDown()) {
+        if (!canUseActiveProbe()) {
             return Entity.NONE;
         }
         // Sensory implants provide active probe capability:
@@ -8123,6 +8123,7 @@ public abstract class Entity extends TurnOrdered
         setFindingClub(false);
         setSpotting(false);
         spotTargetId = Entity.NONE;
+        spotTargetType = null;
         reconCameraSpotTargetId = Entity.NONE;
         hasTriedReconCameraSpot = false;
         getReconCameraViewerIds().clear();
@@ -14150,11 +14151,47 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setSpotTargetId(int targetId) {
+        setSpotTarget(Targetable.TYPE_ENTITY, targetId);
+    }
+
+    public void setSpotTarget(int targetType, int targetId) {
         spotTargetId = targetId;
+        spotTargetType = (targetType == Targetable.TYPE_ENTITY) ? null : targetType;
     }
 
     public int getSpotTargetId() {
         return spotTargetId;
+    }
+
+    /** Resolves a spotted unit, building or terrain hex, including ID-only spot orders in older saves. */
+    public @Nullable Targetable getSpotTarget(Game game) {
+        if (spotTargetId == NONE) {
+            return null;
+        }
+        if (spotTargetType != null) {
+            return game.getTarget(spotTargetType, spotTargetId);
+        }
+        Entity unit = game.getEntity(spotTargetId);
+        if (unit != null) {
+            return unit;
+        }
+        for (TagInfo tag : game.getTagInfo()) {
+            if (!tag.missed && (tag.attackerId == getId()) && (tag.target.getId() == spotTargetId)
+                  && !(tag.target instanceof Entity)) {
+                return tag.target;
+            }
+        }
+        // Older manual orders stored only an ID. Recover a map target only while the order is active and
+        // that ID does not belong to a unit that has since left the board.
+        if (!isSpotting() || (game.getOutOfGameEntity(spotTargetId) != null)) {
+            return null;
+        }
+        BoardLocation location = HexTarget.idToLocation(spotTargetId);
+        if (!game.hasBoardLocation(location)) {
+            return null;
+        }
+        int type = game.getBuildingAt(location).isPresent() ? Targetable.TYPE_BUILDING : Targetable.TYPE_HEX_CLEAR;
+        return game.getTarget(type, spotTargetId);
     }
 
     /**

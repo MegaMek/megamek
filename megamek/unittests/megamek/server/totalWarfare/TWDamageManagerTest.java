@@ -89,6 +89,7 @@ import megamek.common.units.Mek;
 import megamek.common.units.SuperHeavyTank;
 import megamek.common.units.Tank;
 import megamek.common.units.VTOL;
+import megamek.common.util.SerializationHelper;
 import megamek.common.weapons.DamageType;
 import megamek.server.Server;
 import megamek.utils.ServerFactory;
@@ -513,6 +514,95 @@ class TWDamageManagerTest {
         // Two points destroy a reinforced pip and the third is recorded on the next (Core p.205; TO:AUE p.155)
         assertEquals(9, mek.getInternal(Mek.LOC_RIGHT_ARM));
         assertEquals(17, mek.getReinforcedStructureCapacity(Mek.LOC_RIGHT_ARM));
+    }
+
+    @Test
+    void reinforcedStructureOnlySavesPendingDamage() {
+        int arm = Mek.LOC_RIGHT_ARM;
+        int otherArm = Mek.LOC_LEFT_ARM;
+        BipedMek mek = createFrankenMekForInternalDamage();
+        mek.setFrankenMekStructureType(arm, EquipmentType.T_STRUCTURE_REINFORCED, TechConstants.T_IS_EXPERIMENTAL);
+        mek.setFrankenMekStructureType(otherArm, EquipmentType.T_STRUCTURE_REINFORCED, TechConstants.T_IS_EXPERIMENTAL);
+        var writer = SerializationHelper.getSaveGameXStream();
+        var reader = SerializationHelper.getLoadSaveGameXStream();
+        String cleanXml = writer.toXML(mek);
+        assertFalse(cleanXml.contains("reinforcedStructureDamaged"));
+
+        // This is also the format of saves from before partial structure damage was tracked.
+        BipedMek loaded = (BipedMek) reader.fromXML(cleanXml);
+        loaded.setGame(game);
+        HitData hit = new HitData(arm, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+        manager.damageEntity(new DamageInfo(loaded, hit, 1, false, DamageType.NONE, true));
+        HitData otherHit = new HitData(otherArm, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+        manager.damageEntity(new DamageInfo(loaded, otherHit, 1, false, DamageType.NONE, true));
+        assertEquals(10, loaded.getInternal(arm));
+        assertEquals(19, loaded.getReinforcedStructureCapacity(arm));
+        String damagedXml = writer.toXML(loaded);
+        int bothArms = (1 << arm) | (1 << otherArm);
+        assertTrue(damagedXml.contains(">" + bothArms + "</reinforcedStructureDamaged>"));
+
+        BipedMek damaged = (BipedMek) reader.fromXML(damagedXml);
+        damaged.setGame(game);
+        assertEquals(19, damaged.getReinforcedStructureCapacity(arm));
+        assertEquals(19, damaged.getReinforcedStructureCapacity(otherArm));
+        damaged.destroyLocation(otherArm, true);
+        assertTrue(writer.toXML(damaged).contains(">" + (1 << arm) + "</reinforcedStructureDamaged>"));
+        manager.damageEntity(new DamageInfo(damaged, hit, 1, false, DamageType.NONE, true));
+        assertEquals(9, damaged.getInternal(arm));
+        assertEquals(18, damaged.getReinforcedStructureCapacity(arm));
+        assertFalse(writer.toXML(damaged).contains("reinforcedStructureDamaged"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void earlierReinforcedStructureArraysRetainOnlyPendingDamage(boolean pending) {
+        BipedMek mek = new BipedMek();
+        int arm = Mek.LOC_RIGHT_ARM;
+        mek.initializeInternal(10, arm);
+        var writer = SerializationHelper.getSaveGameXStream();
+        String clear = "<boolean>false</boolean>";
+        String array = "<reinforcedStructureDamaged>" + clear.repeat(arm) + "<boolean>" + pending + "</boolean>"
+              + clear.repeat(mek.locations() - arm - 1) + "</reinforcedStructureDamaged>";
+        String oldXml = writer.toXML(mek).replace("</megamek.common.units.BipedMek>", array
+              + "</megamek.common.units.BipedMek>");
+        assertTrue(oldXml.contains("reinforcedStructureDamaged"));
+
+        BipedMek restored = (BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(oldXml);
+        assertEquals(pending ? 19 : 20, restored.getReinforcedStructureCapacity(arm));
+        String restoredXml = writer.toXML(restored);
+        assertEquals(pending, restoredXml.contains("reinforcedStructureDamaged"));
+        if (pending) {
+            assertTrue(restoredXml.contains(">" + (1 << arm) + "</reinforcedStructureDamaged>"));
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+          "false,DAMAGE_ARMOR_PIERCING_MISSILE,1",
+          "true,DAMAGE_ARMOR_PIERCING_MISSILE,1",
+          "false,DAMAGE_ARMOR_PIERCING,0",
+          "true,DAMAGE_ARMOR_PIERCING,1"
+    })
+    void armorPiercingHitOnMissingArmResolvesAgainstTorsoArmor(boolean core, HitDamageType type, int checks) {
+        BipedMek mek = createFrankenMekForInternalDamage();
+        mek.destroyLocation(Mek.LOC_LEFT_ARM);
+        mek.initializeArmor(10, Mek.LOC_LEFT_TORSO);
+        HitData hit = new HitData(Mek.LOC_LEFT_ARM);
+        hit.setGeneralDamageType(type);
+        hit.setSpecCriticalModifier(-2);
+        TWGameManager gm = spy(gameMan);
+        doReturn(new Vector<Report>()).when(gm).criticalEntity(any(), anyInt(), anyBoolean(), anyInt(), anyInt());
+        RulesManager saved = Game.rulesManager;
+        try {
+            game.getOptions().getOption(OptionsConstants.RULES_SYSTEM)
+                  .setValue(core ? OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW);
+            new TWDamageManager(gm, game).damageEntity(new DamageInfo(mek, hit, 2));
+            assertEquals(8, mek.getArmor(Mek.LOC_LEFT_TORSO));
+            verify(gm, times(checks)).criticalEntity(mek, Mek.LOC_LEFT_TORSO, false, -2, 2);
+        } finally {
+            Game.rulesManager = saved;
+            saved.getRulesAmmo().updateAmmoBVs();
+        }
     }
 
     @Test

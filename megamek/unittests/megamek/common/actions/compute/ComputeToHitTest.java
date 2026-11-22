@@ -152,6 +152,15 @@ public class ComputeToHitTest extends GameBoardTestCase {
     static {
         initializeBoard("03_BY_05_CENTER_HILLS", BOARD_03_BY_05_CENTER_HILLS_DATA);
         initializeBoard("03_BY_05_FLAT", BOARD_03_BY_05_FLAT_DATA);
+        initializeBoard("QUARTER_COVER_AND_SHORT_BUILDING", """
+              size 3 2
+              hex 0101 0 "" ""
+              hex 0201 1 "" ""
+              hex 0301 0 "" ""
+              hex 0102 0 "" ""
+              hex 0202 0 "" ""
+              hex 0302 0 "bldg_elev:1;building:2;bldg_cf:50" ""
+              end""");
             initializeBoard("10_BY_01_FLAT", BOARD_10_BY_01_FLAT_DATA);
     }
 
@@ -340,6 +349,37 @@ public class ComputeToHitTest extends GameBoardTestCase {
                                     + ", but modifiers were " + result.getModifiers());
             }
       }
+
+    @Test
+    void shortBuildingRaisesQuarterCoverToHorizontalCover() throws LocationFullException {
+        setBoard("QUARTER_COVER_AND_SHORT_BUILDING");
+        when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER)).thenReturn(true);
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        attacker.setPosition(new Coords(0, 1));
+        Mek target = createMek("Target", "TGT-1", "Bob");
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        target.setPosition(new Coords(2, 1));
+        when(attacker.getCrew().isActive()).thenReturn(true);
+        when(attacker.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
+        when(target.getCrew().isActive()).thenReturn(true);
+        game.addEntity(attacker);
+        game.addEntity(target);
+        int facing = attacker.getPosition().direction(target.getPosition());
+        attacker.setFacing(facing);
+        attacker.setSecondaryFacing(facing);
+        WeaponMounted laser = (WeaponMounted) attacker.addEquipment(mediumLaserType, Mek.LOC_CENTER_TORSO);
+
+        int terrainCover = LosEffects.calculateLOS(game, attacker, target).getTargetCover();
+        assertTrue((terrainCover == LosEffects.COVER_LOW_LEFT) || (terrainCover == LosEffects.COVER_LOW_RIGHT));
+        ToHitData attack = WeaponAttackAction.toHit(game, attacker.getId(), target, laser.getEquipmentNum(), false);
+        assertEquals(LosEffects.COVER_HORIZONTAL, attack.getCover(), attack::getDesc);
+        assertEquals(1, attack.getModifiers().stream()
+              .filter(mod -> mod.description().contains("cover"))
+              .mapToInt(TargetRollModifier::value).sum(), attack::getDesc);
+    }
 
     @Nested
     @DisplayName(value = "toHitCalc Tests - BuildingEntity")

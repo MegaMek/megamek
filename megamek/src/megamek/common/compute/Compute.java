@@ -1202,8 +1202,9 @@ public class Compute {
         for (Entity other : game.getEntitiesVector()) {
             // a Recon Camera that spotted the target counts as a spotter without the attack penalty (TO:AUE p.150)
             boolean isCameraSpotter = ReconCameraRules.isCameraSpotting(other, target);
-            if (((other.isSpotting() && (other.getSpotTargetId() == target
-                  .getId())) || isCameraSpotter || (taggedBy == other.getId()))
+            if (((other.isSpotting() && (other.getSpotTargetId() == target.getId())
+                  && Targetable.isSameTarget(other.getSpotTarget(game), target))
+                  || isCameraSpotter || (taggedBy == other.getId()))
                   && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 ToHitData mods = isCameraSpotter && ReconCameraRules.isAerospaceCamera(other)
@@ -1215,7 +1216,7 @@ public class Compute {
                 // a spotter suffers a penalty if it's also making an attack this round
                 // unless it has a command console, has TAG-ged the target or spotted it with a Recon Camera
                 if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && !isCameraSpotter &&
-                      (!isTargetTagged(attacker, target, game) || (taggedBy != -1))) {
+                      !hasTagged(other, target, game)) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
 
@@ -1302,7 +1303,8 @@ public class Compute {
      */
     public static @Nullable Entity findFriendlyTagger(Entity attacker, Targetable target, Game game) {
         for (TagInfo tagInfo : game.getTagInfo()) {
-            if (!tagInfo.missed && isTagOn(tagInfo, target) && isFriendlyTagger(attacker, tagInfo.attackerId, game)) {
+            if (!tagInfo.missed && Targetable.isSameTarget(tagInfo.target, target)
+                  && isFriendlyTagger(attacker, tagInfo.attackerId, game)) {
                 return game.getEntity(tagInfo.attackerId);
             }
         }
@@ -1322,15 +1324,12 @@ public class Compute {
             return false;
         }
         for (TagInfo tagInfo : game.getTagInfo()) {
-            if (!tagInfo.missed && (tagInfo.attackerId == tagger.getId()) && isTagOn(tagInfo, target)) {
+            if (!tagInfo.missed && (tagInfo.attackerId == tagger.getId())
+                  && Targetable.isSameTarget(tagInfo.target, target)) {
                 return true;
             }
         }
         return false;
-    }
-
-    private static boolean isTagOn(TagInfo tagInfo, Targetable target) {
-        return (tagInfo.target.getTargetType() == target.getTargetType()) && (tagInfo.target.getId() == target.getId());
     }
 
     private static boolean isFriendlyTagger(Entity attacker, int taggerId, Game game) {

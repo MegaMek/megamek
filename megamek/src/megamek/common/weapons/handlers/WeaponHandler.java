@@ -1211,7 +1211,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         game.addTagInfo(info);
 
                         attackingEntity.setSpotting(true);
-                        attackingEntity.setSpotTargetId(target.getId());
+                        attackingEntity.setSpotTarget(target.getTargetType(), target.getId());
 
                         report = new Report(3390);
                         report.subject = subjectId;

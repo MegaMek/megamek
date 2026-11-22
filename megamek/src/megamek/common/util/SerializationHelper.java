@@ -151,6 +151,35 @@ public class SerializationHelper {
         xStream.registerLocalConverter(Game.class, "pilotingRolls", new CollectionConverter(xStream.getMapper(),
               ArrayList.class));
 
+        // Before pending reinforced structure damage was a single location mask, saves stored a boolean per location.
+        xStream.registerLocalConverter(Mek.class, "reinforcedStructureDamaged", new Converter() {
+            @Override
+            public boolean canConvert(Class type) {
+                return type == Integer.class;
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                if (!reader.hasMoreChildren()) {
+                    return Integer.valueOf(reader.getValue());
+                }
+                int mask = 0;
+                for (int location = 0; reader.hasMoreChildren(); location++) {
+                    reader.moveDown();
+                    if (Boolean.parseBoolean(reader.getValue())) {
+                        mask |= 1 << location;
+                    }
+                    reader.moveUp();
+                }
+                return mask == 0 ? null : mask;
+            }
+
+            @Override
+            public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
+                writer.setValue(value.toString());
+            }
+        });
+
         xStream.registerConverter(new Converter() {
             @Override
             public boolean canConvert(Class cls) {

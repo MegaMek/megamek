@@ -10469,7 +10469,7 @@ public class TWGameManager extends AbstractGameManager {
                 case DodgeAction ignored -> entity.dodging = true;
                 case SpotAction spotAction -> {
                     entity.setSpotting(true);
-                    entity.setSpotTargetId(spotAction.getTargetId());
+                    entity.setSpotTarget(spotAction.getTargetType(), spotAction.getTargetId());
                 }
                 // a scan is resolved in the End Phase; a later order from the same unit replaces this one
                 case ScanAction scanAction -> entity.setPendingScan(scanAction);

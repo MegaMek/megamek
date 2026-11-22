@@ -42,9 +42,15 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import megamek.common.CriticalSlot;
+import megamek.common.Player;
+import megamek.common.battlefieldSupport.BFSSpecial;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
+import megamek.common.planetaryConditions.EMI;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
 import megamek.common.units.Crew;
@@ -105,6 +111,25 @@ class CoreRulesScanningTest {
     @Test
     void testTheDefaultRangeIsTwoHexes() {
         assertEquals(CoreRulesScanning.DEFAULT_SCANNING_RANGE, rules.scanningRange(scanner, hexTarget));
+    }
+
+    @Test
+    void planetaryInterferenceDisablesBothBenefitsOfAnAssetProbe() {
+        Game game = new Game();
+        game.setBoard(Board.createEmptyBoard(8, 8));
+        BattlefieldSupportAsset asset = new BattlefieldSupportAsset();
+        asset.setOwner(new Player(1, "Scout"));
+        asset.addSpecial(BFSSpecial.of("PRB"));
+        asset.setCrew(new Crew(asset.defaultCrewType()));
+        asset.setPosition(new Coords(3, 3));
+        game.addEntity(asset);
+        CoreRulesScanning scanning = new CoreRulesScanning();
+
+        assertEquals(4, scanning.scanningRange(asset, hexTarget));
+        assertEquals(6, scanning.scanTargetRoll(asset, hexTarget).getValue());
+        game.getPlanetaryConditions().setEMI(EMI.EMI);
+        assertEquals(2, scanning.scanningRange(asset, hexTarget));
+        assertEquals(8, scanning.scanTargetRoll(asset, hexTarget).getValue());
     }
 
     @Test

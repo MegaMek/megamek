@@ -3256,8 +3256,8 @@ public class TWDamageManager implements IDamageManager {
     }
 
     /**
-     * A transferred hit drops the armor-piercing check (see Mek#getTransferLocation). Under rules that limit that to
-     * damage from a location the attack itself destroys, the check passes through a location destroyed before.
+     * A tandem-charge missile passing through an already destroyed location makes its check where it strikes armor
+     * (TO:AUE p.184). For armor-piercing autocannon ammunition this depends on the rules in play.
      *
      * @param hit                       the hit on the location the damage leaves
      * @param transferHit               the hit on the location the damage transfers to
@@ -3266,7 +3266,8 @@ public class TWDamageManager implements IDamageManager {
      */
     private static HitData keepArmorPiercingCheck(HitData hit, HitData transferHit, boolean destroyedBeforeThisDamage) {
         if (destroyedBeforeThisDamage && hit.getSpecCrit()
-              && Game.rulesManager.getRulesArmor().armorPiercingCheckPassesDestroyedLocation()) {
+              && (hit.getGeneralDamageType() == HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE
+                    || Game.rulesManager.getRulesArmor().armorPiercingCheckPassesDestroyedLocation())) {
             transferHit.setSpecCriticalModifier(hit.getSpecCritMod());
         }
         return transferHit;

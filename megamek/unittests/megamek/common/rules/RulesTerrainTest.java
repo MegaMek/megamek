@@ -26,10 +26,13 @@ import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.rules.core.CoreRulesTerrain;
 import megamek.common.rules.totalwarfare.TWRulesTerrain;
+import megamek.common.units.BipedMek;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.Tank;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 /**
  * Tests for terrain-specific rule differences between Core and Total Warfare rule sets.
@@ -51,15 +54,20 @@ class RulesTerrainTest {
         assertInstanceOf(RulesTerrain.class, core, "Core rules should extend the base rules type.");
         assertInstanceOf(RulesTerrain.class, totalWarfare, "Total warfare rules should extend the base rules type.");
 
-        Mek mek = Mockito.mock(Mek.class);
+        Mek mek = new BipedMek();
         BattlefieldSupportAsset vehicleAsset = new BattlefieldSupportAsset();
         vehicleAsset.setAssetType(BFSAssetType.VEHICLE);
 
-        assertEquals(1, core.getRoadElevationCostDifference(mek, true, 2),
+        assertEquals(1, core.getRoadElevationCostDifference(mek, mek.getMovementMode(), true, 2),
                 "Core p.53: a level change between road hexes costs 1 MP less.");
-        assertEquals(0, core.getRoadElevationCostDifference(vehicleAsset, true, 2),
+        assertEquals(0, core.getRoadElevationCostDifference(vehicleAsset, EntityMovementMode.TRACKED, true, 2),
                 "Core p.142: an Asset's road level change still costs 2 MP per level.");
-        assertEquals(0, totalWarfare.getRoadElevationCostDifference(mek, true, 2),
+        assertEquals(0, core.getRoadElevationCostDifference(new Tank(), EntityMovementMode.TRACKED, true, 2));
+        QuadVee quadVee = new QuadVee();
+        assertEquals(1, core.getRoadElevationCostDifference(quadVee, EntityMovementMode.QUAD, true, 1));
+        // The next plotted step can use vehicle mode before the unit completes its conversion.
+        assertEquals(0, core.getRoadElevationCostDifference(quadVee, EntityMovementMode.TRACKED, true, 2));
+        assertEquals(0, totalWarfare.getRoadElevationCostDifference(mek, mek.getMovementMode(), true, 2),
                 "Total Warfare does not change road elevation cost.");
         assertEquals(2, core.getMaxElevationChangeAllowed(mek, true, 2),
                 "Core p.53 gives Meks no extra level on roads.");

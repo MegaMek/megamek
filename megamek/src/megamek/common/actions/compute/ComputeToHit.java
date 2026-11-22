@@ -701,11 +701,10 @@ public class ComputeToHit {
             shortBuildingLos.setCoverBuildingPrimary(currentBuilding);
             shortBuildingLos.setCoverLocPrimary(target.getPosition());
 
-            // Partial cover does not stack: when the line of sight already gives it, the building only decides
-            // where leg hits land
-            boolean losCover = los.getTargetCover() != LosEffects.COVER_NONE;
+            // A building upgrades quarter cover (+0) to horizontal cover (+1). Count the modifier once.
+            int previousCoverModifier = los.partialCoverModifier(game);
             los.add(shortBuildingLos);
-            if (!losCover) {
+            if (los.partialCoverModifier(game) > previousCoverModifier) {
                 toHit.append(shortBuildingLos.losModifiers(game));
             }
         }

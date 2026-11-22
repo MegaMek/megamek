@@ -96,7 +96,8 @@ public class CoreRulesScanning extends RulesScanning {
     boolean hasWorkingProbeAgainst(Entity scanner, @Nullable Targetable target) {
         // An Asset's Probe Special is a standard probe, negated by hostile ECM like any other (Core pp.150, 233)
         boolean probeWorks = hasProbeSpecial(scanner)
-              ? !ComputeECM.isAffectedByECM(scanner, scanner.getPosition(), scanner.getPosition())
+              ? scanner.canUseActiveProbe()
+                    && !ComputeECM.isAffectedByECM(scanner, scanner.getPosition(), scanner.getPosition())
               : scanner.hasBAP(true);
         if (!probeWorks) {
             return false;

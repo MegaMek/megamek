@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.when;
 import java.util.Vector;
 
 import megamek.common.GameBoardTestCase;
+import megamek.common.HexTarget;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -66,6 +68,7 @@ import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.AfterEach;
@@ -73,6 +76,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
@@ -300,16 +304,7 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
         bay.addWeaponToBay(ppc);
         bay.addWeaponToBay(plainPpc);
         bay.addWeaponToBay(shortPpc);
-        WeaponAttackAction attack = new WeaponAttackAction(dropShip.getId(), target.getId(),
-              dropShip.getEquipmentNum(bay));
-        WeaponHandler handler = (WeaponHandler) ((Weapon) bay.getType())
-              .getCorrectHandler(new ToHitData(2, "test"), attack, game, gameManager);
-        Roll two = mock(Roll.class);
-        when(two.getIntValue()).thenReturn(2);
-        when(two.getReport()).thenReturn("2");
-        handler.roll = two;
-
-        handler.handle(GamePhase.FIRING, new Vector<>());
+        fireBayOnTwo(dropShip, bay, target, 2);
 
         assertTrue(ppc.isHit(), "the ER PPC burns out at long range");
         assertTrue(capacitor.isHit());
@@ -320,5 +315,44 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
         assertTrue(shortPpc.holdsCapacitorCharge());
         assertFalse(shortCapacitor.pendingMode().equals(Mounted.MODE_OFF));
         assertEquals(PPC_ATTACK_VALUE, armorLost(), "only the plain ER PPC deals damage");
+    }
+
+    /** If the whole bay burns out, neither a deliberate ignition nor a miss against a ground target can start a fire. */
+    @ParameterizedTest
+    @CsvSource({ "false, false", "false, true", "true, false", "true, true" })
+    void aBayThatBurnsOutCannotStartAFire(boolean aeroSanity, boolean intentionalIgnition) throws Exception {
+        Game.rulesManager = new TWRulesManager();
+        game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY).setValue(aeroSanity);
+        target.setAltitude(0);
+        Dropship dropShip = addDropShip();
+        WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PPC_BAY),
+              Aero.LOC_NOSE);
+        WeaponMounted ppc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
+        Mounted<?> capacitor = dropShip.addEquipment(EquipmentType.get("ISPPCCapacitor"), Aero.LOC_NOSE);
+        capacitor.setLinked(ppc);
+        bay.addWeaponToBay(ppc);
+
+        if (intentionalIgnition) {
+            fireBayOnTwo(dropShip, bay, new HexTarget(target.getBoardLocation(), Targetable.TYPE_HEX_IGNITE), 2);
+        } else {
+            fireBayOnTwo(dropShip, bay, target, 7);
+        }
+
+        assertTrue(ppc.isHit());
+        assertTrue(capacitor.isHit());
+        Mockito.verify(gameManager, Mockito.never()).tryIgniteHex(any(), anyInt(), anyInt(), anyBoolean(), anyBoolean(),
+              any(), anyBoolean(), anyInt(), any());
+    }
+
+    private void fireBayOnTwo(Dropship dropShip, WeaponMounted bay, Targetable attackTarget, int toHitNumber) {
+        WeaponAttackAction attack = new WeaponAttackAction(dropShip.getId(), attackTarget.getTargetType(),
+              attackTarget.getId(), dropShip.getEquipmentNum(bay));
+        WeaponHandler handler = (WeaponHandler) ((Weapon) bay.getType())
+              .getCorrectHandler(new ToHitData(toHitNumber, "test"), attack, game, gameManager);
+        Roll two = mock(Roll.class);
+        when(two.getIntValue()).thenReturn(2);
+        when(two.getReport()).thenReturn("2");
+        handler.roll = two;
+        handler.handle(GamePhase.FIRING, new Vector<>());
     }
 }

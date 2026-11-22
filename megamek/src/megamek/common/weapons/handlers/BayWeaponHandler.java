@@ -73,10 +73,19 @@ public class BayWeaponHandler extends WeaponHandler {
     private static final long serialVersionUID = -1618484541772117621L;
     protected AmmoMounted ammo;
     /** The bay's capacitor PPCs that this attack's to-hit roll burned out */
-    private final Set<WeaponMounted> burnedOut = new HashSet<>();
+    private Set<WeaponMounted> burnedOut = new HashSet<>();
 
     protected BayWeaponHandler() {
         // deserialization only
+    }
+
+    /** @return this handler, with an empty burnout set for attacks saved before bay burnout was tracked */
+    @Serial
+    protected Object readResolve() {
+        if (burnedOut == null) {
+            burnedOut = new HashSet<>();
+        }
+        return this;
     }
 
     public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
@@ -135,6 +144,16 @@ public class BayWeaponHandler extends WeaponHandler {
             attackValue = calcAttackValue();
         }
         return false;
+    }
+
+    @Override
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
+        if (burnedOut.isEmpty()) {
+            return false;
+        }
+        // If every in-range PPC burned out, no shot can hit the target or start a fire on a miss (TO:AUE p.149).
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
+        return weapon.getBayWeapons().stream().noneMatch(member -> getAv(member, range) > 0);
     }
 
     /** Whether a bay weapon can fire in this attack. */

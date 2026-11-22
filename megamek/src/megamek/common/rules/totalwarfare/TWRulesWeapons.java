@@ -148,37 +148,36 @@ public class TWRulesWeapons extends RulesWeapons {
      */
     @Nullable
     @Override
-    public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
-          weapon) {
-        Report r = new Report(3178);
-        if (roll == 2) {
-            r.subject = attackingEntity.getId();
-            r.indent();
-            Mounted<?> capacitor = weapon.getLinkedBy();
-            weapon.setHit(true);
-            if (capacitor != null) {
-                capacitor.setHit(true);
-            }
-            // The weapon's first slot and the capacitor's slot; units without critical slots have none
-            boolean weaponSlotHit = false;
-            boolean capacitorSlotHit = (capacitor == null);
-            int wLocation = weapon.getLocation();
-            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(wLocation); i++) {
-                CriticalSlot slot = attackingEntity.getCritical(wLocation, i);
-                if ((slot == null) || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                    continue;
-                }
-                if (!weaponSlotHit && slot.getMount().equals(weapon)) {
-                    slot.setDestroyed(true);
-                    weaponSlotHit = true;
-                } else if (!capacitorSlotHit && capacitor.equals(slot.getMount())) {
-                    slot.setDestroyed(true);
-                    capacitorSlotHit = true;
-                }
-            }
-            return r;
+    public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted weapon) {
+        if (roll != 2) {
+            return null;
         }
-        return null;
+        applyBurnoutCritical(attackingEntity, weapon);
+        Mounted<?> capacitor = weapon.getLinkedBy();
+        if (capacitor != null) {
+            applyBurnoutCritical(attackingEntity, capacitor);
+        }
+        Report report = new Report(3178);
+        report.subject = attackingEntity.getId();
+        report.indent();
+        return report;
+    }
+
+    /** Burnout hits the first slot of each mount. Intact slot armor absorbs that hit (BMM pp. 105, 118). */
+    private void applyBurnoutCritical(Entity entity, Mounted<?> mount) {
+        for (CriticalSlot slot : entity.getCriticalSlots(mount.getLocation())) {
+            if ((slot == null) || ((slot.getMount() != mount) && (slot.getMount2() != mount))) {
+                continue;
+            }
+            if (slot.isArmored()) {
+                slot.hitArmored();
+                return;
+            }
+            slot.setDestroyed(true);
+            break;
+        }
+        // Aerospace units without equipment slots also suffer the hit on the mount.
+        mount.setHit(true);
     }
 
     /**

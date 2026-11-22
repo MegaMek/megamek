@@ -59,13 +59,13 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.net.packets.Packet;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.BipedMek;
-import megamek.common.units.Crew;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.weapons.Weapon;
@@ -74,6 +74,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * A charged PPC capacitor explodes with its PPC when either takes a critical hit, unless the PPC fired this turn and
@@ -103,6 +105,7 @@ class PPCCapacitorExplosionTest {
         game.addPlayer(0, player);
         mek = new BipedMek();
         mek.setOwner(player);
+        mek.setCrew(spy(mek.getCrew()));
         mek.setPosition(new Coords(0, 0));
         // A side torso of 21 internal structure keeps the explosion inside it
         mek.setWeight(100);
@@ -203,8 +206,74 @@ class PPCCapacitorExplosionTest {
         assertEquals(List.of(true), damagedSlots(mek, capacitor));
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void burnoutChecksTheArmorOfEachSlotIndependently(boolean armorPpc) {
+        CriticalSlot ppcSlot = slotsOf(mek, ppc).getFirst();
+        CriticalSlot capacitorSlot = slotsOf(mek, capacitor).getFirst();
+        ppcSlot.setArmored(armorPpc);
+        capacitorSlot.setArmored(!armorPpc);
+
+        Game.rulesManager.getRulesWeapons().checkPPCCapacitor(2, mek, (WeaponMounted) ppc);
+
+        assertFalse(ppcSlot.isArmored());
+        assertFalse(capacitorSlot.isArmored());
+        assertEquals(!armorPpc, ppcSlot.isDestroyed());
+        assertEquals(!armorPpc, ppc.isHit());
+        assertEquals(armorPpc, capacitorSlot.isDestroyed());
+        assertEquals(armorPpc, capacitor.isHit());
+    }
+
     @Test
-    void aBurnedOutPpcDoesNotDamageAnAdjacentTargetsBuilding() throws Exception {
+    void aBurnedOutPpcDoesNotDamageAnAdjacentTargetsBuilding() throws EntityLoadingException {
+        Mek target = targetInBuilding();
+        IBuilding building = manager.getGame().getBoard(target).getBuildingAt(target.getPosition());
+        int originalCF = building.getCurrentCF(target.getPosition());
+
+        firePpcOnTwo(target);
+
+        assertTrue(capacitor.isHit());
+        assertEquals(originalCF, building.getCurrentCF(target.getPosition()));
+    }
+
+    @Test
+    void firstBurnoutStripsSlotArmorAndSecondBurnoutDestroysTheExposedSlots() throws EntityLoadingException {
+        List<CriticalSlot> ppcSlots = slotsOf(mek, ppc);
+        CriticalSlot capacitorSlot = slotsOf(mek, capacitor).getFirst();
+        ppc.setArmored(true);
+        capacitor.setArmored(true);
+        ppcSlots.forEach(slot -> slot.setArmored(true));
+        capacitorSlot.setArmored(true);
+        Mek target = targetInBuilding();
+        IBuilding building = manager.getGame().getBoard(target).getBuildingAt(target.getPosition());
+        int originalCF = building.getCurrentCF(target.getPosition());
+
+        firePpcOnTwo(target);
+        mek.applyDamage();
+        assertFalse(ppcSlots.getFirst().isArmored());
+        assertFalse(capacitorSlot.isArmored());
+        assertTrue(ppcSlots.stream().noneMatch(CriticalSlot::isDamaged));
+        assertFalse(capacitorSlot.isDamaged());
+        assertTrue(ppc.isOperable());
+        assertTrue(capacitor.isOperable());
+        assertEquals(originalCF, building.getCurrentCF(target.getPosition()));
+
+        mek.newRound(2);
+        assertEquals(0, ppc.hasChargedCapacitor());
+        capacitor.setMode(Mounted.MODE_CAPACITOR_CHARGE);
+        mek.newRound(3);
+        assertEquals(1, ppc.hasChargedCapacitor());
+        firePpcOnTwo(target);
+        mek.applyDamage();
+        assertTrue(ppc.isDestroyed());
+        assertTrue(capacitor.isDestroyed());
+        assertTrue(capacitorSlot.isDestroyed());
+        assertEquals(List.of(true, false, false, false), ppcSlots.stream().map(CriticalSlot::isDestroyed).toList());
+        assertTrue(ppcSlots.stream().skip(1).allMatch(CriticalSlot::isArmored));
+        assertEquals(originalCF, building.getCurrentCF(target.getPosition()));
+    }
+
+    private Mek targetInBuilding() {
         Game game = manager.getGame();
         Board board = new Board();
         board.load("""
@@ -218,22 +287,19 @@ class PPCCapacitorExplosionTest {
         target.setOwner(mek.getOwner());
         target.setPosition(new Coords(0, 1));
         game.addEntity(target);
-        IBuilding building = board.getBuildingAt(target.getPosition());
-        int originalCF = building.getCurrentCF(target.getPosition());
+        return target;
+    }
 
+    private void firePpcOnTwo(Mek target) throws EntityLoadingException {
+        Game game = manager.getGame();
         WeaponAttackAction attack = new WeaponAttackAction(mek.getId(), target.getId(), mek.getEquipmentNum(ppc));
-        Crew crew = spy(mek.getCrew());
-        mek.setCrew(crew);
         Roll two = mock(Roll.class);
         when(two.getIntValue()).thenReturn(2);
         when(two.getReport()).thenReturn("2");
-        doReturn(two).when(crew).rollGunnerySkill(game, attack);
+        doReturn(two).when(mek.getCrew()).rollGunnerySkill(game, attack);
 
         PPCHandler handler = new PPCHandler(new ToHitData(2, "test"), attack, game, manager);
         handler.handle(GamePhase.FIRING, new Vector<>());
-
-        assertTrue(capacitor.isHit());
-        assertEquals(originalCF, building.getCurrentCF(target.getPosition()));
     }
 
     /** @return The critical slots in its location that hold the equipment */

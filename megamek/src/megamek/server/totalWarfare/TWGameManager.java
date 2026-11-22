@@ -68,6 +68,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.compute.ComputeSideTable;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
@@ -31378,17 +31379,18 @@ public class TWGameManager extends AbstractGameManager {
                         continue;
                     }
                     // Capture the unit.
-                    pe.pickUp(e);
-                    // The captured unit is being carried by the loader.
-                    e.setCaptured(true);
-                    e.setPickedUpById(pe.getId());
-                    e.setPickedUpByExternalId(pe.getExternalIdAsString());
+                    captureMekWarrior(e, pe);
                     pickedUp = true;
-                    r = new Report(6420, Report.PUBLIC);
-                    r.add(e.getDisplayName());
-                    r.addDesc(pe);
-                    addReport(r);
                     break;
+                }
+            }
+            // Finally, check for a crewed enemy turret or building. These are never targetable as units (they are
+            // attacked through their hex), so the checks above never see them.
+            if (!pickedUp) {
+                Entity capturingBuilding = findCapturingBuilding(e);
+                if (capturingBuilding != null) {
+                    captureMekWarrior(e, capturingBuilding);
+                    pickedUp = true;
                 }
             }
             if (pickedUp) {
@@ -31398,6 +31400,81 @@ public class TWGameManager extends AbstractGameManager {
                 entityUpdate(e.getId());
             }
         }
+    }
+
+    /**
+     * Makes an ejected MekWarrior the prisoner of an enemy unit and reports it.
+     *
+     * @param mekWarrior the ejected MekWarrior
+     * @param captor     the unit that takes them prisoner
+     */
+    private void captureMekWarrior(MekWarrior mekWarrior, Entity captor) {
+        captor.pickUp(mekWarrior);
+        // The captured unit is being carried by the loader.
+        mekWarrior.setCaptured(true);
+        mekWarrior.setPickedUpById(captor.getId());
+        mekWarrior.setPickedUpByExternalId(captor.getExternalIdAsString());
+
+        Report report = new Report(6420, Report.PUBLIC);
+        report.add(mekWarrior.getDisplayName());
+        report.addDesc(captor);
+        addReport(report);
+    }
+
+    /**
+     * Finds an enemy building or gun emplacement whose crew can capture the given ejected MekWarrior. The MekWarrior
+     * may be on any of the building's floors or on its roof. A building the MekWarrior is already attacking in an
+     * infantry action does not capture them; that action decides their fate.
+     *
+     * @param mekWarrior the ejected MekWarrior
+     *
+     * @return the capturing building or gun emplacement, or {@code null} if there is none
+     */
+    private @Nullable Entity findCapturingBuilding(MekWarrior mekWarrior) {
+        for (Entity building : game.getEntitiesVector()) {
+            boolean isBuilding = building instanceof AbstractBuildingEntity;
+            // The position lookup does not reliably hold every hex of a building, so ask the building itself
+            boolean isInHex = switch (building) {
+                case AbstractBuildingEntity buildingEntity ->
+                      InfantryActionStrengths.isInside(mekWarrior, buildingEntity);
+                case GunEmplacement gunEmplacement -> (gunEmplacement.getPosition() != null)
+                      && gunEmplacement.getPosition().equals(mekWarrior.getPosition())
+                      && (gunEmplacement.getBoardId() == mekWarrior.getBoardId());
+                default -> false;
+            };
+            if (!isInHex
+                  || !building.isEnemyOf(mekWarrior)
+                  || !building.isDeployed()
+                  || building.isDestroyed()
+                  || building.isDoomed()
+                  || building.isCaptured()
+                  || building.isShutDown()) {
+                continue;
+            }
+
+            // An abandoned building, or one whose crew has been killed or has surrendered, captures nobody. Only
+            // buildings lose their crew head by head; a gun emplacement's crew may legitimately have no head-count.
+            Crew crew = building.getCrew();
+            if ((crew == null)
+                  || !crew.isActive()
+                  || crew.isDoomed()
+                  || crew.isEjected()
+                  || (isBuilding && (crew.getCurrentSize() <= 0))) {
+                continue;
+            }
+
+            if (mekWarrior.getInfantryCombatTargetId() == building.getId()) {
+                continue;
+            }
+
+            Hex hex = game.getHex(mekWarrior.getBoardLocation());
+            int roof = (hex == null) ? 0 : Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
+            boolean isOnAFloorOrRoof = (mekWarrior.getElevation() >= 0) && (mekWarrior.getElevation() <= roof);
+            if (isOnAFloorOrRoof) {
+                return building;
+            }
+        }
+        return null;
     }
 
     /**

@@ -114,7 +114,7 @@ class BattlefieldSupportAssetTest {
         assertEquals(6, asset.getECMRange());
         assertEquals(asset.getECMInfo().getRange(), asset.getECMRange());
         game.getPlanetaryConditions().setEMI(EMI.EMI);
-        assertEquals(12, asset.getECMRange());
+        assertEquals(6, asset.getECMRange());
         assertEquals(asset.getECMInfo().getRange(), asset.getECMRange());
         asset.setShutDown(true);
         assertFalse(asset.hasActiveECM());

@@ -666,15 +666,15 @@ public class ComputeECM {
                 }
             }
         }
-        // An Asset's ECM Special emits "a 6-hex radius ECM bubble equivalent to that from a Guardian ECM system"
-        // (Core p.149)
+        bestInfo = applyEmiRangeBonus(bestInfo, game);
+        // The Asset ECM Special provides its own six-hex field (Core p.149).
         if ((entity instanceof BattlefieldSupportAsset asset) && asset.hasSpecial(BFSSpecialType.ECM)) {
             ECMInfo assetInfo = new ECMInfo(6, 1, entity);
             if ((bestInfo == null) || (ecmComparator.compare(assetInfo, bestInfo) > 0)) {
                 bestInfo = assetInfo;
             }
         }
-        return applyEmiRangeBonus(bestInfo, game);
+        return bestInfo;
     }
 
     /**

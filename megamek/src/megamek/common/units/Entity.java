@@ -6850,8 +6850,7 @@ public abstract class Entity extends TurnOrdered
         return hasBAP(true);
     }
 
-    /** Shutdown and planetary electromagnetic interference disable even an Asset's Probe Special (TO:AR p.53). */
-    public boolean canUseActiveProbe() {
+    private boolean canUseActiveProbe() {
         return !isShutDown() && (game == null || !game.getPlanetaryConditions().getEMI().isEMI());
     }
 

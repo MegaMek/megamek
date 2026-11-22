@@ -114,20 +114,30 @@ class CoreRulesScanningTest {
     }
 
     @Test
-    void planetaryInterferenceDisablesBothBenefitsOfAnAssetProbe() {
+    void hostileEcmBlocksAnAssetProbeWhilePlanetaryInterferenceAloneDoesNot() {
         Game game = new Game();
-        game.setBoard(Board.createEmptyBoard(8, 8));
+        game.setBoard(Board.createEmptyBoard(8, 12));
         BattlefieldSupportAsset asset = new BattlefieldSupportAsset();
         asset.setOwner(new Player(1, "Scout"));
         asset.addSpecial(BFSSpecial.of("PRB"));
         asset.setCrew(new Crew(asset.defaultCrewType()));
-        asset.setPosition(new Coords(3, 3));
+        asset.setPosition(new Coords(5, 1));
         game.addEntity(asset);
         CoreRulesScanning scanning = new CoreRulesScanning();
 
         assertEquals(4, scanning.scanningRange(asset, hexTarget));
         assertEquals(6, scanning.scanTargetRoll(asset, hexTarget).getValue());
         game.getPlanetaryConditions().setEMI(EMI.EMI);
+        BattlefieldSupportAsset jammer = new BattlefieldSupportAsset();
+        jammer.setOwner(new Player(2, "Enemy"));
+        jammer.addSpecial(BFSSpecial.of("ECM"));
+        jammer.setPosition(new Coords(5, 10)); // Seven hexes from the target, outside the ECM field.
+        game.addEntity(jammer);
+        assertEquals(4, scanning.scanningRange(asset, hexTarget));
+        assertEquals(6, scanning.scanTargetRoll(asset, hexTarget).getValue());
+
+        jammer.setPosition(new Coords(5, 9)); // Six hexes from the target, eight from the probe.
+        assertEquals(4, scanning.scanningRange(asset, null));
         assertEquals(2, scanning.scanningRange(asset, hexTarget));
         assertEquals(8, scanning.scanTargetRoll(asset, hexTarget).getValue());
     }

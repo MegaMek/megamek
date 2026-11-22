@@ -858,23 +858,21 @@ public abstract class BVCalculator {
             }
 
             // artemis bumps up the value
-            if ((weapon.getLinkedBy() != null) && (weapon.getLinkedBy().getType() instanceof MiscType)) {
-                Mounted<?> linkedBy = weapon.getLinkedBy();
-                if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    weaponBV *= 1.2;
-                    calculation += " x 1.2 (Art-IV)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                    weaponBV *= 1.1;
-                    calculation += " x 1.1 (P-Art)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    weaponBV *= 1.3;
-                    calculation += " x 1.3 (Art-V)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) ||
-                      linkedBy.getType().hasFlag(MiscType.F_APOLLO)) {
-                    weaponBV *= 1.15;
-                    calculation += " x 1.15 (" +
-                          (linkedBy.getType().hasFlag(MiscType.F_APOLLO) ? "Apollo)" : "RISC LPM)");
-                }
+            if (weapon.getEnhancement(MiscType.F_ARTEMIS) != null) {
+                weaponBV *= 1.2;
+                calculation += " x 1.2 (Art-IV)";
+            } else if (weapon.getEnhancement(MiscType.F_ARTEMIS_PROTO) != null) {
+                weaponBV *= 1.1;
+                calculation += " x 1.1 (P-Art)";
+            } else if (weapon.getEnhancement(MiscType.F_ARTEMIS_V) != null) {
+                weaponBV *= 1.3;
+                calculation += " x 1.3 (Art-V)";
+            } else if (weapon.getEnhancement(MiscType.F_APOLLO) != null) {
+                weaponBV *= 1.15;
+                calculation += " x 1.15 (Apollo)";
+            } else if (weapon.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE) != null) {
+                weaponBV *= 1.15;
+                calculation += " x 1.15 (RISC LPM)";
             }
 
             if (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTC) {

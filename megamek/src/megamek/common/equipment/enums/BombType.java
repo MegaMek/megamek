@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -667,11 +667,13 @@ public class BombType extends AmmoType {
         bomb.bv = 17;
         bomb.cost = 6000;
         bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
-        bomb.techAdvancement.setTechBase(TechBase.IS)
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
+              .setClanAdvancement(DATE_NONE, 3074, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.FW)
               .setProductionFactions(Faction.FW);
 

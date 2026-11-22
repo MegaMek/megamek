@@ -34,6 +34,8 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import java.util.Vector;
+
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
@@ -45,8 +47,6 @@ import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-
-import java.util.Vector;
 
 public class TWRulesExplosions extends RulesExplosions {
 
@@ -161,16 +161,7 @@ public class TWRulesExplosions extends RulesExplosions {
     @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
-            if (mounted.isFired()) {
-                if (mounted.hasChargedCapacitor() == 2) {
-                    return 15;
-                }
-                return 0;
-            }
-            if (mounted.hasChargedCapacitor() == 2) {
-                return 30;
-            }
-            return 15;
+            return mounted.isFired() ? 0 : 15;
         }
 
         if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {

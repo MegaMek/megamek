@@ -4623,6 +4623,12 @@ public class TWGameManager extends AbstractGameManager {
             Coords positionBeforeMovement = entity.getPosition();
             MovePathHandler handler = new MovePathHandler(this, entity, movePath, losCache);
             handler.processMovement();
+            if (handler.isDeploymentRefused() && !getGame().getPhase().isSimultaneous(getGame())) {
+                // The sender has been handed this turn back to pick another hex. Ending it as well would cost the
+                // unit its move, and leave a bot answering a turn that has already passed. In a simultaneous phase a
+                // bot cannot tell a handed-back turn from the other players' turn changes, so the turn still ends
+                return;
+            }
             new ObjectiveResolutionHandler(this).toastZoneEntry(entity, positionBeforeMovement);
             datasetLogger.append(movePath, true);
 
@@ -9546,7 +9552,8 @@ public class TWGameManager extends AbstractGameManager {
                 violation = faller;
                 displacementRoll = null;
             }
-            Coords displacedTo = Compute.getValidDisplacement(game, violation.getId(), fallPosition, direction);
+            Coords displacedTo = Compute.getAccidentalFallDisplacement(game, violation.getId(), fallPosition,
+                  direction);
             if (displacedTo != null) {
                 reports.addAll(doEntityDisplacement(violation, fallPosition, displacedTo, displacementRoll));
                 // Update the violating entity's position on the
@@ -9674,7 +9681,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             // ok, we missed, let's fall into a valid other hex and not cause an
             // AFFA while doing so
-            Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+            Coords targetDest = Compute.getAccidentalFallDisplacement(game, entity.getId(), dest, direction);
             if (targetDest != null) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
                       entitySrcElevation,
@@ -26768,8 +26775,18 @@ public class TWGameManager extends AbstractGameManager {
         // stale (for example a unit that has not moved yet but whose client snapshot is marked done). Swapping it
         // in would overwrite the server's live turn state and could rob the owner of a move they still have. A
         // gamemaster editing damage must not spend the owner's action, so keep the server's turn/move state.
+        boolean isPlannedWalkOn = false;
         if (!game.getPhase().isLounge()) {
             preserveInPlayTurnState(oldEntity, entity);
+            // While a player plans a walk-on, their client already shows the unit deployed on the chosen hex. Only the
+            // move itself may deploy it, after its checks; taking the placement from here would skip those checks, and
+            // the move would then be refused for deploying the unit a second time.
+            isPlannedWalkOn = !oldEntity.isDeployed() && entity.isDeployed();
+            if (isPlannedWalkOn) {
+                LOGGER.debug("Update for {} from {} places a unit that has not deployed yet; keeping it off the board",
+                      entity.getDisplayName(), sender.getName());
+                preserveUndeployedState(oldEntity, entity);
+            }
             // A pending traitor switch is server-side state: /changeOwner sets it on the server's copy only, so a
             // client-sent copy never carries it. An update that does not itself order a switch (the Traitor button
             // does, and wins here) must not erase the pending one while it waits for the END phase.
@@ -26782,7 +26799,11 @@ public class TWGameManager extends AbstractGameManager {
         }
         game.setEntity(entity.getId(), entity);
         CarriedUnitRelinker.relinkAfterUpdate(game, entity);
-        entityUpdate(entity.getId());
+        // A planned walk-on is sent out once its move is processed; sending it now would lift the unit off the hex its
+        // player is still planning from
+        if (!isPlannedWalkOn) {
+            entityUpdate(entity.getId());
+        }
         if (entity.isPartOfFighterSquadron()) {
             // Update the stats of any Squadrons that the new units are part of
             FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
@@ -26864,6 +26885,21 @@ public class TWGameManager extends AbstractGameManager {
         if (oldEntity.getDisplacementAttack() != null) {
             newEntity.setDisplacementAttack(oldEntity.getDisplacementAttack());
         }
+    }
+
+    /**
+     * Puts a client-sent unit back off the board, where the server still has it. Everything else the client sent, such
+     * as a Mek's switch to its underwater maneuvering units, is kept.
+     *
+     * @param oldEntity the server's authoritative unit, which has not deployed yet
+     * @param newEntity the client-sent replacement, whose deployment state is overwritten
+     */
+    private void preserveUndeployedState(Entity oldEntity, Entity newEntity) {
+        newEntity.setDeployed(false);
+        // Marking the unit deployed cleared this on the client, and a first deployment is handled differently
+        newEntity.setNeverDeployed(oldEntity.wasNeverDeployed());
+        newEntity.setPosition(oldEntity.getPosition());
+        newEntity.setBoardId(oldEntity.getBoardId());
     }
 
     /**
@@ -31400,7 +31436,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * destroy all wheeled and tracked Tanks that got displaced into water
+     * destroy all wheeled, tracked and hover Tanks that are immobile in water. Unbroken ice holds them up, so a hex
+     * with ice is skipped; once the ice breaks the ice terrain is removed and the Tank sinks.
      */
     void resolveSinkVees() {
         Iterator<Entity> sinkableTanks = game.getSelectedEntities(entity -> {
@@ -31414,6 +31451,7 @@ public class TWGameManager extends AbstractGameManager {
             return entity.getMovementMode().isTrackedWheeledOrHover() &&
                   entity.isImmobile() &&
                   (hex.terrainLevel(Terrains.WATER) > 0) &&
+                  !hex.containsTerrain(Terrains.ICE) &&
                   !onBridge &&
                   !(entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
                   !(entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL));

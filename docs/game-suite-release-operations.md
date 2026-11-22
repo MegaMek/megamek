@@ -48,6 +48,13 @@ out until that line's first release. This commit changes only the revision, so
 it alone does not count as a change: the next run stays a no-op. Do not edit
 the revision by hand; the stamp only raises it, never lowers it.
 
+Because both channels share the build counter, a version number alone cannot
+say whether a build is Core or Experimental. Release builds therefore stamp
+`channel=core` or `channel=experimental` into the packaged copy of
+`Version.properties` (Gradle property `suiteReleaseChannel`), and the archive
+verifier checks it against the channel being published. The game reads it
+through `Version.getBuildChannel()`; development builds have no channel.
+
 ## The four procedures
 
 ### First Core release and the next Experimental
@@ -124,7 +131,12 @@ Run **Game suite release - Experimental** with `dry_run=false` and approve the
    - creates the tag, release and archive in each repository;
    - uploads the suite record (`suite-record-<version>.json`) to the MegaMek
      release **last**.
-5. Mints a MegaMek-only write token and commits the released build number to
+5. Starts the Docker image build in `megamek-docker-image`, with a token that
+   can only start workflows there. That repository then builds the dedicated
+   server image for the new release. This step never fails a release: if it
+   cannot run, the Docker repository's own scheduled check builds the image
+   later. A dry run or no-op skips it.
+6. Mints a MegaMek-only write token and commits the released build number to
    the built branch's `Version.properties` (see [Version numbers](#version-numbers)).
    This also runs after a no-op, so rerunning repairs a stamp that failed.
 
@@ -143,7 +155,9 @@ runs at a time.
 - Environment secret `SUITE_RELEASE_APP_PRIVATE_KEY` on both
   `suite-release-live` and `suite-release-weekly`.
 - Environments:
-  - `suite-release-live`: required reviewers; used by manual live runs.
+  - `suite-release-live`: required reviewers with **Prevent self-review**
+    enabled, so the person who starts a live run cannot approve it; used by
+    manual live runs.
   - `suite-release-weekly`: no reviewer; used only by the schedule.
   - `suite-release-dry-run`: holds no key.
 
@@ -158,6 +172,11 @@ step requests the narrowest token it needs:
 - branch creation: the four repositories;
 - publication: megamek, megameklab and mekhq;
 - stamping the released revision and moving `main`: megamek only.
+
+To start the Docker image build, the App must also be installed on
+megamek-docker-image with Actions write. That token is limited to that
+repository and holds no Contents permission. Without it the step is skipped
+with a warning and the release is unaffected.
 
 Repository rules must allow the App to:
 

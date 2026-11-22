@@ -114,6 +114,12 @@ public class ClientPreferences extends PreferenceStoreProxy {
     private static final String REPORT_FILTER_KEYWORDS_DEFAULTS = "Fire Hit Damage\nHit Damage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String SPRITES_ONLY = "SpritesOnly";
+    /**
+     * Whether unit readouts and TRO views show the narrative fluff text (overview, capabilities, deployment and
+     * history). When off, MegaMekLab also hides its Fluff tab. Shared by the suite through the common client settings
+     * file.
+     */
+    public static final String SHOW_UNIT_FLUFF_TEXT = "ShowUnitFluffText";
     public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
     public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
     public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
@@ -164,6 +170,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_FILTER_KEYWORDS, REPORT_FILTER_KEYWORDS_DEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(SPRITES_ONLY, false);
+        store.setDefault(SHOW_UNIT_FLUFF_TEXT, true);
         store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
         store.setDefault(USER_DIR, "");
         store.setDefault(MML_PATH, "");
@@ -463,6 +470,19 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setSpritesOnly(boolean value) {
         store.setValue(SPRITES_ONLY, value);
+    }
+
+    /**
+     * @return {@code true} if unit readouts and TRO views should show the narrative fluff text
+     *
+     * @see #SHOW_UNIT_FLUFF_TEXT
+     */
+    public boolean getShowUnitFluffText() {
+        return store.getBoolean(SHOW_UNIT_FLUFF_TEXT);
+    }
+
+    public void setShowUnitFluffText(boolean value) {
+        store.setValue(SHOW_UNIT_FLUFF_TEXT, value);
     }
 
     public void setEnableExperimentalBotFeatures(boolean value) {

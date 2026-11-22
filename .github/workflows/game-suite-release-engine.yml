@@ -148,6 +148,28 @@ jobs:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           TMPDIR: ${{ runner.temp }}
         run: python3 scripts/suite_release_coordinator.py finish --sources sources --state suite-state --publish
+      # The Docker image is a courtesy, never part of the release: both steps continue on error, and
+      # the Docker repository's own scheduled check builds anything a failure here leaves behind.
+      - name: Mint Docker image trigger App token
+        if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}
+        id: docker_app
+        continue-on-error: true
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek-docker-image
+          permission-actions: write
+      - name: Start the Docker image build for the published release
+        if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' && steps.docker_app.outcome == 'success' }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.docker_app.outputs.token }}
+          DISPATCH: repos/MegaMek/megamek-docker-image/actions/workflows/docker-image.yml/dispatches
+        run: |
+          gh api --method POST "$DISPATCH" -f ref=master
+          echo "Started the Docker image build in MegaMek/megamek-docker-image." >> "$GITHUB_STEP_SUMMARY"
       - name: Mint version-stamp App token
         # Also on a no-op, so rerunning repairs a stamp that failed after publication.
         if: ${{ !inputs.dry_run }}

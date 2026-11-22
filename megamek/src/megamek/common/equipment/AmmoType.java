@@ -5891,7 +5891,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.D)
-              .setISAdvancement(DATE_PS, DATE_NONE, 3084, DATE_NONE, DATE_NONE)
+              .setISAdvancement(DATE_PS, DATE_PS, 3084, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
@@ -5920,7 +5920,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.D)
-              .setISAdvancement(DATE_PS, DATE_NONE, 3084, DATE_NONE, DATE_NONE)
+              .setISAdvancement(DATE_PS, DATE_PS, 3084, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
@@ -5949,7 +5949,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.D)
-              .setISAdvancement(DATE_PS, DATE_NONE, 3084, DATE_NONE, DATE_NONE)
+              .setISAdvancement(DATE_PS, DATE_PS, 3084, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
@@ -6070,7 +6070,7 @@ public class AmmoType extends EquipmentType {
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, false, false, false)
+              .setISApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.LC)
               .setProductionFactions(Faction.LC);
         return ammo;
@@ -6101,8 +6101,8 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
-              .setClanAdvancement(3065, 3067, 3079, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false)
+              .setClanAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.CJF)
               .setProductionFactions(Faction.CJF);
         return ammo;
@@ -6379,8 +6379,8 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
-              .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false)
+              .setClanAdvancement(DATE_NONE, 3062, 3068, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, true, false, false, false)
               .setPrototypeFactions(Faction.CHH)
               .setProductionFactions(Faction.CHH);
         return ammo;
@@ -6411,8 +6411,8 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
-              .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false)
+              .setClanAdvancement(DATE_NONE, 3062, 3068, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, true, false, false, false)
               .setPrototypeFactions(Faction.CHH)
               .setProductionFactions(Faction.CHH);
         return ammo;
@@ -6443,8 +6443,8 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
-              .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, false, false, false, false)
+              .setClanAdvancement(DATE_NONE, 3062, 3068, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, true, false, false, false)
               .setPrototypeFactions(Faction.CHH)
               .setProductionFactions(Faction.CHH);
         return ammo;
@@ -6563,9 +6563,9 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
-              .setISAdvancement(DATE_PS, DATE_ES, 3080, DATE_NONE, DATE_NONE)
+              .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
-              .setClanAdvancement(DATE_PS, DATE_ES, 3080, DATE_NONE, DATE_NONE)
+              .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
@@ -6589,8 +6589,9 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
-              .setAdvancement(DATE_PS, DATE_ES, 3070, DATE_NONE, DATE_NONE)
-              .setApproximate(false, false, false, true, false);
+              .setAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
+              .setApproximate(false, false, true, false, false)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
     }
 
@@ -11038,7 +11039,7 @@ public class AmmoType extends EquipmentType {
         );
 
         ammo.techAdvancement.setTechBase(TechBase.IS);
-        ammo.techAdvancement.setISAdvancement(2365, 2380, 2400);
+        ammo.techAdvancement.setISAdvancement(2370, 2380, 2400);
         ammo.techAdvancement.setTechRating(TechRating.C);
         ammo.techAdvancement.setAvailability(AvailabilityValue.C,
               AvailabilityValue.C,
@@ -11072,7 +11073,7 @@ public class AmmoType extends EquipmentType {
         );
 
         ammo.techAdvancement.setTechBase(TechBase.IS);
-        ammo.techAdvancement.setISAdvancement(2365, 2380, 2400);
+        ammo.techAdvancement.setISAdvancement(2370, 2380, 2400);
         ammo.techAdvancement.setTechRating(TechRating.C);
         ammo.techAdvancement.setAvailability(AvailabilityValue.C,
               AvailabilityValue.C,
@@ -11106,7 +11107,7 @@ public class AmmoType extends EquipmentType {
         );
 
         ammo.techAdvancement.setTechBase(TechBase.IS);
-        ammo.techAdvancement.setISAdvancement(2365, 2380, 2400);
+        ammo.techAdvancement.setISAdvancement(2370, 2380, 2400);
         ammo.techAdvancement.setTechRating(TechRating.C);
         ammo.techAdvancement.setAvailability(AvailabilityValue.C,
               AvailabilityValue.C,
@@ -11140,7 +11141,7 @@ public class AmmoType extends EquipmentType {
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2370, 2380, 2400)
-              .setISApproximate(true, false, false, false, false)
+              .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setReintroductionFactions(Faction.FW);
@@ -11172,7 +11173,7 @@ public class AmmoType extends EquipmentType {
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2370, 2380, 2400)
-              .setISApproximate(true, false, false, false, false)
+              .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setReintroductionFactions(Faction.FW);
@@ -11204,7 +11205,7 @@ public class AmmoType extends EquipmentType {
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2370, 2380, 2400)
-              .setISApproximate(true, false, false, false, false)
+              .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setReintroductionFactions(Faction.FW);
@@ -12579,10 +12580,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
-              .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
+              .setISAdvancement(DATE_ES, 2195, DATE_NONE, 2950, 3051)
               .setISApproximate(false, true, false, true, false)
-              .setClanAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, true, false, false, false)
+              .setClanAdvancement(DATE_ES, 2195, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, true, false, false, false)
               .setProductionFactions(Faction.TA)
               .setReintroductionFactions(Faction.FS, Faction.LC);
         return ammo;
@@ -12607,10 +12608,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
-              .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
+              .setISAdvancement(DATE_ES, 2195, DATE_NONE, 2950, 3051)
               .setISApproximate(false, true, false, true, false)
-              .setClanAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setClanApproximate(true, true, false, false, false)
+              .setClanAdvancement(DATE_ES, 2195, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, true, false, false, false)
               .setProductionFactions(Faction.TA)
               .setReintroductionFactions(Faction.FS, Faction.LC);
         return ammo;
@@ -13493,12 +13494,14 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 100000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 110);
         ammo.techAdvancement.setTechBase(TechBase.IS);
-        ammo.techAdvancement.setISAdvancement(3072, DATE_NONE, DATE_NONE);
+        ammo.techAdvancement.setISAdvancement(3072, 3093, DATE_NONE);
         ammo.techAdvancement.setTechRating(TechRating.E);
         ammo.techAdvancement.setAvailability(AvailabilityValue.X,
               AvailabilityValue.X,
               AvailabilityValue.F,
               AvailabilityValue.X);
+        ammo.techAdvancement.setPrototypeFactions(Faction.DC);
+        ammo.techAdvancement.setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return ammo;
     }
 

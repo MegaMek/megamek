@@ -343,7 +343,22 @@ def safe_zip_type(entry):
             f"ZIP symlink is not allowed: {entry.filename}")
 
 
-def jar_version(path, product):
+def megamek_properties(content):
+    """Entries of a packaged MegaMek Version.properties; release builds carry only these keys."""
+    props = {}
+    for line in content.decode("utf-8").splitlines():
+        if not line.strip() or line.startswith(("#", "!")):
+            continue
+        match = re.fullmatch(r"(major|minor|patch|revision|channel)=([A-Za-z0-9.]*)", line)
+        require(match is not None and match.group(1) not in props,
+                "ambiguous Version.properties")
+        props[match.group(1)] = match.group(2)
+    require(props.get("channel") in (None, "core", "experimental"),
+            "unknown Version.properties channel")
+    return props
+
+
+def jar_metadata(path, product):
     with zip_members(path) as jar:
         seen = set()
         for item in jar.infolist():
@@ -359,25 +374,28 @@ def jar_version(path, product):
         with jar.open(item) as source:
             content = source.read(65537)
         require(len(content) <= 65536, "oversized JAR metadata")
-        if product == "MegaMek":
-            props = {}
-            for line in content.decode("utf-8").splitlines():
-                if not line.strip() or line.startswith(("#", "!")):
-                    continue
-                match = re.fullmatch(r"(major|minor|patch|revision)=([A-Za-z0-9.]*)", line)
-                require(match is not None and match.group(1) not in props,
-                        "ambiguous Version.properties")
-                props[match.group(1)] = match.group(2)
-            version = ".".join(props.get(key, "") for key in ("major", "minor", "patch"))
-            # A Weekly's revision is part of its version; the caller compares the whole string.
-            revision = props.get("revision", "").strip()
-            return version + "." + revision if revision else version
-        # Manifest lines may fold; only Implementation-Version matters.
-        lines = content.decode("utf-8").replace("\r\n ", "").splitlines()
-        versions = [line.split(": ", 1)[1] for line in lines
-                    if line.startswith("Implementation-Version: ")]
-        require(len(versions) == 1, "missing or duplicate JAR version")
-        return versions[0]
+        return content
+
+
+def jar_channel(path):
+    """Release channel stamped into a MegaMek JAR, or None for a development build."""
+    return megamek_properties(jar_metadata(path, "MegaMek")).get("channel")
+
+
+def jar_version(path, product):
+    content = jar_metadata(path, product)
+    if product == "MegaMek":
+        props = megamek_properties(content)
+        version = ".".join(props.get(key, "") for key in ("major", "minor", "patch"))
+        # A Weekly's revision is part of its version; the caller compares the whole string.
+        revision = props.get("revision", "").strip()
+        return version + "." + revision if revision else version
+    # Manifest lines may fold; only Implementation-Version matters.
+    lines = content.decode("utf-8").replace("\r\n ", "").splitlines()
+    versions = [line.split(": ", 1)[1] for line in lines
+                if line.startswith("Implementation-Version: ")]
+    require(len(versions) == 1, "missing or duplicate JAR version")
+    return versions[0]
 
 
 def pinned_tree(repo, pin):
@@ -500,7 +518,7 @@ def atlas_replacements(path, available):
 
 
 def verify(archive, product, version, pins, versions, data_repo, companions=None,
-           source_jars=None, copy_jar=None):
+           source_jars=None, copy_jar=None, channel=None):
     companions = companions or {}
     source_jars = source_jars or {}
     own = {"MegaMek": "megamekCommit", "MegaMekLab": "megameklabCommit",
@@ -548,6 +566,11 @@ def verify(archive, product, version, pins, versions, data_repo, companions=None
             if name in jars:
                 require(jar_version(jars[name], dependency) == expected_version,
                         f"incorrect {dependency} launcher version")
+            if dependency == "MegaMek" and channel is not None:
+                for jar in ("lib/" + name, name):
+                    if jar in jars:
+                        require(jar_channel(jars[jar]) == channel,
+                                f"incorrect MegaMek release channel: {jar}")
         for dependency, source in source_jars.items():
             digest = hashlib.sha256()
             with open(source, "rb") as input_file:
@@ -644,12 +667,13 @@ def main(argv=None):
     parser.add_argument("--companion", action="append", default=[])
     parser.add_argument("--source-jar", action="append", default=[])
     parser.add_argument("--copy-jar")
+    parser.add_argument("--channel", choices=("core", "experimental"))
     args = parser.parse_args(argv)
     def pairs(values):
         return dict(value.split("=", 1) for value in values)
     verify(args.archive, args.product, args.version, pairs(args.pin),
            pairs(args.dependency_version), args.data_repo,
-           pairs(args.companion), pairs(args.source_jar), args.copy_jar)
+           pairs(args.companion), pairs(args.source_jar), args.copy_jar, args.channel)
 
 
 if __name__ == "__main__":

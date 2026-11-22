@@ -1055,22 +1055,56 @@ public class Compute {
     /**
      * Gets a valid displacement, from the hexes around src, as close to the original direction as is possible.
      *
-     * @return valid displacement coords, or null if none
+     * @return valid displacement coords, or {@code null} if none
      */
+    @Nullable
     public static Coords getValidDisplacement(Game game, int entityId,
           Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
-        int range = 1;
-        // check for a central drop-ship hex and if so, then displace to a two
-        // hex radius
-        for (Entity en : game.getEntitiesVector(src)) {
-            if ((en instanceof Dropship) && !en.isAirborne()
-                  && en.getPosition().equals(src)) {
-                range = 2;
+        int[] offsets = { 0, 1, 5, 2, 4, 3 };
+        int range = getDisplacementRange(game, src);
+        for (int offset : offsets) {
+            Coords destination = src.translated((direction + offset) % 6, range);
+            if (Compute.isValidDisplacement(game, entityId, src, destination)) {
+                return destination;
+            }
+            // code here borrowed from Compute.coordsAtRange
+            for (int count = 1; count < range; count++) {
+                destination = destination.translated((direction + offset + 2) % 6);
+                if (Compute.isValidDisplacement(game, entityId, src, destination)) {
+                    return destination;
+                }
             }
         }
+        // no hex around the source can take the unit
+        return null;
+    }
+
+    /**
+     * Gets the hex a unit is displaced into by an accidental fall from above. The rules in play decide how the hex is
+     * picked: Total Warfare looks nearest to the given direction first, the Core rules pick at random (Core p.116).
+     * Every other displacement follows its direction and uses {@link #getValidDisplacement(Game, int, Coords, int)}.
+     *
+     * @return valid displacement coords, or {@code null} if none
+     */
+    @Nullable
+    public static Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction) {
         return Game.rulesManager.getRulesMovement().getAccidentalFallDisplacement(game, entityId, src, direction,
-              range);
+              getDisplacementRange(game, src));
+    }
+
+    /**
+     * How far a unit is displaced out of the given hex: two hexes out of the central hex of a grounded DropShip,
+     * otherwise one.
+     */
+    private static int getDisplacementRange(Game game, Coords src) {
+        for (Entity entity : game.getEntitiesVector(src)) {
+            if ((entity instanceof Dropship) && !entity.isAirborne()
+                  && entity.getPosition().equals(src)) {
+                return 2;
+            }
+        }
+        return 1;
     }
 
     /**

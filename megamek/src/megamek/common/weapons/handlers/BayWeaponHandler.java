@@ -137,9 +137,16 @@ public class BayWeaponHandler extends WeaponHandler {
         return false;
     }
 
-    /** Whether a bay weapon fires with the bay: working, and not burned out by this attack's roll */
+    /** Whether a bay weapon can fire in this attack. */
     private boolean firesWithBay(WeaponMounted m) {
-        return !m.isBreached() && !m.isDestroyed() && !m.isJammed() && !burnedOut.contains(m);
+        return !m.isBreached() && !m.isDestroyed() && !m.isJammed() && !burnedOut.contains(m)
+              && !isCapacitorPpcOutOfRange(m);
+    }
+
+    /** A shorter-ranged PPC in a mixed bay keeps its capacitor charge when only the longer-ranged weapons fire. */
+    private boolean isCapacitorPpcOutOfRange(WeaponMounted m) {
+        return m.firesCapacitorCharge()
+              && RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false) > m.getType().getMaxRange(m);
     }
 
     /** A bay's Damage Value is its weapons' total rounded normally: three NL55s make 17 (SO p.88) */
@@ -403,6 +410,9 @@ public class BayWeaponHandler extends WeaponHandler {
     protected void setDone() {
         super.setDone();
         for (WeaponMounted m : weapon.getBayWeapons()) {
+            if (isCapacitorPpcOutOfRange(m)) {
+                continue;
+            }
             m.setUsedThisRound(true);
             if (m.hasChargedCapacitor() != 0) {
                 m.getLinkedBy().setMode(Mounted.MODE_OFF);

@@ -191,6 +191,26 @@ class MekJumpMPTest {
     }
 
     @Test
+    void wingDamageAfterTakeoffChangesOnlyFutureJumps() throws Exception {
+        Mek mek = createFrankenMek(60, 240);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_RIGHT_TORSO, 25);
+        for (int i = 0; i < 6; i++) {
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.JUMP_JET), Mek.LOC_RIGHT_TORSO);
+        }
+        Mounted<?> wing = mek.addEquipment(EquipmentType.get("ISPartialWing"), Mek.LOC_LEFT_TORSO);
+
+        mek.recordJumpTakeoff();
+        assertEquals(4, mek.getJumpHeatForDistance(3));
+        mek.getCriticalSlots(Mek.LOC_LEFT_TORSO).stream().filter(slot -> (slot != null) && (slot.getMount() == wing))
+              .findFirst().orElseThrow().setDestroyed(true);
+
+        assertEquals(4, mek.getJumpHeatForDistance(3));
+        assertEquals(6, mek.getJumpHeat(3));
+        mek.recordJumpTakeoff();
+        assertEquals(6, mek.getJumpHeatForDistance(3));
+    }
+
+    @Test
     void frankenMekBattleValueJumpHeatIgnoresStandingWater() throws Exception {
         Mek mek = createFrankenMek(60, 240);
         mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_TORSO, 25);

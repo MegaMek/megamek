@@ -230,13 +230,18 @@ public class PPCHandler extends EnergyWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        // A bay's PPC is checked on the bay's to-hit roll by the bay (BayWeaponHandler#doChecks); this roll is not one
+        return false;
+    }
+
+    @Override
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
+        // The bay checks its own roll for capacitor burnout before resolving its individual weapons.
         if (chargedCapacitor && (parentBayHandler == null)) {
             Report r = Game.rulesManager.getRulesWeapons().checkPPCCapacitor(roll.getIntValue(), attackingEntity,
                   weapon);
             if (r != null) {
                 vPhaseReport.add(r);
-                // It burns out before it can fire, inflicting no damage (TO:AUE p.149)
+                // Burnout ends the attack before it can damage the target or its building (TO:AUE p.149).
                 return true;
             }
         }

@@ -47,6 +47,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
@@ -280,17 +281,25 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
      */
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void aBayRollOfTwoBurnsOutItsCapacitorPpcs(boolean aeroSanity) throws Exception {
+    void aBayRollOfTwoBurnsOutOnlyCapacitorPpcsInRange(boolean aeroSanity) throws Exception {
         Game.rulesManager = new TWRulesManager();
         game.getOptions().getOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY).setValue(aeroSanity);
+        game.setBoard(Board.getSpaceBoard(16, 17));
+        target.setPosition(new Coords(4, 13));
         Dropship dropShip = addDropShip();
         WeaponMounted bay = (WeaponMounted) dropShip.addEquipment(EquipmentType.get(EquipmentTypeLookup.PPC_BAY),
               Aero.LOC_NOSE);
-        WeaponMounted ppc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
-        dropShip.addEquipment(EquipmentType.get("ISPPCCapacitor"), Aero.LOC_NOSE).setLinked(ppc);
-        WeaponMounted plainPpc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
+        WeaponMounted ppc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISERPPC"), Aero.LOC_NOSE);
+        Mounted<?> capacitor = dropShip.addEquipment(EquipmentType.get("ISPPCCapacitor"), Aero.LOC_NOSE);
+        capacitor.setLinked(ppc);
+        WeaponMounted plainPpc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISERPPC"), Aero.LOC_NOSE);
+        WeaponMounted shortPpc = (WeaponMounted) dropShip.addEquipment(EquipmentType.get("ISPPC"), Aero.LOC_NOSE);
+        Mounted<?> shortCapacitor = dropShip.addEquipment(EquipmentType.get("ISPPCCapacitor"), Aero.LOC_NOSE);
+        shortCapacitor.setLinked(shortPpc);
+        shortCapacitor.setModeImmediately(Mounted.MODE_CAPACITOR_CHARGE);
         bay.addWeaponToBay(ppc);
         bay.addWeaponToBay(plainPpc);
+        bay.addWeaponToBay(shortPpc);
         WeaponAttackAction attack = new WeaponAttackAction(dropShip.getId(), target.getId(),
               dropShip.getEquipmentNum(bay));
         WeaponHandler handler = (WeaponHandler) ((Weapon) bay.getType())
@@ -302,8 +311,14 @@ class AeroAttackValueDamageTest extends GameBoardTestCase {
 
         handler.handle(GamePhase.FIRING, new Vector<>());
 
-        assertTrue(ppc.isHit(), "the capacitor PPC burns out");
+        assertTrue(ppc.isHit(), "the ER PPC burns out at long range");
+        assertTrue(capacitor.isHit());
         assertFalse(plainPpc.isHit(), "a PPC without a capacitor can't burn out");
-        assertEquals(PPC_ATTACK_VALUE, armorLost(), "the bay hits with only the PPC that didn't burn out");
+        assertFalse(shortPpc.isHit());
+        assertFalse(shortCapacitor.isHit());
+        assertFalse(shortPpc.isUsedThisRound());
+        assertTrue(shortPpc.holdsCapacitorCharge());
+        assertFalse(shortCapacitor.pendingMode().equals(Mounted.MODE_OFF));
+        assertEquals(PPC_ATTACK_VALUE, armorLost(), "only the plain ER PPC deals damage");
     }
 }

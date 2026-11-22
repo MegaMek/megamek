@@ -38,10 +38,14 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import megamek.common.CriticalSlot;
 import megamek.common.Player;
@@ -49,16 +53,20 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
+import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.PPCHandler;
@@ -193,6 +201,39 @@ class PPCCapacitorExplosionTest {
         assertTrue(capacitor.isHit());
         assertEquals(List.of(true, false, false, false), damagedSlots(mek, ppc));
         assertEquals(List.of(true), damagedSlots(mek, capacitor));
+    }
+
+    @Test
+    void aBurnedOutPpcDoesNotDamageAnAdjacentTargetsBuilding() throws Exception {
+        Game game = manager.getGame();
+        Board board = new Board();
+        board.load("""
+              size 1 2
+              hex 0101 0 "" ""
+              hex 0102 0 "bldg_elev:3;building:1;bldg_cf:50" ""
+              end
+              """, null);
+        game.setBoard(board);
+        Mek target = new BipedMek();
+        target.setOwner(mek.getOwner());
+        target.setPosition(new Coords(0, 1));
+        game.addEntity(target);
+        IBuilding building = board.getBuildingAt(target.getPosition());
+        int originalCF = building.getCurrentCF(target.getPosition());
+
+        WeaponAttackAction attack = new WeaponAttackAction(mek.getId(), target.getId(), mek.getEquipmentNum(ppc));
+        Crew crew = spy(mek.getCrew());
+        mek.setCrew(crew);
+        Roll two = mock(Roll.class);
+        when(two.getIntValue()).thenReturn(2);
+        when(two.getReport()).thenReturn("2");
+        doReturn(two).when(crew).rollGunnerySkill(game, attack);
+
+        PPCHandler handler = new PPCHandler(new ToHitData(2, "test"), attack, game, manager);
+        handler.handle(GamePhase.FIRING, new Vector<>());
+
+        assertTrue(capacitor.isHit());
+        assertEquals(originalCF, building.getCurrentCF(target.getPosition()));
     }
 
     /** @return The critical slots in its location that hold the equipment */

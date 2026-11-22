@@ -338,6 +338,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     // Movement heat is resolved after landing, so the jets that could fire are kept from the takeoff, their thrust in
     // ascending order. Null until a jump starts this round.
     private double[] jumpTakeoffThrust;
+    private @Nullable Integer jumpTakeoffWingBonus;
 
     private int[] frankenMekStructureTonnage = null;
 
@@ -1168,6 +1169,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
         super.newRound(roundNumber);
         jumpTakeoffThrust = null;
+        jumpTakeoffWingBonus = null;
         incrementMASCAndSuperchargerLevels();
 
         // If emergency cooling system was used last turn, increment the counter,
@@ -1906,6 +1908,15 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return Math.max(bonus, 0);
     }
 
+    private int getPartialWingJumpBonus() {
+        for (MiscMounted mount : getMisc()) {
+            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                return getPartialWingJumpBonus(mount);
+            }
+        }
+        return 0;
+    }
+
     public int getPartialWingJumpBonus(Mounted<?> mount) {
         return getPartialWingJumpBonus(mount, MPCalculationSetting.STANDARD);
     }
@@ -1972,14 +1983,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     private int getJumpHeat(int distance, boolean hexes) {
         int extra = bDamagedCoolantSystem ? 1 : 0;
 
-        // don't count movement granted by Partial Wing
-        int wingBonus = 0;
-        for (Mounted<?> mount : getMisc()) {
-            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
-                wingBonus = getPartialWingJumpBonus(mount);
-                break;
-            }
-        }
+        int wingBonus = (hexes && (jumpTakeoffWingBonus != null)) ? jumpTakeoffWingBonus : getPartialWingJumpBonus();
         // CO p. 213: a FrankenMek generates jump heat per jet fired, not per hex jumped
         int movedMP = isFrankenMek() ? getFrankenMekJumpJetsFired(distance, wingBonus, hexes) : (distance - wingBonus);
 
@@ -2022,8 +2026,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return hex == null ? 0 : hex.terrainLevel(Terrains.WATER);
     }
 
-    /** Keeps the jets that can fire as the jump starts, before any of them is damaged on landing. */
+    /** Records jet thrust and the partial wing bonus before landing or combat damage can change either. */
     public void recordJumpTakeoff() {
+        jumpTakeoffWingBonus = getPartialWingJumpBonus();
         jumpTakeoffThrust = getJumpJetThrust(getJumpJetWaterDepth()).filter(movement -> movement > 0).sorted()
               .toArray();
     }
@@ -6416,6 +6421,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         bCoolantWentUp = false;
         bUsedCoolantSystem = false;
         jumpTakeoffThrust = null;
+        jumpTakeoffWingBonus = null;
         // Fortifying and rubble clearing in progress refer to hexes of the last game's map
         cancelFortify();
         cancelClearingRubble();

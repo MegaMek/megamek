@@ -109,6 +109,11 @@ public class LargeSupportTank extends SupportTank {
     }
 
     @Override
+    protected int getLocRear() {
+        return LOC_REAR;
+    }
+
+    @Override
     public int getLocTurret() {
         return LOC_TURRET;
     }

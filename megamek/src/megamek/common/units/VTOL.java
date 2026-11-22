@@ -57,6 +57,7 @@ import megamek.common.enums.MPBoosters;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.Engine;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -491,14 +492,9 @@ public class VTOL extends Tank implements IBomber {
                             return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if (hasEngine()) {
-                            if (getEngine().isFusion() && !engineHit) {
-                                return CRIT_ENGINE;
-                            } else if (!getEngine().isFusion()) {
-                                return CRIT_FUEL_TANK;
-                            }
-                        } else {
-                            return CRIT_NONE;
+                        int fuelTank = getFuelTankCriticalEffect();
+                        if (fuelTank != CRIT_NONE || getEngineType() == Engine.NONE) {
+                            return fuelTank;
                         }
                 }
             } else if (loc == LOC_ROTOR) {
@@ -594,14 +590,9 @@ public class VTOL extends Tank implements IBomber {
                             }
                         }
                     case 12:
-                        if (hasEngine()) {
-                            if (getEngine().isFusion() && !engineHit) {
-                                return CRIT_ENGINE;
-                            } else if (!getEngine().isFusion()) {
-                                return CRIT_FUEL_TANK;
-                            }
-                        } else {
-                            return CRIT_NONE;
+                        int fuelTank = getFuelTankCriticalEffect();
+                        if (fuelTank != CRIT_NONE || getEngineType() == Engine.NONE) {
+                            return fuelTank;
                         }
                 }
             }

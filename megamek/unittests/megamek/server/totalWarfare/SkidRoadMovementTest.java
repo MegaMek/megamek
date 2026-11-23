@@ -48,8 +48,8 @@ import java.util.List;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
-import megamek.common.compute.Compute;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;

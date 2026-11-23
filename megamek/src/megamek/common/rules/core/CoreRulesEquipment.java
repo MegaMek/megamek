@@ -43,6 +43,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.Sensor;
 import megamek.common.game.Game;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesEquipment;
@@ -144,6 +145,11 @@ public class CoreRulesEquipment extends RulesEquipment {
         coords.add(b);
 
         return coords;
+    }
+
+    @Override
+    public int getSensorRanges(int type) {
+        return type == Sensor.TYPE_NOVA ? 15 : getCommonSensorRange(type);
     }
 
     /**

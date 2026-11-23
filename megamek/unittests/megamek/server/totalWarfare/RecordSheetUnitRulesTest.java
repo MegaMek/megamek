@@ -139,6 +139,14 @@ class RecordSheetUnitRulesTest {
 
     @ParameterizedTest
     @ValueSource(strings = { OptionsConstants.RULES_CORE, OptionsConstants.RULES_TW })
+    void novaSensorBracketUsesSelectedRuleset(String rules) {
+        game.initializeRulesManager(rules);
+        assertEquals(rules.equals(OptionsConstants.RULES_CORE) ? 15 : 9,
+              new Sensor(Sensor.TYPE_NOVA).getRangeByBracket());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { OptionsConstants.RULES_CORE, OptionsConstants.RULES_TW })
     void watchdogUsesRulesetProbeRangeAndSharedSensorAndEcmRanges(String rules) throws LocationFullException {
         Mek mek = new BipedMek();
         deploy(mek, rules);

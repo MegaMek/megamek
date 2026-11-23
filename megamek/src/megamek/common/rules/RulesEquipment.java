@@ -128,20 +128,22 @@ public abstract class RulesEquipment {
     }
 
     /**
-     * What are the Sensor ranges for probes in the Tactical Operations and Strategic Operations sensor rules, which the
-     * Core Rulebook does not cover.
+     * Returns the range per bracket for Tactical Operations and Strategic Operations sensors.
+     * The TO:AR sensor table (p. 190) omits the Nova CEWS, so each ruleset retains its existing bracket.
      *
      * @param type the probe type
      * @return the sensor range
      */
-    public int getSensorRanges(int type) {
+    public abstract int getSensorRanges(int type);
+
+    /** Returns the range per bracket for sensor types shared by both rulesets. */
+    protected static int getCommonSensorRange(int type) {
         return switch (type) {
             case Sensor.TYPE_BAP, Sensor.TYPE_BAPP -> 12;
             case Sensor.TYPE_BLOODHOUND -> 16;
             case Sensor.TYPE_CLAN_AP -> 15;
             // TO:AR p.190 lists "Clan Watchdog/Light Active Probe" together
-            case Sensor.TYPE_WATCHDOG, Sensor.TYPE_NOVA, Sensor.TYPE_LIGHT_AP, Sensor.TYPE_VEE_MAG_SCAN,
-                 Sensor.TYPE_VEE_IR,
+            case Sensor.TYPE_WATCHDOG, Sensor.TYPE_LIGHT_AP, Sensor.TYPE_VEE_MAG_SCAN, Sensor.TYPE_VEE_IR,
                  Sensor.TYPE_BA_HEAT -> 9;
             //Under the current errata (3.0,Dec 2017), the rules only give aero sensor ranges against overflown ground units
             //No differences in range are mentioned for any sensor but active probe, so I'm assuming magscan range for standard sensors

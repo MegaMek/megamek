@@ -409,9 +409,6 @@ public class TWDamageManager implements IDamageManager {
                   ammoExplosion,
                   damageType,
                   areaSatArty,
-                  throughFront,
-                  underWater,
-                  nukeS2S,
                   mods);
             case HandheldWeapon teCast -> damageHandheldWeapon(reportVec,
                   teCast,
@@ -2609,8 +2606,7 @@ public class TWDamageManager implements IDamageManager {
     }
 
     public void damageInfantry(Vector<Report> reportVec, ConvInfantry infantry, HitData hit, int damage,
-          boolean ammoExplosion, DamageType damageType, boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, ModsInfo mods) {
+          boolean ammoExplosion, DamageType damageType, boolean areaSatArty, ModsInfo mods) {
         int entityId = infantry.getId();
         boolean damageIS = mods.damageIS;
         Report report;

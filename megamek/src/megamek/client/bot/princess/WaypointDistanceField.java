@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +41,16 @@ import java.util.PriorityQueue;
 
 import jakarta.annotation.Nullable;
 import megamek.common.Hex;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.moves.MoveStep;
 import megamek.common.orders.LanceRole;
 import megamek.common.orders.LanceRoles;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardEdgePathFinder;
+import megamek.common.pathfinder.BoardEdgePathFinder.GroundElevationLimits;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
@@ -77,11 +82,11 @@ final class WaypointDistanceField {
 
     // the waypoint measured to, or null for a field to a board edge (MM @Nullable is not applicable to fields)
     private final Coords waypoint;
-    private final Map<Coords, Integer> costToWaypoint;
+    private final Map<Coords, Integer> costToWaypoint = new HashMap<>();
+    private final Map<Coords, Map<Integer, Integer>> bridgeCostsByElevation = new HashMap<>();
 
-    private WaypointDistanceField(@Nullable Coords waypoint, Map<Coords, Integer> costToWaypoint) {
+    private WaypointDistanceField(@Nullable Coords waypoint) {
         this.waypoint = waypoint;
-        this.costToWaypoint = costToWaypoint;
     }
 
     /**
@@ -108,14 +113,12 @@ final class WaypointDistanceField {
      */
     static WaypointDistanceField build(Entity mover, Coords waypoint, Map<Coords, Integer> extraCost) {
         Board board = (mover.getGame() == null) ? null : mover.getGame().getBoard(mover);
-        if ((board == null) || !board.contains(waypoint) || !isEnterable(mover, MovementType.getMovementType(mover),
-              board, waypoint)) {
+        if ((board == null) || !board.contains(waypoint)) {
             LOGGER.debug("[BotOrders] {}: waypoint {} cannot be entered; no distance field", mover.getDisplayName(),
                   waypoint.getBoardNum());
-            return new WaypointDistanceField(waypoint, new HashMap<>());
+            return new WaypointDistanceField(waypoint);
         }
-        return new WaypointDistanceField(waypoint, fill(mover, board, List.of(waypoint), waypoint.getBoardNum(),
-              extraCost));
+        return fill(mover, board, waypoint, List.of(waypoint), waypoint.getBoardNum(), extraCost);
     }
 
     /**
@@ -131,16 +134,9 @@ final class WaypointDistanceField {
     static WaypointDistanceField buildToEdge(Entity mover, CardinalEdge edge) {
         Board board = (mover.getGame() == null) ? null : mover.getGame().getBoard(mover);
         if (board == null) {
-            return new WaypointDistanceField(null, new HashMap<>());
+            return new WaypointDistanceField(null);
         }
-        MovementType movementType = MovementType.getMovementType(mover);
-        List<Coords> edgeHexes = new ArrayList<>();
-        for (Coords hex : edgeHexes(board, edge)) {
-            if (isEnterable(mover, movementType, board, hex)) {
-                edgeHexes.add(hex);
-            }
-        }
-        return new WaypointDistanceField(null, fill(mover, board, edgeHexes, edge.name() + " edge", Map.of()));
+        return fill(mover, board, null, edgeHexes(board, edge), edge.name() + " edge", Map.of());
     }
 
     private static List<Coords> edgeHexes(Board board, CardinalEdge edge) {
@@ -196,71 +192,113 @@ final class WaypointDistanceField {
      * Spreads the cost outward from the goal hexes, which cost nothing, walking backward: a unit in each neighbour
      * would step into the hex already reached.
      */
-    private static Map<Coords, Integer> fill(Entity mover, Board board, List<Coords> goals, String goalName,
-          Map<Coords, Integer> extraCost) {
-        Map<Coords, Integer> costToGoal = new HashMap<>();
-        // each hex's answers, asked of the unit once rather than once for every neighbour that looks at the hex
-        Map<Coords, Boolean> enterableHexes = new HashMap<>();
-        Map<Coords, Integer> unitElevations = new HashMap<>();
+    private static WaypointDistanceField fill(Entity mover, Board board, @Nullable Coords waypoint, List<Coords> goals,
+          String goalName, Map<Coords, Integer> extraCost) {
+        Map<Coords, List<Surface>> surfaces = new HashMap<>();
         MovementType movementType = MovementType.getMovementType(mover);
-        boolean isHovercraft = movementType == MovementType.Hover;
-        boolean isAmphibious = (movementType == MovementType.WheeledAmphibious)
-              || (movementType == MovementType.TrackedAmphibious);
-        int maxElevationChange = mover.getMaxElevationChange();
-        // a hovercraft, a boat or an amphibious unit crosses water as it crosses land
-        boolean isWading = !isHovercraft && !isAmphibious && (movementType != MovementType.Water);
-        // a convoy takes the fastest way: along a road a step costs 1 MP whatever the terrain (HammerGS, 2026-10-02)
+        GroundElevationLimits limits = GroundElevationLimits.forEntity(mover);
         LanceRole role = LanceRoles.effectiveRole(mover);
-        boolean isOnRoads = (role != null) && role.isConvoy();
-        Map<Coords, Boolean> roadHexes = new HashMap<>();
+        boolean convoy = role != null && role.isConvoy();
 
-        PriorityQueue<long[]> frontier = new PriorityQueue<>((first, second) -> Long.compare(first[0], second[0]));
+        // A bridge can carry one route and span a different one. Retain the elevation until the search is finished.
+        Map<Surface, Integer> distances = new HashMap<>();
+        PriorityQueue<Visit> frontier = new PriorityQueue<>(Comparator.comparingInt(Visit::cost));
         for (Coords goal : goals) {
-            costToGoal.put(goal, 0);
-            frontier.add(new long[] { 0, goal.getX(), goal.getY() });
+            for (Surface surface : surfaces.computeIfAbsent(goal, c -> surfacesAt(mover, movementType, board, c))) {
+                distances.put(surface, 0);
+                frontier.add(new Visit(surface, 0));
+            }
         }
         while (!frontier.isEmpty()) {
-            long[] entry = frontier.poll();
-            int cost = (int) entry[0];
-            Coords current = new Coords((int) entry[1], (int) entry[2]);
-            if (cost > costToGoal.getOrDefault(current, UNREACHABLE)) {
+            Visit visit = frontier.remove();
+            Surface into = visit.surface();
+            if (visit.cost() != distances.get(into)) {
                 continue;
             }
-            Hex currentHex = board.getHex(current);
-            int currentElevation = unitElevations.computeIfAbsent(current,
-                  hex -> BoardEdgePathFinder.calculateUnitElevationInHex(currentHex, mover, isHovercraft,
-                        isAmphibious));
-            // the cost of stepping into this hex, the same from every neighbour but for the climb
-            int enteringCost = enteringCost(mover, currentHex, isWading) + extraCost.getOrDefault(current, 0);
+            Coords current = into.coords();
             for (int direction = 0; direction < 6; direction++) {
                 Coords neighbor = current.translated(direction);
-                if (!board.contains(neighbor) || !enterableHexes.computeIfAbsent(neighbor,
-                      hex -> isEnterable(mover, movementType, board, hex))) {
+                if (!board.contains(neighbor)) {
                     continue;
                 }
-                int neighborElevation = unitElevations.computeIfAbsent(neighbor,
-                      hex -> BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(hex), mover, isHovercraft,
-                            isAmphibious));
-                int elevationChange = Math.abs(currentElevation - neighborElevation);
-                if (elevationChange > maxElevationChange) {
-                    continue;
-                }
-                int stepCost = enteringCost + elevationChange;
-                if (isOnRoads && roadHexes.computeIfAbsent(current, hex -> board.getHex(hex).containsTerrain(
-                      Terrains.ROAD)) && roadHexes.computeIfAbsent(neighbor, hex -> board.getHex(hex).containsTerrain(
-                      Terrains.ROAD))) {
-                    stepCost = 1 + elevationChange;
-                }
-                int neighborCost = cost + stepCost;
-                if (neighborCost < costToGoal.getOrDefault(neighbor, UNREACHABLE)) {
-                    costToGoal.put(neighbor, neighborCost);
-                    frontier.add(new long[] { neighborCost, neighbor.getX(), neighbor.getY() });
+                for (Surface from : surfaces.computeIfAbsent(neighbor, c -> surfacesAt(mover, movementType, board, c))) {
+                    int step = stepCost(from, into, limits, convoy, extraCost.getOrDefault(current, 0));
+                    if (step != UNREACHABLE && visit.cost() + step < distances.getOrDefault(from, UNREACHABLE)) {
+                        int cost = visit.cost() + step;
+                        distances.put(from, cost);
+                        frontier.add(new Visit(from, cost));
+                    }
                 }
             }
         }
+        WaypointDistanceField result = new WaypointDistanceField(waypoint);
+        distances.forEach((surface, cost) -> {
+            Coords coords = surface.coords();
+            result.costToWaypoint.merge(coords, cost, Math::min);
+            if (surface.hex().hasBridge()) {
+                result.bridgeCostsByElevation.computeIfAbsent(coords, c -> new HashMap<>())
+                      .put(surface.elevation(), cost);
+            }
+        });
         LOGGER.debug("[BotOrders] distance field to {} for {}: {} hexes reachable", goalName, movementType,
-              costToGoal.size());
-        return costToGoal;
+              result.costToWaypoint.size());
+        return result;
+    }
+
+    private record Visit(Surface surface, int cost) {
+    }
+
+    private record Surface(Coords coords, Hex hex, int altitude, int enteringCost, boolean requiresRoad,
+          boolean mustUseBridgeExits) {
+        boolean permitsExit(int direction) {
+            return !mustUseBridgeExits || hex.containsTerrainExit(Terrains.BRIDGE, direction);
+        }
+
+        int elevation() {
+            return altitude - hex.getLevel();
+        }
+    }
+
+    private static List<Surface> surfacesAt(Entity mover, MovementType type, Board board, Coords coords) {
+        Hex hex = board.getHex(coords);
+        if (mover instanceof BattlefieldSupportAsset asset && asset.isSnowProhibited(hex)) {
+            return List.of();
+        }
+        boolean hover = type == MovementType.Hover;
+        boolean amphibious = type == MovementType.WheeledAmphibious || type == MovementType.TrackedAmphibious;
+        boolean wades = !hover && !amphibious && type != MovementType.Water;
+        int ground = BoardEdgePathFinder.calculateUnitElevationInHex(hex, mover, hover, amphibious);
+        int groundElevation = ground - hex.getLevel();
+        List<Surface> surfaces = new ArrayList<>(hex.hasBridge() ? 2 : 1);
+        if ((!hex.hasBridge() || (groundElevation != hex.terrainLevel(Terrains.BRIDGE_ELEV)
+              && mover.isElevationValid(groundElevation, hex)))
+              && !mover.isLocationProhibited(coords, board.getBoardId(), groundElevation)
+              && !BoardClusterTracker.buildingPlowThroughRequired(mover, type, coords)
+              && !wouldBringDownBuilding(mover, board, coords, groundElevation)) {
+            surfaces.add(new Surface(coords, hex, ground, enteringCost(mover, hex, wades),
+                  BoardEdgePathFinder.requiresRoad(mover, board, coords, hex, ground), false));
+        }
+        if (hex.hasBridge() && MovementType.canUseBridge(type) && !hex.containsTerrain(Terrains.IMPASSABLE)) {
+            int deck = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+            if (!wouldBringDownBuilding(mover, board, coords, deck)) {
+                surfaces.add(new Surface(coords, hex, hex.getLevel() + deck, 1, false,
+                      MoveStep.mustUseBridgeExits(mover, board.getBoardId(), hex, deck, coords)));
+            }
+        }
+        return surfaces;
+    }
+
+    private static int stepCost(Surface from, Surface into, GroundElevationLimits limits, boolean convoy, int extra) {
+        int direction = from.coords().direction(into.coords());
+        if (!from.permitsExit(direction) || !into.permitsExit((direction + 3) % 6)
+              || !limits.permits(from.hex(), from.altitude(), into.hex(), into.altitude(), direction)) {
+            return UNREACHABLE;
+        }
+        boolean road = Compute.isRoadStep(from.hex(), from.elevation(), into.hex(), into.elevation(), direction, false);
+        if (!road && (from.requiresRoad() || into.requiresRoad())) {
+            return UNREACHABLE;
+        }
+        return Math.abs(from.altitude() - into.altitude()) + (convoy && road ? 1 : into.enteringCost() + extra);
     }
 
     /**
@@ -294,37 +332,26 @@ final class WaypointDistanceField {
      * @return the movement points, or {@link #UNREACHABLE} when it cannot step there
      */
     static int stepCost(Entity mover, Board board, Coords from, Coords into) {
-        MovementType movementType = MovementType.getMovementType(mover);
-        if (!board.contains(into) || !isEnterable(mover, movementType, board, into)) {
+        if (!board.contains(from) || !board.contains(into)) {
             return UNREACHABLE;
         }
-        boolean isHovercraft = movementType == MovementType.Hover;
-        boolean isAmphibious = (movementType == MovementType.WheeledAmphibious)
-              || (movementType == MovementType.TrackedAmphibious);
-        boolean isWading = !isHovercraft && !isAmphibious && (movementType != MovementType.Water);
-        Hex fromHex = board.getHex(from);
-        Hex intoHex = board.getHex(into);
-        int climb = Math.abs(BoardEdgePathFinder.calculateUnitElevationInHex(fromHex, mover, isHovercraft,
-              isAmphibious) - BoardEdgePathFinder.calculateUnitElevationInHex(intoHex, mover, isHovercraft,
-              isAmphibious));
-        if (climb > mover.getMaxElevationChange()) {
-            return UNREACHABLE;
-        }
-        // the role last: finding a unit's lance role goes through every unit in the game, and most steps are off
-        // the road
-        if (fromHex.containsTerrain(Terrains.ROAD) && intoHex.containsTerrain(Terrains.ROAD)) {
-            LanceRole role = LanceRoles.effectiveRole(mover);
-            if ((role != null) && role.isConvoy()) {
-                return 1 + climb;
+        MovementType type = MovementType.getMovementType(mover);
+        GroundElevationLimits limits = GroundElevationLimits.forEntity(mover);
+        List<Surface> destinations = surfacesAt(mover, type, board, into);
+        // Looking up a lance role scans the game. Only convoys can benefit from a road on both ends.
+        LanceRole role = board.getHex(from).hasPavementOrRoad() && board.getHex(into).hasPavementOrRoad()
+              ? LanceRoles.effectiveRole(mover) : null;
+        int cheapest = UNREACHABLE;
+        for (Surface source : surfacesAt(mover, type, board, from)) {
+            if (from.equals(mover.getPosition()) && source.hex().hasBridge()
+                  && source.elevation() != mover.getElevation()) {
+                continue;
+            }
+            for (Surface destination : destinations) {
+                cheapest = Math.min(cheapest, stepCost(source, destination, limits, role != null && role.isConvoy(), 0));
             }
         }
-        return enteringCost(mover, intoHex, isWading) + climb;
-    }
-
-    private static boolean isEnterable(Entity mover, MovementType movementType, Board board, Coords coords) {
-        return !mover.isLocationProhibited(coords)
-              && !BoardClusterTracker.buildingPlowThroughRequired(mover, movementType, coords)
-              && !wouldBringDownBuilding(mover, board, coords);
+        return cheapest;
     }
 
     /**
@@ -333,13 +360,21 @@ final class WaypointDistanceField {
      * points the unit where it will never step and the unit stands still: a 65-ton Longbow froze in front of a CF 15
      * building for two rounds (HammerGS's playtest, 2026-09-27).
      */
-    static boolean wouldBringDownBuilding(Entity mover, Board board, Coords coords) {
+    static boolean wouldBringDownBuilding(Entity mover, Board board, Coords coords, int elevation) {
+        if (passesUnderBridge(board, coords, elevation)) {
+            return false;
+        }
         // most hexes hold no building: look for one before asking anything of the unit
         IBuilding building = board.getBuildingAt(coords);
         if ((building == null) || mover.isAirborne() || mover.hasETypeFlag(Entity.ETYPE_VTOL)) {
             return false;
         }
         return (mover.getWeight() + COLLAPSE_MARGIN_TONS) > building.getCurrentCF(coords);
+    }
+
+    static boolean passesUnderBridge(Board board, Coords coords, int elevation) {
+        Hex hex = board.getHex(coords);
+        return hex != null && hex.hasBridge() && elevation < hex.terrainLevel(Terrains.BRIDGE_ELEV);
     }
 
     /**
@@ -356,5 +391,15 @@ final class WaypointDistanceField {
      */
     int costFrom(Coords position) {
         return costToWaypoint.getOrDefault(position, UNREACHABLE);
+    }
+
+    /** Use the actual surface for the moving unit; hypothetical coordinates alone can refer to either surface. */
+    int costFrom(Entity mover, Coords position) {
+        return position.equals(mover.getPosition()) ? costFrom(position, mover.getElevation()) : costFrom(position);
+    }
+
+    int costFrom(Coords position, int elevation) {
+        Map<Integer, Integer> bridgeCosts = bridgeCostsByElevation.get(position);
+        return bridgeCosts == null ? costFrom(position) : bridgeCosts.getOrDefault(elevation, UNREACHABLE);
     }
 }

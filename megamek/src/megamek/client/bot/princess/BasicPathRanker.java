@@ -62,9 +62,9 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.orders.UnitOrders;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RoadHazards;
 import megamek.common.units.*;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.logging.MMLogger;
@@ -1724,7 +1724,7 @@ public class BasicPathRanker extends PathRanker {
 
         if (behaviorType == BehaviorType.ForcedWithdrawal || behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToDestination(movingUnit, path.getFinalCoords(), path.getFinalBoardId(),
-                  game);
+                  game, path.getFinalElevation());
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod;
             // Princess's original waypoints add nothing to the distance; a bot that follows unit orders weighs these
@@ -1807,9 +1807,7 @@ public class BasicPathRanker extends PathRanker {
 
 
     protected void checkBlackIce(Game game) {
-        blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE) &&
-              game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP) ||
-              game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
+        blackIce = RoadHazards.blackIceWeather(game) ? 1 : 0;
     }
 
 
@@ -2755,7 +2753,7 @@ public class BasicPathRanker extends PathRanker {
 
 
         logger.trace("Checking Hex ({}) for hazards.", hex.getCoords());
-        Set<Integer> hazards = getHazardTerrainIds(hex);
+        Set<Integer> hazards = getHazardTerrainIds(hex, step, movingUnit, jumpLanding);
         // No hazards were found, so nothing to worry about.
         if (hazards.isEmpty()) {
             logger.trace("No hazards found.");
@@ -2819,15 +2817,25 @@ public class BasicPathRanker extends PathRanker {
         return hazardValue;
     }
 
-    private Set<Integer> getHazardTerrainIds(Hex hex) {
+    private Set<Integer> getHazardTerrainIds(Hex hex, MoveStep step, Entity unit, boolean jumpLanding) {
         var hazards = hex.getTerrainTypesSet();
-        // Black Ice can appear if the conditions are favorable
-        if (blackIce > 0) {
-            hazards.retainAll(Terrains.HAZARDS_WITH_BLACK_ICE);
-        } else {
-            hazards.retainAll(Terrains.HAZARDS);
+        hazards.retainAll(Terrains.HAZARDS);
+        boolean onRoad = !jumpLanding && step.isRoadStep();
+        if (onRoad) {
+            hazards.remove(Terrains.RUBBLE);
+            hazards.remove(Terrains.SWAMP);
+            hazards.remove(Terrains.TUNDRA);
+            hazards.remove(Terrains.WATER);
+            if (!RoadHazards.mudOnRoad(hex)) {
+                hazards.remove(Terrains.MUD);
+            }
         }
-
+        boolean touchesPavement = RoadHazards.touchesPavement(hex, step.getElevation(), onRoad || jumpLanding);
+        if (!touchesPavement) {
+            hazards.remove(Terrains.BLACK_ICE);
+        } else if (blackIce > 0 && !hazards.contains(Terrains.BLACK_ICE) && RoadHazards.canRevealBlackIce(unit)) {
+            hazards.add(Terrains.PAVEMENT);
+        }
         return hazards;
     }
 

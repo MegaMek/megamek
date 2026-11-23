@@ -661,7 +661,7 @@ class FormationMarch {
             Coords stepPosition = step.getPosition();
             // a unit already standing in a building is not brought down by leaving it
             if ((stepPosition != null) && !stepPosition.equals(start)
-                  && WaypointDistanceField.wouldBringDownBuilding(entity, board, stepPosition)) {
+                  && WaypointDistanceField.wouldBringDownBuilding(entity, board, stepPosition, step.getElevation())) {
                 return true;
             }
         }

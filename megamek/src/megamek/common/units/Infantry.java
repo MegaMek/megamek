@@ -56,6 +56,7 @@ import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RoadHazards;
 import megamek.logging.MMLogger;
 
 /**
@@ -404,14 +405,14 @@ public abstract class Infantry extends Entity {
 
     @Override
     public PilotingRollData checkBogDown(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
-          Coords curPos, int lastElev, boolean isPavementStep) {
-        return checkBogDown(step, curHex, lastPos, curPos, isPavementStep);
+          Coords curPos, int lastElev, boolean onRoad) {
+        return checkBogDown(step, curHex, lastPos, curPos, onRoad);
     }
 
     public PilotingRollData checkBogDown(MoveStep step, Hex curHex, Coords lastPos, Coords curPos,
-          boolean isPavementStep) {
+          boolean onRoad) {
         PilotingRollData roll = new PilotingRollData(getId(), 4, "entering boggy terrain");
-        int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
+        int bgMod = RoadHazards.bogDownModifier(this, curHex, onRoad, step.getElevation());
         final boolean onBridge = (curHex.terrainLevel(Terrains.BRIDGE) > 0) &&
               (getElevation() == curHex.terrainLevel(Terrains.BRIDGE_ELEV));
         if (!lastPos.equals(curPos) &&
@@ -421,7 +422,6 @@ public abstract class Infantry extends Entity {
               (getMovementMode() != EntityMovementMode.VTOL) &&
               (getMovementMode() != EntityMovementMode.WIGE) &&
               (step.getElevation() == 0) &&
-              !isPavementStep &&
               !onBridge) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
         } else {

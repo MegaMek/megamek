@@ -199,7 +199,7 @@ public class SupportTank extends Tank {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation, boolean onRoad) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -231,37 +231,32 @@ public class SupportTank extends Tank {
         // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
         // terrain still applies.
         boolean rubblePassable = hasWorkingBulldozer() || BulldozerRules.canBackhoeClearRubble(this, game);
+        boolean usesRoad = onRoad && hex.hasGroundRoad();
         return switch (movementMode) {
-            case TRACKED -> (hex.terrainLevel(Terrains.WOODS) > 1)
+            case TRACKED -> (!usesRoad && ((hex.terrainLevel(Terrains.WOODS) > 1)
+                  || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                  || ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !rubblePassable)))
                   || ((hex.terrainLevel(Terrains.WATER) > 0)
                   && !hex.containsTerrain(Terrains.ICE)
                   && !EnvironmentalSealingRules.canOperateFullySubmerged(this))
-                  || hex.containsTerrain(Terrains.JUNGLE)
-                  || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                  || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                  || ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !rubblePassable);
-            case WHEELED -> (hex.terrainLevel(Terrains.WOODS) > 1)
+                  || (hex.terrainLevel(Terrains.MAGMA) > 1);
+            case WHEELED -> (!usesRoad && ((hex.terrainLevel(Terrains.WOODS) > 1)
                   || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
-                  || hex.containsTerrain(Terrains.ROUGH)
+                  || hex.containsTerrain(Terrains.ROUGH) || (hex.containsTerrain(Terrains.RUBBLE) && !rubblePassable)
+                  || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)))
                   || ((hex.terrainLevel(Terrains.WATER) > 0)
                   && !hex.containsTerrain(Terrains.ICE)
                   && !EnvironmentalSealingRules.canOperateFullySubmerged(this))
-                  || (hex.containsTerrain(Terrains.RUBBLE) && !rubblePassable)
-                  || hex.containsTerrain(Terrains.MAGMA)
-                  || hex.containsTerrain(Terrains.JUNGLE)
-                  || (hex.terrainLevel(Terrains.SNOW) > 1)
-                  || (hex.terrainLevel(Terrains.GEYSER) == 2);
-            case HOVER -> (hex.terrainLevel(Terrains.WOODS) > 1)
+                  || hex.containsTerrain(Terrains.MAGMA) || (hex.terrainLevel(Terrains.GEYSER) == 2);
+            case HOVER -> (!usesRoad && ((hex.terrainLevel(Terrains.WOODS) > 1)
                   || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
-                  || hex.containsTerrain(Terrains.JUNGLE)
-                  || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                  || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                  || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+                  || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                  || (hex.terrainLevel(Terrains.RUBBLE) > 5))) || (hex.terrainLevel(Terrains.MAGMA) > 1);
             case NAVAL, HYDROFOIL -> (hex.terrainLevel(Terrains.WATER) <= 0)
                   || hex.containsTerrain(Terrains.ICE);
             case SUBMARINE -> (hex.terrainLevel(Terrains.WATER) <= 0);
             // Combat and support WiGEs share one rule, including hover restrictions while grounded (TW p.55)
-            case WIGE -> isLocationProhibitedWiGE(hex, currElevation);
+            case WIGE -> isLocationProhibitedWiGE(hex, currElevation, usesRoad);
             default -> false;
         };
     }

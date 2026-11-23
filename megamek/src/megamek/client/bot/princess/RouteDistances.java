@@ -37,7 +37,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import jakarta.annotation.Nullable;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Coords;
+import megamek.common.pathfinder.BoardEdgePathFinder.GroundElevationLimits;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
@@ -81,9 +83,14 @@ class RouteDistances {
      * @return the movement points to the waypoint, or {@link WaypointDistanceField#UNREACHABLE}
      */
     int routeCostFrom(Entity mover, Coords waypoint, Coords position) {
+        return routeCostFrom(mover, waypoint, position, null);
+    }
+
+    int routeCostFrom(Entity mover, Coords waypoint, Coords position, @Nullable Integer elevation) {
         boolean isTownSpot = follower.townLegs().isTownSpotOf(mover, waypoint);
         boolean isSlowest = isTownSpot && follower.townLegs().isSlowestOfLance(mover);
-        return routeCost(mover, waypoint, position, isTownSpot, isSlowest);
+        WaypointDistanceField field = routeField(mover, waypoint, isTownSpot, isSlowest);
+        return costFrom(field, mover, position, elevation);
     }
 
     /**
@@ -95,7 +102,15 @@ class RouteDistances {
     int routeCost(Entity mover, Coords waypoint, Coords position, boolean isGoingRoundUnitsInPlace,
           boolean isKeepingOutOfStreets) {
         WaypointDistanceField field = routeField(mover, waypoint, isGoingRoundUnitsInPlace, isKeepingOutOfStreets);
-        return (field == null) ? WaypointDistanceField.UNREACHABLE : field.costFrom(position);
+        return costFrom(field, mover, position, null);
+    }
+
+    private static int costFrom(@Nullable WaypointDistanceField field, Entity mover, Coords position,
+          @Nullable Integer elevation) {
+        if (field == null) {
+            return WaypointDistanceField.UNREACHABLE;
+        }
+        return elevation == null ? field.costFrom(mover, position) : field.costFrom(position, elevation);
     }
 
     /**
@@ -154,7 +169,9 @@ class RouteDistances {
      */
     private String moverKey(Entity mover) {
         return String.valueOf(MovementType.getMovementType(mover)) + '|' + mover.getBoardId() + '|'
-              + mover.getMaxElevationChange() + "|t" + mover.getWeight() + (follower.isConvoy(mover) ? "|roads" : "");
+              + GroundElevationLimits.forEntity(mover) + "|t" + mover.getWeight() + "|h" + mover.height()
+              + (mover instanceof BattlefieldSupportAsset asset && asset.cannotEnterSnow() ? "|noSnow" : "")
+              + (follower.isConvoy(mover) ? "|roads" : "");
     }
 
     /**
@@ -191,6 +208,10 @@ class RouteDistances {
      *       {@link WaypointDistanceField#UNREACHABLE}
      */
     int edgeCostFrom(Entity mover, CardinalEdge edge, Coords position) {
+        return edgeCostFrom(mover, edge, position, null);
+    }
+
+    int edgeCostFrom(Entity mover, CardinalEdge edge, Coords position, @Nullable Integer elevation) {
         if (MovementType.getMovementType(mover) == MovementType.Flyer) {
             return WaypointDistanceField.UNREACHABLE;
         }
@@ -204,7 +225,7 @@ class RouteDistances {
             field = WaypointDistanceField.buildToEdge(mover, edge);
             distanceFields.put(key, field);
         }
-        return field.costFrom(position);
+        return costFrom(field, mover, position, elevation);
     }
 
     /**
@@ -222,7 +243,12 @@ class RouteDistances {
         if (entity.getPosition() == null) {
             return true;
         }
-        if (!owner.getClusterTracker().getDestinationCoords(entity, waypoint, true).isEmpty()) {
+        // Clusters project a bridge deck and its underpass onto one coordinate. The route field retains both.
+        var board = entity.getGame() == null ? null : entity.getGame().getBoard(entity);
+        boolean startsOnBridge = MovementType.canUseBridge(MovementType.getMovementType(entity))
+              && board != null && board.contains(entity.getPosition())
+              && board.getHex(entity.getPosition()).hasBridge();
+        if (!startsOnBridge && !owner.getClusterTracker().getDestinationCoords(entity, waypoint, true).isEmpty()) {
             return true;
         }
         boolean hasRoute = routeCostFrom(entity, waypoint, entity.getPosition()) != WaypointDistanceField.UNREACHABLE;

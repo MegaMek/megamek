@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
+import java.util.function.Predicate;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CompositeTechLevel;
@@ -60,6 +61,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.interfaces.ITechnology;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -224,6 +226,28 @@ public class Dropship extends SmallCraft {
     public boolean isLocationProhibited(Coords c,
                                         int testBoardId,
                                         int currElevation) {
+        return isLocationProhibited(c, testBoardId, currElevation, hex -> false);
+    }
+
+    /** Checks road travel separately for each hex of the taxiing DropShip's footprint (TW p.88). */
+    public boolean isTaxiStepProhibited(Coords src, int srcElevation, Coords dest, MoveStep step) {
+        int boardId = step.getBoardId();
+        int destElevation = step.getElevation();
+        return isTaxiFootprintProhibited(src, srcElevation, dest, destElevation, boardId)
+              || isTaxiFootprintProhibited(dest, destElevation, src, srcElevation, boardId);
+    }
+
+    private boolean isTaxiFootprintProhibited(Coords center, int elevation, Coords otherCenter, int otherElevation,
+          int boardId) {
+        int direction = center.direction(otherCenter);
+        return isLocationProhibited(center, boardId, elevation, hex -> {
+            Coords pos = hex.getCoords();
+            Hex other = game.getHex(center.equals(otherCenter) ? pos : pos.translated(direction), boardId);
+            return other != null && Compute.isRoadStep(hex, elevation, other, otherElevation, false);
+        });
+    }
+
+    private boolean isLocationProhibited(Coords c, int testBoardId, int currElevation, Predicate<Hex> followsRoad) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -235,7 +259,7 @@ public class Dropship extends SmallCraft {
         // Check prohibited terrain
         // treat grounded Dropships like wheeled tanks,
         // plus buildings are prohibited
-        boolean isProhibited = taxingAeroProhibitedTerrains(hex);
+        boolean isProhibited = taxingAeroProhibitedTerrains(hex) && !followsRoad.test(hex);
         // Also check for any crushable entities
         var currentEntitiesIter = game.getEntities(c);
         while (currentEntitiesIter.hasNext()) {
@@ -255,7 +279,9 @@ public class Dropship extends SmallCraft {
             Hex secondaryHex = game.getBoard(testBoardId).getHex(secondaryCoords);
             currentEntitiesIter = game.getEntities(secondaryCoords);
             secondaryHexPresent = secondaryHex != null;
-            isProhibited = isProhibited || !secondaryHexPresent || taxingAeroProhibitedTerrains(secondaryHex);
+            isProhibited = isProhibited || !secondaryHexPresent
+                  || secondaryHex.containsTerrain(Terrains.IMPASSABLE)
+                  || (taxingAeroProhibitedTerrains(secondaryHex) && !followsRoad.test(secondaryHex));
             while (!isProhibited && currentEntitiesIter.hasNext()) {
                 Entity entity = currentEntitiesIter.next();
                 isProhibited = !this.equals(entity);

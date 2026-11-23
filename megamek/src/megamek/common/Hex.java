@@ -526,30 +526,33 @@ public class Hex implements Serializable {
      * @return True if there is pavement, a paved road or a bridge in the hex.
      */
     public boolean hasPavement() {
-        if (containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.BRIDGE)) {
-            return true;
-        } else {
-            return hasPavedRoad();
-        }
+        return hasPavedGround() || containsTerrain(Terrains.BRIDGE);
+    }
+
+    /** Whether the ground surface is pavement or a paved road (TW pp. 32, 61 and Core p. 53). */
+    public boolean hasPavedGround() {
+        return containsTerrain(Terrains.PAVEMENT) || hasPavedRoad();
     }
 
     /**
      * If there's a road on this tile, and it's paved, return true
      */
     public boolean hasPavedRoad() {
-        if (containsTerrain(Terrains.ROAD)) {
-            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL)
-                  .contains(terrainLevel(Terrains.ROAD));
-            //Return false if the road is dirt or gravel
-        }
-        return false;
+        int roadLevel = terrainLevel(Terrains.ROAD);
+        return roadLevel != Terrain.LEVEL_NONE && roadLevel != Terrains.ROAD_LVL_DIRT
+              && roadLevel != Terrains.ROAD_LVL_GRAVEL;
     }
 
     /**
      * @return True if there is pavement, a road or a bridge in the hex.
      */
     public boolean hasPavementOrRoad() {
-        return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE);
+        return hasGroundRoad() || containsTerrain(Terrains.BRIDGE);
+    }
+
+    /** Whether the hex contains a road of any surface or ordinary pavement at ground level. */
+    public boolean hasGroundRoad() {
+        return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD);
     }
 
     /**
@@ -705,13 +708,10 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Returns true if the hex is valid for takeoff - either clear, has pavement, or a road
+     * Returns whether a horizontal liftoff can use this clear or paved hex (TW p. 88).
      */
     public boolean isClearForTakeoff() {
-        if (hasPavementOrRoad()) {
-            return true;
-        }
-        return getBaseTerrainType() == 0;
+        return hasPavement() || getBaseTerrainType() == 0;
     }
 
     public boolean isClearForLanding() {
@@ -747,10 +747,15 @@ public class Hex implements Serializable {
      * this hex, then it returns TargetRoll.AUTOMATIC_SUCCESS
      */
     public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
+        return getBogDownModifier(moveMode, largeVee, false);
+    }
+
+    /** A unit exempt from bogging in mud can still bog in other terrain in the same hex. */
+    public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee, boolean ignoresMud) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
         for (final Terrain terrain : terrains.values()) {
-            if ((terrain != null) && (mod < terrain.getBogDownModifier(moveMode, largeVee))) {
-                mod = terrain.getBogDownModifier(moveMode, largeVee);
+            if (terrain != null && !(ignoresMud && terrain.getType() == Terrains.MUD)) {
+                mod = Math.max(mod, terrain.getBogDownModifier(moveMode, largeVee));
             }
         }
         return mod;
@@ -773,6 +778,21 @@ public class Hex implements Serializable {
         return containsTerrain(Terrains.CLIFF_TOP)
               && getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
               && ((getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << coords.direction(otherHex.getCoords()))) != 0);
+    }
+
+    public boolean isBridgeDeck(int elevation) {
+        return containsTerrain(Terrains.BRIDGE) && elevation == terrainLevel(Terrains.BRIDGE_ELEV);
+    }
+
+    /** Whether a unit crossing this hexside encounters the designated cliff (TO:AR p. 37). */
+    public boolean crossesCliffTopTowards(Hex other, int elevation, int otherElevation) {
+        return hasCliffTopTowards(other)
+              && !hasBridgeDeckExitTowards(other, elevation) && !other.hasBridgeDeckExitTowards(this, otherElevation);
+    }
+
+    private boolean hasBridgeDeckExitTowards(Hex other, int elevation) {
+        return isBridgeDeck(elevation) && (elevation > 0 || terrainLevel(Terrains.WATER) > 0)
+              && containsTerrainExit(Terrains.BRIDGE, coords.direction(other.getCoords()));
     }
 
     /** Returns the position of this hex on the board. */

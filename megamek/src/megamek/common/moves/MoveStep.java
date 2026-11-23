@@ -51,6 +51,7 @@ import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.BridgeConstruction;
@@ -70,6 +71,7 @@ import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rules.RoadHazards;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -171,8 +173,11 @@ public class MoveStep implements Serializable {
     private boolean prevStepOnPavement; // prev
     private boolean hasJustStood;
     private boolean thisStepBackwards;
+    private boolean assetMovingBackward;
+    private boolean assetChangedLevel;
     private boolean onlyPavementOrRoad; // additive
     private boolean isPavementStep;
+    private boolean roadStep;
     private boolean isRunProhibited = false;
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
@@ -564,14 +569,7 @@ public class MoveStep implements Serializable {
                      CachedEntityState cachedEntityState) {
 
         Hex destHex = game.getBoard(boardId).getHex(getPosition());
-
-        // Check for pavement movement.
-        if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), this)) {
-            setPavementStep(true);
-        } else {
-            setPavementStep(false);
-            setOnlyPavementOrRoad(false);
-        }
+        Hex srcHex = game.getBoard(boardId).getHex(prev.getPosition());
 
         setHasJustStood(false);
         if (prev.isThisStepBackwards() != isThisStepBackwards()) {
@@ -729,10 +727,8 @@ public class MoveStep implements Serializable {
                     // the waterline (the dest hex's own water/no-water state is what matters).
                     setElevation(ClimbingHelper.getClimbDestinationElevation(hex));
                 } else {
-                    setElevation(entity.calcElevation(game.getBoard(boardId).getHex(prev.getPosition()),
-                                                      game.getBoard(boardId).getHex(getPosition()),
-                                                      elevation,
-                                                      climbMode()));
+                    setElevation(entity.calcElevation(srcHex, destHex, elevation, climbMode(),
+                                                      Compute.canMoveOnPavement(srcHex, destHex, this)));
                 }
             } else if (isClimbing) {
                 // Same as above for the no-building case. A Mek climbing onto a plain higher
@@ -740,12 +736,12 @@ public class MoveStep implements Serializable {
                 Hex curHex = game.getBoard(boardId).getHex(getPosition());
                 setElevation(ClimbingHelper.getClimbDestinationElevation(curHex));
             } else {
-                setElevation(entity.calcElevation(game.getBoard(boardId).getHex(prev.getPosition()),
-                                                  game.getBoard(boardId).getHex(getPosition()),
-                                                  elevation,
-                                                  climbMode()));
+                setElevation(entity.calcElevation(srcHex, destHex, elevation, climbMode(),
+                                                  Compute.canMoveOnPavement(srcHex, destHex, this)));
             }
         }
+
+        updateRoadMovement(game, prev);
 
         // if this is a flying aero, then there is no MP cost for moving
         if ((prev.getAltitude() > 0) || game.getBoard(boardId).isSpace()) {
@@ -768,7 +764,7 @@ public class MoveStep implements Serializable {
         // check for water
         if (Game.rulesManager.getRulesMovement().cannotRunInWater(entity.getMovementMode(),
                                                                   cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
-            && !isPavementStep()
+            && !isRoadStep()
             && (destHex.terrainLevel(Terrains.WATER) > 0)
             && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
             &&
@@ -1009,6 +1005,7 @@ public class MoveStep implements Serializable {
         mpUsed = prev.mpUsed;
         totalHeat = prev.totalHeat;
         isPavementStep = prev.isPavementStep;
+        roadStep = prev.isRoadStep();
         onlyPavementOrRoad = prev.onlyPavementOrRoad;
         wigeBonus = prev.wigeBonus;
         nWigeDescent = prev.nWigeDescent;
@@ -1060,6 +1057,10 @@ public class MoveStep implements Serializable {
         climbMode = entity.climbMode();
         isClimbing = entity.isClimbing();
         thisStepBackwards = entity.inReverse;
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            assetMovingBackward = asset.getMovedBackwards();
+            assetChangedLevel = asset.hasChangedLevelThisTurn();
+        }
 
         // Moving in reverse prohibits running
         if (thisStepBackwards) {
@@ -1125,22 +1126,12 @@ public class MoveStep implements Serializable {
         if (position != null) {
             Hex curHex = game.getBoard(boardId).getHex(position);
             if (curHex.hasPavementOrRoad()) {
-                if (curHex.hasPavement()) {
-                    isPavementStep = true;
-                    onlyPavementOrRoad = true;
-                } else if (curHex.containsTerrain(Terrains.ROAD, Terrains.ROAD_LVL_DIRT)) {
-                    if (entity.getMovementMode().isHover()) {
-                        onlyPavementOrRoad = true;
-                    }
-                } else if (curHex.containsTerrain(Terrains.ROAD, Terrains.ROAD_LVL_GRAVEL)) {
-                    if (entity.getMovementMode().isHover() || entity.getMovementMode().isTracked()) {
-                        onlyPavementOrRoad = true;
-                    }
-                }
-                // if we previously moved, and didn't get a pavement bonus, we
-                // shouldn't now get one, either (this can happen when skidding
-                // onto a pavement hex
-                if (!entity.gotPavementOrRoadBonus && (entity.delta_distance > 0)) {
+                isPavementStep = Compute.isRoadStep(curHex, elevation, curHex, elevation, true);
+                roadStep = Compute.isRoadStep(curHex, elevation, curHex, elevation, false);
+                onlyPavementOrRoad = isPavementStep || (roadStep
+                      && Compute.isUnpavedRoadBonusStep(entity, nMove, curHex, elevation, curHex, elevation));
+                // A resumed move must qualify across the steps already executed this turn.
+                if (!entity.gotPavementOrRoadBonus && (mpUsed > 0 || distance > 0)) {
                     onlyPavementOrRoad = false;
                 }
             }
@@ -1216,6 +1207,11 @@ public class MoveStep implements Serializable {
 
     public boolean isHasJustStood() {
         return hasJustStood;
+    }
+
+    /** Whether the unit follows a road, including dirt, gravel or a connected bridge deck. */
+    public boolean isRoadStep() {
+        return roadStep || isPavementStep;
     }
 
     public boolean isPavementStep() {
@@ -1516,6 +1512,31 @@ public class MoveStep implements Serializable {
         return targetNumberSupercharger;
     }
 
+    public boolean hasAssetChangedLevel() {
+        return assetChangedLevel;
+    }
+
+    /**
+     * Core p.141 halves the card allowance for a turn involving reverse movement. The pavement bonus is
+     * earned separately for the whole movement phase (p.142). Remember every level change, including a return
+     * to the starting level, so an Asset cannot combine any of them with reversing.
+     */
+    private boolean isAssetMovementAllowed(Game game, BattlefieldSupportAsset asset, MoveStep prev) {
+        Hex from = game.getHex(prev.getPosition(), prev.getBoardId());
+        Hex to = game.getHex(getPosition(), boardId);
+        boolean changesHex = !getPosition().equals(prev.getPosition());
+        assetMovingBackward = prev.assetMovingBackward || (thisStepBackwards && changesHex);
+        assetChangedLevel = prev.assetChangedLevel;
+        if (from != null && to != null) {
+            assetChangedLevel |= from.getLevel() + prev.elevation != to.getLevel() + elevation;
+            if (changesHex && (asset.isSnowProhibited(from) || asset.isSnowProhibited(to))) {
+                return false;
+            }
+        }
+        int bonus = isOnlyPavementOrRoad() && asset.isEligibleForPavementOrRoadBonus() ? 1 : 0;
+        return !assetMovingBackward || (!assetChangedLevel && mpUsed <= (asset.getMp() + 1) / 2 + bonus);
+    }
+
     public boolean isThisStepBackwards() {
         return thisStepBackwards;
     }
@@ -1544,8 +1565,21 @@ public class MoveStep implements Serializable {
         hasJustStood = b;
     }
 
-    protected void setPavementStep(boolean b) {
-        isPavementStep = b;
+    /** Update the surface of this step and retain a vehicle's road bonus only while the whole path qualifies. */
+    void updateRoadMovement(Game game, MoveStep prev) {
+        Hex from = game.getBoard(boardId).getHex(prev.getPosition());
+        Hex to = game.getBoard(boardId).getHex(getPosition());
+        if (entity.isAirborne() || isJumping()) {
+            isPavementStep = false;
+            roadStep = false;
+        } else {
+            isPavementStep = Compute.isRoadStep(from, prev.getElevation(), to, elevation, true);
+            roadStep = isPavementStep || Compute.isRoadStep(from, prev.getElevation(), to, elevation, false);
+        }
+        if (!isPavementStep) {
+            onlyPavementOrRoad &= roadStep && Compute.isUnpavedRoadBonusStep(entity, prev.getMovementMode(),
+                  from, prev.getElevation(), to, elevation);
+        }
     }
 
     protected void setProne(boolean b) {
@@ -1611,10 +1645,6 @@ public class MoveStep implements Serializable {
 
     protected void setSelfDestructing(boolean b) {
         isSelfDestructing = b;
-    }
-
-    protected void setOnlyPavementOrRoad(boolean b) {
-        onlyPavementOrRoad = b;
     }
 
     protected void setTargetNumberMASC(int i) {
@@ -1711,8 +1741,7 @@ public class MoveStep implements Serializable {
      */
     private static boolean isOnBridgeDeck(@Nullable Hex hex,
                                           int assumedElevation) {
-        return (hex != null) && hex.containsTerrain(Terrains.BRIDGE)
-               && (assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV));
+        return hex != null && hex.isBridgeDeck(assumedElevation);
     }
 
     /**
@@ -1742,10 +1771,14 @@ public class MoveStep implements Serializable {
                                              int elevation,
                                              Coords hexPos,
                                              Coords otherPos) {
-        return isRealBridgeSpan(bridgeHex)
-               && (elevation == bridgeHex.terrainLevel(Terrains.BRIDGE_ELEV))
-               && entity.isLocationProhibited(hexPos, boardId, elevation)
-               && !bridgeHex.containsTerrainExit(Terrains.BRIDGE, hexPos.direction(otherPos));
+        return mustUseBridgeExits(entity, boardId, bridgeHex, elevation, hexPos)
+              && !bridgeHex.containsTerrainExit(Terrains.BRIDGE, hexPos.direction(otherPos));
+    }
+
+    /** A unit relying on a bridge to cross prohibited terrain may only board or leave its deck at an exit. */
+    public static boolean mustUseBridgeExits(Entity entity, int boardId, @Nullable Hex hex, int elevation, Coords pos) {
+        return isRealBridgeSpan(hex) && hex.isBridgeDeck(elevation)
+              && entity.isLocationProhibited(pos, boardId, elevation);
     }
 
     /**
@@ -1774,6 +1807,10 @@ public class MoveStep implements Serializable {
 
         // guilty until proven innocent
         movementType = EntityMovementType.MOVE_ILLEGAL;
+
+        if (entity instanceof BattlefieldSupportAsset asset && !isAssetMovementAllowed(game, asset, prev)) {
+            return;
+        }
 
         // Crushing buildings creates rubble, and Dropships can't drive on
         // rubble, so they get stuck
@@ -2310,7 +2347,6 @@ public class MoveStep implements Serializable {
         entity.wigeBonus = wigeBonus;
         if (entity.isEligibleForPavementOrRoadBonus() && isOnlyPavementOrRoad()) {
             bonus++;
-            entity.gotPavementOrRoadBonus = true;
         }
         int tmpWalkMP = cachedEntityState.getWalkMP() + bonus;
 
@@ -2418,10 +2454,9 @@ public class MoveStep implements Serializable {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 
-        // VTOLs use jump MP when airborne (includes powered flight infantry whose getMovementMode() returns VTOL)
-        if ((getEntity().getMovementMode() == EntityMovementMode.VTOL) &&
-            getClearance() > 0 &&
-            !(getEntity() instanceof VTOL)) {
+        // Powered-flight infantry use jump MP for flight. VTOL vehicles and Assets use their printed ground/flight MP.
+        if (entity.getMovementMode().isVTOL() && getClearance() > 0
+              && !(entity instanceof VTOL) && !entity.isBattlefieldSupportAsset()) {
             tmpWalkMP = entity.getJumpMP();
         }
 
@@ -2906,8 +2941,7 @@ public class MoveStep implements Serializable {
 
         // do not allow to move onto a bridge if there's no exit in lastPos's
         // direction, unless jumping or already at/above bridge level
-        if (!isFirstStep() &&
-            !curPos.equals(lastPos) &&
+        if (!curPos.equals(lastPos) &&
             climbMode &&
             entity.getMovementMode() != EntityMovementMode.VTOL &&
             (entity.getMovementMode() != EntityMovementMode.WIGE || getClearance() == 0) &&
@@ -2922,8 +2956,7 @@ public class MoveStep implements Serializable {
 
         // Walking under a bridge: check if entity fits (TO:AR 115)
         // If entity is under the bridge and can't fit, move is illegal (unless jumping)
-        if (!isFirstStep() &&
-            !curPos.equals(lastPos) &&
+        if (!curPos.equals(lastPos) &&
             (movementType != EntityMovementType.MOVE_JUMP) &&
             game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BRIDGE) &&
             (getElevation() < game.getBoard(boardId).getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV)) &&
@@ -2936,8 +2969,7 @@ public class MoveStep implements Serializable {
         // use a bridge at its ends, not over its sides (TO:AR p.115). This covers bridges flush with the bank
         // level - including engineer bridges over water (TO:AUE p.152) - which the climb-from-below check above misses.
         // Bridges flush with dry ground (a bridge acting as a road) are exempt, preserving road-segment movement.
-        if (!isFirstStep() &&
-            !curPos.equals(lastPos) &&
+        if (!curPos.equals(lastPos) &&
             (movementType != EntityMovementType.MOVE_JUMP) &&
             (entity.getMovementMode() != EntityMovementMode.VTOL) &&
             ((entity.getMovementMode() != EntityMovementMode.WIGE) || (getClearance() == 0))) {
@@ -3449,30 +3481,45 @@ public class MoveStep implements Serializable {
         }
 
         // Be careful on pavement during cold weather, there may be black ice.
-        boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
-        boolean goodTemp = conditions.getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
-        boolean goodWeather = conditions.getWeather().isIceStorm();
-
-        if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
-            if (destHex.containsTerrain(Terrains.BLACK_ICE)) {
+        Terrain blackIce = destHex.getTerrain(Terrains.BLACK_ICE);
+        if (isCareful() && RoadHazards.touchesPavement(destHex, elevation, isRoadStep())) {
+            if (blackIce != null) {
+                mp += blackIce.movementCost(en);
+            } else if (RoadHazards.canRevealBlackIce(en) && RoadHazards.blackIceWeather(game)) {
                 mp++;
             }
-            if (destHex.containsTerrain(Terrains.BLACK_ICE) && !isCareful() && (nDestEl == destHex.getLevel())) {
-                mp--;
-            }
-            if (isPavementStep && !destHex.containsTerrain(Terrains.BLACK_ICE) && isCareful()) {
-                mp++;
-            }
-
         }
 
-        // Account for terrain, unless we're moving along a road.
-        if (!isPavementStep()) {
+        // Dirt and gravel also bypass the underlying terrain (TO:AR p.49).
+        boolean onRoad = isRoadStep();
+        if (onRoad && elevation == 0 && !isOnBridgeDeck(destHex, elevation) && RoadHazards.mudOnRoad(destHex)) {
+            mp += destHex.getTerrain(Terrains.MUD).movementCost(en);
+        }
+        if ((onRoad || isOnBridgeDeck(destHex, elevation)) && en.isBattlefieldSupportAsset()) {
+            Terrain snow = destHex.getTerrain(Terrains.SNOW);
+            if (snow != null) {
+                mp += snow.movementCost(en);
+            }
+            Terrain ice = destHex.getTerrain(Terrains.ICE);
+            if (ice != null && elevation == 0 && !isOnBridgeDeck(destHex, elevation)) {
+                mp += ice.movementCost(en);
+            }
+        }
+        if (!onRoad && !isOnBridgeDeck(destHex, elevation)) {
+            // TW p.48 exempts pavement and following a road from the wheeled Support Vehicle surcharge.
+            if (en.isSupportVehicle() && moveMode.isWheeled() && !en.hasMisc(MiscType.F_OFF_ROAD)
+                  && !destHex.containsTerrain(Terrains.PAVEMENT)) {
+                mp++;
+            }
 
             if ((moveMode != EntityMovementMode.BIPED_SWIM) &&
                 (moveMode != EntityMovementMode.QUAD_SWIM) &&
                 getClearance() == 0) {
-                mp += destHex.movementCost(getEntity());
+                mp += destHex.movementCost(en);
+                if (blackIce != null) {
+                    // Ice on pavement is priced above, independently of the terrain beside the road.
+                    mp -= blackIce.movementCost(en);
+                }
             }
 
             // if this is an amphibious unit crossing water, increment movement cost by 1
@@ -3528,8 +3575,9 @@ public class MoveStep implements Serializable {
                         mp += Game.rulesManager.getRulesMovement().getUnderwaterMPCost();
                     }
                 }
-                // if using non-careful movement on ice then reduce cost
-                if (destHex.containsTerrain(Terrains.ICE) && !isCareful() && (nDestEl == destHex.getLevel())) {
+                // Core Assets pay the ice cost for their motive type regardless of careful movement (Core p.142).
+                if (!en.isBattlefieldSupportAsset() && destHex.containsTerrain(Terrains.ICE) && !isCareful()
+                      && (nDestEl == destHex.getLevel())) {
                     mp--;
                 }
 
@@ -3539,9 +3587,9 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int deltaElevation = Math.abs(nSrcEl - nDestEl);
-            if (isMek && (deltaElevation > Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex,
-                                                                                                            destHex,
-                                                                                                            getEntity().getMaxElevationChange()))) {
+            int maxElevationChange = Game.rulesManager.getRulesTerrain()
+                  .getMaxElevationChangeAllowed(entity, isPavementStep, entity.getMaxElevationChange());
+            if (isMek && (deltaElevation > maxElevationChange)) {
                 LOGGER.debug("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
                              "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
                              prevEl, elevation, srcHex.getLevel(), destHex.getLevel(),
@@ -3549,9 +3597,7 @@ public class MoveStep implements Serializable {
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING) &&
                 isMek &&
-                (deltaElevation > Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex,
-                                                                                                   destHex,
-                                                                                                   getEntity().getMaxElevationChange())) &&
+                (deltaElevation > maxElevationChange) &&
                 (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
@@ -3582,11 +3628,7 @@ public class MoveStep implements Serializable {
             // as a walk. One level, the cheapest climb-down, costs no more than the old walk price of a 3+ level
             // drop, so no step that showed the dialog before is pushed past walking MP now. Like a leap,
             // it replaces the hex and terrain cost: the server bills an edge descent only per level descended.
-            boolean isCliffDrop = (nDestEl < nSrcEl)
-                                  && (deltaElevation > Game.rulesManager.getRulesTerrain()
-                                                                        .getMaxElevationChangeAllowed(srcHex,
-                                                                                                      destHex,
-                                                                                                      entity.getMaxElevationChange()));
+            boolean isCliffDrop = (nDestEl < nSrcEl) && (deltaElevation > maxElevationChange);
             boolean isEdgeDescent = canUseClimbing && isCliffDrop && !isClimbing;
             if (isEdgeDescent) {
                 int climbCostPerLevel = ClimbingHelper.getClimbingMPCostPerLevel((Mek) entity);
@@ -3620,20 +3662,25 @@ public class MoveStep implements Serializable {
             // elevation cost by 1 MP. Combined, a 1-level change can cost 0 MP elevation.
             boolean isMountainTroop = entity instanceof ConvInfantry convInfantry
                                       && convInfantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS);
+            EntityMovementMode elevationMoveMode = prevStep.getMovementMode();
+            // Ground Assets, including infantry Assets, pay 2 MP per level (Core p.141).
+            boolean isGroundAsset = entity.isBattlefieldSupportAsset() && !elevationMoveMode.isVTOL();
             if (isMountainTroop) {
                 deltaElevation = (int) Math.ceil(deltaElevation / 2.0);
-            } else if ((isInfantry &&
+            } else if (((isInfantry || isGroundAsset) &&
                         !((getMovementType(false) == EntityMovementType.MOVE_VTOL_WALK) ||
                           (getMovementType(false) == EntityMovementType.MOVE_VTOL_RUN))) ||
-                       ((moveMode == EntityMovementMode.TRACKED) ||
-                        (moveMode == EntityMovementMode.WHEELED) ||
-                        (moveMode == EntityMovementMode.HOVER))) {
-                // non-flying Infantry and ground vehicles are charged double.
+                       elevationMoveMode.isTrackedWheeledOrHover()) {
+                // Non-flying infantry, ground vehicles and ground Assets are charged double.
                 deltaElevation *= 2;
             }
+            // Core p.134 treats a Mek walking across building roofs as moving on pavement.
+            boolean crossingRoofs = isMek && srcHex.containsTerrain(Terrains.BUILDING)
+                  && destHex.containsTerrain(Terrains.BUILDING) && prevEl == srcHex.terrainLevel(Terrains.BLDG_ELEV)
+                  && elevation == destHex.terrainLevel(Terrains.BLDG_ELEV);
             int elevationCostReduction = Game.rulesManager.getRulesTerrain()
-                                                          .getRoadElevationCostDifference(srcHex, destHex,
-                                                                                                   deltaElevation);
+                  .getRoadElevationCostDifference(entity, elevationMoveMode, isPavementStep || crossingRoofs,
+                        deltaElevation);
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 mp += Math.max(0, deltaElevation - 1 - elevationCostReduction);
             } else {
@@ -3658,7 +3705,7 @@ public class MoveStep implements Serializable {
         // WIGEs spend one extra MP to ascend a sheer cliff, TO p.39
         if (entity.getMovementMode() == EntityMovementMode.WIGE &&
             distance > 0 &&
-            destHex.hasCliffTopTowards(srcHex) &&
+            destHex.crossesCliffTopTowards(srcHex, elevation, prevEl) &&
             nDestEl > nSrcEl) {
             mp += 1;
         }
@@ -3690,7 +3737,8 @@ public class MoveStep implements Serializable {
         }
 
         // Infantry (except mechanized) pay 1 less MP to enter woods
-        if (isInfantry && !isMechanizedInfantry && destHex.containsTerrain(Terrains.WOODS) && !isPavementStep) {
+        if (isInfantry && !isMechanizedInfantry && destHex.containsTerrain(Terrains.WOODS) && !onRoad
+              && !isOnBridgeDeck(destHex, elevation)) {
             mp--;
 
             // Ensures that Infantry always pay at least 1 mp when entering woods or jungle
@@ -3805,7 +3853,7 @@ public class MoveStep implements Serializable {
         // prohibited-terrain check further down, so run it here for a jumping vehicle. As there, a vehicle landing on a
         // bridge deck is on the bridge, not in the terrain below it (TO:AR p.115).
         if (isJumping() && (entity instanceof Tank)) {
-            boolean isInProhibitedTerrain = entity.isLocationProhibited(dest, boardId, elevation);
+            boolean isInProhibitedTerrain = entity.isLocationProhibited(dest, boardId, elevation, false);
             boolean isOnBridge = isOnBridgeDeck(destHex, elevation);
             if (isInProhibitedTerrain && !isOnBridge) {
                 terrainInvalid = true;
@@ -4004,6 +4052,9 @@ public class MoveStep implements Serializable {
             return false;
         }
 
+        boolean onRoad = !entity.isAirborne() && !isJumping()
+              && Compute.isRoadStep(srcHex, srcEl, destHex, getElevation(), false);
+
         // Check if using VTOL-style flight (either VTOL mode or VTOL movement type)
         // Also explicitly check for powered flight infantry as a fallback in case getMovementMode()
         // doesn't return VTOL (e.g., if crew/abilities aren't accessible during validation)
@@ -4015,7 +4066,8 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
 
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
-            int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex, destHex,
+            boolean onPavement = onRoad && Compute.isRoadStep(srcHex, srcEl, destHex, getElevation(), true);
+            int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, onPavement,
                                                                                            entity.getMaxElevationDown(
                                                                                                    srcAlt));
             if (movementMode == EntityMovementMode.WIGE &&
@@ -4043,8 +4095,10 @@ public class MoveStep implements Serializable {
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 
+            int maxUp = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, onPavement,
+                  entity.getMaxElevationChange());
             if (((elevationDown > 0) && (elevationDown > maxDown)) ||
-                ((elevationUp > 0) && (elevationUp > entity.getMaxElevationChange()))) {
+                ((elevationUp > 0) && (elevationUp > maxUp))) {
                 // Allow climbing UP if the option is enabled and entity can climb;
                 // allow climbing DOWN (edge descent) if the entity can dangle.
                 boolean allowUp = canUseClimbing && (elevationUp > 0);
@@ -4073,7 +4127,6 @@ public class MoveStep implements Serializable {
         }
 
         // Sheer Cliffs, TO p.39
-        // Roads over cliffs cancel the cliff effects for units that move on roads
         boolean vehicleAffectedByCliff = entity instanceof Tank && !entity.isAirborneVTOLorWIGE();
         boolean quadVeeVehicleMode = entity instanceof QuadVee &&
                                      entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
@@ -4082,15 +4135,15 @@ public class MoveStep implements Serializable {
         // Everything that does not have a 1 or 2 level drop shouldn't be handled as a
         // cliff
         boolean isUpCliff = !src.equals(dest) &&
-                            destHex.hasCliffTopTowards(srcHex) &&
+                            destHex.crossesCliffTopTowards(srcHex, elevation, srcEl) &&
                             (stepHeight == 1 || stepHeight == 2);
         boolean isDownCliff = !src.equals(dest) &&
-              srcHex.hasCliffTopTowards(destHex) &&
+              srcHex.crossesCliffTopTowards(destHex, srcEl, elevation) &&
               (stepHeight == -1 || stepHeight == -2);
 
         // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
         // QuadVees in vehicle mode drive as vehicles, IO p.133
-        if ((vehicleAffectedByCliff || quadVeeVehicleMode) && isUpCliff && !isPavementStep) {
+        if ((vehicleAffectedByCliff || quadVeeVehicleMode) && isUpCliff) {
             return false;
         }
 
@@ -4100,7 +4153,7 @@ public class MoveStep implements Serializable {
         // cross sheer cliffs at all except for Mountain Troops across a level 1 cliff.
         // Flying VTOL infantry (native VTOL, powered flight) can bypass cliffs.
         // Note: Glider infantry cannot traverse cliffs - they only get fall damage protection.
-        if (entity instanceof ConvInfantry infantry && (isUpCliff || isDownCliff) && !isPavementStep && !isVTOLFlight) {
+        if (entity instanceof ConvInfantry infantry && (isUpCliff || isDownCliff) && !isVTOLFlight) {
 
             boolean isMountainTroop = infantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS);
             if (!isMountainTroop || stepHeight == 2) {
@@ -4126,22 +4179,8 @@ public class MoveStep implements Serializable {
                                                                   entity)) {
                 return false;
             }
-            // Even with Expanded Backward Movement, ...
-            // May not move across a cliff (up) moving backwards at all
-            if (destHex.containsTerrain(Terrains.CLIFF_TOP) &&
-                destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified() &&
-                ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) &&
-                (!src.equals(dest))) {
-                return false;
-            }
-            // May not move across a cliff (down) moving backwards at all
-            if (srcHex.containsTerrain(Terrains.CLIFF_TOP) &&
-                srcHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified() &&
-                ((srcHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << src.direction(dest))) != 0) &&
-                (!src.equals(dest))) {
-                return false;
-            }
-            if (Math.abs(destAlt - srcAlt) > 1) {
+            // Expanded Backward Movement still prohibits crossing a sheer cliff.
+            if (isUpCliff || isDownCliff || Math.abs(destAlt - srcAlt) > 1) {
                 return false;
             }
         }
@@ -4163,7 +4202,7 @@ public class MoveStep implements Serializable {
             !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
             !dest.equals(entity.getPosition()) &&
             !isFirstStep() &&
-            !isPavementStep()) {
+            !onRoad && !destHex.isBridgeDeck(elevation)) {
             return false;
         }
 
@@ -4232,7 +4271,10 @@ public class MoveStep implements Serializable {
         // restrictions of the underlying terrain do not apply (TO:AR p.115). This also covers bridges without
         // approach roads, such as those raised by Bridge-Building Engineers (TO:AUE p.152), where the step onto the
         // bridge does not qualify as a pavement step.
-        if (entity.isLocationProhibited(dest, boardId, getElevation())
+        boolean taxiingDropShip = entity instanceof Dropship && !entity.isAirborne()
+              && (!src.equals(dest) || type == MoveStepType.TURN_LEFT || type == MoveStepType.TURN_RIGHT)
+              && movementType != EntityMovementType.MOVE_SAFE_THRUST;
+        if (!taxiingDropShip && entity.isLocationProhibited(dest, boardId, getElevation(), onRoad)
             && !isOnBridgeDeck(game.getBoard(boardId).getHex(dest), getElevation())
             // Units in prohibited terran should still be able to unload/disconnect
             &&
@@ -4244,7 +4286,7 @@ public class MoveStep implements Serializable {
             // QuadVees can convert to vehicle mode even if they cannot enter the terrain
             &&
             (type != MoveStepType.CONVERT_MODE) &&
-            (!isPavementStep() ||
+            (!onRoad ||
              (nMove == EntityMovementMode.NAVAL) ||
              (nMove == EntityMovementMode.HYDROFOIL) ||
              (nMove == EntityMovementMode.SUBMARINE)) &&
@@ -4264,20 +4306,8 @@ public class MoveStep implements Serializable {
 
         // We need extra checking for DropShips, due to secondary positions
         // if the DropShip is taking off, MoveType will be safe thrust
-        if ((entity instanceof Dropship) &&
-            !entity.isAirborne() &&
-            isPavementStep() &&
-            entity.isLocationProhibited(dest, boardId, getElevation()) &&
-            (movementType != EntityMovementType.MOVE_SAFE_THRUST) &&
-            (type != MoveStepType.LOAD) &&
-            (type != MoveStepType.UNLOAD)) {
-            for (int dir = 0; dir < 6; dir++) {
-                Coords secondaryCoords = dest.translated(dir);
-                Hex secondaryHex = game.getBoard(boardId).getHex(secondaryCoords);
-                if (!secondaryHex.hasPavement()) {
-                    return false;
-                }
-            }
+        if (taxiingDropShip && ((Dropship) entity).isTaxiStepProhibited(src, srcEl, dest, this)) {
+            return false;
         }
 
         // If we're a land train with mixed motive types, use the most restrictive type
@@ -4287,8 +4317,7 @@ public class MoveStep implements Serializable {
              type != MoveStepType.UNLOAD &&
              type != MoveStepType.TOW &&
              type != MoveStepType.DISCONNECT)) {
-            boolean prohibitedByTrailer;
-            // Add up the trailers
+            // Test the terrain at both ends against each trailer's motive type.
             for (int id : entity.getAllTowedUnits()) {
                 Entity tr = game.getEntity(id);
 
@@ -4296,8 +4325,10 @@ public class MoveStep implements Serializable {
                     continue;
                 }
 
-                prohibitedByTrailer = tr.isLocationProhibited(dest, boardId, getElevation());
-                if (prohibitedByTrailer) {
+                if ((tr.isLocationProhibited(dest, boardId, getElevation(), onRoad)
+                      && !isOnBridgeDeck(destHex, getElevation()))
+                      || (tr.isLocationProhibited(src, boardId, srcEl, onRoad)
+                            && !isOnBridgeDeck(srcHex, srcEl))) {
                     return false;
                 }
             }
@@ -4342,11 +4373,11 @@ public class MoveStep implements Serializable {
             // leave
             &&
             (type != MoveStepType.CONVERT_MODE) &&
-            entity.isLocationProhibited(src, boardId, srcEl) &&
+            !taxiingDropShip && entity.isLocationProhibited(src, boardId, srcEl, onRoad) &&
             // Standing on a bridge deck is not standing in the prohibited terrain below it (TO:AR p.115), so
             // a unit on a bridge without approach roads may still leave it
             !isOnBridgeDeck(game.getBoard(boardId).getHex(src), srcEl) &&
-            !isPavementStep()) {
+            !onRoad) {
             return false;
         }
         if (type == MoveStepType.UP) {
@@ -4384,23 +4415,26 @@ public class MoveStep implements Serializable {
              (type == MoveStepType.LATERAL_LEFT) ||
              (type == MoveStepType.LATERAL_LEFT_BACKWARDS) ||
              (type == MoveStepType.LATERAL_RIGHT) ||
-             (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))) {
+             (type == MoveStepType.LATERAL_RIGHT_BACKWARDS) ||
+             (type == MoveStepType.TURN_LEFT) || (type == MoveStepType.TURN_RIGHT))) {
+            boolean followsGroundRoad = srcHex.hasGroundRoad() && destHex.hasGroundRoad();
+            if (srcHex.hasVegetation() && srcEl <= srcHex.vegetationCeiling() && !followsGroundRoad) {
+                return false;
+            }
             // It's possible to fly under a bridge.
-            if (destHex.containsTerrain(Terrains.BRIDGE_ELEV)) {
-                if (elevation == destHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
-                    return false;
-                }
-            } else if (elevation <= (destHex.ceiling() - destHex.getLevel())) {
+            if (destHex.containsTerrain(Terrains.BRIDGE_ELEV)
+                  && elevation == destHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+                return false;
+            }
+            if (destHex.hasVegetation() && elevation <= destHex.vegetationCeiling()) {
+                return followsGroundRoad;
+            }
+            if (!destHex.containsTerrain(Terrains.BRIDGE_ELEV) && elevation <= (destHex.ceiling() - destHex.getLevel())) {
                 // WiGE are not prohibited from flying over planted fields.
                 if ((entity.getMovementMode() == EntityMovementMode.WIGE) && destHex.containsTerrain(Terrains.FIELDS)) {
                     return true;
                 }
 
-                // VTOLs and WiGEs can fly through woods and jungle below the level of the
-                // treetops on a road.
-                if (destHex.containsTerrain(Terrains.WOODS) || destHex.containsTerrain(Terrains.JUNGLE)) {
-                    return destHex.containsTerrainExit(Terrains.ROAD, dest.direction(src));
-                }
                 return false; // can't fly into woods or a cliff face
             }
         }

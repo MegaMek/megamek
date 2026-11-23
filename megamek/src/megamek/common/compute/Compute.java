@@ -44,6 +44,8 @@ import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.Coords;
@@ -65,6 +67,7 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.MMRoll;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RoadHazards;
 import megamek.common.units.*;
 import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
@@ -816,15 +819,19 @@ public class Compute {
             return false;
         }
 
-        // airborne aircraft do not require pavement-related checks
-        final boolean isPavementStep = !entity.isAirborne() && Compute.canMoveOnPavement(srcHex, destHex, moveStep);
+        boolean onRoad = moveStep.isRoadStep();
 
         // check for rubble
         if ((movementType != EntityMovementType.MOVE_JUMP)
               && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
               && (destElevation == 0)
-              && !isPavementStep
+              && !onRoad
               && entity.canFall()) {
+            return true;
+        }
+
+        // Mud can cover a dirt or gravel road even when the underlying swamp is bypassed.
+        if (onRoad && RoadHazards.bogDownModifier(entity, destHex, true, destElevation) != TargetRoll.AUTOMATIC_SUCCESS) {
             return true;
         }
 
@@ -835,7 +842,7 @@ public class Compute {
               && (entity.getMovementMode() != EntityMovementMode.VTOL)
               && (movementType != EntityMovementType.MOVE_JUMP)
               && (entity.getMovementMode() != EntityMovementMode.WIGE)
-              && !isPavementStep) {
+              && !onRoad) {
             return true;
         }
 
@@ -843,15 +850,15 @@ public class Compute {
         if (destHex.containsTerrain(Terrains.ICE)
               && destHex.containsTerrain(Terrains.WATER)
               && !(entity.getElevation() > destHex.getLevel())
-              && !isPavementStep
+              && !onRoad
               && (movementType != EntityMovementType.MOVE_JUMP)) {
             return true;
         }
 
         // Check for black ice on pavement
         if (destHex.containsTerrain(Terrains.BLACK_ICE)
-              && !(entity.getElevation() > destHex.getLevel())
-              && isPavementStep
+              && RoadHazards.canRevealBlackIce(entity) && !moveStep.isCareful()
+              && RoadHazards.touchesPavement(destHex, destElevation, onRoad)
               && (movementType != EntityMovementType.MOVE_JUMP)) {
             return true;
         }
@@ -870,14 +877,13 @@ public class Compute {
               || (entity.getMovementMode() == EntityMovementMode.WIGE)
               || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
               && (destHex.terrainLevel(Terrains.WATER) > 0)
-              && !isPavementStep
+              && !onRoad && !destHex.isBridgeDeck(destElevation)
               && Game.rulesManager.getRulesMovement()
               .isMoveIntoWaterDangerous(movementType, entity.getMovementMode())) {
             return true;
         }
 
         // Sheer Cliffs, TO p.39
-        // Roads over cliffs cancel the cliff effects for units that move on roads
         boolean quadveeVehMode = entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
         boolean vehicleAffectedByCliff = entity instanceof Tank && !entity.isAirborneVTOLorWIGE();
         boolean mekAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
@@ -888,26 +894,24 @@ public class Compute {
         // Everything that does not have a 1 or 2 level drop shouldn't be handled as a
         // cliff
         boolean isUpCliff = !src.equals(dest)
-              && destHex.hasCliffTopTowards(srcHex)
+              && destHex.crossesCliffTopTowards(srcHex, destElevation, srcElevation)
               && (stepHeight == 1 || stepHeight == 2);
         boolean isDownCliff = !src.equals(dest)
-              && srcHex.hasCliffTopTowards(destHex)
+              && srcHex.crossesCliffTopTowards(destHex, srcElevation, destElevation)
               && (stepHeight == -1 || stepHeight == -2);
 
         // Meks and Vehicles moving down a cliff
         // QuadVees in vee mode ignore PSRs to avoid falls, IO p.133
         if ((mekAffectedByCliff || vehicleAffectedByCliff)
               && !quadveeVehMode
-              && isDownCliff
-              && !isPavementStep) {
+              && isDownCliff) {
             return true;
         }
 
         // Meks moving up a cliff
         if (mekAffectedByCliff
               && !quadveeVehMode
-              && isUpCliff
-              && !isPavementStep) {
+              && isUpCliff) {
             return true;
         }
 
@@ -926,7 +930,7 @@ public class Compute {
               && (movementType != EntityMovementType.MOVE_JUMP)))
               && (entity.getMovementMode() != EntityMovementMode.HOVER)
               && (entity.getMovementMode() != EntityMovementMode.WIGE)
-              && isTurning && !isInfantry
+              && isTurning && !isInfantry && !(entity instanceof ProtoMek)
               && Game.rulesManager.getRulesMovement().skidEnabled()) {
             return true;
         }
@@ -992,57 +996,64 @@ public class Compute {
     public static boolean isValidDisplacement(Game game, int entityId,
           Coords src, Coords dest) {
         final Entity entity = game.getEntity(entityId);
-        final Hex srcHex = game.getBoard().getHex(src);
-        final Hex destHex = game.getBoard().getHex(dest);
-        final ArrayList<Coords> intervening = Coords.intervening(src, dest);
-        final int direction = src.direction(dest);
-
         // arguments valid?
         if (entity == null) {
             throw new IllegalArgumentException("Entity invalid.");
         }
 
-        // dropships should never be displaceable
-        // this should also take care of the situation of displacing another
-        // entity
-        // into a grounded droppers hex, because of the stacking violation check
-        // below
-        if (entity instanceof Dropship) {
+        // Grounded DropShips and emplacement Assets (Core p.144) cannot be displaced.
+        if (entity instanceof Dropship || (entity instanceof BattlefieldSupportAsset asset
+              && asset.getAssetType() == BFSAssetType.EMPLACEMENT)) {
             return false;
         }
 
-        // an easy check
-        if (!game.getBoard().contains(dest)) {
+        Board board = game.getBoard(entity);
+        if (!board.contains(dest)) {
             return game.getOptions().booleanOption(OptionsConstants.BASE_PUSH_OFF_BOARD);
         }
 
-        // can't be displaced into prohibited terrain
-        // unless we're displacing a tracked or wheeled vee into water
-        if (entity.isLocationProhibited(dest)
-              && !((entity instanceof Tank)
-              && destHex.containsTerrain(Terrains.WATER)
-              && ((entity.getMovementMode() == EntityMovementMode.TRACKED)
-              || (entity.getMovementMode() == EntityMovementMode.WHEELED)))) {
-            return false;
-        }
-
-        // can't go up more levels than normally possible
-        for (Coords c : intervening) {
-            // ignore off-board hexes
-            if (!game.getBoard().contains(c)) {
+        // TW p.151: a displacement may descend any distance, but must be able to enter the destination
+        // and cannot rise higher than the unit normally could. A tracked or wheeled vehicle can be pushed into water.
+        Hex srcHex = board.getHex(src);
+        Hex previous = srcHex;
+        Coords previousCoords = src;
+        int previousElevation = entity.getElevation();
+        int startingAltitude = srcHex.getLevel() + previousElevation;
+        boolean groundMovement = !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()
+              && !entity.isMakingDfa() && !entity.getMovementMode().isMarine();
+        for (Coords c : Coords.intervening(src, dest)) {
+            if (c.equals(src) || !board.contains(c)) {
                 continue;
             }
-            final Hex hex = game.getBoard().getHex(c);
-            int change = entity.elevationOccupied(hex)
-                  - entity.elevationOccupied(srcHex);
-            if (change > entity.getMaxElevationChange()) {
+            Hex hex = board.getHex(c);
+            int elevation = entity.calcElevation(previous, hex, previousElevation, false);
+            int direction = previousCoords.direction(c);
+            boolean road = groundMovement && isRoadStep(previous, previousElevation, hex, elevation, direction, false);
+            boolean paved = road && isRoadStep(previous, previousElevation, hex, elevation, direction, true);
+            int maxRise = Game.rulesManager.getRulesTerrain()
+                  .getMaxElevationChangeAllowed(entity, paved, entity.getMaxElevationChange());
+            if (hex.getLevel() + elevation - startingAltitude > maxRise) {
                 return false;
             }
+            if (c.equals(dest)) {
+                boolean deck = groundMovement && hex.hasBridge() && elevation == hex.terrainLevel(Terrains.BRIDGE_ELEV);
+                boolean pushedIntoWater = entity instanceof Tank && hex.containsTerrain(Terrains.WATER)
+                      && (entity.getMovementMode().isTracked() || entity.getMovementMode().isWheeled());
+                if (hex.containsTerrain(Terrains.IMPASSABLE)
+                      || (entity instanceof BattlefieldSupportAsset asset && asset.isSnowProhibited(hex))
+                      || (!road && !deck && !pushedIntoWater
+                            && entity.isLocationProhibited(dest, board.getBoardId(), elevation, false))) {
+                    return false;
+                }
+            }
+            previous = hex;
+            previousCoords = c;
+            previousElevation = elevation;
         }
 
-        // if there's an entity in the way, can they be displaced in that
-        // direction?
-        Entity inTheWay = Compute.stackingViolation(game, entityId, dest, false);
+        // if there's an entity in the way, can they be displaced in that direction?
+        int direction = src.direction(dest);
+        Entity inTheWay = Compute.stackingViolation(game, entity, src, entity.getElevation(), dest, null, false, true);
         if (inTheWay != null) {
             return Compute.isValidDisplacement(game, inTheWay.getId(),
                   inTheWay.getPosition(), direction);
@@ -6378,62 +6389,48 @@ public class Compute {
         return ToxinAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
     }
 
-    /**
-     * Can movement between the two coordinates be on pavement (which includes roads and bridges)? If so it will
-     * override prohibited terrain, it may change movement costs, and it may lead to skids.
-     *
-     * @param srcHex   the {@link Hex} being left.
-     * @param destHex  the {@link Hex} being entered.
-     * @param moveStep the {@link MoveStep} being performed.
-     *
-     * @return <code>true</code> if movement between <code>srcHex</code> and
-     *       <code>destHex</code> can be on pavement; <code>false</code> otherwise.
-     */
-    public static boolean canMoveOnPavement(final Hex srcHex, final Hex destHex, MoveStep moveStep) {
-        final Coords src = srcHex.getCoords();
-        final Coords dest = destHex.getCoords();
-        final int src2destDir = src.direction(dest);
-        final int dest2srcDir = (src2destDir + 3) % 6;
-        boolean result = false;
+    /** Can a unit follow road terrain between the given elevations, including a bridge deck or its underpass? */
+    public static boolean isRoadStep(Hex from, int fromElevation, Hex to, int toElevation, boolean pavedOnly) {
+        boolean sameHex = from.getCoords().equals(to.getCoords());
+        return isRoadStep(from, fromElevation, to, toElevation, sameHex ? -1 : from.getCoords().direction(to.getCoords()),
+              pavedOnly);
+    }
 
-        // Jumping shouldn't be considered to be moving on pavement
-        if (moveStep.isJumping()) {
+    /** Uses the board's direction when the caller already knows the hexside; -1 means a step in place. */
+    public static boolean isRoadStep(Hex from, int fromElevation, Hex to, int toElevation, int direction,
+          boolean pavedOnly) {
+        return hasRoadSurface(from, fromElevation, direction, pavedOnly)
+              && hasRoadSurface(to, toElevation, direction < 0 ? -1 : (direction + 3) % 6, pavedOnly);
+    }
+
+    private static boolean hasRoadSurface(Hex hex, int elevation, int direction, boolean pavedOnly) {
+        if (elevation == 0 && (pavedOnly ? hex.hasPavedGround() : hex.hasGroundRoad())) {
+            return true;
+        }
+        return hex.containsTerrain(Terrains.BRIDGE) && elevation == hex.terrainLevel(Terrains.BRIDGE_ELEV)
+              && (direction < 0 || hex.containsTerrainExit(Terrains.BRIDGE, direction));
+    }
+
+    /** TO:AR p.49 grants the bonus on continuous dirt to hover vehicles and on gravel to hover or tracked vehicles. */
+    public static boolean isUnpavedRoadBonusStep(Entity entity, EntityMovementMode mode, Hex from, int fromElevation,
+          Hex to, int toElevation) {
+        if (fromElevation != 0 || toElevation != 0 || from.terrainLevel(Terrains.ROAD) != to.terrainLevel(Terrains.ROAD)
+              || !(entity instanceof Tank || entity instanceof Mek
+              || (entity instanceof BattlefieldSupportAsset asset && asset.getAssetType() == BFSAssetType.VEHICLE))) {
             return false;
         }
+        return switch (to.terrainLevel(Terrains.ROAD)) {
+            case Terrains.ROAD_LVL_DIRT -> mode.isHover();
+            case Terrains.ROAD_LVL_GRAVEL -> mode.isHover() || mode.isTracked();
+            default -> false;
+        };
+    }
 
-        // We may be moving in the same hex.
-        if (src.equals(dest)
-              && (srcHex.hasPavement())) {
-            result = true;
-        }
-        // If the source is a pavement hex, then see if the destination
-        // hex is also a pavement hex or has a road or bridge that exits
-        // into the source hex and the entity is climbing onto the bridge.
-        else if (srcHex.containsTerrain(Terrains.PAVEMENT)
-              && (destHex.containsTerrain(Terrains.PAVEMENT)
-              || (destHex.containsTerrainExit(Terrains.ROAD,
-              dest2srcDir)
-              && destHex.hasPavedRoad())
-              || (destHex.containsTerrainExit(
-              Terrains.BRIDGE, dest2srcDir) && moveStep.climbMode()))) {
-            result = true;
-        }
-        // See if the source hex has a road or bridge (and the entity is on the
-        // bridge) that exits into the destination hex, and the dest hex has
-        // pavement or a corresponding exit to the src hex
-        else if (((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) && srcHex.hasPavedRoad())
-              || (srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)
-              && (moveStep.getElevation() == srcHex
-              .terrainLevel(Terrains.BRIDGE_ELEV))))
-              && ((destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) && destHex.hasPavedRoad())
-              || (destHex.containsTerrainExit(Terrains.BRIDGE,
-              dest2srcDir) && moveStep.climbMode())
-              || destHex
-              .containsTerrain(Terrains.PAVEMENT))) {
-            result = true;
-        }
-
-        return result;
+    /** Checks pavement between two hexes while choosing the destination elevation. */
+    public static boolean canMoveOnPavement(Hex from, Hex to, MoveStep step) {
+        int toElevation = to.containsTerrain(Terrains.BRIDGE) && step.climbMode()
+              ? to.terrainLevel(Terrains.BRIDGE_ELEV) : 0;
+        return !step.isJumping() && isRoadStep(from, step.getElevation(), to, toElevation, true);
     }
 
     /**

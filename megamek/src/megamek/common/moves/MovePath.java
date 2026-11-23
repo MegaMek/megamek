@@ -872,6 +872,16 @@ public class MovePath implements Cloneable,
         regenerateStepTypes();
     }
 
+    /** Keep the executed prefix of an interrupted move, including the step at the supplied index. */
+    public void truncateAfter(int lastStepIndex) {
+        synchronized (COORD_SET_LOCK) {
+            steps.subList(lastStepIndex + 1, steps.size()).clear();
+            coordsSet = null;
+        }
+        regenerateStepTypes();
+        steps.get(lastStepIndex).setEndPos(true);
+    }
+
     public void clear() {
         steps.removeAllElements();
     }

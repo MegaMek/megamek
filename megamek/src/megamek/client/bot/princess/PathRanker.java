@@ -772,6 +772,11 @@ public abstract class PathRanker implements IPathRanker {
      * @return the distance; {@code 0} means the unit has arrived
      */
     protected int distanceToDestination(Entity movingUnit, Coords position, int boardId, Game game) {
+        return distanceToDestination(movingUnit, position, boardId, game, null);
+    }
+
+    protected int distanceToDestination(Entity movingUnit, Coords position, int boardId, Game game,
+          @Nullable Integer elevation) {
         Optional<Coords> waypoint = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner());
         boolean followsUnitOrders = getOwner().followsUnitOrders();
         if (waypoint.isPresent() && (boardId == movingUnit.getBoardId()) && !followsUnitOrders) {
@@ -797,12 +802,12 @@ public abstract class PathRanker implements IPathRanker {
             boolean hasArrived = position.distance(target) <= arrivalRadius;
             if (nextWaypoint != null) {
                 if (hasArrived) {
-                    return costToward(movingUnit, nextWaypoint, position, 0);
+                    return costToward(movingUnit, nextWaypoint, position, 0, elevation);
                 }
-                return costToward(movingUnit, target, position, arrivalRadius)
-                      + costToward(movingUnit, nextWaypoint, target, 0);
+                return costToward(movingUnit, target, position, arrivalRadius, elevation)
+                      + costToward(movingUnit, nextWaypoint, target, 0, null);
             }
-            return hasArrived ? 0 : costToward(movingUnit, target, position, arrivalRadius);
+            return hasArrived ? 0 : costToward(movingUnit, target, position, arrivalRadius, elevation);
         }
         CardinalEdge homeEdge = getOwner().getHomeEdge(movingUnit);
         // A unit on the ground heading for an edge is scored by the way it can really go. By rows to the edge alone,
@@ -810,7 +815,8 @@ public abstract class PathRanker implements IPathRanker {
         // (HammerGS's playtest, 2026-09-26). Airborne units keep the straight line.
         boolean isOnGround = !movingUnit.isAirborne() && !movingUnit.isAirborneVTOLorWIGE();
         if (isOnGround && (boardId == movingUnit.getBoardId())) {
-            int edgeCost = getOwner().getUnitOrdersFollower().edgeCostFrom(movingUnit, homeEdge, position);
+            int edgeCost = getOwner().getUnitOrdersFollower().distances()
+                  .edgeCostFrom(movingUnit, homeEdge, position, elevation);
             if (edgeCost != WaypointDistanceField.UNREACHABLE) {
                 return edgeCost;
             }
@@ -822,8 +828,10 @@ public abstract class PathRanker implements IPathRanker {
      * @return the movement points from the position to the target by the cheapest route, or the straight-line
      *       distance less the arrival radius where no route is known
      */
-    private int costToward(Entity movingUnit, Coords target, Coords position, int arrivalRadius) {
-        int routeCost = getOwner().getUnitOrdersFollower().routeCostFrom(movingUnit, target, position);
+    private int costToward(Entity movingUnit, Coords target, Coords position, int arrivalRadius,
+          @Nullable Integer elevation) {
+        int routeCost = getOwner().getUnitOrdersFollower().distances().routeCostFrom(movingUnit, target, position,
+              elevation);
         if (routeCost == WaypointDistanceField.UNREACHABLE) {
             return Math.max(0, position.distance(target) - arrivalRadius);
         }
@@ -877,7 +885,8 @@ public abstract class PathRanker implements IPathRanker {
         if (path.isJumping()) {
             final Coords finalCoords = path.getFinalCoords();
             Optional<IBuilding> building = game.getBuildingAt(finalCoords, path.getFinalBoardId());
-            if (building.isEmpty()) {
+            if (building.isEmpty() || WaypointDistanceField.passesUnderBridge(game.getBoard(path.getFinalBoardId()),
+                  finalCoords, path.getFinalElevation())) {
                 return false;
             }
 
@@ -917,8 +926,9 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             for (Coords pos : occupiedHexes) {
-                final IBuilding building = game.getBoard(step.getBoardId()).getBuildingAt(pos);
-                if (building == null) {
+                Board board = game.getBoard(step.getBoardId());
+                final IBuilding building = board.getBuildingAt(pos);
+                if (building == null || WaypointDistanceField.passesUnderBridge(board, pos, step.getElevation())) {
                     continue;
                 }
 

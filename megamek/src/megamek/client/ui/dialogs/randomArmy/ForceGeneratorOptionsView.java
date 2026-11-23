@@ -95,6 +95,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private final static MMLogger logger = MMLogger.create(ForceGeneratorOptionsView.class);
 
     private int currentYear;
+    /**
+     * The faction whose sub-factions the Subfaction menu last listed. A sub-faction is preselected only when the
+     * faction changes, so a player who picks "General" on purpose keeps it until they pick another faction.
+     */
+    private @Nullable String subFactionsListedFor;
     private final Consumer<ForceDescriptor> onGenerate;
     /**
      * Optional override for the Export-MUL button action. When set, replaces the built-in {@link #exportMUL}
@@ -1604,10 +1609,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbSubFaction.removeActionListener(this);
         cbSubFaction.removeAllItems();
         String currentFaction = ((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey();
+        List<FactionRecord> sorted = new ArrayList<>();
         if (currentFaction != null) {
             // Subunits are deliberately left out: this list offers whole commands, so including every regiment of
             // every command would swell one faction's list by hundreds of entries.
-            List<FactionRecord> sorted = RATGenerator.getInstance()
+            sorted = RATGenerator.getInstance()
                   .getFactionList()
                   .stream()
                   .filter(factionRecord -> factionRecord.getKey().startsWith(currentFaction + ".") &&
@@ -1617,6 +1623,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                   .toList();
             cbSubFaction.addItem(null);
             sorted.forEach(factionRecord -> cbSubFaction.addItem(factionRecord));
+        }
+        boolean isNewFaction = !Objects.equals(currentFaction, subFactionsListedFor);
+        subFactionsListedFor = currentFaction;
+        if (isNewFaction && (currentFaction != null)) {
+            oldFaction = preselectSubFactionWithMeks(currentFaction, sorted);
         }
         cbSubFaction.setSelectedItem(oldFaction);
         if (cbSubFaction.getSelectedItem() == null) {
@@ -1629,9 +1640,64 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * The unit types the menu should offer: those the faction's unit tables can fill, plus the blank combined-arms
-     * entry, which draws on every type. Example: Clan Wolf in 3150 has no ProtoMeks in its tables, so ProtoMek is left
-     * out rather than offered and then generated as an empty formation.
+     * Picks the sub-faction to show when a faction is newly selected: one whose unit tables hold Meks, if the faction's
+     * own tables hold none in the current year, otherwise "General".
+     *
+     * @param factionKey  the faction just selected
+     * @param subFactions the sub-factions the menu lists, in menu order
+     *
+     * @return the sub-faction to select, or {@code null} for "General"
+     */
+    private @Nullable FactionRecord preselectSubFactionWithMeks(String factionKey, List<FactionRecord> subFactions) {
+        boolean parentHasMeks = factionHasUnitsOfType(factionKey, UnitType.MEK);
+        FactionRecord preselected = subFactionToPreselect(parentHasMeks, subFactions,
+              subFaction -> factionHasUnitsOfType(subFaction.getKey(), UnitType.MEK));
+        if (parentHasMeks) {
+            logger.debug("[ForceGen][SubFaction] faction={} year={} has Meks of its own; General stays selected",
+                  factionKey, currentYear);
+        } else if (preselected == null) {
+            logger.info("[ForceGen][SubFaction] faction={} year={} has no Meks, nor does any sub-faction; General"
+                  + " stays selected", factionKey, currentYear);
+        } else {
+            logger.info("[ForceGen][SubFaction] faction={} year={} has no Meks of its own; selecting sub-faction {}"
+                  + " whose tables do", factionKey, currentYear, preselected.getKey());
+        }
+        return preselected;
+    }
+
+    /**
+     * The sub-faction to select in place of the faction itself, for a faction whose own unit tables hold no Meks in
+     * the year while one of its sub-factions' tables do. Example: from 3049 the Clan Meks are listed under Clan - Inner
+     * Sphere and Clan - Homeworld rather than under All Clans, so All Clans on its own ("General") has no Meks to
+     * draw, and Clan - Homeworld is selected instead.
+     *
+     * @param parentHasMeks whether the faction's own tables hold Meks in the year
+     * @param subFactions   the sub-factions the menu lists, in menu order
+     * @param hasMeks       whether a sub-faction's tables hold Meks in the year
+     *
+     * @return the first listed sub-faction with Meks, or {@code null} to keep the faction itself selected
+     */
+    static @Nullable FactionRecord subFactionToPreselect(boolean parentHasMeks, List<FactionRecord> subFactions,
+          Predicate<FactionRecord> hasMeks) {
+        if (parentHasMeks) {
+            return null;
+        }
+        for (FactionRecord subFaction : subFactions) {
+            if (hasMeks.test(subFaction)) {
+                return subFaction;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The unit types the menu should offer: those the faction's unit tables can fill. Example: Clan Wolf in 3150 has
+     * no ProtoMeks in its tables, so ProtoMek is left out rather than offered and then generated as an empty
+     * formation.
+     *
+     * <p>The blank combined-arms entry is offered only when the tables hold Meks, because every combined-arms force is
+     * built around them: a combined-arms Clan Star is five Meks. Example: All Clans in 3071 has no Meks of its own, so
+     * a combined-arms Star had nothing to draw and a Galaxy came out without a single Mek.</p>
      *
      * <p>When no type has any units at all, the tables are not loaded yet rather than empty, so the menu is kept as the
      * ruleset lists it.</p>
@@ -1645,9 +1711,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         List<Integer> stocked = new ArrayList<>();
         boolean anyStocked = false;
         for (Integer unitType : offeredTypes) {
-            if (unitType == null) {
-                stocked.add(null);
-            } else if (hasUnits.test(unitType)) {
+            int typeToCheck = (unitType == null) ? UnitType.MEK : unitType;
+            if (hasUnits.test(typeToCheck)) {
                 stocked.add(unitType);
                 anyStocked = true;
             }
@@ -1660,7 +1725,18 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * Answers {@code true} when that cannot be known yet, so a type is never hidden for want of loaded data.
      */
     private boolean factionHasUnitsOfType(int unitType) {
-        FactionRecord factionRecord = RATGenerator.getInstance().getFaction(forceDesc.getFaction());
+        return factionHasUnitsOfType(forceDesc.getFaction(), unitType);
+    }
+
+    /**
+     * Whether a faction's unit tables hold any units of a type in the current year, regardless of rating. Answers
+     * {@code true} when that cannot be known yet, so nothing is hidden or switched for want of loaded data.
+     *
+     * @param factionKey the faction to look up
+     * @param unitType   the unit type
+     */
+    private boolean factionHasUnitsOfType(String factionKey, int unitType) {
+        FactionRecord factionRecord = RATGenerator.getInstance().getFaction(factionKey);
         if ((factionRecord == null) || !RATGenerator.getInstance().isInitialized()) {
             return true;
         }

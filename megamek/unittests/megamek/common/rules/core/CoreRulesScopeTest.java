@@ -47,6 +47,7 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.HitData;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -55,6 +56,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.game.Game;
+import megamek.common.rules.RulesGame;
+import megamek.common.rules.RulesManager;
 import megamek.common.rules.totalwarfare.TWRulesArmor;
 import megamek.common.rules.totalwarfare.TWRulesEquipment;
 import megamek.common.units.BipedMek;
@@ -205,7 +208,7 @@ class CoreRulesScopeTest {
         when(dropShip.getAmmo()).thenReturn(List.of(homingBin));
 
         // Core errata v0.2 p.1 charges by the number of launchers, so a bay of two pays twice
-        assertEquals(2, CoreRulesGame.homingLauncherCount(spotter));
+        assertEquals(100, new CoreRulesGame().tagBVBump(spotter, mock(CalculationReport.class), 0, 1, false));
     }
 
     @Test
@@ -243,5 +246,24 @@ class CoreRulesScopeTest {
         assertEquals(3, new CoreRulesEquipment().getECMRanges(nova));
         assertEquals(6, new CoreRulesEquipment().getECMRanges(watchdog));
         assertEquals(6, new TWRulesEquipment().getECMRanges(watchdog));
+    }
+
+    @Test
+    void assetPriceUsesTheActiveRulesAndTheSelectedCrewSkill() {
+        RulesManager previous = Game.rulesManager;
+        try {
+            Game.rulesManager = mock(RulesManager.class);
+            RulesGame gameRules = mock(RulesGame.class);
+            when(Game.rulesManager.getRulesGame()).thenReturn(gameRules);
+            BattlefieldSupportAsset asset = new BattlefieldSupportAsset();
+            asset.setSkill(6);
+            asset.setVeteranSkill(4);
+            when(gameRules.assetTagSurchargeBsp(asset, 6)).thenReturn(3);
+            when(gameRules.assetTagSurchargeBsp(asset, 4)).thenReturn(7);
+            assertEquals(3, asset.tagSurchargeBsp(false));
+            assertEquals(7, asset.tagSurchargeBsp(true));
+        } finally {
+            Game.rulesManager = previous;
+        }
     }
 }

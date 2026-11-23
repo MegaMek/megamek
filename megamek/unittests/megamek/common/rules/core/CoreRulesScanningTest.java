@@ -47,14 +47,20 @@ import megamek.common.battlefieldSupport.BFSSpecial;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
+import megamek.common.enums.BasementType;
+import megamek.common.enums.BuildingType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.EMI;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesScanning;
 import megamek.common.units.Aero;
+import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -278,7 +284,7 @@ class CoreRulesScanningTest {
      * Gives the unit one working probe of the named type and the engine's answers for it: {@code hasBAP(true)} true
      * and the given range.
      */
-    private static void mountProbe(Entity unit, String internalName, int range) {
+    private static MiscMounted mountProbe(Entity unit, String internalName, int range) {
         MiscType probeType = mock(MiscType.class);
         when(probeType.hasFlag(MiscType.F_BAP)).thenReturn(true);
         when(probeType.hasFlag(MiscType.F_BLOODHOUND)).thenReturn(internalName.contains("Bloodhound"));
@@ -290,5 +296,44 @@ class CoreRulesScanningTest {
         when(unit.hasBAP(true)).thenReturn(true);
         when(unit.getBAPRange()).thenReturn(range);
         when(unit.getBadCriticalSlots(anyInt(), anyInt(), anyInt())).thenReturn(0);
+        return probe;
+    }
+
+    @Test
+    void anInactiveBloodhoundCannotLendItsBonusOrEcmImmunityToAnotherProbe() {
+        MiscMounted bloodhound = mountProbe(scanner, "BloodhoundActiveProbe", 8);
+        when(bloodhound.isModeTurnedOff()).thenReturn(true);
+        MiscMounted beagle = mountProbe(scanner, "BeagleActiveProbe", 4);
+        when(scanner.getMisc()).thenReturn(List.of(bloodhound, beagle));
+
+        assertEquals(5, rules.scanTargetRoll(scanner, hexTarget).getValue());
+        rules.targetInsideHostileEcm = true;
+        assertEquals(7, rules.scanTargetRoll(scanner, hexTarget).getValue());
+        assertEquals(2, rules.scanningRange(scanner, hexTarget));
+    }
+
+    @Test
+    void infantryAutomaticallyScansAnOccupiedHexOfABuildingEntityOnItsBoard() {
+        Infantry platoon = mock(Infantry.class);
+        when(platoon.getCrew()).thenReturn(mock(Crew.class));
+        when(platoon.isInfantry()).thenReturn(true);
+        BuildingEntity building = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
+        building.getInternalBuilding().setBuildingHeight(2);
+        building.getInternalBuilding().addHex(CubeCoords.ZERO, 40, 0, BasementType.NONE, false);
+        building.getInternalBuilding().addHex(new CubeCoords(0, 1, -1), 40, 0, BasementType.NONE, false);
+        building.setPosition(new Coords(1, 3));
+        Coords occupied = building.getSecondaryPositions().get(1);
+        when(platoon.getPosition()).thenReturn(occupied);
+        building.setBoardId(platoon.getBoardId());
+
+        assertEquals(0, RulesScanning.scanDistance(platoon, building));
+        assertEquals(TargetRoll.AUTOMATIC_SUCCESS, rules.scanTargetRoll(platoon, building).getValue());
+        when(platoon.getElevation()).thenReturn(3);
+        assertEquals(8, rules.scanTargetRoll(platoon, building).getValue());
+        when(platoon.getElevation()).thenReturn(-1);
+        assertEquals(8, rules.scanTargetRoll(platoon, building).getValue());
+        when(platoon.getElevation()).thenReturn(0);
+        building.setBoardId(platoon.getBoardId() + 1);
+        assertEquals(8, rules.scanTargetRoll(platoon, building).getValue());
     }
 }

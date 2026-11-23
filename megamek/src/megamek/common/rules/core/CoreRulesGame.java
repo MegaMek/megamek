@@ -35,18 +35,10 @@ package megamek.common.rules.core;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.battlefieldSupport.BFSSpecialType;
-import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.enums.GamePhase;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.equipment.WeaponTypeFlag;
-import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
@@ -123,67 +115,6 @@ public class CoreRulesGame extends RulesGame {
             adjustedBV = addHomingBombBV(otherEntity, bvReport, adjustedBV, tags);
         }
         return adjustedBV;
-    }
-
-    /**
-     * @param entity a unit of the force
-     *
-     * @return the number of launchers in the unit's force that carry the Homing TAG surcharge
-     */
-    public static int homingLauncherCount(Entity entity) {
-        return homingLaunchers(entity).size();
-    }
-
-    /**
-     * @return a description of every Arrow IV or artillery launcher in the unit's force on a unit with usable Homing
-     *       ammo, and of every Asset with the Arrow IV Special, whose attacks need friendly TAG (Core p.148)
-     */
-    private static List<String> homingLaunchers(Entity entity) {
-        List<String> launchers = new ArrayList<>();
-        if ((entity.getGame() == null) || (entity.getOwner() == null)) {
-            return launchers;
-        }
-        for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            // Every friendly launcher counts, as any friendly TAG designates for it (Core p.193)
-            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
-                continue;
-            }
-            if (otherEntity instanceof BattlefieldSupportAsset asset) {
-                // "ARROW2" is two launchers (Core p.149)
-                int assetLaunchers = asset.findSpecial(BFSSpecialType.ARROW_IV)
-                      .map(special -> special.intValue().orElse(1))
-                      .orElse(0);
-                for (int launcher = 0; launcher < assetLaunchers; launcher++) {
-                    launchers.add("Arrow IV (" + asset.getShortName() + ")");
-                }
-                continue;
-            }
-            if (!hasUsableHomingAmmo(otherEntity)) {
-                continue;
-            }
-            for (WeaponMounted weapon : otherEntity.getWeaponList()) {
-                // A mounted Homing bomb is "dropped as a bomb, not fired as artillery" (TO:AUE p.171), priced above
-                if (weapon.isBombMounted()) {
-                    continue;
-                }
-                // A bay counts each launcher in it
-                List<WeaponMounted> mounts = weapon.getBayWeapons().isEmpty() ? List.of(weapon)
-                      : weapon.getBayWeapons();
-                for (WeaponMounted mount : mounts) {
-                    if (mount.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV)
-                          || mount.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
-                        launchers.add(mount.getType().getShortName() + " (" + otherEntity.getShortName() + ")");
-                    }
-                }
-            }
-        }
-        return launchers;
-    }
-
-    private static boolean hasUsableHomingAmmo(Entity unit) {
-        return unit.getAmmo().stream()
-              .anyMatch(ammo -> (ammo.getUsableShotsLeft() > 0) && !(ammo.getType() instanceof BombType)
-                    && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING));
     }
 
     /**

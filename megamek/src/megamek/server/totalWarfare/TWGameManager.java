@@ -23665,7 +23665,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);
-                    target = (lowFail) ? target + 2 : target - 2;
+                    target = lowFail ? target - 2 : target + 2;
                 }
 
                 // Check for impact resistant armor

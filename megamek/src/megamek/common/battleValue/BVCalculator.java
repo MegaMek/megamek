@@ -1428,7 +1428,8 @@ public abstract class BVCalculator {
             return;
         }
         // Units "whose only such piece of equipment is rear-mounted add half" (TechManual p.315; Core errata v0.2 p.1)
-        boolean onlyRearTag = (pendingTagPods == 0) && workingTags.stream().allMatch(rearWeaponFilter());
+        boolean onlyRearTag = (pendingTagPods == 0) && workingTags.stream()
+              .allMatch(rearWeaponFilter().or(Mounted::isRearMounted));
 
         bvReport.startTentativeSection();
         bvReport.addLine("TAG Bonus (" + tagCount + " Tag" + (tagCount == 1 ? "" : "s") + "):", "", "");

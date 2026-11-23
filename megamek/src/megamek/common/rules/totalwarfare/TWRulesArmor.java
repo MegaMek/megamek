@@ -176,6 +176,9 @@ public class TWRulesArmor extends RulesArmor {
     /** Hardened armor modifies penetrating critical checks, including vehicle criticals (TO:AUE p.93). */
     @Override
     public int hardenedLocationCriticalModifier(HitData hit) {
+        if (hit.getGeneralDamageType() == HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION) {
+            return 0; // Re-engineered lasers treat hardened armor as standard (Core p.185; BMM p.101).
+        }
         return -2;
     }
 
@@ -194,7 +197,7 @@ public class TWRulesArmor extends RulesArmor {
     public boolean ferroLamellorArmorReduces(HitDamageType damageType) {
         return (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING)
               && (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
-              && (damageType != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)
+              && !damageType.ignoresArmorDamageReduction()
               && (damageType != HitDamageType.DAMAGE_AX);
     }
 

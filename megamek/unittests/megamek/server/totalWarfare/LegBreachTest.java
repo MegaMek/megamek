@@ -392,6 +392,23 @@ class LegBreachTest {
         int leg = Mek.LOC_LEFT_LEG;
         mek.setArmorType(EquipmentType.T_ARMOR_IMPACT_RESISTANT, leg);
         mek.setLocationStatus(leg, ILocationExposureStatus.VACUUM);
+        assertVacuumBreach(mek, leg, roll, breaches);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true, true, 2, true", "true, false, 3, false",
+          "false, true, 11, false", "false, false, 12, true" })
+    void harJelIIOrIIIProtectsAgainstHullBreaches(boolean core, boolean harJelII, int roll, boolean breaches) {
+        game.initializeRulesManager(core ? OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW);
+        int leg = Mek.LOC_LEFT_LEG;
+        Mek mek = prepareMek(spy(new BipedMek()));
+        when(mek.hasHarJelIIIn(leg)).thenReturn(harJelII);
+        when(mek.hasHarJelIIIIn(leg)).thenReturn(!harJelII);
+        mek.setLocationStatus(leg, ILocationExposureStatus.VACUUM);
+        assertVacuumBreach(mek, leg, roll, breaches);
+    }
+
+    private void assertVacuumBreach(Mek mek, int leg, int roll, boolean breaches) {
         Roll breachRoll = mock(Roll.class);
         when(breachRoll.getIntValue()).thenReturn(roll);
         when(breachRoll.getReport()).thenReturn(Integer.toString(roll));

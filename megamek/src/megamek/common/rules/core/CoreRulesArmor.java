@@ -80,7 +80,7 @@ public class CoreRulesArmor extends RulesArmor {
     @Override
     public boolean ferroLamellorArmorReduces(HitDamageType damageType) {
         return (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
-              && (damageType != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)
+              && !damageType.ignoresArmorDamageReduction()
               && (damageType != HitDamageType.DAMAGE_AX);
     }
 
@@ -136,6 +136,9 @@ public class CoreRulesArmor extends RulesArmor {
 
     @Override
     public int hardenedLocationCriticalModifier(HitData hit) {
+        if (hit.getGeneralDamageType() == HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION) {
+            return 0; // Re-engineered lasers treat hardened armor as standard (Core p.185; BMM p.101).
+        }
         // Core p.91, errata v0.2: the modifier applies to the TAC check only.
         return hit.isThroughArmorCritical() ? -2 : 0;
     }

@@ -63,16 +63,19 @@ public enum TaserEffects {
         if (entityTarget.getWeight() > 100) {
             return;
         }
+        if (entityTarget.isConventionalInfantry()) {
+            // One successful hit eliminates one trooper (TO:AUE p.157), regardless of the platoon's armor or terrain.
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_TASER);
+            applyDamage.accept(1);
+            return;
+        }
         int armorType = entityTarget.getArmor(hit) > 0 ? entityTarget.getArmorType(hit.getLocation())
               : EquipmentType.T_ARMOR_UNKNOWN;
         // Hardened loses a full pip to either weapon. Ferro-lamellor's exception names only Mek tasers.
         boolean fullPip = armorType == EquipmentType.T_ARMOR_HARDENED
               || (armorType == EquipmentType.T_ARMOR_FERRO_LAMELLOR && this != BATTLE_ARMOR);
-        hit.setGeneralDamageType(fullPip ? HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION : HitDamageType.DAMAGE_BALLISTIC);
+        hit.setGeneralDamageType(fullPip ? HitDamageType.DAMAGE_TASER : HitDamageType.DAMAGE_BALLISTIC);
         applyDamage.accept(fullPip ? Math.min(1, damage) : damage);
-        if (entityTarget.isConventionalInfantry()) {
-            return;
-        }
         OptionalInt armorModifier = switch (armorType) {
             case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION -> {
                 // Core p.201 negates the effect at impact. IO:AE p.80 gives -2 only if armor remains.

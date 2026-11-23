@@ -55,9 +55,9 @@ import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.SkillLevel;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.rules.core.CoreRulesGame;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
@@ -672,12 +672,8 @@ public class BattlefieldSupportAsset extends Entity {
      *       with Homing ammo in its force (Core errata v0.2 p.1)
      */
     public int tagSurchargeBsp(boolean veteran) {
-        if (!hasSpecial(BFSSpecialType.TAG)) {
-            return 0;
-        }
-        int assetSkill = (veteran && (veteranSkill != null)) ? veteranSkill : skill;
-        int bspPerLauncher = Math.max(0, 15 - (2 * assetSkill));
-        return CoreRulesGame.homingLauncherCount(this) * bspPerLauncher;
+        int assetSkill = (veteran && veteranSkill != null) ? veteranSkill : skill;
+        return Game.rulesManager.getRulesGame().assetTagSurchargeBsp(this, assetSkill);
     }
 
     /**

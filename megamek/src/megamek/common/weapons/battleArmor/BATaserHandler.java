@@ -37,9 +37,11 @@ package megamek.common.weapons.battleArmor;
 import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -65,6 +67,8 @@ public class BATaserHandler extends MekTaserHandler {
 
     @Override
     protected void applyEntityDamage(Entity entityTarget, int damage, Vector<Report> vPhaseReport) {
+        BattleArmor squad = (BattleArmor) attackingEntity;
+        int firer = weapon.getLocation() == BattleArmor.LOC_SQUAD ? squad.getRandomTrooper() : weapon.getLocation();
         super.applyEntityDamage(entityTarget, damage, vPhaseReport);
         // Feedback is a separate roll on a successful hit regardless of the target effect (TO:AUE p.158).
         Roll diceRoll2 = Compute.rollD6(2);
@@ -82,10 +86,12 @@ public class BATaserHandler extends MekTaserHandler {
         } else {
             report = new Report(3725);
             vPhaseReport.add(report);
-            // kill the firing trooper
-            // TODO: should just be shut down for remainder of scenario
-            vPhaseReport.addAll(gameManager.criticalEntity(attackingEntity, weapon.getLocation(),
-                  false, 0, false, false, 0));
+            if (firer > BattleArmor.LOC_SQUAD && squad.isTrooperActive(firer)) {
+                squad.destroyLocation(firer);
+                if (squad.getTransferLocation(new HitData(firer)).getLocation() == Entity.LOC_DESTROYED) {
+                    vPhaseReport.addAll(gameManager.destroyEntity(squad, "all troopers eliminated", true));
+                }
+            }
         }
     }
 }

@@ -247,7 +247,7 @@ public class CoreRulesEquipment extends RulesEquipment {
 
     /** Core pp.197, 201 give the Watchdog the standard Clan active probe. */
     @Override
-    public int getWatchdogProbeRange() {
-        return 5;
+    public boolean watchdogUsesLightProbe() {
+        return false;
     }
 }

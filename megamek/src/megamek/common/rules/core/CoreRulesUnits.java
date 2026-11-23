@@ -33,6 +33,7 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.HitData;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.RulesUnits;
@@ -261,5 +262,17 @@ public class CoreRulesUnits extends RulesUnits {
     @Override
     public boolean getPhysicalTwistEnabled() {
         return true;
+    }
+
+    /** Core p.205 shares the last point only with exposed composite structure in the next location. */
+    @Override
+    public boolean transfersCompositePip(Mek mek, HitData hit, boolean ammoExplosion) {
+        if (ammoExplosion && (mek.locationHasCase(hit.getLocation()) || mek.hasCASEII(hit.getLocation()))) {
+            return false;
+        }
+        HitData next = mek.getTransferLocation(hit);
+        int loc = next.getLocation();
+        return loc >= 0 && mek.getInternal(next) > 0 && mek.hasCompositeStructure(loc)
+              && (ammoExplosion || mek.getArmor(next) <= 0);
     }
 }

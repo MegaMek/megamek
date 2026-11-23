@@ -6858,18 +6858,10 @@ public abstract class Entity extends TurnOrdered
         if (!canUseActiveProbe()) {
             return false;
         }
-        for (MiscMounted m : getMisc()) {
-            MiscType type = m.getType();
-            if ((type != null) && type.hasFlag(MiscType.F_BAP)) {
-
-                // A probe the player has switched off provides no sensing (activation/deactivation rules); for a
-                // Watchdog/Nova CEWS the shared "Off" mode silences the probe half along with the rest of the suite.
-                if (!m.isInoperable() && !m.isModeTurnedOff()) {
-                    return (game == null) ||
-                           Game.rulesManager.getRulesEquipment().isBAPActive(checkECM, m.getType(),
-                                                                             this, getPosition());
-                }
-            }
+        MiscMounted probe = EquipmentActivation.activeProbe(this);
+        if (probe != null) {
+            return game == null || Game.rulesManager.getRulesEquipment()
+                  .isBAPActive(checkECM, probe.getType(), this, getPosition());
         }
 
         // Sensory implants: IR/EM optical OR enhanced audio = 2-hex active probe (infantry only)
@@ -6953,50 +6945,45 @@ public abstract class Entity extends TurnOrdered
             spaBonus = 1;
         }
 
-        for (MiscMounted m : getMisc()) {
+        MiscMounted m = EquipmentActivation.activeProbe(this);
+        if (m != null) {
             MiscType type = m.getType();
-            if (type == null) {
-                continue;
+            // Quirk bonus is only 2 if equipped with BAP
+            if (quirkBonus > 0) {
+                quirkBonus = 2;
             }
-            if (type.hasFlag(MiscType.F_BAP) && !m.isInoperable() && !m.isModeTurnedOff()) {
-                // Quirk bonus is only 2 if equipped with BAP
-                if (quirkBonus > 0) {
-                    quirkBonus = 2;
-                }
 
-                // in space the range of all BAPs is given by the mode
-                if (isSpaceborne()) {
-                    return m.curMode().equals("Medium") ? 12 : 6;
-                }
-
-                // By the flag, not by name: both Bloodhound variants carry it, and the old comparison tested a
-                // display name against an internal-name constant, so it never matched and a Bloodhound was
-                // given the generic 4 hexes instead of its 8.
-                if (type.hasFlag(MiscType.F_BLOODHOUND)) {
-                    return 8 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                String internalName = type.getInternalName();
-                if (type.hasFlag(MiscType.F_WATCHDOG)) {
-                    return Game.rulesManager.getRulesEquipment().getWatchdogProbeRange()
-                          + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                if (internalName.equals(Sensor.CLAN_AP) ||
-                    internalName.equals(Sensor.NOVA) ||
-                    internalName.equals(Sensor.CL_BA_LIGHT_AP)) {
-                    return 5 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                if (internalName.equals(Sensor.LIGHT_AP)) {
-                    return 3 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                if (internalName.equals(Sensor.IS_BA_LIGHT_AP)) {
-                    return 4 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                if (internalName.equals(Sensor.IS_IMPROVED) || internalName.equals(Sensor.CL_IMPROVED)) {
-                    return 2 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                return 4 + cyberProbeBonus + quirkBonus + spaBonus;// everything else should be
-                // range 4
+            // in space the range of all BAPs is given by the mode
+            if (isSpaceborne()) {
+                return m.curMode().equals("Medium") ? 12 : 6;
             }
+
+            // By the flag, not by name: both Bloodhound variants carry it, and the old comparison tested a
+            // display name against an internal-name constant, so it never matched and a Bloodhound was
+            // given the generic 4 hexes instead of its 8.
+            if (type.hasFlag(MiscType.F_BLOODHOUND)) {
+                return 8 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            String internalName = type.getInternalName();
+            if (type.hasFlag(MiscType.F_WATCHDOG)) {
+                return Game.rulesManager.getRulesEquipment().getWatchdogProbeRange()
+                      + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            if (internalName.equals(Sensor.CLAN_AP) ||
+                internalName.equals(Sensor.NOVA) ||
+                internalName.equals(Sensor.CL_BA_LIGHT_AP)) {
+                return 5 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            if (internalName.equals(Sensor.LIGHT_AP)) {
+                return 3 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            if (internalName.equals(Sensor.IS_BA_LIGHT_AP)) {
+                return 4 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            if (internalName.equals(Sensor.IS_IMPROVED) || internalName.equals(Sensor.CL_IMPROVED)) {
+                return 2 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            return 4 + cyberProbeBonus + quirkBonus + spaBonus;
         }
         // No BAP equipped - return base probe from implants/quirks/SPA
         if ((cyberBaseProbe + quirkBonus + spaBonus) > 0) {

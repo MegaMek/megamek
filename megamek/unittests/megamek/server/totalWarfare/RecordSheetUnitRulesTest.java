@@ -144,6 +144,9 @@ class RecordSheetUnitRulesTest {
         deploy(mek, rules);
         mek.addEquipment(EquipmentType.get(Sensor.WATCHDOG), Mek.LOC_RIGHT_TORSO);
         assertEquals(rules.equals(OptionsConstants.RULES_CORE) ? 5 : 3, mek.getBAPRange());
+        mek.getCrew().setPiloting(5, 0);
+        assertEquals(rules.equals(OptionsConstants.RULES_CORE) ? 6 : 7,
+              Game.rulesManager.getRulesScanning().scanTargetRoll(mek, null).getValue());
         assertEquals(6, mek.getECMRange());
         assertEquals(9, Game.rulesManager.getRulesEquipment().getSensorRanges(Sensor.TYPE_WATCHDOG));
     }

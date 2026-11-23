@@ -233,5 +233,10 @@ public abstract class RulesEquipment {
     }
 
     /** Ground active-probe radius of a Watchdog CEWS, before crew and equipment bonuses. */
-    public abstract int getWatchdogProbeRange();
+    public int getWatchdogProbeRange() {
+        return watchdogUsesLightProbe() ? 3 : 5;
+    }
+
+    /** Whether the Watchdog carries the Clan light active probe instead of the standard Clan probe. */
+    public abstract boolean watchdogUsesLightProbe();
 }

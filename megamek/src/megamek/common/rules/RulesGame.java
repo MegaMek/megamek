@@ -35,15 +35,22 @@ package megamek.common.rules;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.Player;
+import megamek.common.battlefieldSupport.BFSSpecialType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
@@ -254,5 +261,66 @@ public abstract class RulesGame {
             return true;
         }
         return false;
+    }
+
+    /** Battlefield Support Asset TAG pricing in either ruleset (Core errata v0.2 p.1). */
+    public int assetTagSurchargeBsp(BattlefieldSupportAsset asset, int skill) {
+        if (!asset.hasSpecial(BFSSpecialType.TAG)) {
+            return 0;
+        }
+        int bspPerLauncher = Math.max(0, 15 - 2 * skill);
+        return homingLaunchers(asset).size() * bspPerLauncher;
+    }
+
+    /**
+     * @return a description of every Arrow IV or artillery launcher in the unit's force on a unit with usable Homing
+     *       ammo, and of every Asset with the Arrow IV Special, whose attacks need friendly TAG (Core p.148)
+     */
+    protected List<String> homingLaunchers(Entity entity) {
+        List<String> launchers = new ArrayList<>();
+        if ((entity.getGame() == null) || (entity.getOwner() == null)) {
+            return launchers;
+        }
+        for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
+            // Every friendly launcher counts, as any friendly TAG designates for it (Core p.193)
+            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+                continue;
+            }
+            if (otherEntity instanceof BattlefieldSupportAsset asset) {
+                // "ARROW2" is two launchers (Core p.149)
+                int assetLaunchers = asset.findSpecial(BFSSpecialType.ARROW_IV)
+                      .map(special -> special.intValue().orElse(1))
+                      .orElse(0);
+                for (int launcher = 0; launcher < assetLaunchers; launcher++) {
+                    launchers.add("Arrow IV (" + asset.getShortName() + ")");
+                }
+                continue;
+            }
+            if (!hasUsableHomingAmmo(otherEntity)) {
+                continue;
+            }
+            for (WeaponMounted weapon : otherEntity.getWeaponList()) {
+                // A mounted Homing bomb is "dropped as a bomb, not fired as artillery" (TO:AUE p.171), priced above
+                if (weapon.isBombMounted()) {
+                    continue;
+                }
+                // A bay counts each launcher in it
+                List<WeaponMounted> mounts = weapon.getBayWeapons().isEmpty() ? List.of(weapon)
+                      : weapon.getBayWeapons();
+                for (WeaponMounted mount : mounts) {
+                    if (mount.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV)
+                          || mount.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+                        launchers.add(mount.getType().getShortName() + " (" + otherEntity.getShortName() + ")");
+                    }
+                }
+            }
+        }
+        return launchers;
+    }
+
+    private static boolean hasUsableHomingAmmo(Entity unit) {
+        return unit.getAmmo().stream()
+              .anyMatch(ammo -> (ammo.getUsableShotsLeft() > 0) && !(ammo.getType() instanceof BombType)
+                    && ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING));
     }
 }

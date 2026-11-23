@@ -56,6 +56,12 @@ public class MekTaserHandler extends AmmoWeaponHandler {
     }
 
     @Override
+    protected int calcDamagePerHit() {
+        // TO:AUE p.157 sets a fixed casualty before any intervening cover absorbs the attack.
+        return target.isConventionalInfantry() ? 1 : super.calcDamagePerHit();
+    }
+
+    @Override
     protected void applyEntityDamage(Entity entityTarget, int damage, Vector<Report> reports) {
         TaserEffects taser = weaponType.hasFlag(WeaponType.F_BA_WEAPON) ? TaserEffects.BATTLE_ARMOR : TaserEffects.MEK;
         taser.resolve(gameManager, entityTarget, hit, damage,

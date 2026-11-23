@@ -891,12 +891,13 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         if (targetRoll.getValue() == TargetRoll.IMPOSSIBLE) {
             return Messages.getString("PreEndDeclarationsDisplay.scanRefused", targetRoll.getDesc());
         }
-        int distance = scanner.getPosition().distance(scanTarget.getPosition());
+        int distance = RulesScanning.scanDistance(scanner, scanTarget);
         int range = rules.scanningRange(scanner, scanTarget);
         if (distance > range) {
             return Messages.getString("PreEndDeclarationsDisplay.scanOutOfRange", distance, range);
         }
-        if (!LosEffects.calculateLOS(game, scanner, scanTarget).canSee()) {
+        if (!RulesScanning.occupiesTargetBuilding(scanner, scanTarget)
+              && !LosEffects.calculateLOS(game, scanner, scanTarget).canSee()) {
             return Messages.getString("PreEndDeclarationsDisplay.scanNoLineOfSight");
         }
         return null;

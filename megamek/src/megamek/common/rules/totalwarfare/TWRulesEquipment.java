@@ -267,7 +267,7 @@ public class TWRulesEquipment extends RulesEquipment {
 
     /** TO:AUE p.90 gives the Watchdog the Clan light active probe. */
     @Override
-    public int getWatchdogProbeRange() {
-        return 3;
+    public boolean watchdogUsesLightProbe() {
+        return true;
     }
 }

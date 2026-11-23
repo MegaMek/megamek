@@ -40,6 +40,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Vector;
@@ -51,6 +52,7 @@ import megamek.common.Report;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.rolls.Roll;
@@ -58,6 +60,7 @@ import megamek.common.rules.RulesManager;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.BipedMek;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.DamageType;
@@ -84,7 +87,9 @@ class TaserHandlerTest {
               : mock(MekTaserHandler.class, CALLS_REAL_METHODS);
         handler.hit = rear;
         handler.gameManager = mock(TWGameManager.class);
-        handler.attackingEntity = new BipedMek();
+        handler.attackingEntity = baTaser ? new BattleArmor() : new BipedMek();
+        handler.weapon = mock(WeaponMounted.class);
+        when(handler.weapon.getLocation()).thenReturn(1);
         handler.weaponType = mock(WeaponType.class);
         handler.damageType = DamageType.NONE;
         when(handler.weaponType.hasFlag(WeaponType.F_BA_WEAPON)).thenReturn(baTaser);
@@ -132,7 +137,9 @@ class TaserHandlerTest {
                   : mock(MekTaserHandler.class, CALLS_REAL_METHODS);
             handler.hit = rear;
             handler.gameManager = manager;
-            handler.attackingEntity = new BipedMek();
+            handler.attackingEntity = baTaser ? new BattleArmor() : new BipedMek();
+            handler.weapon = mock(WeaponMounted.class);
+            when(handler.weapon.getLocation()).thenReturn(1);
             handler.weaponType = mock(WeaponType.class);
             handler.damageType = DamageType.NONE;
             when(handler.weaponType.hasFlag(WeaponType.F_BA_WEAPON)).thenReturn(baTaser);
@@ -212,6 +219,46 @@ class TaserHandlerTest {
             assertEquals(shutdown, vehicle.getTaserShutdownRounds() > 0);
         } finally {
             Game.rulesManager = saved;
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "1, 1, 2", "2, 2, 2", "0, 2, 2", "0, 1, 1" })
+    void failedFeedbackDisablesTheFiringSuit(int mountLocation, int firingTrooper, int squadSize) {
+        BattleArmor squad = new BattleArmor();
+        squad.setSquadSize(squadSize);
+        for (int trooper = 1; trooper <= squadSize; trooper++) {
+            squad.initializeInternal(1, trooper);
+        }
+        ConvInfantry target = new ConvInfantry();
+        MekTaserHandler handler = mock(BATaserHandler.class, CALLS_REAL_METHODS);
+        handler.attackingEntity = squad;
+        handler.target = target;
+        handler.gameManager = mock(TWGameManager.class);
+        handler.weapon = mock(WeaponMounted.class);
+        when(handler.weapon.getLocation()).thenReturn(mountLocation);
+        handler.weaponType = mock(WeaponType.class);
+        when(handler.weaponType.hasFlag(WeaponType.F_BA_WEAPON)).thenReturn(true);
+        handler.hit = new HitData(ConvInfantry.LOC_INFANTRY);
+        handler.damageType = DamageType.NONE;
+        doAnswer(invocation -> new Vector<Report>()).when(handler.gameManager)
+              .damageEntity(any(), any(), anyInt(), anyBoolean(), any(), anyBoolean(), anyBoolean(), anyBoolean(),
+                    anyBoolean(), anyBoolean());
+        when(handler.gameManager.destroyEntity(squad, "all troopers eliminated", true)).thenReturn(new Vector<>());
+
+        Roll feedback = mock(Roll.class);
+        when(feedback.getIntValue()).thenReturn(6);
+        try (var dice = mockStatic(Compute.class)) {
+            dice.when(() -> Compute.rollD6(2)).thenReturn(feedback);
+            dice.when(() -> Compute.randomInt(squadSize)).thenReturn(squadSize - 1);
+            assertEquals(1, handler.calcDamagePerHit());
+            handler.applyEntityDamage(target, 1, new Vector<>());
+        }
+        for (int trooper = 1; trooper <= squadSize; trooper++) {
+            assertEquals(trooper != firingTrooper, squad.isTrooperActive(trooper));
+        }
+        if (squadSize == 1) {
+            verify(handler.gameManager).destroyEntity(squad, "all troopers eliminated", true);
         }
     }
 }

@@ -803,6 +803,7 @@ public class TWDamageManager implements IDamageManager {
 
         // Set when the rules cap this internal explosion; its armor is vented where the last point lands
         boolean cappedExplosion = false;
+        boolean sharedCompositePip = false;
 
         // Allocate the damage
         while (damage > 0) {
@@ -998,6 +999,12 @@ public class TWDamageManager implements IDamageManager {
                     if (hasCompositeStructure) {
                         tmpDamageHold = damage;
                         damage *= 2;
+                        // A point shared with the previous location has only one pip left. If CASE capped the
+                        // incoming damage again, the excess already accounts for that spent pip.
+                        if (sharedCompositePip && tmpDamageHold == uncappedDamage) {
+                            damage--;
+                        }
+                        sharedCompositePip = false;
                         report = new Report(6091);
                         report.subject = entityId;
                         report.indent(3);
@@ -1115,9 +1122,9 @@ public class TWDamageManager implements IDamageManager {
                         // Now we need to consider alternate structure types!
                         if (tmpDamageHold > 0) {
                             if (hasCompositeStructure) {
-                                // If there's a remainder, we can actually
-                                // ignore it.
-                                damage /= 2;
+                                sharedCompositePip = (damage % 2 != 0) && Game.rulesManager.getRulesUnits()
+                                      .transfersCompositePip(mek, hit, ammoExplosion);
+                                damage = damage / 2 + (sharedCompositePip ? 1 : 0);
                             } else if (hasReinforcedStructure) {
                                 damage = tmpDamageHold - reinforcedCapacity;
                             }
@@ -1197,7 +1204,8 @@ public class TWDamageManager implements IDamageManager {
                     } else if (nextHit.getLocation() == Entity.LOC_NONE) {
                         // The rest of the damage is wasted.
                         damage = 0;
-                    } else if (ammoExplosion && mek.locationHasCase(hit.getLocation())) {
+                    } else if (ammoExplosion && (mek.locationHasCase(hit.getLocation())
+                          || mek.hasCASEII(hit.getLocation()))) {
                         // Remaining damage prevented by CASE
                         report = new Report(6125);
                         report.subject = entityId;
@@ -2528,23 +2536,10 @@ public class TWDamageManager implements IDamageManager {
         return damage;
     }
 
-    public void damageInfantry(Vector<Report> reportVec, ConvInfantry infantry, HitData hit, int damage,
-          boolean ammoExplosion, DamageType damageType, boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, ModsInfo mods) {
-        boolean isPlatoon = true;
-        int entityId = infantry.getId();
-        Hex te_hex = game.getHexOf(infantry);
-        boolean damageIS = mods.damageIS;
+    private int adjustInfantryDamage(ConvInfantry infantry, HitData hit, int damage, boolean ammoExplosion,
+          DamageType damageType, boolean areaSatArty, Vector<Report> reportVec, ModsInfo mods) {
         Report report;
-
-        // Track initial trooper count for suicide implant reactive damage (IO pg 83)
-        // Only track if: conventional infantry, has suicide implants, and this is NOT reactive damage
-        boolean hasSuicideImplants = infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
-        boolean checkSuicideImplantReaction = infantry.isConventionalInfantry()
-              && hasSuicideImplants
-              && !damageType.equals(DamageType.SUICIDE_IMPLANT_REACTION);
-        int initialTroopers = checkSuicideImplantReaction ? infantry.getInternal(ConvInfantry.LOC_INFANTRY) : -1;
-
+        int entityId = infantry.getId();
         // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
         if (damageType.equals(DamageType.ANTI_TSM) &&
               infantry.isConventionalInfantry() &&
@@ -2573,9 +2568,9 @@ public class TWDamageManager implements IDamageManager {
 
         // Is the infantry in the open?
         if (ServerHelper.infantryInOpen(infantry,
-              te_hex,
+              game.getHexOf(infantry),
               game,
-              isPlatoon,
+              true,
               ammoExplosion,
               hit.isIgnoreInfantryDoubleDamage())) {
             // PBI. Damage is doubled.
@@ -2609,6 +2604,31 @@ public class TWDamageManager implements IDamageManager {
             damage = (int) Math.ceil((damage) / infantry.calcDamageDivisor());
             report.add(damage);
             reportVec.addElement(report);
+        }
+        return damage;
+    }
+
+    public void damageInfantry(Vector<Report> reportVec, ConvInfantry infantry, HitData hit, int damage,
+          boolean ammoExplosion, DamageType damageType, boolean areaSatArty, boolean throughFront, boolean underWater,
+          boolean nukeS2S, ModsInfo mods) {
+        int entityId = infantry.getId();
+        boolean damageIS = mods.damageIS;
+        Report report;
+
+        // Track initial trooper count for suicide implant reactive damage (IO pg 83)
+        // Only track if: conventional infantry, has suicide implants, and this is NOT reactive damage
+        boolean hasSuicideImplants = infantry.hasAbility(OptionsConstants.MD_SUICIDE_IMPLANTS);
+        boolean checkSuicideImplantReaction = infantry.isConventionalInfantry()
+              && hasSuicideImplants
+              && !damageType.equals(DamageType.SUICIDE_IMPLANT_REACTION);
+        int initialTroopers = checkSuicideImplantReaction ? infantry.getInternal(ConvInfantry.LOC_INFANTRY) : -1;
+
+        boolean taserHit = hit.getGeneralDamageType() == HitDamageType.DAMAGE_TASER;
+        if (taserHit) {
+            damage = 1;
+            damageIS = true;
+        } else {
+            damage = adjustInfantryDamage(infantry, hit, damage, ammoExplosion, damageType, areaSatArty, reportVec, mods);
         }
 
         HitData nextHit;
@@ -3540,7 +3560,9 @@ public class TWDamageManager implements IDamageManager {
           boolean areaSatArty, Vector<Report> reportVec, ModsInfo mods) {
         boolean ferroLamellorArmor = mods.ferroLamellorArmor;
         boolean ballisticArmor = mods.ballisticArmor;
-        boolean hardenedArmor = mods.hardenedArmor;
+        HitDamageType hitType = hit.getGeneralDamageType();
+        boolean hardenedAbsorbsTwoPerPip = mods.hardenedArmor && hitType != HitDamageType.DAMAGE_ARMOR_PIERCING
+              && hitType != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE && !hitType.ignoresArmorDamageReduction();
         boolean impactArmor = mods.impactArmor;
         boolean reflectiveArmor = mods.reflectiveArmor;
         boolean reactiveArmor = mods.reactiveArmor;
@@ -3686,10 +3708,7 @@ public class TWDamageManager implements IDamageManager {
             }
             // Need to account for the possibility of hardened armor here
             int armorThreshold = entity.getArmor(hit);
-            if (hardenedArmor &&
-                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
-                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)) {
+            if (hardenedAbsorbsTwoPerPip) {
                 armorThreshold *= 2;
                 armorThreshold -= (entity.isHardenedArmorDamaged(hit)) ? 1 : 0;
                 reportVec.lastElement().newlines = 0;
@@ -3714,10 +3733,7 @@ public class TWDamageManager implements IDamageManager {
 
                 // armor absorbs all damage
                 // Hardened armor deals with damage in its own fashion...
-                if (hardenedArmor &&
-                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
-                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                if (hardenedAbsorbsTwoPerPip) {
                     int armorBefore = entity.getArmor(hit);
                     armorThreshold -= damage;
                     entity.setHardenedArmorDamaged(hit, (armorThreshold % 2) > 0);
@@ -3764,9 +3780,7 @@ public class TWDamageManager implements IDamageManager {
                 // damage goes on to internal
                 int absorbed = Math.max(entity.getArmor(hit), 0);
                 int pipsRemoved = absorbed;
-                if (hardenedArmor &&
-                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
-                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                if (hardenedAbsorbsTwoPerPip) {
                     absorbed = (absorbed * 2) - ((entity.isHardenedArmorDamaged(hit)) ? 1 : 0);
                 }
                 if (reflectiveArmor && (hit.getGeneralDamageType() == HitDamageType.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitDamageType.DAMAGE_PHYSICAL_NONATTACK)

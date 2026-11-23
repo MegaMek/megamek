@@ -50,12 +50,15 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Sensor;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.EMI;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Aero;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
@@ -335,5 +338,17 @@ class CoreRulesScanningTest {
         when(platoon.getElevation()).thenReturn(0);
         building.setBoardId(platoon.getBoardId() + 1);
         assertEquals(8, rules.scanTargetRoll(platoon, building).getValue());
+    }
+
+    @Test
+    void missionWatchdogBonusFollowsTheManagerProvidingTheScan() {
+        EquipmentType.initializeTypes();
+        MiscMounted probe = mock(MiscMounted.class);
+        when(probe.getType()).thenReturn((MiscType) EquipmentType.get(Sensor.WATCHDOG));
+        when(scanner.getMisc()).thenReturn(List.of(probe));
+        when(scanner.hasBAP(true)).thenReturn(true);
+
+        assertEquals(6, new TWRulesManager().getRulesScanning().scanTargetRoll(scanner, null).getValue());
+        assertEquals(5, new CoreRulesManager().getRulesScanning().scanTargetRoll(scanner, null).getValue());
     }
 }

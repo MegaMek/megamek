@@ -139,24 +139,28 @@ public abstract class RulesScanning {
      *       {@link #PROBE_LEVEL_NONE} without one
      */
     public static int activeProbeLevel(Entity unit) {
+        return activeProbeLevel(unit, Game.rulesManager.getRulesEquipment());
+    }
+
+    protected static int activeProbeLevel(Entity unit, RulesEquipment equipmentRules) {
         if (!unit.hasBAP(true)) {
             return PROBE_LEVEL_NONE;
         }
         MiscMounted probe = EquipmentActivation.activeProbe(unit);
         // A probe supplied by an implant or quirk counts as light.
-        return probe == null ? PROBE_LEVEL_LIGHT : probeLevelOf(probe.getType());
+        return probe == null ? PROBE_LEVEL_LIGHT : probeLevelOf(probe.getType(), equipmentRules);
     }
 
     /**
-     * @param probeType the probe equipment type
+     * @param probeType      the probe equipment type
+     * @param equipmentRules the equipment rules for the mission
      *
      * @return the Core Rules probe level of that equipment
      */
-    private static int probeLevelOf(MiscType probeType) {
+    private static int probeLevelOf(MiscType probeType, RulesEquipment equipmentRules) {
         String probeName = probeType.getInternalName().toLowerCase(Locale.ROOT);
         if (probeType.hasFlag(MiscType.F_WATCHDOG)) {
-            return Game.rulesManager.getRulesEquipment().watchdogUsesLightProbe() ? PROBE_LEVEL_LIGHT
-                  : PROBE_LEVEL_STANDARD;
+            return equipmentRules.watchdogUsesLightProbe() ? PROBE_LEVEL_LIGHT : PROBE_LEVEL_STANDARD;
         }
         if (probeType.hasFlag(MiscType.F_BLOODHOUND)) {
             return PROBE_LEVEL_BLOODHOUND;

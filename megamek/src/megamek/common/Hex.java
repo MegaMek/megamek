@@ -526,30 +526,33 @@ public class Hex implements Serializable {
      * @return True if there is pavement, a paved road or a bridge in the hex.
      */
     public boolean hasPavement() {
-        if (containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.BRIDGE)) {
-            return true;
-        } else {
-            return hasPavedRoad();
-        }
+        return hasPavedGround() || containsTerrain(Terrains.BRIDGE);
+    }
+
+    /** Whether the ground surface is pavement or a paved road (TW pp. 32, 61 and Core p. 53). */
+    public boolean hasPavedGround() {
+        return containsTerrain(Terrains.PAVEMENT) || hasPavedRoad();
     }
 
     /**
      * If there's a road on this tile, and it's paved, return true
      */
     public boolean hasPavedRoad() {
-        if (containsTerrain(Terrains.ROAD)) {
-            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL)
-                  .contains(terrainLevel(Terrains.ROAD));
-            //Return false if the road is dirt or gravel
-        }
-        return false;
+        int roadLevel = terrainLevel(Terrains.ROAD);
+        return roadLevel != Terrain.LEVEL_NONE && roadLevel != Terrains.ROAD_LVL_DIRT
+              && roadLevel != Terrains.ROAD_LVL_GRAVEL;
     }
 
     /**
      * @return True if there is pavement, a road or a bridge in the hex.
      */
     public boolean hasPavementOrRoad() {
-        return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE);
+        return hasGroundRoad() || containsTerrain(Terrains.BRIDGE);
+    }
+
+    /** Whether the hex contains a road of any surface or ordinary pavement at ground level. */
+    public boolean hasGroundRoad() {
+        return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD);
     }
 
     /**

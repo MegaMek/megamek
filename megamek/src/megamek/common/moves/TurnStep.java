@@ -36,7 +36,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
@@ -64,14 +63,7 @@ class TurnStep implements PhasePass {
     @Override
     public PhasePassResult preCompilation(final MoveStep moveStep, final Game game, final Entity entity, MoveStep prev,
           final CachedEntityState cachedEntityState) {
-        // Check for pavement movement.
-        if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), moveStep.getPosition(),
-              moveStep)) {
-            moveStep.setPavementStep(true);
-        } else {
-            moveStep.setPavementStep(false);
-            moveStep.setOnlyPavementOrRoad(false);
-        }
+        moveStep.updateRoadMovement(game, prev);
 
         // Infantry can turn for free, except for field artillery
         moveStep.setMp((moveStep.isJumping() ||

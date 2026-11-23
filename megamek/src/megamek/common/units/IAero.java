@@ -453,7 +453,7 @@ public interface IAero {
         // We will just treat this as having paved terrain
         Coords pos = ((Entity) this).getPosition();
         Hex hex = ((Entity) this).getGame().getHexOf((Entity) this);
-        if ((hex != null) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
+        if ((hex != null) && hex.hasPavedGround() && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
 

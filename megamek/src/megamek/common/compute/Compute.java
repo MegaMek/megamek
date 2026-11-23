@@ -6443,6 +6443,12 @@ public class Compute {
         return ToxinAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE;
     }
 
+    /** Ground road movement includes the unpaved roads in TO:AR p.49 as well as paved and bridge steps. */
+    public static boolean canMoveOnRoad(Hex srcHex, Hex destHex, MoveStep step) {
+        return !step.isJumping() && ((srcHex.hasGroundRoad() && destHex.hasGroundRoad())
+              || canMoveOnPavement(srcHex, destHex, step));
+    }
+
     /**
      * Can movement between the two coordinates be on pavement (which includes roads and bridges)? If so it will
      * override prohibited terrain, it may change movement costs, and it may lead to skids.
@@ -6455,50 +6461,24 @@ public class Compute {
      *       <code>destHex</code> can be on pavement; <code>false</code> otherwise.
      */
     public static boolean canMoveOnPavement(final Hex srcHex, final Hex destHex, MoveStep moveStep) {
-        final Coords src = srcHex.getCoords();
-        final Coords dest = destHex.getCoords();
-        final int src2destDir = src.direction(dest);
-        final int dest2srcDir = (src2destDir + 3) % 6;
-        boolean result = false;
-
-        // Jumping shouldn't be considered to be moving on pavement
         if (moveStep.isJumping()) {
             return false;
         }
 
-        // We may be moving in the same hex.
-        if (src.equals(dest)
-              && (srcHex.hasPavement())) {
-            result = true;
-        }
-        // If the source is a pavement hex, then see if the destination
-        // hex is also a pavement hex or has a road or bridge that exits
-        // into the source hex and the entity is climbing onto the bridge.
-        else if (srcHex.containsTerrain(Terrains.PAVEMENT)
-              && (destHex.containsTerrain(Terrains.PAVEMENT)
-              || (destHex.containsTerrainExit(Terrains.ROAD,
-              dest2srcDir)
-              && destHex.hasPavedRoad())
-              || (destHex.containsTerrainExit(
-              Terrains.BRIDGE, dest2srcDir) && moveStep.climbMode()))) {
-            result = true;
-        }
-        // See if the source hex has a road or bridge (and the entity is on the
-        // bridge) that exits into the destination hex, and the dest hex has
-        // pavement or a corresponding exit to the src hex
-        else if (((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) && srcHex.hasPavedRoad())
-              || (srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)
-              && (moveStep.getElevation() == srcHex
-              .terrainLevel(Terrains.BRIDGE_ELEV))))
-              && ((destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) && destHex.hasPavedRoad())
-              || (destHex.containsTerrainExit(Terrains.BRIDGE,
-              dest2srcDir) && moveStep.climbMode())
-              || destHex
-              .containsTerrain(Terrains.PAVEMENT))) {
-            result = true;
+        Coords src = srcHex.getCoords();
+        Coords dest = destHex.getCoords();
+        if (src.equals(dest)) {
+            return srcHex.hasPavement();
         }
 
-        return result;
+        int exit = src.direction(dest);
+        int entrance = (exit + 3) % 6;
+        boolean leavesPavement = srcHex.hasPavedGround()
+              || (srcHex.containsTerrainExit(Terrains.BRIDGE, exit)
+                    && moveStep.getElevation() == srcHex.terrainLevel(Terrains.BRIDGE_ELEV));
+        boolean entersPavement = destHex.hasPavedGround()
+              || (destHex.containsTerrainExit(Terrains.BRIDGE, entrance) && moveStep.climbMode());
+        return leavesPavement && entersPavement;
     }
 
     /**

@@ -32,7 +32,6 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.Hex;
 import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.rules.RulesTerrain;
@@ -40,25 +39,23 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
-import megamek.common.units.Terrains;
 
 public class CoreRulesTerrain extends RulesTerrain {
 
     /**
      * {@inheritDoc}
-     * A Mek on its legs pays 1 MP less for a level change on pavement (Core p.53). Ground tanks keep the
-     * historical 1 MP discount whenever both hexes contain road terrain.
+     * A Mek on its legs pays 1 MP less for a level change on pavement (Core p.53).
+     * Tracked, wheeled and hover tanks receive the same reduction.
      */
     @Override
     public int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
-          Hex srcHex, Hex destHex, boolean pavementStep, int deltaElevation) {
-        if (deltaElevation <= 0) {
+          boolean pavementStep, int deltaElevation) {
+        if (!pavementStep || deltaElevation <= 0) {
             return 0;
         }
         return switch (movementMode) {
-            case BIPED, QUAD, TRIPOD -> (entity instanceof Mek && pavementStep) ? 1 : 0;
-            case TRACKED, WHEELED, HOVER -> (entity instanceof Tank && srcHex.containsTerrain(Terrains.ROAD)
-                  && destHex.containsTerrain(Terrains.ROAD)) ? 1 : 0;
+            case BIPED, QUAD, TRIPOD -> entity instanceof Mek ? 1 : 0;
+            case TRACKED, WHEELED, HOVER -> entity instanceof Tank ? 1 : 0;
             default -> 0;
         };
     }

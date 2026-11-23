@@ -246,9 +246,8 @@ final class WaypointDistanceField {
                     continue;
                 }
                 int stepCost = enteringCost + elevationChange;
-                if (isOnRoads && roadHexes.computeIfAbsent(current, hex -> board.getHex(hex).containsTerrain(
-                      Terrains.ROAD)) && roadHexes.computeIfAbsent(neighbor, hex -> board.getHex(hex).containsTerrain(
-                      Terrains.ROAD))) {
+                if (isOnRoads && roadHexes.computeIfAbsent(current, hex -> board.getHex(hex).hasGroundRoad())
+                      && roadHexes.computeIfAbsent(neighbor, hex -> board.getHex(hex).hasGroundRoad())) {
                     stepCost = 1 + elevationChange;
                 }
                 int neighborCost = cost + stepCost;
@@ -312,7 +311,7 @@ final class WaypointDistanceField {
         }
         // the role last: finding a unit's lance role goes through every unit in the game, and most steps are off
         // the road
-        if (fromHex.containsTerrain(Terrains.ROAD) && intoHex.containsTerrain(Terrains.ROAD)) {
+        if (fromHex.hasGroundRoad() && intoHex.hasGroundRoad()) {
             LanceRole role = LanceRoles.effectiveRole(mover);
             if ((role != null) && role.isConvoy()) {
                 return 1 + climb;

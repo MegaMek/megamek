@@ -32,7 +32,6 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.Hex;
 import megamek.common.rules.RulesTerrain;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -45,7 +44,7 @@ public class TWRulesTerrain extends RulesTerrain {
      */
     @Override
     public int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
-          Hex srcHex, Hex destHex, boolean pavementStep, int deltaElevation) {
+          boolean pavementStep, int deltaElevation) {
         return 0;
     }
 

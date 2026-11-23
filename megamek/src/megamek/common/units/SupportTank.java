@@ -199,7 +199,7 @@ public class SupportTank extends Tank {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation, boolean onRoad) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -261,7 +261,7 @@ public class SupportTank extends Tank {
                   || hex.containsTerrain(Terrains.ICE);
             case SUBMARINE -> (hex.terrainLevel(Terrains.WATER) <= 0);
             // Combat and support WiGEs share one rule, including hover restrictions while grounded (TW p.55)
-            case WIGE -> isLocationProhibitedWiGE(hex, currElevation);
+            case WIGE -> isLocationProhibitedWiGE(hex, currElevation, onRoad && hex.hasGroundRoad());
             default -> false;
         };
     }

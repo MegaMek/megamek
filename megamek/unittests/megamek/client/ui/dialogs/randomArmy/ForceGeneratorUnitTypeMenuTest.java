@@ -32,19 +32,26 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
+import static megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.subFactionToPreselect;
 import static megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.unitTypesWithUnits;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import megamek.client.ratgenerator.FactionRecord;
 import megamek.common.units.UnitType;
 import org.junit.jupiter.api.Test;
 
 /**
  * The Unit Type menu lists only the types the faction's unit tables can fill in that year. Clan Wolf in 3150 offered
  * ProtoMek with no ProtoMeks in its tables, so a ProtoMek formation came out empty (MegaMek/mekhq#10376 item 1).
+ * Combined Arms needs Meks, and a faction with no Meks of its own opens on a sub-faction that has them
+ * (MegaMek/megamek#9480).
  */
 class ForceGeneratorUnitTypeMenuTest {
 
@@ -61,11 +68,60 @@ class ForceGeneratorUnitTypeMenuTest {
     }
 
     @Test
-    void combinedArmsStaysWhateverTheTablesHold() {
+    void combinedArmsIsOfferedWhenTheTablesHoldMeks() {
         List<Integer> menu = unitTypesWithUnits(CLAN_MENU, unitType -> unitType == UnitType.MEK);
 
         assertEquals(Arrays.asList(null, UnitType.MEK), menu,
-              "the blank (combined arms) entry draws on every type, so it is never filtered");
+              "every combined-arms force is built around Meks, so Meks in the tables keep it on the menu");
+    }
+
+    /**
+     * MegaMek/megamek#9480: All Clans on its own has no Meks after 3049, yet Combined Arms was still offered, and a
+     * combined-arms Star (five Meks) then came out with nothing in it.
+     */
+    @Test
+    void combinedArmsIsLeftOutWhenTheTablesHoldNoMeks() {
+        Set<Integer> stocked = Set.of(UnitType.BATTLE_ARMOR, UnitType.WARSHIP);
+
+        List<Integer> menu = unitTypesWithUnits(CLAN_MENU, stocked::contains);
+
+        assertEquals(List.of(UnitType.BATTLE_ARMOR, UnitType.WARSHIP), menu);
+    }
+
+    @Test
+    void aCombinedArmsOnlyMenuIsKeptWhenTheTablesHoldMeks() {
+        List<Integer> combinedArmsOnly = Collections.singletonList(null);
+
+        List<Integer> menu = unitTypesWithUnits(combinedArmsOnly, unitType -> unitType == UnitType.MEK);
+
+        assertEquals(combinedArmsOnly, menu, "ComStar and the Word of Blake offer only Combined Arms");
+    }
+
+    @Test
+    void aFactionWithMeksOfItsOwnKeepsGeneral() {
+        FactionRecord innerSphere = new FactionRecord("CLAN.IS", "Clan - Inner Sphere");
+
+        assertNull(subFactionToPreselect(true, List.of(innerSphere), subFaction -> true));
+    }
+
+    @Test
+    void aFactionWithoutMeksSelectsTheFirstSubFactionThatHasThem() {
+        FactionRecord grandCouncil = new FactionRecord("CLAN.GC", "Grand Council (Ebon Keshik)");
+        FactionRecord homeworld = new FactionRecord("CLAN.HW", "Clan - Homeworld");
+        FactionRecord innerSphere = new FactionRecord("CLAN.IS", "Clan - Inner Sphere");
+        Set<FactionRecord> withMeks = Set.of(homeworld, innerSphere);
+
+        FactionRecord preselected = subFactionToPreselect(false, List.of(grandCouncil, homeworld, innerSphere),
+              withMeks::contains);
+
+        assertSame(homeworld, preselected);
+    }
+
+    @Test
+    void whenNoSubFactionHasMeksGeneralStays() {
+        FactionRecord innerSphere = new FactionRecord("CLAN.IS", "Clan - Inner Sphere");
+
+        assertNull(subFactionToPreselect(false, List.of(innerSphere), subFaction -> false));
     }
 
     @Test

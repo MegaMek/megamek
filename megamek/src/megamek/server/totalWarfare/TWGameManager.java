@@ -5593,7 +5593,7 @@ public class TWGameManager extends AbstractGameManager {
           boolean isBackwards, EntityMovementType lastStepMoveType, int distance, int modifier, int marginOfFailure) {
         Board board = game.getBoard(entity);
         Hex curHex = board.getHex(curPos);
-        if (entity.getMovementMode() == EntityMovementMode.WHEELED && !curHex.hasPavedGround()) {
+        if (entity.getMovementMode() == EntityMovementMode.WHEELED && !curHex.containsTerrain(Terrains.PAVEMENT)) {
             modifier += 2;
         }
         if (entity.getMovementMode() == EntityMovementMode.VTOL) {

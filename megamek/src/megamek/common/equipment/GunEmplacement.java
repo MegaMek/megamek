@@ -148,7 +148,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation, boolean onRoad) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }

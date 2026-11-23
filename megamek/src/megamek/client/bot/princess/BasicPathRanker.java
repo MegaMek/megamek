@@ -2823,9 +2823,6 @@ public class BasicPathRanker extends PathRanker {
         var hazards = hex.getTerrainTypesSet();
         // Black Ice can appear if the conditions are favorable
         if (blackIce > 0) {
-            if (hex.hasPavedGround()) {
-                hazards.add(Terrains.PAVEMENT);
-            }
             hazards.retainAll(Terrains.HAZARDS_WITH_BLACK_ICE);
         } else {
             hazards.retainAll(Terrains.HAZARDS);

@@ -4301,11 +4301,6 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
-    /** Checks terrain for a movement step. Vehicles can use a road through prohibited terrain only while following it. */
-    public boolean isLocationProhibited(Coords coords, int boardId, int elevation, boolean onRoad) {
-        return isLocationProhibited(coords, boardId, elevation);
-    }
-
     /**
      * Returns true if the specified hex contains some sort of prohibited terrain. legacy - use the board location/board
      * ID methods instead

@@ -32,33 +32,32 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Hex;
 import megamek.common.rules.RulesTerrain;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
 
 public class TWRulesTerrain extends RulesTerrain {
-
+    
     /**
-     * {@inheritDoc}
-     * Total Warfare charges the full elevation cost on roads.
+     * Do we change the road elevation cost? No
+     *
+     * @param srcHex the source hexagon
+     * @param destHex the destination hexagon
+     * @param deltaElevation the change in elevation
+     * @return the road elevation cost difference
      */
     @Override
-    public int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
-          boolean pavementStep, int deltaElevation) {
-        return 0;
-    }
+    public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) { return 0; }
 
     /**
      * Can we change more levels than normally allowed? No
      *
-     * @param entity the moving unit
-     * @param pavementStep true if the unit moves from one hex to the next on pavement, which roads and paved bridges
-     *       count as (Core p.53)
+     * @param srcHex the source hexagon
+     * @param destHex the destination hexagon
      * @param maxElevationChange the maximum elevation change normally allowed
      * @return the adjusted maximum elevation change allowed
      */
     @Override
-    public int getMaxElevationChangeAllowed(Entity entity, boolean pavementStep, int maxElevationChange) {
+    public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
         return maxElevationChange;
     }
 }

@@ -424,7 +424,7 @@ public class LargeSupportTank extends SupportTank {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation, boolean onRoad) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -451,7 +451,7 @@ public class LargeSupportTank extends SupportTank {
                 return true;
             }
         }
-        return super.isLocationProhibited(c, testBoardId, currElevation, onRoad);
+        return super.isLocationProhibited(c, testBoardId, currElevation);
     }
 
     @Override

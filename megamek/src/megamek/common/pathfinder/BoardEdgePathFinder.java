@@ -604,7 +604,7 @@ public class BoardEdgePathFinder {
         boolean isAmphibious = movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
               movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
               movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
-        boolean destHexHasRoad = destHex.hasGroundRoad();
+        boolean destHexHasRoad = destHex.containsTerrain(Terrains.ROAD);
 
         // this indicates that we are stepping off a bridge
         boolean sourceIsBridge = srcHex.containsTerrain(Terrains.BRIDGE_CF) &&

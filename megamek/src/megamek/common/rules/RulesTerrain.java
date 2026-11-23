@@ -32,32 +32,27 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
+import megamek.common.Hex;
 
 public abstract class RulesTerrain {
 
     /**
-     * Returns the reduction in MP charged for this step's elevation change.
+     * Do we change the road elevation cost.
      *
-     * @param entity the moving unit
-     * @param movementMode the mode used for this step, including a conversion earlier in the path
-     * @param pavementStep true if the unit moves from one hex to the next on pavement, which roads and paved bridges
-     *       count as (Core p.53)
+     * @param srcHex the source hexagon
+     * @param destHex the destination hexagon
      * @param deltaElevation the change in elevation
      * @return the road elevation cost difference
      */
-    public abstract int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
-          boolean pavementStep, int deltaElevation);
+    public abstract int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation);
 
     /**
      * Can we change more levels than normally allowed?
      *
-     * @param entity the moving unit
-     * @param pavementStep true if the unit moves from one hex to the next on pavement, which roads and paved bridges
-     *       count as (Core p.53)
+     * @param srcHex the source hexagon
+     * @param destHex the destination hexagon
      * @param maxElevationChange the maximum elevation change normally allowed
      * @return the adjusted maximum elevation change allowed
      */
-    public abstract int getMaxElevationChangeAllowed(Entity entity, boolean pavementStep, int maxElevationChange);
+    public abstract int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange);
 }

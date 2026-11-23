@@ -32,44 +32,33 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.battlefieldSupport.BFSAssetType;
-import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.Hex;
 import megamek.common.rules.RulesTerrain;
 import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Mek;
-import megamek.common.units.Tank;
+import megamek.common.units.Terrains;
 
 public class CoreRulesTerrain extends RulesTerrain {
 
     /**
      * {@inheritDoc}
-     * A Mek on its legs pays 1 MP less for a level change on pavement (Core p.53).
-     * Tracked, wheeled and hover tanks receive the same reduction.
+     * Road to road elevation change is -1 MP
      */
     @Override
-    public int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
-          boolean pavementStep, int deltaElevation) {
-        if (!pavementStep || deltaElevation <= 0) {
-            return 0;
+    public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) {
+        if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && deltaElevation > 0) {
+            return 1;
         }
-        return switch (movementMode) {
-            case BIPED, QUAD, TRIPOD -> entity instanceof Mek ? 1 : 0;
-            case TRACKED, WHEELED, HOVER -> entity instanceof Tank ? 1 : 0;
-            default -> 0;
-        };
+        return 0;
     }
 
     /**
      * {@inheritDoc}
-     * Travelling between two road hexes, vehicle and infantry Assets "can make a level change of up to two levels,
-     * instead of one" (Core p.142). Meks get no extra level on roads (Core p.53); other units keep Total Warfare.
+     * Using roads can increase the max elevation change by 1. Core p.53
      */
     @Override
-    public int getMaxElevationChangeAllowed(Entity entity, boolean pavementStep, int maxElevationChange) {
-        if ((entity instanceof BattlefieldSupportAsset asset) && (asset.getAssetType() != BFSAssetType.EMPLACEMENT)
-              && pavementStep && (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN)) {
-            return maxElevationChange + 1;
+    public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
+        if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD)) {
+            return (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN) ? maxElevationChange + 1 : maxElevationChange;
         }
         return maxElevationChange;
     }

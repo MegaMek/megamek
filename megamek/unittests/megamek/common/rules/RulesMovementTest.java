@@ -23,19 +23,46 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.GameBoardTestCase;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.core.CoreRulesMovement;
 import megamek.common.rules.totalwarfare.TWRulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
+import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class RulesMovementTest {
+class RulesMovementTest extends GameBoardTestCase {
+    @Test
+    void groundInfantryAssetPaysTwoMpToChangeOneLevelInClearTerrain() {
+        RulesManager savedRules = Game.rulesManager;
+        try {
+            Game.rulesManager = new CoreRulesManager();
+            getGame().setBoard(BoardLoader.initializeBoard("""
+                  size 1 2
+                  hex 0101 0 "" ""
+                  hex 0102 1 "" ""
+                  end"""));
+            BattlefieldSupportAsset infantry = new BattlefieldSupportAsset();
+            infantry.setAssetType(BFSAssetType.CONV_INFANTRY);
+            MovePath path = getMovePathFor(infantry, 0, EntityMovementMode.INF_LEG, MoveStepType.FORWARDS);
+            assertTrue(path.isMoveLegal());
+            assertEquals(3, path.getMpUsed());
+        } finally {
+            Game.rulesManager = savedRules;
+        }
+    }
+
     @Test
     void coreAndTotalWarfareRulesExerciseMovementLogic() {
         CoreRulesMovement core = new CoreRulesMovement();

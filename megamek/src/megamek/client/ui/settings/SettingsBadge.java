@@ -38,20 +38,61 @@ import java.util.Locale;
 import java.util.Objects;
 
 import jakarta.annotation.Nullable;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
- * A resolved marker shown beside a setting and explained in its legend.
+ * A resolved marker shown beside a setting and explained in its legend. A marker is either a Material Symbols glyph or,
+ * when {@code text} is set, a short run of colored text such as a version number.
  *
- * @param codePoint   the Material Symbols code point
+ * @param codePoint   the Material Symbols code point, or {@link #NO_SYMBOL} for a text marker
  * @param color       the marker color, or {@code null} to inherit the component foreground
  * @param description localized text explaining the marker
+ * @param text        the text shown instead of a glyph, or {@code null} for a glyph marker
  */
-public record SettingsBadge(int codePoint, @Nullable Color color, String description) {
+public record SettingsBadge(int codePoint, @Nullable Color color, String description, @Nullable String text) {
+    /** The code point carried by a text marker, which has no glyph. */
+    public static final int NO_SYMBOL = -1;
+
     public SettingsBadge {
-        if (!Character.isValidCodePoint(codePoint)) {
-            throw new IllegalArgumentException("Invalid settings badge code point: " + codePoint);
-        }
         Objects.requireNonNull(description);
+        if (text == null) {
+            if (!Character.isValidCodePoint(codePoint)) {
+                throw new IllegalArgumentException("Invalid settings badge code point: " + codePoint);
+            }
+        } else if (text.isBlank()) {
+            throw new IllegalArgumentException("Settings badge text must not be blank");
+        } else if (codePoint != NO_SYMBOL) {
+            throw new IllegalArgumentException("A text settings badge cannot also carry a code point: " + codePoint);
+        }
+    }
+
+    /**
+     * Creates a glyph marker.
+     *
+     * @param codePoint   the Material Symbols code point
+     * @param color       the marker color, or {@code null} to inherit the component foreground
+     * @param description localized text explaining the marker
+     */
+    public SettingsBadge(int codePoint, @Nullable Color color, String description) {
+        this(codePoint, color, description, null);
+    }
+
+    /**
+     * Creates a text marker, such as a version number, shown in place of a glyph.
+     *
+     * @param text        the text to show
+     * @param color       the text color, or {@code null} to inherit the component foreground
+     * @param description localized text explaining the marker
+     *
+     * @return the text marker
+     */
+    public static SettingsBadge ofText(String text, @Nullable Color color, String description) {
+        return new SettingsBadge(NO_SYMBOL, color, description, Objects.requireNonNull(text));
+    }
+
+    /** @return {@code true} if this marker shows text rather than a glyph */
+    public boolean isText() {
+        return text != null;
     }
 
     /** @return this badge as an HTML fragment suitable for Swing label text */
@@ -59,6 +100,9 @@ public record SettingsBadge(int codePoint, @Nullable Color color, String descrip
         String colorAttribute = color == null
               ? ""
               : String.format(Locale.ROOT, " color=\"#%06x\"", color.getRGB() & 0xFFFFFF);
+        if (isText()) {
+            return " <font" + colorAttribute + '>' + StringEscapeUtils.escapeHtml4(text) + "</font>";
+        }
         return " <font face=\"Material Symbols Rounded\"" + colorAttribute + '>'
               + Character.toString(codePoint) + "</font>";
     }

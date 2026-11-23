@@ -84,7 +84,7 @@ public class CoreRulesPSR extends RulesPSR {
     @Override
     public int landingWithDamageChecks(Entity entity, int gyroHits) {
         if (!(entity instanceof Mek mek)) {
-            return super.landingWithDamageChecks(entity, gyroHits);
+            return singleLandingCheckForDamage(entity, gyroHits);
         }
         return ((gyroHits > 0) ? 1 : 0) + CoreRulesUnits.legsForcingLandingChecks(mek);
     }

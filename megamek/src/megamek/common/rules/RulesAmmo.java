@@ -51,10 +51,8 @@ public abstract class RulesAmmo {
      */
     public abstract int armorPiercingMod(AmmoType inType);
 
-    /** TW p.140 exempts aerospace units from the special effect of armor-piercing ammunition. */
-    public boolean armorPiercingAffectsAerospace() {
-        return false;
-    }
+    /** Whether armor-piercing ammunition can cause a critical check on an aerospace unit. */
+    public abstract boolean armorPiercingAffectsAerospace();
 
     public void updateAmmoBVs() {
         List<EquipmentType> equipmentTypes = EquipmentType.allTypes();
@@ -130,9 +128,7 @@ public abstract class RulesAmmo {
      *
      * @return true if the indirect fire modifier is ignored
      */
-    public boolean semiGuidedIndirectIgnoresIndirectFireModifier() {
-        return true;
-    }
+    public abstract boolean semiGuidedIndirectIgnoresIndirectFireModifier();
 
     /**
      * Does the semi-guided impact the number of missiles.

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,8 +76,11 @@ public enum TaserEffects {
         OptionalInt armorModifier = switch (armorType) {
             case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION -> {
                 // Core p.201 negates the effect at impact. IO:AE p.80 gives -2 only if armor remains.
-                OptionalInt ablation = Game.rulesManager.getRulesArmor().ablationArmorPiercingModifier();
-                yield ablation.isPresent() && entityTarget.getArmor(hit) <= 0 ? OptionalInt.of(0) : ablation;
+                if (Game.rulesManager.getRulesArmor().blocksAblationTaserEffect()) {
+                    yield OptionalInt.empty();
+                }
+                yield OptionalInt.of(entityTarget.getArmor(hit) > 0
+                      ? Game.rulesManager.getRulesArmor().ablationArmorPiercingModifier() : 0);
             }
             case EquipmentType.T_ARMOR_REACTIVE, EquipmentType.T_ARMOR_BA_REACTIVE -> OptionalInt.empty();
             // Battle armor-grade reflective armor has none of the drawbacks (TO:AUE p.93).

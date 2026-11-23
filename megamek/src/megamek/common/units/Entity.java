@@ -6976,8 +6976,11 @@ public abstract class Entity extends TurnOrdered
                     return 8 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 String internalName = type.getInternalName();
+                if (type.hasFlag(MiscType.F_WATCHDOG)) {
+                    return Game.rulesManager.getRulesEquipment().getWatchdogProbeRange()
+                          + cyberProbeBonus + quirkBonus + spaBonus;
+                }
                 if (internalName.equals(Sensor.CLAN_AP) ||
-                    internalName.equals(Sensor.WATCHDOG) ||
                     internalName.equals(Sensor.NOVA) ||
                     internalName.equals(Sensor.CL_BA_LIGHT_AP)) {
                     return 5 + cyberProbeBonus + quirkBonus + spaBonus;

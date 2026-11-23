@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.EnumSet;
@@ -58,13 +57,11 @@ import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.rules.totalwarfare.TWRulesArmor;
 import megamek.common.rules.totalwarfare.TWRulesEquipment;
-import megamek.common.rules.totalwarfare.TWRulesExplosions;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.SupportTank;
-import megamek.common.units.Tank;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -128,8 +125,8 @@ class CoreRulesScopeTest {
         assertTrue(core.criticalProtectionsApplyAgainst(HitDamageType.DAMAGE_BALLISTIC));
         assertTrue(new TWRulesArmor().criticalProtectionsApplyAgainst(HitDamageType.DAMAGE_ARMOR_PIERCING));
         // Ablation armor: -2 to those critical checks under TW (IO:AE p.80); Core ignores the TAC instead (Core p.201)
-        assertEquals(-2, new TWRulesArmor().ablationArmorPiercingModifier().orElseThrow());
-        assertTrue(core.ablationArmorPiercingModifier().isEmpty());
+        assertEquals(-2, new TWRulesArmor().ablationArmorPiercingModifier());
+        assertEquals(0, core.ablationArmorPiercingModifier());
     }
 
     @Test
@@ -234,22 +231,6 @@ class CoreRulesScopeTest {
         assertEquals(0, CoreRulesUnits.legsForcingLandingChecks(quad));
         quad.getCritical(Mek.LOC_RIGHT_LEG, 0).setDestroyed(true);
         assertEquals(1, CoreRulesUnits.legsForcingLandingChecks(quad));
-    }
-
-    @Test
-    void coreVehicleCaseCapsAnExplosionAtTenToStructureAndTenToArmor() {
-        Tank tank = mock(Tank.class);
-        when(tank.locationHasCase(Tank.LOC_BODY)).thenReturn(true);
-        when(tank.getInternal(Tank.LOC_FRONT)).thenReturn(15);
-        when(tank.getArmor(Tank.LOC_FRONT)).thenReturn(20);
-        when(tank.getLocationAbbr(Tank.LOC_FRONT)).thenReturn("FR");
-        // Core p.96: an explosion in a CASE-protected location deals "maximum 10 to internal structure, maximum 10 to
-        // armor"; TW p.194 vehicle CASE vents to the rear armor instead
-        assertEquals(10, new CoreRulesExplosions().capVehicleExplosion(tank, new HitData(Tank.LOC_FRONT), 40, true,
-              new Vector<>()));
-        verify(tank).setArmor(10, Tank.LOC_FRONT);
-        assertFalse(new CoreRulesExplosions().vehicleCaseVentsExplosion());
-        assertTrue(new TWRulesExplosions().vehicleCaseVentsExplosion());
     }
 
     @Test

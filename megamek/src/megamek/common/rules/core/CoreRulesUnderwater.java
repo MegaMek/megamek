@@ -129,4 +129,9 @@ public class CoreRulesUnderwater extends RulesUnderwater {
     public boolean allowsLosRange(WeaponType weaponType) {
         return !weaponType.hasFlag(WeaponType.F_ENERGY);
     }
+
+    @Override
+    public boolean breachOnLowRoll() {
+        return true;
+    }
 }

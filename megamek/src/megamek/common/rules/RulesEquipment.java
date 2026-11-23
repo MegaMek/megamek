@@ -231,4 +231,7 @@ public abstract class RulesEquipment {
     public boolean blueShieldStealth() {
         return blueShieldStealth(true);
     }
+
+    /** Ground active-probe radius of a Watchdog CEWS, before crew and equipment bonuses. */
+    public abstract int getWatchdogProbeRange();
 }

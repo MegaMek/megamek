@@ -239,9 +239,7 @@ public abstract class RulesPhysical {
      *
      * @return the damage to deal
      */
-    public int fallFromAboveDamage(int damage, Entity affaTarget) {
-        return damage;
-    }
+    public abstract int fallFromAboveDamage(int damage, Entity affaTarget);
 
     /**
      * What kind of rubble can you find a club in?

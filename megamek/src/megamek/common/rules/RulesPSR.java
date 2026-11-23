@@ -133,13 +133,15 @@ public abstract class RulesPSR {
     }
 
     /**
-     * How many PSRs landing from a jump with damage forces: one for gyro or leg damage (TW p.53).
+     * How many piloting checks are required to land with gyro or leg damage?
      *
      * @param entity   the landing unit
      * @param gyroHits the gyro hits that count
      * @return the number of PSRs
      */
-    public int landingWithDamageChecks(Entity entity, int gyroHits) {
+    public abstract int landingWithDamageChecks(Entity entity, int gyroHits);
+
+    protected static int singleLandingCheckForDamage(Entity entity, int gyroHits) {
         return ((gyroHits > 0) || entity.hasLegActuatorCrit() || Game.rulesManager.getRulesUnits().hasBadLegs(entity))
               ? 1 : 0;
     }

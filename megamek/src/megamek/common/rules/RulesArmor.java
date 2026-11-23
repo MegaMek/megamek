@@ -33,7 +33,6 @@ package megamek.common.rules;
  */
 
 
-import java.util.OptionalInt;
 import java.util.Vector;
 
 import megamek.common.HitData;
@@ -51,14 +50,16 @@ public abstract class RulesArmor {
     public abstract boolean allowHeatWeapon(boolean heat_weapon);
 
     /**
-     * Does armor allow armor piercing. Hardened, ferro-lamellor and reactive armor negate the armor-piercing check
-     * (TO:AUE pp.92-94).
+     * Whether the armor allows an armor-piercing critical check for this damage type.
      *
      * @param mods the modifications info
      * @param damageType the general damage type of the hit, to tell armor-piercing ammunition from missiles
      * @return true if armor piercing is allowed
      */
-    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType) {
+    public abstract boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType);
+
+    /** Armor types that negate the armor-piercing check under TO:AUE pp.92-94. */
+    protected static boolean allowsTacticalOperationsArmorPiercing(TWDamageManager.ModsInfo mods) {
         return !(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor);
     }
 
@@ -72,10 +73,9 @@ public abstract class RulesArmor {
     /**
      * Impact Resistant Armor breach.
      *
-     * @param vacuum true for a vacuum breach check, false for an underwater one
      * @return the breach value modifier
      */
-    public abstract int impactArmorBreach(boolean vacuum);
+    public abstract int impactArmorBreach();
 
     /**
      * Does a lance penetrate the armor.
@@ -110,42 +110,31 @@ public abstract class RulesArmor {
      */
     public abstract boolean blockTAC(int armorType);
 
-    /** Hardened armor modifies penetrating critical checks, including the vehicle tables (TO:AUE p.93). */
-    public int hardenedLocationCriticalModifier(HitData hit) {
-        return -2;
-    }
+    /** Modifier from hardened armor for this critical check. */
+    public abstract int hardenedLocationCriticalModifier(HitData hit);
 
     /**
      * Do ablation and hardened armor keep their critical-hit protections (the ablation TAC block, the hardened -2)
-     * against damage of this type? By default always.
+     * against damage of this type?
      *
      * @param damageType the general damage type of the hit
      * @return true if those protections apply
      */
-    public boolean criticalProtectionsApplyAgainst(HitDamageType damageType) {
-        return true;
-    }
+    public abstract boolean criticalProtectionsApplyAgainst(HitDamageType damageType);
 
     /**
-     * Does damage that passes through a location destroyed before this attack keep its armor-piercing check? Under TW
-     * "Damage that transfers to a location with armor does not trigger a new critical damage check" (TW p.140).
+     * Does damage that passes through a location destroyed before this attack keep its armor-piercing check?
      *
      * @return true if the check passes through such a location
      */
-    public boolean armorPiercingCheckPassesDestroyedLocation() {
-        return false;
-    }
+    public abstract boolean armorPiercingCheckPassesDestroyedLocation();
 
     /**
-     * While the location struck still has armor, ablation armor "applies an additional -2 roll modifier to the critical
-     * hit check for all attacks made by weapons with armor-piercing abilities" and to the critical check for a hit
-     * location roll of 2 (IO:AE p.80).
+     * Ablation armor modifier for an applicable critical check while the struck location still has armor.
      *
-     * @return the modifier, or empty if ablation armor negates the armor-piercing effect
+     * @return the modifier to a critical check that still takes place
      */
-    public OptionalInt ablationArmorPiercingModifier() {
-        return OptionalInt.of(-2);
-    }
+    public abstract int ablationArmorPiercingModifier();
 
     /**
      * How does impact armor reduce damage. While the location has armor, impact-resistant armor reduces damage "by 1
@@ -159,8 +148,10 @@ public abstract class RulesArmor {
      * @param damageType the type of damage
      * @return the reduced damage amount
      */
-    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
-          HitDamageType damageType) {
+    public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
+          HitDamageType damageType);
+
+    protected static int reduceImpactDamageByThird(int entityId, int damage, Vector<Report> reportVec) {
         damage = Math.max(1, damage - (int) Math.ceil(damage / 3.0));
         Report report = new Report(6089);
         report.subject = entityId;
@@ -204,16 +195,13 @@ public abstract class RulesArmor {
     public abstract boolean ballisticReinforcedArmorReduces(HitDamageType damageType);
 
     /**
-     * Does ferro-lamellor armor (TO:AUE p.92) reduce damage of this type? By default not armor-piercing ammunition or
-     * missiles, acid (AX) missiles or damage that ignores reductions.
+     * Does ferro-lamellor armor reduce damage of this type?
      *
      * @param damageType the general damage type of the hit
      * @return true if the ferro-lamellor reduction applies
      */
-    public boolean ferroLamellorArmorReduces(HitDamageType damageType) {
-        return (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING)
-              && (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
-              && (damageType != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)
-              && (damageType != HitDamageType.DAMAGE_AX);
-    }
+    public abstract boolean ferroLamellorArmorReduces(HitDamageType damageType);
+
+    /** Whether ablation armor on the struck facing negates a taser effect at impact. */
+    public abstract boolean blocksAblationTaserEffect();
 }

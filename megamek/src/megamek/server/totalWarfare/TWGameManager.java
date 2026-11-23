@@ -116,8 +116,8 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPSR;
+import megamek.common.rules.RulesUnderwater;
 import megamek.common.rules.core.CoreRulesManager;
-import megamek.common.rules.totalwarfare.TWRulesUnderwater;
 import megamek.common.turns.CounterGrappleTurn;
 import megamek.common.turns.PrephaseTurn;
 import megamek.common.turns.SpecificEntityTurn;
@@ -21074,7 +21074,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * A critical hit to a ProtoMek torso weapon destroys it, except an autocannon's first (Core pp.92, 183).
+     * A critical hit to a ProtoMek torso weapon disables the weapon.
      */
     private void hitProtoMekTorsoWeapon(ProtoMek pm, CriticalSlot cs, int reportId, Vector<Report> reports) {
         Mounted<?> weapon = pm.getTorsoWeapon(cs.getIndex());
@@ -21082,13 +21082,10 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         weapon.setHit(true);
-        Game.rulesManager.getRulesWeapons().setACHit(cs, weapon, reports, pm.getId());
-        if (weapon.isHit()) {
-            Report r = new Report(reportId);
-            r.subject = pm.getId();
-            r.newlines = 0;
-            reports.addElement(r);
-        }
+        Report r = new Report(reportId);
+        r.subject = pm.getId();
+        r.newlines = 0;
+        reports.addElement(r);
     }
 
     /**
@@ -23633,20 +23630,10 @@ public class TWGameManager extends AbstractGameManager {
               (entity.isSurfaceNaval() && (loc != ((Tank) entity).getLocTurret()))) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
-            int breachRoll = 12;
-            boolean lowFail = true;
-            // Core breach checks are for underwater locations only (Core pp.88, 127); a vacuum breach happens on a
-            // roll of 10 or greater (TO:AR p.52) under every ruleset, and tainted or toxic air breaches "in the same
-            // manner as under Vacuum" (TO:AR p.54)
-            boolean vacuumBreach = (entity.getLocationStatus(loc) == ILocationExposureStatus.VACUUM)
-                  || (entity.getLocationStatus(loc) == ILocationExposureStatus.TAINTED);
-
-            if (vacuumBreach || (Game.rulesManager.getRulesUnderwater() instanceof TWRulesUnderwater)) {
-                breachRoll = 0;
-                lowFail = false;
-            }
-            // set the target roll for the breach
-            int target = vacuumBreach ? 10 : Game.rulesManager.getRulesUnderwater().getBreachTarget();
+            RulesUnderwater breachRules = Game.rulesManager.getRulesUnderwater();
+            boolean lowFail = breachRules.breachOnLowRoll();
+            int breachRoll = lowFail ? 12 : 0;
+            int target = breachRules.getBreachTarget();
 
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             // if this is a vacuum check, and we are in trace atmosphere then
@@ -23683,7 +23670,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 // Check for impact resistant armor
                 if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
-                    int impactChange = Game.rulesManager.getRulesArmor().impactArmorBreach(vacuumBreach);
+                    int impactChange = Game.rulesManager.getRulesArmor().impactArmorBreach();
                     target = (lowFail) ? target + impactChange : target - impactChange;
                     if (impactChange != 0) {
                         r = new Report(6344);

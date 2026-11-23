@@ -32,9 +32,14 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import java.util.Vector;
+
+import megamek.common.HitData;
+import megamek.common.Report;
 import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.rules.RulesArmor;
+import megamek.server.totalWarfare.TWDamageManager;
 
 public class TWRulesArmor extends RulesArmor {
     /**
@@ -55,7 +60,7 @@ public class TWRulesArmor extends RulesArmor {
      * Impact-resistant armor applies a +1 to hull breach checks "including underwater and vacuum" (IO:AE p.82).
      */
     @Override
-    public int impactArmorBreach(boolean vacuum) {
+    public int impactArmorBreach() {
         return 1;
     }
 
@@ -161,5 +166,52 @@ public class TWRulesArmor extends RulesArmor {
               || (damageType == HitDamageType.DAMAGE_ARMOR_PIERCING)
               || (damageType == HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
               || (damageType == HitDamageType.DAMAGE_AX);
+    }
+
+    @Override
+    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType) {
+        return allowsTacticalOperationsArmorPiercing(mods);
+    }
+
+    /** Hardened armor modifies penetrating critical checks, including vehicle criticals (TO:AUE p.93). */
+    @Override
+    public int hardenedLocationCriticalModifier(HitData hit) {
+        return -2;
+    }
+
+    @Override
+    public boolean criticalProtectionsApplyAgainst(HitDamageType damageType) {
+        return true;
+    }
+
+    /** Transferred damage does not trigger another armor-piercing check (TW p.140). */
+    @Override
+    public boolean armorPiercingCheckPassesDestroyedLocation() {
+        return false;
+    }
+
+    @Override
+    public boolean ferroLamellorArmorReduces(HitDamageType damageType) {
+        return (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING)
+              && (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
+              && (damageType != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)
+              && (damageType != HitDamageType.DAMAGE_AX);
+    }
+
+    /** Ablation applies a -2 modifier while armor remains (IO:AE p.80). */
+    @Override
+    public int ablationArmorPiercingModifier() {
+        return -2;
+    }
+
+    @Override
+    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
+          HitDamageType damageType) {
+        return reduceImpactDamageByThird(entityId, damage, reportVec);
+    }
+
+    @Override
+    public boolean blocksAblationTaserEffect() {
+        return false;
     }
 }

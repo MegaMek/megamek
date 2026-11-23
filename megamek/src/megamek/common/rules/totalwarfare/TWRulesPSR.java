@@ -300,4 +300,9 @@ public class TWRulesPSR extends RulesPSR {
             default -> 1;
         };
     }
+
+    @Override
+    public int landingWithDamageChecks(Entity entity, int gyroHits) {
+        return singleLandingCheckForDamage(entity, gyroHits);
+    }
 }

@@ -38,7 +38,6 @@ import java.util.Vector;
 
 import megamek.common.HitData;
 import megamek.common.Report;
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.units.Entity;
@@ -63,47 +62,16 @@ public abstract class RulesExplosions {
      *
      * @return true if a jammed rotary autocannon explodes when hit
      */
-    public boolean jammedRotaryAutocannonExplodes() {
-        return true;
-    }
+    public abstract boolean jammedRotaryAutocannonExplodes();
 
     /**
-     * Called for the location where the last point of an internal explosion that {@link #explosionDamageReduction} or
-     * {@link #capVehicleExplosion} capped is applied, if that location survives it. Only rules that cap explosion
-     * damage do anything here.
+     * Vents a surviving Mek location where the final point of a capped internal explosion was applied.
      *
-     * @param entity the unit taking damage
+     * @param mek the Mek taking damage
      * @param hit the location the last point of explosion damage was applied to
      * @param reportVec vector of reports
      */
-    public void ventCappedExplosion(Entity entity, HitData hit, Vector<Report> reportVec) {
-    }
-
-    /**
-     * Vehicle CASE sends an internal explosion to the rear armor, dissipates the rest and stuns the crew (TW p.194).
-     *
-     * @return true if vehicle CASE handles internal explosions this way
-     */
-    public boolean vehicleCaseVentsExplosion() {
-        return true;
-    }
-
-    /**
-     * Caps an internal explosion in a vehicle location, after CASE II and vehicle CASE have taken their share. Only
-     * rules that cap explosion damage do anything here.
-     *
-     * @param vehicle       the vehicle taking damage
-     * @param hit           the location hit
-     * @param damage        the explosion damage left
-     * @param ammoExplosion whether the damage comes from an internal explosion
-     * @param reportVec     vector of reports
-     *
-     * @return the damage to apply
-     */
-    public int capVehicleExplosion(Entity vehicle, HitData hit, int damage, boolean ammoExplosion,
-          Vector<Report> reportVec) {
-        return damage;
-    }
+    public abstract void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec);
 
     /**
      * CASE II damage reduction.
@@ -128,23 +96,13 @@ public abstract class RulesExplosions {
     public abstract int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion);
 
     /**
-     * How much damage to equipment explosions do: the item's own explosion damage.
+     * How much damage does this component deal when it explodes?
      *
      * @param mounted the mounted equipment
      * @param weaponType the weapon type
      * @return the damage amount
      */
-    public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
-        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
-            return mounted.isFired() ? 0 : 15;
-        }
-
-        if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {
-            return 0;
-        }
-
-        return weaponType.getExplosionDamage();
-    }
+    public abstract int equipmentDamage(Mounted<?> mounted, WeaponType weaponType);
 
     /**
      * Are M and B pods explosive?
@@ -155,9 +113,7 @@ public abstract class RulesExplosions {
 
     /**
      * Should explosions be reduced?
-     * @return false by default
+     * @return whether internal explosion damage is capped
      */
-    public boolean explosionsAreReduced() {
-        return false;
-    }
+    public abstract boolean explosionsAreReduced();
 }

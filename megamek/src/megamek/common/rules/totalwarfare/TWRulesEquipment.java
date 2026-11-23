@@ -264,4 +264,10 @@ public class TWRulesEquipment extends RulesEquipment {
      */
     @Override
     public boolean blueShieldStealth(boolean activeBlueShield) { return false; }
+
+    /** TO:AUE p.90 gives the Watchdog the Clan light active probe. */
+    @Override
+    public int getWatchdogProbeRange() {
+        return 3;
+    }
 }

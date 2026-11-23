@@ -413,4 +413,9 @@ public class TWRulesPhysical extends RulesPhysical {
     public boolean muleWeaponsCheck() {
         return true;
     }
+
+    @Override
+    public int fallFromAboveDamage(int damage, Entity affaTarget) {
+        return damage;
+    }
 }

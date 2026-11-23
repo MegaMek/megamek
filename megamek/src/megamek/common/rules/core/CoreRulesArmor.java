@@ -33,7 +33,6 @@ package megamek.common.rules.core;
  */
 
 
-import java.util.OptionalInt;
 import java.util.Vector;
 
 import megamek.common.HitData;
@@ -64,10 +63,10 @@ public class CoreRulesArmor extends RulesArmor {
     @Override
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType) {
         if (mods.abaArmor) {
-            return ablationArmorPiercingModifier().isPresent();
+            return false;
         }
         if (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING) {
-            return super.allowArmorPiercing(mods, damageType);
+            return allowsTacticalOperationsArmorPiercing(mods);
         }
         return !(mods.hardenedArmor || mods.ballisticArmor);
     }
@@ -94,12 +93,11 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Core writes impact-resistant armor without a breach modifier (Core p.202), and Core breaches are underwater only
-     * (Core p.127). Vacuum breaches are not in Core and keep the +1 "including underwater and vacuum" (IO:AE p.82).
+     * Impact-resistant armor gives no breach modifier in Core (p.202).
      */
     @Override
-    public int impactArmorBreach(boolean vacuum) {
-        return vacuum ? 1 : 0;
+    public int impactArmorBreach() {
+        return 0;
     }
 
     /**
@@ -108,7 +106,7 @@ public class CoreRulesArmor extends RulesArmor {
      */
     @Override
     public boolean checkLancePenetration(int armorType) {
-        return armorType != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION || ablationArmorPiercingModifier().isPresent();
+        return armorType != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION;
     }
 
     /**
@@ -158,8 +156,8 @@ public class CoreRulesArmor extends RulesArmor {
      * and gives no protection against armor-piercing ammunition (Core p.191).
      */
     @Override
-    public OptionalInt ablationArmorPiercingModifier() {
-        return OptionalInt.empty();
+    public int ablationArmorPiercingModifier() {
+        return 0;
     }
 
     /**
@@ -175,7 +173,7 @@ public class CoreRulesArmor extends RulesArmor {
     /**
      * {@inheritDoc}
      * Impact-resistant armor halves damage from building collapses, collisions and falls (rounding remaining damage
-     * down) and reduces physical attack damage as {@link RulesArmor#reduceImpactDamage} does (Core p.202).
+     * down) and removes one point per three points of physical attack damage (Core p.202).
      */
     @Override
     public int reduceImpactDamage(int entityId,
@@ -194,7 +192,7 @@ public class CoreRulesArmor extends RulesArmor {
 
             return damage;
         }
-        return super.reduceImpactDamage(entityId, hit, damage, reportVec, damageType);
+        return reduceImpactDamageByThird(entityId, damage, reportVec);
     }
 
     /**
@@ -235,5 +233,10 @@ public class CoreRulesArmor extends RulesArmor {
         return (damageType == HitDamageType.DAMAGE_BALLISTIC)
               || (damageType == HitDamageType.DAMAGE_MISSILE)
               || (damageType == HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE);
+    }
+
+    @Override
+    public boolean blocksAblationTaserEffect() {
+        return true;
     }
 }

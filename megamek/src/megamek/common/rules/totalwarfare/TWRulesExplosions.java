@@ -39,8 +39,10 @@ import java.util.Vector;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
@@ -160,5 +162,33 @@ public class TWRulesExplosions extends RulesExplosions {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean jammedRotaryAutocannonExplodes() {
+        return true;
+    }
+
+    @Override
+    public void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec) {
+        // TW explosions have no damage cap to vent.
+    }
+
+    @Override
+    public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
+        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
+            return mounted.isFired() ? 0 : 15;
+        }
+
+        if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {
+            return 0;
+        }
+
+        return weaponType.getExplosionDamage();
+    }
+
+    @Override
+    public boolean explosionsAreReduced() {
+        return false;
     }
 }

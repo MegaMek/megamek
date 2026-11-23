@@ -63,8 +63,7 @@ public abstract class RulesWeapons {
     public abstract boolean canUACsJam();
 
     /**
-     * What happens when a critical hit strikes a weapon. Called for every weapon critical hit; the rules decide which
-     * weapons are affected.
+     * Applies the autocannon exception to a weapon critical where the unit's critical-hit rules permit it.
      *
      * @param cs the critical slot being hit, or null for a unit without critical slots
      * @param mounted the mounted weapon

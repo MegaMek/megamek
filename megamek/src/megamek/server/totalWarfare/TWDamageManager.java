@@ -1795,12 +1795,6 @@ public class TWDamageManager implements IDamageManager {
             // Apply Tank CASE here
             damage = applyTankCASEDamageReduction(tank, hit, damage, ammoExplosion, reportVec);
 
-            // Then the explosion cap of the rules in play; a location that survives a capped explosion vents its armor
-            int uncappedTankDamage = damage;
-            damage = Game.rulesManager.getRulesExplosions().capVehicleExplosion(tank, hit, damage, ammoExplosion,
-                  reportVec);
-            boolean tankExplosionCapped = (damage < uncappedTankDamage) && !tank.locationHasCase(Tank.LOC_BODY);
-
             // is there damage remaining?
             if (damage > 0) {
 
@@ -1809,9 +1803,6 @@ public class TWDamageManager implements IDamageManager {
 
                     // Now we need to consider alternate structure types!
                     if ((tank.getInternal(hit) > damage)) {
-                        if (tankExplosionCapped) {
-                            Game.rulesManager.getRulesExplosions().ventCappedExplosion(tank, hit, reportVec);
-                        }
                         // internal structure absorbs all damage
                         tank.setInternal(tank.getInternal(hit) - damage, hit);
                         // Triggers a critical hit on Vehicles and Meks.
@@ -3143,8 +3134,7 @@ public class TWDamageManager implements IDamageManager {
         int entityId = tank.getId();
         Report report;
 
-        if (ammoExplosion && tank.locationHasCase(Tank.LOC_BODY)
-              && Game.rulesManager.getRulesExplosions().vehicleCaseVentsExplosion()) {
+        if (ammoExplosion && tank.locationHasCase(Tank.LOC_BODY)) {
             tank.damageThisPhase += damage;
             report = new Report(6124);
             report.subject = entityId;
@@ -3208,7 +3198,7 @@ public class TWDamageManager implements IDamageManager {
         // While the location struck keeps armor, ablation armor modifies the armor-piercing checks and the critical
         // check for a hit location roll of 2, not the critical check of a swarm attack (IO:AE p.80; TW p.223)
         int ablationModifier = (mods.abaArmor && (entity.getArmor(hit) > 0))
-              ? Game.rulesManager.getRulesArmor().ablationArmorPiercingModifier().orElse(0) : 0;
+              ? Game.rulesManager.getRulesArmor().ablationArmorPiercingModifier() : 0;
 
         // roll all critical hits against this location
         // unless the section destroyed in a previous phase?

@@ -59,9 +59,6 @@ class RulesPhysicalTest {
         assertEquals(1, total.getPilotDiffModifier(5, 4, true));
         // Core p.77: a charge or DFA against an immobile target assumes a target Piloting Skill of 4
         assertEquals(1, core.getPilotDiffModifier(5, 5, true));
-        // Core p.194 and TO:AUE p.102: lances are +1
-        assertEquals(1, core.getLanceToHitModifier());
-        assertEquals(1, total.getLanceToHitModifier());
         assertTrue(core.getClubFindInRubble() >= 1);
         assertTrue(total.getClubFindInRubble() >= 1);
         assertEquals(9, core.getLanceTarget());

@@ -51,7 +51,7 @@ public class CoreRulesManager implements RulesManager {
     private CoreRulesPhysical coreRulesPhysical = new CoreRulesPhysical();
     private CoreRulesPilot coreRulesPilot = new CoreRulesPilot();
     private CoreRulesPSR coreRulesPSR = new CoreRulesPSR();
-    private CoreRulesScanning coreRulesScanning = new CoreRulesScanning(coreRulesEquipment);
+    private CoreRulesScanning coreRulesScanning = new CoreRulesScanning();
     private CoreRulesTerrain coreRulesTerrain = new CoreRulesTerrain();
     private CoreRulesUnderwater coreRulesUnderwater = new CoreRulesUnderwater();
     private CoreRulesUnits coreRulesUnits = new CoreRulesUnits();

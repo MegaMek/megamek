@@ -78,7 +78,7 @@ public abstract class RulesScanning {
     public static final int PROBE_LEVEL_NONE = 0;
     /** Light Active Probe (Core Rules p.233). */
     public static final int PROBE_LEVEL_LIGHT = 1;
-    /** Active Probe, Beagle Active Probe and their Clan and Watchdog equivalents. */
+    /** Standard active probes, including the Watchdog under Core equipment rules. */
     public static final int PROBE_LEVEL_STANDARD = 2;
     /** Bloodhound Active Probe. */
     public static final int PROBE_LEVEL_BLOODHOUND = 3;
@@ -139,28 +139,24 @@ public abstract class RulesScanning {
      *       {@link #PROBE_LEVEL_NONE} without one
      */
     public static int activeProbeLevel(Entity unit) {
-        return activeProbeLevel(unit, Game.rulesManager.getRulesEquipment());
-    }
-
-    protected static int activeProbeLevel(Entity unit, RulesEquipment equipmentRules) {
         if (!unit.hasBAP(true)) {
             return PROBE_LEVEL_NONE;
         }
         MiscMounted probe = EquipmentActivation.activeProbe(unit);
         // A probe supplied by an implant or quirk counts as light.
-        return probe == null ? PROBE_LEVEL_LIGHT : probeLevelOf(probe.getType(), equipmentRules);
+        return probe == null ? PROBE_LEVEL_LIGHT : probeLevelOf(probe.getType());
     }
 
     /**
-     * @param probeType      the probe equipment type
-     * @param equipmentRules the equipment rules for the mission
+     * @param probeType the probe equipment type
      *
      * @return the Core Rules probe level of that equipment
      */
-    private static int probeLevelOf(MiscType probeType, RulesEquipment equipmentRules) {
+    private static int probeLevelOf(MiscType probeType) {
         String probeName = probeType.getInternalName().toLowerCase(Locale.ROOT);
         if (probeType.hasFlag(MiscType.F_WATCHDOG)) {
-            return equipmentRules.watchdogUsesLightProbe() ? PROBE_LEVEL_LIGHT : PROBE_LEVEL_STANDARD;
+            return Game.rulesManager.getRulesEquipment().watchdogUsesLightProbe()
+                  ? PROBE_LEVEL_LIGHT : PROBE_LEVEL_STANDARD;
         }
         if (probeType.hasFlag(MiscType.F_BLOODHOUND)) {
             return PROBE_LEVEL_BLOODHOUND;

@@ -42,7 +42,6 @@ import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.RulesEquipment;
 import megamek.common.rules.RulesScanning;
 import megamek.common.units.Entity;
 import megamek.common.units.ProtoMek;
@@ -59,17 +58,6 @@ import megamek.common.units.Targetable;
  * small craft and DropShips - cannot scan; a VTOL is a vehicle and scans like one, airborne or not.
  */
 public class CoreRulesScanning extends RulesScanning {
-
-    private final RulesEquipment equipmentRules;
-
-    public CoreRulesScanning() {
-        this(new CoreRulesEquipment());
-    }
-
-    /** TW uses the Core mission scan procedure with its own equipment capabilities. */
-    public CoreRulesScanning(RulesEquipment equipmentRules) {
-        this.equipmentRules = equipmentRules;
-    }
 
     /** Every scan is a sensor check at this modifier (Core Rules p.233). */
     public static final int SCAN_MODIFIER = 3;
@@ -172,7 +160,7 @@ public class CoreRulesScanning extends RulesScanning {
             }
         }
         int probeLevel = !hasWorkingProbeAgainst(scanner, target) ? PROBE_LEVEL_NONE
-              : hasProbeSpecial(scanner) ? PROBE_LEVEL_STANDARD : activeProbeLevel(scanner, equipmentRules);
+              : hasProbeSpecial(scanner) ? PROBE_LEVEL_STANDARD : activeProbeLevel(scanner);
         if (probeLevel > PROBE_LEVEL_NONE) {
             roll.addModifier(-probeLevel, Messages.getString("RulesScanning.activeProbe", probeLevel));
         }

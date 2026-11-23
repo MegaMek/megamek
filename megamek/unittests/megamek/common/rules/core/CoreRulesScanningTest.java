@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -53,10 +54,13 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.ScanMission;
 import megamek.common.equipment.Sensor;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.EMI;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesEquipment;
+import megamek.common.rules.RulesManager;
 import megamek.common.rules.RulesScanning;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Aero;
@@ -341,14 +345,30 @@ class CoreRulesScanningTest {
     }
 
     @Test
-    void missionWatchdogBonusFollowsTheManagerProvidingTheScan() {
+    void missionWatchdogBonusUsesTheActiveManagersEquipmentRules() {
         EquipmentType.initializeTypes();
         MiscMounted probe = mock(MiscMounted.class);
         when(probe.getType()).thenReturn((MiscType) EquipmentType.get(Sensor.WATCHDOG));
         when(scanner.getMisc()).thenReturn(List.of(probe));
         when(scanner.hasBAP(true)).thenReturn(true);
 
-        assertEquals(6, new TWRulesManager().getRulesScanning().scanTargetRoll(scanner, null).getValue());
-        assertEquals(5, new CoreRulesManager().getRulesScanning().scanTargetRoll(scanner, null).getValue());
+        RulesManager previous = Game.rulesManager;
+        try {
+            Game game = new Game();
+            Game.rulesManager = new TWRulesManager();
+            assertEquals(6, ScanMission.scanningRules(game).scanTargetRoll(scanner, null).getValue());
+
+            CoreRulesManager core = spy(new CoreRulesManager());
+            Game.rulesManager = core;
+            RulesScanning mission = ScanMission.scanningRules(game);
+            assertEquals(5, mission.scanTargetRoll(scanner, null).getValue());
+
+            RulesEquipment equipment = mock(RulesEquipment.class);
+            when(equipment.watchdogUsesLightProbe()).thenReturn(true);
+            when(core.getRulesEquipment()).thenReturn(equipment);
+            assertEquals(6, mission.scanTargetRoll(scanner, null).getValue());
+        } finally {
+            Game.rulesManager = previous;
+        }
     }
 }

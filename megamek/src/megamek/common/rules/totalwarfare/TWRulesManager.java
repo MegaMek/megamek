@@ -52,7 +52,7 @@ public class TWRulesManager implements RulesManager {
     private TWRulesPhysical twRulesPhysical = new TWRulesPhysical();
     private TWRulesPilot twRulesPilot = new TWRulesPilot();
     private TWRulesPSR twRulesPsr = new TWRulesPSR();
-    private CoreRulesScanning missionScanning = new CoreRulesScanning(twRulesEquipment);
+    private CoreRulesScanning missionScanning = new CoreRulesScanning();
     private TWRulesTerrain twRulesTerrain = new TWRulesTerrain();
     private TWRulesUnderwater twRulesUnderwater = new TWRulesUnderwater();
     private TWRulesUnits twRulesUnits = new TWRulesUnits();

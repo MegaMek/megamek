@@ -31540,9 +31540,13 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Remove all iNarc pods from all vehicles that did not move and shoot this round NOTE: this is not quite what the
-     * rules say, the player should be able to choose whether to remove all iNarc Pods that are attached.
+     * rules say, the player should be able to choose whether to remove all iNarc Pods that are attached. Does nothing
+     * when the rules do not allow removing pods (Core rules).
      */
     void resolveVeeINarcPodRemoval() {
+        if (!Game.rulesManager.getRulesPhysical().canRemoveINarcPods()) {
+            return;
+        }
         Iterator<Entity> vees = game.getSelectedEntities(entity -> (entity instanceof Tank) && (entity.mpUsed == 0));
         boolean canSwipePods;
         while (vees.hasNext()) {

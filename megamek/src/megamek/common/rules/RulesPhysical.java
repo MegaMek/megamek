@@ -251,4 +251,12 @@ public abstract class RulesPhysical {
      * @return true if it must check both legs, false if only the kicking leg must not have fired weapons
      */
     public abstract boolean muleWeaponsCheck();
+
+    /**
+     * Can a unit remove an attached iNarc pod during play (a Mek brushing it off, or a vehicle crew pulling it off)?
+     *
+     * @return {@code true} if attached iNarc pods can be removed, {@code false} if they stay until their location is
+     *       destroyed
+     */
+    public abstract boolean canRemoveINarcPods();
 }

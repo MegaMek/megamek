@@ -47,7 +47,7 @@ public class TWRulesUnits extends RulesUnits {
      */
     @Override
     public int getMuleKickModifier() { return 1; }
-    
+
     /**
      * Does removing legs cause it to be immobile? No
      *

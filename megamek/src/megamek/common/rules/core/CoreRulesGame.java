@@ -35,7 +35,6 @@ package megamek.common.rules.core;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
-
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.enums.GamePhase;

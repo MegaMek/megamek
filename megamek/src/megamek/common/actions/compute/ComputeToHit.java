@@ -964,7 +964,7 @@ public class ComputeToHit {
 
         // Narc-capable missiles homing on an iNarc beacon
         if (isINarcGuided) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.iNarcHoming"));
+            Game.rulesManager.getRulesAmmo().iNarcHomingTarget(toHit);
         }
 
         // Listen-Kill ammo from War of 3039 sourcebook?

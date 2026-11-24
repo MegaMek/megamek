@@ -4627,6 +4627,12 @@ public class TWGameManager extends AbstractGameManager {
             Coords positionBeforeMovement = entity.getPosition();
             MovePathHandler handler = new MovePathHandler(this, entity, movePath, losCache);
             handler.processMovement();
+            if (handler.isDeploymentRefused() && !getGame().getPhase().isSimultaneous(getGame())) {
+                // The sender has been handed this turn back to pick another hex. Ending it as well would cost the
+                // unit its move, and leave a bot answering a turn that has already passed. In a simultaneous phase a
+                // bot cannot tell a handed-back turn from the other players' turn changes, so the turn still ends
+                return;
+            }
             new ObjectiveResolutionHandler(this).toastZoneEntry(entity, positionBeforeMovement);
             datasetLogger.append(movePath, true);
 
@@ -26680,8 +26686,18 @@ public class TWGameManager extends AbstractGameManager {
         // stale (for example a unit that has not moved yet but whose client snapshot is marked done). Swapping it
         // in would overwrite the server's live turn state and could rob the owner of a move they still have. A
         // gamemaster editing damage must not spend the owner's action, so keep the server's turn/move state.
+        boolean isPlannedWalkOn = false;
         if (!game.getPhase().isLounge()) {
             preserveInPlayTurnState(oldEntity, entity);
+            // While a player plans a walk-on, their client already shows the unit deployed on the chosen hex. Only the
+            // move itself may deploy it, after its checks; taking the placement from here would skip those checks, and
+            // the move would then be refused for deploying the unit a second time.
+            isPlannedWalkOn = !oldEntity.isDeployed() && entity.isDeployed();
+            if (isPlannedWalkOn) {
+                LOGGER.debug("Update for {} from {} places a unit that has not deployed yet; keeping it off the board",
+                      entity.getDisplayName(), sender.getName());
+                preserveUndeployedState(oldEntity, entity);
+            }
             // A pending traitor switch is server-side state: /changeOwner sets it on the server's copy only, so a
             // client-sent copy never carries it. An update that does not itself order a switch (the Traitor button
             // does, and wins here) must not erase the pending one while it waits for the END phase.
@@ -26694,7 +26710,11 @@ public class TWGameManager extends AbstractGameManager {
         }
         game.setEntity(entity.getId(), entity);
         CarriedUnitRelinker.relinkAfterUpdate(game, entity);
-        entityUpdate(entity.getId());
+        // A planned walk-on is sent out once its move is processed; sending it now would lift the unit off the hex its
+        // player is still planning from
+        if (!isPlannedWalkOn) {
+            entityUpdate(entity.getId());
+        }
         if (entity.isPartOfFighterSquadron()) {
             // Update the stats of any Squadrons that the new units are part of
             FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
@@ -26776,6 +26796,21 @@ public class TWGameManager extends AbstractGameManager {
         if (oldEntity.getDisplacementAttack() != null) {
             newEntity.setDisplacementAttack(oldEntity.getDisplacementAttack());
         }
+    }
+
+    /**
+     * Puts a client-sent unit back off the board, where the server still has it. Everything else the client sent, such
+     * as a Mek's switch to its underwater maneuvering units, is kept.
+     *
+     * @param oldEntity the server's authoritative unit, which has not deployed yet
+     * @param newEntity the client-sent replacement, whose deployment state is overwritten
+     */
+    private void preserveUndeployedState(Entity oldEntity, Entity newEntity) {
+        newEntity.setDeployed(false);
+        // Marking the unit deployed cleared this on the client, and a first deployment is handled differently
+        newEntity.setNeverDeployed(oldEntity.wasNeverDeployed());
+        newEntity.setPosition(oldEntity.getPosition());
+        newEntity.setBoardId(oldEntity.getBoardId());
     }
 
     /**
@@ -31296,17 +31331,18 @@ public class TWGameManager extends AbstractGameManager {
                         continue;
                     }
                     // Capture the unit.
-                    pe.pickUp(e);
-                    // The captured unit is being carried by the loader.
-                    e.setCaptured(true);
-                    e.setPickedUpById(pe.getId());
-                    e.setPickedUpByExternalId(pe.getExternalIdAsString());
+                    captureMekWarrior(e, pe);
                     pickedUp = true;
-                    r = new Report(6420, Report.PUBLIC);
-                    r.add(e.getDisplayName());
-                    r.addDesc(pe);
-                    addReport(r);
                     break;
+                }
+            }
+            // Finally, check for a crewed enemy turret or building. These are never targetable as units (they are
+            // attacked through their hex), so the checks above never see them.
+            if (!pickedUp) {
+                Entity capturingBuilding = new EjectedCrewCaptureHandler(this).findCapturingBuilding(e);
+                if (capturingBuilding != null) {
+                    captureMekWarrior(e, capturingBuilding);
+                    pickedUp = true;
                 }
             }
             if (pickedUp) {
@@ -31316,6 +31352,25 @@ public class TWGameManager extends AbstractGameManager {
                 entityUpdate(e.getId());
             }
         }
+    }
+
+    /**
+     * Makes an ejected MekWarrior the prisoner of an enemy unit and reports it.
+     *
+     * @param mekWarrior the ejected MekWarrior
+     * @param captor     the unit that takes them prisoner
+     */
+    private void captureMekWarrior(MekWarrior mekWarrior, Entity captor) {
+        captor.pickUp(mekWarrior);
+        // The captured unit is being carried by the loader.
+        mekWarrior.setCaptured(true);
+        mekWarrior.setPickedUpById(captor.getId());
+        mekWarrior.setPickedUpByExternalId(captor.getExternalIdAsString());
+
+        Report report = new Report(6420, Report.PUBLIC);
+        report.add(mekWarrior.getDisplayName());
+        report.addDesc(captor);
+        addReport(report);
     }
 
     /**
@@ -31403,9 +31458,13 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Remove all iNarc pods from all vehicles that did not move and shoot this round NOTE: this is not quite what the
-     * rules say, the player should be able to choose whether to remove all iNarc Pods that are attached.
+     * rules say, the player should be able to choose whether to remove all iNarc Pods that are attached. Does nothing
+     * when the rules do not allow removing pods (Core rules).
      */
     void resolveVeeINarcPodRemoval() {
+        if (!Game.rulesManager.getRulesPhysical().canRemoveINarcPods()) {
+            return;
+        }
         Iterator<Entity> vees = game.getSelectedEntities(entity -> (entity instanceof Tank) && (entity.mpUsed == 0));
         boolean canSwipePods;
         while (vees.hasNext()) {

@@ -83,6 +83,15 @@ public class CoreRulesAmmo extends RulesAmmo {
     }
 
     /**
+     * {@inheritDoc} Does nothing in Core: an iNarc homing pod gives the same single -1 as a Narc pod, which
+     * {@link #narcHomingTarget(ToHitData)} already applies. Core pp.188, 193
+     */
+    @Override
+    public void iNarcHomingTarget(ToHitData toHit) {
+        // No separate iNarc modifier in Core
+    }
+
+    /**
      * {@inheritDoc} Acid (AX) missiles are -1 on the cluster roll. Core p.192
      */
     @Override

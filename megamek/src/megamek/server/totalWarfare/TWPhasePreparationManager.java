@@ -283,6 +283,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.checkForIndustrialEndOfTurn();
                 gameManager.processUnitAbandonments();
                 gameManager.resolveMekWarriorPickUp();
+                new EjectedCrewCaptureHandler(gameManager).captureOtherCrewsInsideEnemyBuildings();
                 gameManager.resolveVeeINarcPodRemoval();
                 gameManager.resolveFortify();
 

@@ -4505,7 +4505,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             return Optional.of(megaMekDocument);
         }
 
-        File mekHqDocument = new File(docsDirectory, "Customization/MekHQ/UserDirHelp.html");
+        File mekHqDocument = new File(docsDirectory, "mekhq/customization/UserDirHelp.html");
         return mekHqDocument.isFile() ? Optional.of(mekHqDocument) : Optional.empty();
     }
 

@@ -45,6 +45,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.GameBoardTestCase;
 import megamek.common.LosEffects;
@@ -58,6 +61,8 @@ import megamek.common.board.CubeCoords;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
@@ -379,6 +384,92 @@ public class ComputeToHitTest extends GameBoardTestCase {
         assertEquals(1, attack.getModifiers().stream()
               .filter(mod -> mod.description().contains("cover"))
               .mapToInt(TargetRollModifier::value).sum(), attack::getDesc);
+    }
+
+    @Nested
+    @DisplayName("Narc-capable missiles against an iNarc homing pod (#9680)")
+    class INarcHomingTests {
+        private static final String CORE_NARC_POD_DESCRIPTION = "target has a narc pod";
+
+        @Test
+        @DisplayName("Core Rules gives one -1, not a second -1 for the iNarc pod")
+        void coreRulesAppliesSingleHomingModifier() throws LocationFullException {
+            List<TargetRollModifier> homingModifiers = fireNarcCapableLrmsAtINarcedTarget(OptionsConstants.RULES_CORE);
+
+            assertEquals(1, homingModifiers.size(), () -> "Expected one homing modifier, got " + homingModifiers);
+            assertEquals(-1, homingModifiers.getFirst().value());
+            assertEquals(CORE_NARC_POD_DESCRIPTION, homingModifiers.getFirst().description());
+        }
+
+        @Test
+        @DisplayName("Total Warfare keeps the iNarc homing -1")
+        void totalWarfareAppliesINarcHomingModifier() throws LocationFullException {
+            List<TargetRollModifier> homingModifiers = fireNarcCapableLrmsAtINarcedTarget(OptionsConstants.RULES_TW);
+
+            assertEquals(1, homingModifiers.size(), () -> "Expected one homing modifier, got " + homingModifiers);
+            assertEquals(-1, homingModifiers.getFirst().value());
+            assertEquals(Messages.getString("WeaponAttackAction.iNarcHoming"),
+                  homingModifiers.getFirst().description());
+        }
+
+        /**
+         * Fires an LRM-5 loaded with Narc-capable ammo at a Mek 7 hexes away that carries the attacker's iNarc homing
+         * pod, and returns only the Narc and iNarc homing modifiers from the result.
+         */
+        private List<TargetRollModifier> fireNarcCapableLrmsAtINarcedTarget(String rulesSystem)
+              throws LocationFullException {
+            setBoard("10_BY_01_FLAT");
+            game.initializeRulesManager(rulesSystem);
+            try {
+                Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+                attacker.setOwnerId(player1.getId());
+                attacker.setId(1);
+                attacker.setPosition(new Coords(0, 0));
+                when(attacker.getCrew().isActive()).thenReturn(true);
+                when(attacker.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
+                WeaponMounted launcher = (WeaponMounted) attacker.addEquipment(EquipmentType.get("ISLRM5"),
+                      Mek.LOC_RIGHT_TORSO);
+                Mounted<?> narcCapableAmmo = attacker.addEquipment(EquipmentType.get("IS Ammo LRM-5 Narc-capable"),
+                      Mek.LOC_RIGHT_TORSO);
+                launcher.setLinked(narcCapableAmmo);
+
+                Mek target = createMek("Target", "TGT-1", "Bob");
+                target.setOwnerId(player2.getId());
+                target.setId(2);
+                target.setPosition(new Coords(7, 0));
+                when(target.getCrew().isActive()).thenReturn(true);
+                when(target.getCrew().getSkillModifiers()).thenReturn(new TemporarySkillModifiers());
+
+                game.addEntity(attacker);
+                game.addEntity(target);
+
+                int attackerTeam = attacker.getOwner().getTeam();
+                target.attachINarcPod(new INarcPod(attackerTeam, INarcPod.HOMING, Mek.LOC_CENTER_TORSO));
+                target.newRound(1);
+                assertTrue(target.isINarcedBy(attackerTeam), "Setup: target should carry the attacker's iNarc pod");
+
+                int targetDirection = attacker.getPosition().direction(target.getPosition());
+                attacker.setFacing(targetDirection);
+                attacker.setSecondaryFacing(targetDirection);
+
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      launcher.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+                String iNarcDescription = Messages.getString("WeaponAttackAction.iNarcHoming");
+                List<TargetRollModifier> homingModifiers = new ArrayList<>();
+                for (TargetRollModifier modifier : result.getModifiers()) {
+                    String description = modifier.description();
+                    if (CORE_NARC_POD_DESCRIPTION.equals(description) || iNarcDescription.equals(description)) {
+                        homingModifiers.add(modifier);
+                    }
+                }
+                return homingModifiers;
+            } finally {
+                game.initializeRulesManager(OptionsConstants.RULES_CORE);
+            }
+        }
     }
 
     @Nested

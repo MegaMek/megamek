@@ -83,6 +83,14 @@ public abstract class RulesAmmo {
     public abstract void narcHomingTarget(ToHitData toHit);
 
     /**
+     * Applies the to-hit modifier for Narc-capable missiles homing on an iNarc homing pod, where the ruleset gives
+     * iNarc a bonus of its own on top of {@link #narcHomingTarget(ToHitData)}.
+     *
+     * @param toHit to-hit object
+     */
+    public abstract void iNarcHomingTarget(ToHitData toHit);
+
+    /**
      * Acid (AX) missiles reduce cluster roll.
      *
      * @return AX missile modifier

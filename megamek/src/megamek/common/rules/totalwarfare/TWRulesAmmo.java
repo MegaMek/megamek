@@ -98,6 +98,16 @@ public class TWRulesAmmo extends RulesAmmo {
     }
 
     /**
+     * Narc-capable missiles get -1 to-hit against a target with an iNarc homing pod. TW p.142
+     *
+     * @param toHit the to-hit data
+     */
+    @Override
+    public void iNarcHomingTarget(ToHitData toHit) {
+        toHit.addModifier(-1, Messages.getString("WeaponAttackAction.iNarcHoming"));
+    }
+
+    /**
      * Acid (AX) missiles are -2 on the cluster roll.
      *
      * @return the AX missile cluster modifier

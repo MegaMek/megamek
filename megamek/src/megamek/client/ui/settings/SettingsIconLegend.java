@@ -77,10 +77,17 @@ public class SettingsIconLegend extends JPanel {
     }
 
     private void addEntry(int row, int column, SettingsBadge badge) {
-        Color iconColor = badge.color() == null ? UIManager.getColor("Label.foreground") : badge.color();
-        JLabel label = new JLabel("<html>" + StringEscapeUtils.escapeHtml4(badge.description()) + "</html>");
-        label.setIcon(symbolIcon(badge.codePoint(), UIUtil.scaleForGUI(ICON_SIZE), iconColor));
-        label.setIconTextGap(UIUtil.scaleForGUI(6));
+        String description = StringEscapeUtils.escapeHtml4(badge.description());
+        JLabel label;
+        if (badge.isText()) {
+            // A text marker has no glyph to draw as the icon, so lead the description with the marker itself.
+            label = new JLabel("<html><nobr>" + badge.toHtml().strip() + "</nobr>&nbsp; " + description + "</html>");
+        } else {
+            Color iconColor = badge.color() == null ? UIManager.getColor("Label.foreground") : badge.color();
+            label = new JLabel("<html>" + description + "</html>");
+            label.setIcon(symbolIcon(badge.codePoint(), UIUtil.scaleForGUI(ICON_SIZE), iconColor));
+            label.setIconTextGap(UIUtil.scaleForGUI(6));
+        }
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = column;

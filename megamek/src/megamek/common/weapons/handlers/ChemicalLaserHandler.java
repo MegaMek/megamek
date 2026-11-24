@@ -37,8 +37,10 @@ package megamek.common.weapons.handlers;
 import static java.lang.Math.floor;
 
 import java.io.Serial;
+import java.util.Vector;
 
 import megamek.common.RangeType;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
@@ -61,6 +63,12 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
           throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitDamageType.DAMAGE_ENERGY;
+    }
+
+    @Override
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        EnergyWeaponHandler.checkInsulator(gameManager, roll.getIntValue(), weapon, subjectId, vPhaseReport);
+        return super.doChecks(vPhaseReport);
     }
 
     /*

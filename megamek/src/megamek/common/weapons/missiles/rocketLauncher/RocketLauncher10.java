@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -87,9 +87,9 @@ public class RocketLauncher10 extends RLWeapon {
         techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
-              .setISAdvancement(DATE_NONE, 3064, 3067, DATE_NONE, DATE_NONE)
+              .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
+              .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
               .setProductionFactions(Faction.MH);
     }

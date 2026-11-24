@@ -385,6 +385,12 @@ public class Caspar extends Princess {
     }
 
     @Override
+    public boolean followsUnitOrders() {
+        // CASPAR divergence: carry out the unit orders players give; Princess keeps her original waypoints
+        return true;
+    }
+
+    @Override
     protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         // CASPAR divergence: deploy as a formation rather than scattering across the whole zone.
         int formationRadius = FormationGeometry.formationRadius(getEntitiesOwned(), mutualSupportMultiplier());

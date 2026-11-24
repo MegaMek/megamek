@@ -406,6 +406,14 @@ public class MiscType extends EquipmentType {
         return hasFlag(F_BOOBY_TRAP);
     }
 
+    /**
+     * @return True for the equipment that is attached to a single weapon: Artemis and Apollo fire control systems,
+     *       PPC capacitors, laser insulators and RISC laser pulse modules
+     */
+    public static boolean isWeaponEnhancement(EquipmentType type) {
+        return (type instanceof MiscType) && type.hasFlag(F_WEAPON_ENHANCEMENT);
+    }
+
     public boolean isVibroblade() {
         return hasFlag(F_CLUB)
               && hasAnyFlag(
@@ -7150,7 +7158,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
-        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 83);
+        misc.rulesRefs = rulesRefs(rulesRef(SourceBookCode.IO_AE, 83), rulesRef(SourceBookCode.CORE, 208));
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3095, 3122, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -9616,7 +9624,10 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         // TODO: add game rules, BV rules are implemented
-        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 88);
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.IO_AE, 88),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.F)

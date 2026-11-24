@@ -75,7 +75,10 @@ public class ISAPDS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 200000;
-        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 85);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.IO_AE, 85),
+              rulesRef(SourceBookCode.CORE, 206)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)

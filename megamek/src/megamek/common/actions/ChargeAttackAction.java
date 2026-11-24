@@ -316,7 +316,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // water partial cover?
         if ((te.height() > 0) && (te.getElevation() == -1)
               && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
-            toHit.addModifier(1, "target has partial cover");
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTargetHasPartialCover"));
         }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three

@@ -113,6 +113,19 @@ public class ArtilleryTracker implements Serializable {
         }
     }
 
+    /**
+     * Removes all fire adjustment and auto hit mods and the spotter flags, keeping the tracked weapons. Used when an
+     * entity is carried over into a new game (e.g. by MekHQ), as otherwise the previous game's target hexes remain
+     * valid and visible. The weapons must be kept, as {@link #setModifier(int, Coords)} only adds mods for them.
+     */
+    public void clearAllModifiers() {
+        for (Vector<ArtilleryModifier> modVector : weapons.values()) {
+            modVector.clear();
+        }
+        spotterIsForwardObs = false;
+        spotterHasCommImplant = false;
+    }
+
     @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean weaponInList(Mounted<?> mounted) {
         return (weapons.containsKey(mounted));

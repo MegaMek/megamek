@@ -36,9 +36,10 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -6910,8 +6911,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), but not once the sensors are damaged
+        if (hasEiCockpit() && !EnhancedImagingSensors.areDamaged(this)) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
@@ -7018,8 +7019,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), but not once the sensors are damaged
+        if (hasEiCockpit() && !EnhancedImagingSensors.areDamaged(this)) {
             return 1;
         }
 
@@ -9659,14 +9660,16 @@ public abstract class Entity extends TurnOrdered
                                            EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        int mod;
-        if (waterLevel == 1) {
-            mod = -1;
-        } else if (waterLevel == 2) {
-            mod = 0;
-        } else {
-            mod = 1;
+        // Jumping into water is a special case. It is not modified for depth, just a straight roll.
+        // BMM p.19, Core p.50.
+        if (overallMoveType == EntityMovementType.MOVE_JUMP && waterLevel > 0) {
+            roll.append(new PilotingRollData(getId(), 0, "jumping into depth " + waterLevel + " water"));
+            adjustDifficultTerrainPSRModifier(roll);
+            return roll;
         }
+
+        int mod;
+        mod = Game.rulesManager.getRulesPSR().getWaterLevelModifier(waterLevel);
 
         if ((waterLevel > 1) &&
             hasAbility(OptionsConstants.PILOT_TM_FROGMAN) &&
@@ -13987,6 +13990,113 @@ public abstract class Entity extends TurnOrdered
         iNarcPods.clear();
     }
 
+    /**
+     * This clears the state an Entity builds up during a game that must not carry over into the next one, such as
+     * artillery fire adjustment, MASC levels, ongoing effects and links to other units by their (now meaningless) game
+     * ids. It is used in MekHQ to clear this transient data between scenarios. Subclasses that add such state should
+     * override this and call super.
+     *
+     * <p>EntityPersistenceRegressionTest checks that every field of an Entity and its equipment is either reset here
+     * or listed, with the reason it may persist, in its allowed-to-persist.txt.</p>
+     */
+    public void clearGameState() {
+        // Improvised clubs picked up during the last game
+        removeMisc(EquipmentTypeLookup.LIMB_CLUB);
+        removeMisc(EquipmentTypeLookup.GIRDER_CLUB);
+        removeMisc(EquipmentTypeLookup.TREE_CLUB);
+
+        // Deployment, position and movement on the last game's map
+        setDeployed(false);
+        setDeployRound(0);
+        setNeverDeployed(true);
+        setElevation(0);
+        setPassedThrough(new Vector<>());
+        resetFiringArcs();
+        setEvading(false);
+        setFacing(0);
+        setPosition(null);
+        getSecondaryPositions().clear();
+        setProne(false);
+        setHullDown(false);
+        setStuck(false);
+        setConversionMode(0);
+        setHidden(false);
+        setDone(false);
+        // Without this a unit that fled the last battle still reports the edge it left by
+        setRetreatedDirection(OffBoardDirection.NONE);
+
+        // Heat, shutdown and the condition the unit ended the last game in
+        heat = 0;
+        heatBuildup = 0;
+        underwaterRounds = 0;
+        resetCoolantFailureAmount();
+        setShutDown(false);
+        setSearchlightState(false);
+        setDoomed(false);
+        setDestroyed(false);
+        // Without this a unit wrecked, recovered and repaired is written off again the next time it only flees
+        clearBattleOutcome();
+
+        // Transport, swarming and targeting links to other units by their game ids
+        resetBays();
+        setTransportId(Entity.NONE);
+        resetTransporter();
+        setUnloaded(false);
+        setSwarmAttackerId(Entity.NONE);
+        setSwarmTargetId(Entity.NONE);
+        setLastTarget(Entity.NONE);
+        clearNarcAndiNarcPods();
+        // Orders given to the unit's bot in this battle, such as a flee order, must not steer it in the next one
+        setUnitOrders(UnitOrders.NONE);
+
+        // Artillery: fire adjustment and auto hit hexes, and which enemy teams have spotted this unit off board
+        aTracker.clearAllModifiers();
+        offBoardShotObservers.clear();
+        setOffBoard(0, OffBoardDirection.NONE);
+
+        // SPAs and equipment whose state builds up over the rounds of a game
+        bloodStalkerTarget = Entity.NONE;
+        blueShieldRounds = 0;
+        nMASCLevel = 0;
+        bMASCWentUp = false;
+        usedMASC = false;
+        nSuperchargerLevel = 0;
+        bSuperchargerWentUp = false;
+        usedSupercharger = false;
+        consecutiveRHSUses = 0;
+        usedRHSLastTurn = false;
+        rhsWentUp = false;
+
+        // Ongoing effects
+        infernos.clear();
+        manualShutdown = false;
+        carcass = false;
+        captured = false;
+
+        // Interactions with other units and objects of the last game
+        if (carriedObjects != null) {
+            carriedObjects.clear();
+        }
+        clearInfantryCombatState();
+        infantryActionLeaving = false;
+        isTowing = Entity.NONE;
+        tractor = Entity.NONE;
+        towedBy = Entity.NONE;
+        isTractorFor.clear();
+        connectedUnits.clear();
+        c3emActive = false;
+        c3emOperatingTurns = 0;
+        c3emOriginalMasterId = NONE;
+        c3MasterLostId = NONE;
+        // Grapples are only held by the subclasses that can grapple, so these are no-ops for the others
+        setGrappled(Entity.NONE, false);
+        setGrappleSide(Entity.GRAPPLE_BOTH);
+
+        for (Mounted<?> mounted : getEquipment()) {
+            mounted.clearGameState();
+        }
+    }
+
     public PilotingRollData checkSideSlip(EntityMovementType moveType,
                                           Hex prevHex,
                                           EntityMovementType overallMoveType,
@@ -17046,10 +17156,10 @@ public abstract class Entity extends TurnOrdered
     public int getLabTotalArmorPoints() {
         ArmorType armor = ArmorType.forEntity(this);
         if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-            return (int) Math.floor(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
+            return (int) Math.round(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
         } else {
             double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-            return (int) Math.floor(armorPerTon * armorTonnage);
+            return (int) Math.round(armorPerTon * armorTonnage);
         }
     }
 

@@ -410,6 +410,17 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     public double getWeightSail() {
+        return calculateSailTonnage(vessel);
+    }
+
+    /**
+     * Computes the weight of the jump sail, using the primitive jump sail table for primitive JumpShips (IO:AE p.124).
+     *
+     * @param vessel The ship
+     *
+     * @return The weight of the jump sail in tons, or 0 if the ship has no sail
+     */
+    public static double calculateSailTonnage(Jumpship vessel) {
         if (!vessel.hasSail()) {
             return 0;
         }

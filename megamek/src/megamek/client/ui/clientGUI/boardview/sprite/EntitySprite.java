@@ -41,7 +41,9 @@ import java.util.Set;
 import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.DamageLevelColors;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.UnitOwnerColors;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.StringDrawer;
@@ -77,6 +79,8 @@ public class EntitySprite extends Sprite {
     private static final Color LABEL_SPACE_BACK = new Color(0, 0, 200, 200);
     private static final Color LABEL_GROUND_BACK = new Color(50, 50, 50, 200);
     private static final int ON_DECK_ARC_ALPHA = 100;
+    /** Shortest hyphenated Mek model treated as a full designation (UM-R60) rather than a configuration (A-Z). */
+    static final int MIN_DESIGNATION_LENGTH = 4;
 
     enum Positioning {
         LEFT, RIGHT
@@ -169,7 +173,7 @@ public class EntitySprite extends Sprite {
                 case FULL:
                     return standardLabelName();
                 case ABBREV:
-                    return (entity instanceof Mek) ? entity.getModel() : abbreviateUnitName(standardLabelName());
+                    return abbreviatedName();
                 case CHASSIS:
                     return reduceVehicleName(entity);
                 case NICKNAME:
@@ -181,8 +185,7 @@ public class EntitySprite extends Sprite {
                         return reduceVehicleName(entity);
                     }
                 case NICKNAME_AND_ABBREVIATED: {
-                    String abbreviated = (entity instanceof Mek) ? entity.getModel()
-                          : abbreviateUnitName(standardLabelName());
+                    String abbreviated = abbreviatedName();
                     if (!pilotNick().isBlank()) {
                         return "\"" + pilotNick().toUpperCase() + "\" (" + abbreviated + ")";
                     } else if (!unitNick().isBlank()) {
@@ -225,6 +228,36 @@ public class EntitySprite extends Sprite {
             }
             return String.join(" ", Arrays.copyOfRange(tokens, 0, i + 1));
         }
+    }
+
+    /** Returns the label name used by the abbreviated label styles. */
+    private String abbreviatedName() {
+        if (entity instanceof Mek) {
+            return abbreviatedMekName(entity.getChassis(), entity.getModel());
+        }
+        return abbreviateUnitName(standardLabelName());
+    }
+
+    /**
+     * Returns the abbreviated label name of a Mek. A model designation with a hyphen names the Mek on its own (Marauder
+     * MAD-3R shows {@code MAD-3R}), so it is shown alone. Any other model is only a configuration (Mad Cat Prime,
+     * Thor A), so the chassis is kept in front of it. A blank model shows the chassis alone. Hyphenated models
+     * shorter than {@link #MIN_DESIGNATION_LENGTH} are configurations too (Pariah A-Z, Ha Otoko -HR).
+     *
+     * @param chassis the Mek's chassis, without any reporting name
+     * @param model   the Mek's model, possibly blank or {@code null}
+     *
+     * @return the label name, never blank unless the chassis is blank
+     */
+    static String abbreviatedMekName(String chassis, @Nullable String model) {
+        String trimmedModel = (model == null) ? "" : model.trim();
+        if (trimmedModel.isEmpty()) {
+            return chassis;
+        }
+        if (trimmedModel.contains("-") && (trimmedModel.length() >= MIN_DESIGNATION_LENGTH)) {
+            return trimmedModel;
+        }
+        return chassis + " " + trimmedModel;
     }
 
     /** Returns the string with some content shortened like Battle Armor -> BA */
@@ -851,23 +884,7 @@ public class EntitySprite extends Sprite {
 
                 // Draw a label border with player colors or team coloring
                 if (GUIP.getUnitLabelBorder()) {
-                    if (GUIP.getTeamColoring()) {
-                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.getClientgui()
-                              .getClient()
-                              .getLocalPlayer()
-                              .getTeam();
-                        boolean isLocalPlayer = entity.getOwner()
-                              .equals(bv.getClientgui().getClient().getLocalPlayer());
-                        if (isLocalPlayer) {
-                            graph.setColor(GUIP.getMyUnitColor());
-                        } else if (isLocalTeam) {
-                            graph.setColor(GUIP.getAllyUnitColor());
-                        } else {
-                            graph.setColor(GUIP.getEnemyUnitColor());
-                        }
-                    } else {
-                        graph.setColor(entity.getOwner().getColour().getColour(false));
-                    }
+                    graph.setColor(UnitOwnerColors.colorFor(entity.getOwner(), bv.getLocalPlayer(), bv.game));
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1,
@@ -1081,13 +1098,7 @@ public class EntitySprite extends Sprite {
     }
 
     private @Nullable Color getDamageColor() {
-        return switch (entity.getDamageLevel()) {
-            case Entity.DMG_CRIPPLED -> Color.black;
-            case Entity.DMG_HEAVY -> GUIP.getWarningColor();
-            case Entity.DMG_MODERATE -> GUIP.getCautionColor();
-            case Entity.DMG_LIGHT -> Color.green;
-            default -> null;
-        };
+        return DamageLevelColors.forEntity(entity);
     }
 
     /**

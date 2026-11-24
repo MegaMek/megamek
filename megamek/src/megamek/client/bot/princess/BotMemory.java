@@ -69,7 +69,9 @@ import megamek.logging.MMLogger;
 public class BotMemory {
     private static final MMLogger LOGGER = MMLogger.create(BotMemory.class);
 
-    private UnitBehavior unitBehaviorTracker = new UnitBehavior();
+    // true for a bot that follows unit orders (CASPAR), which keeps its waypoints on the units rather than here
+    private final boolean followsUnitOrders;
+    private UnitBehavior unitBehaviorTracker;
     private EnemyTracker enemyTracker;
     private SwarmContext swarmContext;
     private List<HeatMap> enemyHeatMaps = List.of();
@@ -79,10 +81,25 @@ public class BotMemory {
     // Read while firing plans are built and written at the end of the turn, so it keeps the concurrent set it had
     // as a field on Princess.
     private final Set<Integer> attackedWhileFleeingIds = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    // Withdrawing units of mine that attacked anyway, and so can be attacked without dishonor (issue #9595)
+    private final Set<Integer> forfeitedProtectionIds = new HashSet<>();
     private final Set<Integer> scootingUnitIds = new HashSet<>();
 
     private final Map<Integer, UnitMemory> unitMemories = new HashMap<>();
     private final Map<Integer, FightMemory> fightMemories = new HashMap<>();
+
+    /** Memory for a bot with Princess's original waypoints. */
+    public BotMemory() {
+        this(false);
+    }
+
+    /**
+     * @param followsUnitOrders {@code true} for a bot that follows unit orders ({@link Princess#followsUnitOrders()})
+     */
+    public BotMemory(boolean followsUnitOrders) {
+        this.followsUnitOrders = followsUnitOrders;
+        unitBehaviorTracker = newUnitBehaviorTracker();
+    }
 
     // region What each of my units is doing this round, and the waypoints it is following
 
@@ -92,7 +109,11 @@ public class BotMemory {
 
     /** Starts the behaviour tracker afresh, as at the start of a game. */
     void resetUnitBehaviorTracker() {
-        unitBehaviorTracker = new UnitBehavior();
+        unitBehaviorTracker = newUnitBehaviorTracker();
+    }
+
+    private UnitBehavior newUnitBehaviorTracker() {
+        return followsUnitOrders ? new UnitOrdersBehavior() : new UnitBehavior();
     }
 
     // endregion
@@ -183,6 +204,34 @@ public class BotMemory {
 
     public boolean wasAttackedWhileFleeing(int unitId) {
         return attackedWhileFleeingIds.contains(unitId);
+    }
+
+    /**
+     * Notes that one of my units attacked while it was already withdrawing. It chose to fight, so it gives up the
+     * protection of a fleeing unit for the rest of the game: attacking it no longer dishonors anyone.
+     *
+     * @param unitId the unit that attacked
+     *
+     * @return {@code true} if this is news, {@code false} if it was already known
+     */
+    boolean rememberForfeitedProtection(int unitId) {
+        return forfeitedProtectionIds.add(unitId);
+    }
+
+    /**
+     * @param unitId one of my units
+     *
+     * @return {@code true} if the unit attacked while withdrawing, and so may be attacked without dishonor
+     */
+    public boolean hasForfeitedProtection(int unitId) {
+        return forfeitedProtectionIds.contains(unitId);
+    }
+
+    /**
+     * Forgets which units gave up their protection, when a game ends. Unit IDs start again in the next game.
+     */
+    void forgetForfeitedProtection() {
+        forfeitedProtectionIds.clear();
     }
 
     // endregion

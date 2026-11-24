@@ -1576,10 +1576,7 @@ public final class Game extends AbstractGame implements Serializable,
         } else {
             entity.setGame(this);
             inGameObjects.put(id, entity);
-            // Get the collection of positions
-            HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
-            // Update position lookup table
-            updateEntityPositionLookup(entity, oldPositions);
+            updateEntityPositionLookup(entity, getPositionsToReplace(oldEntity));
 
             // Not sure if this really required
             if (id > lastEntityId) {
@@ -1588,6 +1585,38 @@ public final class Game extends AbstractGame implements Serializable,
 
             processGameEvent(new GameEntityChangeEvent(this, entity, movePath, oldEntity));
         }
+    }
+
+    /**
+     * Returns every hex the position lookup must drop a unit from when the unit is replaced by a newer copy. That is
+     * wherever the lookup itself lists the unit, which can differ from where the old copy stands. A bot shares its
+     * unit objects with its planner's game, so when the bot moves a unit while choosing a hex, only the planner's
+     * lookup hears about it. Trusting the old copy instead goes wrong in two ways (see
+     * {@code SharedEntityPositionLookupTest}):
+     * <ul>
+     *     <li>a unit listed on a hex it was merely tried on would keep that entry forever;</li>
+     *     <li>a unit that ends its move on the hex the bot already put it on would look unmoved, and would never be
+     *     listed at all. Other units could then be sent to deploy on top of it.</li>
+     * </ul>
+     *
+     * <p>An empty lookup has not been built yet. It is built from every unit when it is first read, so the old copy's
+     * position is used, which leaves the lookup empty for a unit that has not moved.</p>
+     *
+     * @param oldEntity the copy of the unit being replaced
+     *
+     * @return the hexes to remove the unit from in the position lookup
+     */
+    private HashSet<Coords> getPositionsToReplace(Entity oldEntity) {
+        HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
+        if (entityPosLookup.isEmpty()) {
+            return oldPositions;
+        }
+        HashSet<Coords> listedPositions = getEntityPositions(oldEntity);
+        if (!oldPositions.equals(listedPositions)) {
+            logger.debug("[PositionLookup] {}: listed on {}, but the unit stood on {}",
+                  oldEntity.getDisplayName(), listedPositions, oldPositions);
+        }
+        return listedPositions;
     }
 
     @Override
@@ -2299,7 +2328,8 @@ public final class Game extends AbstractGame implements Serializable,
     /**
      * Determines if the indicated entity is stranded on transport that can't move.
      * <p>
-     * According to Randall Bills, the "minimum move" rule allow stranded units to dismount at the start of the turn.
+     * According to Randall Bills, the "minimum move" rule allows stranded units to dismount at the start of the turn.
+     * A unit aboard a transport that has not deployed yet is not stranded.
      *
      * @param entity the <code>Entity</code> that may be stranded
      * @return <code>true</code> if the entity is stranded <code>false</code>
@@ -2314,6 +2344,11 @@ public final class Game extends AbstractGame implements Serializable,
 
             // aero units don't count here
             if (transport instanceof Aero) {
+                return false;
+            }
+
+            // A transport that has not entered the map yet carries its units in with it
+            if (!transport.isDeployed()) {
                 return false;
             }
 

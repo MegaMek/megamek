@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -154,6 +154,12 @@ public class BrushOffAttackAction extends AbstractAttackAction {
               && (target.getTargetType() != Targetable.TYPE_I_NARC_POD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Can only brush off swarming infantry or iNarc Pods");
+        }
+
+        // Under Core rules an attached pod stays until its location is destroyed
+        if ((target.getTargetType() == Targetable.TYPE_I_NARC_POD)
+              && !Game.rulesManager.getRulesPhysical().canRemoveINarcPods()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "iNarc pods can not be removed under Core rules");
         }
 
         // Quads can't brush off.

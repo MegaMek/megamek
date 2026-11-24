@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -52,7 +52,7 @@ record DestroyedElement(String text) implements ViewElement {
 
     @Override
     public String toHTML() {
-        String colorString = UIUtil.colorString(GUIP.getWarningColor());
+        String colorString = UIUtil.colorString(GUIP.getWarningColorForTheme());
         return HTML_FORMAT.formatted(colorString, text);
     }
 

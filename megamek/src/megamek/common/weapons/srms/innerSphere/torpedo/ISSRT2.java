@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,8 +77,8 @@ public class ISSRT2 extends SRTWeapon {
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
-              .setISAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
+              .setISAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setReintroductionFactions(Faction.FW);

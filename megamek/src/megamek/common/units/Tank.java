@@ -717,7 +717,10 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     @Override
     public boolean isImmobile(boolean checkCrew) {
         if (isActiveOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES)) {
-            return super.isImmobile(checkCrew);
+            // The option waives the immobile penalty for drive and engine damage only. A vehicle whose crew was
+            // killed (a carcass) is immobile whatever the motive state, TW p.194.
+            boolean isCrewKilled = checkCrew && isCarcass();
+            return isCrewKilled || super.isImmobile(checkCrew);
         }
 
         if (isTrailer()) {
@@ -1385,7 +1388,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                     } else if (bRear) {
                         rv = new HitData(LOC_LEFT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
-                        rv = new HitData(LOC_LEFT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        rv = new HitData(LOC_RIGHT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     }
                     rv.setMotiveMod(motiveMod);
                     break;
@@ -1966,6 +1969,19 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         burningLocations = 0;
         infernoFire = false;
         infernos.clear();
+    }
+
+    @Override
+    public void clearGameState() {
+        super.clearGameState();
+        unjamTurret(getLocTurret());
+        unjamTurret(getLocTurret2());
+        resetJammedWeapons();
+        extinguishAll();
+        m_nStunnedTurns = 0;
+        // Fortifying and rubble clearing in progress refer to hexes of the last game's map
+        cancelFortify();
+        cancelClearingRubble();
     }
 
     /**

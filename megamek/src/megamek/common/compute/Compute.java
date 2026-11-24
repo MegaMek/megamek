@@ -442,6 +442,23 @@ public class Compute {
     }
 
     /**
+     * Rounds odds from {@link #oddsAbove(int, boolean)} down to one decimal place for display. Rounding down means a
+     * roll that can still fail never shows as 100%. For example, a target number of 3 rolled with Natural Aptitude is
+     * 99.54%, which shows as 99.5% rather than 100%.
+     *
+     * <p>One decimal place, not two, because the 2d6 odds are stored to one decimal place: 8 or more is stored as
+     * 41.6, so two places would show a false 41.60.</p>
+     *
+     * @param odds the odds of success, from 0 to 100
+     *
+     * @return the odds rounded down to one decimal place
+     */
+    public static double oddsAsDisplayPercent(double odds) {
+        // The tiny nudge stops a stored 97.2 from flooring to 97.1 when 97.2 * 10 lands just under 972
+        return Math.floor((odds * 10.0) + 1.0e-9) / 10.0;
+    }
+
+    /**
      * Returns an entity if the specified entity would cause a stacking violation entering a hex, or returns null if it
      * would not. The returned entity is the entity causing the violation.
      * <p>
@@ -560,7 +577,8 @@ public class Compute {
      * @param destBoardId  Allows setting a different board for checking destination hex
      * @param transport    Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode    The moving Entity's climb mode at the point it enters the destination hex
-     * @param ignoreHidden true by default.
+     * @param ignoreHidden {@code true} to leave hidden enemies of the entering unit out of the check, as that unit
+     *                     does not know they are there; hidden units on its own side always count
      *
      * @return Entity instance that is causing the violation
      */
@@ -641,8 +659,10 @@ public class Compute {
                     continue;
                 }
 
-                // We are not allowed to consider hidden units here!
-                if (ignoreHidden && inHex.isHidden()) {
+                // A hidden enemy must not be considered: the entering unit does not know it is there. A hidden unit
+                // on the entering unit's own side is known to it and takes up room like any other unit.
+                boolean isUndiscoveredEnemy = inHex.isHidden() && inHex.isEnemyOf(entering);
+                if (ignoreHidden && isUndiscoveredEnemy) {
                     continue;
                 }
 
@@ -1035,22 +1055,56 @@ public class Compute {
     /**
      * Gets a valid displacement, from the hexes around src, as close to the original direction as is possible.
      *
-     * @return valid displacement coords, or null if none
+     * @return valid displacement coords, or {@code null} if none
      */
+    @Nullable
     public static Coords getValidDisplacement(Game game, int entityId,
           Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
-        int range = 1;
-        // check for a central drop-ship hex and if so, then displace to a two
-        // hex radius
-        for (Entity en : game.getEntitiesVector(src)) {
-            if ((en instanceof Dropship) && !en.isAirborne()
-                  && en.getPosition().equals(src)) {
-                range = 2;
+        int[] offsets = { 0, 1, 5, 2, 4, 3 };
+        int range = getDisplacementRange(game, src);
+        for (int offset : offsets) {
+            Coords destination = src.translated((direction + offset) % 6, range);
+            if (Compute.isValidDisplacement(game, entityId, src, destination)) {
+                return destination;
+            }
+            // code here borrowed from Compute.coordsAtRange
+            for (int count = 1; count < range; count++) {
+                destination = destination.translated((direction + offset + 2) % 6);
+                if (Compute.isValidDisplacement(game, entityId, src, destination)) {
+                    return destination;
+                }
             }
         }
+        // no hex around the source can take the unit
+        return null;
+    }
+
+    /**
+     * Gets the hex a unit is displaced into by an accidental fall from above. The rules in play decide how the hex is
+     * picked: Total Warfare looks nearest to the given direction first, the Core rules pick at random (Core p.116).
+     * Every other displacement follows its direction and uses {@link #getValidDisplacement(Game, int, Coords, int)}.
+     *
+     * @return valid displacement coords, or {@code null} if none
+     */
+    @Nullable
+    public static Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction) {
         return Game.rulesManager.getRulesMovement().getAccidentalFallDisplacement(game, entityId, src, direction,
-              range);
+              getDisplacementRange(game, src));
+    }
+
+    /**
+     * How far a unit is displaced out of the given hex: two hexes out of the central hex of a grounded DropShip,
+     * otherwise one.
+     */
+    private static int getDisplacementRange(Game game, Coords src) {
+        for (Entity entity : game.getEntitiesVector(src)) {
+            if ((entity instanceof Dropship) && !entity.isAirborne()
+                  && entity.getPosition().equals(src)) {
+                return 2;
+            }
+        }
+        return 1;
     }
 
     /**

@@ -1,0 +1,60 @@
+name: Game suite release tooling tests
+
+on:
+  pull_request:
+    paths:
+      - "scripts/suite_*.py"
+      - "scripts/test_suite_*.py"
+      - "gradle/suite_*"
+      - "gradle/test_suite_*.py"
+      - "megamek/testresources/suite-records/**"
+      - ".github/workflows/game-suite-*.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/suite_*.py"
+      - "scripts/test_suite_*.py"
+      - "gradle/suite_*"
+      - "gradle/test_suite_*.py"
+      - "megamek/testresources/suite-records/**"
+      - ".github/workflows/game-suite-*.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: game-suite-release-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      # The shared verifier tests load the Lab/HQ/mm-data adapters from sibling checkouts.
+      - uses: actions/checkout@v7
+        with:
+          path: megamek
+          persist-credentials: false
+      - name: Clone sibling repositories at main
+        run: |
+          for repo in megameklab mekhq mm-data; do
+            git clone --depth 1 "https://github.com/MegaMek/$repo.git" "$repo"
+          done
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Coordinator, planner and publisher tests
+        working-directory: megamek
+        run: python3 -m unittest discover -s scripts -p 'test_suite_*.py' -v
+      - name: Shared archive verifier and canonical data tests
+        working-directory: megamek
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: python3 -m unittest discover -s gradle -p 'test_suite_*.py' -v

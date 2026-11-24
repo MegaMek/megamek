@@ -197,6 +197,33 @@ class MovementDisplayTest {
     }
 
     @Test
+    @DisplayName("clear preserves mechanical booster subgear for a deployed jump path")
+    void clearWithMechanicalBoosterJumpPreservesSubGear() throws Exception {
+        BipedMek mek = new BipedMek();
+        mek.setGame(game);
+        mek.setPosition(new Coords(0, 0));
+        mek.setBoardId(game.getBoard().getBoardId());
+        game.addEntity(mek);
+        movementDisplay.currentEntity = mek.getId();
+
+        MovePath jumpPath = new MovePath(game, mek);
+        jumpPath.addStep(MoveStepType.DEPLOY);
+        setField(movementDisplay, "cmd", jumpPath);
+        setField(movementDisplay, "gear", MovementDisplay.GEAR_JUMP);
+        setField(movementDisplay, "jumpSubGear", MovementDisplay.GEAR_SUB_MEK_BOOSTERS);
+
+        movementDisplay.clear();
+
+        assertEquals(MovementDisplay.GEAR_SUB_MEK_BOOSTERS, readField(movementDisplay, "jumpSubGear"),
+                     "clear should preserve the selected mechanical booster subgear.");
+        MovePath refreshed = (MovePath) readField(movementDisplay, "cmd");
+        assertNotNull(refreshed, "clear should rebuild the jump path.");
+        assertEquals(MoveStepType.START_JUMP, refreshed.getStep(0).getType());
+        assertEquals(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER, refreshed.getStep(1).getType());
+        assertEquals(MoveStepType.DEPLOY, refreshed.getStep(2).getType());
+    }
+
+    @Test
     @DisplayName("movement path rebuild keeps a deploy step for walk-on deployments")
     void clearRebuildsWalkOnMovementPathWithDeployStep() throws Exception {
         BipedMek mek = new BipedMek();

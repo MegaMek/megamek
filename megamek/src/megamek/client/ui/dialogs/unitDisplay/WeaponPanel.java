@@ -781,7 +781,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private void createTargetDisplay(JPanel parent) {
         wTargetInfo = new JTextPane();
         setupTextPane(wTargetInfo);
-        addSubDisplay(parent, wTargetInfo, LINE_HEIGHT * 2, GridBagConstraints.BOTH);
+
+        // The target's details can run longer than the space below the split, so they scroll rather than get cut off
+        JScrollPane targetInfoScroll = new JScrollPane(wTargetInfo);
+        addSubDisplay(parent, targetInfoScroll, LINE_HEIGHT * 2, GridBagConstraints.BOTH);
     }
 
     public void clearToHit() {
@@ -796,11 +799,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         String txt = switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE, TargetRoll.AUTOMATIC_FAIL -> String.format("To Hit: (0%%) %s", toHit.getDesc());
             case TargetRoll.AUTOMATIC_SUCCESS -> String.format("To Hit: (100%%) %s", toHit.getDesc());
-            default -> String.format("<font color=\"%s\">To Hit: <b>%2d (%2.0f%%)</b></font> = %s",
+            default -> String.format("<font color=\"%s\">To Hit: <b>%2d (%.1f%%)</b></font> = %s%s",
                   GUIPreferences.hexColor(GUIP.getUnitToolTipHighlightColor()),
                   toHit.getValue(),
-                  Compute.oddsAbove(toHit.getValue(), natAptGunnery),
-                  toHit.getDesc());
+                  Compute.oddsAsDisplayPercent(Compute.oddsAbove(toHit.getValue(), natAptGunnery)),
+                  toHit.getDesc(),
+                  natAptGunnery ? " " + Messages.getString("MekDisplay.NaturalAptitudeRoll") : "");
         };
 
         toHitText.setText(UnitToolTip.wrapWithHTML(txt));
@@ -836,6 +840,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         wTargetInfo.setText(UnitToolTip.wrapWithHTML(txt));
+        // Start at the top of the new target's details, not wherever the caret was left by setText
+        wTargetInfo.setCaretPosition(0);
     }
 
     @Override
@@ -1757,14 +1763,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
               && unitDisplayPanel.getClientGUI().getClient().getGame().getOptions().booleanOption(
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ENERGY_WEAPONS)) {
             if (mounted.hasChargedCapacitor() != 0) {
-                if (mounted.hasChargedCapacitor() == 1) {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
-                          mounted, weaponType) + 5));
-                }
-                if (mounted.hasChargedCapacitor() == 2) {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
-                          mounted, weaponType) + 10));
-                }
+                wDamR.setText(Integer.toString(Compute.dialDownDamage(
+                      mounted, weaponType) + 5));
             } else {
                 wDamR.setText(Integer.toString(Compute.dialDownDamage(
                       mounted, weaponType)));

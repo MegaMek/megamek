@@ -364,4 +364,13 @@ public class CoreRulesPhysical extends RulesPhysical {
     public boolean muleWeaponsCheck() {
         return false;
     }
+
+    /**
+     * {@inheritDoc} A Narc or iNarc pod is only destroyed when the location it is attached to is destroyed, and
+     * otherwise remains in effect for the entire battle. Core p.188, p.193
+     */
+    @Override
+    public boolean canRemoveINarcPods() {
+        return false;
+    }
 }

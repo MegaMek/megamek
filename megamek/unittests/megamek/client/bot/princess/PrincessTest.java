@@ -228,6 +228,8 @@ class PrincessTest {
         when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
         when(game.getOptions()).thenReturn(options);
         when(game.getTurn()).thenReturn(turn);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(Entity.NONE);
         when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
         when(options.booleanOption(anyString())).thenReturn(false);
 
@@ -245,7 +247,8 @@ class PrincessTest {
         when(undeployed.getPosition()).thenReturn(null);
         when(undeployed.getDisplayName()).thenReturn("Undeployed");
 
-        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(deployed, undeployed));
+        when(game.inGameTWEntities()).thenReturn(List.of(deployed, undeployed));
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(deployed));
 
         assertEquals(undeployed, mockPrincess.getEntityToMove());
     }
@@ -283,6 +286,32 @@ class PrincessTest {
         when(game.getEntity(2)).thenReturn(secondUndeployed);
 
         assertEquals(secondUndeployed, mockPrincess.getEntityToMove());
+    }
+
+    /** Issue #9390: a unit whose move the server refused is not picked again in the same phase. */
+    @Test
+    void testGetEntityToMoveSkipsAUnitTheServerRefused() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
+
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(1);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+
+        Entity refused = mockUndeployedUnit("Refused");
+        Entity nextUndeployed = mockUndeployedUnit("Next");
+        when(game.getEntity(1)).thenReturn(refused);
+        when(game.inGameTWEntities()).thenReturn(List.of(refused, nextUndeployed));
+        // As in a real game: a unit with no position is not in this list
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of());
+        when(mockPrincess.isRefusedThisPhase(refused)).thenReturn(true);
+
+        assertEquals(nextUndeployed, mockPrincess.getEntityToMove());
     }
 
     private static Entity mockUndeployedUnit(String name) {
@@ -340,6 +369,8 @@ class PrincessTest {
         when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
         when(game.getOptions()).thenReturn(options);
         when(game.getTurn()).thenReturn(turn);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(Entity.NONE);
         when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
         when(options.booleanOption(anyString())).thenReturn(false);
 
@@ -347,9 +378,63 @@ class PrincessTest {
         Entity mek = mockUndeployedUnit("Rifleman RFL-3N");
         when(mockPrincess.canWalkOnThisRound(tractor)).thenReturn(false);
         when(mockPrincess.canWalkOnThisRound(mek)).thenReturn(true);
-        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(tractor, mek));
+        when(game.inGameTWEntities()).thenReturn(List.of(tractor, mek));
+        // As in a real game: a unit with no position is not in this list
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of());
 
         assertEquals(mek, mockPrincess.getEntityToMove());
+    }
+
+    @Test
+    void testGetEntityToMoveDoesNotWalkOnTheFirstDeployableUnitWhenItIsCarried() {
+        // Issue #9389: battle armor riding a VTOL enters with the VTOL. Picking it for a walk-on made the server refuse
+        // the move, and the game hung
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+
+        Entity battleArmor = mockUndeployedUnit("Purifier Adaptive Battle Armor");
+        when(battleArmor.isTransported()).thenReturn(true);
+        Entity vtol = mockUndeployedUnit("Pinto Attack VTOL");
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(86);
+        when(game.getEntity(86)).thenReturn(battleArmor);
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
+        when(game.inGameTWEntities()).thenReturn(List.of(battleArmor, vtol));
+        // As in a real game: a unit with no position is not in this list
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of());
+
+        assertEquals(vtol, mockPrincess.getEntityToMove());
+    }
+
+    @Test
+    void testGetEntityToMoveDoesNotWalkOnACarriedUnit() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(Entity.NONE);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity battleArmor = mockUndeployedUnit("Purifier Adaptive Battle Armor");
+        when(battleArmor.isTransported()).thenReturn(true);
+        Entity vtol = mockUndeployedUnit("Pinto Attack VTOL");
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
+        when(game.inGameTWEntities()).thenReturn(List.of(battleArmor, vtol));
+        // As in a real game: a unit with no position is not in this list
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of());
+
+        assertEquals(vtol, mockPrincess.getEntityToMove());
     }
 
     @Test
@@ -1014,6 +1099,31 @@ class PrincessTest {
         bin1.setShotsLeft(1);
         conserveMap = mockPrincess.calcAmmoConservation(mek1);
         assertTrue(conserveMap.get(wpn1) <= target);
+    }
+
+    @Test
+    void testCalcAmmoSplitsSharedShotsBetweenLaunchers() throws LocationFullException {
+        // Issue 9376: two launchers sharing two shots have one shot each, so each should be as careful as a lone
+        // launcher down to its last shot, not fire as though both shots were its own
+        BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        when(mockBehavior.getHyperAggressionIndex()).thenReturn(5);
+        when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
+        Mek loneLauncherMek = new BipedMek();
+        Mounted<?> loneBin = loneLauncherMek.addEquipment(mockAC5AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> loneLauncher = loneLauncherMek.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
+        loneBin.setShotsLeft(1);
+
+        Mek twinLauncherMek = new BipedMek();
+        Mounted<?> sharedBin = twinLauncherMek.addEquipment(mockAC5AmmoType, Mek.LOC_CENTER_TORSO);
+        Mounted<?> firstLauncher = twinLauncherMek.addEquipment(mockAC5, Mek.LOC_RIGHT_TORSO);
+        Mounted<?> secondLauncher = twinLauncherMek.addEquipment(mockAC5, Mek.LOC_LEFT_TORSO);
+        sharedBin.setShotsLeft(2);
+
+        double loneThreshold = mockPrincess.calcAmmoConservation(loneLauncherMek).get((WeaponMounted) loneLauncher);
+        Map<WeaponMounted, Double> twinThresholds = mockPrincess.calcAmmoConservation(twinLauncherMek);
+        assertEquals(loneThreshold, twinThresholds.get((WeaponMounted) firstLauncher), 0.0001);
+        assertEquals(loneThreshold, twinThresholds.get((WeaponMounted) secondLauncher), 0.0001);
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -59,7 +59,7 @@ import java.util.TreeSet;
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.tileset.HexTileset;
-import megamek.client.ui.util.ImageCache;
+import megamek.client.ui.util.ImageKeyedCache;
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.BoardType;
@@ -81,7 +81,7 @@ class TerrainShadowHelper {
           null);
 
     private final BoardView boardView;
-    private final ImageCache<Integer, BufferedImage> shadowImageCache = new ImageCache<>();
+    private final ImageKeyedCache<BufferedImage> shadowImageCache = new ImageKeyedCache<>();
 
     /**
      * Creates a shadow map helper for the given BoardView.
@@ -410,7 +410,7 @@ class TerrainShadowHelper {
         if ((orig == null) || (orig.getWidth(null) < 0) || (orig.getHeight(null) < 0)) {
             return null;
         }
-        BufferedImage mask = shadowImageCache.get(orig.hashCode());
+        BufferedImage mask = shadowImageCache.get(orig);
         if (mask == null) {
             GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment()
                   .getDefaultScreenDevice()
@@ -429,7 +429,7 @@ class TerrainShadowHelper {
             if (!conditions.getLight().isDay()) {
                 mask = BLUR_OP.filter(mask, null);
             }
-            shadowImageCache.put(orig.hashCode(), mask);
+            shadowImageCache.put(orig, mask);
         }
         return mask;
     }

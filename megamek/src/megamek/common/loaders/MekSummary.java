@@ -65,6 +65,7 @@ import megamek.common.battlefieldSupport.BFSDamage;
 import megamek.common.battlefieldSupport.BFSRange;
 import megamek.common.battlefieldSupport.BFSSpecial;
 import megamek.common.battlefieldSupport.BFSSpecialType;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.Mounted;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionInfo;
@@ -88,9 +89,13 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      * Pinning it stops the next field addition from doing the same. Bump it only for a change that genuinely cannot be
      * read back, and expect a full cache rebuild when you do.
      * </p>
+     * <p>
+     * Bumped to 3 for the tech rating: an older cache reads back with it missing, and nothing would rescan those
+     * units to fill it in.
+     * </p>
      */
     @Serial
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     private static final MMLogger logger = MMLogger.create(MekSummary.class);
     private String name;
@@ -118,6 +123,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private boolean invalid;
     private String techLevel;
     private int techLevelCode;
+    private TechRating techRating;
     private String techBase;
     private boolean failedToLoadEquipment;
     private String entryName; // for files in zips
@@ -431,6 +437,13 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public int getTechLevelCode() {
         return techLevelCode;
+    }
+
+    /**
+     * @return the unit's overall tech rating, or {@code null} if the summary was built without one
+     */
+    public @Nullable TechRating getTechRating() {
+        return techRating;
     }
 
     public String getTechBase() {
@@ -1239,6 +1252,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public void setTechLevelCode(int i) {
         this.techLevelCode = i;
+    }
+
+    public void setTechRating(@Nullable TechRating techRating) {
+        this.techRating = techRating;
     }
 
     public void setTechBase(String s) {

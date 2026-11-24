@@ -65,10 +65,10 @@ public class EditBotsDialog extends AbstractButtonDialog {
     private static final int REPLACE_WITH_PRINCESS_INDEX = 1;
 
     /**
-     * Index of the CASPAR replacement choice, present only when the experimental bot is enabled.
+     * Index of the CASPAR replacement choice, present only when the CASPAR bot is enabled.
      *
-     * <p>CASPAR is a hidden option: {@code UseCASPAR} defaults to off and is in no settings UI, so the choice is
-     * added to the combo box only when it is switched on. When it is off the box is exactly as it was.</p>
+     * <p>{@code UseCASPAR} defaults to on and is in no settings UI, so the choice is added to the combo box
+     * unless it is switched off. When it is off the box is exactly as it was.</p>
      */
     private static final int REPLACE_WITH_CASPAR_INDEX = 2;
 
@@ -76,7 +76,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
     private static final int KICK_INDEX = 1;
     private static final int EDIT_CONFIG_INDEX = 2;
 
-    /** Whether the experimental CASPAR bot is offered as a replacement, from the {@code UseCASPAR} client setting. */
+    /** Whether the CASPAR bot is offered as a replacement, from the {@code UseCASPAR} client setting. */
     private final boolean casparAvailable = PreferenceManager.getClientPreferences().getUseCASPAR();
 
     /** A ClientGUI given to the dialog. */

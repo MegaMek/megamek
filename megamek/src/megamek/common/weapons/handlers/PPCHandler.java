@@ -64,23 +64,30 @@ import megamek.server.totalWarfare.TWGameManager;
 public class PPCHandler extends EnergyWeaponHandler {
     @Serial
     private static final long serialVersionUID = 5545991061428671743L;
-    private int chargedCapacitor = 0;
+    /** The extra damage a charged PPC Capacitor adds to its PPC's shot. */
+    private static final int PPC_CAPACITOR_DAMAGE_BONUS = 5;
+    private boolean chargedCapacitor = false;
 
     public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         // remember capacitor state and turn it off here,
         // so a crit in the firing phase does not cause an explosion, per the
         // rules in TO
-        if (weapon.hasChargedCapacitor() != 0) {
-            if (weapon.hasChargedCapacitor() == 2) {
-                chargedCapacitor = 2;
-                weapon.getCrossLinkedBy().setMode("Off");
-            }
-            if (weapon.hasChargedCapacitor() == 1) {
-                chargedCapacitor = 1;
-                weapon.getLinkedBy().setMode("Off");
-            }
+        chargedCapacitor = weapon.hasChargedCapacitor() == 1;
+        if (chargedCapacitor) {
+            weapon.getLinkedBy().setMode("Off");
         }
+    }
+
+    /**
+     * A charged PPC Capacitor adds {@code 5} to the PPC's damage, and so to its Attack Value when the Attack Value is
+     * used.
+     *
+     * @return {@code 5} with a charged capacitor, otherwise {@code 0}
+     */
+    @Override
+    protected int getAttackValueBonus() {
+        return chargedCapacitor ? PPC_CAPACITOR_DAMAGE_BONUS : 0;
     }
 
     /*
@@ -97,8 +104,8 @@ public class PPCHandler extends EnergyWeaponHandler {
             toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
 
-        if (chargedCapacitor != 0) {
-            toReturn += 5;
+        if (chargedCapacitor) {
+            toReturn += PPC_CAPACITOR_DAMAGE_BONUS;
         }
         // during a swarm, all damage gets applied as one block to one location
         if ((attackingEntity instanceof BattleArmor)
@@ -224,7 +231,7 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
         }
         // resolve roll for charged capacitor
-        if (chargedCapacitor != 0) {
+        if (chargedCapacitor) {
             Report r = Game.rulesManager.getRulesWeapons().checkPPCCapacitor(roll.getIntValue(), attackingEntity,
                   weapon);
             if (r != null) {

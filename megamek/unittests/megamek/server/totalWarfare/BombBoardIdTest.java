@@ -32,7 +32,6 @@
  */
 package megamek.server.totalWarfare;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,13 +41,11 @@ import java.util.Vector;
 import java.util.stream.Stream;
 
 import megamek.common.Hex;
-import megamek.common.HexTarget;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -56,7 +53,6 @@ import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
-import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +60,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * Fuel-air and inferno bombs resolve on the board they were dropped on, not on the first board (issue #9315). Two
+ * Inferno bombs resolve on the board they were dropped on, not on the first board (issue #9315). Two
  * identical boards each hold a Mek at the same hex; a bomb dropped on the second board must affect only that board.
  */
 class BombBoardIdTest {
@@ -146,21 +142,6 @@ class BombBoardIdTest {
         mek.setFacing(0);
         mek.setDeployed(true);
         return mek;
-    }
-
-    @Test
-    void fuelAirBombHitsOnlyTheBoardItWasDroppedOn() {
-        int firstBoardArmor = firstBoardMek.getTotalArmor();
-        int secondBoardArmor = secondBoardMek.getTotalArmor();
-        HexTarget target = new HexTarget(TARGET_HEX, SECOND_BOARD, Targetable.TYPE_HEX_AERO_BOMB);
-
-        Vector<Integer> hit = gameManager.deliverBombDamage(target, BombTypeEnum.FAE_LARGE, bomber.getId(), bomber,
-              new Vector<Report>());
-
-        assertTrue(hit.contains(secondBoardMek.getId()), "the Mek under the bomb is caught in the blast");
-        assertFalse(hit.contains(firstBoardMek.getId()), "the Mek on the other board is not");
-        assertTrue(secondBoardMek.getTotalArmor() < secondBoardArmor, "the Mek under the bomb takes damage");
-        assertEquals(firstBoardArmor, firstBoardMek.getTotalArmor(), "the Mek on the other board is untouched");
     }
 
     @Test

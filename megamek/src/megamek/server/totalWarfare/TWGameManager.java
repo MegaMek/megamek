@@ -394,6 +394,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new ForcedWithdrawalOrderCommand(server, this));
         commands.add(new UnitOrderCommand(server, this));
         commands.add(new RadioCommand(server, this));
+        commands.add(new PingCommand(server));
+        commands.add(new GameMasterPingCommand(server));
         commands.add(new ChangeWeatherCommand(server, this));
         commands.add(new TraitorCommand(server, this));
         commands.add(new ListEntitiesCommand(server, this));
@@ -1128,6 +1130,11 @@ public class TWGameManager extends AbstractGameManager {
                         // bot to this seat instead of guessing.
                         if (packet.getObject(1) instanceof AIType aiType) {
                             game.recordBotType(player.getName(), aiType);
+                            // Tell every client too, not only those that connect later: only CASPAR bots take unit
+                            // orders, so a player who joined before this bot needs its type to be offered them.
+                            // Copied to a plain HashMap for the same reason as on connect.
+                            send(new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings(),
+                                  new HashMap<>(getGame().getBotTypes())));
                         }
                     }
                     break;
@@ -2955,8 +2962,9 @@ public class TWGameManager extends AbstractGameManager {
             // We don't use the hashmap for individual initiative, so can ignore it here
             TurnOrdered.rollInitiative(game.getEntitiesVector(), false, new HashMap<>());
         } else {
+            // Every team's aptitude goes into one map, then all teams roll once
+            Map<Team, Integer> initiativeAptitude = new HashMap<>();
             for (Team team : game.getTeams()) {
-                Map<Team, Integer> initiativeAptitude = new HashMap<>();
                 boolean commanderHasCombatSense = false;
                 boolean commanderHasCombatParalysis = false;
 
@@ -2979,13 +2987,13 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     initiativeAptitude.put(team, TEAM_HAS_NO_INITIATIVE_APTITUDE);
                 }
-
-                // Roll for initiative on the teams.
-                TurnOrdered.rollInitiative(game.getTeams(),
-                      game.getOptions().booleanOption(INIT_INITIATIVE_STREAK_COMPENSATION) &&
-                            !game.shouldDeployThisRound(),
-                      initiativeAptitude);
             }
+
+            // Roll for initiative on the teams.
+            TurnOrdered.rollInitiative(game.getTeams(),
+                  game.getOptions().booleanOption(INIT_INITIATIVE_STREAK_COMPENSATION) &&
+                        !game.shouldDeployThisRound(),
+                  initiativeAptitude);
         }
 
         transmitAllPlayerUpdates();
@@ -3712,10 +3720,16 @@ public class TWGameManager extends AbstractGameManager {
             game.setTurnVector(new ArrayList<>());
         } else {
             for (Entity entity : game.getEntitiesVector()) {
-                if (entity.isEligibleFor(phase)) {
-                    assistable = true;
-                } else {
+                if (!entity.isEligibleFor(phase)) {
                     assistants.addElement(entity);
+                } else if (!Game.rulesManager.getRulesGame().eligibleForPhase(entity, phase)) {
+                    // determineTurnOrder gives this unit no turn, so it must not stay selectable: a unit that can
+                    // be picked without a turn of its own spends a turn that belongs to another unit.
+                    LOGGER.info("[TurnOrder] {} gets no {} turn under the active rules system; marking it done",
+                          entity.getShortName(), phase);
+                    assistants.addElement(entity);
+                } else {
+                    assistable = true;
                 }
             }
         }
@@ -4584,9 +4598,24 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if ((turn == null) || !turn.isValid(connectionId, entity, game)) {
-                LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}",
+                LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}; "
+                            + "resending the turn so the sender can act again",
                       connectionId,
                       entity.getShortName());
+                // Without this the sender believes its turn is over while the server still waits on it
+                send(connectionId, packetHelper.createTurnListPacket());
+                send(connectionId, packetHelper.createTurnIndexPacket(connectionId));
+                return;
+            }
+
+            if (DeploymentServerHelper.deploysAlreadyDeployedUnit(entity, movePath)) {
+                LOGGER.error("Refused movement from connection {}: {} is already deployed at {} but the path deploys "
+                            + "it again; resending the turn so the sender can act again",
+                      connectionId,
+                      entity.getShortName(),
+                      entity.getPosition());
+                send(connectionId, packetHelper.createTurnListPacket());
+                send(connectionId, packetHelper.createTurnIndexPacket(connectionId));
                 return;
             }
 
@@ -4594,6 +4623,12 @@ public class TWGameManager extends AbstractGameManager {
             Coords positionBeforeMovement = entity.getPosition();
             MovePathHandler handler = new MovePathHandler(this, entity, movePath, losCache);
             handler.processMovement();
+            if (handler.isDeploymentRefused() && !getGame().getPhase().isSimultaneous(getGame())) {
+                // The sender has been handed this turn back to pick another hex. Ending it as well would cost the
+                // unit its move, and leave a bot answering a turn that has already passed. In a simultaneous phase a
+                // bot cannot tell a handed-back turn from the other players' turn changes, so the turn still ends
+                return;
+            }
             new ObjectiveResolutionHandler(this).toastZoneEntry(entity, positionBeforeMovement);
             datasetLogger.append(movePath, true);
 
@@ -9517,7 +9552,8 @@ public class TWGameManager extends AbstractGameManager {
                 violation = faller;
                 displacementRoll = null;
             }
-            Coords displacedTo = Compute.getValidDisplacement(game, violation.getId(), fallPosition, direction);
+            Coords displacedTo = Compute.getAccidentalFallDisplacement(game, violation.getId(), fallPosition,
+                  direction);
             if (displacedTo != null) {
                 reports.addAll(doEntityDisplacement(violation, fallPosition, displacedTo, displacementRoll));
                 // Update the violating entity's position on the
@@ -9645,7 +9681,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             // ok, we missed, let's fall into a valid other hex and not cause an
             // AFFA while doing so
-            Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+            Coords targetDest = Compute.getAccidentalFallDisplacement(game, entity.getId(), dest, direction);
             if (targetDest != null) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
                       entitySrcElevation,
@@ -11314,6 +11350,8 @@ public class TWGameManager extends AbstractGameManager {
                 resolveUnjam(entity);
             }
         }
+        // Clear the unjam actions (and anything else)
+        game.clearActions(true);
     }
 
     void resolveBoobyTraps() {
@@ -24435,23 +24473,33 @@ public class TWGameManager extends AbstractGameManager {
     private void dropCargo(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
         boolean cargoDropped = false;
 
-        for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
+        for (ICarryable carriedObject : entity.getDistinctCarriedObjects()) {
+            ICarryable cargo = CarriedUnitRelinker.currentInstanceOf(game, carriedObject);
             // if the cargo was dropped but not destroyed.
             if (!damageCargo(false, entity, cargo)) {
-                Report r = new Report(6722);
-                r.indent();
-                r.subject = entity.getId();
-                r.add(cargo.generalName());
-                vPhaseReport.add(r);
-
+                boolean cargoUnloaded = true;
                 if (cargo instanceof Entity carriedEntity) {
-                    unloadUnit(entity, carriedEntity, coords, entity.getFacing(), entity.getElevation());
+                    cargoUnloaded = unloadUnit(entity, carriedEntity, coords, entity.getFacing(),
+                          entity.getElevation());
+                    if (!cargoUnloaded) {
+                        LOGGER.error("{} could not drop {} in a fall: none of its transporters holds that unit",
+                              entity.getShortName(),
+                              carriedEntity.getShortName());
+                    }
                 } else {
                     entity.dropCarriedObject(cargo, false);
                     if (game.getBoard().contains(coords)) {
                         game.placeGroundObject(coords, cargo);
                         cargoDropped = true;
                     }
+                }
+
+                if (cargoUnloaded) {
+                    Report r = new Report(6722);
+                    r.indent();
+                    r.subject = entity.getId();
+                    r.add(cargo.generalName());
+                    vPhaseReport.add(r);
                 }
             } else {
                 // cargo was destroyed by the fall
@@ -25468,61 +25516,82 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * add fire to a hex
      *
-     * @param c         - the <code>Coords</code> of the hex to be set on fire
+     * @param hexCoords - the <code>Coords</code> of the hex to be set on fire
      * @param fireLevel - The level of fire, see Terrains
      */
-    public void ignite(Coords c, int boardId, int fireLevel, Vector<Report> vReport) {
+    public void ignite(Coords hexCoords, int boardId, int fireLevel, Vector<Report> reports) {
+        ignite(hexCoords, boardId, fireLevel, reports, false);
+    }
+
+    /**
+     * Sets a hex on fire because the Game Master placed the fire there. The TacOps start-fire game option decides
+     * whether attacks and other events can start fires; it does not stop a Game Master who chose to put one down, so
+     * it is not checked here. Planetary conditions that make fire impossible, such as a vacuum, still apply.
+     *
+     * <p>Whether the fire spreads afterward is still up to the game options, as for any other fire.</p>
+     *
+     * @param hexCoords the coordinates of the hex to set on fire
+     * @param fireLevel the level of fire, see Terrains
+     * @param reports   the list of reports to add the result to, or {@code null}
+     */
+    public void igniteByGameMaster(Coords hexCoords, int fireLevel, Vector<Report> reports) {
+        ignite(hexCoords, 0, fireLevel, reports, true);
+    }
+
+    private void ignite(Coords hexCoords, int boardId, int fireLevel, Vector<Report> reports,
+          boolean ignoreStartFireOption) {
         // you can't start fires in some planetary conditions!
         if (game.getPlanetaryConditions().cannotStartFire() != null) {
-            if (vReport != null) {
-                Report r = new Report(3007);
-                r.indent(2);
-                r.add(game.getPlanetaryConditions().cannotStartFire());
-                r.type = Report.PUBLIC;
-                vReport.add(r);
+            if (reports != null) {
+                Report report = new Report(3007);
+                report.indent(2);
+                report.add(game.getPlanetaryConditions().cannotStartFire());
+                report.type = Report.PUBLIC;
+                reports.add(report);
             }
             return;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
-            if (vReport != null) {
-                Report r = new Report(3008);
-                r.indent(2);
-                r.type = Report.PUBLIC;
-                vReport.add(r);
+        if (!ignoreStartFireOption
+              && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
+            if (reports != null) {
+                Report report = new Report(3008);
+                report.indent(2);
+                report.type = Report.PUBLIC;
+                reports.add(report);
             }
             return;
         }
 
-        Hex hex = game.getHex(c, boardId);
+        Hex hex = game.getHex(hexCoords, boardId);
         if (hex == null) {
             return;
         }
 
-        Report r = new Report(3005);
-        r.indent(2);
-        r.add(c.getBoardNum());
-        r.type = Report.PUBLIC;
+        Report report = new Report(3005);
+        report.indent(2);
+        report.add(hexCoords.getBoardNum());
+        report.type = Report.PUBLIC;
 
         // Adjust report message for inferno types
         switch (fireLevel) {
             case Terrains.FIRE_LVL_INFERNO:
-                r.messageId = 3006;
+                report.messageId = 3006;
                 break;
             case Terrains.FIRE_LVL_INFERNO_BOMB:
-                r.messageId = 3003;
+                report.messageId = 3003;
                 break;
             case Terrains.FIRE_LVL_INFERNO_IV:
-                r.messageId = 3004;
+                report.messageId = 3004;
                 break;
         }
 
         // report it
-        if (vReport != null) {
-            vReport.add(r);
+        if (reports != null) {
+            reports.add(report);
         }
         hex.addTerrain(new Terrain(Terrains.FIRE, fireLevel));
-        sendChangedHex(c, boardId);
+        sendChangedHex(hexCoords, boardId);
     }
 
     /**
@@ -26708,8 +26777,18 @@ public class TWGameManager extends AbstractGameManager {
         // stale (for example a unit that has not moved yet but whose client snapshot is marked done). Swapping it
         // in would overwrite the server's live turn state and could rob the owner of a move they still have. A
         // gamemaster editing damage must not spend the owner's action, so keep the server's turn/move state.
+        boolean isPlannedWalkOn = false;
         if (!game.getPhase().isLounge()) {
             preserveInPlayTurnState(oldEntity, entity);
+            // While a player plans a walk-on, their client already shows the unit deployed on the chosen hex. Only the
+            // move itself may deploy it, after its checks; taking the placement from here would skip those checks, and
+            // the move would then be refused for deploying the unit a second time.
+            isPlannedWalkOn = !oldEntity.isDeployed() && entity.isDeployed();
+            if (isPlannedWalkOn) {
+                LOGGER.debug("Update for {} from {} places a unit that has not deployed yet; keeping it off the board",
+                      entity.getDisplayName(), sender.getName());
+                preserveUndeployedState(oldEntity, entity);
+            }
             // A pending traitor switch is server-side state: /changeOwner sets it on the server's copy only, so a
             // client-sent copy never carries it. An update that does not itself order a switch (the Traitor button
             // does, and wins here) must not erase the pending one while it waits for the END phase.
@@ -26721,7 +26800,12 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         game.setEntity(entity.getId(), entity);
-        entityUpdate(entity.getId());
+        CarriedUnitRelinker.relinkAfterUpdate(game, entity);
+        // A planned walk-on is sent out once its move is processed; sending it now would lift the unit off the hex its
+        // player is still planning from
+        if (!isPlannedWalkOn) {
+            entityUpdate(entity.getId());
+        }
         if (entity.isPartOfFighterSquadron()) {
             // Update the stats of any Squadrons that the new units are part of
             FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
@@ -26803,6 +26887,21 @@ public class TWGameManager extends AbstractGameManager {
         if (oldEntity.getDisplacementAttack() != null) {
             newEntity.setDisplacementAttack(oldEntity.getDisplacementAttack());
         }
+    }
+
+    /**
+     * Puts a client-sent unit back off the board, where the server still has it. Everything else the client sent, such
+     * as a Mek's switch to its underwater maneuvering units, is kept.
+     *
+     * @param oldEntity the server's authoritative unit, which has not deployed yet
+     * @param newEntity the client-sent replacement, whose deployment state is overwritten
+     */
+    private void preserveUndeployedState(Entity oldEntity, Entity newEntity) {
+        newEntity.setDeployed(false);
+        // Marking the unit deployed cleared this on the client, and a first deployment is handled differently
+        newEntity.setNeverDeployed(oldEntity.wasNeverDeployed());
+        newEntity.setPosition(oldEntity.getPosition());
+        newEntity.setBoardId(oldEntity.getBoardId());
     }
 
     /**
@@ -26964,6 +27063,7 @@ public class TWGameManager extends AbstractGameManager {
             // Only update entities that existed; senderCanUpdateEntity handles the permission check
             if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
                 game.setEntity(entity.getId(), entity);
+                CarriedUnitRelinker.relinkAfterUpdate(game, entity);
 
                 // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)
                 List<Entity> c3affected = C3Util.wireC3(game, entity);
@@ -31315,17 +31415,18 @@ public class TWGameManager extends AbstractGameManager {
                         continue;
                     }
                     // Capture the unit.
-                    pe.pickUp(e);
-                    // The captured unit is being carried by the loader.
-                    e.setCaptured(true);
-                    e.setPickedUpById(pe.getId());
-                    e.setPickedUpByExternalId(pe.getExternalIdAsString());
+                    captureMekWarrior(e, pe);
                     pickedUp = true;
-                    r = new Report(6420, Report.PUBLIC);
-                    r.add(e.getDisplayName());
-                    r.addDesc(pe);
-                    addReport(r);
                     break;
+                }
+            }
+            // Finally, check for a crewed enemy turret or building. These are never targetable as units (they are
+            // attacked through their hex), so the checks above never see them.
+            if (!pickedUp) {
+                Entity capturingBuilding = new EjectedCrewCaptureHandler(this).findCapturingBuilding(e);
+                if (capturingBuilding != null) {
+                    captureMekWarrior(e, capturingBuilding);
+                    pickedUp = true;
                 }
             }
             if (pickedUp) {
@@ -31338,7 +31439,27 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * destroy all wheeled and tracked Tanks that got displaced into water
+     * Makes an ejected MekWarrior the prisoner of an enemy unit and reports it.
+     *
+     * @param mekWarrior the ejected MekWarrior
+     * @param captor     the unit that takes them prisoner
+     */
+    private void captureMekWarrior(MekWarrior mekWarrior, Entity captor) {
+        captor.pickUp(mekWarrior);
+        // The captured unit is being carried by the loader.
+        mekWarrior.setCaptured(true);
+        mekWarrior.setPickedUpById(captor.getId());
+        mekWarrior.setPickedUpByExternalId(captor.getExternalIdAsString());
+
+        Report report = new Report(6420, Report.PUBLIC);
+        report.add(mekWarrior.getDisplayName());
+        report.addDesc(captor);
+        addReport(report);
+    }
+
+    /**
+     * destroy all wheeled, tracked and hover Tanks that are immobile in water. Unbroken ice holds them up, so a hex
+     * with ice is skipped; once the ice breaks the ice terrain is removed and the Tank sinks.
      */
     void resolveSinkVees() {
         Iterator<Entity> sinkableTanks = game.getSelectedEntities(entity -> {
@@ -31352,6 +31473,7 @@ public class TWGameManager extends AbstractGameManager {
             return entity.getMovementMode().isTrackedWheeledOrHover() &&
                   entity.isImmobile() &&
                   (hex.terrainLevel(Terrains.WATER) > 0) &&
+                  !hex.containsTerrain(Terrains.ICE) &&
                   !onBridge &&
                   !(entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
                   !(entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL));
@@ -31420,9 +31542,13 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Remove all iNarc pods from all vehicles that did not move and shoot this round NOTE: this is not quite what the
-     * rules say, the player should be able to choose whether to remove all iNarc Pods that are attached.
+     * rules say, the player should be able to choose whether to remove all iNarc Pods that are attached. Does nothing
+     * when the rules do not allow removing pods (Core rules).
      */
     void resolveVeeINarcPodRemoval() {
+        if (!Game.rulesManager.getRulesPhysical().canRemoveINarcPods()) {
+            return;
+        }
         Iterator<Entity> vees = game.getSelectedEntities(entity -> (entity instanceof Tank) && (entity.mpUsed == 0));
         boolean canSwipePods;
         while (vees.hasNext()) {
@@ -32947,13 +33073,17 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Cycle through entities on team and collect all the airborne VTOL/WIGE vehicles Only vehicles can be affected by
-     * Blowing Sand (TO:AR 6th Ed. pg. 60)
+     * Blowing Sand (TO:AR 6th Ed. pg. 60). Units that have not entered the map are not in the sand.
      *
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOLForSand(Team team) {
         Vector<Integer> units = new Vector<>();
         for (Entity entity : game.getEntitiesVector()) {
+            // An undeployed unit has no position, so isAirborneVTOLorWIGE() falls back to its lobby elevation
+            if (!entity.isDeployed()) {
+                continue;
+            }
             for (Player player : team.players()) {
                 if (entity.getOwner().equals(player)) {
                     if (entity.isAirborneVTOLorWIGE() && !(entity instanceof LandAirMek)) {

@@ -62,5 +62,18 @@ public class SuiteOptions {
     public Locale getDateLocale() {
         return Locale.US;
     }
+
+    /**
+     * Returns the Locale used for formatting and parsing numbers (grouping and decimal separators). Each application
+     * applies this as the default {@link Locale.Category#FORMAT} Locale at startup so that numbers display the same
+     * way throughout the suite, regardless of the operating system's regional settings or the chosen UI language.
+     *
+     * <p>This is fixed to {@link Locale#US} for now and is the hook for a future user-facing number format option.</p>
+     *
+     * @return the Locale to use for number formatting
+     */
+    public static Locale getNumberFormatLocale() {
+        return Locale.US;
+    }
     // endregion Temporary
 }

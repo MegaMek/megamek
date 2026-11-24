@@ -239,19 +239,24 @@ public abstract class RulesPhysical {
     public abstract int getClubFindInRubble();
 
     /**
-     * Check if the quad can kick
-     *
-     * @param leg    what leg is kicking
-     * @param entity the entity that is kicking
-     *
-     * @return true if the kick is impossible
-     */
-    public abstract boolean quadMuleKickImpossible(int leg, Entity entity);
-
-    /**
      * What is the lance's base to-hit modifier?
      *
      * @return
      */
     public abstract int getLanceToHitModifier();
+
+    /**
+     * Check if you can mule kick if you fired weapons from the non-kicking leg.
+     *
+     * @return true if it must check both legs, false if only the kicking leg must not have fired weapons
+     */
+    public abstract boolean muleWeaponsCheck();
+
+    /**
+     * Can a unit remove an attached iNarc pod during play (a Mek brushing it off, or a vehicle crew pulling it off)?
+     *
+     * @return {@code true} if attached iNarc pods can be removed, {@code false} if they stay until their location is
+     *       destroyed
+     */
+    public abstract boolean canRemoveINarcPods();
 }

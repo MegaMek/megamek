@@ -32,6 +32,10 @@
  */
 package megamek.common.orders;
 
+import jakarta.annotation.Nullable;
+import megamek.client.bot.AIType;
+import megamek.common.Player;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 /**
@@ -61,5 +65,22 @@ public final class OrderEligibility {
             return true;
         }
         return entity.isConventionalFighter() || entity.isFixedWingSupport();
+    }
+
+    /**
+     * Whether a player's units take unit orders at all. Only CASPAR bots follow them; Princess keeps her original
+     * waypoints, given by chat command (HammerGS, 2026-11-05). A bot whose type the game has not recorded - a save from
+     * before types were kept, or one that has not reported yet - counts as Princess.
+     *
+     * @param game  the game, which records each bot's type by player name
+     * @param owner the player who owns the units, or {@code null}
+     *
+     * @return {@code true} if the owner is a CASPAR bot
+     */
+    public static boolean takesUnitOrders(Game game, @Nullable Player owner) {
+        if ((owner == null) || !owner.isBot()) {
+            return false;
+        }
+        return game.getBotTypes().get(owner.getName()) == AIType.CASPAR;
     }
 }

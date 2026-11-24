@@ -147,6 +147,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private boolean continueTurnFromCliffAscent = false;
     // Track if we already sent a special report popup for EMP mines during this move
     private boolean sentEMPPopupThisMove = false;
+    private boolean deploymentRefused = false;
 
     // get a list of coordinates that the unit passed through this turn
     // so that I can later recover potential bombing targets
@@ -305,6 +306,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                && (entity.moved == EntityMovementType.MOVE_NONE);
     }
 
+    /**
+     * Whether {@link #processMovement()} refused the path because the unit may not walk on where the path deploys it.
+     * Nothing was moved and the sender has been handed the same turn back, so outside simultaneous phases the caller
+     * must not end the turn.
+     *
+     * @return {@code true} if the walk-on deployment was refused
+     */
+    boolean isDeploymentRefused() {
+        return deploymentRefused;
+    }
+
     void processMovement() {
         // Do the deployment first, avoids future issues
         // Since the step DEPLOY is only used by WoD, just process if it has it.
@@ -341,11 +353,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             boolean isLegalLocation = deploymentProcess.isLegalDeployment(position, boardId, entity, facing);
             if (!isLegalLocation) {
-                String msg = "server got invalid deployment packet from connection " + entity.getOwnerId();
-                msg += ", Entity: " + entity.getShortName();
-                logger.error(msg);
-                gameManager.send(entity.getOwnerId(), gameManager.getPacketHelper().createTurnListPacket());
+                deploymentRefused = true;
+                deploymentProcess.refuseIllegalDeployment(entity.getOwnerId(), entity, position, entity.getOwnerId());
+                return;
+            }
 
+            // Under double blind the client cannot see enemy units, so it may deploy onto one (issue 9488)
+            Entity blocker = deploymentProcess.findDeploymentStackingViolation(entity, position, boardId,
+                  entityElevation, assaultDrop);
+            if (blocker != null) {
+                deploymentRefused = true;
+                deploymentProcess.refuseStackedDeployment(entity.getOwnerId(), entity, blocker, position,
+                      entity.getOwnerId());
                 return;
             }
 
@@ -522,8 +541,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 boolean fellWhileDescending = false;
                 for (int i = 1; i <= levelsToDescend; i++) {
                     PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    // The +1 climbing modifier is not applied to the climbing roll itself (TO:AR p.20)
                     psr.append(new PilotingRollData(entity.getId(),
-                                                    ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                    0,
                                                     "climbing down (level " + i + " of " + levelsToDescend + ")"));
                     if (climbableArms == 1) {
                         psr.append(new PilotingRollData(entity.getId(),
@@ -671,8 +691,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 boolean fellWhileDescending = false;
                 for (int i = 1; i <= levelsToDescend; i++) {
                     PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    // The +1 climbing modifier is not applied to the climbing roll itself (TO:AR p.20)
                     psr.append(new PilotingRollData(entity.getId(),
-                                                    ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                    0,
                                                     "climbing down (level " + i + " of " + levelsToDescend + ")"));
                     if (climbableArms == 1) {
                         psr.append(new PilotingRollData(entity.getId(),
@@ -2414,6 +2435,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // stop for illegal movement
             if (stepMoveType == EntityMovementType.MOVE_ILLEGAL) {
+                if (md.isEndStep(step)) {
+                    new HiddenFriendlyStackingHandler(gameManager).reportMoveStoppedShort(entity, step);
+                }
                 break;
             }
 
@@ -3310,6 +3334,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.BRACE) {
                 entity.setBraceLocation(step.getBraceLocation());
+                logger.info("[Brace] {}: braced {} at {} (hull down: {})", entity.getDisplayName(),
+                      entity.getLocationName(step.getBraceLocation()), curPos, entity.isHullDown());
             }
 
             if (step.getType() == MoveStepType.SHUTDOWN) {
@@ -4420,25 +4446,38 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     return;
                 }
 
+                cargo = CarriedUnitRelinker.currentInstanceOf(getGame(), cargo);
                 entity.dropCarriedObject(cargo, isLastStep);
+                boolean cargoUnloaded = true;
                 if (cargo instanceof Entity carriedEntity) {
-                    gameManager.unloadUnit(entity,
-                                           carriedEntity,
-                                           step.getPosition(),
-                                           step.getFacing(),
-                                           step.getElevation());
+                    cargoUnloaded = gameManager.unloadUnit(entity,
+                          carriedEntity,
+                          step.getPosition(),
+                          step.getFacing(),
+                          step.getElevation());
+                    if (cargoUnloaded) {
+                        logger.info("{} dropped {} at {}",
+                              entity.getShortName(),
+                              carriedEntity.getShortName(),
+                              step.getPosition().toFriendlyString());
+                    } else {
+                        logger.error("{} could not drop {} at {}: none of its transporters holds that unit",
+                              entity.getShortName(),
+                              carriedEntity.getShortName(),
+                              step.getPosition().toFriendlyString());
+                    }
                 }
 
 
                 boolean cargoDestroyed = false;
 
-                if (!isLastStep) {
+                if (cargoUnloaded && !isLastStep) {
                     cargoDestroyed = gameManager.damageCargo(step.isFlying() || step.isJumping(), entity, cargo);
                 }
 
                 // note that this should not be moved into the "!isLastStep" block above as cargo may be either
                 // unloaded peacefully or dumped on the move
-                if (!cargoDestroyed) {
+                if (cargoUnloaded && !cargoDestroyed) {
                     if (cargo instanceof GroundObject) {
                         getGame().placeGroundObject(step.getPosition(), cargo);
                     }
@@ -4875,8 +4914,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 for (int levelClimbed = 1; levelClimbed <= levelsThisTurn; levelClimbed++) {
                     int overallLevel = levelsAlreadyClimbed + levelClimbed;
                     rollTarget = entity.getBasePilotingRoll(moveType);
+                    // The +1 climbing modifier is not applied to the climbing roll itself (TO:AR p.20)
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                                                           ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                           0,
                                                            "climbing (level " + overallLevel + " of " + overallClimbHeight + ")"));
                     if (climbableArms == 1) {
                         rollTarget.append(new PilotingRollData(entity.getId(),

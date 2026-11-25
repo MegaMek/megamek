@@ -123,6 +123,8 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.AltitudeBombAttack;
 import megamek.common.weapons.attacks.DiveBombAttack;
 import megamek.common.weapons.attacks.SpaceBombAttack;
+import megamek.common.weapons.autoCannons.RACWeapon;
+import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.bayWeapons.AR10BayWeapon;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
@@ -4120,7 +4122,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Sets this entity's original jump movement points
+     * Sets this entity's original jump movement points. A Mek ignores the stored value: its Jump MP comes from its
+     * installed jets (see {@link Mek#getOriginalJumpMP(boolean)}).
      */
     public void setOriginalJumpMP(int jumpMP) {
         this.jumpMP = jumpMP;
@@ -4169,6 +4172,14 @@ public abstract class Entity extends TurnOrdered
      */
     public int getJumpHeat(int movedMP) {
         return 0;
+    }
+
+    /**
+     * @return the heat this Entity generates jumping the given number of hexes, which planetary gravity can make differ
+     *       from the MP that carries it (TO:AR p.53)
+     */
+    public int getJumpHeatForDistance(int hexes) {
+        return getJumpHeat(hexes);
     }
 
     /**
@@ -6062,9 +6073,9 @@ public abstract class Entity extends TurnOrdered
         int sinks;
 
         if (this instanceof Mek mek) {
-            sinks = mek.getActiveSinks();
+            sinks = mek.getActiveSinksOfAnyType();
         } else if (this instanceof Aero aero) {
-            sinks = aero.getHeatSinks();
+            sinks = aero.getActiveSinks();
         } else {
             return "(none)";
         }
@@ -14627,18 +14638,20 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Force rapid fire mode to the highest level on RAC and UAC - this is for aerospace
+     * Sets rapid-fire weapons on an aerospace unit to their maximum firing rate (TW p. 238).
      */
     public void setRapidFire() {
-        for (WeaponMounted m : getTotalWeaponList()) {
-            AmmoType.AmmoTypeEnum ammoType = m.getType().getAmmoType();
-            if (ammoType == AmmoType.AmmoTypeEnum.AC_ROTARY) {
-                m.setMode("6-shot");
-                m.setModeSwitchable(false);
-            } else if (ammoType == AmmoType.AmmoTypeEnum.AC_ULTRA) {
-                m.setMode("Ultra");
-                m.setModeSwitchable(false);
-            }
+        getTotalWeaponList().forEach(Entity::setRapidFire);
+    }
+
+    /**
+     * Locks an aerospace rotary or Ultra autocannon at its maximum firing rate (TW p. 238).
+     */
+    public static void setRapidFire(WeaponMounted weapon) {
+        if (weapon.getType() instanceof UACWeapon) {
+            String mode = (weapon.getType() instanceof RACWeapon) ? Weapon.MODE_RAC_SIX_SHOT : Weapon.MODE_UAC_ULTRA;
+            weapon.setModeImmediately(mode);
+            weapon.setModeSwitchable(false);
         }
     }
 
@@ -15322,35 +15335,29 @@ public abstract class Entity extends TurnOrdered
         return taserInterferenceRounds;
     }
 
-    /**
-     * Applies the Magnetic Pulse (MP) missile effect to this unit (IO p.62). While active the unit takes a +1 to-hit
-     * penalty on all of its own weapon attacks. Additional MP hits do not extend or stack the effect.
-     */
-    public void setMagneticPulseHit() {
-        getMagneticPulseState().applyStandardPulse();
-    }
-
     public int getMagneticPulseRounds() {
         return getMagneticPulseState().getStandardRounds();
     }
 
     /**
-     * Applies a Magnetic Pulse (MP) missile salvo that hit this unit (TO:AUE p.182). MP missiles deal no damage; they
-     * impose a +1 to-hit penalty on the unit's own weapon attacks, and add outside heat to fusion-powered units at +1
-     * per {@code heatDivisor} warheads (5 for LRM, 3 for SRM, rounded down). MP missiles have no effect against
-     * conventional infantry.
+     * Applies one group of Magnetic Pulse (MP) missiles that struck this unit (TO:AUE p.182). MP missiles deal no
+     * damage; they impose a +1 to-hit penalty on the unit's own weapon attacks, and add outside heat to fusion-powered
+     * units at +1 per {@code heatDivisor} warheads (5 for LRM, 3 for SRM), counted over the turn and rounded down. MP
+     * missiles have no effect against conventional infantry.
      *
-     * @param missiles    number of MP warheads that hit this unit
+     * @param missiles    number of MP warheads in the group
      * @param heatDivisor warheads needed per +1 heat (5 for LRM, 3 for SRM)
+     * @param hit         the location the group struck
      */
-    public void applyMagneticPulse(int missiles,
-                                   int heatDivisor) {
+    public void applyMagneticPulse(int missiles, int heatDivisor, HitData hit) {
         if ((missiles <= 0) || isConventionalInfantry()) {
             return;
         }
         getMagneticPulseState().applyStandardPulse();
-        if (hasEngine() && getEngine().isFusion()) {
-            heatFromExternal += getMagneticPulseState().computeStandardHeat(missiles, heatDivisor);
+        // Only heat-tracking units powered by a fusion engine take the heat (TO:AUE p.182)
+        if (tracksHeat() && hasEngine() && getEngine().isFusion()) {
+            heatFromExternal += getMagneticPulseState()
+                  .computeStandardHeat(magneticPulseHalfWarheads(missiles, hit), heatDivisor);
         }
     }
 
@@ -15397,18 +15404,26 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Records Improved Magnetic Pulse (iATM IMP) missile hits on this unit (IO IMP rules). The hit count drives the
-     * to-hit, movement and hostile-ECM effects (see {@link #getImpToHitModifier()}, {@link #getImpMpReduction()}). Only
-     * fusion-powered units also take outside heat, at +1 per 3 warheads that hit (rounded down, with the remainder
-     * carried across the turn's salvos).
+     * Records Improved Magnetic Pulse (iATM IMP) missile hits on this unit (IO:AE p.61). The hit count drives the
+     * to-hit, movement and hostile-ECM effects (see {@link #getImpToHitModifier()}, {@link #getImpMpReduction()}); the
+     * heat comes with each group as it strikes, see {@link #addImprovedMagneticPulseHeat}.
      *
      * @param missiles number of IMP warheads that hit this unit
      */
     public void addIMPHits(int missiles) {
         getMagneticPulseState().addImpHits(missiles);
-        // Non-fusion units ignore the heat effect (IO IMP rules).
-        if (hasEngine() && getEngine().isFusion()) {
-            heatFromExternal += getMagneticPulseState().computeImpHeat(missiles);
+    }
+
+    /**
+     * Adds the outside heat of one group of Improved Magnetic Pulse missiles as it strikes: +1 per 3 warheads, counted
+     * over the turn and rounded down (IO:AE p.61). Only heat-tracking units powered by a fusion engine take it.
+     *
+     * @param missiles number of IMP warheads in the group
+     * @param hit      the location the group struck
+     */
+    public void addImprovedMagneticPulseHeat(int missiles, HitData hit) {
+        if ((missiles > 0) && tracksHeat() && hasEngine() && getEngine().isFusion()) {
+            heatFromExternal += getMagneticPulseState().computeImpHeat(magneticPulseHalfWarheads(missiles, hit));
         }
     }
 
@@ -17644,6 +17659,64 @@ public abstract class Entity extends TurnOrdered
 
     public int getHeat() {
         return heat;
+    }
+
+    /**
+     * Adds the outside heat a hit delivers (TW p.159). Armor with special effects acts while the location struck still
+     * has armor at the time the hit is applied (Core p.201), so heat-dissipating armor is judged here, before the hit's
+     * own damage; the Heat Phase only adds the turn's total within its cap.
+     *
+     * @param heat the heat the hit delivers
+     * @param hit  the hit; a hit on a missing Mek location delivers its heat where its damage transfers
+     *
+     * @return the heat added
+     */
+    public int addOutsideHeat(int heat, HitData hit) {
+        HitData struck = heatReceivingLocation(hit);
+        return addOutsideHeat(heat, struck.getLocation(), struck.isRear());
+    }
+
+    /**
+     * Adds outside heat that strikes no location, such as fire or magma; see {@link #addOutsideHeat(int, HitData)}.
+     *
+     * @return the heat added
+     */
+    public int addOutsideHeat(int heat) {
+        return addOutsideHeat(heat, LOC_NONE, false);
+    }
+
+    private int addOutsideHeat(int heat, int location, boolean rear) {
+        int added = (heat > 0)
+              ? Game.rulesManager.getRulesArmor().heatAfterDissipatingArmor(this, heat, location, rear)
+              : 0;
+        heatFromExternal += added;
+        return added;
+    }
+
+    /** @return The location a hit's heat reaches: a hit on a missing Mek location lands where its damage transfers */
+    public HitData heatReceivingLocation(HitData hit) {
+        HitData struck = hit;
+        while ((this instanceof Mek) && (getInternal(struck) < 0)) {
+            HitData next = getTransferLocation(struck);
+            if ((next.getLocation() == LOC_DESTROYED) || (next.getLocation() == LOC_NONE)) {
+                break;
+            }
+            struck = next;
+        }
+        return struck;
+    }
+
+    /**
+     * Magnetic Pulse heat counts warheads (TO:AUE p.182, IO:AE p.61), and each group of warheads strikes its own
+     * location, whose heat-dissipating armor acts on that group's share of the heat. Each warhead counts as two
+     * halves, so armor that halves heat halves a warhead's share exactly and the turn's total rounds down once.
+     *
+     * @return the half-warheads that a group striking with this hit adds to the heat count
+     */
+    private int magneticPulseHalfWarheads(int missiles, HitData hit) {
+        HitData struck = heatReceivingLocation(hit);
+        return Game.rulesManager.getRulesArmor()
+              .heatAfterDissipatingArmor(this, 2 * missiles, struck.getLocation(), struck.isRear());
     }
 
     public int getTsempHitsThisTurn() {

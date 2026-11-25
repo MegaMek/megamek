@@ -35,6 +35,7 @@ package megamek.common.loaders;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -191,6 +192,58 @@ class MtfFileTest {
     }
 
     @Test
+    void aMekTakesItsJumpMPFromItsJetsNotTheJumpLine() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(50.0);
+        mek.setEngine(new Engine(200, Engine.NORMAL_ENGINE, 0));
+        for (int location : new int[] { Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_CENTER_TORSO }) {
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.JUMP_JET), location);
+        }
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("jump mp:3"), mtf);
+
+        Mek loaded = (Mek) new MtfFile(new ByteArrayInputStream(mtf.replace("jump mp:3", "jump mp:5")
+              .getBytes(StandardCharsets.UTF_8))).getEntity();
+
+        assertEquals(3, loaded.getOriginalJumpMP());
+        assertTrue(loaded.getMtf().contains("jump mp:3"));
+    }
+
+    @Test
+    void aLegacyMechanicalJumpBoosterTakesItsMPFromTheJumpLine() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(50.0);
+        mek.setEngine(new Engine(200, Engine.NORMAL_ENGINE, 0));
+        for (int location : new int[] { Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG }) {
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER), location).setSize(4);
+        }
+        // Old files gave the booster no size and its MP on the jump line
+        String mtf = mek.getMtf().replaceAll(":SIZE:[0-9.]+", "").replace("jump mp:0", "jump mp:4");
+
+        Mek loaded = (Mek) new MtfFile(new ByteArrayInputStream(mtf.getBytes(StandardCharsets.UTF_8))).getEntity();
+
+        assertEquals(4, loaded.getOriginalMechanicalJumpBoosterMP());
+        assertEquals(0, loaded.getOriginalJumpMP());
+    }
+
+    @Test
+    void aLegacyMechanicalJumpBoosterWithoutAJumpLineIsALoadingError() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(50.0);
+        mek.setEngine(new Engine(200, Engine.NORMAL_ENGINE, 0));
+        for (int location : new int[] { Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG }) {
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER), location).setSize(4);
+        }
+        String mtf = mek.getMtf().replaceAll(":SIZE:[0-9.]+", "").replaceAll("(?m)^jump mp:\\d+\n", "");
+        assertFalse(mtf.contains("jump mp:"), mtf);
+        MtfFile loader = toMtfFile(mtf);
+
+        Exception exception = Objects.requireNonNull(assertThrowsExactly(Exception.class, loader::getEntity));
+
+        assertEquals(EntityLoadingException.class, exception.getCause().getClass());
+    }
+
+    @Test
     void missingUnitFileUUIDGeneratesVersion7UUID() throws Exception {
         Mek mek = new BipedMek();
         String originalUUID = mek.getUnitFileUUID();
@@ -290,6 +343,25 @@ class MtfFileTest {
         assertTrue(slot.getMount().isOmniPodMounted());
         assertTrue(slot.getMount2().isOmniPodMounted());
         assertTrue(slot.isArmored());
+    }
+
+    @Test
+    void consecutiveSuperheavyAc20sUseFiveRowsEach() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(120);
+        mek.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));
+        for (int gun = 0; gun < 2; gun++) {
+            Mounted<?> mount = mek.addEquipment(EquipmentType.get("ISAC20"), Mek.LOC_LEFT_TORSO);
+            for (int row = 1; row < 5; row++) {
+                mek.addCritical(Mek.LOC_LEFT_TORSO, new CriticalSlot(mount));
+            }
+        }
+
+        Entity loaded = toMtfFile(mek).getEntity();
+        assertEquals(2, loaded.getWeaponList().size());
+        for (int row = 0; row < 10; row++) {
+            assertSame(loaded.getWeaponList().get(row / 5), loaded.getCritical(Mek.LOC_LEFT_TORSO, row).getMount());
+        }
     }
 
     // Exercises new MtfFile.java code
@@ -454,6 +526,26 @@ class MtfFileTest {
         assertEquals(100, loaded.getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
         assertEquals(60, loaded.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_LEG));
         assertTrue(getMekVerifierReport(loaded).contains("Right Leg is lower than the center torso"));
+    }
+
+    @Test
+    void frankenMekCenterTorsoDonorSetsTheChassisTonnage() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setWeight(100.0);
+        mek.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
+        mek.setFrankenMek(true);
+        // CO p. 213: the center torso donor sets the tonnage, and the omitted locations follow it
+        String mtf = mek.getMtf().replaceAll("(?m)^(LA|RA|LT|RT|HD|LL|RL) structure:\\d+\n", "")
+              .replace("CT structure:100\n", "CT structure:105\n");
+        assertTrue(mtf.contains("mass:100\n"));
+
+        Mek loaded = (Mek) toMtfFile(mtf).getEntity();
+
+        assertEquals(105, loaded.getWeight());
+        assertTrue(loaded.isSuperHeavy());
+        assertTrue(loaded.getEngine().hasFlag(Engine.SUPERHEAVY_ENGINE));
+        assertEquals(105, loaded.getFrankenMekStructureTonnage(Mek.LOC_RIGHT_ARM));
     }
 
     @Test

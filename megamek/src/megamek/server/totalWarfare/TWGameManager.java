@@ -7536,15 +7536,16 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Targetable.TYPE_ENTITY:
                 Entity te = (Entity) t;
-                if ((te instanceof Mek) && (!areaEffect)) {
+                // Each missile rolls its location even where Core p.192 skips the roll, because partial cover and
+                // heat-dissipating armor can depend on it (Xotl, Core Rulebook forum ruling, 19 Oct 2026)
+                if ((te instanceof Mek) && !areaEffect) {
                     // Bug #1585497: Check for partial cover
                     int m = missiles;
                     LosEffects le = LosEffects.calculateLOS(game, ae, t);
                     int cover = le.getTargetCover();
                     Vector<Report> coverDamageReports = new Vector<>();
                     int heatDamage = 0;
-                    boolean heatReduced = false;
-                    String reductionCause = "";
+                    String reducedBy = null;
                     for (int i = 0; i < m; i++) {
                         if (ae == null) {
                             continue;
@@ -7619,36 +7620,16 @@ public class TWGameManager extends AbstractGameManager {
                             }
                             coverDamageReports.addAll(coverDamageReport);
                         } else { // No partial cover, missile hits
-                            int missileHeat = 2;
-                            if ((te.getArmor(hit) > 0) &&
-                                  (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                                heatDamage += Game.rulesManager.getRulesArmor()
-                                      .reduceHeatDamageByArmor(te.getArmorType(hit.getLocation()), missileHeat);
-                                heatReduced = true;
-                                reductionCause = ArmorType.forEntity(te, hit.getLocation()).getName();
-                            } else {
-                                heatDamage += missileHeat;
+                            int heat = te.addOutsideHeat(2, hit);
+                            if (heat < 2) {
+                                reducedBy = ArmorType.forEntity(te, te.heatReceivingLocation(hit).getLocation())
+                                      .getName();
                             }
+                            heatDamage += heat;
                         }
                     }
-                    if (heatReduced) {
-                        r = new Report(3406);
-                        r.add(heatDamage);
-                        r.subject = te.getId();
-                        r.indent(2);
-                        r.choose(true);
-                        r.add(missiles * 2);
-                        r.add(reductionCause);
-                    } else {
-                        r = new Report(3400);
-                        r.add(heatDamage);
-                        r.subject = te.getId();
-                        r.indent(2);
-                        r.choose(true);
-                    }
-                    vPhaseReport.add(r);
+                    vPhaseReport.add(WeaponHandler.heatReport(te.getId(), heatDamage, 2 * missiles, reducedBy));
                     Report.addNewline(vPhaseReport);
-                    te.heatFromExternal += heatDamage;
 
                     if (missiles != m) {
                         r = new Report(3403);
@@ -7660,15 +7641,13 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.addAll(coverDamageReports);
                     Report.addNewline(vPhaseReport);
                 } else if (te.tracksHeat()) {
-                    // ASFs and small craft
-                    r = new Report(3400);
-                    r.add(2 * missiles);
-                    r.subject = te.getId();
-                    r.indent(2);
-                    r.choose(true);
-                    vPhaseReport.add(r);
-                    te.heatFromExternal += 2 * missiles;
+                    // Area-effect inferno heat and inferno heat on aerospace units strike no location
+                    int heat = te.addOutsideHeat(2 * missiles);
+                    vPhaseReport.add(WeaponHandler.heatReport(te.getId(), heat, 2 * missiles, null));
                     Report.addNewline(vPhaseReport);
+                    if (heat < 2 * missiles) {
+                        vPhaseReport.add(new Report(5550));
+                    }
                 } else if (te.isBuildingEntityOrGunEmplacement() && ae != null) {
                     int direction = ComputeSideTable.sideTable(ae, te, called);
                     while (missiles-- > 0) {
@@ -20935,9 +20914,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Handle equipment explosions.
         // Equipment explosions are secondary effects and do not occur when loading from a scenario.
-        if (((secondaryEffects && eqType.isExplosive(mounted)) ||
-              mounted.isHotLoaded() ||
-              (mounted.hasChargedCapacitor() != 0)) && !hitBefore) {
+        if (((secondaryEffects && eqType.isExplosive(mounted)) || mounted.isHotLoaded()) && !hitBefore) {
             // Hot-loaded launchers must override the explosive check since the launcher itself
             // isn't inherently explosive, but hot-loaded ammo makes it explode on crit (TO p.102-103)
             reports.addAll(explodeEquipment(en, loc, mounted, mounted.isHotLoaded()));
@@ -24613,6 +24590,17 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
             laser.setHit(true);
+        }
+
+        // A charged PPC capacitor's explosion destroys all critical slots of the PPC and its capacitor, which sit in
+        // one location (TO:AUE pp.148-149, Core p.188)
+        Mounted<?> ppc = ((mounted.getType() instanceof MiscType) && mounted.getType()
+              .hasFlag(MiscType.F_PPC_CAPACITOR)) ? mounted.getLinked() : mounted;
+        if ((ppc != null) && ppc.holdsCapacitorCharge()) {
+            for (Mounted<?> part : List.of(ppc, ppc.getLinkedBy())) {
+                part.setHit(true);
+                EquipmentExplosionHandler.markCriticalSlotsHit(en, part, loc);
+            }
         }
 
         mounted.setShotsLeft(0);
@@ -32487,7 +32475,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
             alreadyHit.add(entity.getId());
-            // TacOps, p. 359 - treat as if hit by 5 inferno missiles
+            // An inferno bomb hits like 5 inferno missiles (TO:AUE p. 171), and bombs are area-effect weapons (TW p. 246)
             r = new Report(6696);
             r.indent(3);
             r.add(entity.getDisplayName());
@@ -32497,7 +32485,7 @@ public class TWGameManager extends AbstractGameManager {
             if (entity instanceof Tank) {
                 Report.addNewline(vPhaseReport);
             }
-            Vector<Report> vDamageReport = deliverInfernoMissiles(ae, entity, 5);
+            Vector<Report> vDamageReport = deliverInfernoMissiles(ae, entity, 5, true);
             Report.indentAll(vDamageReport, 2);
             vPhaseReport.addAll(vDamageReport);
         }

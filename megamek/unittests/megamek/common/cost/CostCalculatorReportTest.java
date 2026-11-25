@@ -21,16 +21,22 @@ import java.util.Map;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.common.TechConstants;
+import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class CostCalculatorReportTest {
     private static final String UNIT_PATH = "testresources/megamek/common/units/";
@@ -92,6 +98,63 @@ class CostCalculatorReportTest {
               .orElseThrow();
         assertEquals(10000, headTurret.getCost());
         assertReportTotalMatchesReturnedCost(returnedCost, report);
+    }
+
+    @Test
+    void frankenMekGyroCostUsesRetainedEngineRating() {
+        Mek mek = new BipedMek();
+        mek.setWeight(50);
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setFrankenMek(true);
+        mek.setEngine(new Engine(245, Engine.NORMAL_ENGINE, 0));
+        mek.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        RecordingCalculationReport report = new RecordingCalculationReport();
+
+        assertEquals(4, mek.getOriginalWalkMP());
+        mek.getCost(report, true);
+        assertEquals(NumberFormat.getInstance().format(900000), report.result("Gyro"));
+    }
+
+    @Test
+    void jumpJetCostCountsTheInstalledJetsEvenWhenModularArmorCostsJumpMP() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(50);
+        mek.setEngine(new Engine(200, Engine.NORMAL_ENGINE, 0));
+        mek.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        for (int location : new int[] { Mek.LOC_LEFT_LEG, Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG, Mek.LOC_RIGHT_LEG }) {
+            mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.JUMP_JET), location);
+        }
+        mek.addEquipment(EquipmentType.get("ISModularArmor"), Mek.LOC_CENTER_TORSO);
+        RecordingCalculationReport report = new RecordingCalculationReport();
+
+        assertEquals(3, mek.getOriginalJumpMP());
+        mek.getCost(report, true);
+        assertEquals(NumberFormat.getInstance().format(160000), report.result("Jump Jets"));
+    }
+
+    /**
+     * Four jets from a 50-ton donor torso give a 100-ton FrankenMek 1 Jumping MP (CO p. 213). Primitive prototype jets
+     * cost tonnage x 200 x Jumping MP squared (IO:AE p. 181), standard jets 200 x jets squared x tonnage (TM p. 278).
+     */
+    @ParameterizedTest
+    @CsvSource({ EquipmentTypeLookup.PROTOTYPE_JUMP_JET + ", 20000", EquipmentTypeLookup.JUMP_JET + ", 320000" })
+    void primitivePrototypeJumpJetsCostByTheJumpingMPTheyGive(String jumpJet, int cost) throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(100);
+        mek.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+        mek.setEngine(new Engine(400, Engine.NORMAL_ENGINE, 0));
+        mek.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        mek.setFrankenMek(true);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO, 100);
+        mek.setFrankenMekStructureTonnage(Mek.LOC_LEFT_TORSO, 50);
+        for (int jet = 0; jet < 4; jet++) {
+            mek.addEquipment(EquipmentType.get(jumpJet), Mek.LOC_LEFT_TORSO);
+        }
+        RecordingCalculationReport report = new RecordingCalculationReport();
+
+        assertEquals(1, mek.getOriginalJumpMP(true));
+        mek.getCost(report, true);
+        assertEquals(NumberFormat.getInstance().format(cost), report.result("Jump Jets"));
     }
 
     @Test

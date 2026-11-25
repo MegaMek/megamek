@@ -41,6 +41,8 @@ import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.rules.RulesArmor;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.server.totalWarfare.TWDamageManager;
 
 public class CoreRulesArmor extends RulesArmor {
@@ -111,11 +113,36 @@ public class CoreRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Does armor reduce heat? Core p.202
+     * Core p.202 gives laser-reflective armor no heat effect; see {@link #heatAfterDissipatingArmor} for
+     * heat-dissipating armor.
      */
     @Override
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
-        return (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) ? 0 : heatDamage;
+        return heatDamage;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Core p. 202: a Mek with heat-dissipating armor is still affected by Extreme Heat.
+     */
+    @Override
+    public int reduceExtremeHeat(Entity target, int heat) {
+        return heat;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Core p.202: heat-dissipating armor reduces the heat of heat-causing weapons and other outside heat sources to 0.
+     * Like any special armor it protects the location struck while that location or facing has armor (Core p.201);
+     * heat that strikes no location, such as fire or magma, is negated while the Mek has any amount of it (Core p.202).
+     */
+    @Override
+    public int heatAfterDissipatingArmor(Entity target, int heat, int location, boolean rear) {
+        boolean dissipated = (location == Entity.LOC_NONE)
+              ? (target instanceof Mek mek) && mek.hasAnyHeatDissipatingArmor()
+              : (target.getArmorType(location) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)
+                    && (target.getArmor(location, rear) > 0);
+        return dissipated ? 0 : heat;
     }
 
     /**

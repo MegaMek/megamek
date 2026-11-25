@@ -34,8 +34,6 @@
 
 package megamek.common.weapons.handlers;
 
-import static java.lang.Math.floor;
-
 import java.io.Serial;
 
 import megamek.common.RangeType;
@@ -91,10 +89,10 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 weaponEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
             }
-            if (!bayW.isBreached()
-                  && !bayW.isDestroyed()
+            if (bayW.isOperable()
                   && !bayW.isJammed()
                   && bayWAmmo != null
+                  && bayWAmmo.getUsableShotsLeft() > 0
                   && weaponEntity.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
                 WeaponType bayWType = bayW.getType();
                 // need to cycle through weapons and add av
@@ -112,7 +110,6 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 }
                 current_av = updateAVForAmmo(current_av, ammoType, bayWType,
                       range, bayW.getEquipmentNum());
-                av = av + current_av;
                 // now use the ammo that we had loaded
                 if (current_av > 0) {
                     int shots = bayW.getCurrentShots();
@@ -123,19 +120,20 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                             weaponEntity.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
                         }
-                        if (bayWAmmo != null) {
+                        if (bayWAmmo != null && bayWAmmo.getUsableShotsLeft() > 0) {
                             bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
                         }
                     }
+                    av += firedWeaponAttackValue(bayW, current_av);
                 }
             }
         }
-        if (bDirect) {
-            av = Math.min(av + (int) floor(toHit.getMoS() / 3.0), av * 2);
-        }
-        av = applyGlancingBlowModifier(av, false);
-        av = (int) Math.floor(getBracketingMultiplier() * av);
-        return (int) Math.ceil(av);
+        return bayAttackValue(av);
+    }
+
+    /** Physical attack value contributed by a member that fired at this range. */
+    protected double firedWeaponAttackValue(WeaponMounted member, double ammoAV) {
+        return ammoAV;
     }
 
     /*

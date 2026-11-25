@@ -55,7 +55,8 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  * The V1 scenario readme documents {@code CritHit}, {@code Camo_Faction} and the per-unit {@code Camo} key. The
  * loader used to ignore all three: it wanted {@code CriticalHit}, a lower-case {@code camo_}, and per-unit keys
- * starting with a lower-case letter that its own unit data pattern can never match.
+ * starting with a lower-case letter that its own unit data pattern can never match. {@code PilotHits},
+ * {@code DeploymentRound} and {@code Altitude} were read as 0, because their value was looked up as if it were a key.
  *
  * <p>The tests use only units found both in mm-data and in {@code testresources/data/mekfiles}. Some test
  * fixtures point the shared unit cache at that small test set and leave it there, so either cache may be loaded
@@ -137,8 +138,44 @@ class ScenarioV1UnitKeysTest {
               Unit_A_1_Camo=%s,%s
               """.formatted(CAMO_CATEGORY, CAMO_FILE)).createGame();
 
-        Entity locust = (Entity) game.getInGameObjects().getFirst();
+        Entity locust = findUnit(game);
         assertWolfCamo(locust.getCamouflage().getCategory(), locust.getCamouflage().getFilename());
+    }
+
+    @Test
+    void pilotHitsAreApplied() throws Exception {
+        IGame game = loadScenario("""
+              Unit_A_1=Locust LCT-1V,Pilot One,3,4,N,5,5
+              Unit_A_1_PilotHits=2
+              """).createGame();
+
+        assertEquals(2, findUnit(game).getCrew().getHits());
+    }
+
+    @Test
+    void deploymentRoundHoldsTheUnitBack() throws Exception {
+        IGame game = loadScenario("""
+              Unit_A_1=Locust LCT-1V,Pilot One,3,4,N,5,5
+              Unit_A_1_DeploymentRound=3
+              """).createGame();
+
+        Entity locust = findUnit(game);
+        assertEquals(3, locust.getDeployRound());
+        assertFalse(locust.isDeployed());
+    }
+
+    @Test
+    void altitudeIsAppliedToAnAerospaceUnit() throws Exception {
+        IGame game = loadScenario("""
+              Unit_A_1=Cheetah F-11,Pilot One,3,4,N,5,5
+              Unit_A_1_Altitude=3
+              """).createGame();
+
+        assertEquals(3, findUnit(game).getAltitude());
+    }
+
+    private Entity findUnit(IGame game) {
+        return (Entity) game.getInGameObjects().getFirst();
     }
 
     private void assertWolfCamo(String category, String filename) {

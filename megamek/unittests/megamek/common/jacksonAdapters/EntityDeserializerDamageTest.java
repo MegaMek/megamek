@@ -91,8 +91,8 @@ class EntityDeserializerDamageTest {
 
     @Test
     void unitTypeTheTableDoesNotCoverLoadsUndamaged() throws Exception {
-        Entity undamaged = readUnit("fullname: Foot Platoon (MG)");
-        Entity unchanged = readUnit("fullname: Foot Platoon (MG)\ndamage: heavy");
+        Entity undamaged = readUnit("fullname: Elemental Battle Armor [Laser](Sqd5)");
+        Entity unchanged = readUnit("fullname: Elemental Battle Armor [Laser](Sqd5)\ndamage: heavy");
 
         assertEquals(undamaged.getTotalInternal(), unchanged.getTotalInternal());
     }

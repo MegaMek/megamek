@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -90,12 +90,13 @@ class TransportsScenarioParser {
     private static ParsedTransportsInfo readTransport(JsonNode transportsNode, String carrierId) {
         var transport = new ParsedTransportsInfo();
         transport.carrierId = Integer.parseInt(carrierId);
-        if (transportsNode.isArray()) {
+        JsonNode carriedNode = transportsNode.get(carrierId);
+        if (carriedNode.isArray()) {
             // multiple carried units (or single as array)
-            transportsNode.get(carrierId).forEach(element -> transport.carriedUnits.add(element.asInt()));
+            carriedNode.forEach(element -> transport.carriedUnits.add(element.asInt()));
         } else {
             // single carried unit
-            transport.carriedUnits.add(transportsNode.get(carrierId).asInt());
+            transport.carriedUnits.add(carriedNode.asInt());
         }
         return transport;
     }

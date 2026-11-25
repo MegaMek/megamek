@@ -418,7 +418,7 @@ public class TWRulesPhysical extends RulesPhysical {
     public int fallFromAboveDamage(int damage, Entity affaTarget) {
         return damage;
     }
-  
+
     /**
      * {@inheritDoc} Meks may brush off attached iNarc pods, and vehicle crews may remove them.
      */

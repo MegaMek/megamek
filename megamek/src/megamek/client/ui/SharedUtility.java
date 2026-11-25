@@ -54,6 +54,7 @@ import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RoadHazards;
 import megamek.common.units.*;
 import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
@@ -226,7 +227,7 @@ public class SharedUtility {
         MoveStep prevStep = null;
         for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
             final MoveStep step = i.next();
-            boolean isPavementStep = step.isPavementStep();
+            boolean onRoad = step.isRoadStep();
 
             // stop for illegal movement
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
@@ -317,7 +318,7 @@ public class SharedUtility {
             // check if we've moved into rubble
             boolean isLastStep = md.getLastStep().equals(step);
             rollTarget = entity.checkRubbleMove(step, overallMoveType, curHex,
-                  lastPos, curPos, isLastStep, isPavementStep);
+                  lastPos, curPos, isLastStep, onRoad);
             checkNag(rollTarget, nagReport, psrList);
 
             // check if we are moving recklessly
@@ -332,14 +333,14 @@ public class SharedUtility {
                   && (step.getElevation() == 0)
                   && (moveType != EntityMovementType.MOVE_JUMP)
                   && !(entity instanceof Infantry)
-                  && !(isPavementStep && curHex
+                  && !(onRoad && curHex
                   .containsTerrain(Terrains.BRIDGE))) {
                 nagReport.append(Messages.getString("MovementDisplay.IceMoving"));
             }
 
             // check if we've moved into water
             rollTarget = entity.checkWaterMove(step, overallMoveType, curHex,
-                  lastPos, curPos, isPavementStep);
+                  lastPos, curPos, onRoad);
             checkNag(rollTarget, nagReport, psrList);
 
             // check for non-heat tracking entering a fire
@@ -408,7 +409,7 @@ public class SharedUtility {
             // jumping into the last hex
             if (level != 2 || jumpedIntoMagma) {
                 rollTarget = entity.checkBogDown(step, overallMoveType, curHex,
-                      lastPos, curPos, lastElevation, isPavementStep);
+                      lastPos, curPos, lastElevation, onRoad);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -462,7 +463,6 @@ public class SharedUtility {
             }
 
             // Sheer Cliffs, TO p.39
-            // Roads over cliffs cancel the cliff effects for units that move on roads
             boolean vehicleAffectedByCliff = entity instanceof Tank
                   && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
@@ -476,14 +476,14 @@ public class SharedUtility {
             int stepHeight = curElevation + curHex.getLevel()
                   - (lastElevation + prevHex.getLevel());
             boolean isUpCliff = !lastPos.equals(curPos)
-                  && curHex.hasCliffTopTowards(prevHex)
+                  && curHex.crossesCliffTopTowards(prevHex, curElevation, lastElevation)
                   && (stepHeight == 1 || stepHeight == 2);
             boolean isDownCliff = !lastPos.equals(curPos)
-                  && prevHex.hasCliffTopTowards(curHex)
+                  && prevHex.crossesCliffTopTowards(curHex, lastElevation, curElevation)
                   && (stepHeight == -1 || stepHeight == -2);
 
             // Vehicles (exc. WIGE/VTOL) moving down a cliff
-            if (vehicleAffectedByCliff && isDownCliff && !isPavementStep) {
+            if (vehicleAffectedByCliff && isDownCliff) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
@@ -492,14 +492,14 @@ public class SharedUtility {
             // Meks moving down a cliff
             // QuadVees in vee mode ignore PSRs to avoid falls, IO p.133
             // ProtoMeks as Meks
-            if (mekAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
+            if (mekAffectedByCliff && !quadveeVehMode && isDownCliff) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
             }
 
             // Meks moving up a cliff
-            if (mekAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
+            if (mekAffectedByCliff && !quadveeVehMode && isUpCliff) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
@@ -633,6 +633,10 @@ public class SharedUtility {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
                       hex);
                 checkNag(rollTarget, nagReport, psrList);
+            }
+            if (entity instanceof Mek && RoadHazards.touchesPavement(hex, md.getFinalElevation(), true)
+                  && hex.containsTerrain(Terrains.BLACK_ICE)) {
+                checkNag(entity.checkLandingOnBlackIce(overallMoveType, hex), nagReport, psrList);
             }
             int waterLevel = hex.terrainLevel(Terrains.WATER);
             if (hex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {

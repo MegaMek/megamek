@@ -113,6 +113,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RoadHazards;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.util.RoundWeight;
@@ -529,6 +530,7 @@ public abstract class Entity extends TurnOrdered
 
     private boolean wigeLiftoffHover = false;
     protected int mpUsedLastRound = 0;
+    /** Whether the movement already executed this turn qualifies for the road bonus. */
     public boolean gotPavementOrRoadBonus = false;
     public int wigeBonus = 0;
     public boolean inReverse = false;
@@ -2817,6 +2819,11 @@ public abstract class Entity extends TurnOrdered
                              Hex next,
                              int assumedElevation,
                              boolean climb) {
+        return calcElevation(current, next, assumedElevation, climb, false);
+    }
+
+    /** As {@link #calcElevation(Hex, Hex, int, boolean)}, taking road movement into account for bridge access. */
+    public int calcElevation(Hex current, Hex next, int assumedElevation, boolean climb, boolean onRoad) {
         int retVal = assumedElevation;
         if (next == null) {
             return retVal;
@@ -2976,7 +2983,9 @@ public abstract class Entity extends TurnOrdered
                                                  && ((next.getLevel() + bridgeElev) > (current.getLevel() + assumedElevation))
                                                  && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
                                                  && ClimbingHelper.canClimb(this);
-                if ((elevDiff <= getMaxElevationChange()) || climbingOntoTallBridge) {
+                int bridgeReach = Game.rulesManager.getRulesTerrain()
+                      .getMaxElevationChangeAllowed(this, onRoad, getMaxElevationChange());
+                if ((elevDiff <= bridgeReach) || climbingOntoTallBridge) {
                     // bridge is reachable, or a climbing Mek can scale up to it (TO:AR p.20)
                     if (climb || !isElevationValid(retVal, next)) {
                         // use bridge if you can't use the base terrain or if
@@ -4296,6 +4305,11 @@ public abstract class Entity extends TurnOrdered
         }
 
         return false;
+    }
+
+    /** Checks terrain for a movement step. Vehicles can use a road through prohibited terrain only while following it. */
+    public boolean isLocationProhibited(Coords coords, int boardId, int elevation, boolean onRoad) {
+        return isLocationProhibited(coords, boardId, elevation);
     }
 
     /**
@@ -8856,6 +8870,10 @@ public abstract class Entity extends TurnOrdered
      * Returns an entity's base piloting skill roll needed
      */
     public PilotingRollData getBasePilotingRoll(EntityMovementType moveType) {
+        return getBasePilotingRoll(moveType, false);
+    }
+
+    private PilotingRollData getBasePilotingRoll(EntityMovementType moveType, boolean useGunnery) {
         final int entityId = getId();
 
         PilotingRollData roll;
@@ -8918,10 +8936,15 @@ public abstract class Entity extends TurnOrdered
 
         // okay, let's figure out the stuff then. A gamemaster's temporary modifier is taken back out of the skill
         // and shown as a line of its own, so a shifted target can be traced to the gamemaster's intervention.
-        int gamemasterModifier = getCrew().appliedPilotingModifier(moveType);
-        roll = new PilotingRollData(entityId,
-                                    getCrew().getPiloting(moveType) - gamemasterModifier,
-                                    (this instanceof Infantry) ? "Anti-Mek skill" : "Base piloting skill");
+        int gamemasterModifier;
+        if (useGunnery) {
+            gamemasterModifier = getCrew().appliedGunneryModifier();
+            roll = new PilotingRollData(entityId, getCrew().getGunnery() - gamemasterModifier, "Base gunnery skill");
+        } else {
+            gamemasterModifier = getCrew().appliedPilotingModifier(moveType);
+            roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType) - gamemasterModifier,
+                  (this instanceof Infantry) ? "Anti-Mek skill" : "Base piloting skill");
+        }
         if (gamemasterModifier != 0) {
             roll.addModifier(gamemasterModifier, "GM Modifier");
         }
@@ -9244,22 +9267,25 @@ public abstract class Entity extends TurnOrdered
                                               Coords lastPos,
                                               Coords curPos,
                                               Hex prevHex) {
+        return checkRecklessMove(step, moveType, curHex, lastPos, curPos, prevHex, true);
+    }
+
+    public PilotingRollData checkRecklessMove(MoveStep step,
+                                              EntityMovementType moveType,
+                                              Hex curHex,
+                                              Coords lastPos,
+                                              Coords curPos,
+                                              Hex prevHex, boolean forecastBlackIce) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        PilotingRollData roll = getBasePilotingRoll(moveType);
+        // TO:AR p.62 uses Gunnery for a ProtoMek moving through hazardous terrain at full speed.
+        PilotingRollData roll = this instanceof ProtoMek ? getBasePilotingRoll(moveType, true)
+              : getBasePilotingRoll(moveType);
         // no need to go further if movement is careful
         if (step.isCareful()) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "moving carefully");
             return roll;
         }
 
-        // this only applies in fog, night conditions, or if a hex along the move path has ice
-        boolean isBlackIce;
-
-        boolean blackIceCheck = gameOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE) &&
-                                conditions.getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
-        isBlackIce = conditions.getWeather().isIceStorm() || blackIceCheck;
-
-        // if we are jumping, then no worries
         if (moveType == EntityMovementType.MOVE_JUMP) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "jumping is not reckless?");
             return roll;
@@ -9267,7 +9293,17 @@ public abstract class Entity extends TurnOrdered
 
         // we need to make this check on the first move forward and anytime the hex is not clear or is a level change
         boolean levelChange = (prevHex != null) && (prevHex.getLevel() != curHex.getLevel());
-        boolean moved = (curHex.movementCost(this) > 0) || levelChange;
+        boolean moved = (!step.isRoadStep() && curHex.movementCost(this) > 0) || levelChange;
+        // TO:AR pp.48, 61–62: check on entering an icy surface on the ground. Hover and WiGE vehicles
+        // ignore ice, and a VTOL passing above an ice hex never touches it.
+        boolean entersHex = !lastPos.equals(curPos);
+        EntityMovementMode mode = getMovementMode();
+        boolean susceptibleToIce = this instanceof Mek || this instanceof ProtoMek
+              || (this instanceof Tank && !mode.isHoverVTOLOrWiGE() && !mode.isMarine());
+        boolean entersIceSurface = entersHex && susceptibleToIce && !isAirborne()
+              && !(mode.isWiGE() && step.getClearance() > 0);
+        boolean entersPavement = entersIceSurface
+              && RoadHazards.touchesPavement(curHex, step.getElevation(), step.isRoadStep());
         if (conditions.isRecklessConditions() &&
             !lastPos.equals(curPos) &&
             lastPos.equals(step.getEntity().getPosition())) {
@@ -9277,11 +9313,10 @@ public abstract class Entity extends TurnOrdered
         else if (conditions.isRecklessConditions() && !lastPos.equals(curPos) && moved) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
-        } else if (curHex.containsTerrain(Terrains.ICE)) {
+        } else if (entersIceSurface && step.getElevation() == 0 && curHex.containsTerrain(Terrains.ICE)) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
-        } else if (curHex.containsTerrain(Terrains.BLACK_ICE)) {
-            roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
-        } else if (curHex.hasPavement() && isBlackIce) {
+        } else if (entersPavement && (curHex.containsTerrain(Terrains.BLACK_ICE)
+              || (forecastBlackIce && RoadHazards.canRevealBlackIce(this) && RoadHazards.blackIceWeather(game)))) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "not moving recklessly");
@@ -9431,7 +9466,7 @@ public abstract class Entity extends TurnOrdered
             case MOVE_SPRINT:
             case MOVE_VTOL_SPRINT:
                 maxSafeMP = getSprintMP(MPCalculationSetting.SAFE_MOVE) + wigeBonus;
-                if (isEligibleForPavementOrRoadBonus() && gotPavementOrRoadBonus) {
+                if (isEligibleForPavementOrRoadBonus() && step.isOnlyPavementOrRoad()) {
                     maxSafeMP++;
                 }
                 break;
@@ -9439,7 +9474,7 @@ public abstract class Entity extends TurnOrdered
                 // Max safe MP is based on whatever is the current maximum.
                 // http://bg.battletech.com/forums/index.php?topic=6681.msg154097#msg154097
                 maxSafeMP = getRunMP(MPCalculationSetting.SAFE_MOVE) + wigeBonus;
-                if (isEligibleForPavementOrRoadBonus() && gotPavementOrRoadBonus) {
+                if (isEligibleForPavementOrRoadBonus() && step.isOnlyPavementOrRoad()) {
                     maxSafeMP++;
                 }
                 break;
@@ -9487,14 +9522,14 @@ public abstract class Entity extends TurnOrdered
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         // If we aren't traveling along a road, apply terrain modifiers
-        boolean previousStepCountsAsPavement = (prevStep == null) || prevStep.isPavementStep();
-        if (!previousStepCountsAsPavement || !currStep.isPavementStep()) {
+        boolean turnedOnRoad = prevStep != null && prevStep.isRoadStep();
+        if (!turnedOnRoad) {
             addPilotingModifierForTerrain(roll, lastPos, currStep.getBoardId());
         }
 
-        boolean prevStepPavement = (prevStep != null) ?
-                                   prevStep.isPavementStep() :
-                                   ((prevHex != null) && prevHex.hasPavement());
+        int turnElevation = prevStep == null ? getElevation() : prevStep.getElevation();
+        boolean prevStepPavement = prevHex != null
+              && RoadHazards.touchesPavement(prevHex, turnElevation, prevStep == null || turnedOnRoad);
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean affectedByIce = !movementMode.isHoverOrWiGE() || conditions.getWind().isStrongerThan(Wind.STRONG_GALE);
         boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN) ||
@@ -9502,13 +9537,10 @@ public abstract class Entity extends TurnOrdered
         boolean unitTouchesIce = (prevHex != null) &&
                                  prevHex.containsTerrain(Terrains.ICE) &&
                                  (currStep.getElevation() == 0);
-        boolean unitTouchesBlackIce = (prevHex != null) &&
-                                      prevHex.containsTerrain(Terrains.BLACK_ICE) &&
-                                      (((currStep.getElevation() == 0) &&
-                                        prevHex.containsAnyTerrainOf(Terrains.ROAD, Terrains.PAVEMENT)) ||
-                                       (prevHex.containsTerrain(Terrains.BRIDGE_ELEV) &&
-                                        (currStep.getElevation() ==
-                                         prevHex.terrainLevel(Terrains.BRIDGE_ELEV))));
+        boolean unitTouchesBlackIce = prevStepPavement && prevHex.containsTerrain(Terrains.BLACK_ICE);
+        if (turnedOnRoad && unitTouchesBlackIce) {
+            prevHex.getTerrain(Terrains.BLACK_ICE).applyPilotingModifier(movementMode, roll, false);
+        }
         boolean isMoveAndTurn = (prevFacing != curFacing) && !Objects.equals(curPos, lastPos);
 
         if (unitTouchesIce && affectedByIce && isMoveAndTurn) {
@@ -9542,14 +9574,14 @@ public abstract class Entity extends TurnOrdered
                                             Coords lastPos,
                                             Coords curPos,
                                             boolean isLastStep,
-                                            boolean isPavementStep) {
+                                            boolean onRoad) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         addPilotingModifierForTerrain(roll, curPos, step.getBoardId(), true);
 
         if (!lastPos.equals(curPos) &&
             ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep) &&
             (curHex.terrainLevel(Terrains.RUBBLE) > 0) &&
-            !isPavementStep &&
+            !onRoad &&
             (step.getElevation() == 0) &&
             canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
@@ -9577,9 +9609,9 @@ public abstract class Entity extends TurnOrdered
                                          Coords lastPos,
                                          Coords curPos,
                                          int lastElev,
-                                         boolean isPavementStep) {
+                                         boolean onRoad) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        int bgMod = curHex.getBogDownModifier(getMovementMode(), this instanceof LargeSupportTank);
+        int bgMod = RoadHazards.bogDownModifier(this, curHex, onRoad, step.getElevation());
 
         // we check for bog down on entering a new hex or changing altitude but not if we're jumping, above the
         // "ground" (meaning the bottom of the lake), not susceptible to bog down as per getBogDownModifier, and not
@@ -9587,8 +9619,7 @@ public abstract class Entity extends TurnOrdered
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev)) &&
             (bgMod != TargetRoll.AUTOMATIC_SUCCESS) &&
             (moveType != EntityMovementType.MOVE_JUMP) &&
-            (step.getElevation() == -curHex.depth()) &&
-            !isPavementStep) {
+            (step.getElevation() == -curHex.depth())) {
 
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
 
@@ -9600,7 +9631,11 @@ public abstract class Entity extends TurnOrdered
                 roll.addModifier(-1, "Swamp Beast");
             }
 
-            addPilotingModifierForTerrain(roll, curPos, step.getBoardId(), false);
+            if (onRoad) {
+                curHex.getTerrain(Terrains.MUD).applyPilotingModifier(getMovementMode(), roll, false);
+            } else {
+                addPilotingModifierForTerrain(roll, curPos, step.getBoardId(), false);
+            }
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -9617,7 +9652,7 @@ public abstract class Entity extends TurnOrdered
                                            Hex curHex,
                                            Coords lastPos,
                                            Coords curPos,
-                                           boolean isPavementStep) {
+                                           boolean onRoad) {
         if ((curHex.terrainLevel(Terrains.WATER) > 0) &&
             (step.getElevation() < 0) &&
             !lastPos.equals(curPos) &&
@@ -9632,7 +9667,7 @@ public abstract class Entity extends TurnOrdered
             (getMovementMode() != EntityMovementMode.QUAD_SWIM) &&
             (getMovementMode() != EntityMovementMode.WIGE) &&
             canFall() &&
-            !isPavementStep) {
+            !onRoad) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER), moveType);
         }
         return checkWaterMove(0, moveType);

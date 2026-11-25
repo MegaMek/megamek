@@ -449,8 +449,7 @@ public interface IAero {
             roll.addModifier(+3, "Maneuvering thrusters damaged");
         }
 
-        // Supposed to be -1 for lifting off from an "airfield or landing pad."
-        // We will just treat this as having paved terrain
+        // TW p.88 grants this to an airfield or landing pad. Boards use ordinary pavement as a proxy.
         Coords pos = ((Entity) this).getPosition();
         Hex hex = ((Entity) this).getGame().getHexOf((Entity) this);
         if ((hex != null) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {

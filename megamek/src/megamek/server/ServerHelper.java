@@ -53,6 +53,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
+import megamek.common.rules.RoadHazards;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
@@ -201,23 +202,19 @@ public class ServerHelper {
         }
     }
 
-    /**
-     * Check for black ice when moving into pavement hex.
-     */
-    public static boolean checkEnteringBlackIce(TWGameManager gameManager, Coords curPos, Hex curHex,
-          boolean useBlackIce, boolean goodTemp, boolean isIceStorm) {
-        boolean isPavement = curHex.hasPavement();
-        if (isPavement && ((useBlackIce && goodTemp) || isIceStorm)) {
-            if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
-                int blackIceChance = Compute.d6(1);
-                if (blackIceChance > 4) {
-                    curHex.addTerrain(new Terrain(Terrains.BLACK_ICE, 1));
-                    gameManager.sendChangedHex(curPos);
-                    return true;
-                }
-            } else {
-                return true;
-            }
+    /** Resolve discovery on entering a paved surface (TO:AR p. 38). Existing ice stays on that surface. */
+    public static boolean checkEnteringBlackIce(TWGameManager gameManager, Entity unit, Hex hex, int elevation,
+          boolean onRoad, boolean weatherAllowsIce) {
+        if (unit.isAirborne() || !RoadHazards.touchesPavement(hex, elevation, onRoad)) {
+            return false;
+        }
+        if (hex.containsTerrain(Terrains.BLACK_ICE)) {
+            return true;
+        }
+        if (weatherAllowsIce && RoadHazards.canRevealBlackIce(unit) && Compute.d6(1) >= 5) {
+            hex.addTerrain(new Terrain(Terrains.BLACK_ICE, 1));
+            gameManager.sendChangedHex(hex.getCoords(), unit.getBoardId());
+            return true;
         }
         return false;
     }

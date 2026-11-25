@@ -32,33 +32,41 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.Hex;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.rules.RulesTerrain;
 import megamek.common.units.Entity;
-import megamek.common.units.Terrains;
+import megamek.common.units.EntityMovementMode;
 
 public class CoreRulesTerrain extends RulesTerrain {
 
     /**
      * {@inheritDoc}
-     * Road to road elevation change is -1 MP
+     * Core p.53 discounts a Mek's paved level change. MegaMek applies this terrain benefit to detailed units
+     * using ground movement. Battlefield Support Assets pay their own elevation costs (Core p.142).
      */
     @Override
-    public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) {
-        if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && deltaElevation > 0) {
-            return 1;
+    public int getRoadElevationCostDifference(Entity entity, EntityMovementMode movementMode,
+          boolean pavementStep, int deltaElevation) {
+        if (!pavementStep || deltaElevation <= 0 || entity instanceof BattlefieldSupportAsset) {
+            return 0;
         }
-        return 0;
+        return switch (movementMode) {
+            case BIPED, QUAD, TRIPOD, TRACKED, WHEELED, HOVER, INF_LEG, INF_MOTORIZED, INF_JUMP, INF_UMU -> 1;
+            default -> 0;
+        };
     }
 
     /**
      * {@inheritDoc}
-     * Using roads can increase the max elevation change by 1. Core p.53
+     * Travelling between two road hexes, vehicle and infantry Assets "can make a level change of up to two levels,
+     * instead of one" (Core p.142). Meks get no extra level on roads (Core p.53); other units keep Total Warfare.
      */
     @Override
-    public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
-        if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD)) {
-            return (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN) ? maxElevationChange + 1 : maxElevationChange;
+    public int getMaxElevationChangeAllowed(Entity entity, boolean pavementStep, int maxElevationChange) {
+        if ((entity instanceof BattlefieldSupportAsset asset) && (asset.getAssetType() != BFSAssetType.EMPLACEMENT)
+              && pavementStep && (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN)) {
+            return maxElevationChange + 1;
         }
         return maxElevationChange;
     }

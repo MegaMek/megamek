@@ -148,7 +148,7 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int testBoardId, int elevation) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int elevation, boolean onRoad) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -171,7 +171,7 @@ public class VTOL extends Tank implements IBomber {
             return true;
         }
 
-        if (hex.hasVegetation() && !hex.containsTerrain(ROAD) && (elevation <= hex.vegetationCeiling())) {
+        if (hex.hasVegetation() && !hex.hasGroundRoad() && (elevation <= hex.vegetationCeiling())) {
             return true;
         }
 

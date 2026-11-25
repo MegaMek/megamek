@@ -781,6 +781,11 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        return isLocationProhibited(c, testBoardId, currElevation, true);
+    }
+
+    @Override
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation, boolean onRoad) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -814,7 +819,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
         boolean sealed = hasEnvironmentalSealing();
-        boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
+        boolean hexHasRoad = onRoad && hex.hasGroundRoad();
         // A bulldozer (or, under the unofficial rule, a backhoe) lets a vehicle enter a rubble hex its motive type
         // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
         // terrain still applies.
@@ -888,7 +893,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                           (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
             case HOVER:
-                return isHoverTerrainProhibited(hex);
+                return isHoverTerrainProhibited(hex, hexHasRoad);
             case NAVAL:
             case HYDROFOIL:
                 // Can only deploy under a bridge if there is sufficient clearance.
@@ -905,7 +910,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                 }
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
-                return isLocationProhibitedWiGE(hex, currElevation);
+                return isLocationProhibitedWiGE(hex, currElevation, hexHasRoad);
             default:
                 return false;
         }
@@ -913,14 +918,14 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
     /**
      * Returns whether a hovercraft is barred from the given hex. A grounded WiGE uses these same restrictions (TW
-     * p.55), so this is kept apart from the movement mode switch for {@link #isLocationProhibitedWiGE(Hex, int)}.
+     * p.55), so this is kept apart from the movement mode switch for {@link #isLocationProhibitedWiGE(Hex, int, boolean)}.
      *
-     * @param hex the hex to test
+     * @param hex        the hex to test
+     * @param hexHasRoad whether the vehicle can use the road in this hex
      *
      * @return {@code true} if a hovercraft may not enter the hex
      */
-    private boolean isHoverTerrainProhibited(Hex hex) {
-        boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
+    private boolean isHoverTerrainProhibited(Hex hex, boolean hexHasRoad) {
         if (hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY) && !isSuperHeavy()) {
             return (hex.terrainLevel(Terrains.MAGMA) > 1);
         }
@@ -949,10 +954,11 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
      *
      * @param hex           the hex to test, taken from the board being tested
      * @param currElevation the WiGE's elevation in that hex
+     * @param hexHasRoad    whether the WiGE can use the road in this hex
      *
      * @return {@code true} if the WiGE may not be in the hex at that elevation
      */
-    protected boolean isLocationProhibitedWiGE(Hex hex, int currElevation) {
+    protected boolean isLocationProhibitedWiGE(Hex hex, int currElevation, boolean hexHasRoad) {
         if (hex.containsAnyTerrainOf(Terrains.IMPASSABLE, Terrains.SPACE, Terrains.SKY)) {
             return true;
         }
@@ -969,11 +975,11 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
             return true;
         }
 
-        if (hex.hasVegetation() && !hex.containsTerrain(Terrains.ROAD) && (currElevation <= hex.vegetationCeiling())) {
+        if (hex.hasVegetation() && !hexHasRoad && (currElevation <= hex.vegetationCeiling())) {
             return true;
         }
 
-        return (currElevation == 0) && isHoverTerrainProhibited(hex);
+        return (currElevation == 0) && isHoverTerrainProhibited(hex, hexHasRoad);
     }
 
     public void lockTurret(int turret) {
@@ -1035,7 +1041,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     /**
      * Returns whether this VTOL or WiGE can land in the given hex. A WiGE may only land in clear or paved hexes, and
      * treats water as clear (TW p.55, errata v12.0); a VTOL may land in clear or paved hexes, or on a building roof
-     * (TW p.54). A road or bridge counts as paved. Landing anywhere else is a crash (TW p.68).
+     * (TW p.54). Paved roads and bridges count as pavement. Landing anywhere else is a crash (TW p.68).
      *
      * @param hex the hex to land in
      *

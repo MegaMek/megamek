@@ -380,7 +380,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         if (behaviorType == UnitBehavior.BehaviorType.ForcedWithdrawal
               || behaviorType == UnitBehavior.BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToDestination(movingUnit, path.getFinalCoords(), path.getFinalBoardId(),
-                  game);
+                  game, path.getFinalElevation());
             int currentDistanceToHome = distanceToDestination(movingUnit, path.getEntity().getPosition(),
                   path.getEntity().getBoardId(), game);
 

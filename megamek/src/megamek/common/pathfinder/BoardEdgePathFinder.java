@@ -45,8 +45,10 @@ import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
@@ -580,9 +582,11 @@ public class BoardEdgePathFinder {
     private MoveLegalityIndicator isLegalMove(MovePath movePath, Hex destHex, IBuilding destinationBuilding) {
         Coords dest = movePath.getFinalCoords();
         Board board = movePath.getGame().getBoard(movePath.getFinalBoardId());
-        Coords src = movePath.getSecondLastStep().getPosition();
-        Hex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
+        MoveStep previous = movePath.length() > 1 ? movePath.getSecondLastStep() : null;
+        Coords src = previous == null ? entity.getPosition() : previous.getPosition();
+        int srcElevation = previous == null ? entity.getElevation() : previous.getElevation();
+        Hex srcHex = board.getHex(src);
 
         MoveLegalityIndicator mli = new MoveLegalityIndicator();
 
@@ -604,22 +608,23 @@ public class BoardEdgePathFinder {
         boolean isAmphibious = movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
               movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
               movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
-        boolean destHexHasRoad = destHex.containsTerrain(Terrains.ROAD);
+        boolean onRoad = movePath.getLastStep().isRoadStep();
 
         // this indicates that we are stepping off a bridge
         boolean sourceIsBridge = srcHex.containsTerrain(Terrains.BRIDGE_CF) &&
-              movePath.getSecondLastStep().getElevation() == srcHex.maxTerrainFeatureElevation(false);
+              srcElevation == srcHex.terrainLevel(Terrains.BRIDGE_ELEV);
 
         // this indicates that we are stepping onto a bridge
         boolean destinationIsBridge = destHex.containsTerrain(Terrains.BRIDGE_CF) &&
-              movePath.getFinalElevation() == destHex.maxTerrainFeatureElevation(false);
+              movePath.getFinalElevation() == destHex.terrainLevel(Terrains.BRIDGE_ELEV);
 
-        // jumpers can clear higher objects than walkers and crawlers
+        boolean pavedStep = movePath.getLastStep().isPavementStep();
         int maxUpwardElevationChange = movePath.isJumping() ? movePath.getCachedEntityState().getJumpMP()
-              : entity.getMaxElevationChange();
-        // jumpers can just hop down wherever they want
+              : Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, pavedStep,
+                    entity.getMaxElevationChange());
         int maxDownwardElevationChange = movePath.isJumping() ? Entity.UNLIMITED_JUMP_DOWN
-              : entity.getMaxElevationDown();
+              : Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(entity, pavedStep,
+                    entity.getMaxElevationDown(srcElevation));
         mli.destHexElevation = calculateUnitElevationInHex(destHex, entity, isHovercraft, isAmphibious,
               destinationIsBridge);
         mli.srcHexElevation = calculateUnitElevationInHex(srcHex, entity, isHovercraft, isAmphibious, sourceIsBridge);
@@ -628,6 +633,13 @@ public class BoardEdgePathFinder {
         mli.steppingOntoBridge = destinationIsBridge;
 
         mli.destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
+        if (!movePath.isJumping() && !src.equals(dest)) {
+            int direction = src.direction(dest);
+            mli.destinationImpassable |= (MoveStep.mustUseBridgeExits(entity, board.getBoardId(), srcHex,
+                  srcElevation, src) && !srcHex.containsTerrainExit(Terrains.BRIDGE, direction))
+                  || (MoveStep.mustUseBridgeExits(entity, board.getBoardId(), destHex, movePath.getFinalElevation(),
+                        dest) && !destHex.containsTerrainExit(Terrains.BRIDGE, (direction + 3) % 6));
+        }
 
         boolean destinationHasBuilding = destHex.containsTerrain(Terrains.BLDG_CF)
               || destHex.containsTerrain(Terrains.FUEL_TANK_CF);
@@ -653,28 +665,34 @@ public class BoardEdgePathFinder {
         // tanks cannot go into jungles or heavy woods unless there is a road
         mli.tankIntoHeavyWoods = isTracked &&
               (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 1)
-              && !destHexHasRoad;
+              && !onRoad && !destinationIsBridge;
 
         // hovercraft and wheeled units cannot go into jungles or woods unless there is
         // a road
         mli.weakTankIntoWoods = (isHovercraft || isWheeled) &&
               (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 0)
-              && !destHexHasRoad;
+              && !onRoad && !destinationIsBridge;
 
         // wheeled tanks cannot go into rough terrain or rubble of any kind, or
         // buildings for that matter
         // even if you level them they still turn to rubble. Additionally, they cannot
         // go into deep snow.
-        mli.wheeledTankRestriction = isWheeled && !destHexHasRoad &&
+        mli.wheeledTankRestriction = isWheeled && !onRoad && !destinationIsBridge &&
               (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE)
                     || destinationHasBuilding
                     || (destHex.containsTerrain(Terrains.SNOW) && (destHex.terrainLevel(Terrains.SNOW) > 1)));
+
+        // A vehicle in normally prohibited terrain must also leave it along a road (TW p. 61).
+        if (!onRoad && !sourceIsBridge && srcHex.hasGroundRoad()) {
+            mli.leavingProhibitedTerrain = entity.isLocationProhibited(src, movePath.getFinalBoardId(),
+                  srcElevation, false);
+        }
 
         // tracked and wheeled tanks cannot go into water without a bridge, unless
         // amphibious
         mli.groundTankIntoWater = (isTracked || isWheeled) &&
               destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) &&
-              !isAmphibious && !destHex.containsTerrain(Terrains.BRIDGE);
+              !isAmphibious && !onRoad && !destinationIsBridge;
 
         // naval units cannot go out of water
         mli.shipOutOfWater = entity.isNaval() &&
@@ -688,6 +706,28 @@ public class BoardEdgePathFinder {
         mli.tankGoingThroughBuilding = (isWheeled || isTracked || isHovercraft) && destinationHasBuilding;
 
         return mli;
+    }
+
+    /** Ground vehicles must enter and leave an otherwise prohibited hex along its road (TW p. 61). */
+    public static boolean requiresRoad(Entity mover, Board board, Coords position, Hex hex, int altitude) {
+        return altitude == hex.getLevel() && hex.hasGroundRoad()
+              && mover.isLocationProhibited(position, board.getBoardId(), 0, false);
+    }
+
+    /** Limits for reversible ground movement used by the bot's distance and reachability maps. */
+    public record GroundElevationLimits(int ordinary, int paved) {
+        public static GroundElevationLimits forEntity(Entity mover) {
+            int normal = mover.getMaxElevationChange();
+            return new GroundElevationLimits(normal,
+                  Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(mover, true, normal));
+        }
+
+        public boolean permits(Hex from, int fromAltitude, Hex into, int intoAltitude, int direction) {
+            int difference = Math.abs(fromAltitude - intoAltitude);
+            return difference <= ordinary || (difference <= paved
+                  && Compute.isRoadStep(from, fromAltitude - from.getLevel(), into, intoAltitude - into.getLevel(),
+                        direction, true));
+        }
     }
 
     /**
@@ -723,7 +763,7 @@ public class BoardEdgePathFinder {
         // if we are explicitly going to the top of a bridge, use that.
 
         if (useBridgeTop && !entity.isSurfaceNaval() && hex.containsTerrain(Terrains.BRIDGE_CF)) {
-            return hex.ceiling();
+            return hex.getLevel() + hex.terrainLevel(Terrains.BRIDGE_ELEV);
         }
 
         int hexElevation = hex.getLevel();
@@ -734,7 +774,7 @@ public class BoardEdgePathFinder {
         } else if (entity.isNaval() && hex.containsTerrain(Terrains.BRIDGE)) {
             hexElevation = hex.getLevel();
         } else if (!entity.isSurfaceNaval() && !isHovercraft && !isAmphibious &&
-              hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.BRIDGE)) {
+              hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)) {
             hexElevation = hex.floor();
         }
 
@@ -811,6 +851,7 @@ public class BoardEdgePathFinder {
         public boolean goingDownTooLow;
         public boolean tankIntoHeavyWoods;
         public boolean weakTankIntoWoods;
+        public boolean leavingProhibitedTerrain;
         public boolean wheeledTankRestriction;
         public boolean groundTankIntoWater;
         public boolean shipOutOfWater;
@@ -834,6 +875,7 @@ public class BoardEdgePathFinder {
                   !goingDownTooLow &&
                   !tankIntoHeavyWoods &&
                   !weakTankIntoWoods &&
+                  !leavingProhibitedTerrain &&
                   !wheeledTankRestriction &&
                   !groundTankIntoWater &&
                   !shipOutOfWater &&

@@ -53,6 +53,7 @@ public enum BFSSpecialType {
     IMMOBILE("Immobile", false, "Immobile"),
     INDIRECT_FIRE("IF", true, "Indirect Fire", "IndirectFire"),
     SPOTTER("Spotter", false, "Spotter"),
+    SNOW("Snow", false, "Snow"),
     TAG("TAG", false, "Target Acquisition Gear"),
     COMMANDER("Commander", false, "Commander", "Cmdr"),
     APC("APC", true, "Armored Personnel Carrier"),

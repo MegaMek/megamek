@@ -42,12 +42,14 @@ import java.util.stream.Collectors;
 
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
 import megamek.common.Report;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
@@ -59,6 +61,7 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.Terrains;
 import megamek.common.units.UnitType;
 
 /**
@@ -114,6 +117,7 @@ public class BattlefieldSupportAsset extends Entity {
 
     // Battlefield Support stat values. Chassis, model, role, movement mode and MP reuse the base Entity fields.
     private BFSAssetType assetType = BFSAssetType.VEHICLE;
+    private boolean changedLevelThisTurn;
     private String cardTitle;
     private String cardSubtitle;
     private int tmm;
@@ -790,6 +794,91 @@ public class BattlefieldSupportAsset extends Entity {
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         // Assets have a single flat MP allowance; they do not gain a running bonus.
         return getWalkMP(mpCalculationSetting);
+    }
+
+    public boolean isInfantryAsset() {
+        return assetType == BFSAssetType.CONV_INFANTRY || assetType == BFSAssetType.BATTLE_ARMOR;
+    }
+
+    /** Foot conventional infantry without Snow cannot cross even a snow-covered road (Core pp.121, 125, 142). */
+    public boolean isSnowProhibited(Hex hex) {
+        return hex.containsTerrain(Terrains.SNOW) && cannotEnterSnow();
+    }
+
+    public boolean cannotEnterSnow() {
+        return assetType == BFSAssetType.CONV_INFANTRY && getMovementMode().isLegInfantry()
+              && !hasSpecial(BFSSpecialType.SNOW);
+    }
+
+    public boolean hasChangedLevelThisTurn() {
+        return changedLevelThisTurn;
+    }
+
+    public void recordLevelChange() {
+        changedLevelThisTurn = true;
+    }
+
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        changedLevelThisTurn = false;
+    }
+
+    /** Core p.142 grants a paved movement bonus to ground vehicles and mechanized or motorized infantry. */
+    @Override
+    public boolean isEligibleForPavementOrRoadBonus() {
+        if (isImmobileAsset()) {
+            return false;
+        }
+        return switch (assetType) {
+            case VEHICLE -> getMovementMode().isTrackedWheeledOrHover();
+            case CONV_INFANTRY -> getMovementMode().isTrackedWheeledOrHover()
+                  || getMovementMode() == EntityMovementMode.INF_MOTORIZED;
+            default -> false;
+        };
+    }
+
+    @Override
+    public boolean isLocationProhibited(Coords coords, int boardId, int elevation) {
+        return isLocationProhibited(coords, boardId, elevation, true);
+    }
+
+    /** Core pp.142–143. A road through prohibited terrain can only be used while following the road (p.53). */
+    @Override
+    public boolean isLocationProhibited(Coords coords, int boardId, int elevation, boolean onRoad) {
+        if (super.isLocationProhibited(coords, boardId, elevation)) {
+            return true;
+        }
+        Hex hex = game.getHex(coords, boardId);
+        EntityMovementMode mode = getMovementMode();
+        if (mode.isVTOL()) {
+            return !isElevationValid(elevation, hex);
+        }
+        if (isSnowProhibited(hex)) {
+            return true;
+        }
+        if (onRoad && hex.hasGroundRoad()) {
+            return false;
+        }
+        boolean onIce = elevation == 0 && hex.containsTerrain(Terrains.ICE);
+        if (hex.hasDepth1WaterOrDeeper() && !onIce && !mode.isHover()) {
+            return true;
+        }
+        return switch (mode) {
+            case TRACKED -> hex.vegetationCeiling() != 1
+                  && (hex.terrainLevel(Terrains.WOODS) >= 2 || hex.terrainLevel(Terrains.JUNGLE) >= 2);
+            case HOVER -> hex.hasVegetation();
+            case WHEELED, INF_MOTORIZED -> hex.hasVegetation()
+                  || hex.containsAnyTerrainOf(Terrains.ROUGH, Terrains.RUBBLE);
+            default -> false;
+        };
+    }
+
+    @Override
+    public boolean isElevationValid(int elevation, Hex hex) {
+        // A VTOL Asset must remain at least one level above the terrain, including while crossing a road.
+        return getMovementMode().isVTOL() ? elevation > hex.maxTerrainFeatureElevation(false)
+              : super.isElevationValid(elevation, hex);
     }
 
     @Override

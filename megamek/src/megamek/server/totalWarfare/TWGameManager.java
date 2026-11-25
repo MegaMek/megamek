@@ -115,6 +115,7 @@ import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RoadHazards;
 import megamek.common.rules.RulesPSR;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesUnderwater;
@@ -4776,6 +4777,9 @@ public class TWGameManager extends AbstractGameManager {
         Hex curHex = board.getHex(start);
         Report r;
         int skidDistance = 0; // actual distance moved
+        boolean roadBonusInNextHex = entity.gotPavementOrRoadBonus;
+        boolean onRoad = false;
+        Coords lastRecordedSkidHex = start;
         // Flipping vehicles take tonnage/10 points of damage for every hex they enter.
         int flipDamage = (int) Math.ceil(entity.getWeight() / 10.0);
         while (!entity.isDoomed() && (distance > 0)) {
@@ -4820,7 +4824,6 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             Hex nextHex = board.getHex(nextPos);
-            distance -= nextHex.movementCost(entity) + 1;
             // By default, the unit is going to fall to the floor of the next
             // hex
             int curAltitude = elevation + curHex.getLevel();
@@ -4844,12 +4847,10 @@ public class TWGameManager extends AbstractGameManager {
                 if (nextHex.containsTerrain(Terrains.BRIDGE)) {
                     // unit will land on the bridge, if at a higher level, and the bridge exits towards the current hex,
                     // otherwise the bridge has no effect
-                    int exitDir = (direction + 3) % 6;
-                    exitDir = 1 << exitDir;
-                    if ((nextHex.getTerrain(Terrains.BRIDGE).getExits() & exitDir) == exitDir) {
-                        nextAltitude = Math.clamp(nextAltitude,
-                              nextHex.getLevel() + nextHex.terrainLevel(Terrains.BRIDGE_ELEV),
-                              curAltitude);
+                    int deckAltitude = nextHex.getLevel() + nextHex.terrainLevel(Terrains.BRIDGE_ELEV);
+                    if (deckAltitude <= curAltitude
+                          && nextHex.containsTerrainExit(Terrains.BRIDGE, (direction + 3) % 6)) {
+                        nextAltitude = Math.max(nextAltitude, deckAltitude);
                     }
                 }
                 if ((nextAltitude <= nextHex.getLevel()) && (curAltitude >= curHex.getLevel())) {
@@ -4923,6 +4924,19 @@ public class TWGameManager extends AbstractGameManager {
             boolean isAirborneVehicleSlip = (entity instanceof Tank) && (elevation > 0)
                   && ((entity.getMovementMode() == EntityMovementMode.VTOL)
                   || (entity.getMovementMode() == EntityMovementMode.WIGE));
+            onRoad = !isAirborneVehicleSlip && !entity.getMovementMode().isMarine()
+                  && Compute.isRoadStep(curHex, elevation, nextHex, nextElevation, false);
+            roadBonusInNextHex = entity.gotPavementOrRoadBonus && onRoad
+                  && (Compute.isRoadStep(curHex, elevation, nextHex, nextElevation, true)
+                  || Compute.isUnpavedRoadBonusStep(entity, entity.getMovementMode(), curHex, elevation,
+                        nextHex, nextElevation));
+            boolean onDeck = nextHex.containsTerrain(Terrains.BRIDGE)
+                  && nextElevation == nextHex.terrainLevel(Terrains.BRIDGE_ELEV);
+            int terrainCost = onRoad ? 0 : nextHex.movementCost(entity);
+            if (onRoad && !onDeck && RoadHazards.mudOnRoad(nextHex)) {
+                terrainCost = nextHex.getTerrain(Terrains.MUD).movementCost(entity);
+            }
+            distance -= 1 + terrainCost;
             // TW p.55: a WiGE that enters a woods or jungle hex, including by a sideslip, crashes
             if (isAirborneVehicleSlip && (entity.getMovementMode() == EntityMovementMode.WIGE)
                   && (nextHex.containsTerrain(Terrains.WOODS) || nextHex.containsTerrain(Terrains.JUNGLE))) {
@@ -5068,7 +5082,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // Have skidding units suffer falls (off a cliff).
             else if ((curAltitude > (nextAltitude + entity.getMaxElevationChange()) ||
-                  (curHex.hasCliffTopTowards(nextHex) && curAltitude > nextAltitude)) &&
+                  (curHex.crossesCliffTopTowards(nextHex, elevation, nextElevation) && curAltitude > nextAltitude)) &&
                   !(isAirborneVehicleSlip
                         ? AirborneVehicleCrashHandler.canAvoidSideslipFall((Tank) entity)
                         : (entity.getMovementMode() == EntityMovementMode.WIGE && elevation > curHex.ceiling()))) {
@@ -5386,8 +5400,13 @@ public class TWGameManager extends AbstractGameManager {
 
             // Can the skidding entity enter the next hex from this?
             // N.B. can skid along roads.
-            if ((entity.isLocationProhibited(start) || entity.isLocationProhibited(nextPos)) &&
-                  !Compute.canMoveOnPavement(game, curPos, nextPos, step)) {
+            boolean leavingDeck = curHex.containsTerrain(Terrains.BRIDGE)
+                  && elevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV);
+            boolean leavesProhibitedTerrain = !onRoad && !leavingDeck
+                  && entity.isLocationProhibited(curPos, board.getBoardId(), elevation, false);
+            boolean entersProhibitedTerrain = !onRoad && !onDeck
+                  && entity.isLocationProhibited(nextPos, board.getBoardId(), nextElevation, false);
+            if (nextHex.containsTerrain(Terrains.IMPASSABLE) || leavesProhibitedTerrain || entersProhibitedTerrain) {
                 // Update report.
                 r = new Report(2040);
                 r.subject = entity.getId();
@@ -5420,7 +5439,7 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             }
 
-            if ((nextHex.terrainLevel(Terrains.WATER) > 0) &&
+            if (!onRoad && !onDeck && (nextHex.terrainLevel(Terrains.WATER) > 0) &&
                   (entity.getMovementMode() != EntityMovementMode.HOVER) &&
                   (entity.getMovementMode() != EntityMovementMode.WIGE)) {
                 // water ends the skid
@@ -5436,20 +5455,10 @@ public class TWGameManager extends AbstractGameManager {
             ServerHelper.checkEnteringHazardousLiquid(nextHex, nextElevation, entity, this);
             ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, this);
 
-            // is the next hex a swamp?
-            PilotingRollData rollTarget = entity.checkBogDown(step,
-                  moveType,
-                  nextHex,
-                  curPos,
-                  nextPos,
-                  step.getElevation(),
-                  Compute.canMoveOnPavement(game, curPos, nextPos, step));
-
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                // Taharqa: According to TacOps, you automatically stick if you
-                // are skidding, (pg. 63)
-                // if (0 < doSkillCheckWhileMoving(entity, curPos, nextPos,
-                // rollTarget, false)) {
+            // A skidding unit bogs down automatically when it reaches boggy ground (TO:AR p. 63).
+            if (!isAirborneVehicleSlip && !onDeck && nextElevation == -nextHex.depth()
+                  && RoadHazards.bogDownModifier(entity, nextHex, onRoad, nextElevation)
+                        != TargetRoll.AUTOMATIC_SUCCESS) {
                 entity.setStuck(true);
                 r = new Report(2081);
                 r.subject = entity.getId();
@@ -5474,6 +5483,10 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // Update the position and keep skidding.
+            entity.gotPavementOrRoadBonus = roadBonusInNextHex;
+            ServerHelper.checkEnteringBlackIce(this, entity, nextHex, nextElevation, onRoad,
+                  RoadHazards.blackIceWeather(game));
+            lastRecordedSkidHex = nextPos;
             curPos = nextPos;
             curHex = nextHex;
             elevation = nextElevation;
@@ -5488,6 +5501,13 @@ public class TWGameManager extends AbstractGameManager {
             }
 
         } // Handle the next skid hex.
+
+        // A collision or terrain hazard can stop the skid either before or after entering the last attempted hex.
+        if (nextPos.equals(entity.getPosition()) && !nextPos.equals(lastRecordedSkidHex) && board.contains(nextPos)) {
+            entity.gotPavementOrRoadBonus = roadBonusInNextHex;
+            ServerHelper.checkEnteringBlackIce(this, entity, board.getHex(nextPos), entity.getElevation(), onRoad,
+                  RoadHazards.blackIceWeather(game));
+        }
 
         // Handle additional displacements
         try {
@@ -5594,7 +5614,8 @@ public class TWGameManager extends AbstractGameManager {
           boolean isBackwards, EntityMovementType lastStepMoveType, int distance, int modifier, int marginOfFailure) {
         Board board = game.getBoard(entity);
         Hex curHex = board.getHex(curPos);
-        if (entity.getMovementMode() == EntityMovementMode.WHEELED && !curHex.containsTerrain(Terrains.PAVEMENT)) {
+        if (entity.getMovementMode() == EntityMovementMode.WHEELED
+              && !RoadHazards.touchesPavement(curHex, prevStep.getElevation(), prevStep.isRoadStep())) {
             modifier += 2;
         }
         if (entity.getMovementMode() == EntityMovementMode.VTOL) {
@@ -9776,7 +9797,14 @@ public class TWGameManager extends AbstractGameManager {
                 roll = entity.getBasePilotingRoll();
             }
             if (!(entity.isAirborneVTOLorWIGE())) {
-                displacementReport.addAll(doEntityFallsInto(entity, entity.getElevation(), src, dest, roll, true));
+                int oldElevation = entity.getElevation();
+                displacementReport.addAll(doEntityFallsInto(entity, oldElevation, src, dest, roll, true));
+                if (dest.equals(entity.getPosition()) && !src.equals(dest)) {
+                    boolean onRoad = !entity.isMakingDfa() && !entity.getMovementMode().isMarine()
+                          && Compute.isRoadStep(srcHex, oldElevation, destHex, entity.getElevation(), false);
+                    ServerHelper.checkEnteringBlackIce(this, entity, destHex, entity.getElevation(), onRoad,
+                          RoadHazards.blackIceWeather(game));
+                }
             } else {
                 entity.setPosition(dest);
             }
@@ -9857,7 +9885,13 @@ public class TWGameManager extends AbstractGameManager {
             displacementReport.addAll(doEntityFall(entity, dest, 0, roll));
         }
         // check bog-down conditions
-        displacementReport.addAll(doEntityDisplacementBogDownCheck(entity, dest, entity.getElevation()));
+        boolean onRoad = !entity.isMakingDfa() && !entity.getMovementMode().isMarine()
+              && Compute.isRoadStep(srcHex, oldElev, destHex, entity.getElevation(), false);
+        if (!src.equals(dest)) {
+            ServerHelper.checkEnteringBlackIce(this, entity, destHex, entity.getElevation(), onRoad,
+                  RoadHazards.blackIceWeather(game));
+        }
+        displacementReport.addAll(doEntityDisplacementBogDownCheck(entity, dest, entity.getElevation(), onRoad));
 
         if (roll != null) {
             if (entity.canFall()) {
@@ -10080,11 +10114,11 @@ public class TWGameManager extends AbstractGameManager {
         return vPhaseReport;
     }
 
-    private Vector<Report> doEntityDisplacementBogDownCheck(Entity entity, Coords c, int elev) {
+    private Vector<Report> doEntityDisplacementBogDownCheck(Entity entity, Coords c, int elev, boolean onRoad) {
         Vector<Report> vReport = new Vector<>();
         Report report;
         Hex destHex = game.getBoard(entity).getHex(c);
-        int bgMod = destHex.getBogDownModifier(entity.getMovementMode(), entity instanceof LargeSupportTank);
+        int bgMod = RoadHazards.bogDownModifier(entity, destHex, onRoad, elev);
         if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS) && !entity.getMovementMode().isHoverOrWiGE() && (elev == 0)) {
             PilotingRollData roll = entity.getBasePilotingRoll();
             roll.append(new PilotingRollData(entity.getId(), bgMod, "avoid bogging down"));

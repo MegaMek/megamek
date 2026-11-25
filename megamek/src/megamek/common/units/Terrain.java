@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Objects;
 
 import jakarta.annotation.Nullable;
+import megamek.common.battlefieldSupport.BFSSpecialType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.equipment.MiscType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -403,6 +405,18 @@ public class Terrain implements Serializable {
      */
     public int movementCost(Entity e) {
         EntityMovementMode moveMode = e.getMovementMode();
+        // Core pp.124–125, 142. Hover Assets treat passable terrain as clear. The card's Snow
+        // Special cancels the snow and ice costs for wheeled and tracked units.
+        if (e instanceof BattlefieldSupportAsset asset) {
+            if (moveMode.isHover()) {
+                return 0;
+            }
+            boolean wheeled = moveMode.isWheeled() || moveMode.isMotorizedInfantry();
+            if (type == SNOW || type == ICE) {
+                boolean affected = wheeled || (type == SNOW && moveMode.isTracked());
+                return affected && !asset.hasSpecial(BFSSpecialType.SNOW) ? 1 : 0;
+            }
+        }
         int mp;
         boolean isCrossCountry = e.hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
 

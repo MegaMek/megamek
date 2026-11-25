@@ -60,6 +60,7 @@ import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.actions.UnjamAction;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
@@ -79,10 +80,10 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RoadHazards;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.*;
 import megamek.common.weapons.TeleMissile;
@@ -967,7 +968,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         entity.setJumpingWithMechanicalBoosters(md.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER));
 
-        if (md.contains(MoveStepType.BACKWARDS)) {
+        if (!entity.isBattlefieldSupportAsset() && md.contains(MoveStepType.BACKWARDS)) {
             entity.setMovedBackwards(true);
             if (md.getMpUsed() > entity.getWalkMP()) {
                 entity.setPowerReverse(true);
@@ -1647,22 +1648,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // check for black ice
-            boolean useBlackIce = getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
-            boolean goodTemp = getGame().getPlanetaryConditions()
-                                        .getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
-            boolean goodWeather = getGame().getPlanetaryConditions().getWeather().isIceStorm();
-            if ((useBlackIce && goodTemp) || goodWeather) {
-                if (ServerHelper.checkEnteringBlackIce(gameManager,
-                                                       curPos,
-                                                       curHex,
-                                                       useBlackIce,
-                                                       goodTemp,
-                                                       goodWeather)) {
-                    rollTarget = entity.checkLandingOnBlackIce(overallMoveType, curHex);
-                    if (!gameManager.doSkillCheckInPlace(entity, rollTarget)) {
-                        entity.applyDamage();
-                    }
+            // The jump landing contacts the surface of the destination, independently of the jump path.
+            if (ServerHelper.checkEnteringBlackIce(gameManager, entity, curHex, entity.getElevation(), true,
+                  RoadHazards.blackIceWeather(getGame())) && entity instanceof Mek) {
+                rollTarget = entity.checkLandingOnBlackIce(overallMoveType, curHex);
+                if (!gameManager.doSkillCheckInPlace(entity, rollTarget)) {
+                    entity.applyDamage();
                 }
             }
 
@@ -1897,7 +1888,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                        && (fellDuringMovement && !entity.isCarefulStand())
                                        // Careful standing takes up the whole turn
                                        && !turnOver
-                                       && (entity.mpUsed < entity.getRunMP())
+                                       && hasRemainingGroundMP(entity.mpUsed)
                                        && (overallMoveType != EntityMovementType.MOVE_JUMP);
         if ((continueTurnFromFall
              || continueTurnFromPBS
@@ -2289,20 +2280,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * Iterate through the steps of the movement path and handle each step.
      */
     private void processSteps() {
-        MoveStep previousStep = null;
-        for (final ListIterator<MoveStep> i = md.getSteps(); i.hasNext(); ) {
-            if (i.hasPrevious()) {
-                previousStep = i.previous();
-                // move iterator back to original position; we know this is safe due to for loop terminator
-                i.next();
-            }
-            final MoveStep step = i.next();
+        // Hazard detection can truncate this path while the current hex is still being resolved.
+        for (int stepIndex = 0; stepIndex < md.length(); stepIndex++) {
+            MoveStep previousStep = stepIndex == 0 ? null : md.getStep(stepIndex - 1);
+            final MoveStep step = md.getStep(stepIndex);
+            boolean isLastStep = stepIndex + 1 == md.length();
             EntityMovementType stepMoveType = step.getMovementType(md.isEndStep(step));
             wasProne = entity.isProne();
-            boolean isPavementStep = step.isPavementStep();
-            entity.inReverse = step.isThisStepBackwards();
+            boolean onRoad = step.isRoadStep();
+            if (!entity.isBattlefieldSupportAsset()) {
+                entity.inReverse = step.isThisStepBackwards();
+            }
             boolean entityFellWhileAttemptingToStand = false;
-            boolean isOnGround = !i.hasNext();
+            boolean isOnGround = isLastStep;
             isOnGround |= stepMoveType != EntityMovementType.MOVE_JUMP;
             isOnGround &= step.getElevation() < 1;
 
@@ -2398,6 +2388,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                         // If not set, BV icons could have wrong facing
                         this.entity.setPosition(step.getPosition());
+                        recordRoadMovement(step);
                         this.entity.setFacing(step.getFacing());
                         this.entity.setSecondaryFacing(step.getFacing());
 
@@ -3679,52 +3670,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // Does the entity skid?
                 if (psrFailed) {
 
-                    if (entity instanceof Tank) {
-                        addReport(gameManager.vehicleMotiveDamage((Tank) entity, 0));
-                    }
-
-                    curPos = lastPos;
-                    int skidDistance = (int) Math.round((double) (distance - 1) / 2);
-                    int skidDirection = prevFacing;
-
-                    // All charge damage is based upon
-                    // the pre-skid move distance.
-                    entity.delta_distance = distance - 1;
-
-                    // Attacks against a skidding target have additional +2.
-                    moveType = EntityMovementType.MOVE_SKID;
-
-                    // What is the first hex in the skid?
-                    if (step.isThisStepBackwards()) {
-                        skidDirection = (skidDirection + 3) % 6;
-                    }
-
-                    if (gameManager.processSkid(entity,
-                                                curPos,
-                                                prevStep.getElevation(),
-                                                skidDirection,
-                                                skidDistance,
-                                                prevStep,
-                                                lastStepMoveType)) {
+                    int direction = step.isThisStepBackwards() ? (prevFacing + 3) % 6 : prevFacing;
+                    if (resolveSkid(lastPos, prevStep, prevStep.getElevation(), direction, distance - 1)) {
                         return;
                     }
-
-                    // set entity parameters
-                    curFacing = entity.getFacing();
-                    curPos = entity.getPosition();
-                    entity.setSecondaryFacing(curFacing);
-
-                    // skid consumes all movement
-                    if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
-                        mpUsed = entity.getRunMP();
-                    } else {
-                        mpUsed = entity.getRunMPWithoutMASC();
-                    }
-
-                    entity.moved = moveType;
-                    fellDuringMovement = true;
-                    turnOver = true;
-                    distance = entity.delta_distance;
                     break;
 
                 } else { // End failed-skid-psr
@@ -3762,6 +3711,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         int skidDirection;
                         // distance already counts the hex this step was about to enter
                         int hexesEnteredBeforeSlip;
+                        int mpBeforeSlip;
                         Coords start;
                         if (step.getType() == MoveStepType.LATERAL_LEFT
                             || step.getType() == MoveStepType.LATERAL_RIGHT
@@ -3769,14 +3719,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             || step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS) {
                             // A failed controlled sideslip always results in moving one additional hex
                             // in the direction of the intentional sideslip.
+                            recordRoadMovement(step);
                             elev = step.getElevation();
                             sideslipDistance = 1;
                             skidDirection = lastPos.direction(curPos);
                             start = curPos;
                             hexesEnteredBeforeSlip = distance;
+                            mpBeforeSlip = step.getMpUsed();
                         } else {
                             elev = (prevStep == null) ? curElevation : prevStep.getElevation();
                             hexesEnteredBeforeSlip = distance - 1;
+                            // The uncontrolled slip replaces the attempted entry, which costs no MP (TW p.67).
+                            mpBeforeSlip = step.getMpUsed() - step.getMp();
                             sideslipDistance = AirborneVehicleCrashHandler.sideslipDistanceCap(moF,
                                   hexesEnteredBeforeSlip);
                             skidDirection = prevFacing;
@@ -3793,6 +3747,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             // Charges and crash damage during the sideslip use the hexes moved before it, and a WiGE
                             // needs MP left to avoid a fall (TW p.68)
                             entity.delta_distance = hexesEnteredBeforeSlip;
+                            mpUsed = mpBeforeSlip;
                             entity.mpUsed = mpUsed;
                             if (gameManager.processSkid(entity,
                                                         start,
@@ -3806,7 +3761,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             // Sideslipped hexes count toward the target movement modifier (TW p.67)
                             distance = hexesEnteredBeforeSlip + start.distance(entity.getPosition());
 
-                            if (!entity.isDestroyed() && !entity.isDoomed() && (mpUsed < entity.getRunMP())) {
+                            if (!entity.isDestroyed() && !entity.isDoomed() && hasRemainingGroundMP(mpUsed)) {
                                 fellDuringMovement = true; // No, but it should
                                 // work...
                             }
@@ -3825,31 +3780,53 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
+            // The unit entered this step without skidding or sideslipping into a different hex.
+            recordRoadMovement(step);
+
             // check if we've moved into rubble
-            boolean isLastStep = step.equals(md.getLastStep());
             rollTarget = entity.checkRubbleMove(step,
                                                 overallMoveType,
                                                 curHex,
                                                 lastPos,
                                                 curPos,
                                                 isLastStep,
-                                                isPavementStep);
+                                                onRoad);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos, rollTarget, true);
             }
 
             // check if we are using reckless movement
-            rollTarget = entity.checkRecklessMove(step, overallMoveType, curHex, lastPos, curPos, prevHex);
+            if (!lastPos.equals(curPos) && !step.isJumping()) {
+                ServerHelper.checkEnteringBlackIce(gameManager, entity, curHex, step.getElevation(), onRoad,
+                      RoadHazards.blackIceWeather(getGame()));
+            }
+            rollTarget = entity.checkRecklessMove(step, overallMoveType, curHex, lastPos, curPos, prevHex, false);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                if (entity instanceof Mek) {
-                    gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos, rollTarget, true);
-                } else if (entity instanceof Tank) {
-                    if (0 < gameManager.doSkillCheckWhileMoving(entity,
-                                                                lastElevation,
-                                                                lastPos,
-                                                                curPos,
-                                                                rollTarget,
-                                                                false)) {
+                boolean mek = entity instanceof Mek;
+                // ProtoMeks resolve a failed full-speed check as a vehicle (TO:AR p.62).
+                if ((mek || entity instanceof Tank || entity instanceof ProtoMek)
+                      && gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos, rollTarget, mek) > 0) {
+                    // A failed fall while climbing can put a Mek back in the lower hex (TW p.68).
+                    Coords skidStart = mek ? entity.getPosition() : curPos;
+                    boolean entered = curPos.equals(skidStart);
+                    MoveStep skidStep = entered || prevStep == null ? step : prevStep;
+                    Hex skidHex = getGame().getHex(skidStart, curBoardId);
+                    int skidElevation = mek ? entity.getElevation() : step.getElevation();
+                    boolean paved = RoadHazards.touchesPavement(skidHex, skidElevation,
+                          entered ? onRoad : prevStep == null || prevStep.isRoadStep());
+                    boolean ice = (paved && skidHex.containsTerrain(Terrains.BLACK_ICE))
+                          || (skidElevation == 0 && skidHex.containsTerrain(Terrains.ICE));
+                    // TO:AR p.61: a vehicle skids on ice; a Mek that falls on pavement skids as well.
+                    boolean skids = mek ? entity.isProne() && paved
+                          : ice && !entity.getMovementMode().isHoverOrWiGE() && !entity.isAirborneVTOLorWIGE();
+                    if (Game.rulesManager.getRulesMovement().skidEnabled() && skids && !lastPos.equals(curPos)) {
+                        if (resolveSkid(skidStart, skidStep, skidElevation, lastPos.direction(curPos),
+                              entered ? distance : distance - 1)) {
+                            return;
+                        }
+                        break;
+                    }
+                    if (!mek) {
                         // assume VTOLs in flight are always in clear terrain
                         if ((0 == curHex.terrainsPresent()) || (step.getClearance() > 0)) {
                             if (entity instanceof VTOL) {
@@ -3920,7 +3897,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // check if we jumped into magma
             boolean jumpedIntoMagma = false;
-            if (!i.hasNext() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
+            if (isLastStep && curHex.terrainLevel(Terrains.MAGMA) == 2) {
                 jumpedIntoMagma = (moveType == EntityMovementType.MOVE_JUMP);
             }
             if (curHex.terrainLevel(Terrains.MAGMA) != 2 || jumpedIntoMagma) {
@@ -3931,7 +3908,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                  lastPos,
                                                  curPos,
                                                  lastElevation,
-                                                 isPavementStep);
+                                                 onRoad);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     if (0 < gameManager.doSkillCheckWhileMoving(entity,
                                                                 lastElevation,
@@ -4042,7 +4019,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for extreme gravity movement
-            if (!i.hasNext() && !firstStep) {
+            if (isLastStep && !firstStep) {
                 gameManager.checkExtremeGravityMovement(entity, step, lastStepMoveType, curPos, cachedGravityLimit);
             }
 
@@ -4065,8 +4042,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                                                                  gameManager)) {
                     detectedHiddenHazard = true;
 
-                    if (i.hasNext() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
-                        md.clear();
+                    if (!isLastStep && stepMoveType != EntityMovementType.MOVE_JUMP) {
+                        md.truncateAfter(stepIndex);
+                        isLastStep = true;
                     }
                 }
             }
@@ -4076,7 +4054,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // jumping units may end their movement with a turn but should still check at
             // end of movement
             if (!lastPos.equals(curPos) || (lastElevation != curElevation) || ((stepMoveType
-                                                                                == EntityMovementType.MOVE_JUMP) && !i.hasNext())) {
+                                                                                == EntityMovementType.MOVE_JUMP) && isLastStep)) {
                 boolean boom = false;
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
@@ -4126,8 +4104,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // taken account of (functions the same as MASC failure)
                     // only do this if they had more steps (and they were not
                     // jumping
-                    if (i.hasNext() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
-                        md.clear();
+                    if (!isLastStep && stepMoveType != EntityMovementType.MOVE_JUMP) {
+                        md.truncateAfter(stepIndex);
+                        isLastStep = true;
                         fellDuringMovement = true;
                     }
                     // reset mines if anything detonated
@@ -4137,7 +4116,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // infantry discovers minefields if they end their move
             // in a minefield.
-            if (!lastPos.equals(curPos) && !i.hasNext() && isInfantry) {
+            if (!lastPos.equals(curPos) && isLastStep && isInfantry) {
                 if (getGame().containsMinefield(curPos)) {
                     Player owner = entity.getOwner();
                     for (Minefield mf : getGame().getMinefields(curPos)) {
@@ -4153,7 +4132,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check if we've moved into water
-            rollTarget = entity.checkWaterMove(step, lastStepMoveType, curHex, lastPos, curPos, isPavementStep);
+            rollTarget = entity.checkWaterMove(step, lastStepMoveType, curHex, lastPos, curPos, onRoad);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Swarmers need special handling.
                 final int swarmerId = entity.getSwarmAttackerId();
@@ -4223,7 +4202,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for breaking ice by stepping on it
             if (curHex.containsTerrain(Terrains.ICE) && curHex.containsTerrain(Terrains.WATER) && (stepMoveType
                                                                                                    != EntityMovementType.MOVE_JUMP) && !lastPos.equals(
-                    curPos) && !(entity instanceof Infantry) && !(isPavementStep
+                    curPos) && !(entity instanceof Infantry) && !(onRoad
                                                                   && curHex.containsTerrain(Terrains.BRIDGE))) {
                 if (step.getElevation() == 0) {
                     Roll diceRoll = Compute.rollD6(1);
@@ -4245,21 +4224,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     report.addDesc(entity);
                     addReport(report);
                     addReport(gameManager.resolveIceBroken(curPos));
-                }
-            }
-
-            // Check for black ice
-            int minTemp = -30;
-            boolean useBlackIce = getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
-            boolean goodTemp = getGame().getPlanetaryConditions().getTemperature() <= minTemp;
-            boolean goodWeather = getGame().getPlanetaryConditions().getWeather().isIceStorm();
-            if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
-                if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
-                    int blackIceChance = Compute.d6(1);
-                    if (blackIceChance > 4) {
-                        curHex.addTerrain(new Terrain(Terrains.BLACK_ICE, 1));
-                        gameManager.sendChangedHex(curPos);
-                    }
                 }
             }
 
@@ -4800,13 +4764,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Everything that does not have a 1 or 2 level drop shouldn't be handled as a
             // cliff
             int stepHeight = curElevation + curHex.getLevel() - (lastElevation + prevHex.getLevel());
-            boolean isUpCliff = !lastPos.equals(curPos) && curHex.hasCliffTopTowards(prevHex) && (stepHeight == 1
-                                                                                                  || stepHeight == 2);
-            boolean isDownCliff = !lastPos.equals(curPos) && prevHex.hasCliffTopTowards(curHex) && (stepHeight == -1
-                                                                                                    || stepHeight == -2);
+            boolean isUpCliff = (stepHeight == 1 || stepHeight == 2) && !lastPos.equals(curPos)
+                  && curHex.crossesCliffTopTowards(prevHex, curElevation, lastElevation);
+            boolean isDownCliff = (stepHeight == -1 || stepHeight == -2) && !lastPos.equals(curPos)
+                  && prevHex.crossesCliffTopTowards(curHex, lastElevation, curElevation);
 
             // Vehicles (exc. WIGE/VTOL) moving down a cliff
-            if (vehicleAffectedByCliff && isDownCliff && !isPavementStep) {
+            if (vehicleAffectedByCliff && isDownCliff) {
                 rollTarget = entity.getBasePilotingRoll(stepMoveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity,
@@ -4824,7 +4788,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Meks and Protomeks moving down a cliff
             // QuadVees in vee mode ignore PSRs to avoid falls, IO p.133
-            if (mekAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
+            if (mekAffectedByCliff && !quadveeVehMode && isDownCliff) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos, rollTarget, true) > 0) {
@@ -4835,7 +4799,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // Meks moving up a cliff
-            if (mekAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
+            if (mekAffectedByCliff && !quadveeVehMode && isUpCliff) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity,
@@ -5216,6 +5180,48 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+    }
+
+    private boolean hasRemainingGroundMP(int spentMP) {
+        int bonus = entity.gotPavementOrRoadBonus && entity.isEligibleForPavementOrRoadBonus() ? 1 : 0;
+        return spentMP < entity.getRunMP() + bonus;
+    }
+
+    /** Resolve a skid from the hex where control was lost. Returns true if the unit left play. */
+    private boolean resolveSkid(Coords start, MoveStep startStep, int elevation, int direction, int hexesMoved) {
+        if (entity instanceof Tank tank) {
+            addReport(gameManager.vehicleMotiveDamage(tank, 0));
+        }
+        entity.setPosition(start);
+        entity.delta_distance = hexesMoved;
+        moveType = EntityMovementType.MOVE_SKID;
+        if (gameManager.processSkid(entity, start, elevation, direction, (hexesMoved + 1) / 2,
+              startStep, lastStepMoveType)) {
+            return true;
+        }
+        curFacing = entity.getFacing();
+        curPos = entity.getPosition();
+        entity.setSecondaryFacing(curFacing);
+        mpUsed = md.hasActiveMASC() || md.hasActiveSupercharger() ? entity.getRunMP() : entity.getRunMPWithoutMASC();
+        entity.moved = moveType;
+        fellDuringMovement = true;
+        turnOver = true;
+        distance = entity.delta_distance;
+        return false;
+    }
+
+    private void recordRoadMovement(MoveStep step) {
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            // An interruption may discard a planned reverse before the Asset ever enters that hex.
+            asset.inReverse = step.isThisStepBackwards();
+            if (asset.inReverse && step.getType().entersNewHex()) {
+                asset.setMovedBackwards(true);
+            }
+            if (step.hasAssetChangedLevel()) {
+                asset.recordLevelChange();
+            }
+        }
+        entity.gotPavementOrRoadBonus = entity.isEligibleForPavementOrRoadBonus() && step.isOnlyPavementOrRoad();
     }
 
     /**

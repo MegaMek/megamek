@@ -162,7 +162,7 @@ public final class RoutePlanner {
     static List<Coords> turningPoints(Entity mover, WaypointDistanceField field, Coords from, Board board,
           Map<Coords, Integer> styleCost) {
         List<Coords> points = new ArrayList<>();
-        int startCost = field.costFrom(from);
+        int startCost = field.costFrom(mover, from);
         if ((startCost == WaypointDistanceField.UNREACHABLE) || (startCost == 0)) {
             return points;
         }

@@ -3018,8 +3018,10 @@ class BasicPathRankerTest {
         when(mockUnit.getCrew()).thenReturn(mockCrew);
         when(mockCrew.getPiloting()).thenReturn(5);
 
-        // Test visible black ice hazard value
-        when(mockPenultimateHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.BLACK_ICE)));
+        // Visible black ice on pavement is a full-strength hazard.
+        when(mockPenultimateHex.containsTerrain(Terrains.PAVEMENT)).thenReturn(true);
+        when(mockPenultimateHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.PAVEMENT,
+              Terrains.BLACK_ICE)));
         assertEquals(12.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
     }
 
@@ -3050,7 +3052,8 @@ class BasicPathRankerTest {
         when(mockUnit.getCrew()).thenReturn(mockCrew);
         when(mockCrew.getPiloting()).thenReturn(5);
         // hex.getTerrainTypesSet()
-        // Test _possible_ black ice hazard value (1/3 lower)
+        // Undiscovered ice on pavement is a one-in-three hazard.
+        when(mockPenultimateHex.containsTerrain(Terrains.PAVEMENT)).thenReturn(true);
         when(mockPenultimateHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.PAVEMENT)));
         assertEquals(4.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
     }

@@ -1875,8 +1875,8 @@ public final class UnitToolTip {
         }
 
         // Spotting
-        Entity spotTarget = game.getEntity(entity.getSpotTargetId());
-        if (entity.isSpotting() && spotTarget != null) {
+        Targetable spotTarget = entity.isSpotting() ? entity.getSpotTarget(game) : null;
+        if (spotTarget != null) {
             String sSpotting = addToTT("Spotting", NOBR, spotTarget.getDisplayName()) + " ";
             result += sSpotting;
         }

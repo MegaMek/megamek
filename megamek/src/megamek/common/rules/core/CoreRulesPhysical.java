@@ -55,7 +55,7 @@ import megamek.common.units.Mek;
 public class CoreRulesPhysical extends RulesPhysical {
 
     /**
-     * {@inheritDoc} Shield rules for damage while punching. Core p.195
+     * {@inheritDoc} Shield rules for damage while punching. Core p.82, p.195
      */
     @Override
     public int getShieldDamageBoost(Entity entity,
@@ -103,15 +103,6 @@ public class CoreRulesPhysical extends RulesPhysical {
     public void getShieldToHitModifier(ToHitData toHit,
                                        Entity attacker,
                                        Mounted<?> weapon) {
-    }
-
-
-    /**
-     * {@inheritDoc} core p.194
-     */
-    @Override
-    public int getLanceToHitModifier() {
-        return 0;
     }
 
     /**
@@ -171,7 +162,7 @@ public class CoreRulesPhysical extends RulesPhysical {
     }
 
     /**
-     * {@inheritDoc} Charge with shield allocated damage to shield. Core p.195
+     * {@inheritDoc} Charge with shield allocated damage to shield. Core p.78, p.195
      */
     @Nullable
     @Override
@@ -336,7 +327,7 @@ public class CoreRulesPhysical extends RulesPhysical {
     }
 
     /**
-     * {@inheritDoc} Falls from above if the target is prone changes table. Core p.115
+     * {@inheritDoc} Falls from above if the target is prone changes table. Core p.116
      */
     @Override
     public HitData getFallFromAboveTable(Entity affaTarget) {
@@ -346,6 +337,15 @@ public class CoreRulesPhysical extends RulesPhysical {
         }
         return affaTarget.rollHitLocation(ToHitData.HIT_PUNCH,
                                           ToHitData.SIDE_FRONT);
+    }
+
+    /**
+     * {@inheritDoc} "Divide the damage to both attacker and target by 2 (rounding down) if the target Mek is fully
+     * submerged" (Core p.116); the attacker's side is its fall into the water.
+     */
+    @Override
+    public int fallFromAboveDamage(int damage, Entity affaTarget) {
+        return affaTarget.isUnderwater() ? damage / 2 : damage;
     }
 
     /**
@@ -362,6 +362,15 @@ public class CoreRulesPhysical extends RulesPhysical {
      */
     @Override
     public boolean muleWeaponsCheck() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc} A Narc or iNarc pod is only destroyed when the location it is attached to is destroyed, and
+     * otherwise remains in effect for the entire battle. Core p.188, p.193
+     */
+    @Override
+    public boolean canRemoveINarcPods() {
         return false;
     }
 }

@@ -1267,6 +1267,15 @@ public class ClientGUI extends AbstractClientGUI
 
 
     public void customizePlayer() {
+        Player localPlayer = client.getLocalPlayer();
+        // A player who joins a running game is on no team until they join one; the dialog has nothing to show them
+        if ((localPlayer == null) || (client.getGame().getTeamForPlayer(localPlayer) == null)) {
+            logger.info("[PlayerSettings] refused: local player {} has no team",
+                  (localPlayer == null) ? "(none)" : localPlayer.getName());
+            addToast(ToastLevel.ERROR, Messages.getString("ClientGUI.customizePlayer.noTeamMessage"));
+            return;
+        }
+        logger.info("[PlayerSettings] opening for {}", localPlayer.getName());
         PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client, (BoardView) boardViews.get(0));
         psd.setVisible(true);
     }

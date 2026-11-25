@@ -35,20 +35,27 @@ package megamek.server.totalWarfare;
 
 import static megamek.testUtilities.MMTestUtilities.getEntityForUnitTesting;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import megamek.common.Player;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,6 +75,7 @@ class TWGameManagerEntityUpdateTest {
     private static final int GM_CONNECTION_ID = 2;
     private static final int ORIGINAL_ARMOR = 15;
     private static final int EDITED_ARMOR = 3;
+    private static final Coords PLANNED_HEX = new Coords(3, 3);
 
     private Game game;
     private TWGameManager gameManager;
@@ -150,5 +158,51 @@ class TWGameManagerEntityUpdateTest {
         gamemaster.setTeam(2);
         sendUpdate(GM_CONNECTION_ID, editedAtlas(game.getPlayer(OWNER_CONNECTION_ID)));
         assertEquals(EDITED_ARMOR, armorOnServer());
+    }
+
+    /** The unit as its owner's client has it: standing on a hex, switched to its underwater maneuvering units. */
+    private Entity swimmingAtlasOnAHex() {
+        Entity swimming = editedAtlas(game.getPlayer(OWNER_CONNECTION_ID));
+        swimming.setPosition(PLANNED_HEX);
+        swimming.setDeployed(true);
+        swimming.setMovementMode(EntityMovementMode.BIPED_SWIM);
+        return swimming;
+    }
+
+    /**
+     * A client planning a walk-on already marks the unit deployed, and a unit with underwater maneuvering units is sent
+     * to the server just before its move. Before the fix that update deployed the unit without any checks, and the move
+     * was then refused for deploying it a second time.
+     */
+    @Test
+    void updateDuringAPlannedWalkOnDoesNotDeployTheUnit() {
+        sendUpdate(OWNER_CONNECTION_ID, swimmingAtlasOnAHex());
+
+        Entity serverEntity = game.getEntity(UNIT_ID);
+        assertNotNull(serverEntity);
+        assertFalse(serverEntity.isDeployed(), "only the move itself may deploy the unit");
+        assertNull(serverEntity.getPosition(), "an undeployed unit is not on the board");
+        assertTrue(serverEntity.wasNeverDeployed(), "the unit has still never been on the board");
+        assertEquals(EntityMovementMode.BIPED_SWIM, serverEntity.getMovementMode(),
+              "the rest of the update is kept; the move needs the swim mode");
+        assertEquals(EDITED_ARMOR, armorOnServer(), "the rest of the update is kept");
+        verify(gameManager, never()).entityUpdate(UNIT_ID);
+    }
+
+    @Test
+    void updateOfADeployedUnitKeepsItOnTheBoard() {
+        Entity serverAtlas = game.getEntity(UNIT_ID);
+        assertNotNull(serverAtlas);
+        serverAtlas.setPosition(PLANNED_HEX);
+        serverAtlas.setDeployed(true);
+
+        sendUpdate(OWNER_CONNECTION_ID, swimmingAtlasOnAHex());
+
+        Entity serverEntity = game.getEntity(UNIT_ID);
+        assertNotNull(serverEntity);
+        assertTrue(serverEntity.isDeployed(), "control: a unit already on the board stays there");
+        assertEquals(PLANNED_HEX, serverEntity.getPosition());
+        assertEquals(EntityMovementMode.BIPED_SWIM, serverEntity.getMovementMode());
+        verify(gameManager).entityUpdate(UNIT_ID);
     }
 }

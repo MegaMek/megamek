@@ -32,7 +32,6 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-
 import java.util.Vector;
 
 import megamek.common.HitData;
@@ -57,24 +56,10 @@ public class TWRulesArmor extends RulesArmor {
         return false;
     }
 
-    /**
-     * Does armor allow armor piercing.
-     * Hardened, FerroLam, and Reactive prevent AP ammo.
-     *
-     * @param mods the modifications info
-     * @return true if armor piercing is allowed
-     */
-    @Override
-    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
-        if (mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor) {
-            return false;
-        }
-        return true;
-    }
 
     /**
      * {@inheritDoc}
-     * Impact Resistant Armor breach.
+     * Impact-resistant armor applies a +1 to hull breach checks "including underwater and vacuum" (IO:AE p.82).
      */
     @Override
     public int impactArmorBreach() {
@@ -145,7 +130,7 @@ public class TWRulesArmor extends RulesArmor {
     }
 
     /**
-     * Block TAC (Targeting Auto-Correlator).
+     * Does this armor negate through-armor critical (TAC) checks? Asked only while the location struck has armor.
      *
      * @param armorType the type of armor
      * @return true if TAC is blocked
@@ -153,33 +138,6 @@ public class TWRulesArmor extends RulesArmor {
     @Override
     public boolean blockTAC(int armorType) {
         return false;
-    }
-
-    /**
-     * How does impact armor reduce damage.
-     *
-     * @param entityId the entity ID
-     * @param hit the hit data
-     * @param damage the damage amount
-     * @param reportVec vector of reports describing the damage reduction
-     * @param damageType the type of damage
-     * @return the reduced damage amount
-     */
-    @Override
-    public int reduceImpactDamage(int entityId,
-                                  HitData hit,
-                                  int damage,
-                                  Vector<Report> reportVec,
-                                  HitDamageType damageType) {
-        // As long as there is even 1 point of armor in this location, reduce _all_ damage
-        // to 2 points for every whole 3 points applied (IntOps pg 88).
-        damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));
-        Report report = new Report(6089);
-        report.subject = entityId;
-        report.indent(3);
-        report.add(damage);
-        reportVec.addElement(report);
-        return damage;
     }
 
     /**
@@ -193,7 +151,7 @@ public class TWRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Round down. TO:AUE p.93
+     * Round down. TO:AUE p.94
      */
     @Override
     public int reactiveArmorReduction(final int damage) {
@@ -202,10 +160,74 @@ public class TWRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Round down. TO:AUE p.93
+     * Round down, at least one pip. IO:AE p.81
      */
     @Override
     public int ballisticReinforcedArmorReduction(final int damage) {
         return Math.max(1, damage / 2);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Attacks of the DB or M types (IO:AE p.81), armor-piercing ammunition and missiles included; acid (AX) missiles
+     * do not get their bonus damage against it (TO:AUE p.179) and are reduced like other missiles.
+     */
+    @Override
+    public boolean ballisticReinforcedArmorReduces(HitDamageType damageType) {
+        return (damageType == HitDamageType.DAMAGE_BALLISTIC)
+              || (damageType == HitDamageType.DAMAGE_MISSILE)
+              || (damageType == HitDamageType.DAMAGE_ARMOR_PIERCING)
+              || (damageType == HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
+              || (damageType == HitDamageType.DAMAGE_AX);
+    }
+
+    @Override
+    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType) {
+        return allowsTacticalOperationsArmorPiercing(mods);
+    }
+
+    /** Hardened armor modifies penetrating critical checks, including vehicle criticals (TO:AUE p.93). */
+    @Override
+    public int hardenedLocationCriticalModifier(HitData hit) {
+        if (hit.getGeneralDamageType() == HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION) {
+            return 0; // Re-engineered lasers treat hardened armor as standard (Core p.185; BMM p.101).
+        }
+        return -2;
+    }
+
+    @Override
+    public boolean criticalProtectionsApplyAgainst(HitDamageType damageType) {
+        return true;
+    }
+
+    /** Transferred damage does not trigger another armor-piercing check (TW p.140). */
+    @Override
+    public boolean armorPiercingCheckPassesDestroyedLocation() {
+        return false;
+    }
+
+    @Override
+    public boolean ferroLamellorArmorReduces(HitDamageType damageType) {
+        return (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING)
+              && (damageType != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)
+              && !damageType.ignoresArmorDamageReduction()
+              && (damageType != HitDamageType.DAMAGE_AX);
+    }
+
+    /** Ablation applies a -2 modifier while armor remains (IO:AE p.80). */
+    @Override
+    public int ablationArmorPiercingModifier() {
+        return -2;
+    }
+
+    @Override
+    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
+          HitDamageType damageType) {
+        return reduceImpactDamageByThird(entityId, damage, reportVec);
+    }
+
+    @Override
+    public boolean blocksAblationTaserEffect() {
+        return false;
     }
 }

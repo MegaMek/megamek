@@ -2479,12 +2479,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      * @param attacker Should be the current entity for whom we're building attack data.
      * @param pos      Coords of the hex to check; may not be the same as attacker.getPosition()
      *
-     * @return List of Targetables containing co-located iNarc pods
+     * @return List of Targetables containing co-located iNarc pods; empty when the rules do not allow removing pods
      */
     public static List<Targetable> getINarcPods(Entity attacker, Coords pos) {
         List<Targetable> targets = new ArrayList<>();
         // Add any iNarc pods attached to the entity if the attacker is targeting its own hex
-        if (attacker.getPosition().equals(pos)) {
+        if (attacker.getPosition().equals(pos) && Game.rulesManager.getRulesPhysical().canRemoveINarcPods()) {
             Iterator<INarcPod> pods = attacker.getINarcPodsAttached();
             while (pods.hasNext()) {
                 Targetable choice = pods.next();

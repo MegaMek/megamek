@@ -1458,8 +1458,8 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Picks the hex for a TO:AR gun emplacement: dry ground, spaced from the other emplacements, with the widest field
-     * of fire. See {@link EmplacementDeployment}.
+     * Picks the hex for a TO:AR gun emplacement: clear ground beside the streets, where its guns are worth the most
+     * and interlock with the other emplacements'. See {@link EmplacementDeployment}.
      *
      * @param deployedUnit         The emplacement being deployed
      * @param possibleDeployCoords The coordinates being considered for deployment
@@ -1472,14 +1472,12 @@ public class Princess extends BotClient {
         final List<Coords> legalCoords = possibleDeployCoords.stream()
               .filter(c -> super.getFirstValidCoords(deployedUnit, List.of(c)) != null)
               .toList();
-        final List<Coords> otherEmplacements = getEntitiesOwned().stream()
+        final List<Entity> otherEmplacements = getEntitiesOwned().stream()
               .filter(e -> (e != deployedUnit) && e.isDeployed() && (e.getPosition() != null)
                     && (e.getBoardId() == board.getBoardId()) && EmplacementDeployment.isGunEmplacementBuilding(e))
-              .map(Entity::getPosition)
               .toList();
         final Coords enemyCentre = getEnemyDeploymentCenter(board).orElse(null);
-        return EmplacementDeployment.choose(deployedUnit, legalCoords, board, otherEmplacements,
-              c -> EmplacementDeployment.fieldOfFire(game, board, c, deployedUnit, enemyCentre));
+        return EmplacementDeployment.site(game, board, deployedUnit, legalCoords, otherEmplacements, enemyCentre);
     }
 
     /**
@@ -3145,9 +3143,9 @@ public class Princess extends BotClient {
      * This unit should have already moved due to the isImmobilized check. via the
      * {@link #calculateMoveIndex(Entity, StringBuilder)} method.  The highest index value is moved first.
      *
-     * @return The entity that should be moved next.
+     * @return The entity that should be moved next, or {@code null} if no unit can take this turn.
      */
-    Entity getEntityToMove() {
+    @Nullable Entity getEntityToMove() {
         final Game currentGame = getGame();
 
         if ((currentGame != null) && (currentGame.getPhase() == GamePhase.MOVEMENT)) {
@@ -3165,16 +3163,19 @@ public class Princess extends BotClient {
                         return deployEntity;
                     }
                 }
-            }
 
-            for (final Entity entity : getEntitiesOwned()) {
-                // A carried unit enters with its transport; the server refuses a move for it
-                if (entity.isDone() || entity.isOffBoard() || entity.isTransported() || isRefusedThisPhase(entity)) {
-                    continue;
-                }
-                if (((entity.getPosition() == null) || !entity.isDeployed()) && canWalkOnThisRound(entity)) {
-                    LOGGER.info("Choosing {} to deploy during the movement phase.", entity.getDisplayName());
-                    return entity;
+                // The first deployable unit is out of the running, so look at the others. Not at getEntitiesOwned():
+                // that leaves out every unit without a position, which is every unit still waiting to walk on.
+                for (final Entity entity : currentGame.inGameTWEntities()) {
+                    // A carried unit enters with its transport; the server refuses a move for it
+                    if (entity.isDone() || entity.isOffBoard() || entity.isTransported()
+                          || isRefusedThisPhase(entity) || !turn.isValidEntity(entity, currentGame)) {
+                        continue;
+                    }
+                    if (!entity.isDeployed() && canWalkOnThisRound(entity)) {
+                        LOGGER.info("Choosing {} to deploy during the movement phase.", entity.getDisplayName());
+                        return entity;
+                    }
                 }
             }
         }
@@ -3260,14 +3261,19 @@ public class Princess extends BotClient {
     @Override
     protected @Nullable MovePath calculateMoveTurn() {
         try {
-            MovePath path = continueMovementFor(getEntityToMove());
+            final Entity entity = getEntityToMove();
+            if (entity == null) {
+                LOGGER.warn("{}: no unit can take this movement turn", getName());
+                return null;
+            }
+            MovePath path = continueMovementFor(entity);
             // Update the friendly heat map with movement of ground units
             if (path != null && path.getEntity().isGround()) {
                 getMemory().getFriendlyHeatMap().updateTrackers(path);
             }
             return path;
-        } catch (Exception ignored) {
-            LOGGER.error("Error while calculating movement");
+        } catch (Exception exception) {
+            LOGGER.error(exception, "Error while calculating movement");
             return null;
         }
     }
@@ -5821,8 +5827,9 @@ public class Princess extends BotClient {
      */
     void announceSpotting(final EntityAction spotAction, final Entity spotter) {
         if ((spotAction instanceof SpotAction spot) && !spotter.isHidden()) {
-            Entity target = getGame().getEntity(spot.getTargetId());
-            String targetName = (target != null) ? target.getShortName() : Integer.toString(spot.getTargetId());
+            Targetable target = spot.getTarget(getGame());
+            String targetName = (target instanceof Entity unit) ? unit.getShortName()
+                  : (target == null) ? Integer.toString(spot.getTargetId()) : target.getDisplayName();
             sendChat(Messages.getString("Princess.spotting", spotter.getShortName(), targetName), Level.INFO);
         }
     }

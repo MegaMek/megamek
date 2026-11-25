@@ -232,6 +232,16 @@ public abstract class RulesPhysical {
     public abstract HitData getFallFromAboveTable(Entity affaTarget);
 
     /**
+     * The damage a unit falling from above deals to the unit it lands on.
+     *
+     * @param damage     the damage for the levels fallen
+     * @param affaTarget the unit fallen on
+     *
+     * @return the damage to deal
+     */
+    public abstract int fallFromAboveDamage(int damage, Entity affaTarget);
+
+    /**
      * What kind of rubble can you find a club in?
      *
      * @return the level of the rubble needed
@@ -239,16 +249,17 @@ public abstract class RulesPhysical {
     public abstract int getClubFindInRubble();
 
     /**
-     * What is the lance's base to-hit modifier?
-     *
-     * @return
-     */
-    public abstract int getLanceToHitModifier();
-
-    /**
      * Check if you can mule kick if you fired weapons from the non-kicking leg.
      *
      * @return true if it must check both legs, false if only the kicking leg must not have fired weapons
      */
     public abstract boolean muleWeaponsCheck();
+
+    /**
+     * Can a unit remove an attached iNarc pod during play (a Mek brushing it off, or a vehicle crew pulling it off)?
+     *
+     * @return {@code true} if attached iNarc pods can be removed, {@code false} if they stay until their location is
+     *       destroyed
+     */
+    public abstract boolean canRemoveINarcPods();
 }

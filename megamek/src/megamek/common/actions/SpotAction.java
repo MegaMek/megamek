@@ -37,9 +37,11 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 
 public class SpotAction extends AbstractEntityAction {
 
@@ -49,19 +51,35 @@ public class SpotAction extends AbstractEntityAction {
     @Serial
     private static final long serialVersionUID = 3629300334304478911L;
     private final int targetId;
+    private @Nullable Integer targetType;
 
     public SpotAction(int entityId, int targetId) {
         super(entityId);
         this.targetId = targetId;
     }
 
+    public SpotAction(int entityId, Targetable target) {
+        this(entityId, target.getId());
+        targetType = (target.getTargetType() == Targetable.TYPE_ENTITY) ? null : target.getTargetType();
+    }
+
     public int getTargetId() {
         return targetId;
     }
 
+    public int getTargetType() {
+        return (targetType == null) ? Targetable.TYPE_ENTITY : targetType;
+    }
+
+    public @Nullable Targetable getTarget(Game game) {
+        return (targetType == null) ? game.getEntity(targetId) : game.getTarget(targetType, targetId);
+    }
+
     @Override
     public String toSummaryString(final Game game) {
-        Entity target = game.getEntity(this.getTargetId());
-        return Messages.getString("BoardView1.SpotAction", (target != null) ? target.getShortName() : "");
+        Targetable target = getTarget(game);
+        String name = (target instanceof Entity entity) ? entity.getShortName()
+              : (target == null) ? "" : target.getDisplayName();
+        return Messages.getString("BoardView1.SpotAction", name);
     }
 }

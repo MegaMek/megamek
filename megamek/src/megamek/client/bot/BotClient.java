@@ -38,16 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -76,6 +67,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -95,6 +87,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -219,7 +212,28 @@ public abstract class BotClient extends Client {
     public void moveEntity(int id, MovePath md) {
         lastMovedEntityId = id;
         lastMovedTurnIndex = game.getTurnIndex();
+        recordWalkOnDeployment(id, md);
         super.moveEntity(id, md);
+    }
+
+    /**
+     * Records a move that deploys its unit, the same as a deployment sent in the deployment phase, so a walk-on the
+     * server refuses is tried again on another hex. A move without a {@code DEPLOY} step is not recorded.
+     *
+     * @param entityId the ID of the unit being moved
+     * @param movePath the path about to be sent; may be {@code null}
+     */
+    private void recordWalkOnDeployment(int entityId, @Nullable MovePath movePath) {
+        if (movePath == null) {
+            return;
+        }
+        for (MoveStep step : movePath.getStepVector()) {
+            if ((step.getType() == MoveStepType.DEPLOY) && (step.getPosition() != null)) {
+                refusedDeploymentTracker.recordSentDeployment(entityId, step.getPosition(), step.getBoardId(),
+                      game.getTurnIndex());
+                return;
+            }
+        }
     }
 
     /** The deployment this bot last sent and the hexes the server has refused this phase. */
@@ -338,14 +352,15 @@ public abstract class BotClient extends Client {
                 // verbatim by this very log line ("myTurn true ... -> skipping") after ~50 corrupted
                 // benchmark games. A turn the server says is ours is ours.
                 boolean myTurn = isMyTurn();
-                // The one exception: the server refused our move and handed the same turn back
-                if (myTurn && isRefusedTurnRestart(game.getTurnIndex(), e.getPreviousPlayerId(),
-                      getGame().getPhase().isSimultaneous(getGame()))) {
-                    startRefusedTurnOver();
-                }
+                // The one exception: the server refused our move and handed the same turn back. A walk-on is both a
+                // move and a deployment; it is tried on other hexes first and only left out once those run out
+                boolean isSimultaneous = getGame().getPhase().isSimultaneous(getGame());
                 if (myTurn && isRefusedDeploymentRestart(game.getTurnIndex(), e.getPreviousPlayerId(),
-                      getGame().getPhase().isSimultaneous(getGame()))) {
+                      isSimultaneous)) {
                     startRefusedDeploymentOver();
+                } else if (myTurn && isRefusedTurnRestart(game.getTurnIndex(), e.getPreviousPlayerId(),
+                      isSimultaneous)) {
+                    startRefusedTurnOver();
                 }
                 boolean alreadySpawnedForThisTurn = (game.getTurnIndex() == lastCalculatedTurnIndex);
                 LOGGER.info("{}: turn change - phase {}, turnIndex {}, prevPlayer {}, me {}, "
@@ -1020,6 +1035,10 @@ public abstract class BotClient extends Client {
                     }
                 }
                 onMovePathChosen(mp);
+                if ((mp == null) && lastAttempt && (moverId == -1) && isMyTurn()) {
+                    // The bot found no unit to move, but the server is waiting on one; spend the turn on that one
+                    moverId = game.getFirstEntityNum(getMyTurn());
+                }
                 // MP can be null due to various factors in pathing.  Avoid derailing the bot if so.
                 if (mp != null) {
                     moveEntity(mp.getEntity().getId(), mp);

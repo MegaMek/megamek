@@ -65,7 +65,7 @@ public class TWRulesWeapons extends RulesWeapons {
     public int getATMClusterSize() { return 5; }
 
     /**
-     * Can ultra autocannons jam? Yes.
+     * Can ultra autocannons jam? Yes (TW p.114).
      *
      * @return true if ultra autocannons can jam
      */

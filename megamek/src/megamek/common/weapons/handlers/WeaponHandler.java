@@ -1224,7 +1224,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         game.addTagInfo(info);
 
                         attackingEntity.setSpotting(true);
-                        attackingEntity.setSpotTargetId(target.getId());
+                        attackingEntity.setSpotTarget(target.getTargetType(), target.getId());
 
                         report = new Report(3390);
                         report.subject = subjectId;
@@ -1796,9 +1796,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hit.makeGlancingBlow();
             }
 
-            vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
-                  attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
-                  false, false, throughFront, underWater, nukeS2S));
+            applyEntityDamage(entityTarget, nDamage, vPhaseReport);
             if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mek)
                   && entityTarget.antiTSMVulnerable()) {
                 vPhaseReport.addAll(gameManager.doGreenSmokeDamage(entityTarget));
@@ -1848,6 +1846,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return (!isIndirect || partialCoverForIndirectFire)
               && entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
               ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()));
+    }
+
+    /** Applies a hit after resolving its location, cover and damage absorption. */
+    protected void applyEntityDamage(Entity entityTarget, int damage, Vector<Report> reports) {
+        reports.addAll(gameManager.damageEntity(entityTarget, hit, damage, false,
+              attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
+              false, false, throughFront, underWater, nukeS2S));
     }
 
     /**

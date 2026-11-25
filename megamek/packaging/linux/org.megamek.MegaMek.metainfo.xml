@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+
+  AppStream metadata for Linux packages such as the Flathub build. This file is
+  licensed CC0-1.0 (see metadata_license below), separately from the game itself.
+
+  Add a <release> entry here for every stable release, newest first. Flathub
+  only ships stable releases, so leave experimental builds out.
+-->
+<component type="desktop-application">
+  <id>org.megamek.MegaMek</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later AND CC-BY-NC-SA-4.0</project_license>
+
+  <name>MegaMek</name>
+  <summary>Unofficial BattleTech tabletop game</summary>
+  <developer id="org.megamek">
+    <name>The MegaMek Team</name>
+  </developer>
+
+  <description>
+    <p>
+      MegaMek is a free, open source version of the BattleTech board game. Play alone against
+      the computer, or with friends over the internet.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Play the Core Rules, with many optional rules from the advanced rulebooks</li>
+      <li>Every unit type, from infantry and BattleMeks to aerospace fighters, DropShips and WarShips</li>
+      <li>Ground battles and space battles</li>
+      <li>Thousands of units ready to play, plus the units, maps and scenarios you make</li>
+      <li>Computer opponents for solo play</li>
+    </ul>
+    <p>
+      MegaMek is made by volunteers. It is not affiliated with or endorsed by the owners of the
+      BattleTech trademarks.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">org.megamek.MegaMek.desktop</launchable>
+
+  <url type="homepage">https://megamek.org</url>
+  <url type="bugtracker">https://github.com/MegaMek/megamek/issues</url>
+  <url type="vcs-browser">https://github.com/MegaMek/megamek</url>
+  <url type="faq">https://megamek.org/faq.html</url>
+  <url type="contact">https://megamek.org/community.html</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>A battle with DropShips on the tarmac</caption>
+      <image type="source">https://megamek.org/assets/images/screenshots/MM_dropships.png</image>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-fantasy">moderate</content_attribute>
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+
+  <categories>
+    <category>Game</category>
+    <category>StrategyGame</category>
+  </categories>
+
+  <releases>
+    <release version="0.51.01.14" date="2026-11-24" type="stable">
+      <url type="details">https://github.com/MegaMek/megamek/releases/tag/v0.51.01.14</url>
+    </release>
+    <release version="0.51.00.1" date="2026-08-15" type="stable">
+      <url type="details">https://github.com/MegaMek/megamek/releases/tag/v0.51.00.1</url>
+    </release>
+  </releases>
+</component>

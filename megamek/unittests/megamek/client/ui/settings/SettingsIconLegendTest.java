@@ -76,6 +76,17 @@ class SettingsIconLegendTest {
     }
 
     @Test
+    void legendLeadsTextBadgesWithTheirTextInsteadOfAnIcon() {
+        SettingsIconLegend legend = new SettingsIconLegend(
+              List.of(SettingsBadge.ofText("> 0.51.00", new Color(0x12, 0x34, 0x56), "Since Core")));
+
+        JLabel label = (JLabel) legend.getComponent(0);
+        assertEquals(null, label.getIcon());
+        assertEquals("<html><nobr><font color=\"#123456\">&gt; 0.51.00</font></nobr>&nbsp; Since Core</html>",
+              label.getText());
+    }
+
+    @Test
     void legendButtonDoesNotRetainMutableSourceList() {
         List<SettingsBadge> badges = new ArrayList<>();
         badges.add(new SettingsBadge(0xE002, null, "Important"));

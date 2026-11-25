@@ -45,7 +45,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
-import megamek.common.units.IBomber;
 
 public class TWRulesGame extends RulesGame {
 
@@ -97,8 +96,8 @@ public class TWRulesGame extends RulesGame {
      */
     @Override
     public double tagBVBump(Entity entity, CalculationReport bvReport, double adjustedBV,
-          long tagCount, boolean hasGuided) {
-
+          long tagCount, boolean onlyRearTag) {
+        double tags = tagCount * (onlyRearTag ? 0.5 : 1);
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
             if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
@@ -106,41 +105,23 @@ public class TWRulesGame extends RulesGame {
             for (Mounted<?> mounted : otherEntity.getAmmo()) {
                 AmmoType ammoType = (AmmoType) mounted.getType();
                 EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
-                if ((mounted.getUsableShotsLeft() > 0) &&
+                // Mounted Homing bombs are priced as bombs below, as before they are mounted
+                if ((mounted.getUsableShotsLeft() > 0) && !(ammoType instanceof BombType) &&
                       ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED)) ||
                             (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
-                    adjustedBV += mounted.getType().getBV(entity) * tagCount;
+                    adjustedBV += mounted.getType().getBV(entity) * tags;
                     bvReport.addLine("- " + equipmentDescriptor(mounted, entity),
                           "+ " +
-                                tagCount +
+                                formatForReport(tags) +
                                 " x " +
                                 formatForReport(mounted.getType().getBV(entity)) +
                                 " (" +
                                 otherEntity.getShortName() +
                                 ")",
                           "= " + formatForReport(adjustedBV));
-                    hasGuided = true;
                 }
             }
-            if (otherEntity instanceof IBomber asBomber) {
-                BombType bomb = BombType.createBombByType(BombType.BombTypeEnum.HOMING);
-                if (bomb != null) {
-                    int homingCount = asBomber.getBombChoices().getCount(BombType.BombTypeEnum.HOMING);
-                    if (homingCount > 0) {
-                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
-                        bvReport.addLine("- " + bomb.getName(),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(bomb.getBV(otherEntity)) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
-                        hasGuided = true;
-                    }
-                }
-            }
+            adjustedBV = addHomingBombBV(otherEntity, bvReport, adjustedBV, tags);
         }
         return adjustedBV;
     }

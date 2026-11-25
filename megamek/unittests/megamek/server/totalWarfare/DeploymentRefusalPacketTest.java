@@ -46,14 +46,21 @@ import java.util.List;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import megamek.server.Server;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,6 +81,7 @@ class DeploymentRefusalPacketTest extends GameBoardTestCase {
     private static final int ENEMY_ID = 1;
     private static final int DEPLOYING_MEK_ID = 10;
     private static final int BLOCKING_MEK_ID = 11;
+    private static final int TRAILER_ID = 12;
 
     private MockedStatic<Server> mockedServer;
     private Server server;
@@ -134,10 +142,42 @@ class DeploymentRefusalPacketTest extends GameBoardTestCase {
         return mek;
     }
 
+    /** Hitches an undeployed trailer to the deploying unit. */
+    private void hitchTrailer() {
+        Tank trailer = new Tank();
+        trailer.setChassis("Trailer");
+        trailer.setMovementMode(EntityMovementMode.TRACKED);
+        trailer.setWeight(10);
+        trailer.setTrailer(true);
+        trailer.setId(TRAILER_ID);
+        trailer.setOwner(game.getPlayer(PLAYER_ID));
+        game.addEntity(trailer);
+        deployingMek.addTowedUnit(TRAILER_ID);
+    }
+
     /** Sends the deployment the way a client does, and returns every packet the server sent that player back. */
     private List<Packet> deployOntoTheBlocker() {
         gameManager.handlePacket(PLAYER_ID,
               new Packet(PacketCommand.ENTITY_DEPLOY, DEPLOYING_MEK_ID, TARGET_HEX, 0, 0, 0, 0, false));
+        return packetsSentToThePlayer();
+    }
+
+    /** Sends a walk-on into the blocker's hex, and returns every packet the server sent that player back. */
+    private List<Packet> walkOnOntoTheBlocker() {
+        game.setPhase(GamePhase.MOVEMENT);
+        deployingMek.setCrew(new Crew(CrewType.SINGLE));
+        // The client stands its own copy of the unit on the hex to build the path; the server's copy has no position
+        deployingMek.setPosition(TARGET_HEX);
+        MovePath walkOnPath = new MovePath(game, deployingMek);
+        walkOnPath.addStep(MoveStepType.DEPLOY);
+        deployingMek.setPosition(null);
+        deployingMek.setDeployed(false);
+
+        gameManager.handlePacket(PLAYER_ID, new Packet(PacketCommand.ENTITY_MOVE, DEPLOYING_MEK_ID, walkOnPath));
+        return packetsSentToThePlayer();
+    }
+
+    private List<Packet> packetsSentToThePlayer() {
         ArgumentCaptor<Packet> sentPackets = ArgumentCaptor.forClass(Packet.class);
         verify(server, atLeast(0)).send(eq(PLAYER_ID), sentPackets.capture());
         return sentPackets.getAllValues();
@@ -173,6 +213,76 @@ class DeploymentRefusalPacketTest extends GameBoardTestCase {
         assertTrue(handsTheTurnBack(packets), "the turn is handed back so the player can pick another hex");
         assertEquals(List.of(DEPLOYING_MEK_ID), unitIdsSentIn(packets),
               "only the refused unit is resent; the hidden enemy must not reach the player");
+    }
+
+    /**
+     * A unit walking on from the map edge deploys as part of its move. A refused walk-on must leave the turn where it
+     * was. Before the fix the server handed the turn back and then ended it, so a bot answered a turn that had already
+     * passed and the game hung.
+     */
+    @Test
+    void aWalkOnOntoAnotherUnitIsRefusedWithoutEndingTheTurn() {
+        List<Packet> packets = walkOnOntoTheBlocker();
+
+        assertFalse(deployingMek.isDeployed(), "the server must refuse to stack on the unit in the hex");
+        assertTrue(handsTheTurnBack(packets), "the turn is handed back to pick another hex");
+        assertEquals(0, game.getTurnIndex(), "the turn that was handed back must not also be ended");
+        assertEquals(GamePhase.MOVEMENT, game.getPhase());
+    }
+
+    /**
+     * The client places the whole train while the player picks a hex, so a refusal must send the trailers back along
+     * with the tractor, or they are left standing on the player's board.
+     */
+    @Test
+    void aWalkOnRefusedForStackingSendsTheTrailersBackToo() throws Exception {
+        hitchTrailer();
+
+        List<Packet> packets = walkOnOntoTheBlocker();
+
+        assertFalse(deployingMek.isDeployed(), "the server must refuse to stack on the unit in the hex");
+        assertEquals(List.of(BLOCKING_MEK_ID, DEPLOYING_MEK_ID, TRAILER_ID), unitIdsSentIn(packets));
+        assertTrue(handsTheTurnBack(packets), "the turn is handed back to pick another hex");
+    }
+
+    /** A hex outside the deployment zone is refused before stacking is looked at, so the blocker is not sent. */
+    @Test
+    void aWalkOnRefusedForAnIllegalHexSendsTheTrailersBackToo() throws Exception {
+        hitchTrailer();
+        deployingMek.setStartingPos(Board.START_ANY);
+        deployingMek.setStartingAnyNWx(TARGET_HEX.getX() + 1);
+
+        List<Packet> packets = walkOnOntoTheBlocker();
+
+        assertFalse(deployingMek.isDeployed(), "the server must refuse a hex outside the deployment zone");
+        assertEquals(List.of(DEPLOYING_MEK_ID, TRAILER_ID), unitIdsSentIn(packets));
+        assertTrue(handsTheTurnBack(packets), "the turn is handed back to pick another hex");
+        assertEquals(0, game.getTurnIndex(), "the turn that was handed back must not also be ended");
+    }
+
+    /** Before the fix the player got the turn back with nothing to say why. */
+    @Test
+    void aWalkOnRefusedForAnIllegalHexTellsThePlayer() {
+        deployingMek.setStartingPos(Board.START_ANY);
+        deployingMek.setStartingAnyNWx(TARGET_HEX.getX() + 1);
+
+        walkOnOntoTheBlocker();
+
+        ArgumentCaptor<String> chatLine = ArgumentCaptor.forClass(String.class);
+        verify(server).sendServerChat(eq(PLAYER_ID), chatLine.capture());
+        assertTrue(chatLine.getValue().contains(deployingMek.getShortName()), "the refused unit is named");
+        assertTrue(chatLine.getValue().contains(TARGET_HEX.getBoardNum()), "the refused hex is named");
+    }
+
+    /** Refusals in the deployment phase have the same train to send back. */
+    @Test
+    void aRefusedDeploymentSendsTheTrailersBackToo() throws Exception {
+        hitchTrailer();
+
+        List<Packet> packets = deployOntoTheBlocker();
+
+        assertFalse(deployingMek.isDeployed(), "the server must refuse to stack on the unit in the hex");
+        assertEquals(List.of(BLOCKING_MEK_ID, DEPLOYING_MEK_ID, TRAILER_ID), unitIdsSentIn(packets));
     }
 
     @Test

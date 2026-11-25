@@ -469,10 +469,10 @@ public class EquipmentType implements ITechnology {
             }
         }
 
-        // special-case. RACs only explode when jammed
+        // special-case. RACs only explode when jammed, and only under rules that have that explosion
         if ((mounted.getType() instanceof WeaponType) &&
               (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
-            if (!mounted.isJammed()) {
+            if (!mounted.isJammed() || !Game.rulesManager.getRulesExplosions().jammedRotaryAutocannonExplodes()) {
                 return false;
             }
         }

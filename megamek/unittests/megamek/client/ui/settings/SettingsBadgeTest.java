@@ -33,7 +33,9 @@
 package megamek.client.ui.settings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.util.List;
@@ -61,5 +63,26 @@ class SettingsBadgeTest {
     @Test
     void badgeRejectsInvalidCodePoint() {
         assertThrows(IllegalArgumentException.class, () -> new SettingsBadge(-1, null, "Invalid"));
+    }
+
+    @Test
+    void textBadgeRendersEscapedColoredText() {
+        SettingsBadge version = SettingsBadge.ofText("0.51.01", new Color(0x12, 0x34, 0x56), "Recent");
+        SettingsBadge escaped = SettingsBadge.ofText("< 1 & 2", null, "Escaped");
+
+        assertTrue(version.isText());
+        assertEquals(" <font color=\"#123456\">0.51.01</font>", version.toHtml());
+        assertEquals(" <font>&lt; 1 &amp; 2</font>", escaped.toHtml());
+    }
+
+    @Test
+    void glyphBadgeIsNotText() {
+        assertFalse(new SettingsBadge(0xE002, null, "Important").isText());
+    }
+
+    @Test
+    void textBadgeRejectsBlankTextAndCodePoint() {
+        assertThrows(IllegalArgumentException.class, () -> SettingsBadge.ofText(" ", null, "Blank"));
+        assertThrows(IllegalArgumentException.class, () -> new SettingsBadge(0xE002, null, "Both", "0.51.01"));
     }
 }

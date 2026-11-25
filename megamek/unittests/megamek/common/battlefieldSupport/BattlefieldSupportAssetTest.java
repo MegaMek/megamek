@@ -41,9 +41,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.common.Player;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.enums.SkillLevel;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.HandheldWeapon;
+import megamek.common.game.Game;
+import megamek.common.planetaryConditions.EMI;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -92,6 +97,29 @@ class BattlefieldSupportAssetTest {
         assertEquals(UnitType.BATTLEFIELD_SUPPORT_ASSET, asset.getUnitType());
         assertEquals(Entity.ETYPE_BATTLEFIELD_SUPPORT_ASSET, asset.getEntityType());
         assertEquals(BFSAssetType.VEHICLE, asset.getAssetType());
+    }
+
+    @Test
+    void ecmRangeReportedToDoubleBlindMatchesTheActiveField() {
+        Game game = new Game();
+        game.setBoard(Board.createEmptyBoard(8, 8));
+        BattlefieldSupportAsset asset = new BattlefieldSupportAsset();
+        asset.setOwner(new Player(1, "ECM Asset"));
+        asset.setPosition(new Coords(3, 3));
+        game.addEntity(asset);
+
+        assertEquals(Entity.NONE, asset.getECMRange());
+        asset.addSpecial(BFSSpecial.of("ECM"));
+        assertTrue(asset.hasActiveECM());
+        assertEquals(6, asset.getECMRange());
+        assertEquals(asset.getECMInfo().getRange(), asset.getECMRange());
+        game.getPlanetaryConditions().setEMI(EMI.EMI);
+        assertEquals(6, asset.getECMRange());
+        assertEquals(asset.getECMInfo().getRange(), asset.getECMRange());
+        asset.setShutDown(true);
+        assertFalse(asset.hasActiveECM());
+        assertNull(asset.getECMInfo());
+        assertEquals(Entity.NONE, asset.getECMRange());
     }
 
     @Test

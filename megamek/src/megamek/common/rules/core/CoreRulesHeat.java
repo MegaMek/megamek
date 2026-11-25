@@ -45,7 +45,7 @@ public class CoreRulesHeat extends RulesHeat {
 
     /**
      * {@inheritDoc}
-     * Attempts to stand do not generate heat Core p.100
+     * Attempts to stand do not generate heat (Core p.102 Movement Heat, p.51 Standing Up)
      */
     @Override
     public int standingHeat() {
@@ -116,7 +116,7 @@ public class CoreRulesHeat extends RulesHeat {
             Mounted<?> mounted = cs.getMount();
             AmmoType ammoType = (AmmoType) mounted.getType();
 
-            // TW page 160, compare one rack's
+            // Core p.107 (TW p.160), compare one rack's
             // damage. Ties go to most rounds.
             int newRack = ammoType.getDamagePerShot() * ammoType.getRackSize();
             int newDamage = mounted.getExplosionDamage();

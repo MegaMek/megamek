@@ -139,14 +139,6 @@ public class TWRulesPhysical extends RulesPhysical {
     public int getLanceTarget() {return 10;}
 
     /**
-     * {@inheritDoc} lances are +1 to hit
-     */
-    @Override
-    public int getLanceToHitModifier() {
-        return 1;
-    }
-
-    /**
      * Lance doesn't do anything special on a charge
      *
      * @return true if the lance has special charge effects
@@ -419,6 +411,19 @@ public class TWRulesPhysical extends RulesPhysical {
      */
     @Override
     public boolean muleWeaponsCheck() {
+        return true;
+    }
+
+    @Override
+    public int fallFromAboveDamage(int damage, Entity affaTarget) {
+        return damage;
+    }
+
+    /**
+     * {@inheritDoc} Meks may brush off attached iNarc pods, and vehicle crews may remove them.
+     */
+    @Override
+    public boolean canRemoveINarcPods() {
         return true;
     }
 }

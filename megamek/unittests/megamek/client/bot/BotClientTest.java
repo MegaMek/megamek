@@ -50,8 +50,11 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -272,6 +275,58 @@ class BotClientTest {
               "the refused hex is ruled out, so the next best hex is chosen");
     }
 
+    /** A move that deploys its unit on the given hex. */
+    private static MovePath walkOnPathTo(Coords hex) {
+        MoveStep deployStep = mock(MoveStep.class);
+        when(deployStep.getType()).thenReturn(MoveStepType.DEPLOY);
+        when(deployStep.getPosition()).thenReturn(hex);
+        MovePath walkOnPath = mock(MovePath.class);
+        when(walkOnPath.getStepVector()).thenReturn(new Vector<>(List.of(deployStep)));
+        return walkOnPath;
+    }
+
+    /**
+     * A unit walking on from the map edge deploys as part of its move. When the server refuses the hex, the same unit
+     * must be tried again on another one, and not be left out as a refused move would be.
+     */
+    @Test
+    void aRefusedWalkOnIsTriedAgainOnAnotherHex() {
+        RecordingBotClient bot = botOnAFlatBoard();
+        Mek refusedUnit = addMek(bot, 86, BOT_PLAYER_ID);
+        int turnIndex = 3;
+        bot.getGame().setTurnIndex(turnIndex, 0);
+
+        bot.lastCalculatedTurnIndex = turnIndex;
+        bot.moveEntity(86, walkOnPathTo(REFUSED_HEX));
+
+        assertTrue(bot.isRefusedDeploymentRestart(turnIndex, BOT_PLAYER_ID, false),
+              "the same turn handed back to us is a refused walk-on");
+
+        bot.startRefusedDeploymentOver();
+
+        assertTrue(bot.shouldSpawnForTest(turnIndex), "a refused walk-on turn is calculated again");
+        assertFalse(bot.isRefusedThisPhase(refusedUnit), "the refused unit still has to walk on, so it is not left out");
+        assertEquals(FREE_HEX, bot.getFirstValidCoords(refusedUnit, List.of(REFUSED_HEX, FREE_HEX)),
+              "the refused hex is ruled out, so the next best hex is chosen");
+    }
+
+    /** A move that does not deploy its unit is still handled as a refused move, not as a refused deployment. */
+    @Test
+    void aRefusedMoveThatDoesNotDeployIsNotARefusedWalkOn() {
+        RecordingBotClient bot = botOnAFlatBoard();
+        addMek(bot, 86, BOT_PLAYER_ID);
+        int turnIndex = 3;
+        bot.getGame().setTurnIndex(turnIndex, 0);
+        MovePath plainMove = mock(MovePath.class);
+        when(plainMove.getStepVector()).thenReturn(new Vector<>());
+
+        bot.lastCalculatedTurnIndex = turnIndex;
+        bot.moveEntity(86, plainMove);
+
+        assertFalse(bot.isRefusedDeploymentRestart(turnIndex, BOT_PLAYER_ID, false));
+        assertTrue(bot.isRefusedTurnRestart(turnIndex, BOT_PLAYER_ID, false), "control: it is a refused move");
+    }
+
     /** A turn handed back after the server did deploy the unit is not a refusal. */
     @Test
     void aDeploymentTheServerAcceptedDoesNotRestart() {
@@ -405,5 +460,28 @@ class BotClientTest {
 
         assertEquals(1, bot.unitMovesAsked, "the named unit's move is asked for directly");
         assertEquals(1, bot.movesReported, "and the move chosen for it is reported");
+    }
+
+    /**
+     * A bot that finds no unit to move must still answer its turn, or the server waits on it forever. Before its last
+     * attempt it keeps trying; on the last one it sends an empty move for the unit the server is waiting on.
+     */
+    @Test
+    void aBotThatFindsNoUnitToMoveStillAnswersItsTurn() throws Exception {
+        RecordingBotClient bot = botOnAFlatBoard();
+        addMek(bot, 86, BOT_PLAYER_ID);
+        bot.getGame().setPhase(GamePhase.MOVEMENT);
+        bot.getGame().setTurnVector(List.of(new GameTurn(BOT_PLAYER_ID)));
+        // Set before the turn change, so the bot does not answer this turn on a calculation thread of its own
+        bot.lastCalculatedTurnIndex = 0;
+        bot.getGame().setTurnIndex(0, ENEMY_PLAYER_ID);
+        Method worker = BotClient.class.getDeclaredMethod("calculateMyTurnWorker", boolean.class);
+        worker.setAccessible(true);
+
+        assertEquals(false, worker.invoke(bot, false), "control: an earlier attempt leaves the turn to a retry");
+        assertFalse(bot.isRefusedTurnRestart(0, BOT_PLAYER_ID, false), "control: no move has been sent yet");
+
+        assertEquals(true, worker.invoke(bot, true), "the last attempt answers the turn");
+        assertTrue(bot.isRefusedTurnRestart(0, BOT_PLAYER_ID, false), "a move was sent on this turn");
     }
 }

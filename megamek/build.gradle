@@ -671,6 +671,11 @@ distributions {
                 rename "shell.sh", "MegaMek.sh"
             }
 
+            // Desktop entry and AppStream metadata, read by Linux packages such as the Flathub build
+            from("${projectDir}/packaging/linux") {
+                into "packaging/linux"
+            }
+
             from(jar)
             from fileStagingDir
             if (suiteReleaseVersion != null) {

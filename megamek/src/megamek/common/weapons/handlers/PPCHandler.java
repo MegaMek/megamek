@@ -218,9 +218,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                     rep.indent(2);
                 }
                 vPhaseReport.addAll(newReports);
-                // Deal damage to the pilot
-                vPhaseReport.addAll(gameManager.damageCrew(attackingEntity,
-                      Game.rulesManager.getRulesPilot().getExplosionPilotHits(),
+                // Feedback "will always" deal two pilot hits (TO:AR p.101); it is not an internal explosion
+                vPhaseReport.addAll(gameManager.damageCrew(attackingEntity, 2,
                       attackingEntity.getCrew().getCurrentPilotIndex()));
                 r = new Report(3185);
                 r.subject = subjectId;

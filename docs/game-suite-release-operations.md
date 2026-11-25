@@ -155,7 +155,9 @@ runs at a time.
 - Environment secret `SUITE_RELEASE_APP_PRIVATE_KEY` on both
   `suite-release-live` and `suite-release-weekly`.
 - Environments:
-  - `suite-release-live`: required reviewers; used by manual live runs.
+  - `suite-release-live`: required reviewers with **Prevent self-review**
+    enabled, so the person who starts a live run cannot approve it; used by
+    manual live runs.
   - `suite-release-weekly`: no reviewer; used only by the schedule.
   - `suite-release-dry-run`: holds no key.
 

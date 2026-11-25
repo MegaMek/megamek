@@ -3256,7 +3256,7 @@ public class FireControl {
             Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
             LOGGER.debug("[Spot] {}: spotting {} at {} hexes for indirect fire", spotter.getDisplayName(),
                   target.getDisplayName(), spotter.getPosition().distance(target.getPosition()));
-            return new SpotAction(spotter.getId(), target.getId());
+            return new SpotAction(spotter.getId(), target);
         }
 
         LOGGER.debug("[Spot] {}: not spotting - no enemy in line of sight", spotter.getDisplayName());
@@ -4500,7 +4500,7 @@ public class FireControl {
      *
      * @return Mode switch result.
      */
-    private int switchMissileMode(Mounted<?> weapon) {
+    int switchMissileMode(Mounted<?> weapon) {
         // check that we're operating a missile weapon that can switch direct/indirect
         // modes
         // don't bother checking non-missile weapons

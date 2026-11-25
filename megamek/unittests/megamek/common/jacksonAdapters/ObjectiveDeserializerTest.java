@@ -63,6 +63,7 @@ class ObjectiveDeserializerTest {
               at: [ 20, 12 ]
               controlRadius: 2
               vp: 3
+              scheme: raid
               variants: [ potential, fragile, mobile ]
               """);
 
@@ -129,6 +130,30 @@ class ObjectiveDeserializerTest {
               name: Contradiction
               at: [ 3, 4 ]
               variants: [ potential, "false" ]
+              """);
+
+        assertThrows(IllegalArgumentException.class, () -> ObjectiveDeserializer.parse(node));
+    }
+
+    @Test
+    void testAPotentialScanPointThrows() throws Exception {
+        JsonNode node = parseYaml("""
+              name: Relay
+              at: [ 3, 4 ]
+              scheme: scan
+              variants: [ potential ]
+              """);
+
+        assertThrows(IllegalArgumentException.class, () -> ObjectiveDeserializer.parse(node));
+    }
+
+    @Test
+    void testAMobilePointThatIsNotARaidPointThrows() throws Exception {
+        JsonNode node = parseYaml("""
+              name: Supply Crate
+              at: [ 3, 4 ]
+              scheme: hold
+              variants: [ mobile ]
               """);
 
         assertThrows(IllegalArgumentException.class, () -> ObjectiveDeserializer.parse(node));

@@ -753,7 +753,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         ammoPlans.add(setAmmoPlanType);
                         break;
                     case PARAM_PILOT_HITS:
-                        int hits = parseInt(scenarioV1.getString(key), 0);
+                        int hits = MathUtility.parseInt(scenarioV1.getString(key), 0);
                         entity.getCrew().setHits(Math.min(hits, 5), 0);
                         break;
                     case PARAM_EXTERNAL_ID:
@@ -769,7 +769,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         parseCommander(entity, scenarioV1.getString(key));
                         break;
                     case PARAM_DEPLOYMENT_ROUND:
-                        int round = parseInt(scenarioV1.getString(key), 0);
+                        int round = MathUtility.parseInt(scenarioV1.getString(key), 0);
                         if (round > 0) {
                             LOGGER.debug("{} will be deployed before round {}", entity.getDisplayName(), round);
                             entity.setDeployRound(round);
@@ -785,7 +785,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         }
                         break;
                     case PARAM_UNIT_ALTITUDE:
-                        int altitude = Math.min(parseInt(scenarioV1.getString(key), 0), 10);
+                        int altitude = Math.min(MathUtility.parseInt(scenarioV1.getString(key), 0), 10);
                         if (entity.isAero()) {
                             entity.setAltitude(altitude);
                             if (altitude <= 0) {

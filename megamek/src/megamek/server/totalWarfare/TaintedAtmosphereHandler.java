@@ -59,6 +59,7 @@ import megamek.common.planetaryConditions.TaintedAtmosphereRules.VehicleBreachEf
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
@@ -156,6 +157,29 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
             case NONE -> LOGGER.debug("[TaintedAtmosphere] {}: {} breached but {} air has no crew effect",
                   tank.getShortName(), tank.getLocationAbbr(location), atmosphericTaint());
         }
+        return reports;
+    }
+
+    /**
+     * Resolves a breach of a Mek's cockpit in toxic air, which kills the MekWarrior outright (TO:AR p.54). Only the
+     * cockpit is ever open to a tainted or toxic atmosphere, and on a Mek only a cockpit breach has any effect, so
+     * the equipment in the location keeps working and none of the vacuum breach effects apply. That matters for a
+     * torso-mounted cockpit: its center torso breach must not also destroy the engine or eject the pilot the air has
+     * just killed. The location is marked breached so the same hole is not rolled for again.
+     *
+     * @param mek      the Mek whose cockpit was breached
+     * @param location the breached location, which holds the cockpit
+     *
+     * @return the reports describing the breach
+     */
+    Vector<Report> resolveMekCockpitBreach(Mek mek, int location) {
+        Vector<Report> reports = new Vector<>();
+        mek.setLocationStatus(location, ILocationExposureStatus.BREACHED);
+        LOGGER.info("[TaintedAtmosphere] {}: cockpit breached in {} ({} air) - MekWarrior killed",
+              mek.getShortName(), mek.getLocationAbbr(location), atmosphericTaint());
+        mek.getCrew().setDoomed(true);
+        reports.addAll(gameManager.destroyEntity(mek, "hull breach"));
+        reports.add(new Report(7716).subject(mek.getId()).addDesc(mek));
         return reports;
     }
 

@@ -362,14 +362,9 @@ public class AimedShotHandler implements ActionListener, ItemListener {
     public void setAimingMode() {
         boolean allowAim;
 
-        // BA cannot use aimed shots - their anti-mek attacks (swarm/leg) don't support
-        // aimed shots, and EI's +2 aimed shot penalty makes it impractical for ranged weapons.
-        // This prevents the confusing aimed shot dialog from appearing for BA.
+        // Any unit type may aim at an immobile target, battle armor included (TW p.110). Which weapons may aim is
+        // decided per weapon in Compute.allowAimedShotWith().
         Entity attacker = this.firingDisplay.currentEntity();
-        if (attacker instanceof BattleArmor) {
-            aimingMode = AimingMode.NONE;
-            return;
-        }
 
         // TC against a mek, tank or battle armor. Not against a ProtoMek: they are too small for a targeting
         // computer to pick a hit location, though the TC's usual -1 still applies (TW p.185).

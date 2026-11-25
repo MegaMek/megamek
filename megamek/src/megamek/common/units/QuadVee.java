@@ -439,8 +439,20 @@ public class QuadVee extends QuadMek {
         return super.height();
     }
 
+    /**
+     * In vehicle mode a QuadVee changes levels as a vehicle; in Mek mode as a four-legged Mek, whose hip damage or
+     * destroyed legs limit it (IO:AE p.127).
+     */
     @Override
     public int getMaxElevationChange() {
+        return (getConversionMode() == CONV_MODE_VEHICLE) ? 1 : super.getMaxElevationChange();
+    }
+
+    /**
+     * {@inheritDoc} In vehicle mode a QuadVee moves, and is displaced, as a vehicle (IO:AE p.127; TW p.151).
+     */
+    @Override
+    public int getMaxDisplacementElevationChange() {
         return (getConversionMode() == CONV_MODE_VEHICLE) ? 1 : 2;
     }
 

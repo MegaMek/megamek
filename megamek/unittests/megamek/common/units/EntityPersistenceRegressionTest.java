@@ -33,6 +33,7 @@
 package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -235,6 +236,22 @@ class EntityPersistenceRegressionTest {
         }
 
         assertTrue(problems.isEmpty(), () -> report(fixture, problems));
+    }
+
+    /**
+     * The test above compares against a cleared unit, so it cannot catch clearGameState itself leaving a flag in a
+     * battle state. Clearing the transport and swarm links marks a unit as unloaded and done for the turn; if those
+     * flags survive, MekHQ (which never starts a new round) can no longer tow, load or hitch the unit (MekHQ issue
+     * #11169).
+     */
+    @ParameterizedTest
+    @EnumSource(UnitFixture.class)
+    void clearedUnitIsReadyToBeLoadedOrTowed(UnitFixture fixture) throws Exception {
+        Entity entity = clearedEntity(fixture);
+
+        assertFalse(entity.isUnloadedThisTurn(), fixture.name() + " is still marked as unloaded this turn");
+        assertFalse(entity.isDone(), fixture.name() + " is still marked as done this turn");
+        assertTrue(entity.isLoadableThisTurn(), fixture.name() + " cannot be loaded or towed after clearGameState");
     }
 
     /**

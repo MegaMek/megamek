@@ -49,7 +49,7 @@ import megamek.common.units.Mek;
 public class TWRulesMovement extends RulesMovement {
 
     /**
-     * Units can skid
+     * Units can skid (TW p.62)
      *
      * @return true if skidding is enabled
      */
@@ -239,7 +239,7 @@ public class TWRulesMovement extends RulesMovement {
     @Nullable
     @Override
     public Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
-          int range) {
+          int range, boolean fallerMissed) {
         int[] offsets = { 0, 1, 5, 2, 4, 3 };
         for (int offset : offsets) {
             Coords dest = src.translated((direction + offset) % 6, range);
@@ -268,7 +268,7 @@ public class TWRulesMovement extends RulesMovement {
      * @return int, the elevation above the underlying terrain the attacker should be at
      */
     @Override
-    public int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step) {
+    public int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step, Coords attackHex) {
         return step.getElevation();
     }
 }

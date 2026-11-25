@@ -18,18 +18,49 @@
  */
 package megamek.common.rules;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 
+import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.core.CoreRulesPSR;
 import megamek.common.rules.totalwarfare.TWRulesPSR;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class RulesPSRTest {
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void secondQuadHipHitForcesAPilotingRoll(boolean firstHitInEarlierPhase) {
+        CoreRulesPSR core = new CoreRulesPSR();
+        Game game = new Game();
+        QuadMek quad = new QuadMek();
+        // Losing a leg flags all of its slots this phase, but does not count as a hip critical.
+        quad.destroyLocation(Mek.LOC_RIGHT_ARM);
+        quad.getCritical(Mek.LOC_LEFT_ARM, 0).setHit(true);
+        core.hitActuator(game, quad, Mek.LOC_LEFT_ARM, Mek.ACTUATOR_HIP);
+        assertTrue(game.getPSRsForEntity(quad).isEmpty());
+
+        if (firstHitInEarlierPhase) {
+            quad.getCritical(Mek.LOC_LEFT_ARM, 0).setDestroyed(true);
+            quad.getCritical(Mek.LOC_LEFT_ARM, 0).setHit(false);
+        }
+        quad.getCritical(Mek.LOC_RIGHT_LEG, 0).setHit(true);
+        core.hitActuator(game, quad, Mek.LOC_RIGHT_LEG, Mek.ACTUATOR_HIP);
+
+        var rolls = game.getPSRsForEntity(quad);
+        assertEquals(1, rolls.size());
+        assertEquals(Mek.LOC_RIGHT_LEG, rolls.getFirst().getLocation());
+        assertEquals(1, rolls.getFirst().getValue());
+    }
 
     @Test
     void coreAndTotalWarfareRulesExercisePSRLogic() {

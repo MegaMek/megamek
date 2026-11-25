@@ -74,7 +74,8 @@ public class PrototypeCLUltraWeaponHandler extends UltraWeaponHandler {
             return false;
         }
 
-        if ((roll.getIntValue() <= 3) && (howManyShots == 2)) {
+        // Core writes the ultra autocannon, of every kind, without a jam (Core p.183)
+        if ((roll.getIntValue() <= 3) && (howManyShots == 2) && Game.rulesManager.getRulesWeapons().canUACsJam()) {
             Report r = new Report(3160);
             r.subject = subjectId;
             weapon.setJammed(true);

@@ -106,7 +106,8 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                     bayW.setJammed(true);
                 }
             } else if (bayWType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) {
-                if (roll.getIntValue() == 2 && ammoUsed == 2) {
+                // Core writes the ultra autocannon, of every kind, without a jam (Core p.183)
+                if (roll.getIntValue() == 2 && ammoUsed == 2 && Game.rulesManager.getRulesWeapons().canUACsJam()) {
                     Report r = new Report();
                     r.subject = subjectId;
                     r.messageId = 3160;

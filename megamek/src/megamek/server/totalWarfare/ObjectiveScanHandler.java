@@ -174,7 +174,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         if (targetRoll.getValue() == TargetRoll.IMPOSSIBLE) {
             return targetRoll.getDesc();
         }
-        int distance = scanner.getPosition().distance(target.getPosition());
+        int distance = RulesScanning.scanDistance(scanner, target);
         int range = rules.scanningRange(scanner, target);
         if (distance > range) {
             return Messages.getString("ObjectiveScan.outOfRange", distance, range);
@@ -233,7 +233,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         }
         String targetName = describeTarget(target);
         RulesScanning rules = ScanMission.scanningRules(getGame());
-        int distance = scanner.getPosition().distance(target.getPosition());
+        int distance = RulesScanning.scanDistance(scanner, target);
         int range = rules.scanningRange(scanner, target);
         if (distance > range) {
             reportCannotScan(scanner, order, Messages.getString("ObjectiveScan.outOfRange", distance, range));
@@ -1069,7 +1069,8 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
 
     /** Seam for tests: line of sight from the scanner to the target. */
     boolean hasLineOfSight(Entity scanner, Targetable target) {
-        return LosEffects.calculateLOS(getGame(), scanner, target).canSee();
+        return RulesScanning.occupiesTargetBuilding(scanner, target)
+              || LosEffects.calculateLOS(getGame(), scanner, target).canSee();
     }
 
     /** Seam for tests: the 2D6 of the sensor check. */

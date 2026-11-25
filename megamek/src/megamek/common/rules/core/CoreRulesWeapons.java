@@ -39,6 +39,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.rules.RulesWeapons;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -65,7 +66,7 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     /**
      * {@inheritDoc}
-     * UACs cannot jam Core p.183
+     * Core writes the ultra autocannon, of every kind, without a jam (Core p.183).
      */
     @Override
     public boolean canUACsJam() {
@@ -74,15 +75,26 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     /**
      * {@inheritDoc}
-     * ACs can get hit one time. Core p.183
+     * The first critical hit "applied to an autocannon of any class or variety" does not destroy it, which Core p.183
+     * applies to the standard, LB-X, light, ProtoMek, rotary and ultra autocannons it lists. Capital-scale naval
+     * autocannons are not in Core and keep the Total Warfare critical hit.
      */
     @Override
     public void setACHit(CriticalSlot cs,
                          Mounted<?> mounted,
                          Vector<Report> reports,
                          int entityId) {
+        if (!(mounted.getType() instanceof WeaponType weaponType)
+              || !weaponType.hasFlag(WeaponType.F_AC)
+              || weaponType.isCapital()) {
+            return;
+        }
         if (!mounted.isAutocannonHit()) {
-            if (mounted.getNumCriticalSlots() == 1 || !(mounted.getEntity() instanceof Mek)) {
+            // A superheavy Mek can hold a two-slot autocannon in one slot, which then needs "two hits to the same
+            // slot" (Core pp.183, 240)
+            // A unit without critical slots, such as a building, passes none
+            if ((cs != null)
+                  && (!(mounted.getEntity() instanceof Mek) || (mounted.getEntity().occupiedCriticalSlots(mounted) == 1))) {
                 cs.setHit(false);
             }
             mounted.setHit(false);
@@ -168,7 +180,7 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     /**
      * {@inheritDoc}
-     * HGR does not cause PSRs
+     * Firing a heavy Gauss rifle does not cause a PSR (Core p.184)
      */
     @Override
     public boolean canHGRTriggerPSR(int mpUsed,
@@ -178,7 +190,7 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     /**
      * {@inheritDoc}
-     * Returns True. we have Saturation Mode
+     * The Apollo FCS has a saturation mode (Core p.197)
      */
     @Override
     public boolean getApolloSaturationMode() {
@@ -187,7 +199,7 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     /**
      * {@inheritDoc}
-     * Core does not halve damage under minimums
+     * Core writes the Thunderbolt launcher without halving damage under minimum range (Core p.187)
      */
     @Override
     public double thunderboltMinimum(final double toReturn,

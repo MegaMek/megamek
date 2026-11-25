@@ -43,9 +43,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import megamek.common.Configuration;
 import megamek.common.Player;
 import megamek.common.game.IGame;
 import megamek.common.units.Entity;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -59,8 +62,25 @@ class ScenarioV1UnitKeysTest {
     private static final String CAMO_CATEGORY = "Clans/Wolf";
     private static final String CAMO_FILE = "Alpha Galaxy.jpg";
 
+    /** A board that ships with the test resources, since V1 only reads boards from the boards directory. */
+    private static final String TEST_BOARDS_DIRECTORY = "testresources/data/scenarios/test_setups";
+    private static final String TEST_BOARD = "testiceonwater";
+
+    private static File originalBoardsDirectory;
+
     @TempDir
     Path tempDir;
+
+    @BeforeAll
+    static void useTestBoards() {
+        originalBoardsDirectory = Configuration.boardsDir();
+        Configuration.setBoardsDir(new File(TEST_BOARDS_DIRECTORY));
+    }
+
+    @AfterAll
+    static void restoreBoardsDirectory() {
+        Configuration.setBoardsDir(originalBoardsDirectory);
+    }
 
     @Test
     void critHitSpellingFromTheReadmeRegistersACriticalHit() throws Exception {
@@ -136,8 +156,8 @@ class ScenarioV1UnitKeysTest {
               Factions=A
               BoardWidth=1
               BoardHeight=1
-              Maps=AGoAC Maps/16x17 Desert 2
-              """ + unitLines;
+              Maps=%s
+              """.formatted(TEST_BOARD) + unitLines;
         File scenarioFile = tempDir.resolve("UnitKeyTest.mms").toFile();
         Files.writeString(scenarioFile.toPath(), content, StandardCharsets.UTF_8);
         return (ScenarioV1) new ScenarioLoader(scenarioFile).load();

@@ -56,6 +56,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
+import megamek.common.equipment.ObjectiveScoringScheme.RaidPayout;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -1168,6 +1169,129 @@ class ObjectiveResolutionHandlerTest {
         verify(game).removeGroundObject(position, objective.marker());
         VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
         assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    // --- Objective Raid (Core p.217): each point pays its controller every End Phase ---
+
+    /** Installs Raid points paid every End Phase, worth 1 VP each, as the game's ground objects. */
+    private List<ObjectiveMarker> raidPointsAt(Coords... positions) {
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        List<ObjectiveMarker> raidPoints = new ArrayList<>();
+        for (Coords position : positions) {
+            ObjectiveMarker raidPoint = objectiveAt(position, 0, teamOnePlayer).marker();
+            raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+            raidPoint.setVictoryPointValue(1);
+            groundObjects.put(position, new ArrayList<>(List.of(raidPoint)));
+            raidPoints.add(raidPoint);
+        }
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        return raidPoints;
+    }
+
+    @Test
+    void testEachRaidPointPaysItsControllerEveryEndPhase() {
+        // the Core p.217 example: four crates, team 1 holds three and team 2 one - 3 and 1 VP every turn
+        Coords first = new Coords(2, 2);
+        Coords second = new Coords(6, 2);
+        Coords third = new Coords(10, 2);
+        Coords fourth = new Coords(14, 2);
+        raidPointsAt(first, second, third, fourth);
+        Entity[] holders = { groundUnit(teamOnePlayer, first), groundUnit(teamOnePlayer, second),
+              groundUnit(teamOnePlayer, third), groundUnit(teamTwoPlayer, fourth) };
+
+        resolveWith(holders);
+        resolveWith(holders);
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(6, tracker.getTeamVictoryPoints(1));
+        assertEquals(2, tracker.getTeamVictoryPoints(2));
+        assertTrue(reportIds().contains(ObjectiveResolutionHandler.REPORT_RAID_POINT_PAID));
+    }
+
+    @Test
+    void testARaidPointNobodyControlsPaysNobody() {
+        Coords position = new Coords(5, 5);
+        raidPointsAt(position);
+
+        resolveWith(groundUnit(teamOnePlayer, position), groundUnit(teamTwoPlayer, position));
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore(), "a tie leaves the point uncontrolled");
+    }
+
+    @Test
+    void testAnUnconfirmedPotentialRaidPointPaysOnlyOnceConfirmed() {
+        Coords position = new Coords(5, 5);
+        ObjectiveMarker candidate = raidPointsAt(position).getFirst();
+        candidate.setPotential(true);
+        Entity holder = groundUnit(teamOnePlayer, position);
+
+        resolveWith(holder);
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore(), "RAW: only confirmed objectives score");
+
+        candidate.setConfirmed(true);
+        resolveWith(holder);
+
+        assertEquals(1, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testACarriedRaidPointPaysItsCarriersSideEveryEndPhase() {
+        ObjectiveMarker flag = new ObjectiveMarker();
+        flag.setName("Flag");
+        flag.setScoringScheme(ObjectiveScoringScheme.raid());
+        flag.setVictoryPointValue(2);
+        flag.setMobile(true);
+        Entity carrier = groundUnit(teamTwoPlayer, new Coords(5, 5));
+        when(carrier.getDistinctCarriedObjects()).thenReturn(List.of(flag));
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+
+        resolveWith(carrier);
+
+        assertEquals(2, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(2));
+    }
+
+    @Test
+    void testARaidPointPaidAtGameEndPaysNothingDuringPlay() {
+        Coords position = new Coords(5, 5);
+        raidPointsAt(position).getFirst().getScoringScheme().setRaidPayout(RaidPayout.AT_GAME_END);
+
+        resolveWith(groundUnit(teamOnePlayer, position));
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    @Test
+    void testADecoyRaidPointIsExposedInsteadOfPaying() {
+        Coords position = new Coords(5, 5);
+        ObjectiveMarker decoy = raidPointsAt(position).getFirst();
+        decoy.setFalseObjective(true);
+
+        resolveWith(groundUnit(teamOnePlayer, position));
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore(), "a decoy never pays");
+        verify(game).removeGroundObject(position, decoy);
+        assertTrue(reportIds().contains(VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
+    }
+
+    @Test
+    void testACarriedDecoyRaidPointIsTakenFromItsCarrier() {
+        ObjectiveMarker decoy = new ObjectiveMarker();
+        decoy.setName("Flag");
+        decoy.setScoringScheme(ObjectiveScoringScheme.raid());
+        decoy.setMobile(true);
+        decoy.setFalseObjective(true);
+        Entity carrier = groundUnit(teamOnePlayer, new Coords(5, 5));
+        when(carrier.getDistinctCarriedObjects()).thenReturn(List.of(decoy));
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+
+        resolveWith(carrier);
+
+        verify(carrier).dropCarriedObject(decoy, false);
+        assertTrue(reportIds().contains(VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
     }
 
     private void playTwoSides() {

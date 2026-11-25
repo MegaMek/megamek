@@ -45,6 +45,7 @@ import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.RaidPayout;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
@@ -319,7 +320,7 @@ class VictoryPointVictoryTest {
         ObjectiveMarker raidPoint = new ObjectiveMarker();
         raidPoint.setName("Raid Point");
         raidPoint.setVictoryPointValue(3);
-        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid(RaidPayout.AT_GAME_END));
         raidPoint.setController(1, ObjectiveMarker.NO_CONTROLLER);
         game.placeGroundObject(new megamek.common.board.Coords(2, 2), raidPoint);
 
@@ -396,11 +397,58 @@ class VictoryPointVictoryTest {
               .anyMatch(report -> report.messageId == VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
     }
 
+    @Test
+    void testARaidPointPaidEveryEndPhaseIsNotPaidAgainAtGameEnd() {
+        enableObjectiveScoring();
+        ObjectiveMarker raidPoint = new ObjectiveMarker();
+        raidPoint.setName("Raid Point");
+        raidPoint.setVictoryPointValue(3);
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid(RaidPayout.EVERY_END_PHASE));
+        raidPoint.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        game.placeGroundObject(new Coords(2, 2), raidPoint);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isDraw(), "the End Phases have already paid it, turn by turn");
+    }
+
+    @Test
+    void testARaidPointPaidEveryEndPhaseStopsPayingOnceCarriedOffTheBattlefield() {
+        // Core p.217 pays for objectives a side controls in the End Phase; one carried off is no longer controlled
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(2));
+        ObjectiveMarker raidPoint = carriedRaidPoint();
+        raidPoint.getScoringScheme().setRaidPayout(RaidPayout.EVERY_END_PHASE);
+        carrier.pickupCarryableObject(raidPoint, Mek.LOC_RIGHT_ARM);
+        game.removeEntity(carrier.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isDraw());
+    }
+
+    @Test
+    void testARaidPointFromASaveMadeBeforeThePayoutChoiceStillPaysAtGameEnd() {
+        enableObjectiveScoring();
+        ObjectiveMarker raidPoint = new ObjectiveMarker();
+        raidPoint.setName("Raid Point");
+        raidPoint.setVictoryPointValue(3);
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+        // a scheme read from an older save has no payout field, which deserializes as null
+        raidPoint.getScoringScheme().setRaidPayout(null);
+        raidPoint.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        game.placeGroundObject(new Coords(2, 2), raidPoint);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(3, (int) result.getTeamScore(1), "a game in progress keeps the rules it was set up with");
+    }
+
     private ObjectiveMarker carriedRaidPoint() {
         ObjectiveMarker raidPoint = new ObjectiveMarker();
         raidPoint.setName("Data Core");
         raidPoint.setVictoryPointValue(3);
-        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid(RaidPayout.AT_GAME_END));
         raidPoint.setMobile(true);
         return raidPoint;
     }
@@ -425,7 +473,7 @@ class VictoryPointVictoryTest {
         ObjectiveMarker decoy = new ObjectiveMarker();
         decoy.setName("Raid Point");
         decoy.setVictoryPointValue(3);
-        decoy.setScoringScheme(ObjectiveScoringScheme.raid());
+        decoy.setScoringScheme(ObjectiveScoringScheme.raid(RaidPayout.AT_GAME_END));
         decoy.setFalseObjective(true);
         decoy.setController(1, ObjectiveMarker.NO_CONTROLLER);
         game.placeGroundObject(new megamek.common.board.Coords(2, 2), decoy);

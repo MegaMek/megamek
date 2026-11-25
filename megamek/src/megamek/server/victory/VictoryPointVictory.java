@@ -46,7 +46,6 @@ import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
-import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
@@ -212,9 +211,10 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
     }
 
     /**
-     * Objective Raid end-scoring, once when the game ends: every point using the {@code RAID} scheme awards its
+     * Objective Raid end-scoring, once when the game ends: every {@code RAID} point set to pay at game end awards its
      * victory point value to its controller per the last End Phase control resolution, and a carried one to its
-     * carrier's side (see {@link #awardCarriedRaidPoints}). Uncontrolled or destroyed points award nothing.
+     * carrier's side (see {@link #awardCarriedRaidPoints}). Uncontrolled or destroyed points award nothing. A point
+     * set to pay every End Phase has already been paid turn by turn.
      *
      * @return the end-scoring reports, shown with the victory result
      */
@@ -227,7 +227,7 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         for (Map.Entry<Coords, List<ICarryable>> hexObjects : game.getGroundObjects().entrySet()) {
             for (ICarryable groundObject : hexObjects.getValue()) {
                 if (!(groundObject instanceof ObjectiveMarker marker) || marker.isDestroyed()
-                      || (marker.getScoringScheme().getPreset() != SchemePreset.RAID)) {
+                      || !marker.getScoringScheme().isRaidPaidAtGameEnd()) {
                     continue;
                 }
                 if (marker.isFalseObjective()) {
@@ -297,12 +297,16 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         }
     }
 
-    /** @return the intact Raid points the unit is carrying */
+    /**
+     * @return the intact Raid points set to pay at game end that the unit is carrying. One set to pay every End Phase
+     *       has been paid each turn its carrier held it on the board, and stops paying once it leaves (Core p.217
+     *       pays for objectives controlled in the End Phase)
+     */
     private static List<ObjectiveMarker> carriedRaidPoints(Entity carrier) {
         List<ObjectiveMarker> raidPoints = new ArrayList<>();
         for (ICarryable carriedObject : carrier.getDistinctCarriedObjects()) {
             if ((carriedObject instanceof ObjectiveMarker marker) && !marker.isDestroyed()
-                  && (marker.getScoringScheme().getPreset() == SchemePreset.RAID)) {
+                  && marker.getScoringScheme().isRaidPaidAtGameEnd()) {
                 raidPoints.add(marker);
             }
         }

@@ -199,6 +199,12 @@ public class ForceDescriptor {
      * while {@link UnitVariety} is in force. Set only for the length of one pick.
      */
     private final Set<String> excludedModels = new HashSet<>();
+    /**
+     * Models a pick for this slot must never return, whatever else the table offers: the designs a player has rerolled
+     * away. Unlike {@link #excludedModels} this holds on every pick path, not only a chassis-limited one. Set only for
+     * the length of one reroll by {@link UnitReroller}.
+     */
+    private final Set<String> rejectedModels = new HashSet<>();
     /** Whether this node is the "Naval Units" branch the transport stage attaches to a force. */
     private boolean transportRoot = false;
     /**
@@ -1340,11 +1346,34 @@ public class ForceDescriptor {
               movementModes,
               EnumSet.of(MissionRole.ARTILLERY),
               2);
-        MekSummary mekSummary = table.generateUnit();
+        MekSummary mekSummary = table.generateUnit(rejectedModelsFilter());
         if (mekSummary == null) {
             return null;
         }
         return RATGenerator.getInstance().getModelRecord(mekSummary.getName());
+    }
+
+    /** @return {@code true} unless the unit is one a reroll of this slot has ruled out */
+    private boolean isNotRejected(MekSummary unit) {
+        return !rejectedModels.contains(unit.getName());
+    }
+
+    /**
+     * @return a filter refusing the rejected models, or {@code null} when there are none, so an ordinary pick draws
+     *       from the table exactly as it did before rerolls existed
+     */
+    private @Nullable UnitTable.UnitFilter rejectedModelsFilter() {
+        return rejectedModels.isEmpty() ? null : this::isNotRejected;
+    }
+
+    /**
+     * The models a pick for this slot must not return. {@link UnitReroller} fills it for one reroll and empties it
+     * afterwards; nothing else writes to it.
+     *
+     * @return the live set, never {@code null}
+     */
+    Set<String> getRejectedModels() {
+        return rejectedModels;
     }
 
     /**
@@ -1463,13 +1492,16 @@ public class ForceDescriptor {
                 } else if (!workingCopy.getChassis().isEmpty()) {
                     mekSummary = table.generateUnit(unit -> workingCopy.getChassis().contains(unit.getChassis())
                           && !excludedModels.contains(unit.getName())
+                          && isNotRejected(unit)
                           && workingCopy.acceptsForInfantryClass(unit));
                 } else if (workingCopy.isInfantryClassApplied()) {
+                    UnitTable.UnitFilter classFilter = unit -> workingCopy.acceptsForInfantryClass(unit)
+                          && isNotRejected(unit);
                     mekSummary = allowSalvage
-                          ? table.generateUnit(workingCopy::acceptsForInfantryClass)
-                          : table.generateUnitWithoutSalvage(workingCopy::acceptsForInfantryClass);
+                          ? table.generateUnit(classFilter)
+                          : table.generateUnitWithoutSalvage(classFilter);
                 } else {
-                    mekSummary = table.generateUnit();
+                    mekSummary = table.generateUnit(rejectedModelsFilter());
                 }
                 // Gate on the log level, not on the unit type: the force generator serves combined-arms
                 // forces, so tanks, aero, infantry and vessels need this trace as much as Meks do. The

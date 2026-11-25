@@ -203,6 +203,7 @@ Entity.assaultDropInProgress                    KNOWN_LEAK  Entity.newRound only
 Entity.climbMode                                GAME_RESET  reset by Entity.newRound
 Entity.lastTargetDisplayName                    KNOWN_LEAK  display only
 Entity.spotTargetId                             GAME_RESET  reset by Entity.newRound
+Entity.spotTargetType                           GAME_RESET  reset by Entity.newRound
 Entity.reconCameraSpotTargetId                  GAME_RESET  reset by Entity.newRound
 Entity.hasTriedReconCameraSpot                  GAME_RESET  reset by Entity.newRound
 Entity.reconCameraViewerIds                     GAME_RESET  cleared by Entity.newRound
@@ -263,6 +264,7 @@ Entity.fleeZone                                 KNOWN_LEAK  set by MegaMek scena
 Mek.rearArmor                                   KEEP        damage
 Mek.orig_rearArmor                              KEEP        design
 Mek.rearHardenedArmorDamaged                    KEEP        damage
+Mek.reinforcedStructureDamaged                  KEEP        damage
 Mek.armorDamagedThisTurn                        GAME_RESET  cleared by Mek.newRound
 Mek.autoEject                                   KEEP        player setting
 Mek.condEjectAmmo                               KEEP        player setting

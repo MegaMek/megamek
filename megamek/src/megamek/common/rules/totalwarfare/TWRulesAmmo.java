@@ -233,4 +233,14 @@ public class TWRulesAmmo extends RulesAmmo {
 
         return super.getAmmoBVAdjusted(munition);
     }
+
+    @Override
+    public boolean armorPiercingAffectsAerospace() {
+        return false;
+    }
+
+    @Override
+    public boolean semiGuidedIndirectIgnoresIndirectFireModifier() {
+        return true;
+    }
 }

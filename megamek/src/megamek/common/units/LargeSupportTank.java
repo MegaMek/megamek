@@ -109,6 +109,11 @@ public class LargeSupportTank extends SupportTank {
     }
 
     @Override
+    protected int getLocRear() {
+        return LOC_REAR;
+    }
+
+    @Override
     public int getLocTurret() {
         return LOC_TURRET;
     }
@@ -157,7 +162,7 @@ public class LargeSupportTank extends SupportTank {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                    rv.setEffect(HitData.EFFECT_TAC);
                     break;
                 case 3:
                     if (bSide) {

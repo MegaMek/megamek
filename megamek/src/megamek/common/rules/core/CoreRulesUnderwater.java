@@ -112,9 +112,26 @@ public class CoreRulesUnderwater extends RulesUnderwater {
     @Override
     public int getExtremeRange(WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
-            return weaponType.getLongRange();
+            // An attack that would be at the weapon's long range "cannot be made" underwater (Core p.127), so there is
+            // no bracket beyond the shifted long one, even with extreme range in play
+            return weaponType.getMediumRange();
         } else {
             return weaponType.getWExtremeRange();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * Underwater, an energy weapon's attack beyond its shifted long range "cannot be made"; the snub-nose PPC example
+     * "could not attack anything at a range of 14+" (Core p.127). Torpedoes keep the launcher's ranges (Core p.187).
+     */
+    @Override
+    public boolean allowsLosRange(WeaponType weaponType) {
+        return !weaponType.hasFlag(WeaponType.F_ENERGY);
+    }
+
+    @Override
+    public boolean breachOnLowRoll() {
+        return true;
     }
 }

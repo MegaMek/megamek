@@ -3260,7 +3260,7 @@ public class FireControl {
             Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
             LOGGER.debug("[Spot] {}: spotting {} at {} hexes for indirect fire", spotter.getDisplayName(),
                   target.getDisplayName(), spotter.getPosition().distance(target.getPosition()));
-            return new SpotAction(spotter.getId(), target.getId());
+            return new SpotAction(spotter.getId(), target);
         }
 
         LOGGER.debug("[Spot] {}: not spotting - no enemy in line of sight", spotter.getDisplayName());

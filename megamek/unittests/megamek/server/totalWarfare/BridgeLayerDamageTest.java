@@ -138,6 +138,7 @@ class BridgeLayerDamageTest {
         Vector<Report> reports = new Vector<>();
         ModsInfo mods = new ModsInfo();
         mods.crits = 1;
+        mods.locationCrits = 1;
         mods.specCrits = 1;
         HitData critHit = new HitData(Tank.LOC_RIGHT, false, HitData.EFFECT_CRITICAL);
 
@@ -145,6 +146,7 @@ class BridgeLayerDamageTest {
 
         assertTrue(state.isDeployMechanismDisabled(), "the crit disables the deploy mechanism");
         assertEquals(0, mods.crits, "the location crit is suppressed");
+        assertEquals(0, mods.locationCrits, "structure damage from overflow has its own critical check");
         assertEquals(0, mods.specCrits, "the location special crit is suppressed");
         assertTrue(hasReport(reports, 4298), "a mechanism-disabled report (4298) is added");
         assertEquals(35, state.getCurrentCF(), "the crit hit still reduces CF normally");

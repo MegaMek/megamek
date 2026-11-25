@@ -152,12 +152,28 @@ public class TWRulesExplosions extends RulesExplosions {
 
 
     /**
-     * How much damage to equipment explosions do.
-     *
-     * @param mounted the mounted equipment
-     * @param weaponType the weapon type
-     * @return the damage amount
+     * Pods are explosive if they have not shot yet
+     * @param mounted the mounted weapon
+     * @return false if it has already shot, otherwise true
      */
+    @Override
+    public boolean arePodsExplosive(Mounted<?> mounted) {
+        if (mounted.getLinked() == null || mounted.getLinked().getUsableShotsLeft() == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean jammedRotaryAutocannonExplodes() {
+        return true;
+    }
+
+    @Override
+    public void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec) {
+        // TW explosions have no damage cap to vent.
+    }
+
     @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
@@ -171,16 +187,8 @@ public class TWRulesExplosions extends RulesExplosions {
         return weaponType.getExplosionDamage();
     }
 
-    /**
-     * Pods are explosive if they have not shot yet
-     * @param mounted the mounted weapon
-     * @return false if it has already shot, otherwise true
-     */
     @Override
-    public boolean arePodsExplosive(Mounted<?> mounted) {
-        if (mounted.getLinked() == null || mounted.getLinked().getUsableShotsLeft() == 0) {
-            return false;
-        }
-        return true;
+    public boolean explosionsAreReduced() {
+        return false;
     }
 }

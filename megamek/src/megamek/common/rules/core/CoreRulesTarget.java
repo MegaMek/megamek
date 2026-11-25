@@ -32,6 +32,8 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import java.util.EnumSet;
+
 import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
 import megamek.common.LosEffects;
@@ -50,8 +52,6 @@ import megamek.common.units.Targetable;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayWeapons.ArtilleryBayWeapon;
-
-import java.util.EnumSet;
 
 public class CoreRulesTarget extends RulesTarget {
     /**
@@ -101,7 +101,8 @@ public class CoreRulesTarget extends RulesTarget {
 
     /**
      * {@inheritDoc}
-     * Only upper arm actuators increase the to hit for shooting. Core p.97
+     * A destroyed upper arm actuator adds +1 to that arm's weapon attacks (Core p.98); the shoulder's +4 is applied
+     * elsewhere (Core p.97)
      */
     @Override
     public int getArmActuatorHitMod(Entity attacker, int location) {
@@ -110,7 +111,7 @@ public class CoreRulesTarget extends RulesTarget {
         }
         return 0;
     }
-    
+
     /**
      * {@inheritDoc}
      * BAP reduces smoke within its range. It is blocked by ECM (Handled prior to this call) Core p.197, 124

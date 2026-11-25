@@ -33,16 +33,18 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-import megamek.common.CriticalSlot;
-import megamek.common.Report;
-import megamek.common.board.Coords;
-import megamek.common.equipment.MiscType;
-import megamek.common.units.Entity;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+
+import megamek.common.CriticalSlot;
+import megamek.common.Report;
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Sensor;
+import megamek.common.units.Entity;
 
 public abstract class RulesEquipment {
     /**
@@ -110,20 +112,55 @@ public abstract class RulesEquipment {
     public abstract ArrayList<Coords> getECMCoordsAffected(final Coords a, final Coords b);
 
     /**
-     * What are the ECM ranges other than angel.
+     * What are the ECM ranges other than angel. ECM suites have a 6-hex radius, the Watchdog included (Core p.201;
+     * TO:AUE p.90); EW equipment has 3 (TO:AUE p.123), as does the Nova CEWS (IO:AE pp.60, 212).
      *
      * @param type the miscellaneous equipment type
      * @return the ECM range
      */
-    public abstract int getECMRanges(MiscType type);
+    public int getECMRanges(MiscType type) {
+        if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+            return 0;
+        } else if (type.hasFlag(MiscType.F_EW_EQUIPMENT) || type.hasFlag(MiscType.F_NOVA)) {
+            return 3;
+        }
+        return 6;
+    }
 
     /**
-     * What are the Sensor ranges for probes.
+     * Returns the range per bracket for Tactical Operations and Strategic Operations sensors.
+     * The TO:AR sensor table (p. 190) omits the Nova CEWS, so each ruleset retains its existing bracket.
      *
      * @param type the probe type
      * @return the sensor range
      */
     public abstract int getSensorRanges(int type);
+
+    /** Returns the range per bracket for sensor types shared by both rulesets. */
+    protected static int getCommonSensorRange(int type) {
+        return switch (type) {
+            case Sensor.TYPE_BAP, Sensor.TYPE_BAPP -> 12;
+            case Sensor.TYPE_BLOODHOUND -> 16;
+            case Sensor.TYPE_CLAN_AP -> 15;
+            // TO:AR p.190 lists "Clan Watchdog/Light Active Probe" together
+            case Sensor.TYPE_WATCHDOG, Sensor.TYPE_LIGHT_AP, Sensor.TYPE_VEE_MAG_SCAN, Sensor.TYPE_VEE_IR,
+                 Sensor.TYPE_BA_HEAT -> 9;
+            //Under the current errata (3.0,Dec 2017), the rules only give aero sensor ranges against overflown ground units
+            //No differences in range are mentioned for any sensor but active probe, so I'm assuming magscan range for standard sensors
+            case Sensor.TYPE_MEK_MAG_SCAN, Sensor.TYPE_MEK_IR, Sensor.TYPE_AERO_SENSOR -> 10;
+            case Sensor.TYPE_MEK_RADAR -> 8;
+            case Sensor.TYPE_VEE_RADAR, Sensor.TYPE_BA_IMPROVED -> 6;
+            case Sensor.TYPE_EW_EQUIPMENT -> 3;
+            case Sensor.TYPE_MEK_SEISMIC -> 2;
+            case Sensor.TYPE_VEE_SEISMIC, Sensor.TYPE_EI_PROBE -> 1;
+            //The ranges listed for the various sensors in SO are so far beyond gameplay distances that I'm condensing
+            //them into just the types that have different detection mechanics.
+            case Sensor.TYPE_SPACECRAFT_RADAR, Sensor.TYPE_SPACECRAFT_ESM -> 5555;
+            case Sensor.TYPE_SPACECRAFT_THERMAL -> 1388;
+            case Sensor.TYPE_AERO_THERMAL -> 139;
+            default -> 0;
+        };
+    }
 
     /**
      * Is the probe impacted by ECM?
@@ -134,7 +171,13 @@ public abstract class RulesEquipment {
      * @param position the position to check
      * @return true if BAP is active
      */
-    public abstract boolean isBAPActive(boolean checkECM, MiscType type, Entity entity, Coords position);
+    public boolean isBAPActive(boolean checkECM, MiscType type, Entity entity, Coords position) {
+        // A Bloodhound is negated only by Angel ECM (Core p.200; TO:AUE pp.90-91)
+        if (type.hasFlag(MiscType.F_BLOODHOUND)) {
+            return !checkECM || !ComputeECM.isAffectedByAngelECM(entity, position, position);
+        }
+        return !checkECM || !ComputeECM.isAffectedByECM(entity, position, position);
+    }
 
     /**
      * Is there an init bonus for the command console or tripod tech officer?
@@ -142,6 +185,19 @@ public abstract class RulesEquipment {
      * @return the initiative bonus
      */
     public abstract int getCommandConsoleBonus();
+
+    /**
+     * @return true if anti-missile systems and point defenses can engage homing Arrow IV missiles
+     */
+    public abstract boolean antiMissileSystemsEngageArrowIV();
+
+    /**
+     * The modifier to a supercharger's activation roll result.
+     *
+     * @param entity the unit using the supercharger
+     * @return the roll modifier
+     */
+    public abstract int getSuperchargerActivationModifier(Entity entity);
 
     /**
      * Check for how many hits and how we deal with them.
@@ -177,4 +233,12 @@ public abstract class RulesEquipment {
     public boolean blueShieldStealth() {
         return blueShieldStealth(true);
     }
+
+    /** Ground active-probe radius of a Watchdog CEWS, before crew and equipment bonuses. */
+    public int getWatchdogProbeRange() {
+        return watchdogUsesLightProbe() ? 3 : 5;
+    }
+
+    /** Whether the Watchdog carries the Clan light active probe instead of the standard Clan probe. */
+    public abstract boolean watchdogUsesLightProbe();
 }

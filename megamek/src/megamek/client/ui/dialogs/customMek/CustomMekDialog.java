@@ -473,6 +473,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_RAIN);
             optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_SNOW);
             optionComp.addValue(Crew.ENVIRONMENT_SPECIALIST_WIND);
+            optionComp.setSelected(option.stringValue());
         }
 
         // Prosthetic Limbs, Enhanced - add inline dropdown and spinner for slot 1

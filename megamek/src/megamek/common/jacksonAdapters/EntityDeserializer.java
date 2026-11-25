@@ -61,6 +61,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.loaders.MekSummary;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoaderException;
+import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.IBomber;
@@ -259,7 +260,10 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         }
     }
 
-    /** Sets a Mek's automatic ejection from {@code autoeject: true / false}; other unit types have no such setting. */
+    /**
+     * Sets automatic ejection from {@code autoeject: true / false} for Meks and fighters, the unit types the unit
+     * editor offers it for. Units without an ejection seat never eject, whatever the setting.
+     */
     private void assignAutoEject(Entity entity, JsonNode node) {
         if (!node.has(AUTO_EJECT)) {
             return;
@@ -267,8 +271,11 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         boolean autoEject = readBoolean(node, AUTO_EJECT);
         if (entity instanceof Mek mek) {
             mek.setAutoEject(autoEject);
+        } else if (entity.isFighter() && (entity instanceof Aero aero)) {
+            aero.setAutoEject(autoEject);
         } else {
-            LOGGER.warn("[ScenarioCrew] {}: autoeject only applies to Meks; ignoring", entity.getShortName());
+            LOGGER.warn("[ScenarioCrew] {}: autoeject only applies to Meks and fighters; ignoring",
+                  entity.getShortName());
         }
     }
 

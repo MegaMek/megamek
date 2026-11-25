@@ -41,6 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.Test;
@@ -112,6 +113,20 @@ class EntityDeserializerCrewTest {
         Entity atlas = readUnit(ATLAS + "autoeject: false\n");
 
         assertFalse(((Mek) atlas).isAutoEject());
+    }
+
+    @Test
+    void autoEjectCanBeSwitchedOffOnAFighter() throws Exception {
+        Entity cheetah = readUnit("fullname: Cheetah F-11\nautoeject: false\n");
+
+        assertFalse(((Aero) cheetah).isAutoEject());
+    }
+
+    @Test
+    void autoEjectCanBeSwitchedOnOnAFighter() throws Exception {
+        Entity cheetah = readUnit("fullname: Cheetah F-11\nautoeject: true\n");
+
+        assertTrue(((Aero) cheetah).isAutoEject());
     }
 
     private Entity readUnit(String yaml) throws Exception {

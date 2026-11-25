@@ -412,7 +412,7 @@ factions:
 
         # Optional: this unit is its force's commander; default: false
         commander: true
-        # Optional, Meks only: let the pilot eject automatically; default: the auto-eject client setting
+        # Optional, Meks and fighters: let the pilot eject automatically; default: the auto-eject client setting
         autoeject: false
 
     # Carryable objects. These currently have no real owner, but if they are not pre-deployed, the present

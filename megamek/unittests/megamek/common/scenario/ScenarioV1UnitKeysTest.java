@@ -56,6 +56,10 @@ import org.junit.jupiter.api.io.TempDir;
  * The V1 scenario readme documents {@code CritHit}, {@code Camo_Faction} and the per-unit {@code Camo} key. The
  * loader used to ignore all three: it wanted {@code CriticalHit}, a lower-case {@code camo_}, and per-unit keys
  * starting with a lower-case letter that its own unit data pattern can never match.
+ *
+ * <p>The tests use only units found both in mm-data and in {@code testresources/data/mekfiles}. Some test
+ * fixtures point the shared unit cache at that small test set and leave it there, so either cache may be loaded
+ * when this class runs.</p>
  */
 class ScenarioV1UnitKeysTest {
 
@@ -85,7 +89,7 @@ class ScenarioV1UnitKeysTest {
     @Test
     void critHitSpellingFromTheReadmeRegistersACriticalHit() throws Exception {
         ScenarioV1 scenario = loadScenario("""
-              Unit_A_1=Locust LCT-1M,Pilot One,3,4,N,5,5
+              Unit_A_1=Locust LCT-1V,Pilot One,3,4,N,5,5
               Unit_A_1_CritHit=1:3
               """);
         scenario.createGame();
@@ -96,7 +100,7 @@ class ScenarioV1UnitKeysTest {
     @Test
     void criticalHitSpellingStillRegistersACriticalHit() throws Exception {
         ScenarioV1 scenario = loadScenario("""
-              Unit_A_1=Locust LCT-1M,Pilot One,3,4,N,5,5
+              Unit_A_1=Locust LCT-1V,Pilot One,3,4,N,5,5
               Unit_A_1_CriticalHit=1:3
               """);
         scenario.createGame();
@@ -107,7 +111,7 @@ class ScenarioV1UnitKeysTest {
     @Test
     void capitalizedFactionCamoKeyFromTheReadmeIsApplied() throws Exception {
         IGame game = loadScenario("""
-              Unit_A_1=Locust LCT-1M,Pilot One,3,4,N,5,5
+              Unit_A_1=Locust LCT-1V,Pilot One,3,4,N,5,5
               Camo_A=%s,%s
               """.formatted(CAMO_CATEGORY, CAMO_FILE)).createGame();
 
@@ -118,7 +122,7 @@ class ScenarioV1UnitKeysTest {
     @Test
     void lowerCaseFactionCamoKeyStillWorks() throws Exception {
         IGame game = loadScenario("""
-              Unit_A_1=Locust LCT-1M,Pilot One,3,4,N,5,5
+              Unit_A_1=Locust LCT-1V,Pilot One,3,4,N,5,5
               camo_A=%s,%s
               """.formatted(CAMO_CATEGORY, CAMO_FILE)).createGame();
 
@@ -129,7 +133,7 @@ class ScenarioV1UnitKeysTest {
     @Test
     void unitCamoKeyFromTheReadmeIsApplied() throws Exception {
         IGame game = loadScenario("""
-              Unit_A_1=Locust LCT-1M,Pilot One,3,4,N,5,5
+              Unit_A_1=Locust LCT-1V,Pilot One,3,4,N,5,5
               Unit_A_1_Camo=%s,%s
               """.formatted(CAMO_CATEGORY, CAMO_FILE)).createGame();
 

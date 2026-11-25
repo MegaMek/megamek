@@ -36,10 +36,9 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -14007,7 +14006,6 @@ public abstract class Entity extends TurnOrdered
         setStuck(false);
         setConversionMode(0);
         setHidden(false);
-        setDone(false);
         // Without this a unit that fled the last battle still reports the edge it left by
         setRetreatedDirection(OffBoardDirection.NONE);
 
@@ -14027,9 +14025,13 @@ public abstract class Entity extends TurnOrdered
         resetBays();
         setTransportId(Entity.NONE);
         resetTransporter();
-        setUnloaded(false);
         setSwarmAttackerId(Entity.NONE);
         setSwarmTargetId(Entity.NONE);
+        // Clearing the transport and swarm target above marks the unit as unloaded and done for the turn, as if it
+        // had just left a transport mid-game. Those flags must be cleared after them, or the unit can't be loaded
+        // or towed until a new round starts - and MekHQ never starts one, so its tractors could never hitch a trailer.
+        setUnloaded(false);
+        setDone(false);
         setLastTarget(Entity.NONE);
         clearNarcAndiNarcPods();
         // Orders given to the unit's bot in this battle, such as a flee order, must not steer it in the next one

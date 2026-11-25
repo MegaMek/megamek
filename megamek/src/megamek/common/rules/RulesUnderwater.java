@@ -43,6 +43,9 @@ public abstract class RulesUnderwater {
      */
     public abstract int getBreachTarget();
 
+    /** Whether a breach occurs on a roll at or below the target. */
+    public abstract boolean breachOnLowRoll();
+
     /**
      * Whether a breached leg has the gameplay effects of a destroyed leg instead of individual actuator hits.
      * The location retains its armor, internal structure, and hittable critical slots.
@@ -85,4 +88,10 @@ public abstract class RulesUnderwater {
      * @return extreme range
      */
     public abstract int getExtremeRange(WeaponType weaponType);
+
+    /**
+     * @param weaponType the weapon firing underwater
+     * @return true if the underwater attack can use line-of-sight range beyond its extreme range
+     */
+    public abstract boolean allowsLosRange(WeaponType weaponType);
 }

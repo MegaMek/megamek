@@ -198,6 +198,19 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     /**
+     * @param game the game holding the attacker
+     *
+     * @return true if this attack fires Narc or iNarc pods, which point-defense bays do not engage (StratOps p.84)
+     */
+    public boolean firesNarcPods(Game game) {
+        Entity attacker = getEntity(game);
+        Mounted<?> weapon = (attacker == null) ? null : attacker.getEquipment(weaponId);
+        return (weapon != null) && (weapon.getType() instanceof WeaponType weaponType)
+              && ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NARC)
+              || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INARC));
+    }
+
+    /**
      * Returns the weapon this attack fires, looked up on the unit that owns it. A handheld weapon is its own unit, so
      * a shot from one carried by a Mek belongs to the handheld weapon; its weapon number means nothing on the Mek.
      *

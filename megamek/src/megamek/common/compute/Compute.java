@@ -1027,6 +1027,8 @@ public class Compute {
         }
 
         // can't go up more levels than normally possible
+        int maxElevationChange = (entity instanceof Mek mek) ? mek.getMaxDisplacementElevationChange()
+              : entity.getMaxElevationChange();
         for (Coords c : intervening) {
             // ignore off-board hexes
             if (!game.getBoard().contains(c)) {
@@ -1035,7 +1037,7 @@ public class Compute {
             final Hex hex = game.getBoard().getHex(c);
             int change = entity.elevationOccupied(hex)
                   - entity.elevationOccupied(srcHex);
-            if (change > entity.getMaxElevationChange()) {
+            if (change > maxElevationChange) {
                 return false;
             }
         }
@@ -1082,15 +1084,17 @@ public class Compute {
 
     /**
      * Gets the hex a unit is displaced into by an accidental fall from above. The rules in play decide how the hex is
-     * picked: Total Warfare looks nearest to the given direction first, the Core rules pick at random (Core p.116).
+     * picked: Total Warfare looks nearest to the given direction first; the Core rules put a faller that missed as
+     * close as possible to the hex it fell from and push the unit fallen on into a random legal hex (Core p.116).
      * Every other displacement follows its direction and uses {@link #getValidDisplacement(Game, int, Coords, int)}.
      *
      * @return valid displacement coords, or {@code null} if none
      */
     @Nullable
-    public static Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction) {
+    public static Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
+          boolean fallerMissed) {
         return Game.rulesManager.getRulesMovement().getAccidentalFallDisplacement(game, entityId, src, direction,
-              getDisplacementRange(game, src));
+              getDisplacementRange(game, src), fallerMissed);
     }
 
     /**
@@ -1198,8 +1202,9 @@ public class Compute {
         for (Entity other : game.getEntitiesVector()) {
             // a Recon Camera that spotted the target counts as a spotter without the attack penalty (TO:AUE p.150)
             boolean isCameraSpotter = ReconCameraRules.isCameraSpotting(other, target);
-            if (((other.isSpotting() && (other.getSpotTargetId() == target
-                  .getId())) || isCameraSpotter || (taggedBy == other.getId()))
+            if (((other.isSpotting() && (other.getSpotTargetId() == target.getId())
+                  && Targetable.isSameTarget(other.getSpotTarget(game), target))
+                  || isCameraSpotter || (taggedBy == other.getId()))
                   && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 ToHitData mods = isCameraSpotter && ReconCameraRules.isAerospaceCamera(other)
@@ -1211,7 +1216,7 @@ public class Compute {
                 // a spotter suffers a penalty if it's also making an attack this round
                 // unless it has a command console, has TAG-ged the target or spotted it with a Recon Camera
                 if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && !isCameraSpotter &&
-                      (!isTargetTagged(attacker, target, game) || (taggedBy != -1))) {
+                      !hasTagged(other, target, game)) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
 
@@ -1272,6 +1277,65 @@ public class Compute {
         }
 
         return targetTagged;
+    }
+
+    /**
+     * @param attacker the unit attacking the target
+     * @param target   the target
+     * @param game     the game
+     *
+     * @return true if a unit friendly to the attacker designated the target with TAG and hit ("friendly TAG", Core
+     *       p.193; TW p.142)
+     */
+    public static boolean isTargetTaggedByFriend(Entity attacker, Targetable target, Game game) {
+        return findFriendlyTagger(attacker, target, game) != null;
+    }
+
+    /**
+     * Every TAG attack of the phase is recorded, hit or miss, so a later hostile designation does not hide an earlier
+     * friendly one.
+     *
+     * @param attacker the unit attacking the target
+     * @param target   the target
+     * @param game     the game
+     *
+     * @return a unit friendly to the attacker that designated the target with TAG and hit, or null
+     */
+    public static @Nullable Entity findFriendlyTagger(Entity attacker, Targetable target, Game game) {
+        for (TagInfo tagInfo : game.getTagInfo()) {
+            if (!tagInfo.missed && Targetable.isSameTarget(tagInfo.target, target)
+                  && isFriendlyTagger(attacker, tagInfo.attackerId, game)) {
+                return game.getEntity(tagInfo.attackerId);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param tagger the unit that may have fired TAG
+     * @param target the target
+     * @param game   the game
+     *
+     * @return true if the unit designated the target with TAG and hit; after a miss, spotting proceeds "in the normal
+     *       fashion" (Core p.70)
+     */
+    public static boolean hasTagged(Entity tagger, @Nullable Targetable target, Game game) {
+        if (target == null) {
+            return false;
+        }
+        for (TagInfo tagInfo : game.getTagInfo()) {
+            if (!tagInfo.missed && (tagInfo.attackerId == tagger.getId())
+                  && Targetable.isSameTarget(tagInfo.target, target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isFriendlyTagger(Entity attacker, int taggerId, Game game) {
+        Entity tagger = game.getEntity(taggerId);
+        return (tagger != null) && (tagger.getOwner() != null) && (attacker.getOwner() != null)
+              && !tagger.getOwner().isEnemyOf(attacker.getOwner());
     }
 
     /**
@@ -1475,6 +1539,7 @@ public class Compute {
 
         if (weaponUnderwater) {
             weaponRanges = weaponType.getWRanges();
+            useLOSRange &= Game.rulesManager.getRulesUnderwater().allowsLosRange(weaponType);
             boolean MPM = false;
             if ((weaponType.getAmmoType() == AmmoTypeEnum.SRM)
                   || (weaponType.getAmmoType() == AmmoTypeEnum.SRM_IMP)

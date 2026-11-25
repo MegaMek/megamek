@@ -34,7 +34,6 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import java.util.List;
 
 import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
@@ -44,7 +43,7 @@ import megamek.common.rules.RulesPSR;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
-import megamek.common.units.MekWithArms;
+import megamek.common.units.QuadMek;
 
 public class TWRulesPSR extends RulesPSR {
 
@@ -58,7 +57,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param distance the distance traveled
      */
     @Override
-    public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
+    public int checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType, int distance) {
         if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
@@ -68,9 +67,10 @@ public class TWRulesPSR extends RulesPSR {
               ((gyroDamage > 0) || entity.hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
+            return 1;
         }
+        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
+        return 0;
     }
 
     /**
@@ -101,10 +101,16 @@ public class TWRulesPSR extends RulesPSR {
      * @param toLegDamage true if applying leg damage
      */
     @Override
-    public void legDamageModifiers(MekWithArms unit, final PilotingRollData roll, final boolean toLegDamage) {
-        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
+    public void legDamageModifiers(Mek unit, final PilotingRollData roll, final boolean toLegDamage) {
+        boolean quad = unit instanceof QuadMek;
+        for (int loc = 0; loc < unit.locations(); loc++) {
+            if (!unit.locationIsLeg(loc)) {
+                continue;
+            }
             if (unit.isLocationBad(loc)) {
-                roll.addModifier(5, unit.getLocationName(loc) + " destroyed");
+                if (!quad) {
+                    roll.addModifier(5, unit.getLocationName(loc) + " destroyed");
+                }
             } else {
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, unit.getLocationName(loc) + " Hip Actuator destroyed");
@@ -258,23 +264,6 @@ public class TWRulesPSR extends RulesPSR {
     }
 
     /**
-     * We don't care about walking meks with legs destroyed
-     *
-     * @param entity the entity attempting to walk
-     * @param overallMoveType the type of overall movement
-     * @param hexesMoved the number of hexes moved
-     * @return the piloting roll data for the PSR, or null if no PSR required
-     */
-    @Override
-    public PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
-          int hexesMoved) {
-        PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: does not apply");
-        entity.addPilotingModifierForTerrain(roll);
-        return roll;
-    }
-
-    /**
      * Calculate the damage a falling unit in water receives
      *
      * @param damage how much damage is it supposed to take
@@ -310,5 +299,10 @@ public class TWRulesPSR extends RulesPSR {
             case 2 -> 0;
             default -> 1;
         };
+    }
+
+    @Override
+    public int landingWithDamageChecks(Entity entity, int gyroHits) {
+        return singleLandingCheckForDamage(entity, gyroHits);
     }
 }

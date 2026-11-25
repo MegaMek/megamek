@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
@@ -48,14 +49,15 @@ import java.util.Vector;
 
 import megamek.common.CriticalSlot;
 import megamek.common.GameBoardTestCase;
-import megamek.common.compute.Compute;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.actions.ActivateBloodStalkerAction;
+import megamek.common.actions.ProtoMekPhysicalAttackAction;
 import megamek.common.bays.CargoBay;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
@@ -268,7 +270,7 @@ class TWGameManagerTest {
         CriticalSlot gyroSlot1 = mek.getCritical(Mek.LOC_CENTER_TORSO, 3);
         gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot1, true, 0, false);
 
-        // Apply second gyro hit 
+        // Apply second gyro hit
         CriticalSlot gyroSlot2 = mek.getCritical(Mek.LOC_CENTER_TORSO, 4);
         gameManager.applyCriticalHit(mek, Mek.LOC_CENTER_TORSO, gyroSlot2, true, 0, false);
 
@@ -610,6 +612,41 @@ class TWGameManagerTest {
             // Set crew to be active
             target.getCrew().setHits(0, 0);
             getGame().addEntity(target);
+        }
+
+        @Test
+        void chargedFrenzyDealsASeparateTaserHitToFerroLamellor() throws LocationFullException {
+            ProtoMek proto = new ProtoMek();
+            proto.setOwner(player1);
+            proto.setId(3);
+            proto.setPosition(target.getPosition());
+            proto.setDeployed(true);
+            proto.setWeight(4);
+            Mounted<?> edp = proto.addEquipment(EquipmentType.get("CLEDPArmor"), ProtoMek.LOC_TORSO);
+            getGame().addEntity(proto);
+            for (int leg : List.of(Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG)) {
+                target.setArmorType(EquipmentType.T_ARMOR_FERRO_LAMELLOR, leg);
+                target.initializeArmor(3, leg);
+            }
+            getGame().addAction(new ProtoMekPhysicalAttackAction(proto.getId(), target.getTargetType(), target.getId()));
+            try (var dice = mockStatic(Compute.class, CALLS_REAL_METHODS)) {
+                Roll roll = mock(Roll.class);
+                when(roll.getIntValue()).thenReturn(12);
+                dice.when(() -> Compute.rollD6(2)).thenReturn(roll);
+                gameManager.resolvePhysicalAttacks();
+            }
+            // The 1-point physical hit is absorbed; the discharge removes a full pip and gets no bonus effect.
+            assertEquals(5, target.getArmor(Mek.LOC_LEFT_LEG) + target.getArmor(Mek.LOC_RIGHT_LEG));
+            assertEquals(0, target.getTaserInterference());
+            assertEquals(0, target.getTaserShutdownRounds());
+            assertFalse(proto.isEDPCharged());
+            edp.setModeImmediately("charging");
+            for (int round = 1; round <= 5; round++) {
+                proto.newRound(round);
+                assertFalse(proto.isEDPCharged());
+            }
+            proto.newRound(6);
+            assertTrue(proto.isEDPCharged());
         }
 
         @Test

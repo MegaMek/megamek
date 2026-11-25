@@ -35,6 +35,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import org.junit.jupiter.api.AfterEach;
@@ -55,6 +56,15 @@ class PhysicalAttackDamageTest {
     @AfterEach
     void restoreRulesManager() {
         Game.rulesManager = originalRulesManager;
+    }
+
+    @Test
+    void lanceAddsOneToTheAttackRollInBothRulesets() {
+        MiscType lance = MiscType.createISLance();
+        for (RulesManager rules : List.of(new CoreRulesManager(), new TWRulesManager())) {
+            Game.rulesManager = rules;
+            assertEquals(1, ClubAttackAction.getHitModFor(lance));
+        }
     }
 
     @Test

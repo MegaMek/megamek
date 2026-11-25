@@ -3620,15 +3620,16 @@ public class MoveStep implements Serializable {
             // elevation cost by 1 MP. Combined, a 1-level change can cost 0 MP elevation.
             boolean isMountainTroop = entity instanceof ConvInfantry convInfantry
                                       && convInfantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS);
+            EntityMovementMode elevationMoveMode = prevStep.getMovementMode();
+            // Ground Assets, including infantry Assets, pay 2 MP per level (Core p.141).
+            boolean isGroundAsset = entity.isBattlefieldSupportAsset() && !elevationMoveMode.isVTOL();
             if (isMountainTroop) {
                 deltaElevation = (int) Math.ceil(deltaElevation / 2.0);
-            } else if ((isInfantry &&
+            } else if (((isInfantry || isGroundAsset) &&
                         !((getMovementType(false) == EntityMovementType.MOVE_VTOL_WALK) ||
                           (getMovementType(false) == EntityMovementType.MOVE_VTOL_RUN))) ||
-                       ((moveMode == EntityMovementMode.TRACKED) ||
-                        (moveMode == EntityMovementMode.WHEELED) ||
-                        (moveMode == EntityMovementMode.HOVER))) {
-                // non-flying Infantry and ground vehicles are charged double.
+                       elevationMoveMode.isTrackedWheeledOrHover()) {
+                // Non-flying infantry, ground vehicles and ground Assets are charged double.
                 deltaElevation *= 2;
             }
             int elevationCostReduction = Game.rulesManager.getRulesTerrain()

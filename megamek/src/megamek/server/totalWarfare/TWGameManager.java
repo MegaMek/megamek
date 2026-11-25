@@ -116,8 +116,8 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPSR;
+import megamek.common.rules.RulesUnderwater;
 import megamek.common.rules.core.CoreRulesManager;
-import megamek.common.rules.totalwarfare.TWRulesUnderwater;
 import megamek.common.turns.CounterGrappleTurn;
 import megamek.common.turns.PrephaseTurn;
 import megamek.common.turns.SpecificEntityTurn;
@@ -134,9 +134,9 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.voting.Poll;
 import megamek.common.voting.VoteThreshold;
 import megamek.common.weapons.DamageType;
+import megamek.common.weapons.TaserEffects;
 import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.autoCannons.ACWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.DamageFalloff;
@@ -165,6 +165,10 @@ public class TWGameManager extends AbstractGameManager {
 
     /** Equipment activation/deactivation diagnostics ([EquipOff] tag; shared feature logger, see Mounted). */
     private static final MMLogger EQUIP_OFF_LOGGER = MMLogger.create(Mounted.EQUIP_OFF_DIAGNOSTIC_LOGGER);
+
+    /** Arrow IV ammunition of every kind: production, prototype and air-launched (Core p.182) */
+    private static final Set<AmmoTypeEnum> ARROW_IV_AMMO = EnumSet.of(AmmoTypeEnum.ARROW_IV,
+          AmmoTypeEnum.ARROWIV_PROTO, AmmoTypeEnum.ARROW_IV_BOMB);
     static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -5027,7 +5031,8 @@ public class TWGameManager extends AbstractGameManager {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     }
                     HitData hitData = entity.rollHitLocation(table, side);
-                    hitData.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
+                    // A collision with terrain, not a physical attack
+                    hitData.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                     addReport(damageEntity(entity, hitData, Math.min(5, damage)));
                     damage -= 5;
                 }
@@ -9516,8 +9521,10 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
         // deal damage to target
-        int damage = Compute.getAccidentalFallFromAboveDamageFor(faller,
-              Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation, target.getHeight()));
+        int damage = Game.rulesManager.getRulesPhysical().fallFromAboveDamage(
+              Compute.getAccidentalFallFromAboveDamageFor(faller,
+                    Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation, target.getHeight())),
+              target);
         report = new Report(2220);
         report.subject = target.getId();
         report.addDesc(target);
@@ -9553,7 +9560,7 @@ public class TWGameManager extends AbstractGameManager {
                 displacementRoll = null;
             }
             Coords displacedTo = Compute.getAccidentalFallDisplacement(game, violation.getId(), fallPosition,
-                  direction);
+                  direction, violation == faller);
             if (displacedTo != null) {
                 reports.addAll(doEntityDisplacement(violation, fallPosition, displacedTo, displacementRoll));
                 // Update the violating entity's position on the
@@ -9667,22 +9674,23 @@ public class TWGameManager extends AbstractGameManager {
             vPhaseReport.add(r);
 
             if (resolveAccidentalFallFromAboveHit(entity, affaTarget, fallElevation, vPhaseReport)) {
-                // attacker falls as normal, on his back
+                // attacker falls as normal for a fall of that height, on his back (Core p.116)
                 // only given a modifier, so flesh out into a full piloting
                 // roll
                 PilotingRollData pilotRoll = entity.getBasePilotingRoll();
                 pilotRoll.append(roll);
-                vPhaseReport.addAll(doEntityFall(entity, dest,
-                      Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation,
-                            affaTarget.getHeight()), 3, pilotRoll, false, false));
+                vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, 3, pilotRoll, false, false));
                 vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
                 displaceUnitFallenOn(entity, dest, direction, vPhaseReport);
                 return vPhaseReport;
             }
             // ok, we missed, let's fall into a valid other hex and not cause an
             // AFFA while doing so
-            Coords targetDest = Compute.getAccidentalFallDisplacement(game, entity.getId(), dest, direction);
-            if (targetDest != null) {
+            Coords targetDest = Compute.getAccidentalFallDisplacement(game, entity.getId(), dest, direction, true);
+            if ((targetDest != null) && !game.getBoard(entity).contains(targetDest)) {
+                // Off the board there is no hex to fall into: the unit is forced from the field
+                vPhaseReport.addAll(doEntityDisplacement(entity, dest, targetDest, null));
+            } else if (targetDest != null) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
                       entitySrcElevation,
                       src,
@@ -9915,21 +9923,19 @@ public class TWGameManager extends AbstractGameManager {
             stepBackwards.compile(getGame(), violation, false);
             if (Game.rulesManager.getRulesMovement().dominoEffectMovementCriteria(direction, entity, stepForward,
                   stepBackwards, violation) && !violation.isProne() && !violation.isImmobile()) {
-                // First, we need to make a PSR to see if we can step out
+                // First, the unit already in the hex makes a PSR to see if it can step out
                 Roll diceRoll = Compute.rollD6(2);
-                if (roll == null) {
-                    roll = entity.getBasePilotingRoll();
-                }
+                PilotingRollData dodgeRoll = violation.getBasePilotingRoll();
 
                 r = new Report(2351);
                 r.indent(2);
                 r.subject = violation.getId();
                 r.addDesc(violation);
-                r.add(roll);
+                r.add(dodgeRoll);
                 r.add(diceRoll);
                 displacementReport.add(r);
 
-                if (diceRoll.getIntValue() < roll.getValue()) {
+                if (diceRoll.getIntValue() < dodgeRoll.getValue()) {
                     r.choose(false);
                     Vector<Report> newReports = doEntityDisplacement(violation,
                           dest,
@@ -10469,7 +10475,7 @@ public class TWGameManager extends AbstractGameManager {
                 case DodgeAction ignored -> entity.dodging = true;
                 case SpotAction spotAction -> {
                     entity.setSpotting(true);
-                    entity.setSpotTargetId(spotAction.getTargetId());
+                    entity.setSpotTarget(spotAction.getTargetType(), spotAction.getTargetId());
                 }
                 // a scan is resolved in the End Phase; a later order from the same unit replaces this one
                 case ScanAction scanAction -> entity.setPendingScan(scanAction);
@@ -10717,6 +10723,19 @@ public class TWGameManager extends AbstractGameManager {
 
                 Mounted<?> weapon = artilleryFirer.getEquipment(waa.getWeaponId());
 
+                // Arrow IV of every kind (production, prototype or air-launched), from a launcher or a bay and
+                // whatever its munition, may be immune to all anti-missile defenses (Core pp.182, 190). The ammo can
+                // come from another unit, such as an attached trailer.
+                Entity ammoCarrier = game.getEntity(waa.getAmmoCarrier());
+                AmmoMounted firedAmmo = ((ammoCarrier != null) ? ammoCarrier : artilleryFirer).getAmmo(waa.getAmmoId());
+                boolean firesArrowIV = weapon.getType().hasFlag(WeaponType.F_ARROW_IV)
+                      || ((weapon.getType() instanceof WeaponType weaponType)
+                      && ARROW_IV_AMMO.contains(weaponType.getAmmoType()))
+                      || ((firedAmmo != null) && ARROW_IV_AMMO.contains(firedAmmo.getType().getAmmoType()));
+                if (firesArrowIV && !Game.rulesManager.getRulesEquipment().antiMissileSystemsEngageArrowIV()) {
+                    continue;
+                }
+
                 // Only entities can have AMS. Arrow IV doesn't target an entity until later, so
                 // we have to ignore them
                 if (!(waa instanceof ArtilleryAttackAction) && (Targetable.TYPE_ENTITY != waa.getTargetType())) {
@@ -10949,6 +10968,10 @@ public class TWGameManager extends AbstractGameManager {
             // Create a list of valid assignments for this AMS
             List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
+                // Point-defense bays do not engage Narc pods (StratOps p.84)
+                if (ams.getType().hasFlag(WeaponType.F_PD_BAY) && wr.weaponAttackAction.firesNarcPods(game)) {
+                    continue;
+                }
                 if (!amsTargets.contains(wr.weaponAttackAction) &&
                       ComputeArc.isInArc(game,
                             e.getId(),
@@ -13163,14 +13186,8 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        Entity te = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY && target instanceof Entity targetedEntity) {
-            te = targetedEntity;
-        }
-        boolean throughFront = true;
-        if (te != null) {
-            throughFront = Compute.isThroughFrontHex(ae.getPosition(), te);
-        }
+        Entity te = target.getTargetType() == Targetable.TYPE_ENTITY && target instanceof Entity entity ? entity : null;
+        boolean throughFront = te == null || Compute.isThroughFrontHex(ae.getPosition(), te);
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS) &&
@@ -13326,77 +13343,15 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 addReport(damageEntity(te, hit, damage, false, DamageType.NONE, false, false, throughFront));
                 if (((ProtoMek) ae).isEDPCharged()) {
-                    r = new Report(3701);
-                    Roll diceRoll2 = Compute.rollD6(2);
-                    int rollValue2 = diceRoll2.getIntValue() - 2;
-                    String rollCalc2 = rollValue2 + " [" + diceRoll2.getIntValue() + " - 2]";
-                    r.addDataWithTooltip(rollCalc2, diceRoll2.getReport());
-                    r.newlines = 0;
-                    mainPhaseReport.add(r);
-
-                    if (te instanceof BattleArmor) {
-                        r = new Report(3706);
-                        r.addDesc(te);
-                        // shut down for rest of scenario, so we actually kill it
-                        // TODO : fix for salvage purposes
-                        HitData targetTrooper = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                        r.add(te.getLocationAbbr(targetTrooper));
-                        mainPhaseReport.add(r);
-                        mainPhaseReport.addAll(criticalEntity(ae,
-                              targetTrooper.getLocation(),
-                              targetTrooper.isRear(),
-                              0,
-                              false,
-                              false,
-                              0));
-                    } else if (te instanceof Mek) {
-                        if (((Mek) te).isIndustrial()) {
-                            if (rollValue2 >= 8) {
-                                r = new Report(3705);
-                                r.addDesc(te);
-                                r.add(4);
-                                te.taserShutdown(4, false);
-                            } else {
-                                // suffer +2 to piloting and gunnery for 4 rounds
-                                r = new Report(3710);
-                                r.addDesc(te);
-                                r.add(2);
-                                r.add(4);
-                                te.setTaserInterference(2, 4, true);
-                            }
-                        } else {
-                            if (rollValue2 >= 11) {
-                                r = new Report(3705);
-                                r.addDesc(te);
-                                r.add(3);
-                                mainPhaseReport.add(r);
-                                te.taserShutdown(3, false);
-                            } else {
-                                r = new Report(3710);
-                                r.addDesc(te);
-                                r.add(2);
-                                r.add(3);
-                                mainPhaseReport.add(r);
-                                te.setTaserInterference(2, 3, true);
-                            }
-                        }
-                    } else if ((te instanceof ProtoMek) || (te instanceof Tank) || (te instanceof Aero)) {
-                        if (rollValue2 >= 8) {
-                            r = new Report(3705);
-                            r.addDesc(te);
-                            r.add(4);
-                            mainPhaseReport.add(r);
-                            te.taserShutdown(4, false);
-                        } else {
-                            r = new Report(3710);
-                            r.addDesc(te);
-                            r.add(2);
-                            r.add(4);
-                            mainPhaseReport.add(r);
-                            te.setTaserInterference(2, 4, false);
-                        }
+                    ((ProtoMek) ae).setEDPCharged(false);
+                    if (!te.isConventionalInfantry()) {
+                        // IO:AE p.59. The Frenzy already includes the discharge damage against infantry.
+                        HitData discharge = new HitData(hit.getLocation(), hit.isRear());
+                        discharge.setAttackerId(ae.getId());
+                        TaserEffects.EDP.resolve(this, te, discharge, 1,
+                              points -> addReport(damageEntity(te, discharge, points, false, DamageType.NONE, false,
+                                    false, throughFront)), mainPhaseReport);
                     }
-
                 }
             }
         }
@@ -20941,9 +20896,7 @@ public class TWGameManager extends AbstractGameManager {
             mounted.setHit(true);
         }
 
-        if (eqType instanceof ACWeapon) {
-            Game.rulesManager.getRulesWeapons().setACHit(cs, mounted, reports, en.getId());
-        }
+        Game.rulesManager.getRulesWeapons().setACHit(cs, mounted, reports, en.getId());
 
         if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
             ((Mek) en).setHasDamagedCoolantSystem(true);
@@ -21124,6 +21077,21 @@ public class TWGameManager extends AbstractGameManager {
         Game.rulesManager.getRulesPSR().checkLegActuatorPsrRolls(game, en);
 
         return reports;
+    }
+
+    /**
+     * A critical hit to a ProtoMek torso weapon disables the weapon.
+     */
+    private void hitProtoMekTorsoWeapon(ProtoMek pm, CriticalSlot cs, int reportId, Vector<Report> reports) {
+        Mounted<?> weapon = pm.getTorsoWeapon(cs.getIndex());
+        if (weapon == null) {
+            return;
+        }
+        weapon.setHit(true);
+        Report r = new Report(reportId);
+        r.subject = pm.getId();
+        r.newlines = 0;
+        reports.addElement(r);
     }
 
     /**
@@ -21317,64 +21285,22 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_A:
-                Mounted<?> weaponA = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponA != null) {
-                    weaponA.setHit(true);
-                    r = new Report(6245);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6245, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_B:
-                Mounted<?> weaponB = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponB != null) {
-                    weaponB.setHit(true);
-                    r = new Report(6246);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6246, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_C:
-                Mounted<?> weaponC = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponC != null) {
-                    weaponC.setHit(true);
-                    r = new Report(6247);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6247, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_D:
-                Mounted<?> weaponD = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponD != null) {
-                    weaponD.setHit(true);
-                    r = new Report(6248);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6248, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_E:
-                Mounted<?> weaponE = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponE != null) {
-                    weaponE.setHit(true);
-                    r = new Report(6249);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6249, reports);
                 break;
             case ProtoMek.SYSTEM_TORSO_WEAPON_F:
-                Mounted<?> weaponF = pm.getTorsoWeapon(cs.getIndex());
-                if (weaponF != null) {
-                    weaponF.setHit(true);
-                    r = new Report(6250);
-                    r.subject = pm.getId();
-                    r.newlines = 0;
-                    reports.addElement(r);
-                }
+                hitProtoMekTorsoWeapon(pm, cs, 6250, reports);
                 break;
         }
 
@@ -21837,9 +21763,7 @@ public class TWGameManager extends AbstractGameManager {
                         Mounted<?> mounted = slot1.getMount();
                         if (mounted.equals(equipmentHit)) {
                             slot1.setHit(true);
-                            if (mounted.getType() instanceof ACWeapon) {
-                                Game.rulesManager.getRulesWeapons().setACHit(slot1, mounted, reports, aero.getId());
-                            }
+                            Game.rulesManager.getRulesWeapons().setACHit(slot1, mounted, reports, aero.getId());
                             if (slot1.isHit()) {
                                 aero.hitAllCriticalSlots(loc, i);
                             }
@@ -21860,10 +21784,7 @@ public class TWGameManager extends AbstractGameManager {
                                 Mounted<?> mounted = slot1.getMount();
                                 if (mounted.equals(bayWeapon)) {
                                     slot1.setHit(true);
-                                    if (mounted.getType() instanceof ACWeapon) {
-                                        Game.rulesManager.getRulesWeapons()
-                                                         .setACHit(slot1, mounted, reports, aero.getId());
-                                    }
+                                    Game.rulesManager.getRulesWeapons().setACHit(slot1, mounted, reports, aero.getId());
                                     if (slot1.isHit()) {
                                         aero.hitAllCriticalSlots(loc, i);
                                     }
@@ -22680,9 +22601,7 @@ public class TWGameManager extends AbstractGameManager {
                     Mounted<?> mounted = slot1.getMount();
                     if (mounted.equals(weapon)) {
                         slot1.setHit(true);
-                        if (mounted.getType() instanceof ACWeapon) {
-                            Game.rulesManager.getRulesWeapons().setACHit(slot1, mounted, reports, tank.getId());
-                        }
+                        Game.rulesManager.getRulesWeapons().setACHit(slot1, mounted, reports, tank.getId());
                         if (slot1.isHit()) {
                             tank.hitAllCriticalSlots(loc, i);
                         }
@@ -23183,7 +23102,7 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    private Vector<Report> criticalAero(Aero a, int loc, int critMod, String reason, int target, int damage,
+    Vector<Report> criticalAero(Aero a, int loc, int critMod, String reason, int target, int damage,
           boolean isCapital) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
@@ -23294,11 +23213,8 @@ public class TWGameManager extends AbstractGameManager {
             critMod += 2;
         }
 
-        // Apply modifiers for Anti-penetrative ablation armor
-        if ((en.getArmor(loc, isRear) > 0) &&
-              (en.getArmorType(loc) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
-            critMod -= 2;
-        }
+        // Ablation armor's -2 applies only to armor-piercing and through-armor checks while the armor holds, see
+        // RulesArmor#ablationArmorPiercingModifier (IO:AE p.80)
 
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod, damage, damageType.equals(DamageType.INFERNO));
@@ -23720,15 +23636,10 @@ public class TWGameManager extends AbstractGameManager {
               (entity.isSurfaceNaval() && (loc != ((Tank) entity).getLocTurret()))) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
-            int breachRoll = 12;
-            boolean lowFail = true;
-
-            if (Game.rulesManager.getRulesUnderwater() instanceof TWRulesUnderwater) {
-                breachRoll = 0;
-                lowFail = false;
-            }
-            // set the target roll for the breach
-            int target = Game.rulesManager.getRulesUnderwater().getBreachTarget();
+            RulesUnderwater breachRules = Game.rulesManager.getRulesUnderwater();
+            boolean lowFail = breachRules.breachOnLowRoll();
+            int breachRoll = lowFail ? 12 : 0;
+            int target = breachRules.getBreachTarget();
 
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             // if this is a vacuum check, and we are in trace atmosphere then
@@ -23760,7 +23671,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);
-                    target = (lowFail) ? target + 2 : target - 2;
+                    target = lowFail ? target - 2 : target + 2;
                 }
 
                 // Check for impact resistant armor
@@ -29304,10 +29215,17 @@ public class TWGameManager extends AbstractGameManager {
             if (!weapons.isEmpty()) {
                 Mounted<?> weapon = weapons.elementAt(Compute.randomInt(weapons.size()));
                 weapon.setHit(true);
-                r = new Report(3840);
-                r.type = Report.PUBLIC;
-                r.indent(1);
-                r.add(weapon.getDesc());
+                // An autocannon can ignore its first critical hit, whatever unit mounts it (Core pp.92, 183)
+                Vector<Report> autocannonReports = new Vector<>();
+                Game.rulesManager.getRulesWeapons().setACHit(null, weapon, autocannonReports, weapon.getEntity().getId());
+                if (weapon.isHit()) {
+                    r = new Report(3840);
+                    r.type = Report.PUBLIC;
+                    r.indent(1);
+                    r.add(weapon.getDesc());
+                } else {
+                    r = autocannonReports.firstElement();
+                }
             } else {
                 r = new Report(3841);
                 r.type = Report.PUBLIC;

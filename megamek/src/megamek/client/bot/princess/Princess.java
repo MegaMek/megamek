@@ -3501,11 +3501,7 @@ public class Princess extends BotClient {
         int recurring = mover.getEngineCritHeat();
 
         if (!leavingThisHex && isStandingInFire(mover)) {
-            int fireHeat = FIRE_HEAT_PER_TURN;
-            if ((mover instanceof Mek mek) && mek.hasIntactHeatDissipatingArmor()) {
-                fireHeat /= 2;
-            }
-            recurring += fireHeat;
+            recurring += Game.rulesManager.getRulesArmor().reduceNonLocationHeat(mover, FIRE_HEAT_PER_TURN);
         }
 
         return recurring;

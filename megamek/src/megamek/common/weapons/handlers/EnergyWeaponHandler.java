@@ -34,8 +34,6 @@
 
 package megamek.common.weapons.handlers;
 
-import static java.lang.Math.floor;
-
 import java.io.Serial;
 import java.util.Vector;
 
@@ -163,6 +161,11 @@ public class EnergyWeaponHandler extends WeaponHandler {
             toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
 
+        // The NL35, NL45 and NL55 have half-point capital damage. An explicit dial-down mode selects a whole value.
+        if (usesStandardScaleBayDamage() && !weapon.curMode().getName().startsWith("Damage ")) {
+            toReturn = weaponType.getShortAV();
+        }
+
         // Apply Gothic Dazzle Mode damage reduction
         if (weapon.curMode().getName().contains("Dazzle")) {
             // TODO: Check if target is Abomination when that system is implemented
@@ -202,14 +205,13 @@ public class EnergyWeaponHandler extends WeaponHandler {
         }
 
 
+        toReturn = directBlowDamageAtTargetScale(toReturn);
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
                   toReturn, getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
-        } else if (bDirect) {
-            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());

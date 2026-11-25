@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,6 +81,8 @@ class ObjectiveVariantPacketTest {
     void setUp() {
         gameManager = Mockito.spy(new TWGameManager());
         Mockito.doNothing().when(gameManager).send(any(Packet.class));
+        // ground object updates go to each player separately, so their scan notes stay private
+        Mockito.doNothing().when(gameManager).send(anyInt(), any(Packet.class));
         Mockito.doNothing().when(gameManager).send(Mockito.anyInt(), any(Packet.class));
         Mockito.doNothing().when(gameManager).sendServerChat(Mockito.anyString());
         Mockito.doNothing().when(gameManager).endCurrentTurn(any());

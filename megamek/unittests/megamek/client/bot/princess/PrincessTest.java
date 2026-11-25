@@ -87,6 +87,9 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -1590,7 +1593,27 @@ class PrincessTest {
             Mek mockMek = stalledMek(13, 10);
             when(mockMek.hasIntactHeatDissipatingArmor()).thenReturn(true);
             setHexOnFire();
-            assertTrue(mockPrincess.canRecoverMobility(mockMek));
+            RulesManager original = Game.rulesManager;
+            try {
+                Game.rulesManager = new TWRulesManager();
+                assertTrue(mockPrincess.canRecoverMobility(mockMek));
+            } finally {
+                Game.rulesManager = original;
+            }
+        }
+
+        @Test
+        void oneRemainingHeatDissipatingLocationNegatesCoreFireHeat() {
+            Mek mek = stalledMek(11, 10);
+            when(mek.hasAnyHeatDissipatingArmor()).thenReturn(true);
+            setHexOnFire();
+            RulesManager original = Game.rulesManager;
+            try {
+                Game.rulesManager = new CoreRulesManager();
+                assertEquals(10, mockPrincess.recurringHeat(mek, false));
+            } finally {
+                Game.rulesManager = original;
+            }
         }
 
         @Test

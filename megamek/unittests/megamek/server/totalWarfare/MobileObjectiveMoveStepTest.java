@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
@@ -88,6 +89,8 @@ class MobileObjectiveMoveStepTest {
         previousRules = Game.rulesManager;
         gameManager = spy(new TWGameManager());
         doNothing().when(gameManager).send(any(Packet.class));
+        // ground object updates go to each player separately, so their scan notes stay private
+        doNothing().when(gameManager).send(anyInt(), any(Packet.class));
         doNothing().when(gameManager).sendServerChat(anyString());
         game = gameManager.getGame();
         game.initializeRulesManager(OptionsConstants.RULES_CORE);

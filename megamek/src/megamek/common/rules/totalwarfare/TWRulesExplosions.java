@@ -176,8 +176,9 @@ public class TWRulesExplosions extends RulesExplosions {
 
     @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
-        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
-            return mounted.isFired() ? 0 : 15;
+        // A charged PPC capacitor explodes with its PPC for their full combined maximum damage (TO:AUE p.149)
+        if (mounted.holdsCapacitorCharge()) {
+            return weaponType.getDamage(0) + Mounted.CAPACITOR_DAMAGE_BONUS;
         }
 
         if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {

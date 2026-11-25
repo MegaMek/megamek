@@ -37,12 +37,11 @@ package megamek.common.weapons.handlers.plasma;
 import java.io.Serial;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.HitDamageType;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
@@ -65,40 +64,17 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
           IBuilding bldg, int hits, int nCluster, int bldgAbsorbs) {
-        if (entityTarget instanceof Mek) {
-            if (!bSalvo) {
-                // hits
-                Report r = new Report(3390);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            }
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-
-            if (missed) {
-                return;
-            }
-
-            Report r = new Report(3400);
+        if ((entityTarget instanceof Mek) && !bSalvo) {
+            Report r = new Report(3390);
             r.subject = subjectId;
-            r.indent(2);
-            if ((entityTarget.getArmor(hit) > 0)
-                  && ((entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)
-                  || (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))) {
-                entityTarget.heatFromExternal += 2;
-                r.add(2);
-                r.choose(true);
-                r.messageId = 3406;
-                r.add(5);
-                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else {
-                entityTarget.heatFromExternal += 5;
-                r.add(5);
-                r.choose(true);
-            }
             vPhaseReport.addElement(r);
-        } else {
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+    }
+
+    @Override
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
+        return (entityTarget instanceof Mek) ? applyExternalHeat(entityTarget, 5) : null;
     }
 
     @Override

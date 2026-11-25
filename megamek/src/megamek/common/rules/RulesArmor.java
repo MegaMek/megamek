@@ -38,6 +38,7 @@ import java.util.Vector;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.enums.HitDamageType;
+import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
 
 public abstract class RulesArmor {
@@ -86,13 +87,39 @@ public abstract class RulesArmor {
     public abstract boolean checkLancePenetration(int armorType);
 
     /**
-     * Does the armor reduce heat?
+     * Does the armor a hit strikes reduce the heat of that weapon? Laser-reflective armor does for the weapons it
+     * reflects (BMM p.114). Heat-dissipating armor acts on all outside heat; see {@link #heatAfterDissipatingArmor}.
      *
-     * @param armorType the type of armor
+     * @param armorType the type of armor the hit strikes
      * @param heatDamage the amount of heat damage
      * @return the reduced heat damage amount
      */
     public abstract int reduceHeatDamageByArmor(int armorType, int heatDamage);
+
+    /**
+     * The heat an outside heat effect adds after the target's heat-dissipating armor. Armor with special effects acts
+     * while the location struck still has armor at the time the hit is applied (Core p.201), so this is asked as the
+     * heat strikes, before the hit's own damage; the Heat Phase only adds the results (TW p.159).
+     *
+     * @param target   the unit the heat reaches
+     * @param heat     the heat of the effect
+     * @param location the location the heat struck, or {@link Entity#LOC_NONE} for heat that strikes no location,
+     *                 such as fire and magma
+     * @param rear     true when the heat struck the rear armor of the location
+     *
+     * @return the heat the effect adds
+     */
+    public abstract int heatAfterDissipatingArmor(Entity target, int heat, int location, boolean rear);
+
+    /** Outside heat applied to the whole unit, such as fire, magma, or an area-effect inferno hit. */
+    public int reduceNonLocationHeat(Entity target, int heat) {
+        return heatAfterDissipatingArmor(target, heat, Entity.LOC_NONE, false);
+    }
+
+    /** Outside heat from extreme (above 50 degrees C) temperatures: heat-dissipating armor reduces it like other outside heat */
+    public int reduceExtremeHeat(Entity target, int heat) {
+        return reduceNonLocationHeat(target, heat);
+    }
 
     /**
      * Does reflective armor cause modifiers for AP?

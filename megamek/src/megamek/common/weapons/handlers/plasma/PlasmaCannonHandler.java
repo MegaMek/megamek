@@ -48,7 +48,6 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.HitDamageType;
-import megamek.common.equipment.ArmorType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
@@ -227,26 +226,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 r.add(entityTarget.getLocationAbbr(hit));
                 vPhaseReport.addElement(r);
             }
-            Report r = new Report(3400);
-            r.subject = subjectId;
-            r.indent(2);
-            int extraHeat = Compute.d6(2);
-            int reducedHeat =
-                  Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(entityTarget.getArmorType(hit.getLocation()), extraHeat);
-            if (entityTarget.getArmor(hit) > 0
-                  && reducedHeat != extraHeat) {
-                entityTarget.heatFromExternal += reducedHeat;
-                r.add(reducedHeat);
-                r.choose(true);
-                r.messageId = 3406;
-                r.add(extraHeat);
-                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else {
-                entityTarget.heatFromExternal += extraHeat;
-                r.add(extraHeat);
-                r.choose(true);
-            }
-            vPhaseReport.addElement(r);
+            vPhaseReport.add(applyExternalHeat(entityTarget, PlasmaRifleHandler.rollPlasmaHeat(weaponType)));
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }

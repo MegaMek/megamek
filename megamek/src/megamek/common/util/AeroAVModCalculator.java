@@ -34,6 +34,7 @@ package megamek.common.util;
 
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
@@ -72,7 +73,7 @@ public class AeroAVModCalculator {
             return 2;
         } else if (bay && linkedBy.hasFlag(MiscType.F_PPC_CAPACITOR)) {
             // PPC capacitors in weapon bays are treated as if always charged
-            return 5;
+            return Mounted.CAPACITOR_DAMAGE_BONUS;
         }
         return 0;
     }

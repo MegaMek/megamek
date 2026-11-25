@@ -120,9 +120,12 @@ public final class UnitReroller {
             return Refusal.NOT_A_UNIT;
         }
         ForceDescriptor parent = slot.getParent();
-        boolean parentPinsDesign = (parent != null)
-              && (!parent.getModels().isEmpty() || !parent.getChassis().isEmpty());
-        if (parentPinsDesign) {
+        if (parent == null) {
+            return null;
+        }
+        boolean parentPinsModel = !parent.getModels().isEmpty();
+        boolean parentPinsChassis = !parent.getChassis().isEmpty();
+        if (parentPinsModel || parentPinsChassis) {
             LOGGER.debug("[ForceGen][RerollUnit] '{}': its formation '{}' fields one design (models={} chassis={})",
                   slot.parseName(), parent.parseName(), parent.getModels(), parent.getChassis());
             return Refusal.ONE_DESIGN_FORMATION;

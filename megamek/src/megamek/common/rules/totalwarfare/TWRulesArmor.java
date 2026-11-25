@@ -39,6 +39,8 @@ import megamek.common.Report;
 import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.rules.RulesArmor;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.server.totalWarfare.TWDamageManager;
 
 public class TWRulesArmor extends RulesArmor {
@@ -87,21 +89,32 @@ public class TWRulesArmor extends RulesArmor {
     }
 
     /**
-     * Does the armor reduce heat?
-     *
-     * @param armorType the type of armor
-     * @param heatDamage the amount of heat damage
-     * @return the reduced heat damage amount
+     * {@inheritDoc}
+     * BMM p.114: laser-reflective armor halves the heat of the flamers, lasers, PPCs and plasma weapons that strike it,
+     * rounding down to a minimum of 1.
      */
     @Override
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
-        if (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
-            return (int) Math.floor(heatDamage / 2.0);
-        } else if (armorType == EquipmentType.T_ARMOR_REFLECTIVE) {
-            // reflective armor divides heat damage by 2, with a minimum of 1
+        if ((armorType == EquipmentType.T_ARMOR_REFLECTIVE) && (heatDamage > 0)) {
             return Math.max(1, (int) Math.floor(heatDamage / 2.0));
         }
         return heatDamage;
+    }
+
+    /**
+     * {@inheritDoc}
+     * IO:AE p.81: "As long as the location struck still has at least 1 point of armor remaining, heat-dissipating armor
+     * reduces the external heat effects ... by half. Round this reduced heat effect down to the nearest point". Heat
+     * that strikes no location, such as fire, names no location struck; we read it as needing the armor in every
+     * location.
+     */
+    @Override
+    public int heatAfterDissipatingArmor(Entity target, int heat, int location, boolean rear) {
+        boolean dissipated = (location == Entity.LOC_NONE)
+              ? (target instanceof Mek mek) && mek.hasIntactHeatDissipatingArmor()
+              : (target.getArmorType(location) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)
+                    && (target.getArmor(location, rear) > 0);
+        return dissipated ? heat / 2 : heat;
     }
 
     /**

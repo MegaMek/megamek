@@ -798,13 +798,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
 
-        if (bDirect) {
-            attackValue = Math.min(attackValue + (int) floor(toHit.getMoS() / 3.0), attackValue * 2);
-        }
-
-        attackValue = applyGlancingBlowModifier(attackValue, false);
-        attackValue = (int) Math.floor(getBracketingMultiplier() * attackValue);
-        return (int) Math.ceil(attackValue);
+        return bayAttackValue(attackValue);
     }
 
     /**

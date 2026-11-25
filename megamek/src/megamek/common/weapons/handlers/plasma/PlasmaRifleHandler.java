@@ -37,6 +37,7 @@ package megamek.common.weapons.handlers.plasma;
 import java.io.Serial;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -45,8 +46,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.HitDamageType;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -55,6 +54,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
+import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
 import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
@@ -76,53 +76,25 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
-          int nCluster, int bldgAbsorbs) {
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-        if (!missed && entityTarget.tracksHeat()) {
-            Report report = new Report(3400);
-            report.subject = subjectId;
-            report.indent(2);
-            int extraHeat = 0;
-
-            /**
-             * if this is a fighter squadron, we need to account for the number of weapons should default to one for
-             * non-squadrons
-             * Handles light and heavy plasma rifles as well as per Core Rules p.189
-             */
-            for (int i = 0; i < numWeaponsHit; i++) {
-                if (weapon.getType() instanceof ISLightPlasmaRifle) {
-                    extraHeat += (int) Math.ceil(Compute.d6() / 2.0);
-                } else if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
-                    extraHeat += Compute.d6(2);
-                } else {
-                    extraHeat += Compute.d6();
-                }
-            }
-
-            if (entityTarget.getArmor(hit) > 0 &&
-                  ((entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) || (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))) {
-                int reducedHeat =
-                      Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(entityTarget.getArmorType(hit.getLocation()), extraHeat);
-                if (reducedHeat != extraHeat) {
-                    entityTarget.heatFromExternal += reducedHeat;
-                    report.add(reducedHeat);
-                    report.choose(true);
-                    report.messageId = 3406;
-                    report.add(extraHeat);
-                    report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-                } else {
-                    entityTarget.heatFromExternal += extraHeat;
-                    report.add(extraHeat);
-                    report.choose(true);
-                }
-            } else {
-                entityTarget.heatFromExternal += extraHeat;
-                report.add(extraHeat);
-                report.choose(true);
-            }
-            vPhaseReport.addElement(report);
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
+        if (!entityTarget.tracksHeat()) {
+            return null;
         }
+        // Squadrons roll separately for each weapon that hit
+        int extraHeat = 0;
+        for (int i = 0; i < numWeaponsHit; i++) {
+            extraHeat += rollPlasmaHeat(weapon.getType());
+        }
+        return applyExternalHeat(entityTarget, extraHeat);
+    }
+
+    /** @return The heat a plasma weapon of the type deals to a target it strikes (Core p. 189) */
+    static int rollPlasmaHeat(WeaponType type) {
+        if (type instanceof ISLightPlasmaRifle) {
+            return (int) Math.ceil(Compute.d6() / 2.0);
+        }
+        return ((type instanceof ISHeavyPlasmaRifle) || (type instanceof CLPlasmaCannon)) ? Compute.d6(2)
+              : Compute.d6();
     }
 
     @Override

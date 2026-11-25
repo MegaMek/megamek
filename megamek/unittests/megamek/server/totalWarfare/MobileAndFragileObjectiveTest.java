@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 import java.util.List;
 import java.util.Vector;
@@ -127,6 +128,8 @@ class MobileAndFragileObjectiveTest {
         game.setBoard(board);
         gameManager = Mockito.spy(new TWGameManager());
         Mockito.doNothing().when(gameManager).send(any(Packet.class));
+        // ground object updates go to each player separately, so their scan notes stay private
+        Mockito.doNothing().when(gameManager).send(anyInt(), any(Packet.class));
         Mockito.doNothing().when(gameManager).entityUpdate(any(int.class));
         gameManager.setGame(game);
         rollEveryDieAs(6);

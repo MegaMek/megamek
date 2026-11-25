@@ -986,6 +986,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         entity.setJumpingWithMechanicalBoosters(md.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER));
+        if (isJumpPath && entity instanceof Mek mek && mek.isFrankenMek()) {
+            mek.recordJumpTakeoff();
+        }
 
         if (md.contains(MoveStepType.BACKWARDS)) {
             entity.setMovedBackwards(true);
@@ -4033,20 +4036,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     } else if (lastHex.terrainLevel(Terrains.MAGMA) == 2) {
                         heat += 5;
                     }
-                    boolean isMekWithHeatDissipatingArmor = (entity instanceof Mek)
-                                                            && ((Mek) entity).hasIntactHeatDissipatingArmor();
-                    if (isMekWithHeatDissipatingArmor) {
-                        heat /= 2;
-                    }
-                    entity.heatFromExternal += heat;
+                    int addedHeat = entity.addOutsideHeat(heat);
                     report = new Report(2115);
                     report.subject = entity.getId();
                     report.addDesc(entity);
-                    report.add(heat);
+                    report.add(addedHeat);
                     addReport(report);
-                    if (isMekWithHeatDissipatingArmor) {
-                        report = new Report(5550);
-                        addReport(report);
+                    if (addedHeat < heat) {
+                        addReport(new Report(5550));
                     }
                 }
             }

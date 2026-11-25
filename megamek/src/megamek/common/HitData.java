@@ -78,6 +78,7 @@ public class HitData {
     private boolean fallDamage = false; // did the damage come from a fall?
     private HitDamageType generalDamageType;
     private boolean capital = false;
+    private boolean damageInStandardScale;
     private int capMisCritMod = 0;
     private boolean boxcars = false;
     private boolean burstFire = false;
@@ -271,6 +272,15 @@ public class HitData {
         return capital;
     }
 
+
+    /** An Aero Sanity capital gun can supply standard-scale damage and still inflict capital criticals. */
+    public boolean isDamageInStandardScale() {
+        return damageInStandardScale;
+    }
+
+    public void setDamageInStandardScale(boolean damageInStandardScale) {
+        this.damageInStandardScale = damageInStandardScale;
+    }
 
     public int getCapMisCritMod() {
         return capMisCritMod;

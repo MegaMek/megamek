@@ -232,20 +232,22 @@ public class CoreRulesExplosions extends RulesExplosions {
      */
     @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
-        // Charged PPC capacitors when hit can cause an explosion.
-        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
-            if (mounted.isFired()) {
-                return 0;
-            }
+        // A charged PPC capacitor explodes with its PPC for twice their combined slots (Core p.188)
+        if (mounted.holdsCapacitorCharge()) {
+            return (explodingSlots(mounted) + explodingSlots(mounted.getLinkedBy())) * 2;
         }
+        return explodingSlots(mounted) * 2;
+    }
 
+    /** @return The critical slots the exploding equipment fills */
+    private static int explodingSlots(Mounted<?> mounted) {
         if ((mounted.getEntity() instanceof Mek) && (mounted.getEntity().isSuperHeavy())) {
             // Superheavy Meks have compressed criticals. They only explode based on the number of Crit Slots they take
             // up, not the base amount of crits they need. Core p.240
-            return mounted.getEntity().occupiedCriticalSlots(mounted) * 2;
+            return mounted.getEntity().occupiedCriticalSlots(mounted);
         }
 
-        return mounted.getNumCriticalSlots() * 2;
+        return mounted.getNumCriticalSlots();
     }
 
     /**

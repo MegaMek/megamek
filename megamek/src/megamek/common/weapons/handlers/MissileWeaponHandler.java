@@ -83,6 +83,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     boolean advancedAMS;
     // Protected so child handlers can do their own checks
     protected boolean multiAMS;
+    /** Whether this attack's Magnetic Pulse missiles have been reported striking */
+    private boolean magneticPulseReported = false;
 
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {
@@ -1124,5 +1126,45 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected boolean isThunderBolt() {
         return weaponType.hasFlag(WeaponType.F_LARGE_MISSILE);
+    }
+
+    /**
+     * Resolves one group of Magnetic Pulse (MP) missiles (TO:AUE p.182). They use the standard missile rules, so each
+     * group rolls its own hit location: partial cover can stop it (TW p.102), and heat-dissipating armor where it
+     * strikes acts on its share of the heat (Core p.201). MP missiles inflict no damage, so a building around the target
+     * has none to absorb (TW p.171), and they have no effect against conventional infantry.
+     *
+     * @param heatDivisor warheads per +1 heat (5 for LRM, 3 for SRM)
+     */
+    protected void handleMagneticPulseGroup(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg,
+          int hits, int nCluster, int bldgAbsorbs, int heatDivisor) {
+        if (entityTarget.isConventionalInfantry()) {
+            if (firstHit) {
+                Report report = new Report(3348);
+                report.subject = subjectId;
+                report.indent(2);
+                vPhaseReport.addElement(report);
+            }
+            return;
+        }
+
+        initHit(entityTarget);
+        if (hitStrikesPartialCover(entityTarget, game.getHexOf(target))) {
+            handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
+            return;
+        }
+        boolean wasAffected = entityTarget.getMagneticPulseRounds() > 0;
+        entityTarget.applyMagneticPulse(Math.min(nCluster, hits), heatDivisor, hit);
+
+        if (!magneticPulseReported) {
+            magneticPulseReported = true;
+            Report report = new Report(3344);
+            report.subject = subjectId;
+            report.indent(2);
+            vPhaseReport.addElement(report);
+        }
+        if (!wasAffected && (entityTarget.getMagneticPulseRounds() > 0)) {
+            gameManager.sendMagneticPulseToast(entityTarget, false, true);
+        }
     }
 }

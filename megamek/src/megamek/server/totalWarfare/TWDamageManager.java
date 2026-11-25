@@ -1430,7 +1430,7 @@ public class TWDamageManager implements IDamageManager {
         boolean isCapital = hit.isCapital();
 
         // check capital/standard damage
-        if (isCapital &&
+        if (isCapital && !hit.isDamageInStandardScale() &&
               (!aero.isCapitalScale() ||
                     game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY))) {
             damage = 10 * damage;
@@ -2149,6 +2149,7 @@ public class TWDamageManager implements IDamageManager {
         newHit.setBoxCars(hit.rolledBoxCars());
         newHit.setGeneralDamageType(hit.getGeneralDamageType());
         newHit.setCapital(hit.isCapital());
+        newHit.setDamageInStandardScale(hit.isDamageInStandardScale());
         newHit.setCapMisCritMod(hit.getCapMisCritMod());
         newHit.setSingleAV(hit.getSingleAV());
         newHit.setFirstHit(hit.isFirstHit());

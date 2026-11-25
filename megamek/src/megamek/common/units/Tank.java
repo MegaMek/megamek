@@ -218,6 +218,10 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         return LOCATION_NAMES;
     }
 
+    protected int getLocRear() {
+        return LOC_REAR;
+    }
+
     public int getLocTurret() {
         return LOC_TURRET;
     }
@@ -1376,7 +1380,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                    rv.setEffect(HitData.EFFECT_TAC);
                     break;
                 case 3, 4:
                     rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -2124,7 +2128,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                             return CRIT_CREW_KILLED;
                         }
                 }
-            } else if (loc == LOC_REAR) {
+            } else if (loc == getLocRear()) {
                 switch (roll) {
                     case 6:
                         for (Mounted<?> m : getWeaponList()) {
@@ -2165,14 +2169,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                             }
                         }
                     case 12:
-                        if (hasEngine()) {
-                            if (getEngine().isFusion() && !engineHit) {
-                                return CRIT_ENGINE;
-                            } else if (!getEngine().isFusion()) {
-                                return CRIT_FUEL_TANK;
-                            }
-                        } else {
-                            return CRIT_NONE;
+                        int fuelTank = getFuelTankCriticalEffect();
+                        if (fuelTank != CRIT_NONE || getEngineType() == Engine.NONE) {
+                            return fuelTank;
                         }
                 }
             } else if ((loc == getLocTurret()) || (loc == getLocTurret2())) {
@@ -2260,17 +2259,30 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                             return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if (hasEngine()) {
-                            if (getEngine().isFusion() && !engineHit) {
-                                return CRIT_ENGINE;
-                            } else if (!getEngine().isFusion()) {
-                                return CRIT_FUEL_TANK;
-                            }
-                        } else {
-                            return CRIT_NONE;
+                        int fuelTank = getFuelTankCriticalEffect();
+                        if (fuelTank != CRIT_NONE || getEngineType() == Engine.NONE) {
+                            return fuelTank;
                         }
                 }
             }
+        }
+        return CRIT_NONE;
+    }
+
+    /**
+     * Fuel Tank on the side and rear critical tables (TW pp. 195, 197–198, errata v12.0 PRE).
+     * An inapplicable result on a powered vehicle wraps to the top of the same column.
+     */
+    protected int getFuelTankCriticalEffect() {
+        int engineType = getEngineType();
+        if (engineType == Engine.NONE) {
+            return CRIT_NONE;
+        }
+        if (Engine.isFusion(engineType) || engineType == Engine.FISSION) {
+            return engineHit ? CRIT_NONE : CRIT_ENGINE;
+        }
+        if (this instanceof VTOL || engineType == Engine.COMBUSTION_ENGINE || engineType == Engine.FUEL_CELL) {
+            return CRIT_FUEL_TANK;
         }
         return CRIT_NONE;
     }

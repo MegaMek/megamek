@@ -1696,7 +1696,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        addAttack(new SpotAction(currentEntity, target.getId()));
+        addAttack(new SpotAction(currentEntity, target));
     }
 
     /**

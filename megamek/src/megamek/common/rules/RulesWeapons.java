@@ -63,9 +63,9 @@ public abstract class RulesWeapons {
     public abstract boolean canUACsJam();
 
     /**
-     * What happens when an AC is hit.
+     * Applies the autocannon exception to a weapon critical where the unit's critical-hit rules permit it.
      *
-     * @param cs the critical slot being hit
+     * @param cs the critical slot being hit, or null for a unit without critical slots
      * @param mounted the mounted weapon
      * @param reports vector of reports describing the hit
      * @param entityId the ID of the entity being hit

@@ -244,7 +244,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
               || clubType.hasFlag(MiscTypeFlag.S_COMBINE)) {
             return -2;
         } else if (clubType.hasFlag(MiscTypeFlag.S_LANCE)) {
-            return Game.rulesManager.getRulesPhysical().getLanceToHitModifier();
+            return clubType.getToHitModifier(null);
         } else {
             return -1;
         }

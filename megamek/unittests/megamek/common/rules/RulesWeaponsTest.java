@@ -18,6 +18,7 @@
  */
 package megamek.common.rules;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,8 +38,9 @@ class RulesWeaponsTest {
         assertTrue(total.getRACUnjamRestriction() == false || total.getRACUnjamRestriction() == true);
         assertTrue(core.getATMClusterSize() >= 0);
         assertTrue(total.getATMClusterSize() >= 0);
-        assertTrue(core.canUACsJam() == false || core.canUACsJam() == true);
-        assertTrue(total.canUACsJam() == false || total.canUACsJam() == true);
+        // Core p.183 writes the ultra autocannon, of every kind, without a jam; TW p.114 keeps it
+        assertFalse(core.canUACsJam());
+        assertTrue(total.canUACsJam());
         assertTrue(core.getELRMMinimumRackSize(4) >= 0);
         assertTrue(total.getELRMMinimumRackSize(4) >= 0);
         assertTrue(core.getMRMModifier(2) >= 0);

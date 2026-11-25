@@ -36,10 +36,9 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -944,6 +943,8 @@ public abstract class Entity extends TurnOrdered
      * The entity id of our current spot-target
      */
     private int spotTargetId = Entity.NONE;
+    /** Non-entity spot orders also identify what occupies the target hex. Absent in earlier saves. */
+    private @Nullable Integer spotTargetType;
 
     /** The unit this unit's Recon Camera spotted this turn, or {@link Entity#NONE} (TO:AUE p.150). */
     private int reconCameraSpotTargetId = Entity.NONE;
@@ -6836,15 +6837,12 @@ public abstract class Entity extends TurnOrdered
                     continue;
                 }
                 if (type.hasFlag(MiscType.F_ECM) && !m.isInoperable() && !m.isModeTurnedOff()) {
-                    if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                    int toReturn = Game.rulesManager.getRulesEquipment().getECMRanges(type);
+                    if (toReturn == 0) {
                         return 0;
                     }
-                    int toReturn = 6;
                     if (type.hasFlag(MiscType.F_ANGEL_ECM) && (this instanceof BattleArmor)) {
                         toReturn = 2;
-                    }
-                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
-                        toReturn = 3;
                     }
                     PlanetaryConditions conditions = game.getPlanetaryConditions();
                     if (conditions.getEMI().isEMI()) {
@@ -6865,28 +6863,18 @@ public abstract class Entity extends TurnOrdered
         return hasBAP(true);
     }
 
+    private boolean canUseActiveProbe() {
+        return !isShutDown() && (game == null || !game.getPlanetaryConditions().getEMI().isEMI());
+    }
+
     public boolean hasBAP(boolean checkECM) {
-        if (game != null) {
-            PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (conditions.getEMI().isEMI()) {
-                return false;
-            }
-        }
-        if (isShutDown()) {
+        if (!canUseActiveProbe()) {
             return false;
         }
-        for (MiscMounted m : getMisc()) {
-            MiscType type = m.getType();
-            if ((type != null) && type.hasFlag(MiscType.F_BAP)) {
-
-                // A probe the player has switched off provides no sensing (activation/deactivation rules); for a
-                // Watchdog/Nova CEWS the shared "Off" mode silences the probe half along with the rest of the suite.
-                if (!m.isInoperable() && !m.isModeTurnedOff()) {
-                    return (game == null) ||
-                           Game.rulesManager.getRulesEquipment().isBAPActive(checkECM, m.getType(),
-                                                                             this, getPosition());
-                }
-            }
+        MiscMounted probe = EquipmentActivation.activeProbe(this);
+        if (probe != null) {
+            return game == null || Game.rulesManager.getRulesEquipment()
+                  .isBAPActive(checkECM, probe.getType(), this, getPosition());
         }
 
         // Sensory implants: IR/EM optical OR enhanced audio = 2-hex active probe (infantry only)
@@ -6926,8 +6914,7 @@ public abstract class Entity extends TurnOrdered
      * <code>Entity.NONE</code> if no BAP is active.
      */
     public int getBAPRange() {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI() || isShutDown()) {
+        if (!canUseActiveProbe()) {
             return Entity.NONE;
         }
         // Sensory implants provide active probe capability:
@@ -6971,47 +6958,45 @@ public abstract class Entity extends TurnOrdered
             spaBonus = 1;
         }
 
-        for (MiscMounted m : getMisc()) {
+        MiscMounted m = EquipmentActivation.activeProbe(this);
+        if (m != null) {
             MiscType type = m.getType();
-            if (type == null) {
-                continue;
+            // Quirk bonus is only 2 if equipped with BAP
+            if (quirkBonus > 0) {
+                quirkBonus = 2;
             }
-            if (type.hasFlag(MiscType.F_BAP) && !m.isInoperable() && !m.isModeTurnedOff()) {
-                // Quirk bonus is only 2 if equipped with BAP
-                if (quirkBonus > 0) {
-                    quirkBonus = 2;
-                }
 
-                // in space the range of all BAPs is given by the mode
-                if (isSpaceborne()) {
-                    return m.curMode().equals("Medium") ? 12 : 6;
-                }
-
-                // By the flag, not by name: both Bloodhound variants carry it, and the old comparison tested a
-                // display name against an internal-name constant, so it never matched and a Bloodhound was
-                // given the generic 4 hexes instead of its 8.
-                if (type.hasFlag(MiscType.F_BLOODHOUND)) {
-                    return 8 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                String internalName = type.getInternalName();
-                if (internalName.equals(Sensor.CLAN_AP) ||
-                    internalName.equals(Sensor.WATCHDOG) ||
-                    internalName.equals(Sensor.NOVA) ||
-                    internalName.equals(Sensor.CL_BA_LIGHT_AP)) {
-                    return 5 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                if (internalName.equals(Sensor.LIGHT_AP)) {
-                    return 3 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                if (internalName.equals(Sensor.IS_BA_LIGHT_AP)) {
-                    return 4 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                if (internalName.equals(Sensor.IS_IMPROVED) || internalName.equals(Sensor.CL_IMPROVED)) {
-                    return 2 + cyberProbeBonus + quirkBonus + spaBonus;
-                }
-                return 4 + cyberProbeBonus + quirkBonus + spaBonus;// everything else should be
-                // range 4
+            // in space the range of all BAPs is given by the mode
+            if (isSpaceborne()) {
+                return m.curMode().equals("Medium") ? 12 : 6;
             }
+
+            // By the flag, not by name: both Bloodhound variants carry it, and the old comparison tested a
+            // display name against an internal-name constant, so it never matched and a Bloodhound was
+            // given the generic 4 hexes instead of its 8.
+            if (type.hasFlag(MiscType.F_BLOODHOUND)) {
+                return 8 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            String internalName = type.getInternalName();
+            if (type.hasFlag(MiscType.F_WATCHDOG)) {
+                return Game.rulesManager.getRulesEquipment().getWatchdogProbeRange()
+                      + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            if (internalName.equals(Sensor.CLAN_AP) ||
+                internalName.equals(Sensor.NOVA) ||
+                internalName.equals(Sensor.CL_BA_LIGHT_AP)) {
+                return 5 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            if (internalName.equals(Sensor.LIGHT_AP)) {
+                return 3 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            if (internalName.equals(Sensor.IS_BA_LIGHT_AP)) {
+                return 4 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            if (internalName.equals(Sensor.IS_IMPROVED) || internalName.equals(Sensor.CL_IMPROVED)) {
+                return 2 + cyberProbeBonus + quirkBonus + spaBonus;
+            }
+            return 4 + cyberProbeBonus + quirkBonus + spaBonus;
         }
         // No BAP equipped - return base probe from implants/quirks/SPA
         if ((cyberBaseProbe + quirkBonus + spaBonus) > 0) {
@@ -8140,6 +8125,7 @@ public abstract class Entity extends TurnOrdered
         setFindingClub(false);
         setSpotting(false);
         spotTargetId = Entity.NONE;
+        spotTargetType = null;
         reconCameraSpotTargetId = Entity.NONE;
         hasTriedReconCameraSpot = false;
         getReconCameraViewerIds().clear();
@@ -8520,8 +8506,11 @@ public abstract class Entity extends TurnOrdered
                 attacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
             } else if (ams.getType().hasFlag(WeaponType.F_PD_BAY)) {
                 // Point defense bays are assigned to the attack with the greatest threat Unlike single AMS, PD bays
-                // can gang up on 1 attack
-                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
+                // can gang up on 1 attack. They engage the missile attacks StratOps p.84 lists, not Narc pods.
+                List<WeaponAttackAction> missileAttacks = attacksInArc.stream()
+                      .filter(attack -> !attack.firesNarcPods(getGame()))
+                      .toList();
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), missileAttacks, true);
                 if (waa != null) {
                     waa.addCounterEquipment(ams);
                 }
@@ -9147,19 +9136,21 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Checks if the entity is attempting to run with damage that would force a PSR. If so, returns the target roll for
-     * the piloting skill check.
+     * Checks if the entity is attempting to run with damage that would force PSRs.
+     *
+     * @return one target roll per required piloting skill check, in the order they are rolled; empty if none
      */
-    public PilotingRollData checkRunningWithDamage(EntityMovementType overallMoveType,
-                                                   int distance) {
+    public List<PilotingRollData> checkRunningWithDamage(EntityMovementType overallMoveType,
+                                                         int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroDamage = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
 
-        Game.rulesManager.getRulesPSR().checkRunningWithDamage(this, roll, gyroDamage, overallMoveType, distance);
+        int checks = Game.rulesManager.getRulesPSR()
+              .checkRunningWithDamage(this, roll, gyroDamage, overallMoveType, distance);
 
         addPilotingModifierForTerrain(roll);
-        return roll;
+        return Collections.nCopies(checks, roll);
     }
 
     /**
@@ -9325,10 +9316,11 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Checks if the entity is landing (from a jump) with damage that would force a PSR. If so, returns the target roll
-     * for the piloting skill check.
+     * Checks if the entity is landing (from a jump) with damage that would force PSRs.
+     *
+     * @return one target roll per required piloting skill check, in the order they are rolled; empty if none
      */
-    public PilotingRollData checkLandingWithDamage(EntityMovementType overallMoveType) {
+    public List<PilotingRollData> checkLandingWithDamage(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
@@ -9341,20 +9333,18 @@ public abstract class Entity extends TurnOrdered
             gyroHits--;
         }
 
-        if (gyroHits > 0 || hasLegActuatorCrit() || Game.rulesManager.getRulesUnits().hasBadLegs(this)) {
-            // append the reason modifier
-            if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
-                roll.append(new PilotingRollData(getId(), gyroModifier, "landing with damaged leg or heavy-duty gyro"));
-            } else {
-                roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg or gyro"));
-            }
-            addPilotingModifierForTerrain(roll);
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Entity does not have gyro or leg damage -- checking for purposes of determining PSR " +
-                             "after jump.");
+        int checks = Game.rulesManager.getRulesPSR().landingWithDamageChecks(this, gyroHits);
+        if (checks == 0) {
+            return List.of();
         }
-        return roll;
+        // append the reason modifier
+        if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
+            roll.append(new PilotingRollData(getId(), gyroModifier, "landing with damaged leg or heavy-duty gyro"));
+        } else {
+            roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg or gyro"));
+        }
+        addPilotingModifierForTerrain(roll);
+        return Collections.nCopies(checks, roll);
     }
 
     /**
@@ -14021,7 +14011,6 @@ public abstract class Entity extends TurnOrdered
         setStuck(false);
         setConversionMode(0);
         setHidden(false);
-        setDone(false);
         // Without this a unit that fled the last battle still reports the edge it left by
         setRetreatedDirection(OffBoardDirection.NONE);
 
@@ -14041,9 +14030,13 @@ public abstract class Entity extends TurnOrdered
         resetBays();
         setTransportId(Entity.NONE);
         resetTransporter();
-        setUnloaded(false);
         setSwarmAttackerId(Entity.NONE);
         setSwarmTargetId(Entity.NONE);
+        // Clearing the transport and swarm target above marks the unit as unloaded and done for the turn, as if it
+        // had just left a transport mid-game. Those flags must be cleared after them, or the unit can't be loaded
+        // or towed until a new round starts - and MekHQ never starts one, so its tractors could never hitch a trailer.
+        setUnloaded(false);
+        setDone(false);
         setLastTarget(Entity.NONE);
         clearNarcAndiNarcPods();
         // Orders given to the unit's bot in this battle, such as a flee order, must not steer it in the next one
@@ -14163,11 +14156,47 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setSpotTargetId(int targetId) {
+        setSpotTarget(Targetable.TYPE_ENTITY, targetId);
+    }
+
+    public void setSpotTarget(int targetType, int targetId) {
         spotTargetId = targetId;
+        spotTargetType = (targetType == Targetable.TYPE_ENTITY) ? null : targetType;
     }
 
     public int getSpotTargetId() {
         return spotTargetId;
+    }
+
+    /** Resolves a spotted unit, building or terrain hex, including ID-only spot orders in older saves. */
+    public @Nullable Targetable getSpotTarget(Game game) {
+        if (spotTargetId == NONE) {
+            return null;
+        }
+        if (spotTargetType != null) {
+            return game.getTarget(spotTargetType, spotTargetId);
+        }
+        Entity unit = game.getEntity(spotTargetId);
+        if (unit != null) {
+            return unit;
+        }
+        for (TagInfo tag : game.getTagInfo()) {
+            if (!tag.missed && (tag.attackerId == getId()) && (tag.target.getId() == spotTargetId)
+                  && !(tag.target instanceof Entity)) {
+                return tag.target;
+            }
+        }
+        // Older manual orders stored only an ID. Recover a map target only while the order is active and
+        // that ID does not belong to a unit that has since left the board.
+        if (!isSpotting() || (game.getOutOfGameEntity(spotTargetId) != null)) {
+            return null;
+        }
+        BoardLocation location = HexTarget.idToLocation(spotTargetId);
+        if (!game.hasBoardLocation(location)) {
+            return null;
+        }
+        int type = game.getBuildingAt(location).isPresent() ? Targetable.TYPE_BUILDING : Targetable.TYPE_HEX_CLEAR;
+        return game.getTarget(type, spotTargetId);
     }
 
     /**
@@ -16549,13 +16578,11 @@ public abstract class Entity extends TurnOrdered
             int rollValue = diceRoll.getIntValue();
             String rollCalc = String.valueOf(rollValue);
             boolean isSupercharger = masc.getType().hasFlag(MiscTypeFlag.S_SUPERCHARGER);
-            // WHY is this -1 here?
-            if (isSupercharger &&
-                (((this instanceof Mek) && ((Mek) this).isIndustrial()) ||
-                 (this instanceof SupportTank) ||
-                 (this instanceof SupportVTOL))) {
-                rollValue -= 1;
-                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " - 1]";
+            int activationModifier = isSupercharger
+                  ? Game.rulesManager.getRulesEquipment().getSuperchargerActivationModifier(this) : 0;
+            if (activationModifier != 0) {
+                rollValue += activationModifier;
+                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " - " + (-activationModifier) + "]";
             }
 
             if (isSupercharger) {
@@ -17365,7 +17392,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public Hex getOccupiedHex() {
-        return game.getBoard().getHex(getPosition());
+        return game.getBoard(getBoardId()).getHex(getPosition());
     }
 
     /**
@@ -17375,8 +17402,8 @@ public abstract class Entity extends TurnOrdered
         return !isOffBoard() &&
                (getPosition() != null) &&
                (game != null) &&
-               (game.getBoard() != null) &&
-               (game.getBoard().getHex(getPosition()) != null);
+               (game.getBoard(getBoardId()) != null) &&
+               (game.getBoard(getBoardId()).getHex(getPosition()) != null);
     }
 
     public int getTechLevelYear() {
@@ -19124,6 +19151,25 @@ public abstract class Entity extends TurnOrdered
             }
         }
         return -1;
+    }
+
+    /**
+     * @param mounted the equipment to count
+     *
+     * @return the critical slots of this unit, in every location, that hold the given equipment; on a superheavy Mek
+     *       this can be fewer than the equipment's own slot count
+     */
+    public int occupiedCriticalSlots(Mounted<?> mounted) {
+        int occupied = 0;
+        for (int location = 0; location < locations(); location++) {
+            for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
+                CriticalSlot cs = getCritical(location, slot);
+                if ((cs != null) && ((cs.getMount() == mounted) || (cs.getMount2() == mounted))) {
+                    occupied++;
+                }
+            }
+        }
+        return occupied;
     }
 
     @Override

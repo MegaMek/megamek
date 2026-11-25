@@ -183,6 +183,26 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * @param step   the step
+     * @param curHex the hex the step enters
+     *
+     * @return true if the step moves backward across a level change, which takes a Piloting or Driving Skill Roll
+     *       under the expanded backward movement option (TO:AR p.20)
+     */
+    private boolean isBackwardLevelChange(MoveStep step, Hex curHex) {
+        boolean backward = (step.getType() == MoveStepType.BACKWARDS)
+              || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
+              || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS);
+        // Climbing onto a bridge level with the hex left changes no level
+        boolean onLevelBridge = step.climbMode() && curHex.containsTerrain(Terrains.BRIDGE)
+              && ((curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getLevel()) == (prevHex.getLevel()
+              + (prevHex.containsTerrain(Terrains.BRIDGE) ? prevHex.terrainLevel(Terrains.BRIDGE_ELEV) : 0)));
+        return backward && !(md.isJumping() && step.isUsingMekJumpBooster())
+              && ((prevHex.getLevel() + lastElevation) != (curHex.getLevel() + step.getElevation()))
+              && !(entity instanceof VTOL) && !onLevelBridge;
+    }
+
+    /**
      * Moves an industrial elevator platform along with the unit riding it. Only applies to elevator ascend/descend
      * steps; the platform tracks the unit's new elevation and the updated state is broadcast to all clients.
      *
@@ -1298,17 +1318,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             entity.setPassedThroughBoardId(location.boardId());
         }
 
-        // if we ran with destroyed hip or gyro, we need a psr
-        rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved());
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-            gameManager.doSkillCheckInPlace(entity, rollTarget);
-        }
-
-        // if we moved a hex with a destroyed leg, but it was not a run
-        rollTarget = Game.rulesManager.getRulesPSR()
-                                      .checkWalkWithLegDestroyed(entity, overallMoveType, md.getHexesMoved());
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-            gameManager.doSkillCheckInPlace(entity, rollTarget);
+        // if we ran with destroyed hip or gyro, we need a psr; with several, a failed one ends the sequence
+        if (entity.canFall()) {
+            for (PilotingRollData runningRoll : entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved())) {
+                if (!gameManager.doSkillCheckInPlace(entity, runningRoll)) {
+                    break;
+                }
+            }
         }
 
         // if we sprinted with MASC or a supercharger, then we need a PSR
@@ -1557,10 +1573,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             final Hex curHex = getGame().getBoard(curBoardId).getHex(curPos);
 
-            // check for damaged criticalSlots
-            rollTarget = entity.checkLandingWithDamage(overallMoveType);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                gameManager.doSkillCheckInPlace(entity, rollTarget);
+            // check for damaged criticalSlots; with several checks, a failed one ends the sequence
+            for (PilotingRollData landingRoll : entity.checkLandingWithDamage(overallMoveType)) {
+                if (!gameManager.doSkillCheckInPlace(entity, landingRoll)) {
+                    break;
+                }
             }
 
             // check for prototype JJs
@@ -3133,6 +3150,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
+            // A vehicle, or a QuadVee in vehicle mode (IO:AE p.127), moving backward across a level change rolls
+            // before it enters the hex: if the Driving Skill Roll fails, it "stays in its current hex and must spend 1
+            // additional MP" (TO:AR p.20). The move ends there, as retrying the roll is not supported.
+            boolean movesAsVehicle = (entity instanceof Tank)
+                  || ((entity instanceof QuadVee) && (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
+            if (movesAsVehicle
+                  && isBackwardLevelChange(step, getGame().getBoard(curBoardId).getHex(step.getPosition()))) {
+                rollTarget = entity.getBasePilotingRoll(overallMoveType);
+                rollTarget.addModifier(0, "moving backwards over an elevation change");
+                if (gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos, step.getPosition(), rollTarget,
+                      false) > 0) {
+                    mpUsed++;
+                    turnOver = true;
+                    break;
+                }
+            }
+
             // set most step parameters
             moveType = stepMoveType;
             distance = step.getDistance();
@@ -3242,7 +3276,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                          .getDFAElevation(entity.getGame(),
                                                                           entity.getId(),
                                                                           targetID,
-                                                                          step));
+                                                                          step,
+                                                                          curPos));
                     getGame().addDisplacementAttack(daa);
                     charge = daa;
 
@@ -4667,17 +4702,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // moving backwards over elevation change
-            if (((step.getType() == MoveStepType.BACKWARDS)
-                 || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
-                 || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && !(md.isJumping()
-                                                                                   && step.isUsingMekJumpBooster()) && (lastHex.getLevel() + lastElevation
-                                                                                                                        != curHex.getLevel() + step.getElevation()) && !(entity instanceof VTOL) && !(curClimbMode
-                                                                                                                                                                                                      && curHex.containsTerrain(
-                    Terrains.BRIDGE)
-                                                                                                                                                                                                      && ((curHex.terrainLevel(
-                    Terrains.BRIDGE_ELEV) + curHex.getLevel()) == (prevHex.getLevel()
-                                                                   + (prevHex.containsTerrain(
-                    Terrains.BRIDGE) ? prevHex.terrainLevel(Terrains.BRIDGE_ELEV) : 0))))) {
+            if ((entity instanceof Mek) && !movesAsVehicle && isBackwardLevelChange(step, curHex)) {
 
                 // per TacOps, if the mek is walking backwards over an elevation change and
                 // falls
@@ -4699,17 +4724,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0, "moving backwards over an elevation change");
                     gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos, lastPos, rollTarget, true);
-                } else if (entity instanceof Tank) {
-                    rollTarget = entity.getBasePilotingRoll(overallMoveType);
-                    rollTarget.addModifier(0, "moving backwards over an elevation change");
-                    if (gameManager.doSkillCheckWhileMoving(entity,
-                                                            entity.getElevation(),
-                                                            curPos,
-                                                            lastPos,
-                                                            rollTarget,
-                                                            false) < 0) {
-                        curPos = lastPos;
-                    }
                 }
             }
 

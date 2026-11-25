@@ -53,9 +53,11 @@ public class BattlefieldSupportAssetBVCalculator extends BVCalculator {
         this.ignoreC3 = ignoreC3;
         this.ignoreSkill = ignoreSkill;
         this.ignoreTAG = ignoreTAG;
-        int bv = (entity instanceof BattlefieldSupportAsset asset)
-              ? (ignoreSkill ? asset.getBv() : asset.getEffectiveBv())
-              : 0;
+        int bv = 0;
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            boolean veteran = !ignoreSkill && asset.isVeteranCrew();
+            bv = (veteran ? asset.getVeteranBv() : asset.getBv()) + (ignoreTAG ? 0 : asset.tagSurchargeBv(veteran));
+        }
         adjustedBV = bv;
         baseBV = bv;
         return bv;

@@ -35,7 +35,6 @@ package megamek.client.ui.clientGUI.boardview.spriteHandler;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import megamek.client.Client;
@@ -48,8 +47,6 @@ import megamek.client.ui.clientGUI.boardview.sprite.FiringSolutionSprite;
 import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.board.Board;
-import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -100,8 +97,9 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
         HashMap<Entity, Entity> spottedEntities = new HashMap<>();
         for (Entity spotter : game.getEntitiesVector()) {
             // Targets spotted by other entities should be "visible" in this view
-            if (!spotter.isEnemyOf(entity) && spotter.isSpotting()) {
-                spottedEntities.put(game.getEntity(spotter.getSpotTargetId()), spotter);
+            if (!spotter.isEnemyOf(entity) && spotter.isSpotting()
+                  && (spotter.getSpotTarget(game) instanceof Entity spottedUnit)) {
+                spottedEntities.put(spottedUnit, spotter);
             }
 
             // We consider entities with attached Narc pods to be "spotting" themselves (see toHit code)
@@ -115,7 +113,8 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
         }
 
         // Calculate firing solutions, including weapon/ammo information
-        Map<Integer, FiringSolution> solutions = new HashMap<>();
+        record SolutionTarget(int type, int id) {}
+        Map<SolutionTarget, FiringSolution> solutions = new HashMap<>();
         for (Entity target : game.getEntitiesVector()) {
             if (shouldShowTarget(target, entity)) {
                 Optional<Entity> spotter = Optional.ofNullable(spottedEntities.get(target));
@@ -123,7 +122,8 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
                       spotter, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(entity.getPosition().distance(target.getPosition()));
-                solutions.put(target.getId(), new FiringSolution(thd, spotter.isPresent()));
+                solutions.put(new SolutionTarget(target.getTargetType(), target.getId()),
+                      new FiringSolution(thd, spotter.isPresent()));
             } else if (target instanceof AbstractBuildingEntity buildingEntity
                   && game.onTheSameBoard(entity, buildingEntity)
                   && (client.getGame().getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)
@@ -133,37 +133,35 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
                           game.getBoard(buildingEntity.getBoardId()), Targetable.TYPE_BUILDING);
                     Optional<Entity> spotter = game.getEntitiesVector().stream()
                           .filter(s -> !s.isEnemyOf(entity) && s.isSpotting()
-                                && s.getSpotTargetId() == buildingTarget.getId())
+                                && Targetable.isSameTarget(s.getSpotTarget(game), buildingTarget))
                           .findFirst();
                     ToHitData thd = WeaponAttackAction.toHit(game, entity.getId(), weapon, ammo,
                           spotter, buildingTarget);
                     thd.setLocation(buildingHex);
                     thd.setRange(entity.getPosition().distance(buildingHex));
-                    solutions.put(Objects.hash(buildingEntity.getId(), buildingHex),
+                    solutions.put(new SolutionTarget(Targetable.TYPE_BUILDING, buildingTarget.getId()),
                           new FiringSolution(thd, spotter.isPresent()));
                 }
             }
         }
 
-        // Spotted hexes
+        // A building and its terrain hex can be spotted separately.
         for (Entity spotter : game.getEntitiesVector()) {
-            if (!spotter.isEnemyOf(entity) && spotter.isSpotting()
-                  && game.getEntityFromAllSources(spotter.getSpotTargetId()) == null) {
-                BoardLocation spotLocation = HexTarget.idToLocation(spotter.getSpotTargetId());
-                Board board = game.getBoard(spotLocation.boardId());
-                if (board == null || !board.contains(spotLocation.coords())
-                      || board.getBuildingAt(spotLocation.coords()) != null) {
-                    continue;
-                }
-                HexTarget hexTarget = new HexTarget(spotLocation, Targetable.TYPE_HEX_TAG);
-                if (!game.onTheSameBoard(entity, hexTarget)) {
-                    continue;
-                }
-                ToHitData thd = WeaponAttackAction.toHit(game, entity.getId(), weapon, ammo,
-                      Optional.of(spotter), hexTarget);
-                thd.setLocation(spotLocation.coords());
-                thd.setRange(entity.getPosition().distance(spotLocation.coords()));
-                solutions.put(hexTarget.getId(), new FiringSolution(thd, true));
+            if (spotter.isEnemyOf(entity) || !spotter.isSpotting()) {
+                continue;
+            }
+            Targetable spotted = spotter.getSpotTarget(game);
+            if (!((spotted instanceof HexTarget) || (spotted instanceof BuildingTarget))
+                  || !game.onTheSameBoard(entity, spotted)) {
+                continue;
+            }
+            int type = (spotted instanceof BuildingTarget) ? Targetable.TYPE_BUILDING : Targetable.TYPE_HEX_CLEAR;
+            Targetable target = game.getTarget(type, spotted.getId());
+            if (target != null) {
+                ToHitData thd = WeaponAttackAction.toHit(game, entity.getId(), weapon, ammo, Optional.of(spotter), target);
+                thd.setLocation(target.getPosition());
+                thd.setRange(entity.getPosition().distance(target.getPosition()));
+                solutions.put(new SolutionTarget(type, target.getId()), new FiringSolution(thd, true));
             }
         }
 

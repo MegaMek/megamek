@@ -132,7 +132,14 @@ public final class RatDataExporter {
         }
     }
 
-    private static RATGenerator waitForRatGenerator() throws InterruptedException {
+    /**
+     * Loads the unit cache and the RAT Generator, and waits until every era is read.
+     *
+     * @return the loaded RAT Generator
+     *
+     * @throws InterruptedException if interrupted while waiting
+     */
+    static RATGenerator waitForRatGenerator() throws InterruptedException {
         MekSummaryCache.getInstance();
         RATGenerator ratGenerator = RATGenerator.getInstance();
         long deadline = System.currentTimeMillis() + INITIALIZE_TIMEOUT_MILLIS;

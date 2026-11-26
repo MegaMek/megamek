@@ -40,12 +40,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
 import megamek.common.QuirkEntry;
@@ -132,6 +137,8 @@ public class MtfFile implements IMekLoader {
     private final Map<EquipmentType, Mounted<?>> hSharedEquip = new HashMap<>();
     private final List<Mounted<?>> vSplitWeapons = new ArrayList<>();
 
+    private final Map<MountTag, Mounted<?>> taggedMounts = new HashMap<>();
+
     private final List<String> quirkLines = new ArrayList<>();
 
     public static final int[] locationOrder = { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_TORSO,
@@ -209,6 +216,16 @@ public class MtfFile implements IMekLoader {
 
     private static final Pattern LEGACY_SIZE_PATTERN = Pattern.compile("\\((\\d+(?:\\.\\d+)?)\\s*(?:ton|tons|m|kg)\\)",
           Pattern.CASE_INSENSITIVE);
+
+    /**
+     * A critical row may end with a mount tag to tell which mount of its equipment it belongs to, as in
+     * {@code Autocannon/20#1}. The tags number the mounts of that equipment from 1. They are only written for
+     * equipment that is split over two locations, where the rows alone do not tell the mounts apart.
+     */
+    private record MountTag(EquipmentType type, String number) {}
+
+    /** The mount tag that ends a critical row: {@code #} and a positive number without leading zeros */
+    private static final Pattern MOUNT_TAG = Pattern.compile("#([1-9]\\d*)$");
 
     /**
      * Modern unit files store resizable equipment like Cargo:SIZE:4.0 Old equipment stores it like Cargo (4 tons) This
@@ -360,8 +377,12 @@ public class MtfFile implements IMekLoader {
             }
             setTechLevel(mek);
             boolean chassisIsFrankenMek = chassisConfig.contains("FrankenMek");
-            mek.setWeight(Integer.parseInt(tonnage.substring(5)));
-            mek.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
+            String structureLine = internalType.substring(internalType.indexOf(':') + 1).trim();
+            // CO p. 213: the center torso donor sets a FrankenMek's tonnage, so chassis-dependent parts follow it
+            Integer frankenMekChassisTonnage = chassisIsFrankenMek
+                  ? frankenMekStructureTonnage(mek, Mek.LOC_CENTER_TORSO, structureLine) : null;
+            mek.setWeight((frankenMekChassisTonnage != null) ? Math.max(10, frankenMekChassisTonnage)
+                  : Integer.parseInt(tonnage.substring(5)));
 
             boolean dblSinks = heatSinks.contains(HS_DOUBLE);
             boolean laserSinks = heatSinks.contains(HS_LASER);
@@ -370,7 +391,7 @@ public class MtfFile implements IMekLoader {
             int baseHeatSinks = Integer
                   .parseInt(baseChassisHeatSinks.substring("base chassis heat sinks:".length()).trim());
 
-            String thisStructureType = internalType.substring(internalType.indexOf(':') + 1).trim();
+            String thisStructureType = structureLine;
             if (!thisStructureType.isBlank()
                   && !thisStructureType.equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID)) {
                 StructureType structure = EquipmentType.getStructureFromName(thisStructureType);
@@ -668,30 +689,38 @@ public class MtfFile implements IMekLoader {
 
     private void parseFrankenMekStructure(Mek mek, String defaultStructureType) throws EntityLoadingException {
         mek.initializeFrankenMekStructure();
-        boolean hybridStructure = defaultStructureType.trim().equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID);
         for (Map.Entry<Integer, String> entry : frankenMekStructureValues.entrySet()) {
-            String structureValue = entry.getValue().substring(entry.getValue().indexOf(':') + 1).trim();
-            if (structureValue.isBlank()) {
+            Integer tonnage = frankenMekStructureTonnage(mek, entry.getKey(), defaultStructureType);
+            if (tonnage == null) {
                 continue;
             }
-            if (hybridStructure || structureValue.contains(":")) {
-                int splitIndex = structureValue.lastIndexOf(':');
-                if (splitIndex < 0) {
-                    continue;
-                }
+            String structureValue = frankenMekStructureValue(entry.getKey());
+            int splitIndex = structureValue.lastIndexOf(':');
+            if (splitIndex >= 0) {
                 EquipmentType structure = getStructureEquipment(mek, structureValue.substring(0, splitIndex).trim());
                 mek.setFrankenMekStructureType(entry.getKey(), structure);
-                mek.setFrankenMekStructureTonnage(entry.getKey(), parseFrankenMekStructureTonnage(
-                      mek, entry.getKey(), structureValue.substring(splitIndex + 1).trim()));
-            } else {
-                mek.setFrankenMekStructureTonnage(entry.getKey(),
-                      parseFrankenMekStructureTonnage(mek, entry.getKey(), structureValue));
             }
+            mek.setFrankenMekStructureTonnage(entry.getKey(), tonnage);
         }
     }
 
-    private int parseFrankenMekStructureTonnage(Mek mek, int location, String tonnageValue)
+    private String frankenMekStructureValue(int location) {
+        String line = frankenMekStructureValues.getOrDefault(location, "");
+        return line.substring(line.indexOf(':') + 1).trim();
+    }
+
+    /**
+     * @return The donor tonnage a location's structure line gives, or null when there is none; a bare tonnage under
+     *       a Hybrid structure line is ignored
+     */
+    private @Nullable Integer frankenMekStructureTonnage(Mek mek, int location, String defaultStructureType)
           throws EntityLoadingException {
+        String structureValue = frankenMekStructureValue(location);
+        boolean hybridStructure = defaultStructureType.trim().equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID);
+        if (structureValue.isBlank() || (hybridStructure && !structureValue.contains(":"))) {
+            return null;
+        }
+        String tonnageValue = structureValue.substring(structureValue.lastIndexOf(':') + 1).trim();
         try {
             return Integer.parseInt(tonnageValue);
         } catch (NumberFormatException ex) {
@@ -939,7 +968,10 @@ public class MtfFile implements IMekLoader {
         for (int i = 0; i < mek.getNumberOfCriticalSlots(loc); i++) {
 
             // parse out and add the critical
-            String critName = critData[loc][i];
+            Matcher tagMatcher = MOUNT_TAG.matcher(critData[loc][i]);
+            String tagNumber = tagMatcher.find() ? tagMatcher.group(1) : null;
+            String critName = (tagNumber != null) ? critData[loc][i].substring(0, tagMatcher.start())
+                  : critData[loc][i];
 
             critName = critName.trim();
             String critNameUpper = critName.toUpperCase();
@@ -1067,8 +1099,15 @@ public class MtfFile implements IMekLoader {
                         if (etype.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER)) {
                             if (size == 0) {
                                 // legacy MTF loading: MJB gave their MP as the jump MP
-                                size = mek.getOriginalJumpMP(true);
-                                mek.setOriginalJumpMP(0);
+                                if (jumpMP == null) {
+                                    throw new EntityLoadingException(
+                                          "A mechanical jump booster without a size needs the jump MP line");
+                                }
+                                try {
+                                    size = Integer.parseInt(jumpMP.substring(8).trim());
+                                } catch (NumberFormatException exception) {
+                                    throw new EntityLoadingException("Invalid jump MP: " + jumpMP, exception);
+                                }
                             }
 
                             m.setSize(size);
@@ -1085,47 +1124,19 @@ public class MtfFile implements IMekLoader {
 
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplittableOverCriticalSlots())
                           || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
-                        // do we already have this one in this or an outer location?
-                        Mounted<?> m = null;
-                        boolean bFound = false;
-                        for (Mounted<?> vSplitWeapon : vSplitWeapons) {
-                            m = vSplitWeapon;
-                            int nLoc = m.getLocation();
-                            if ((((nLoc == loc) || (loc == Mek.getInnerLocation(nLoc)))
-                                  || ((nLoc == Mek.LOC_CENTER_TORSO) && (loc == Mek.LOC_HEAD)))
-                                  && (m.getType() == etype)) {
-                                bFound = true;
-                                break;
-                            }
-                        }
-                        if (bFound) {
-                            m.setFoundCrits(m.getFoundCrits() + (mek.isSuperHeavy() ? 2 : 1));
-                            if (m.getFoundCrits() >= m.getNumCriticalSlots()) {
-                                vSplitWeapons.remove(m);
-                            }
-                            // if we're in a new location, set the weapon as
-                            // split
-                            if (loc != m.getLocation()) {
-                                m.setSplit(true);
-                            }
-                            // give the most restrictive location for arcs
-                            int help = m.getLocation();
-                            m.setLocation(Mek.mostRestrictiveLoc(loc, help));
-                            if (loc != help) {
-                                m.setSecondLocation(Mek.leastRestrictiveLoc(loc, help));
-                            }
+                        Mounted<?> mount;
+                        if (tagNumber != null) {
+                            // the rows with this tag are one mount, wherever they are
+                            MountTag mountTag = new MountTag(etype, tagNumber);
+                            mount = addSplitRow(mek, taggedMounts.get(mountTag), etype, loc);
+                            taggedMounts.put(mountTag, mount);
                         } else {
-                            // make a new one
-                            m = Mounted.createMounted(mek, etype);
-                            m.setFoundCrits(1);
-                            m.setArmored(isArmored);
-                            m.setMekTurretMounted(isTurreted);
-                            vSplitWeapons.add(m);
+                            mount = addUntaggedSplitRow(mek, etype, loc);
                         }
-                        m.setArmored(isArmored);
-                        m.setMekTurretMounted(isTurreted);
-                        m.setOmniPodMounted(isOmniPod);
-                        mek.addEquipment(m, loc, rearMounted);
+                        mount.setArmored(isArmored);
+                        mount.setMekTurretMounted(isTurreted);
+                        mount.setOmniPodMounted(isOmniPod);
+                        mek.addEquipment(mount, loc, rearMounted);
                     } else {
                         Mounted<?> mount;
                         if (etype2 == null) {
@@ -1209,6 +1220,120 @@ public class MtfFile implements IMekLoader {
 
     private EquipmentType getEquipmentType(Mek mek, String equipmentName) {
         return EquipmentType.get(equipmentName, mek.isMixedTech() ? null : mek.getTechBase());
+    }
+
+    /**
+     * Adds a critical row to a mount that can be split over two locations.
+     *
+     * @param mount The mount of the row, or null to make a new one
+     *
+     * @return The mount
+     */
+    private static Mounted<?> addSplitRow(Mek mek, @Nullable Mounted<?> mount, EquipmentType equipmentType,
+          int location) {
+        // A superheavy Mek's critical row holds two slots
+        int critsPerRow = mek.isSuperHeavy() ? 2 : 1;
+        if (mount == null) {
+            Mounted<?> newMount = Mounted.createMounted(mek, equipmentType);
+            newMount.setFoundCrits(critsPerRow);
+            return newMount;
+        }
+        mount.setFoundCrits(mount.getFoundCrits() + critsPerRow);
+        // if we're in a new location, set the weapon as split
+        if (location != mount.getLocation()) {
+            mount.setSplit(true);
+        }
+        // give the most restrictive location for arcs
+        int previousLocation = mount.getLocation();
+        mount.setLocation(Mek.mostRestrictiveLoc(location, previousLocation));
+        if (location != previousLocation) {
+            mount.setSecondLocation(Mek.leastRestrictiveLoc(location, previousLocation));
+        }
+        return mount;
+    }
+
+    /**
+     * Adds a critical row without mount tag to a mount that can be split over two locations: the first mount of its
+     * equipment that still waits for criticalSlots in this or an outer location, otherwise a new one. This may give
+     * the row to the wrong mount when there are several mounts of the equipment; {@link #mountTags(Mek)} then writes
+     * mount tags.
+     *
+     * @return The mount
+     */
+    private Mounted<?> addUntaggedSplitRow(Mek mek, EquipmentType equipmentType, int location) {
+        // do we already have this one in this or an outer location?
+        for (Mounted<?> mount : vSplitWeapons) {
+            int mountLocation = mount.getLocation();
+            if ((((mountLocation == location) || (location == Mek.getInnerLocation(mountLocation)))
+                  || ((mountLocation == Mek.LOC_CENTER_TORSO) && (location == Mek.LOC_HEAD)))
+                  && (mount.getType() == equipmentType)) {
+                addSplitRow(mek, mount, equipmentType, location);
+                if (mount.getFoundCrits() >= mount.getNumCriticalSlots()) {
+                    vSplitWeapons.remove(mount);
+                }
+                return mount;
+            }
+        }
+        Mounted<?> mount = addSplitRow(mek, null, equipmentType, location);
+        vSplitWeapons.add(mount);
+        return mount;
+    }
+
+    /**
+     * Finds the mount tags that the critical rows of a Mek need in its unit file: rows alone can't tell a split mount
+     * from another mount of its equipment in a location they share, so such a split mount tags its rows. Other unit
+     * files are written without tags.
+     *
+     * @return The mount tag that follows the critical rows of a mount, for the mounts that need one
+     */
+    public static Map<Mounted<?>, String> mountTags(Mek mek) {
+        Map<Mounted<?>, Set<Integer>> locations = new HashMap<>();
+        for (int location = 0; location < mek.locations(); location++) {
+            for (Mounted<?> mount : rowMounts(mek, location)) {
+                locations.computeIfAbsent(mount, newMount -> new HashSet<>()).add(location);
+            }
+        }
+        // The tags number the mounts of an equipment in the order their rows are written, top to bottom
+        Map<Mounted<?>, String> tags = new HashMap<>();
+        Map<EquipmentType, Integer> ids = new HashMap<>();
+        for (int location : locationOrder) {
+            if (location >= mek.locations()) {
+                continue;
+            }
+            for (Mounted<?> mount : rowMounts(mek, location)) {
+                if (!tags.containsKey(mount) && sharesALocationWithItsEquipment(mount, locations)) {
+                    tags.put(mount, "#" + ids.merge(mount.getType(), 1, Integer::sum));
+                }
+            }
+        }
+        return tags;
+    }
+
+    /** @return True for a split mount that has a location in common with another mount of its equipment */
+    private static boolean sharesALocationWithItsEquipment(Mounted<?> mount,
+          Map<Mounted<?>, Set<Integer>> locations) {
+        Set<Integer> mountLocations = locations.get(mount);
+        return (mountLocations.size() > 1) && !mount.getType().isSpreadable()
+              && locations.entrySet().stream().anyMatch(other -> (other.getKey() != mount)
+                    && (other.getKey().getType() == mount.getType())
+                    && !Collections.disjoint(mountLocations, other.getValue()));
+    }
+
+    /**
+     * @return The mounts of the critical rows of a location, top to bottom
+     */
+    static List<Mounted<?>> rowMounts(Mek mek, int location) {
+        List<Mounted<?>> mounts = new ArrayList<>();
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot criticalSlot = mek.getCritical(location, slot);
+            if ((criticalSlot != null) && (criticalSlot.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                mounts.add(criticalSlot.getMount());
+                if (criticalSlot.getMount2() != null) {
+                    mounts.add(criticalSlot.getMount2());
+                }
+            }
+        }
+        return mounts;
     }
 
     private void clearSystemCriticalIfAbsent(Mek mek, int loc, int slot, String expectedCritical) {

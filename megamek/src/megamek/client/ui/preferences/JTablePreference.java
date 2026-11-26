@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,47 +32,52 @@
  */
 package megamek.client.ui.preferences;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 
 import megamek.codeUtilities.StringUtility;
 import megamek.logging.MMLogger;
 
 /**
- * JTablePreference monitors the latest sort column and sort order of a JTable. It sets the saved values when a dialog
- * is loaded and changes them as they change.
+ * JTablePreference keeps the sort of a JTable: every sort key, not only the column sorted last, so a table sorted by
+ * rank and then by profession comes back sorted by profession and, within each profession, by rank. It sets the saved
+ * sort when the table is loaded and follows it as it changes.
+ * <p>
+ * The value is the sort keys from the primary key down, each as {@code column|ORDER}, joined by {@code |}: for example
+ * {@code 4|ASCENDING|2|DESCENDING}. A value with a single key is the format older versions wrote, and older versions
+ * reading this format take the primary key and ignore the rest.
  * <p>
  * Call preferences.manage(new JTablePreference(JTable)) to use this preference, on a JTable that has called setName
+ * and has its row sorter set.
  */
-public class JTablePreference extends PreferenceElement implements MouseListener {
+public class JTablePreference extends PreferenceElement implements RowSorterListener {
     private final static MMLogger logger = MMLogger.create(JTablePreference.class);
+
+    private static final String SEPARATOR = "|";
 
     // region Variable Declarations
     private final WeakReference<JTable> weakReference;
-    private int columnIndex;
-    private SortOrder sortOrder;
+    private final WeakReference<RowSorter<?>> rowSorterReference;
+    private List<RowSorter.SortKey> sortKeys;
     // endregion Variable Declarations
 
     // region Constructors
     public JTablePreference(final JTable table) throws Exception {
         super(table.getName());
 
-        if (!table.getRowSorter().getSortKeys().isEmpty()) {
-            setColumnIndex(table.getRowSorter().getSortKeys().getFirst().getColumn());
-            setSortOrder(table.getRowSorter().getSortKeys().getFirst().getSortOrder());
-        } else {
-            setColumnIndex(0);
-            setSortOrder(SortOrder.ASCENDING);
-        }
-
         weakReference = new WeakReference<>(table);
-        table.getTableHeader().addMouseListener(this);
+        final RowSorter<?> rowSorter = table.getRowSorter();
+        rowSorterReference = new WeakReference<>(rowSorter);
+        setSortKeys(rowSorter.getSortKeys());
+        rowSorter.addRowSorterListener(this);
     }
     // endregion Constructors
 
@@ -81,27 +86,57 @@ public class JTablePreference extends PreferenceElement implements MouseListener
         return weakReference;
     }
 
+    /**
+     * @return the sort keys to save, from the primary key down; never empty
+     */
+    public List<RowSorter.SortKey> getSortKeys() {
+        return sortKeys;
+    }
+
+    /**
+     * Keeps a copy of the given sort keys, leaving out unsorted keys. With no sort keys left it keeps the first column
+     * ascending, as this preference always has.
+     *
+     * @param sortKeys the table's sort keys, from the primary key down
+     */
+    public void setSortKeys(final List<? extends RowSorter.SortKey> sortKeys) {
+        final List<RowSorter.SortKey> keys = new ArrayList<>();
+        for (final RowSorter.SortKey key : sortKeys) {
+            if (key.getSortOrder() != SortOrder.UNSORTED) {
+                keys.add(key);
+            }
+        }
+
+        if (keys.isEmpty()) {
+            keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        }
+        this.sortKeys = List.copyOf(keys);
+    }
+
+    /**
+     * @return the model index of the primary sort column
+     */
     public int getColumnIndex() {
-        return columnIndex;
+        return getSortKeys().getFirst().getColumn();
     }
 
-    public void setColumnIndex(final int columnIndex) {
-        this.columnIndex = columnIndex;
-    }
-
+    /**
+     * @return the sort order of the primary sort column
+     */
     public SortOrder getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(final SortOrder sortOrder) {
-        this.sortOrder = sortOrder;
+        return getSortKeys().getFirst().getSortOrder();
     }
     // endregion Getters/Setters
 
     // region PreferenceElement
     @Override
     protected String getValue() {
-        return String.format("%d|%s", getColumnIndex(), getSortOrder().name());
+        final List<String> parts = new ArrayList<>();
+        for (final RowSorter.SortKey key : getSortKeys()) {
+            parts.add(Integer.toString(key.getColumn()));
+            parts.add(key.getSortOrder().name());
+        }
+        return String.join(SEPARATOR, parts);
     }
 
     @Override
@@ -112,67 +147,67 @@ public class JTablePreference extends PreferenceElement implements MouseListener
         }
 
         final JTable element = getWeakReference().get();
-        if (element != null) {
-            final String[] parts = value.split("\\|", -1);
-
-            setColumnIndex(Integer.parseInt(parts[0]));
-            setSortOrder(SortOrder.valueOf(parts[1]));
-
-            final List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-            sortKeys.add(new RowSorter.SortKey(getColumnIndex(), getSortOrder()));
-
-            element.getRowSorter().setSortKeys(sortKeys);
+        final RowSorter<?> rowSorter = rowSorterReference.get();
+        if ((element == null) || (rowSorter == null)) {
+            return;
         }
+
+        final List<RowSorter.SortKey> keys = parseSortKeys(value, element.getModel().getColumnCount());
+        if (keys.isEmpty()) {
+            logger.warn("Cannot restore the sort of table {} from {}", getName(), value);
+            return;
+        }
+
+        // the sort keys are taken up by the row sorter listener
+        rowSorter.setSortKeys(keys);
+    }
+
+    /**
+     * Reads the saved sort keys, leaving out any that are broken, refer to a column the table doesn't have, or repeat
+     * a column already read.
+     *
+     * @param value       the saved value
+     * @param columnCount the number of columns in the table's model
+     *
+     * @return the sort keys, from the primary key down
+     */
+    static List<RowSorter.SortKey> parseSortKeys(final String value, final int columnCount) {
+        final String[] parts = value.split("\\|", -1);
+        final List<RowSorter.SortKey> keys = new ArrayList<>();
+        final Set<Integer> columns = new HashSet<>();
+
+        for (int i = 0; i + 1 < parts.length; i += 2) {
+            try {
+                final int column = Integer.parseInt(parts[i].trim());
+                final SortOrder sortOrder = SortOrder.valueOf(parts[i + 1].trim());
+                if ((column >= 0) && (column < columnCount) && (sortOrder != SortOrder.UNSORTED)
+                          && columns.add(column)) {
+                    keys.add(new RowSorter.SortKey(column, sortOrder));
+                }
+            } catch (IllegalArgumentException ex) {
+                logger.warn("Skipping a broken sort key in {}", value);
+            }
+        }
+        return keys;
     }
 
     @Override
     protected void dispose() {
-        final JTable element = getWeakReference().get();
-        if (element != null) {
-            element.removeMouseListener(this);
-            getWeakReference().clear();
+        final RowSorter<?> rowSorter = rowSorterReference.get();
+        if (rowSorter != null) {
+            rowSorter.removeRowSorterListener(this);
         }
+        rowSorterReference.clear();
+        getWeakReference().clear();
     }
     // endregion PreferenceElement
 
-    // region MouseListener
+    // region RowSorterListener
     @Override
-    public void mouseClicked(final MouseEvent evt) {
-        final JTable table = getWeakReference().get();
-        if (table != null) {
-            final int uiIndex = table.getColumnModel().getColumnIndexAtX(evt.getX());
-            if (uiIndex == -1) {
-                return;
-            }
-
-            setColumnIndex(table.getColumnModel().getColumn(uiIndex).getModelIndex());
-            for (final RowSorter.SortKey key : table.getRowSorter().getSortKeys()) {
-                if (key.getColumn() == getColumnIndex()) {
-                    setSortOrder(key.getSortOrder());
-                    break;
-                }
-            }
+    public void sorterChanged(final RowSorterEvent event) {
+        if (event.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
+            setSortKeys(event.getSource().getSortKeys());
         }
     }
-
-    @Override
-    public void mousePressed(final MouseEvent evt) {
-
-    }
-
-    @Override
-    public void mouseReleased(final MouseEvent evt) {
-
-    }
-
-    @Override
-    public void mouseEntered(final MouseEvent evt) {
-
-    }
-
-    @Override
-    public void mouseExited(final MouseEvent evt) {
-
-    }
-    // endregion MouseListener
+    // endregion RowSorterListener
 }

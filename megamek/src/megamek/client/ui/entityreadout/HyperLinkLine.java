@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ package megamek.client.ui.entityreadout;
 import java.util.Objects;
 
 import megamek.client.ui.util.DiscordFormat;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Displays a hyperlink.
@@ -57,7 +58,17 @@ class HyperLinkLine extends LabeledLine {
     @Override
     public String toHTML() {
         String result = label.isBlank() ? "" : label + ": ";
-        return result + "<B><A HREF=" + address + ">" + value.toHTML() + "</A></B><BR>";
+        return result + "<B><A " + hrefAttribute(address) + ">" + value.toHTML() + "</A></B><BR>";
+    }
+
+    /**
+     * @param address A link target, such as a shop URL from a sourcebook file
+     *
+     * @return The quoted, HTML-escaped {@code HREF} attribute for the address, so a URL with {@code &} or a quote
+     *       cannot break the surrounding markup
+     */
+    static String hrefAttribute(String address) {
+        return "HREF=\"" + StringEscapeUtils.escapeHtml4(Objects.requireNonNullElse(address, "")) + "\"";
     }
 
     @Override

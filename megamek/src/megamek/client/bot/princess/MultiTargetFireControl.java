@@ -162,6 +162,9 @@ public class MultiTargetFireControl extends FireControl {
 
                 for (AmmoMounted ammo : ammos) {
                     WeaponFireInfo shot = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);
+                    if (shot.getExpectedDamage() <= 0) {
+                        shot = shotInOtherMissileMode(shooter, target, weapon, ammo, shot);
+                    }
 
                     // this is a better shot if it has a chance of doing damage and the damage is
                     // better than the previous best shot
@@ -180,6 +183,38 @@ public class MultiTargetFireControl extends FireControl {
         }
 
         return bestShot;
+    }
+
+    /**
+     * Tries a missile weapon that has no shot in its current mode in its other one: a launcher with no line of sight
+     * can still fire indirectly when a friendly unit is spotting the target. The single-target planner has always
+     * done this; without it a gun emplacement, which plans through this class, never fired over an obstacle.
+     *
+     * @param shooter       the unit firing
+     * @param target        the target
+     * @param weapon        the weapon, switched to its other mode only if that gives it a shot
+     * @param ammo          the ammunition to fire
+     * @param shotAsIs      the shot in the weapon's current mode, which does no damage
+     *
+     * @return the shot in the other mode when that one can do damage, otherwise {@code shotAsIs}
+     */
+    private WeaponFireInfo shotInOtherMissileMode(Entity shooter, Targetable target, WeaponMounted weapon,
+          AmmoMounted ammo, WeaponFireInfo shotAsIs) {
+        int otherMode = switchMissileMode(weapon);
+        if (otherMode < 0) {
+            return shotAsIs;
+        }
+        WeaponFireInfo shotInOtherMode = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);
+        if (shotInOtherMode.getExpectedDamage() > 0) {
+            shotInOtherMode.setUpdatedFiringMode(otherMode);
+            logger.trace("[IndirectFire] {}: {} has no direct shot at {}, switching mode gives {} expected damage",
+                  shooter.getDisplayName(), weapon.getName(), target.getDisplayName(),
+                  shotInOtherMode.getExpectedDamage());
+            return shotInOtherMode;
+        }
+        // no better: put the weapon back in the mode it was in
+        switchMissileMode(weapon);
+        return shotAsIs;
     }
 
     /**

@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import jakarta.annotation.Nullable;
+import megamek.common.HexTarget;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.equipment.GunEmplacement;
@@ -197,6 +198,17 @@ public interface Targetable extends InGameObject, Serializable {
         }
 
         return first.getPosition().equals(second.getPosition());
+    }
+
+    /** Whether two attacks or spot orders refer to the same unit, building hex, or terrain hex. */
+    static boolean isSameTarget(@Nullable Targetable first, @Nullable Targetable second) {
+        if ((first == null) || (second == null) || (first.getId() != second.getId())) {
+            return false;
+        }
+        // A location ID includes the board, but a hex and a building there share the ID. An entity can also have it.
+        return (first.getTargetType() == second.getTargetType())
+              || ((first instanceof HexTarget) && (second instanceof HexTarget))
+              || ((first instanceof BuildingTarget) && (second instanceof BuildingTarget));
     }
 
 

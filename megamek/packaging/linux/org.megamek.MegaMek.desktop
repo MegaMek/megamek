@@ -1,0 +1,14 @@
+# Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+#
+# Desktop entry for Linux packages such as the Flathub build (org.megamek.MegaMek).
+# Exec names the launcher the package installs on its PATH.
+[Desktop Entry]
+Type=Application
+Name=MegaMek
+GenericName=Turn-based strategy game
+Comment=Play the BattleTech board game alone against bots or with friends online
+Exec=megamek
+Icon=org.megamek.MegaMek
+Terminal=false
+Categories=Game;StrategyGame;
+Keywords=battletech;mek;tabletop;boardgame;hex;wargame;

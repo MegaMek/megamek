@@ -103,4 +103,14 @@ public class TWRulesUnderwater extends RulesUnderwater {
     public int getExtremeRange(WeaponType weaponType) {
         return weaponType.getWExtremeRange();
     }
+
+    @Override
+    public boolean allowsLosRange(WeaponType weaponType) {
+        return true;
+    }
+
+    @Override
+    public boolean breachOnLowRoll() {
+        return false;
+    }
 }

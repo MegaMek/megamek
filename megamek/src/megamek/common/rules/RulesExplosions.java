@@ -34,14 +34,14 @@ package megamek.common.rules;
  */
 
 
+import java.util.Vector;
+
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-
-import java.util.Vector;
 
 public abstract class RulesExplosions {
     /**
@@ -56,6 +56,22 @@ public abstract class RulesExplosions {
      */
     public abstract int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec);
+
+    /**
+     * A rotary autocannon that suffers a critical hit while jammed explodes for a single shot (TW p.140).
+     *
+     * @return true if a jammed rotary autocannon explodes when hit
+     */
+    public abstract boolean jammedRotaryAutocannonExplodes();
+
+    /**
+     * Vents a surviving Mek location where the final point of a capped internal explosion was applied.
+     *
+     * @param mek the Mek taking damage
+     * @param hit the location the last point of explosion damage was applied to
+     * @param reportVec vector of reports
+     */
+    public abstract void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec);
 
     /**
      * CASE II damage reduction.
@@ -80,7 +96,7 @@ public abstract class RulesExplosions {
     public abstract int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion);
 
     /**
-     * How much damage to equipment explosions do.
+     * How much damage does this component deal when it explodes?
      *
      * @param mounted the mounted equipment
      * @param weaponType the weapon type
@@ -96,10 +112,8 @@ public abstract class RulesExplosions {
     public abstract boolean arePodsExplosive(Mounted<?> mounted);
 
     /**
-     * Should explosions be reduced? 
-     * @return false by default
+     * Should explosions be reduced?
+     * @return whether internal explosion damage is capped
      */
-    public boolean explosionsAreReduced() {
-        return false;
-    }
+    public abstract boolean explosionsAreReduced();
 }

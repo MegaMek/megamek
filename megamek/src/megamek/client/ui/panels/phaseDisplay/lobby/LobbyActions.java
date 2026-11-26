@@ -40,7 +40,6 @@ import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.haveSingl
 import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.isBlindDrop;
 import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.isRealBlindDrop;
 
-import java.awt.Dimension;
 import java.util.*;
 import java.util.Map.Entry;
 import javax.swing.JFrame;
@@ -457,8 +456,8 @@ public class LobbyActions {
         boolean editable = allowCustomization(oneSelected);
 
         CustomMekDialog cmd = new CustomMekDialog(lobby.getClientGUI(), client, new ArrayList<>(standardUnits), editable);
-        cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
-              GUIPreferences.getInstance().getCustomUnitHeight()));
+        cmd.setStoredSize(GUIPreferences.getInstance().getCustomUnitWidth(),
+              GUIPreferences.getInstance().getCustomUnitHeight());
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits"));
         cmd.setVisible(true);
         GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
@@ -518,8 +517,8 @@ public class LobbyActions {
             List<Entity> entities = new ArrayList<>();
             entities.add(entity);
             CustomMekDialog cmd = new CustomMekDialog(lobby.getClientGUI(), client, entities, editable);
-            cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
-                  GUIPreferences.getInstance().getCustomUnitHeight()));
+            cmd.setStoredSize(GUIPreferences.getInstance().getCustomUnitWidth(),
+                  GUIPreferences.getInstance().getCustomUnitHeight());
             cmd.refreshOptions();
             cmd.refreshQuirks();
             cmd.refreshPartReps();

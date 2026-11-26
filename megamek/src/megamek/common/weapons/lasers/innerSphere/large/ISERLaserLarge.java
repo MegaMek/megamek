@@ -81,6 +81,7 @@ public class ISERLaserLarge extends LaserWeapon {
               rulesRef(SourceBookCode.CORE, 185),
               rulesRef(SourceBookCode.TW, 303)
         );
+        flags = flags.or(F_RISC_LASER_PULSE_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)

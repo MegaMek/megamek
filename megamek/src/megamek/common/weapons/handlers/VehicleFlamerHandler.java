@@ -37,6 +37,7 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -98,11 +99,8 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             if (hit != null) {
                 hit.setHeatWeapon(true);
             }
+            // A flamer that also heats does so as the hit strikes, before its damage (see applyHeatOnStrike)
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-
-            if (Game.rulesManager.getRulesWeapons().flamerHeatAndDamage(bmmFlamerDamage) && entityTarget.tracksHeat()) {
-                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
-            }
         } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                   toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
@@ -125,6 +123,11 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
 
             FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
         }
+    }
+
+    @Override
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
+        return FlamerHandlerHelper.heatWithDamage(game, entityTarget, weaponType, subjectId, hit);
     }
 
 

@@ -33,10 +33,13 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -54,6 +57,7 @@ import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
@@ -107,6 +111,8 @@ class EscortFollowerTest {
         bot.setBot(true);
         game.addPlayer(1, bot);
         princess = spy(new Princess("Lyran Allies", UUID.randomUUID().toString(), 1));
+        // escorts' roles are unit orders, which only a bot that follows them (CASPAR) carries out
+        doReturn(true).when(princess).followsUnitOrders();
         doReturn(game).when(princess).getGame();
         game.setPhase(GamePhase.FIRING);
     }
@@ -410,18 +416,73 @@ class EscortFollowerTest {
               princess.getUnitOrdersFollower().getEscortPlace(lead));
     }
 
+    private static MovePath moveEndingAt(Coords end) {
+        MovePath path = mock(MovePath.class);
+        when(path.getFinalCoords()).thenReturn(end);
+        return path;
+    }
+
     @Test
-    void anEscortBreakingOffBrieflyClosesNoMoreThanFourHexes() {
+    void anEscortBreakingOffBrieflyFightsOnItsLeashThenGoesBackToItsPlace() {
+        // QA playtest, #9524: set to leave Briefly, the escorts only shifted their places 4 hexes and never fought
         convoyHeadingNorth();
         Entity lead = escort(10, HEAD_HEX.translated(NORTH, 2),
               leadEscort(LanceRole.Contact.BREAK_AND_FIGHT, LanceRole.LeaveToFight.BRIEFLY));
         Entity enemy = enemyEastOfTheHead(12);
-        Coords normalPlace = HEAD_HEX.translated(NORTH, MEDIUM_DISTANCE);
+        Coords place = HEAD_HEX.translated(NORTH, MEDIUM_DISTANCE);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        doReturn(false).when(princess).getForcedWithdrawal();
+        UnitBehavior behavior = princess.getUnitBehaviorTracker();
+        game.setCurrentRound(3);
 
-        Coords place = princess.getUnitOrdersFollower().getEscortPlace(lead).orElseThrow();
+        assertEquals(Optional.of(place), follower.getEscortPlace(lead), "the place it is leashed to stays put");
+        assertTrue(follower.isEscortFightingBriefly(lead));
+        assertEquals(UnitBehavior.BehaviorType.Engaged, behavior.getBehaviorType(lead, princess));
+        assertTrue(behavior.getActiveWaypoint(lead, princess).isEmpty(), "nothing pulls it back while it fights");
+        MovePath onLeash = moveEndingAt(place.translated(SOUTH_EAST, LanceRole.BRIEF_CHASE_HEXES));
+        MovePath pastLeash = moveEndingAt(place.translated(SOUTH_EAST, LanceRole.BRIEF_CHASE_HEXES + 2));
+        assertEquals(List.of(onLeash), follower.limitToFormationPace(lead, List.of(onLeash, pastLeash)));
 
-        assertEquals(LanceRole.BRIEF_CHASE_HEXES, normalPlace.distance(place));
-        assertTrue(place.distance(enemy.getPosition()) < normalPlace.distance(enemy.getPosition()));
+        game.setCurrentRound(3 + LanceRole.BRIEF_FIGHT_ROUNDS);
+        behavior.clear();
+        assertFalse(follower.isEscortFightingBriefly(lead), "the brief fight is over while the threat stays");
+        assertEquals(UnitBehavior.BehaviorType.MoveToDestination, behavior.getBehaviorType(lead, princess));
+        assertEquals(Optional.of(place), behavior.getActiveWaypoint(lead, princess));
+        assertEquals(List.of(onLeash, pastLeash), follower.limitToFormationPace(lead, List.of(onLeash, pastLeash)));
+
+        enemy.setPosition(HEAD_HEX.translated(SOUTH_EAST, ESCORT_REACH + 6));
+        game.setCurrentRound(6);
+        assertFalse(follower.isEscortFightingBriefly(lead), "no threat, no fight");
+        enemy.setPosition(HEAD_HEX.translated(SOUTH_EAST, 12));
+        game.setCurrentRound(7);
+        assertTrue(follower.isEscortFightingBriefly(lead), "a threat that comes back is fought again");
+    }
+
+    @Test
+    void aConvoyStillToDeployIsNotGone() {
+        // QA playtest, #9524: every escort logged its convoy gone in round 1, before the convoy deployed
+        List<Entity> trucks = convoyHeadingNorth();
+        for (Entity truck : trucks) {
+            truck.setDeployed(false);
+            truck.setPosition(null);
+        }
+        Entity lead = escort(10, HEAD_HEX.translated(NORTH, 2), LanceRole.defaultEscort(CONVOY_FORCE_ID));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        assertTrue(follower.getEscortPlace(lead).isEmpty());
+        assertFalse(follower.convoyEscorts().hasLoggedConvoyGone(lead));
+
+        for (int slot = 0; slot < trucks.size(); slot++) {
+            trucks.get(slot).setPosition(HEAD_HEX.translated(3, slot));
+            trucks.get(slot).setDeployed(true);
+        }
+        game.setTurnIndex(game.getTurnIndex() + 1, bot.getId());
+        assertTrue(follower.getEscortPlace(lead).isPresent());
+        for (Entity truck : trucks) {
+            truck.setDestroyed(true);
+        }
+        follower.getEscortPlace(lead);
+        assertTrue(follower.convoyEscorts().hasLoggedConvoyGone(lead), "the real event is logged");
     }
 
     @Test

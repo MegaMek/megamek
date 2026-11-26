@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -105,7 +105,7 @@ public enum BayData {
           (size, num) -> new RefrigeratedCargoBay(size, 0, num)),
     INSULATED_CARGO("Cargo (Insulated)", 1 / 0.87, 0, CargoBay.techAdvancement(),
           (size, num) -> new InsulatedCargoBay(size, 0, num)),
-    LIVESTOCK_CARGO("Cargo Livestock)", 1 / 0.83, 0, CargoBay.techAdvancement(),
+    LIVESTOCK_CARGO("Cargo (Livestock)", 1 / 0.83, 0, CargoBay.techAdvancement(),
           (size, num) -> new LivestockCargoBay(size, 0, num));
 
     private final String name;

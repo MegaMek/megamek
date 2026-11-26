@@ -41,13 +41,19 @@ import java.util.Collections;
 import java.util.List;
 
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
 import megamek.common.units.Entity;
+import megamek.common.units.Warship;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Regression tests for issue #8966: {@link WeaponHandler#getLargeCraftHeat(Entity)} read the Heat by bay option
@@ -107,6 +113,16 @@ class LargeCraftHeatTest {
         AttackHandler attackHandler = mock(AttackHandler.class);
         when(attackHandler.getWeaponAttackAction()).thenReturn(action);
         return attackHandler;
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "Ammo AR10 Barracuda, 10", "Ammo AR10 White Shark, 15", "Ammo AR10 Killer Whale, 20" })
+    void ar10ArcHeatUsesTheLoadedMissile(String ammoName, int heat) throws LocationFullException {
+        Warship warship = new Warship();
+        WeaponMounted ar10 = (WeaponMounted) warship.addEquipment(EquipmentType.get("AR10"), Aero.LOC_NOSE);
+        ar10.setLinked(warship.addEquipment(EquipmentType.get(ammoName), Aero.LOC_NOSE));
+
+        assertEquals(heat, warship.getHeatInArc(Aero.LOC_NOSE, false));
     }
 
     @Test

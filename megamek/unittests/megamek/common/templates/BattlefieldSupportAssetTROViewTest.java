@@ -32,6 +32,7 @@
  */
 package megamek.common.templates;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,6 +47,8 @@ import megamek.common.battlefieldSupport.BFSSpecial;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.battlefieldSupport.BattlefieldSupportAssetData;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.EntityMovementMode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -60,6 +63,7 @@ class BattlefieldSupportAssetTROViewTest {
     @Test
     void dispatchesAndRendersHtmlWithNarrativeFluff() {
         TROView view = TROView.createView(testAsset(), ViewFormatting.HTML);
+        view.setIncludeFluffText(true);
 
         assertInstanceOf(BattlefieldSupportAssetTROView.class, view);
         String output = view.processTemplate();
@@ -71,12 +75,44 @@ class BattlefieldSupportAssetTROViewTest {
     @Test
     void dispatchesAndRendersPlainTextWithNarrativeFluff() {
         TROView view = TROView.createView(testAsset(), ViewFormatting.NONE);
+        view.setIncludeFluffText(true);
 
         assertInstanceOf(BattlefieldSupportAssetTROView.class, view);
         String output = view.processTemplate();
         assertNotNull(output);
         assertTrue(output.contains("Test overview"));
         assertAssetStats(output);
+    }
+
+    @Test
+    void hidingFluffTextKeepsTheStats() {
+        for (ViewFormatting formatting : List.of(ViewFormatting.HTML, ViewFormatting.NONE)) {
+            TROView view = TROView.createView(testAsset(), formatting);
+            view.setIncludeFluffText(false);
+
+            String output = view.processTemplate();
+            assertNotNull(output);
+            assertFalse(output.contains("Test overview"));
+            assertAssetStats(output);
+
+            view.setIncludeFluffText(true);
+            assertTrue(view.processTemplate().contains("Test overview"));
+        }
+    }
+
+    @Test
+    void fluffTextDefaultFollowsThePreference() {
+        ClientPreferences preferences = PreferenceManager.getClientPreferences();
+        boolean original = preferences.getShowUnitFluffText();
+        try {
+            preferences.setShowUnitFluffText(false);
+            assertFalse(TROView.createView(testAsset(), ViewFormatting.NONE).getIncludeFluffText());
+
+            preferences.setShowUnitFluffText(true);
+            assertTrue(TROView.createView(testAsset(), ViewFormatting.NONE).getIncludeFluffText());
+        } finally {
+            preferences.setShowUnitFluffText(original);
+        }
     }
 
     private static void assertAssetStats(String output) {

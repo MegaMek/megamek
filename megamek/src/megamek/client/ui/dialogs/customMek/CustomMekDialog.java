@@ -40,6 +40,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -2563,6 +2564,35 @@ public class CustomMekDialog extends AbstractButtonDialog
 
         setResizable(true);
         return mainPanel;
+    }
+
+    /**
+     * Sets the dialog to the size the player last left it at, then widens it if that is too narrow for the content.
+     * The stored width defaults to 600 pixels, narrower than the Pilot tab, and the Pilot tab clips at its right edge
+     * rather than squeezing its fields.
+     *
+     * @param width  the stored dialog width
+     * @param height the stored dialog height
+     */
+    public void setStoredSize(int width, int height) {
+        setSize(width, height);
+        widenToFitContent();
+    }
+
+    /**
+     * Widens the dialog to its content's preferred width, capped at 80% of the screen width like the first-time fit.
+     * Never narrows it and leaves the height alone.
+     */
+    private void widenToFitContent() {
+        int maximumWidth = (int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.8);
+        int neededWidth = Math.min(getPreferredSize().width, maximumWidth);
+        if (getWidth() >= neededWidth) {
+            return;
+        }
+        LOGGER.debug("[CustomizeDialog] Saved width {} is narrower than the content needs, widening to {}",
+              getWidth(), neededWidth);
+        setSize(neededWidth, getHeight());
+        fit();
     }
 
     @Override

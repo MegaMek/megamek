@@ -39,10 +39,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
+import megamek.common.equipment.ObjectiveScoringScheme.RaidPayout;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -105,6 +108,7 @@ class ObjectiveResolutionHandlerTest {
         when(game.getOptions()).thenReturn(gameOptions);
         when(game.getVictoryContext()).thenReturn(new HashMap<>());
         when(game.getCurrentRound()).thenReturn(3);
+        when(game.getRetreatedEntities()).thenReturn(Collections.emptyEnumeration());
     }
 
     private PlacedObjective objectiveAt(Coords position, int controlRadius, Player owner) {
@@ -596,6 +600,92 @@ class ObjectiveResolutionHandlerTest {
         assertEquals(0, tracker.getTeamVictoryPoints(1));
     }
 
+    // --- decoys (False objectives) ---
+
+    @Test
+    void testADecoyHoldPointIsExposedInsteadOfSecured() {
+        Coords decoyPosition = new Coords(4, 4);
+        PlacedObjective decoy = objectiveAt(decoyPosition, 0, teamTwoPlayer);
+        decoy.marker().setScoringScheme(ObjectiveScoringScheme.hold(1, HoldCounting.CONSECUTIVE));
+        decoy.marker().setVictoryPointValue(3);
+        decoy.marker().setFalseObjective(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(decoyPosition, new ArrayList<>(List.of(decoy.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, decoyPosition));
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1), "a decoy never pays");
+        assertFalse(tracker.isPointDecided(), "so sudden death cannot end the game on it");
+        verify(game).removeGroundObject(decoyPosition, decoy.marker());
+        assertTrue(reportIds().contains(VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
+    }
+
+    @Test
+    void testADecoyThatWouldPayAStandardPointIsExposed() {
+        // Team 1 holds its own point and the enemy decoy. Counting the decoy as an enemy point would pay 1 VP,
+        // so the decoy is exposed and the real score, 0, stands
+        Coords friendlyPosition = new Coords(2, 2);
+        Coords decoyPosition = new Coords(4, 2);
+        Coords enemyPosition = new Coords(12, 12);
+        PlacedObjective friendlyObjective = objectiveAt(friendlyPosition, 0, teamOnePlayer);
+        PlacedObjective decoy = objectiveAt(decoyPosition, 0, teamTwoPlayer);
+        decoy.marker().setFalseObjective(true);
+        PlacedObjective enemyObjective = objectiveAt(enemyPosition, 0, teamTwoPlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(friendlyPosition, new ArrayList<>(List.of(friendlyObjective.marker())));
+        groundObjects.put(decoyPosition, new ArrayList<>(List.of(decoy.marker())));
+        groundObjects.put(enemyPosition, new ArrayList<>(List.of(enemyObjective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        List<Entity> entities = List.of(
+              groundUnit(teamOnePlayer, friendlyPosition),
+              groundUnit(teamOnePlayer, decoyPosition));
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1));
+        verify(game).removeGroundObject(decoyPosition, decoy.marker());
+    }
+
+    @Test
+    void testADecoyThatOnlyCostsPointsStaysHidden() {
+        // Team 1 holds both real points but not the decoy. As seen, it holds 2 of 3 points and scores 1; the real
+        // count would be all points and 2. The decoy only cost a point, as a real one would, so it stays hidden
+        Coords friendlyPosition = new Coords(2, 2);
+        Coords enemyPosition = new Coords(4, 2);
+        Coords decoyPosition = new Coords(12, 12);
+        PlacedObjective friendlyObjective = objectiveAt(friendlyPosition, 0, teamOnePlayer);
+        PlacedObjective enemyObjective = objectiveAt(enemyPosition, 0, teamTwoPlayer);
+        PlacedObjective decoy = objectiveAt(decoyPosition, 0, teamTwoPlayer);
+        decoy.marker().setFalseObjective(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(friendlyPosition, new ArrayList<>(List.of(friendlyObjective.marker())));
+        groundObjects.put(enemyPosition, new ArrayList<>(List.of(enemyObjective.marker())));
+        groundObjects.put(decoyPosition, new ArrayList<>(List.of(decoy.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        List<Entity> entities = List.of(
+              groundUnit(teamOnePlayer, friendlyPosition),
+              groundUnit(teamOnePlayer, enemyPosition));
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(1, tracker.getTeamVictoryPoints(1), "the score a real third point would have allowed");
+        verify(game, never()).removeGroundObject(decoyPosition, decoy.marker());
+    }
+
+    private List<Integer> reportIds() {
+        ArgumentCaptor<Report> reports = ArgumentCaptor.forClass(Report.class);
+        verify(gameManager, atLeastOnce()).addReport(reports.capture());
+        return reports.getAllValues().stream().map(report -> report.messageId).toList();
+    }
+
     @Test
     void testConfirmedCandidateScoresNormally() {
         // Same situation, but the candidate is confirmed - it counts as an enemy objective, so holding
@@ -959,5 +1049,260 @@ class ObjectiveResolutionHandlerTest {
         verify(gameManager, atLeastOnce()).addReport(reports.capture());
         assertFalse(reports.getAllValues().stream().anyMatch(report -> report.messageId == 7149),
               "no totals line when there is nothing to total");
+    }
+
+    // --- carried and destroyed points ---
+
+    @Test
+    void testACarriedObjectiveIsControlledByItsCarrierWhateverSurroundsIt() {
+        ObjectiveMarker flag = new ObjectiveMarker();
+        flag.setName("Flag");
+        flag.setOwnerId(teamTwoPlayer.getId());
+        flag.setScoringScheme(ObjectiveScoringScheme.raid());
+        flag.setMobile(true);
+        Coords carrierHex = new Coords(5, 5);
+        Entity carrier = groundUnit(teamOnePlayer, carrierHex);
+        when(carrier.getDistinctCarriedObjects()).thenReturn(List.of(flag));
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+        Entity firstEnemy = groundUnit(teamTwoPlayer, carrierHex);
+        Entity secondEnemy = groundUnit(teamTwoPlayer, carrierHex);
+
+        resolveWith(carrier, firstEnemy, secondEnemy);
+
+        assertEquals(1, flag.getControllingTeam(), "RAW: a Mek carrying an objective controls it");
+    }
+
+    @Test
+    void testADestroyedCapturePointCountsAsCapturedByTheSideAttackingIt() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.capture(3, 1), teamTwoPlayer, position);
+        objective.marker().setVictoryPointValue(2);
+        objective.marker().getScoringScheme().setCaptureProgress(1, ObjectiveScoringScheme.NO_SIDE, 2);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith();
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+        assertEquals(1, objective.marker().getScoringScheme().getSecuredTeam());
+        assertEquals(2, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(1));
+        assertTrue(reportIds().contains(ObjectiveResolutionHandler.REPORT_DESTROYED_POINT_TAKEN));
+    }
+
+    @Test
+    void testWreckingYourOwnCapturePointBeforeAnyProgressStillHandsItToTheEnemy() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.capture(3, 1), teamTwoPlayer, position);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith();
+
+        assertEquals(1, objective.marker().getScoringScheme().getSecuredTeam(), "no scorched-earth denial");
+    }
+
+    @Test
+    void testADestroyedDefendPointFallsToTheOnlyEnemyEvenWithNobodyThere() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(3, 1), teamOnePlayer, position);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith();
+
+        assertEquals(2, objective.marker().getScoringScheme().getSecuredTeam());
+        assertEquals(1, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(2));
+    }
+
+    @Test
+    void testADestroyedDefendPointFallsToTheEnemyWithTheMostUnitsInTheZone() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(3, 1), teamOnePlayer, position);
+        objective.marker().setDestroyed(true);
+        Player teamThreePlayer = playThreeSides();
+        Entity raider = groundUnit(teamThreePlayer, position);
+
+        resolveWith(raider);
+
+        assertEquals(3, objective.marker().getScoringScheme().getSecuredTeam());
+    }
+
+    @Test
+    void testWithSeveralEnemiesAndNoLeaderNobodyTakesADestroyedPointYet() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(3, 1), teamOnePlayer, position);
+        objective.marker().setDestroyed(true);
+        playThreeSides();
+
+        resolveWith();
+
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    @Test
+    void testADestroyedHoldPointScoresForNobody() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.hold(1, HoldCounting.CONSECUTIVE),
+              teamOnePlayer, position);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith(groundUnit(teamTwoPlayer, position));
+
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    @Test
+    void testADestroyedDecoyDefendPointIsExposedAndPaysNobody() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(3, 1), teamOnePlayer, position);
+        objective.marker().setFalseObjective(true);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith();
+
+        verify(game).removeGroundObject(position, objective.marker());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    // --- Objective Raid (Core p.217): each point pays its controller every End Phase ---
+
+    /** Installs Raid points paid every End Phase, worth 1 VP each, as the game's ground objects. */
+    private List<ObjectiveMarker> raidPointsAt(Coords... positions) {
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        List<ObjectiveMarker> raidPoints = new ArrayList<>();
+        for (Coords position : positions) {
+            ObjectiveMarker raidPoint = objectiveAt(position, 0, teamOnePlayer).marker();
+            raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+            raidPoint.setVictoryPointValue(1);
+            groundObjects.put(position, new ArrayList<>(List.of(raidPoint)));
+            raidPoints.add(raidPoint);
+        }
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        return raidPoints;
+    }
+
+    @Test
+    void testEachRaidPointPaysItsControllerEveryEndPhase() {
+        // the Core p.217 example: four crates, team 1 holds three and team 2 one - 3 and 1 VP every turn
+        Coords first = new Coords(2, 2);
+        Coords second = new Coords(6, 2);
+        Coords third = new Coords(10, 2);
+        Coords fourth = new Coords(14, 2);
+        raidPointsAt(first, second, third, fourth);
+        Entity[] holders = { groundUnit(teamOnePlayer, first), groundUnit(teamOnePlayer, second),
+              groundUnit(teamOnePlayer, third), groundUnit(teamTwoPlayer, fourth) };
+
+        resolveWith(holders);
+        resolveWith(holders);
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(6, tracker.getTeamVictoryPoints(1));
+        assertEquals(2, tracker.getTeamVictoryPoints(2));
+        assertTrue(reportIds().contains(ObjectiveResolutionHandler.REPORT_RAID_POINT_PAID));
+    }
+
+    @Test
+    void testARaidPointNobodyControlsPaysNobody() {
+        Coords position = new Coords(5, 5);
+        raidPointsAt(position);
+
+        resolveWith(groundUnit(teamOnePlayer, position), groundUnit(teamTwoPlayer, position));
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore(), "a tie leaves the point uncontrolled");
+    }
+
+    @Test
+    void testAnUnconfirmedPotentialRaidPointPaysOnlyOnceConfirmed() {
+        Coords position = new Coords(5, 5);
+        ObjectiveMarker candidate = raidPointsAt(position).getFirst();
+        candidate.setPotential(true);
+        Entity holder = groundUnit(teamOnePlayer, position);
+
+        resolveWith(holder);
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore(), "RAW: only confirmed objectives score");
+
+        candidate.setConfirmed(true);
+        resolveWith(holder);
+
+        assertEquals(1, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testACarriedRaidPointPaysItsCarriersSideEveryEndPhase() {
+        ObjectiveMarker flag = new ObjectiveMarker();
+        flag.setName("Flag");
+        flag.setScoringScheme(ObjectiveScoringScheme.raid());
+        flag.setVictoryPointValue(2);
+        flag.setMobile(true);
+        Entity carrier = groundUnit(teamTwoPlayer, new Coords(5, 5));
+        when(carrier.getDistinctCarriedObjects()).thenReturn(List.of(flag));
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+
+        resolveWith(carrier);
+
+        assertEquals(2, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(2));
+    }
+
+    @Test
+    void testARaidPointPaidAtGameEndPaysNothingDuringPlay() {
+        Coords position = new Coords(5, 5);
+        raidPointsAt(position).getFirst().getScoringScheme().setRaidPayout(RaidPayout.AT_GAME_END);
+
+        resolveWith(groundUnit(teamOnePlayer, position));
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    @Test
+    void testADecoyRaidPointIsExposedInsteadOfPaying() {
+        Coords position = new Coords(5, 5);
+        ObjectiveMarker decoy = raidPointsAt(position).getFirst();
+        decoy.setFalseObjective(true);
+
+        resolveWith(groundUnit(teamOnePlayer, position));
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore(), "a decoy never pays");
+        verify(game).removeGroundObject(position, decoy);
+        assertTrue(reportIds().contains(VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
+    }
+
+    @Test
+    void testACarriedDecoyRaidPointIsTakenFromItsCarrier() {
+        ObjectiveMarker decoy = new ObjectiveMarker();
+        decoy.setName("Flag");
+        decoy.setScoringScheme(ObjectiveScoringScheme.raid());
+        decoy.setMobile(true);
+        decoy.setFalseObjective(true);
+        Entity carrier = groundUnit(teamOnePlayer, new Coords(5, 5));
+        when(carrier.getDistinctCarriedObjects()).thenReturn(List.of(decoy));
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+
+        resolveWith(carrier);
+
+        verify(carrier).dropCarriedObject(decoy, false);
+        assertTrue(reportIds().contains(VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
+    }
+
+    private void playTwoSides() {
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer, teamTwoPlayer));
+    }
+
+    private Player playThreeSides() {
+        Player teamThreePlayer = new Player(2, "Craig");
+        teamThreePlayer.setTeam(3);
+        when(game.getPlayer(2)).thenReturn(teamThreePlayer);
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer, teamTwoPlayer, teamThreePlayer));
+        return teamThreePlayer;
     }
 }

@@ -47,6 +47,7 @@ import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import jakarta.annotation.Nullable;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
 import megamek.common.RulesRef;
 import megamek.common.SourceBookCode;
@@ -150,6 +151,32 @@ public class SerializationHelper {
 
         xStream.registerLocalConverter(Game.class, "pilotingRolls", new CollectionConverter(xStream.getMapper(),
               ArrayList.class));
+
+        // Before pending reinforced structure damage was a single location mask, saves stored a boolean per location.
+        xStream.registerLocalConverter(Mek.class, "reinforcedStructureDamaged", new Converter() {
+            @Override
+            public boolean canConvert(Class type) {
+                return type == Integer.class;
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int mask = reader.hasMoreChildren() ? 0 : MathUtility.parseInt(reader.getValue());
+                for (int location = 0; reader.hasMoreChildren(); location++) {
+                    reader.moveDown();
+                    if (Boolean.parseBoolean(reader.getValue())) {
+                        mask |= 1 << location;
+                    }
+                    reader.moveUp();
+                }
+                return mask == 0 ? null : mask;
+            }
+
+            @Override
+            public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
+                writer.setValue(value.toString());
+            }
+        });
 
         xStream.registerConverter(new Converter() {
             @Override

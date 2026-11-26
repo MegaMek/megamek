@@ -45,6 +45,8 @@ import megamek.common.units.Entity;
 public class HitData {
     public static final int EFFECT_NONE = 0;
     public static final int EFFECT_CRITICAL = 0x0001;
+    /** A critical check specifically from rolling a 2 on the hit location table (Core p.91). */
+    public static final int EFFECT_TAC = EFFECT_CRITICAL | 0x0004;
     public static final int EFFECT_VEHICLE_MOVE_DAMAGED = 0x0002;
     public static final int EFFECT_NO_CRITICAL_SLOTS = 0x0020;
 
@@ -76,6 +78,7 @@ public class HitData {
     private boolean fallDamage = false; // did the damage come from a fall?
     private HitDamageType generalDamageType;
     private boolean capital = false;
+    private boolean damageInStandardScale;
     private int capMisCritMod = 0;
     private boolean boxcars = false;
     private boolean burstFire = false;
@@ -167,6 +170,13 @@ public class HitData {
         specCritMod += modifier;
     }
 
+    /**
+     * The hit no longer makes an armor-piercing check, as when armor reduces its damage to zero.
+     */
+    public void clearArmorPiercing() {
+        specCrit = false;
+    }
+
     public void makeGlancingBlow() {
         glancing = -2;
     }
@@ -197,6 +207,10 @@ public class HitData {
 
     public int getEffect() {
         return effect;
+    }
+
+    public boolean isThroughArmorCritical() {
+        return (effect & EFFECT_TAC) == EFFECT_TAC;
     }
 
     public int getMotiveMod() {
@@ -258,6 +272,15 @@ public class HitData {
         return capital;
     }
 
+
+    /** An Aero Sanity capital gun can supply standard-scale damage and still inflict capital criticals. */
+    public boolean isDamageInStandardScale() {
+        return damageInStandardScale;
+    }
+
+    public void setDamageInStandardScale(boolean damageInStandardScale) {
+        this.damageInStandardScale = damageInStandardScale;
+    }
 
     public int getCapMisCritMod() {
         return capMisCritMod;

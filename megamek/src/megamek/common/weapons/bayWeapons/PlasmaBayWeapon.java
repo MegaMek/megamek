@@ -34,9 +34,19 @@
 
 package megamek.common.weapons.bayWeapons;
 
+import static megamek.common.game.IGame.LOGGER;
+
 import java.io.Serial;
 
+import jakarta.annotation.Nullable;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.plasma.PlasmaBayWeaponHandler;
+import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -62,5 +72,16 @@ public class PlasmaBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.flags = flags.or(F_ENERGY);
         this.atClass = CLASS_PLASMA;
+    }
+
+    @Override
+    public @Nullable AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction attack, Game game,
+          TWGameManager manager) {
+        try {
+            return new PlasmaBayWeaponHandler(toHit, attack, game, manager);
+        } catch (EntityLoadingException ex) {
+            LOGGER.warn("Could not create plasma bay attack handler", ex);
+            return null;
+        }
     }
 }

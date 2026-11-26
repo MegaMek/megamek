@@ -51,6 +51,7 @@ import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.PartialCover;
 import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.compute.ComputeSideTable;
@@ -164,12 +165,12 @@ public class ComputeTerrainMods {
         boolean semiGuidedIndirectVsTaggedTarget = isIndirect
               && (ammoType != null)
               && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
-              && Compute.isTargetTagged(target, game);
+              && Compute.isTargetTaggedByFriend(attacker, target, game);
 
         boolean semiGuidedDirectVsTaggedTarget = (!isIndirect
               && (ammoType != null)
               && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
-              && Compute.isTargetTagged(target, game) &&
+              && Compute.isTargetTaggedByFriend(attacker, target, game) &&
               Game.rulesManager.getRulesAmmo().semiGuidedIgnoresCover());
 
 
@@ -192,11 +193,24 @@ public class ComputeTerrainMods {
             toHit.append(terrainModifier);
         }
 
-        // Does Semi-guided direct reduce the terrain modifier
+        // Semi-guided direct fire at a TAGged target ignores partial cover "unless provided by being in water or
+        // inside a building", and reduces the target's terrain modifier by 2, minimum 0 (Core p.193). Kept partial
+        // cover "counts as a terrain modifier for the purposes of attacks that ignore or reduce terrain modifiers"
+        // (Core p.66), so it is reduced too.
         if (semiGuidedDirectVsTaggedTarget) {
-            int terrainMod = terrainModifier.getValue() + losMods.getValue();
-            int semiGuidedTerrain =
-                  Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(terrainMod, false, true);
+            Hex semiGuidedTargetHex = game.getHexOf(target);
+            boolean coverFromWater = PartialCover.isInPartialWater(entityTarget, semiGuidedTargetHex, targEl);
+            // Only cover the target's own building gives counts as "inside a building", not a hill beside it
+            boolean coverKept = coverFromWater || WeaponAttackAction.targetInShortCoverBuilding(target);
+            int coverMod = los.partialCoverModifier(game);
+            // Water cover the LOS did not already give is added below as +1
+            int keptCover = !coverKept ? 0
+                  : (coverFromWater && (los.getTargetCover() == LosEffects.COVER_NONE)) ? 1 : coverMod;
+            int semiGuidedTerrain = Game.rulesManager.getRulesAmmo()
+                  .getSemiGuidedAdjustment(terrainModifier.getValue() + keptCover, false, true);
+            if (!coverKept) {
+                semiGuidedTerrain += coverMod;
+            }
             if (semiGuidedTerrain > 0) {
                 toHit.append(new ToHitData(-semiGuidedTerrain, Messages.getString("WeaponAttackAction.SemiGuidedTag")));
             }
@@ -245,8 +259,10 @@ public class ComputeTerrainMods {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
         }
 
-        // Skips partial cover if using semi-guided direct against a tagged target and not in water partial cover.
-        boolean semiguidedNoWater = semiGuidedDirectVsTaggedTarget && !targetInWaterPartialCover;
+        // Skips partial cover if using semi-guided direct against a tagged target, unless the cover is from water or
+        // from being inside a building (Core p.193)
+        boolean semiguidedNoWater = semiGuidedDirectVsTaggedTarget && !targetInWaterPartialCover
+              && !WeaponAttackAction.targetInShortCoverBuilding(target);
 
         // Change hit table for partial cover, accommodate for partial underwater (legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE && !semiguidedNoWater) {

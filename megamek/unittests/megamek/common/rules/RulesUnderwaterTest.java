@@ -82,7 +82,8 @@ class RulesUnderwaterTest {
         assertEquals(6, core.getMediumRange(solidWeapon), "Core solid weapons keep their normal medium range.");
         assertEquals(8, core.getLongRange(energyWeapon), "Core energy weapons map long range to medium range underwater.");
         assertEquals(9, core.getLongRange(solidWeapon), "Core solid weapons keep their normal long range.");
-        assertEquals(12, core.getExtremeRange(energyWeapon), "Core energy weapons map extreme range to long range underwater.");
+        assertEquals(8, core.getExtremeRange(energyWeapon),
+              "Core p.127: an energy weapon has no underwater bracket beyond its shifted long range.");
         assertEquals(12, core.getExtremeRange(solidWeapon), "Core solid weapons keep their normal extreme range.");
 
         assertEquals(3, totalWarfare.getShortRange(solidWeapon), "Total Warfare keeps the base short range underwater.");

@@ -164,5 +164,6 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_INDIRECT_FIRE,
 
     F_PPC_CAPACITOR_COMPATIBLE,
+    F_RISC_LASER_PULSE_COMPATIBLE, // Laser that a RISC Laser Pulse Module can modify (IO:AE p. 87)
     S_IMPROVED,
 }

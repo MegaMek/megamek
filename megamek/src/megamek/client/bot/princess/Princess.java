@@ -3501,11 +3501,7 @@ public class Princess extends BotClient {
         int recurring = mover.getEngineCritHeat();
 
         if (!leavingThisHex && isStandingInFire(mover)) {
-            int fireHeat = FIRE_HEAT_PER_TURN;
-            if ((mover instanceof Mek mek) && mek.hasIntactHeatDissipatingArmor()) {
-                fireHeat /= 2;
-            }
-            recurring += fireHeat;
+            recurring += Game.rulesManager.getRulesArmor().reduceNonLocationHeat(mover, FIRE_HEAT_PER_TURN);
         }
 
         return recurring;
@@ -5831,8 +5827,9 @@ public class Princess extends BotClient {
      */
     void announceSpotting(final EntityAction spotAction, final Entity spotter) {
         if ((spotAction instanceof SpotAction spot) && !spotter.isHidden()) {
-            Entity target = getGame().getEntity(spot.getTargetId());
-            String targetName = (target != null) ? target.getShortName() : Integer.toString(spot.getTargetId());
+            Targetable target = spot.getTarget(getGame());
+            String targetName = (target instanceof Entity unit) ? unit.getShortName()
+                  : (target == null) ? Integer.toString(spot.getTargetId()) : target.getDisplayName();
             sendChat(Messages.getString("Princess.spotting", spotter.getShortName(), targetName), Level.INFO);
         }
     }

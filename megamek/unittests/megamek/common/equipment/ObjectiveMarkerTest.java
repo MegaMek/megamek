@@ -126,6 +126,40 @@ class ObjectiveMarkerTest {
     }
 
     @Test
+    void testOnlyPotentialTogetherWithFalseIsAForbiddenCombination() {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setFragile(true);
+        marker.setMobile(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "Fragile and Mobile combine with anything");
+
+        marker.setPotential(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "Potential alone is allowed");
+
+        marker.setPotential(false);
+        marker.setFalseObjective(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "False alone is allowed");
+
+        marker.setPotential(true);
+        assertTrue(marker.hasPotentialAndFalseVariants());
+    }
+
+    @Test
+    void testEveryHeldSchemeButNotScanCanBePotential() {
+        for (ObjectiveScoringScheme.SchemePreset preset : ObjectiveScoringScheme.SchemePreset.values()) {
+            boolean isScan = preset == ObjectiveScoringScheme.SchemePreset.SCAN;
+            assertEquals(!isScan, ObjectiveMarker.canBePotential(preset), preset.name());
+        }
+    }
+
+    @Test
+    void testOnlyARaidPointCanBeMobile() {
+        for (ObjectiveScoringScheme.SchemePreset preset : ObjectiveScoringScheme.SchemePreset.values()) {
+            boolean isRaid = preset == ObjectiveScoringScheme.SchemePreset.RAID;
+            assertEquals(isRaid, ObjectiveMarker.canBeMobile(preset), preset.name());
+        }
+    }
+
+    @Test
     void testAnyDamageDestroys() {
         ObjectiveMarker marker = new ObjectiveMarker();
 
@@ -254,6 +288,31 @@ class ObjectiveMarkerTest {
         assertEquals(HoldCounting.CUMULATIVE, restoredScheme.getHoldCounting());
         assertEquals(3, restoredScheme.getHeldTurns(2, ObjectiveScoringScheme.NO_SIDE));
         assertFalse(restoredScheme.isDecided());
+    }
+
+    @Test
+    void testRaidPayoutSurvivesSerialization() throws Exception {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setScoringScheme(ObjectiveScoringScheme.raid(ObjectiveScoringScheme.RaidPayout.AT_GAME_END));
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(byteStream)) {
+            objectOutput.writeObject(marker);
+        }
+        ObjectiveMarker restored;
+        try (ObjectInputStream objectInput = new ObjectInputStream(
+              new ByteArrayInputStream(byteStream.toByteArray()))) {
+            restored = (ObjectiveMarker) objectInput.readObject();
+        }
+
+        assertEquals(ObjectiveScoringScheme.RaidPayout.AT_GAME_END, restored.getScoringScheme().getRaidPayout(),
+              "the payout chosen in Victory Setup must reach the server and the other clients");
+    }
+
+    @Test
+    void testANewRaidPointPaysEveryEndPhaseAsPrinted() {
+        assertEquals(ObjectiveScoringScheme.RaidPayout.EVERY_END_PHASE,
+              ObjectiveScoringScheme.raid().getRaidPayout());
     }
 
     // --- control retention (a mission with more points than units) ---

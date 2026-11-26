@@ -433,12 +433,11 @@ public class ProtoMek extends Entity {
         if (hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && !edpCharged) {
             for (Mounted<?> misc : getMisc()) {
                 if (misc.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && misc.curMode().equals("charging")) {
-                    if (edpChargeTurns == 6) {
+                    edpChargeTurns++;
+                    if (edpChargeTurns >= 6) {
                         setEDPCharged(true);
                         misc.setMode("not charging");
                         edpChargeTurns = 0;
-                    } else {
-                        edpChargeTurns++;
                     }
                 }
             }
@@ -741,6 +740,9 @@ public class ProtoMek extends Entity {
         return false;
     }
 
+    /**
+     * Transferred damage does not trigger a new armor-piercing critical check (TW p.140; Core p.191, errata v0.2).
+     */
     @Override
     public HitData getTransferLocation(HitData hit) {
         return switch (hit.getLocation()) {
@@ -750,7 +752,7 @@ public class ProtoMek extends Entity {
                   hit.getEffect(),
                   hit.hitAimedLocation(),
                   hit.getSpecCritMod(),
-                  hit.getSpecCrit(),
+                  false,
                   hit.isFromFront(),
                   hit.getGeneralDamageType(),
                   hit.glancingMod());

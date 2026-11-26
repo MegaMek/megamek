@@ -597,13 +597,9 @@ public class SharedUtility {
         }
 
         // running with destroyed hip or gyro needs a check
-        rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved());
-        checkNag(rollTarget, nagReport, psrList);
-
-        // if we moved a hex with a destroyed leg, but it was not a run
-        rollTarget = Game.rulesManager.getRulesPSR().checkWalkWithLegDestroyed(entity,
-              overallMoveType, md.getHexesMoved());
-        checkNag(rollTarget, nagReport, psrList);
+        for (PilotingRollData runningRoll : entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved())) {
+            checkNag(runningRoll, nagReport, psrList);
+        }
 
         // if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType, md.getMpUsed());
@@ -621,8 +617,9 @@ public class SharedUtility {
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             // check for damaged critical slots
-            rollTarget = entity.checkLandingWithDamage(overallMoveType);
-            checkNag(rollTarget, nagReport, psrList);
+            for (PilotingRollData landingRoll : entity.checkLandingWithDamage(overallMoveType)) {
+                checkNag(landingRoll, nagReport, psrList);
+            }
             // check for landing with prototype JJs
             rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
             checkNag(rollTarget, nagReport, psrList);

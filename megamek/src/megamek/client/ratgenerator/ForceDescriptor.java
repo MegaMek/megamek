@@ -703,13 +703,29 @@ public class ForceDescriptor {
         if (!baseSubs.isEmpty()) {
             baseUnitList = generateFormation(baseSubs, networkMask, numGroups);
         }
-        if (baseUnitList == null) {
+        // generateFormation reports a formation it cannot fill with an empty list, not null. The base units must
+        // still be picked here, or none of them count as omnis below and every battle armor slot asks for
+        // magnetic clamps that most Clans do not have.
+        boolean formationFailed = (baseUnitList != null) && baseUnitList.isEmpty();
+        if ((baseUnitList == null) || formationFailed) {
+            if (formationFailed) {
+                LOGGER.debug("[ForceGen][Nova] '{}': {} could not be filled by {} base unit(s); generating them"
+                      + " as an ordinary lance", parseName(), formationType, baseSubs.size());
+                formationType = null;
+            }
             generateLance(baseSubs);
             baseUnitList = baseSubs.stream()
                   .map(ForceDescriptor::getModelName)
                   .map(m -> RATGenerator.getInstance().getModelRecord(m))
                   .filter(Objects::nonNull)
                   .collect(Collectors.toList());
+            if (formationFailed && (baseUnitList.size() < baseSubs.size())) {
+                // The caller assigns this list to the base slots by position, so a short list cannot be used.
+                // Hand back nothing and let the caller generate the whole Nova as an ordinary lance.
+                LOGGER.debug("[ForceGen][Nova] '{}': only {} of {} base unit(s) resolved; leaving the Nova to the"
+                      + " ordinary lance fallback", parseName(), baseUnitList.size(), baseSubs.size());
+                return new ArrayList<>();
+            }
         }
 
         // Any BA in excess of the number of omni base units will require mag clamps, up to the number of base units.

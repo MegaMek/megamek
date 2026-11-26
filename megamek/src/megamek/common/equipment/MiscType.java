@@ -4161,11 +4161,11 @@ public class MiscType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 194),
               rulesRef(SourceBookCode.TW, 139)
         );
-        misc.techAdvancement.setTechBase(TechBase.IS)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
-              .setISAdvancement(2400, 2420, 3075, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
+              .setAdvancement(2400, 2420, 3075, DATE_NONE, DATE_NONE)
+              .setApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);

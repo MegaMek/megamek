@@ -143,6 +143,21 @@ class TaintedAtmosphereRulesTest {
     }
 
     @Test
+    @DisplayName("A Mek with a torso-mounted cockpit exposes its center torso to toxic air, not its head")
+    void torsoMountedCockpitExposesTheCenterTorso() {
+        Mek mek = mock(Mek.class);
+        when(mek.hasTorsoMountedCockpit()).thenReturn(true);
+
+        assertEquals(Mek.LOC_CENTER_TORSO, TaintedAtmosphereRules.getCockpitLocation(mek));
+        assertTrue(TaintedAtmosphereRules.isLocationExposedToTaint(mek, Mek.LOC_CENTER_TORSO,
+              AtmosphericTaint.TOXIC_POISON));
+        assertFalse(TaintedAtmosphereRules.isLocationExposedToTaint(mek, Mek.LOC_HEAD,
+              AtmosphericTaint.TOXIC_POISON));
+        assertFalse(TaintedAtmosphereRules.isLocationExposedToTaint(mek, Mek.LOC_CENTER_TORSO,
+              AtmosphericTaint.TAINTED_CAUSTIC));
+    }
+
+    @Test
     @DisplayName("A vehicle exposes every location wherever vehicle breaches are rolled at all")
     void vehicleExposesEveryLocation() {
         Tank tank = mock(Tank.class);

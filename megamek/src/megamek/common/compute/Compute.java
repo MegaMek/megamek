@@ -7391,11 +7391,15 @@ public class Compute {
         AmmoMounted ammo = usesAmmo ? weapon.getLinkedAmmo() : null;
         AmmoType ammoType = ammo == null ? null : ammo.getType();
 
-        // Leg, swarm, and BA LB-X AC attacks can't be aimed.
-        if (weaponType.getInternalName().equals(Infantry.LEG_ATTACK)
-              || weaponType.getInternalName().equals(Infantry.SWARM_MEK)
+        // A swarm attempt deals no damage, so there is nothing to aim. BA LB-X AC attacks can't be aimed.
+        if (weaponType.getInternalName().equals(Infantry.SWARM_MEK)
               || weaponType.getInternalName().equals("Battle Armor LB-X AC")) {
             return false;
+        }
+
+        // A leg attack may be aimed at an immobile target (TW p.220). AimedShotLocations limits it to the legs.
+        if (weaponType.getInternalName().equals(Infantry.LEG_ATTACK)) {
+            return aimingMode.isImmobile();
         }
 
         switch (aimingMode) {

@@ -45,6 +45,7 @@ import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.AimedShotLocations;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
@@ -55,6 +56,7 @@ import megamek.common.units.LargeSupportTank;
 import megamek.common.units.Mek;
 import megamek.common.units.SuperHeavyTank;
 import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 
 public class AimedShotHandler implements ActionListener, ItemListener {
     private final FiringDisplay firingDisplay;
@@ -395,6 +397,35 @@ public class AimedShotHandler implements ActionListener, ItemListener {
      */
     public boolean isAimingAtLocation() {
         return aimingAt != Entity.LOC_NONE;
+    }
+
+    /**
+     * @param weapon the weapon about to fire
+     *
+     * @return {@code true} if a location is selected and the weapon can reach it (a leg attack only reaches legs)
+     */
+    public boolean isAimingAtLocationFor(WeaponMounted weapon) {
+        return isAimingAtLocation()
+              && AimedShotLocations.canAimAt(weapon.getEntity(), weapon.getType(), firingDisplay.getTarget(), aimingAt);
+    }
+
+    /**
+     * Enables the dialog's locations that the weapon can aim at, or none if no location is selected or the weapon
+     * cannot make an aimed shot.
+     *
+     * @param weapon the selected weapon
+     */
+    public void setEnableFor(WeaponMounted weapon) {
+        if (asd == null) {
+            return;
+        }
+        if (!isAimingAtLocation() || !allowAimedShotWith(weapon)) {
+            asd.setEnableAll(false);
+            return;
+        }
+        Targetable target = firingDisplay.getTarget();
+        asd.setEnableWhere(location -> AimedShotLocations.canAimAt(weapon.getEntity(), weapon.getType(), target,
+              location));
     }
 
     /**

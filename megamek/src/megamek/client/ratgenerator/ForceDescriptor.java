@@ -157,6 +157,9 @@ public class ForceDescriptor {
     private final HashSet<String> flags;
 
     private FormationType formationType;
+    // The roles picking this node's formation added (a Recon option carries role="+recon"). Dropped again if the
+    // formation cannot be filled, so the ordinary lance built instead is not held to the abandoned formation's role.
+    private final Set<MissionRole> formationRoles = EnumSet.noneOf(MissionRole.class);
     // The formation types this node's rule actually offered, mapped to the weight the ruleset gave each. Recorded
     // when the formation rule fires, before the weighted pick, so it describes the choice rather than its outcome.
     // A node with one entry had no choice to make (a command lance, say); a node with none was never offered one.
@@ -1146,11 +1149,67 @@ public class ForceDescriptor {
     private void buildFormation(List<ForceDescriptor> members, boolean pinChassis) {
         // In cases like Novas and air lances the formation rules only apply to some of the units.
         if (!generateAndAssignFormation(members, pinChassis, 0)) {
-            LOGGER.debug("[ForceGen][GenRule] '{}': {} could not be fulfilled by {} child(ren);"
-                        + " generating them as an ordinary lance", parseName(), formationType,
-                  members.size());
+            Set<MissionRole> dropped = dropFormationRoles(members);
+            String formationName = (formationType == null) ? "the formation" : formationType.getName();
+            LOGGER.info("[ForceGen][Fallback] '{}': {} could not be filled by {} unit(s); generating an ordinary"
+                        + " lance{}", parseName(), formationName, members.size(),
+                  dropped.isEmpty() ? " (the formation added no roles)" : " without its role(s) " + dropped);
             generateLance(members);
             formationType = null;
+        }
+    }
+
+    /**
+     * Records the roles picking this node's formation added, given the roles the node had just before the pick.
+     *
+     * @param rolesBeforeFormation the node's roles before the formation option was applied
+     */
+    void recordFormationRoles(Set<MissionRole> rolesBeforeFormation) {
+        for (MissionRole role : roles) {
+            if (!rolesBeforeFormation.contains(role)) {
+                formationRoles.add(role);
+            }
+        }
+    }
+
+    /**
+     * @return the roles picking this node's formation added; empty when it added none
+     */
+    Set<MissionRole> getFormationRoles() {
+        return formationRoles;
+    }
+
+    /**
+     * Takes back the roles this node's formation added, from this node and everything under the given members, once
+     * the formation has been abandoned. A Heavy recon lance with no heavy unit fit for recon would otherwise be built
+     * as an ordinary lance still held to the recon role, and fill every slot with the one heavy unit that has it: four
+     * Hi-Scout Drone Carriers (MegaMek/mekhq#11219). Roles the node already had before its formation was picked are
+     * kept.
+     *
+     * @param members the formation's members about to be generated as an ordinary lance
+     *
+     * @return the roles removed, empty when the formation added none
+     */
+    Set<MissionRole> dropFormationRoles(List<ForceDescriptor> members) {
+        if (formationRoles.isEmpty()) {
+            return Set.of();
+        }
+        Set<MissionRole> dropped = EnumSet.copyOf(formationRoles);
+        roles.removeAll(dropped);
+        for (ForceDescriptor member : members) {
+            member.removeRolesFromSubtree(dropped);
+        }
+        formationRoles.clear();
+        return dropped;
+    }
+
+    private void removeRolesFromSubtree(Set<MissionRole> droppedRoles) {
+        roles.removeAll(droppedRoles);
+        for (ForceDescriptor child : subForces) {
+            child.removeRolesFromSubtree(droppedRoles);
+        }
+        for (ForceDescriptor child : attached) {
+            child.removeRolesFromSubtree(droppedRoles);
         }
     }
 

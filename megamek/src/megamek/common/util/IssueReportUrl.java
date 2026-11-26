@@ -35,10 +35,16 @@ package megamek.common.util;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
+import megamek.MegaMek;
+import megamek.Revision;
 import megamek.SuiteConstants;
 import megamek.logging.MMLogger;
 
@@ -48,7 +54,8 @@ import megamek.logging.MMLogger;
  * <p>The suite's bug report template asks for the MegaMek version, operating system and Java version, all of them
  * required, and instructs the player to find them by opening {@code megamek.log} in a text editor and reading its
  * header. MegaMek already knows all three, so this class puts them into the form's URL and spares the player the
- * transcription.</p>
+ * transcription. It also fills the optional hardware and build fields (CPU, graphics cards, system memory, Java's
+ * memory limit, locale and build) from the same values the log header shows.</p>
  *
  * <p>MegaMek, MegaMekLab and MekHQ all use GitHub issue forms whose field ids are identical, so a single query
  * string serves all three and only the repository differs. The field ids below are a contract with
@@ -71,6 +78,19 @@ public final class IssueReportUrl {
     private static final String FIELD_VERSION = "custom-megamek-version";
     private static final String FIELD_OPERATING_SYSTEM = "operating-system";
     private static final String FIELD_JAVA_VERSION = "java-version";
+    private static final String FIELD_PROCESSOR = "cpu";
+    private static final String FIELD_GRAPHICS_CARDS = "graphics-cards";
+    private static final String FIELD_SYSTEM_MEMORY = "system-memory";
+    private static final String FIELD_JAVA_MAX_MEMORY = "java-max-memory";
+    private static final String FIELD_LOCALE = "locale";
+    private static final String FIELD_BUILD = "build";
+
+    private static final double BYTES_PER_MEGABYTE = 1024.0 * 1024.0;
+    private static final double BYTES_PER_GIGABYTE = BYTES_PER_MEGABYTE * 1024.0;
+
+    /** Enough of a commit hash to find it on GitHub, short enough to read at a glance. */
+    private static final int SHORT_REVISION_LENGTH = 10;
+    private static final Pattern COMMIT_HASH = Pattern.compile("[0-9a-fA-F]{" + SHORT_REVISION_LENGTH + ",}");
 
     /** The suite's repositories disable blank issues, so the template has to be named explicitly. */
     private static final String TEMPLATE_PARAMETER = "template=bug_report.yml";
@@ -109,6 +129,14 @@ public final class IssueReportUrl {
         fields.put(FIELD_VERSION, SuiteConstants.VERSION.toString());
         fields.put(FIELD_OPERATING_SYSTEM, operatingSystemDescription());
         fields.put(FIELD_JAVA_VERSION, javaVersionDescription());
+        fields.put(FIELD_PROCESSOR, HardwareDescription.processor());
+        // A textarea field: one graphics card per line, so a laptop's integrated and dedicated cards read apart.
+        fields.put(FIELD_GRAPHICS_CARDS, String.join("\n", HardwareDescription.graphicsCards()));
+        fields.put(FIELD_SYSTEM_MEMORY, HardwareDescription.systemMemory());
+        fields.put(FIELD_JAVA_MAX_MEMORY, describeJavaMaxMemory(Runtime.getRuntime().maxMemory()));
+        fields.put(FIELD_LOCALE, Locale.getDefault().toString());
+        fields.put(FIELD_BUILD, describeBuild(MegaMek.getBuildDate(), Revision.mmRevision(), Revision.mmlRevision(),
+              Revision.mhqRevision()));
 
         String candidateUrl = assemble(formUrl, fields);
         if (candidateUrl.length() <= MAX_URL_LENGTH) {
@@ -161,5 +189,43 @@ public final class IssueReportUrl {
      */
     private static String javaVersionDescription() {
         return "%s %s".formatted(System.getProperty("java.vendor"), System.getProperty("java.version"));
+    }
+
+    /**
+     * @param maxMemoryBytes the most memory Java may use, from {@link Runtime#maxMemory()}
+     *
+     * @return the limit in GB, or in MB when it is under 1 GB so a small limit does not read as {@code 0 GB}
+     */
+    static String describeJavaMaxMemory(long maxMemoryBytes) {
+        if (maxMemoryBytes >= BYTES_PER_GIGABYTE) {
+            return String.format(Locale.ROOT, "%.0f GB", maxMemoryBytes / BYTES_PER_GIGABYTE);
+        }
+        return String.format(Locale.ROOT, "%.0f MB", maxMemoryBytes / BYTES_PER_MEGABYTE);
+    }
+
+    /**
+     * @param buildDate          the build date from the manifest, or {@code null} when it is not known
+     * @param megaMekRevision    the MegaMek commit, or {@code Unknown}
+     * @param megaMekLabRevision the MegaMekLab commit, or {@code Unknown}
+     * @param mekHqRevision      the MekHQ commit, or {@code Unknown}
+     *
+     * @return the build line, such as {@code 2026-11-20 | MM a1b2c3d4e5, MML Unknown, MHQ Unknown}
+     */
+    static String describeBuild(@Nullable LocalDateTime buildDate, String megaMekRevision, String megaMekLabRevision,
+          String mekHqRevision) {
+        String date = (buildDate == null) ? "N/A" : buildDate.toLocalDate().toString();
+        return "%s | MM %s, MML %s, MHQ %s".formatted(date, shortRevision(megaMekRevision),
+              shortRevision(megaMekLabRevision), shortRevision(mekHqRevision));
+    }
+
+    /**
+     * @param revision a full commit hash, or a placeholder such as {@code Unknown}
+     *
+     * @return the first ten characters of a hash; a placeholder unchanged
+     */
+    private static String shortRevision(String revision) {
+        String trimmed = revision.strip();
+        boolean isHash = COMMIT_HASH.matcher(trimmed).matches();
+        return isHash ? trimmed.substring(0, SHORT_REVISION_LENGTH) : trimmed;
     }
 }

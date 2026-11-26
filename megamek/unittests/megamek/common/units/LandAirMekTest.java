@@ -39,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.OffBoardDirection;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.exceptions.LocationFullException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -61,6 +63,18 @@ class LandAirMekTest {
     @BeforeEach
     void setUp() {
         lam = new LandAirMek(Mek.GYRO_STANDARD, Mek.COCKPIT_STANDARD, LandAirMek.LAM_STANDARD);
+    }
+
+    @Test
+    void thbUltraAutocannonCanSwitchRateAfterLeavingFighterMode() throws LocationFullException {
+        WeaponMounted ultra = (WeaponMounted) lam.addEquipment(EquipmentType.get("ISUltraAC2 (THB)"), Mek.LOC_LEFT_ARM);
+
+        lam.setMovementMode(EntityMovementMode.AERODYNE);
+        assertEquals(2, ultra.getCurrentShots());
+        assertFalse(ultra.isModeSwitchable());
+
+        lam.setMovementMode(EntityMovementMode.BIPED);
+        assertTrue(ultra.isModeSwitchable());
     }
 
     @Nested

@@ -232,18 +232,21 @@ public abstract class RulesPhysical {
     public abstract HitData getFallFromAboveTable(Entity affaTarget);
 
     /**
+     * The damage a unit falling from above deals to the unit it lands on.
+     *
+     * @param damage     the damage for the levels fallen
+     * @param affaTarget the unit fallen on
+     *
+     * @return the damage to deal
+     */
+    public abstract int fallFromAboveDamage(int damage, Entity affaTarget);
+
+    /**
      * What kind of rubble can you find a club in?
      *
      * @return the level of the rubble needed
      */
     public abstract int getClubFindInRubble();
-
-    /**
-     * What is the lance's base to-hit modifier?
-     *
-     * @return
-     */
-    public abstract int getLanceToHitModifier();
 
     /**
      * Check if you can mule kick if you fired weapons from the non-kicking leg.

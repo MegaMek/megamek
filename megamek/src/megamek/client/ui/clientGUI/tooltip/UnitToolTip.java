@@ -1523,11 +1523,11 @@ public final class UnitToolTip {
 
         if (entity.hasActivatedRadicalHS()) {
             if (entity instanceof Mek mek) {
-                heatCap += mek.getActiveSinks();
-                heatCapWater += mek.getActiveSinks();
+                heatCap += mek.getActiveSinksOfAnyType();
+                heatCapWater += mek.getActiveSinksOfAnyType();
             } else if (entity instanceof Aero aero) {
-                heatCap += aero.getHeatSinks();
-                heatCapWater += aero.getHeatSinks();
+                heatCap += aero.getActiveSinks();
+                heatCapWater += aero.getActiveSinks();
             }
         }
 
@@ -1875,8 +1875,8 @@ public final class UnitToolTip {
         }
 
         // Spotting
-        Entity spotTarget = game.getEntity(entity.getSpotTargetId());
-        if (entity.isSpotting() && spotTarget != null) {
+        Targetable spotTarget = entity.isSpotting() ? entity.getSpotTarget(game) : null;
+        if (spotTarget != null) {
             String sSpotting = addToTT("Spotting", NOBR, spotTarget.getDisplayName()) + " ";
             result += sSpotting;
         }

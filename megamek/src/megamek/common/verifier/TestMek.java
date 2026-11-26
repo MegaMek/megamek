@@ -247,19 +247,7 @@ public class TestMek extends TestEntity {
     }
 
     public double getWeightGyro() {
-        double retVal = Math.ceil(engine.getRating() / 100.0f);
-        if (mek.getGyroType() == Mek.GYRO_XL) {
-            retVal /= 2;
-        } else if (mek.getGyroType() == Mek.GYRO_COMPACT) {
-            retVal *= 1.5;
-        } else if ((mek.getGyroType() == Mek.GYRO_HEAVY_DUTY)
-              || (mek.getGyroType() == Mek.GYRO_SUPERHEAVY)) {
-            retVal *= 2;
-        } else if (mek.getGyroType() == Mek.GYRO_NONE) {
-            retVal = 0;
-        }
-        retVal = ceil(retVal, getWeightCeilingGyro());
-        return retVal;
+        return ceil(mek.getGyroWeight(), getWeightCeilingGyro());
     }
 
     @Override
@@ -624,10 +612,18 @@ public class TestMek extends TestEntity {
                 continue;
             }
             int locationTonnage = mek.getFrankenMekStructureTonnage(location);
+            // A superheavy Mek may use only superheavy structure, made for 105 to 200 tons, so superheavy and standard
+            // donors can't be mixed (IO:AE p. 155)
             if ((centerTorsoTonnage <= 100) && (locationTonnage > 100)) {
                 buff.append("The FrankenMek structure tonnage of ")
                       .append(mek.getLocationName(location))
                       .append(" exceeds 100 while the center torso is 100 tons or less\n");
+                illegal = true;
+            }
+            if ((centerTorsoTonnage > 100) && (locationTonnage <= 100)) {
+                buff.append("The FrankenMek structure tonnage of ")
+                      .append(mek.getLocationName(location))
+                      .append(" is 100 or less while the center torso is superheavy\n");
                 illegal = true;
             }
             if (mek.locationIsLeg(location)
@@ -1022,12 +1018,13 @@ public class TestMek extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(MiscType.F_TALON)) {
+            if (misc.hasFlag(MiscType.F_TALON) || misc.hasFlag(MiscType.F_JUMP_BOOSTER)) {
                 int slots = getMek().isSuperHeavy() ? 1 : 2;
                 for (int loc = 0; loc < mek.locations(); loc++) {
                     if (mek.locationIsLeg(loc) && countCriticalSlotsFromEquipInLocation(mek, m, loc) != slots) {
                         illegal = true;
-                        buff.append("Talons require ").append(slots).append(" critical slots in each leg.\n");
+                        buff.append(misc.getName()).append(" requires ").append(slots)
+                              .append(slots == 1 ? " critical slot" : " critical slots").append(" in each leg.\n");
                         break;
                     }
                 }
@@ -1059,6 +1056,8 @@ public class TestMek extends TestEntity {
                   || misc.hasFlag(MiscType.F_SCM)
                   || misc.hasFlag(MiscType.F_MASC)
                   || misc.hasFlag(MiscType.F_JUMP_JET)
+                  // IO:AE p. 156; the Mek Mechanical Jump Booster carries F_JUMP_BOOSTER
+                  || misc.hasFlag(MiscType.F_JUMP_BOOSTER)
                   || misc.hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER)
                   || misc.hasFlag(MiscType.F_UMU)
                   || misc.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
@@ -1772,7 +1771,8 @@ public class TestMek extends TestEntity {
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_AP_POD) || eq.hasFlag(MiscType.F_TRACKS) || eq.hasFlag(MiscType.F_TALON))
+            if ((eq.hasFlag(MiscType.F_AP_POD) || eq.hasFlag(MiscType.F_TRACKS)
+                  || eq.hasFlag(MiscType.F_TALON) || eq.hasFlag(MiscType.F_JUMP_BOOSTER))
                   && !mek.locationIsLeg(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a leg location.\n");

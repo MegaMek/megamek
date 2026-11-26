@@ -39,7 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.units.Aero;
+import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
@@ -51,6 +54,18 @@ class MekFileParserTest {
     @BeforeAll
     static void beforeAll() {
         EquipmentType.initializeTypes();
+    }
+
+    @Test
+    void aerospaceTHBUltraAutocannonIsLockedAtTwoShots() throws LocationFullException, EntityLoadingException {
+        Aero fighter = new AeroSpaceFighter();
+        EquipmentType thbUltra = EquipmentType.get("ISUltraAC20 (THB)");
+        WeaponMounted ultra = (WeaponMounted) fighter.addEquipment(thbUltra, Aero.LOC_NOSE);
+
+        MekFileParser.postLoadInit(fighter);
+
+        assertEquals(2, ultra.getCurrentShots());
+        assertFalse(ultra.isModeSwitchable());
     }
 
     @Test

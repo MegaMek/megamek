@@ -32,6 +32,7 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.HitData;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -105,4 +106,7 @@ public abstract class RulesUnits {
      */
     public boolean getPhysicalTwistEnabled() { return false;
     }
+
+    /** Whether the second pip of a point of composite structure damage transfers to the next location. */
+    public abstract boolean transfersCompositePip(Mek mek, HitData hit, boolean ammoExplosion);
 }

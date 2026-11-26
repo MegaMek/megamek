@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -48,6 +49,10 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.CriticalSlot;
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.damage.PreExistingDamageApplier;
+import megamek.common.compute.damage.PreExistingDamageCommitter;
+import megamek.common.compute.damage.PreExistingDamageLevel;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.Mounted;
@@ -56,13 +61,17 @@ import megamek.common.icons.Camouflage;
 import megamek.common.loaders.MekSummary;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoaderException;
+import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.IBomber;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
+import megamek.logging.MMLogger;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
+
+    private static final MMLogger LOGGER = MMLogger.create(EntityDeserializer.class);
 
     private static final String ID = "id";
     private static final String AT = "at";
@@ -94,6 +103,11 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String AREA = "area";
     private static final String BOMBS = "bombs";
     private static final String ENGINE = "engine";
+    private static final String DAMAGE = "damage";
+    private static final String COMMANDER = "commander";
+    private static final String AUTO_EJECT = "autoeject";
+    /** Rolls the Pre-Existing Damage Table (FSW p.144) instead of naming a level */
+    private static final String DAMAGE_RANDOM = "random";
 
     public EntityDeserializer() {
         this(null);
@@ -120,10 +134,13 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignVelocity(entity, node);
         assignID(entity, node);
         assignForce(entity, node);
+        assignCommander(entity, node);
+        assignAutoEject(entity, node);
         CrewDeserializer.parseCrew(node, entity);
         assignRemaining(entity, node);
         assignCrits(entity, node);
         assignAmmunition(entity, node);
+        assignPreExistingDamage(entity, node);
         assignBombs(entity, node);
         assignFleeArea(entity, node);
         return entity;
@@ -234,6 +251,86 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 }
             }
         }
+    }
+
+    /** Marks the unit as its force's commander from {@code commander: true}. */
+    private void assignCommander(Entity entity, JsonNode node) {
+        if (node.has(COMMANDER)) {
+            entity.setCommander(readBoolean(node, COMMANDER));
+        }
+    }
+
+    /**
+     * Sets automatic ejection from {@code autoeject: true / false} for Meks and fighters, the unit types the unit
+     * editor offers it for. Units without an ejection seat never eject, whatever the setting.
+     */
+    private void assignAutoEject(Entity entity, JsonNode node) {
+        if (!node.has(AUTO_EJECT)) {
+            return;
+        }
+        boolean autoEject = readBoolean(node, AUTO_EJECT);
+        if (entity instanceof Mek mek) {
+            mek.setAutoEject(autoEject);
+        } else if (entity.isFighter() && (entity instanceof Aero aero)) {
+            aero.setAutoEject(autoEject);
+        } else {
+            LOGGER.warn("[ScenarioCrew] {}: autoeject only applies to Meks and fighters; ignoring",
+                  entity.getShortName());
+        }
+    }
+
+    private boolean readBoolean(JsonNode node, String key) {
+        JsonNode valueNode = node.get(key);
+        if (!valueNode.isBoolean()) {
+            throw new IllegalArgumentException(key + " takes true or false, not " + valueNode.asText());
+        }
+        return valueNode.booleanValue();
+    }
+
+    /**
+     * Applies pre-existing damage (FSW p.144) when the unit has a {@code damage:} key. The value is a level
+     * ({@code none}, {@code light}, {@code moderate}, {@code heavy}) or {@code random} to roll the table. The damage is
+     * rolled anew each time the scenario loads, is added on top of any {@code remaining:} and {@code crits:} values, and
+     * never destroys or immobilizes the unit. Unit types the table does not cover keep their damage unchanged.
+     *
+     * @throws IllegalArgumentException when the value is not one of the levels or {@code random}
+     */
+    private void assignPreExistingDamage(Entity entity, JsonNode node) {
+        if (!node.has(DAMAGE)) {
+            return;
+        }
+        String damageValue = node.get(DAMAGE).asText().trim().toLowerCase(Locale.ROOT);
+        PreExistingDamageLevel level = damageValue.equals(DAMAGE_RANDOM)
+              ? rollPreExistingDamageLevel()
+              : parsePreExistingDamageLevel(damageValue);
+        if (!PreExistingDamageApplier.isSupported(entity)) {
+            LOGGER.warn("[ScenarioDamage] {}: pre-existing damage only covers Meks, vehicles and fighters; ignoring",
+                  entity.getShortName());
+            return;
+        }
+        boolean applied = PreExistingDamageCommitter.rollAndApply(entity, level);
+        LOGGER.debug("[ScenarioDamage] {}: damage level {} (from '{}'), applied: {}",
+              entity.getShortName(), level, damageValue, applied);
+    }
+
+    private PreExistingDamageLevel parsePreExistingDamageLevel(String damageValue) {
+        for (PreExistingDamageLevel level : PreExistingDamageLevel.values()) {
+            if (level.name().equalsIgnoreCase(damageValue)) {
+                return level;
+            }
+        }
+        throw new IllegalArgumentException("Unknown damage level " + damageValue
+              + "; use none, light, moderate, heavy or random");
+    }
+
+    /** Rolls 1D6 on the Pre-Existing Damage Table (FSW p.144): 1 none, 2-3 light, 4-5 moderate, 6 heavy. */
+    private PreExistingDamageLevel rollPreExistingDamageLevel() {
+        return switch (Compute.d6()) {
+            case 1 -> PreExistingDamageLevel.NONE;
+            case 2, 3 -> PreExistingDamageLevel.LIGHT;
+            case 4, 5 -> PreExistingDamageLevel.MODERATE;
+            default -> PreExistingDamageLevel.HEAVY;
+        };
     }
 
     private void parseStatus(Entity entity, String statusString) {

@@ -51,6 +51,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.GameOptions;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityClassTurn;
 import megamek.common.units.Mek;
@@ -276,6 +277,21 @@ class EquipmentExplosionHandlerTest {
 
         assertEquals(EquipmentExplosionHandler.Outcome.ALREADY_DESTROYED, outcome);
         assertEquals(shotsBefore, ammoBin.getBaseShotsLeft(), "A refused explosion changes nothing");
+    }
+
+    /** A superheavy Mek may double up two bins of the same ammo in one slot (IO:AE p.157): it is the second's too */
+    @Test
+    void theSlotHoldingTheEquipmentAsItsSecondItemIsMarkedHit() throws Exception {
+        Mek superheavy = new BipedMek();
+        superheavy.setWeight(150);
+        EquipmentType ammo = EquipmentType.get("ISAC10 Ammo");
+        superheavy.addEquipment(ammo, ammo, Mek.LOC_LEFT_TORSO, false, false);
+        CriticalSlot sharedSlot = superheavy.getCritical(Mek.LOC_LEFT_TORSO, 0);
+        assertNotNull(sharedSlot.getMount2());
+
+        EquipmentExplosionHandler.markCriticalSlotsHit(superheavy, sharedSlot.getMount2(), Mek.LOC_LEFT_TORSO);
+
+        assertTrue(sharedSlot.isHit());
     }
 
     /** Whether every critical slot holding the bin is marked hit. */

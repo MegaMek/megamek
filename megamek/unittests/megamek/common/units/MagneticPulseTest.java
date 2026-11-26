@@ -36,17 +36,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for the Magnetic Pulse (MP, IO p.62) and Improved Magnetic Pulse (iATM IMP) missile effects modeled on
+ * Tests for the Magnetic Pulse (MP, TO:AUE p.182) and Improved Magnetic Pulse (iATM IMP) missile effects modeled on
  * {@link Entity}. These exercise the real effect math (caps, fusion gating, the effect window threshold) rather than
  * constants.
  */
@@ -74,6 +79,9 @@ class MagneticPulseTest {
         return mek;
     }
 
+    /** A group of missiles striking the center torso, which has no armor */
+    private static final HitData CENTER_TORSO = new HitData(Mek.LOC_CENTER_TORSO);
+
     @Nested
     @DisplayName("Improved Magnetic Pulse (iATM IMP) effect math")
     class ImpEffectTests {
@@ -83,6 +91,7 @@ class MagneticPulseTest {
         void threeWarheadsApplyOneStepOfEffect() {
             Mek mek = fusionMek();
             mek.addIMPHits(3);
+            mek.addImprovedMagneticPulseHeat(3, CENTER_TORSO);
 
             assertEquals(1, mek.getImpToHitModifier(), "3 warheads -> +1 to-hit");
             assertEquals(1, mek.getImpMpReduction(), "3 warheads -> -1 MP");
@@ -95,6 +104,7 @@ class MagneticPulseTest {
         void twoWarheadsProduceNoEffect() {
             Mek mek = fusionMek();
             mek.addIMPHits(2);
+            mek.addImprovedMagneticPulseHeat(2, CENTER_TORSO);
 
             assertEquals(0, mek.getImpToHitModifier(), "2 warheads -> no to-hit penalty");
             assertEquals(0, mek.getImpMpReduction(), "2 warheads -> no MP reduction");
@@ -117,6 +127,7 @@ class MagneticPulseTest {
         void nonFusionIgnoresMpAndHeat() {
             Mek mek = iceMek();
             mek.addIMPHits(6);
+            mek.addImprovedMagneticPulseHeat(6, CENTER_TORSO);
 
             assertEquals(2, mek.getImpToHitModifier(), "to-hit applies to non-fusion units");
             assertTrue(mek.isImpEcmAffected(), "ECM applies to non-fusion units");
@@ -167,7 +178,7 @@ class MagneticPulseTest {
         @DisplayName("A hit sets the +1 to-hit window and banks LRM heat on a fusion unit")
         void lrmHitBanksHeatAndSetsToHit() {
             Mek mek = fusionMek();
-            mek.applyMagneticPulse(10, 5); // 10 LRM warheads, +1 heat per 5
+            mek.applyMagneticPulse(10, 5, CENTER_TORSO); // 10 LRM warheads, +1 heat per 5
 
             assertTrue(mek.getMagneticPulseRounds() > 0, "MP hit sets the to-hit window");
             assertEquals(2, mek.heatFromExternal, "10 LRM warheads / 5 -> +2 heat");
@@ -177,7 +188,7 @@ class MagneticPulseTest {
         @DisplayName("SRM heat uses a divisor of 3")
         void srmHitUsesDivisorThree() {
             Mek mek = fusionMek();
-            mek.applyMagneticPulse(6, 3); // 6 SRM warheads, +1 heat per 3
+            mek.applyMagneticPulse(6, 3, CENTER_TORSO); // 6 SRM warheads, +1 heat per 3
 
             assertEquals(2, mek.heatFromExternal, "6 SRM warheads / 3 -> +2 heat");
         }
@@ -188,8 +199,8 @@ class MagneticPulseTest {
             Mek mek = fusionMek();
             // Two SRM salvos of 2 warheads each: per-salvo flooring would give 0+0, but the remainder
             // carries so the combined 4 warheads / 3 = +1 heat.
-            mek.applyMagneticPulse(2, 3);
-            mek.applyMagneticPulse(2, 3);
+            mek.applyMagneticPulse(2, 3, CENTER_TORSO);
+            mek.applyMagneticPulse(2, 3, CENTER_TORSO);
 
             assertEquals(1, mek.heatFromExternal, "2 + 2 SRM warheads across salvos -> +1 heat (carried)");
         }
@@ -200,8 +211,8 @@ class MagneticPulseTest {
             Mek mek = fusionMek();
             // An MML firing LRM mode then SRM mode: the LRM remainder must not be divided by the SRM
             // rate. Correct result is floor(7/5) + floor(5/3) = 1 + 1 = 2, not 3.
-            mek.applyMagneticPulse(7, 5); // LRM rate
-            mek.applyMagneticPulse(5, 3); // SRM rate
+            mek.applyMagneticPulse(7, 5, CENTER_TORSO); // LRM rate
+            mek.applyMagneticPulse(5, 3, CENTER_TORSO); // SRM rate
 
             assertEquals(2, mek.heatFromExternal, "7 LRM/5 + 5 SRM/3 -> +2 heat (rates not mixed)");
         }
@@ -210,10 +221,41 @@ class MagneticPulseTest {
         @DisplayName("Non-fusion units take the to-hit window but no heat")
         void nonFusionTakesToHitButNoHeat() {
             Mek mek = iceMek();
-            mek.applyMagneticPulse(10, 5);
+            mek.applyMagneticPulse(10, 5, CENTER_TORSO);
 
             assertTrue(mek.getMagneticPulseRounds() > 0, "to-hit window still applies");
             assertEquals(0, mek.heatFromExternal, "non-fusion units take no MP heat");
+        }
+
+        /**
+         * An LRM-20 hits with 10 warheads: a group of 5 on a leg with heat-dissipating armor, 5 on the bare center
+         * torso, giving +2 without the armor. The armor acts on its group's share of the heat (Core p.201), and the
+         * turn's total rounds down once.
+         */
+        @Test
+        @DisplayName("Heat-dissipating armor where a group strikes halves (TW) or negates (Core) its share")
+        void heatDissipatingArmorActsOnTheShareOfTheGroupItMeets() {
+            RulesManager originalRules = Game.rulesManager;
+            try {
+                Game.rulesManager = new TWRulesManager();
+                assertEquals(2, lrmHeat(false), "no special armor: 10 / 5 = +2");
+                assertEquals(1, lrmHeat(true), "TW: (5/2 + 5) / 5 = 1.5 -> +1");
+                Game.rulesManager = new CoreRulesManager();
+                assertEquals(1, lrmHeat(true), "Core: (0 + 5) / 5 = +1");
+            } finally {
+                Game.rulesManager = originalRules;
+            }
+        }
+
+        private int lrmHeat(boolean heatDissipatingLeg) {
+            Mek mek = fusionMek();
+            if (heatDissipatingLeg) {
+                mek.setArmorType(EquipmentType.T_ARMOR_HEAT_DISSIPATING, Mek.LOC_LEFT_LEG);
+            }
+            mek.initializeArmor(5, Mek.LOC_LEFT_LEG);
+            mek.applyMagneticPulse(5, 5, new HitData(Mek.LOC_LEFT_LEG));
+            mek.applyMagneticPulse(5, 5, CENTER_TORSO);
+            return mek.heatFromExternal;
         }
     }
 
@@ -251,10 +293,11 @@ class MagneticPulseTest {
         @DisplayName("Heat remainders do not carry across turns")
         void heatRemainderClearsEachTurn() {
             MagneticPulseState state = new MagneticPulseState();
-            state.computeStandardHeat(2, MagneticPulseState.SRM_HEAT_DIVISOR); // remainder 2, no heat yet
-            state.newRound();                                                   // remainder must clear
+            // Heat counts half-warheads, two per warhead
+            state.computeStandardHeat(2 * 2, MagneticPulseState.SRM_HEAT_DIVISOR); // remainder 2, no heat yet
+            state.newRound();                                                       // remainder must clear
 
-            int heat = state.computeStandardHeat(2, MagneticPulseState.SRM_HEAT_DIVISOR);
+            int heat = state.computeStandardHeat(2 * 2, MagneticPulseState.SRM_HEAT_DIVISOR);
             assertEquals(0, heat, "next turn's 2 warheads alone (2/3) give no heat; last turn's remainder is gone");
         }
     }

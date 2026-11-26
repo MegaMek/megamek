@@ -38,6 +38,7 @@ import java.util.Vector;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.enums.HitDamageType;
+import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
 
 public abstract class RulesArmor {
@@ -50,12 +51,18 @@ public abstract class RulesArmor {
     public abstract boolean allowHeatWeapon(boolean heat_weapon);
 
     /**
-     * Does armor allow armor piercing.
+     * Whether the armor allows an armor-piercing critical check for this damage type.
      *
      * @param mods the modifications info
+     * @param damageType the general damage type of the hit, to tell armor-piercing ammunition from missiles
      * @return true if armor piercing is allowed
      */
-    public abstract boolean allowArmorPiercing(TWDamageManager.ModsInfo mods);
+    public abstract boolean allowArmorPiercing(TWDamageManager.ModsInfo mods, HitDamageType damageType);
+
+    /** Armor types that negate the armor-piercing check under TO:AUE pp.92-94. */
+    protected static boolean allowsTacticalOperationsArmorPiercing(TWDamageManager.ModsInfo mods) {
+        return !(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor);
+    }
 
     /**
      * Impact resistant armor.
@@ -80,13 +87,39 @@ public abstract class RulesArmor {
     public abstract boolean checkLancePenetration(int armorType);
 
     /**
-     * Does the armor reduce heat?
+     * Does the armor a hit strikes reduce the heat of that weapon? Laser-reflective armor does for the weapons it
+     * reflects (BMM p.114). Heat-dissipating armor acts on all outside heat; see {@link #heatAfterDissipatingArmor}.
      *
-     * @param armorType the type of armor
+     * @param armorType the type of armor the hit strikes
      * @param heatDamage the amount of heat damage
      * @return the reduced heat damage amount
      */
     public abstract int reduceHeatDamageByArmor(int armorType, int heatDamage);
+
+    /**
+     * The heat an outside heat effect adds after the target's heat-dissipating armor. Armor with special effects acts
+     * while the location struck still has armor at the time the hit is applied (Core p.201), so this is asked as the
+     * heat strikes, before the hit's own damage; the Heat Phase only adds the results (TW p.159).
+     *
+     * @param target   the unit the heat reaches
+     * @param heat     the heat of the effect
+     * @param location the location the heat struck, or {@link Entity#LOC_NONE} for heat that strikes no location,
+     *                 such as fire and magma
+     * @param rear     true when the heat struck the rear armor of the location
+     *
+     * @return the heat the effect adds
+     */
+    public abstract int heatAfterDissipatingArmor(Entity target, int heat, int location, boolean rear);
+
+    /** Outside heat applied to the whole unit, such as fire, magma, or an area-effect inferno hit. */
+    public int reduceNonLocationHeat(Entity target, int heat) {
+        return heatAfterDissipatingArmor(target, heat, Entity.LOC_NONE, false);
+    }
+
+    /** Outside heat from extreme (above 50 degrees C) temperatures: heat-dissipating armor reduces it like other outside heat */
+    public int reduceExtremeHeat(Entity target, int heat) {
+        return reduceNonLocationHeat(target, heat);
+    }
 
     /**
      * Does reflective armor cause modifiers for AP?
@@ -97,15 +130,43 @@ public abstract class RulesArmor {
     public abstract boolean reflectiveAP(boolean reflectiveArmor);
 
     /**
-     * Block TAC (Targeting Auto-Correlator).
+     * Does this armor negate through-armor critical (TAC) checks? Asked only while the location struck has armor.
      *
      * @param armorType the type of armor
      * @return true if TAC is blocked
      */
     public abstract boolean blockTAC(int armorType);
 
+    /** Modifier from hardened armor for this critical check. */
+    public abstract int hardenedLocationCriticalModifier(HitData hit);
+
     /**
-     * How does impact armor reduce damage.
+     * Do ablation and hardened armor keep their critical-hit protections (the ablation TAC block, the hardened -2)
+     * against damage of this type?
+     *
+     * @param damageType the general damage type of the hit
+     * @return true if those protections apply
+     */
+    public abstract boolean criticalProtectionsApplyAgainst(HitDamageType damageType);
+
+    /**
+     * Does damage that passes through a location destroyed before this attack keep its armor-piercing check?
+     *
+     * @return true if the check passes through such a location
+     */
+    public abstract boolean armorPiercingCheckPassesDestroyedLocation();
+
+    /**
+     * Ablation armor modifier for an applicable critical check while the struck location still has armor.
+     *
+     * @return the modifier to a critical check that still takes place
+     */
+    public abstract int ablationArmorPiercingModifier();
+
+    /**
+     * How does impact armor reduce damage. While the location has armor, impact-resistant armor reduces damage "by 1
+     * point for every 3 points delivered (or fraction thereof), to a minimum of 1 damage point" (IO:AE p.82; Core
+     * p.202 for physical attacks).
      *
      * @param entityId the entity ID
      * @param hit the hit data
@@ -115,7 +176,17 @@ public abstract class RulesArmor {
      * @return the reduced damage amount
      */
     public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
-                                           HitDamageType damageType);
+          HitDamageType damageType);
+
+    protected static int reduceImpactDamageByThird(int entityId, int damage, Vector<Report> reportVec) {
+        damage = Math.max(1, damage - (int) Math.ceil(damage / 3.0));
+        Report report = new Report(6089);
+        report.subject = entityId;
+        report.indent(3);
+        report.add(damage);
+        reportVec.addElement(report);
+        return damage;
+    }
 
     /**
      * Reflective armor reduction
@@ -141,4 +212,23 @@ public abstract class RulesArmor {
      * @return the reduced damage amount
      */
     public abstract int ballisticReinforcedArmorReduction(final int damage);
+
+    /**
+     * Does ballistic-reinforced armor reduce damage of this type?
+     *
+     * @param damageType the general damage type of the hit
+     * @return true if {@link #ballisticReinforcedArmorReduction(int)} applies
+     */
+    public abstract boolean ballisticReinforcedArmorReduces(HitDamageType damageType);
+
+    /**
+     * Does ferro-lamellor armor reduce damage of this type?
+     *
+     * @param damageType the general damage type of the hit
+     * @return true if the ferro-lamellor reduction applies
+     */
+    public abstract boolean ferroLamellorArmorReduces(HitDamageType damageType);
+
+    /** Whether ablation armor on the struck facing negates a taser effect at impact. */
+    public abstract boolean blocksAblationTaserEffect();
 }

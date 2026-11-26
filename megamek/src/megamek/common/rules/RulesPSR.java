@@ -41,7 +41,6 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
-import megamek.common.units.MekWithArms;
 import megamek.common.units.QuadMek;
 
 /*
@@ -57,8 +56,9 @@ public abstract class RulesPSR {
      * @param gyroDamage the amount of gyro damage
      * @param overallMoveType the type of overall movement
      * @param distance the distance traveled
+     * @return how many PSRs the unit must make, each with the same roll
      */
-    public abstract void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
+    public abstract int checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType, int distance);
 
     /**
@@ -77,13 +77,14 @@ public abstract class RulesPSR {
     public abstract void facingChangeAfterFall(Entity entity, int facing);
 
     /**
-     * Apply leg damage modifiers to PSR.
+     * Apply leg damage modifiers to PSR, for every leg of a biped, tripod or quad Mek. A quad's destroyed legs are
+     * handled by {@link RulesUnits#quadPilotModForLegsDestroyed}.
      *
-     * @param unit the unit with arms to check
+     * @param unit the Mek to check
      * @param roll the piloting roll data to modify
      * @param toLegDamage true if applying leg damage
      */
-    public abstract void legDamageModifiers(MekWithArms unit, PilotingRollData roll, boolean toLegDamage);
+    public abstract void legDamageModifiers(Mek unit, PilotingRollData roll, boolean toLegDamage);
 
     /**
      * Do we need to reduce potential PSR rolls.
@@ -129,6 +130,20 @@ public abstract class RulesPSR {
         } else if (hitPart != Mek.ACTUATOR_FOOT) {
             game.addPSR(new PilotingRollData(entity.getId(), psrPenalty, psrText, loc));
         }
+    }
+
+    /**
+     * How many piloting checks are required to land with gyro or leg damage?
+     *
+     * @param entity   the landing unit
+     * @param gyroHits the gyro hits that count
+     * @return the number of PSRs
+     */
+    public abstract int landingWithDamageChecks(Entity entity, int gyroHits);
+
+    protected static int singleLandingCheckForDamage(Entity entity, int gyroHits) {
+        return ((gyroHits > 0) || entity.hasLegActuatorCrit() || Game.rulesManager.getRulesUnits().hasBadLegs(entity))
+              ? 1 : 0;
     }
 
     /**
@@ -201,17 +216,6 @@ public abstract class RulesPSR {
      * @return the gyro jump modifier
      */
     public abstract int getGyroJumpModifier(final int gyroHits, final int gyroType);
-
-    /**
-     * Do you need a PSR for walking with a leg destroyed.
-     *
-     * @param entity the entity attempting to walk
-     * @param overallMoveType the type of overall movement
-     * @param hexesMoved the number of hexes moved
-     * @return the piloting roll data for the PSR, or null if no PSR required
-     */
-    public abstract PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
-          int hexesMoved);
 
     /**
      * What is the water level modifier for PSR entering the hex?

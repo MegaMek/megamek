@@ -2792,8 +2792,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         // Save lobby state if setting is enabled, player is marking as done, and we haven't saved yet
         if (done && GUIP.getSaveLobbyOnStart() && !lobbySavePerformed) {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss"));
-            String filename = "Lobby_Save_" + timestamp;
+            String filename = LobbyBackupRotation.LOBBY_BACKUP_PREFIX + timestamp;
             String path = "./" + MMConstants.SAVEGAME_DIR;
+            LobbyBackupRotation.pruneBeforeNewBackup(new File(path), GUIP.getLobbyBackupsToKeep());
             client.sendChat(ClientGUI.CG_CHAT_COMMAND_LOCAL_SAVE + " " + filename + " " + path);
             lobbySavePerformed = true;
         }

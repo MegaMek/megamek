@@ -42,10 +42,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
@@ -90,6 +90,85 @@ public class MekFileParser {
     static boolean canLinkPpcCapacitor(WeaponType weaponType, int year) {
         return weaponType.hasFlag(F_PPC_CAPACITOR_COMPATIBLE)
               && (!(weaponType instanceof CLERPPC) || year >= 3101);
+    }
+
+    /**
+     * @return True when the weapon enhancement may be attached to the equipment: a weapon of the right kind in the
+     *       same location, either one for a weapon split over two (TM pp. 57, 207)
+     */
+    public static boolean isEnhancementTarget(Mounted<?> enhancement, Mounted<?> mount) {
+        int location = enhancement.getLocation();
+        return MiscType.isWeaponEnhancement(enhancement.getType()) && (mount.getType() instanceof WeaponType weapon)
+              && ((mount.getLocation() == location) || (mount.isSplit() && (mount.getSecondLocation() == location)))
+              && canEnhance(enhancement.getType(), weapon, enhancement.getEntity().getYear());
+    }
+
+    /**
+     * @return True when the weapon enhancement may be attached to a weapon of the given type on a unit of the given
+     *       year, wherever the two are mounted
+     */
+    public static boolean canEnhance(EquipmentType enhancement, WeaponType weapon, int year) {
+        if (!(enhancement instanceof MiscType type)) {
+            return false;
+        }
+        if (type.hasFlag(MiscType.F_LASER_INSULATOR) || type.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            // The laser pulse module is also restricted to Inner Sphere standard and ER lasers (IO:AE p.87)
+            return (weapon.hasFlag(WeaponType.F_LASER) || (weapon instanceof CLChemicalLaserWeapon))
+                  && (!type.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                  || weapon.hasFlag(WeaponType.F_RISC_LASER_PULSE_COMPATIBLE));
+        } else if (type.hasFlag(MiscType.F_ARTEMIS) || type.hasFlag(MiscType.F_ARTEMIS_V)
+              || type.hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+            return weapon.hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE);
+        } else if (type.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            return weapon.hasFlag(WeaponType.F_PPC) && canLinkPpcCapacitor(weapon, year);
+        }
+        return type.hasFlag(MiscType.F_APOLLO) && (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
+    }
+
+    /**
+     * @return True when the weapon has an enhancement of the kind of the given one. A weapon can have any number of
+     *       laser insulators and one other enhancement.
+     */
+    public static boolean hasEnhancementOfKind(Mounted<?> weapon, Mounted<?> enhancement) {
+        boolean insulator = enhancement.getType().hasFlag(MiscType.F_LASER_INSULATOR);
+        return weapon.getEnhancements().stream()
+              .anyMatch(other -> other.getType().hasFlag(MiscType.F_LASER_INSULATOR) == insulator);
+    }
+
+    /**
+     * Finds the weapon for a weapon enhancement, which unit files tell by their order: an enhancement belongs to the
+     * nearest weapon before it in its location that can take it. Laser insulators can share a laser; the other
+     * enhancements pass over a weapon that has one of their kind. An enhancement without such a weapon before it
+     * gets the first weapon in its location that has none of its kind, or, being a laser insulator, the first laser.
+     *
+     * @param enhancement The weapon enhancement
+     * @param equipment   The equipment around the enhancement, in the order the unit file lists it (see
+     *                    {@link #fileOrder(Mounted)})
+     *
+     * @return The weapon, or null when there is none to link to
+     */
+    static @Nullable Mounted<?> findEnhancementTarget(Mounted<?> enhancement, List<Mounted<?>> equipment) {
+        boolean stacks = enhancement.getType().hasFlag(MiscType.F_LASER_INSULATOR);
+        for (int index = equipment.indexOf(enhancement) - 1; index >= 0; index--) {
+            Mounted<?> mount = equipment.get(index);
+            if (isEnhancementTarget(enhancement, mount) && (stacks || !hasEnhancementOfKind(mount, enhancement))) {
+                return mount;
+            }
+        }
+        List<Mounted<?>> targets = equipment.stream().filter(mount -> isEnhancementTarget(enhancement, mount)).toList();
+        return targets.stream().filter(mount -> !hasEnhancementOfKind(mount, enhancement)).findFirst()
+              .orElse((stacks && !targets.isEmpty()) ? targets.getFirst() : null);
+    }
+
+    /**
+     * @return The equipment in the order the unit file lists it around the given enhancement. A Mek lists the equipment
+     *       of a location in its critical slots, so a weapon split in from another location sits where its slots in the
+     *       enhancement's location are.
+     */
+    private static List<Mounted<?>> fileOrder(Mounted<?> enhancement) {
+        Entity entity = enhancement.getEntity();
+        return (entity instanceof Mek mek) ? MtfFile.rowMounts(mek, enhancement.getLocation()).stream().distinct().toList()
+              : entity.getEquipment();
     }
 
     public MekFileParser(File f) throws EntityLoadingException {
@@ -356,41 +435,11 @@ public class MekFileParser {
             if (m.getLinked() != null) {
                 continue;
             }
-            // link laser insulators
-            if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR) ||
-                  m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
-                // We can link to a laser in the same location that isn't already linked.
-                Predicate<Mounted<?>> linkable = mount -> (mount.getLinkedBy() == null) &&
-                      (mount.getLocation() == m.getLocation()) &&
-                      (mount.getType() instanceof WeaponType) &&
-                      (mount.getType().hasFlag(WeaponType.F_LASER) ||
-                            mount.getType() instanceof CLChemicalLaserWeapon);
-                // The laser pulse module is also restricted to non-pulse lasers, IS only
-                if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE) &&
-                          !mount.getType().isClan());
-                }
-
-                /*
-                 * First check the immediate predecessor in the equipment list, which allows
-                 * pairing the insulator or pulse module with a specific weapon by placing them
-                 * in a specific order. If that doesn't work, fall back to finding the first
-                 * eligible
-                 * weapon in the location.
-                 */
-                int eqNum = ent.getEquipment().indexOf(m);
-                if ((eqNum > 0) && linkable.test(ent.getEquipment().get(eqNum - 1))) {
-                    m.setLinked(ent.getEquipment().get(eqNum - 1));
-                } else {
-                    for (Mounted<?> weapon : ent.getTotalWeaponList()) {
-                        if (linkable.test(weapon)) {
-                            m.setLinked(weapon);
-                            break;
-                        }
-                    }
-                }
+            // link weapon enhancements, including those of the weapons in weapon bays
+            if (MiscType.isWeaponEnhancement(m.getType())) {
+                m.setLinked(findEnhancementTarget(m, fileOrder(m)));
                 if (m.getLinked() == null) {
-                    LOGGER.error("Unable to match {} to laser for {}", m.getName(), ent.getShortName());
+                    LOGGER.error("Unable to match {} to weapon for {}", m.getName(), ent.getShortName());
                 }
             } else if (m.is(EquipmentTypeLookup.BA_DWP)) {
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
@@ -421,33 +470,6 @@ public class MekFileParser {
                         break;
                     }
                 }
-            } else if (m.getType().hasFlag(MiscType.F_ARTEMIS) ||
-                  m.getType().hasFlag(MiscType.F_ARTEMIS_V) ||
-                  m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-
-                // link up to a weapon in the same location
-                for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
-
-                    if (!mWeapon.getType().hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE)) {
-                        continue;
-                    }
-
-                    // already linked?
-                    if (mWeapon.getLinkedBy() != null) {
-                        continue;
-                    }
-
-                    // check location
-                    if (mWeapon.getLocation() == m.getLocation()) {
-                        m.setLinked(mWeapon);
-                        break;
-                    }
-                }
-
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    LOGGER.error("Unable to match Artemis to launcher for {}", ent.getShortName());
-                }
             } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOID_SIG)) &&
                   (ent instanceof Mek)) {
                 // Find an ECM suite to link to the stealth system. Stop looking after we find the first ECM suite.
@@ -468,64 +490,6 @@ public class MekFileParser {
                           ent.getShortName());
                 }
             } // End link-Stealth
-            // Link PPC Capacitor to PPC it its location.
-            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
-
-                // link up to a weapon in the same location
-                for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
-                    WeaponType weaponType = (WeaponType) mWeapon.getType();
-
-                    // Only PPC'S are Valid
-                    if (!weaponType.hasFlag(WeaponType.F_PPC)) {
-                        continue;
-                    }
-
-                    // already linked?
-                    if (mWeapon.getLinkedBy() != null) {
-                        continue;
-                    }
-
-                    // check location
-                    if (mWeapon.getLocation() == m.getLocation()) {
-
-                        if (canLinkPpcCapacitor(weaponType, ent.getYear())) {
-                            m.setLinked(mWeapon);
-                            break;
-                        }
-                    }
-                }
-            } // End link-PPC Capacitor
-
-            // Link MRM Apollo fire-control systems to their missile racks.
-            else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
-
-                // link up to a weapon in the same location
-                for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
-                    WeaponType weaponType = (WeaponType) mWeapon.getType();
-
-                    // only srm and lrm are valid for artemis
-                    if (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.MRM) {
-                        continue;
-                    }
-
-                    // already linked?
-                    if (mWeapon.getLinkedBy() != null) {
-                        continue;
-                    }
-
-                    // check location
-                    if (mWeapon.getLocation() == m.getLocation()) {
-                        m.setLinked(mWeapon);
-                        break;
-                    }
-
-                }
-
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    LOGGER.error("Unable to match Apollo to launcher for {}", ent.getShortName());
-                }
-            } // End link-Apollo
         }
         // now find any active probes and add them to the sensor list choose this sensor if added
         // WOR CEWS
@@ -608,60 +572,6 @@ public class MekFileParser {
                 }
             }
 
-        } // Check the next piece of equipment.
-
-        // Walk through the list of equipment.
-        for (Mounted<?> m : ent.getMisc()) {
-
-            // Link PPC Capacitor to PPC it its location.
-            if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && (m.getLinked() == null)) {
-
-                // link up to a weapon in the same location
-                for (WeaponMounted mWeapon : ent.getWeaponList()) {
-                    WeaponType weaponType = mWeapon.getType();
-
-                    // Handle weapon bays
-                    if (weaponType.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))) {
-                        for (WeaponMounted bayMountedWeapon : mWeapon.getBayWeapons()) {
-                            WeaponType bayWeaponType = bayMountedWeapon.getType();
-
-                            // Check for PPC that isn't cross-linked
-                            if (!bayWeaponType.hasFlag(WeaponType.F_PPC) ||
-                                  (bayMountedWeapon.getCrossLinkedBy() != null)) {
-                                continue;
-                            }
-
-                            // check location
-                            if (bayMountedWeapon.getLocation() == m.getLocation()) {
-                                if (canLinkPpcCapacitor(bayWeaponType, ent.getYear())) {
-
-                                    m.setCrossLinked(bayMountedWeapon);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    // Check for PPC that isn't cross-linked
-                    if (!weaponType.hasFlag(WeaponType.F_PPC) || (mWeapon.getCrossLinkedBy() != null)) {
-                        continue;
-                    }
-
-                    // check location
-                    if (mWeapon.getLocation() == m.getLocation()) {
-
-                        if (canLinkPpcCapacitor(weaponType, ent.getYear())) {
-
-                            m.setCrossLinked(mWeapon);
-                            break;
-                        }
-                    }
-                }
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    LOGGER.error("No available PPC to match Capacitor for {}!", ent.getShortName());
-                }
-            }
         } // Check the next piece of equipment.
 
         // For BattleArmor, we have to ensure that all ammo that is DWP mounted

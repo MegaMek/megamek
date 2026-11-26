@@ -33,12 +33,17 @@
 package megamek.common.weapons.handlers.lrm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -46,9 +51,11 @@ import megamek.common.HexTarget;
 import megamek.common.Player;
 import megamek.common.TagInfo;
 import megamek.common.ToHitData;
+import megamek.common.actions.SpotAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentMode;
@@ -61,7 +68,10 @@ import megamek.common.options.GameOptions;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
+import megamek.common.units.BipedMek;
+import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.AfterEach;
@@ -118,13 +128,78 @@ public class LRMHandlerSemiGuidedTest {
         Game game = createMockGame(attacker);
         HexTarget target = createHexTarget();
         Vector<TagInfo> tagInfo = new Vector<>();
-        tagInfo.add(new TagInfo(TAGGING_UNIT_ID, target.getTargetType(), target, false));
+        HexTarget designation = new HexTarget(target.getBoardLocation(), Targetable.TYPE_HEX_TAG);
+        tagInfo.add(new TagInfo(TAGGING_UNIT_ID, designation.getTargetType(), designation, false));
         doReturn(tagInfo).when(game).getTagInfo();
 
         LRMHandler handler = createHandler(attacker, target, game);
 
         assertEquals(+2, handler.getSemiGuidedClusterModifier(),
               "A hex designated by TAG should give the Core Rules Semi-Guided bonus");
+        HexTarget onOtherBoard = new HexTarget(target.getPosition(), target.getBoardId() + 1, Targetable.TYPE_HEX_CLEAR);
+        assertFalse(Compute.isTargetTaggedByFriend(attacker, onOtherBoard, game));
+    }
+
+    @Test
+    void buildingDesignationDistinguishesTheBuildingFromItsHexAndAnEntityWithTheSameId() {
+        Board board = mock(Board.class);
+        Coords coords = new Coords(2, 0);
+        doReturn(mock(IBuilding.class)).when(board).getBuildingAt(coords);
+        doReturn(new Hex(0)).when(board).getHex(coords);
+        BuildingTarget designation = new BuildingTarget(coords, board, Targetable.TYPE_BLDG_TAG);
+        BuildingTarget building = new BuildingTarget(coords, board, Targetable.TYPE_BUILDING);
+        HexTarget terrain = new HexTarget(coords, board, Targetable.TYPE_HEX_CLEAR);
+        BipedMek spotter = new BipedMek();
+        spotter.setId(TAGGING_UNIT_ID);
+        BipedMek unit = new BipedMek();
+        unit.setId(building.getId());
+        Game game = mock(Game.class);
+        doReturn(unit).when(game).getEntity(unit.getId());
+        doReturn(building).when(game).getTarget(Targetable.TYPE_BUILDING, building.getId());
+        Vector<TagInfo> tags = new Vector<>();
+        tags.add(new TagInfo(spotter.getId(), designation.getTargetType(), designation, false));
+        doReturn(tags).when(game).getTagInfo();
+
+        SpotAction order = new SpotAction(spotter.getId(), building);
+        spotter.setSpotTarget(order.getTargetType(), order.getTargetId());
+        assertTrue(Compute.hasTagged(spotter, spotter.getSpotTarget(game), game));
+        assertFalse(Compute.hasTagged(spotter, terrain, game));
+        spotter.setSpotTargetId(unit.getId());
+        assertSame(unit, spotter.getSpotTarget(game));
+        assertFalse(Compute.hasTagged(spotter, spotter.getSpotTarget(game), game));
+
+        doReturn(null).when(game).getEntity(unit.getId());
+        assertSame(designation, spotter.getSpotTarget(game), "an ID-only spot in an old save keeps its TAG record");
+
+        tags.clear();
+        doReturn(true).when(game).hasBoardLocation(building.getBoardLocation());
+        doReturn(Optional.of(mock(IBuilding.class))).when(game).getBuildingAt(building.getBoardLocation());
+        assertNull(spotter.getSpotTarget(game), "an inactive order does not infer a target from its ID");
+        spotter.setSpotting(true);
+        assertSame(building, spotter.getSpotTarget(game), "a legacy manual spot can still resolve a building");
+        doReturn(unit).when(game).getOutOfGameEntity(unit.getId());
+        assertNull(spotter.getSpotTarget(game), "a removed unit must not silently become a building spot");
+    }
+
+    @Test
+    void hexTaggedByAnEnemyGivesNoBonus() throws EntityLoadingException {
+        Game.rulesManager = new CoreRulesManager();
+        Entity attacker = createMockEntity();
+        Game game = createMockGame(attacker);
+        Entity enemy = createMockEntity();
+        Player enemyOwner = enemy.getOwner();
+        Player attackerOwner = attacker.getOwner();
+        doReturn(true).when(enemyOwner).isEnemyOf(attackerOwner);
+        doReturn(enemy).when(game).getEntity(TAGGING_UNIT_ID);
+        HexTarget target = createHexTarget();
+        Vector<TagInfo> tagInfo = new Vector<>();
+        tagInfo.add(new TagInfo(TAGGING_UNIT_ID, target.getTargetType(), target, false));
+        doReturn(tagInfo).when(game).getTagInfo();
+
+        LRMHandler handler = createHandler(attacker, target, game);
+
+        assertEquals(-1, handler.getSemiGuidedClusterModifier(),
+              "Only friendly TAG designates targets for Semi-Guided missiles (Core p.193)");
     }
 
     @Test
@@ -148,7 +223,9 @@ public class LRMHandlerSemiGuidedTest {
         Game game = createMockGame(attacker);
         Entity target = createMockEntity();
         doReturn(200).when(target).getId();
-        doReturn(TAGGING_UNIT_ID).when(target).getTaggedBy();
+        Vector<TagInfo> tagInfo = new Vector<>();
+        tagInfo.add(new TagInfo(TAGGING_UNIT_ID, target.getTargetType(), target, false));
+        doReturn(tagInfo).when(game).getTagInfo();
 
         LRMHandler handler = createHandler(attacker, target, game);
 
@@ -241,6 +318,9 @@ public class LRMHandlerSemiGuidedTest {
         int attackerId = attacker.getId();
         doReturn(attacker).when(game).getEntity(attackerId);
         doReturn(game).when(attacker).getGame();
+        // The designating unit is on the attacker's side: semi-guided missiles need "friendly TAG" (Core p.193)
+        Entity tagger = createMockEntity();
+        doReturn(tagger).when(game).getEntity(TAGGING_UNIT_ID);
 
         return game;
     }

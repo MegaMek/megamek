@@ -46,6 +46,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -70,6 +71,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -829,7 +831,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         }
                     }
                 } else {
+                    // A single non-cluster weapon or a weapon bay applies its Attack Value in one block. The damage
+                    // per hit from calcDamagePerHit() is ground damage, and a bay's is the DAMAGE_VARIABLE marker.
                     bSalvo = false;
+                    nDamPerHit = attackValue;
                     nCluster = 1;
                 }
             }
@@ -925,6 +930,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
             bDirect = !isFireExtinguishing
                   && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+
+            // Linked guns share the bay's roll. Their automatic-success rolls have no margin of their own.
+            if (parentBayHandler instanceof BayWeaponHandler bay && bay.resolvesGunInStandardScale(weapon)) {
+                toHit.setMoS(bay.toHit.getMoS());
+                bDirect = bay.bDirect;
+                bGlancing = bay.bGlancing;
+                bLowProfileGlancing = bay.bLowProfileGlancing;
+            }
 
             // This has to be up here so that we don't screw up glancing/direct blow reports
             attackValue = calcAttackValue();
@@ -1036,6 +1049,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // Do this stuff first, because some weapon's miss report reference
             // the amount of shots fired and stuff.
             nDamPerHit = calcDamagePerHit();
+            if (usesStandardScaleBayDamage() && !target.isConventionalInfantry()) {
+                nDamPerHit = BayWeaponHandler.bracketBayDamage(nDamPerHit, getBracketingMultiplier());
+            }
             if (!heatAdded) {
                 addHeat();
                 heatAdded = true;
@@ -1208,7 +1224,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         game.addTagInfo(info);
 
                         attackingEntity.setSpotting(true);
-                        attackingEntity.setSpotTargetId(target.getId());
+                        attackingEntity.setSpotTarget(target.getTargetType(), target.getId());
 
                         report = new Report(3390);
                         report.subject = subjectId;
@@ -1384,6 +1400,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                   weaponType.getBADamageClass(), (BattleArmor) target);
         }
 
+        toReturn = directBlowDamageAtTargetScale(toReturn);
+
         // we default to direct fire weapons for anti-infantry damage
         if (target.isConventionalInfantry()) {
             // Flechette ammo is treated "as though attack were from infantry unit" (TW p.208)
@@ -1396,8 +1414,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   isNonInfantryVsMechanized,
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
-        } else if (bDirect) {
-            toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
@@ -1491,6 +1507,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 av = weaponType.getRoundExtAV();
             }
         }
+        if (av > 0) {
+            av += getAttackValueBonus();
+        }
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -1503,9 +1522,41 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * * adjustment factor on attack value for fighter squadrons
+     * A flat bonus added to this weapon's Attack Value before direct and glancing blows are applied. Handlers whose
+     * equipment raises the damage of a shot override this so the bonus also counts when the Attack Value is used.
+     *
+     * @return the bonus to the Attack Value, {@code 0} by default
      */
+    protected int getAttackValueBonus() {
+        return 0;
+    }
+
+    /** The selected bracketing mode belongs to the firing bay. */
     protected double getBracketingMultiplier() {
+        return bracketingMultiplier(parentBayHandler instanceof BayWeaponHandler ? parentBayHandler.weapon : weapon);
+    }
+
+    /** Aero Sanity resolves the guns of a capital bay individually against standard-scale armor. */
+    protected boolean usesStandardScaleBayDamage() {
+        return parentBayHandler instanceof BayWeaponHandler bay && bay.resolvesGunInStandardScale(weapon);
+    }
+
+    /** Apply a direct blow in the weapon's native scale, before glancing hits or infantry casualties are rounded. */
+    protected double directBlowDamageAtTargetScale(double damage) {
+        if (bDirect && !target.isConventionalInfantry()) {
+            damage = Math.min(damage + (int) floor(toHit.getMoS() / 3.0), damage * 2);
+        }
+        if (!usesStandardScaleBayDamage()) {
+            return damage;
+        }
+        double standardDamage = 10 * damage;
+        // The infantry table must receive the bracketed weapon damage before it converts the hit to casualties.
+        return target.isConventionalInfantry()
+              ? BayWeaponHandler.bracketBayDamage(standardDamage, getBracketingMultiplier()) : standardDamage;
+    }
+
+    /** @return the share of its damage a bay deals in its Bracketing fire mode, or 1 when not bracketing (SO p.87) */
+    public static double bracketingMultiplier(WeaponMounted weapon) {
         double multiplier = 1.0;
         if (weapon.hasModes() && weapon.curMode().equals("Bracket 80%")) {
             multiplier = 0.8;
@@ -1665,27 +1716,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         initHit(entityTarget);
 
-        boolean isIndirect = weapon.hasModes() && weapon.curMode().equals("Indirect");
-
         Hex targetHex = game.getHexOf(target);
-        boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
-
-        // a very specific situation where a mek is standing in a height 1 building
-        // or its upper torso is otherwise somehow poking out of said building
-        boolean targetInShortBuilding = WeaponAttackAction.targetInShortCoverBuilding(target);
-        boolean legHit = entityTarget.locationIsLeg(hit.getLocation());
-        boolean shortBuildingBlocksLegHit = targetInShortBuilding && legHit;
-
-        boolean partialCoverForIndirectFire = isIndirect && (mechPokingOutOfShallowWater || shortBuildingBlocksLegHit);
-
-        // For indirect fire, remove leg hits only if target is in water partial cover
-        // Per TW errata for indirect fire
-        if ((!isIndirect || partialCoverForIndirectFire)
-              && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(),
-              ComputeSideTable.sideTable(attackingEntity, entityTarget,
-                    weapon.getCalledShot().getCall()))) {
-            // Weapon strikes Partial Cover.
+        if (hitStrikesPartialCover(entityTarget, targetHex)) {
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                   nCluster, bldgAbsorbs);
             return;
@@ -1717,8 +1749,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.lastElement().newlines = 0;
             vPhaseReport.addElement(r);
         }
-        // Resolve damage normally.
-        int nDamage = nDamPerHit * Math.min(nCluster, hits);
+        // Resolve damage against the unit actually struck, after partial cover has been checked.
+        int nDamage = damagePerHitAgainst(entityTarget) * Math.min(nCluster, hits);
 
         if (bDirect) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
@@ -1740,8 +1772,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
         nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
 
-        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
+        // Count what strikes before a building scales the damage it deals: an IMP missile strikes whole (IO:AE p.61)
+        Report heatReport = applyHeatOnStrike(entityTarget, nDamage);
 
+        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);
@@ -1750,6 +1784,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.addDesc(entityTarget);
             vPhaseReport.addElement(r);
             missed = true;
+            if (heatReport != null) {
+                vPhaseReport.add(heatReport);
+            }
         } else {
             if (bGlancing) {
                 hit.makeGlancingBlow();
@@ -1759,9 +1796,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hit.makeGlancingBlow();
             }
 
-            vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
-                  attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
-                  false, false, throughFront, underWater, nukeS2S));
+            applyEntityDamage(entityTarget, nDamage, vPhaseReport);
             if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mek)
                   && entityTarget.antiTSMVulnerable()) {
                 vPhaseReport.addAll(gameManager.doGreenSmokeDamage(entityTarget));
@@ -1775,12 +1810,49 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 vPhaseReport.lastElement().newlines = 0;
                 vPhaseReport.addElement(r);
             }
+            if (heatReport != null) {
+                vPhaseReport.add(heatReport);
+            }
         }
         // If a BA squad is shooting at infantry, damage may be random and need
         // to be rerolled for the next hit (if any) from the same attack.
         if ((attackingEntity instanceof BattleArmor) && (target instanceof Infantry)) {
             nDamPerHit = calcDamagePerHit();
         }
+    }
+
+    /** Physical damage per hit against the unit struck. Partial cover may redirect a hit to another unit. */
+    protected int damagePerHitAgainst(Entity entityTarget) {
+        return nDamPerHit;
+    }
+
+    /**
+     * @return true when this hit strikes the target's partial cover instead of the target (TW p.102)
+     */
+    protected boolean hitStrikesPartialCover(Entity entityTarget, Hex targetHex) {
+        boolean isIndirect = weapon.hasModes() && weapon.curMode().equals("Indirect");
+        boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
+
+        // a very specific situation where a mek is standing in a height 1 building
+        // or its upper torso is otherwise somehow poking out of said building
+        boolean targetInShortBuilding = WeaponAttackAction.targetInShortCoverBuilding(target);
+        boolean legHit = entityTarget.locationIsLeg(hit.getLocation());
+        boolean shortBuildingBlocksLegHit = targetInShortBuilding && legHit;
+
+        boolean partialCoverForIndirectFire = isIndirect && (mechPokingOutOfShallowWater || shortBuildingBlocksLegHit);
+
+        // For indirect fire, remove leg hits only if target is in water partial cover
+        // Per TW errata for indirect fire
+        return (!isIndirect || partialCoverForIndirectFire)
+              && entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+              ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()));
+    }
+
+    /** Applies a hit after resolving its location, cover and damage absorption. */
+    protected void applyEntityDamage(Entity entityTarget, int damage, Vector<Report> reports) {
+        reports.addAll(gameManager.damageEntity(entityTarget, hit, damage, false,
+              attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
+              false, false, throughFront, underWater, nukeS2S));
     }
 
     /**
@@ -2033,6 +2105,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
               weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setCapital(weaponType.isCapital());
+        hit.setDamageInStandardScale(usesStandardScaleBayDamage());
         hit.setBoxCars(roll.getIntValue() == 12);
         hit.setCapMisCritMod(getCapMisMod());
         hit.setFirstHit(firstHit);
@@ -2070,6 +2143,62 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     protected void setDone() {
         weapon.setUsedThisRound(true);
+    }
+
+    /**
+     * Applies the outside heat this hit carries as it strikes, before its damage removes armor: armor with special
+     * effects acts while the location struck has armor at the time the hit is applied (Core p.201). Heat isn't damage,
+     * so it strikes even when a building or terrain absorbs all the hit's damage (TW p.171).
+     *
+     * @param damageThatStrikes the hit's damage left after buildings and terrain absorbed theirs
+     *
+     * @return the report of that heat, or null when the hit carries none
+     */
+    protected @Nullable Report applyHeatOnStrike(Entity entityTarget, int damageThatStrikes) {
+        return null;
+    }
+
+    /** Applies weapon heat that strikes where this hit does; see {@link #externalHeatReport}. */
+    protected Report applyExternalHeat(Entity entityTarget, int heat) {
+        return externalHeatReport(entityTarget, hit, heat, subjectId, weaponType);
+    }
+
+    /**
+     * Adds weapon heat that strikes a location through the armor there as it is now: laser-reflective armor halves the
+     * heat of flamers and plasma weapons (BMM p.114), and heat-dissipating armor acts on all outside heat (see
+     * {@link Entity#addOutsideHeat(int, HitData)}).
+     *
+     * @return the report of the heat and of any armor that reduced it
+     */
+    public static Report externalHeatReport(Entity entityTarget, HitData hit, int heat, int subjectId,
+          WeaponType weaponType) {
+        HitData struck = entityTarget.heatReceivingLocation(hit);
+        boolean reflected = weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA)
+              || (weaponType.getAtClass() == WeaponType.CLASS_PLASMA);
+        int reflectedHeat = (reflected && (entityTarget.getArmor(struck) > 0))
+              ? Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(
+                    entityTarget.getArmorType(struck.getLocation()), heat)
+              : heat;
+        int appliedHeat = entityTarget.addOutsideHeat(reflectedHeat, struck);
+        return heatReport(subjectId, appliedHeat, heat,
+              (appliedHeat == heat) ? null : ArmorType.forEntity(entityTarget, struck.getLocation()).getName());
+    }
+
+    /**
+     * @return the report of outside heat that struck a unit: the heat added and, when armor reduced it, the full heat
+     *       and that armor
+     */
+    public static Report heatReport(int subjectId, int heat, int fullHeat, @Nullable String reducedBy) {
+        Report report = new Report((reducedBy == null) ? 3400 : 3406);
+        report.subject = subjectId;
+        report.indent(2);
+        report.add(heat);
+        report.choose(true);
+        if (reducedBy != null) {
+            report.add(fullHeat);
+            report.add(reducedBy);
+        }
+        return report;
     }
 
     protected void addHeat() {

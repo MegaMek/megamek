@@ -192,7 +192,7 @@ public class LRMHandler extends MissileWeaponHandler {
      * @return the number of missiles to add to or subtract from the cluster roll
      */
     protected int getSemiGuidedClusterModifier() {
-        boolean isTargetTagged = Compute.isTargetTagged(target, game);
+        boolean isTargetTagged = Compute.isTargetTaggedByFriend(attackingEntity, target, game);
         boolean isIndirectFire = weapon.curMode().equals("Indirect");
         return Game.rulesManager.getRulesAmmo().getSemiGuidedNMissiles(isTargetTagged, isIndirectFire);
     }

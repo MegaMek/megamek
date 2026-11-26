@@ -33,6 +33,7 @@
 package megamek.common.pathfinder;
 
 import megamek.common.Facing;
+import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 
@@ -49,7 +50,8 @@ public class MovePathDestinationMap implements DestinationMap<CoordsWithFacing, 
          * moving forwards :) NOT
          */
         CoordsWithFacing cfw;
-        if (lastStep != null && lastStep.isThisStepBackwards()) {
+        if (lastStep != null && lastStep.isThisStepBackwards()
+              && !e.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)) {
             Facing f = Facing.valueOfInt(e.getFinalFacing());
             cfw = new CoordsWithFacing(e.getFinalCoords(), f.getOpposite().getIntValue());
         } else {

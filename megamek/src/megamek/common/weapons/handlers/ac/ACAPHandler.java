@@ -38,7 +38,6 @@ import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Hex;
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -70,10 +69,7 @@ public class ACAPHandler extends ACWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
         AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
-              weaponAttackAction.getAimedLocation(), weaponAttackAction.getAimingMode(), toHit.getCover());
-        hit.setGeneralDamageType(generalDamageType);
-        hit.setAttackerId(getAttackerId());
+        initHit(entityTarget);
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
               ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.

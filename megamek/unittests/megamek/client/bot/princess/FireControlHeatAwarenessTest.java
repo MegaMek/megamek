@@ -47,6 +47,9 @@ import megamek.common.CriticalSlot;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -115,11 +118,19 @@ class FireControlHeatAwarenessTest {
     }
 
     @Test
-    void heatDissipatingArmorHalvesTheHotPenalty() {
+    void heatDissipatingArmorUsesRulesetForTheHotPenalty() {
         planetaryConditions.setTemperature(90); // (90 - 50) / 10 = 4 points, halved to 2
         BipedMek mek = newHeatTrackingMek();
         when(mek.hasIntactHeatDissipatingArmor()).thenReturn(true);
-        assertEquals(2, fireControl.predictEnvironmentalHeat(mek));
+        RulesManager original = Game.rulesManager;
+        try {
+            Game.rulesManager = new TWRulesManager();
+            assertEquals(2, fireControl.predictEnvironmentalHeat(mek));
+            Game.rulesManager = new CoreRulesManager();
+            assertEquals(4, fireControl.predictEnvironmentalHeat(mek));
+        } finally {
+            Game.rulesManager = original;
+        }
     }
 
     @Test

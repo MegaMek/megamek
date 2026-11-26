@@ -81,6 +81,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
@@ -380,5 +381,41 @@ class LegBreachTest {
         breach(mek, Mek.LOC_LEFT_LEG);
 
         assertEquals(List.of(0, 1, 1), game.getPSRsForEntity(mek).stream().map(PilotingRollData::getValue).toList());
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true, 4, true", "true, 5, false", "true, 10, false",
+          "false, 4, false", "false, 8, false", "false, 9, true" })
+    void vacuumBreachUsesRulesetRollAndImpactArmorModifier(boolean core, int roll, boolean breaches) {
+        game.initializeRulesManager(core ? OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW);
+        Mek mek = prepareMek(new BipedMek());
+        int leg = Mek.LOC_LEFT_LEG;
+        mek.setArmorType(EquipmentType.T_ARMOR_IMPACT_RESISTANT, leg);
+        mek.setLocationStatus(leg, ILocationExposureStatus.VACUUM);
+        assertVacuumBreach(mek, leg, roll, breaches);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true, true, 2, true", "true, false, 3, false",
+          "false, true, 11, false", "false, false, 12, true" })
+    void harJelIIOrIIIProtectsAgainstHullBreaches(boolean core, boolean harJelII, int roll, boolean breaches) {
+        game.initializeRulesManager(core ? OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW);
+        int leg = Mek.LOC_LEFT_LEG;
+        Mek mek = prepareMek(spy(new BipedMek()));
+        when(mek.hasHarJelIIIn(leg)).thenReturn(harJelII);
+        when(mek.hasHarJelIIIIn(leg)).thenReturn(!harJelII);
+        mek.setLocationStatus(leg, ILocationExposureStatus.VACUUM);
+        assertVacuumBreach(mek, leg, roll, breaches);
+    }
+
+    private void assertVacuumBreach(Mek mek, int leg, int roll, boolean breaches) {
+        Roll breachRoll = mock(Roll.class);
+        when(breachRoll.getIntValue()).thenReturn(roll);
+        when(breachRoll.getReport()).thenReturn(Integer.toString(roll));
+        try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+            compute.when(() -> Compute.rollD6(2)).thenReturn(breachRoll);
+            gameManager.breachCheck(mek, leg, null);
+        }
+        assertEquals(breaches, mek.getLocationStatus(leg) == ILocationExposureStatus.BREACHED);
     }
 }

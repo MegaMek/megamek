@@ -34,11 +34,13 @@
 package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Sensor;
 import megamek.common.game.Game;
+import megamek.common.planetaryConditions.EMI;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -75,8 +77,12 @@ class ProbeRangeTest {
     }
 
     @Test
-    void testABeagleProbeStillReachesFourHexes() throws Exception {
-        assertEquals(4, mekCarrying(Sensor.BAP).getBAPRange());
+    void testPlanetaryInterferenceDisablesAMountedBeagleProbe() throws Exception {
+        Entity mek = mekCarrying(Sensor.BAP);
+        assertEquals(4, mek.getBAPRange());
+        mek.getGame().getPlanetaryConditions().setEMI(EMI.EMI);
+        assertFalse(mek.hasBAP(false));
+        assertEquals(Entity.NONE, mek.getBAPRange());
     }
 
     @Test

@@ -34,6 +34,8 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import java.util.Vector;
+
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
@@ -45,8 +47,6 @@ import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-
-import java.util.Vector;
 
 public class TWRulesExplosions extends RulesExplosions {
 
@@ -152,35 +152,6 @@ public class TWRulesExplosions extends RulesExplosions {
 
 
     /**
-     * How much damage to equipment explosions do.
-     *
-     * @param mounted the mounted equipment
-     * @param weaponType the weapon type
-     * @return the damage amount
-     */
-    @Override
-    public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
-        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
-            if (mounted.isFired()) {
-                if (mounted.hasChargedCapacitor() == 2) {
-                    return 15;
-                }
-                return 0;
-            }
-            if (mounted.hasChargedCapacitor() == 2) {
-                return 30;
-            }
-            return 15;
-        }
-
-        if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {
-            return 0;
-        }
-
-        return weaponType.getExplosionDamage();
-    }
-
-    /**
      * Pods are explosive if they have not shot yet
      * @param mounted the mounted weapon
      * @return false if it has already shot, otherwise true
@@ -191,5 +162,34 @@ public class TWRulesExplosions extends RulesExplosions {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean jammedRotaryAutocannonExplodes() {
+        return true;
+    }
+
+    @Override
+    public void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec) {
+        // TW explosions have no damage cap to vent.
+    }
+
+    @Override
+    public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
+        // A charged PPC capacitor explodes with its PPC for their full combined maximum damage (TO:AUE p.149)
+        if (mounted.holdsCapacitorCharge()) {
+            return weaponType.getDamage(0) + Mounted.CAPACITOR_DAMAGE_BONUS;
+        }
+
+        if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && mounted.isFired()) {
+            return 0;
+        }
+
+        return weaponType.getExplosionDamage();
+    }
+
+    @Override
+    public boolean explosionsAreReduced() {
+        return false;
     }
 }

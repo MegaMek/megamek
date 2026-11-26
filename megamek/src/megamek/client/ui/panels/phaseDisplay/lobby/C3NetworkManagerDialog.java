@@ -44,6 +44,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -60,6 +61,11 @@ import javax.swing.tree.TreeSelectionModel;
 
 import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
+import megamek.client.ui.panels.phaseDisplay.lobby.C3FormationPlanner.ConfigurationShape;
+import megamek.client.ui.panels.phaseDisplay.lobby.C3FormationPlanner.ForcePlan;
+import megamek.client.ui.panels.phaseDisplay.lobby.C3FormationPlanner.LeftOutLance;
+import megamek.client.ui.panels.phaseDisplay.lobby.C3FormationPlanner.PlannedLance;
+import megamek.client.ui.panels.phaseDisplay.lobby.C3FormationPlanner.TemplateAssignment;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.event.GameListenerAdapter;
@@ -69,6 +75,7 @@ import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.util.C3Util;
+import megamek.logging.MMLogger;
 
 /**
  * Lobby dialog for viewing and building C3 networks at scale. The left side lists the local player's unassigned
@@ -82,6 +89,7 @@ import megamek.common.util.C3Util;
 public class C3NetworkManagerDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 1L;
+    private static final MMLogger LOGGER = MMLogger.create(C3NetworkManagerDialog.class);
 
     private static final int PADDING = UIUtil.scaleForGUI(10);
     private static final int PADDING_SMALL = UIUtil.scaleForGUI(5);
@@ -95,14 +103,19 @@ public class C3NetworkManagerDialog extends JDialog {
     private JButton formPeerNetworkButton;
     private JButton buildButton;
     private JButton discardPlanButton;
-    private JButton autoFormButton;
+    private JButton autoAssignPlanButton;
+    private JButton disconnectButton;
+    private JToggleButton autoFormButton;
     private final JCheckBox autoAssignCheckBox =
           new JCheckBox(Messages.getString("C3NetworkManagerDialog.chkAutoAssign"), true);
     private final JLabel forcePlanLabel = new JLabel(" ");
-    private final JButton[] configStartButtons = new JButton[4];
+    private final JToggleButton[] configStartButtons = new JToggleButton[4];
 
     /** The staged network plan cards, filled by the template buttons or Plan Force and applied on Build. */
     private final List<Blueprint> plans = new ArrayList<>();
+
+    /** True while the plan cards came from Plan Force rather than a single configuration button. */
+    private boolean plansFromForcePlan;
 
     /** True while any plan card holds the given unit. */
     private boolean planContainsUnit(int entityId) {
@@ -221,7 +234,7 @@ public class C3NetworkManagerDialog extends JDialog {
         JPanel configPickerPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, PADDING_SMALL, 0));
         configPickerPanel.add(new JLabel(Messages.getString("C3NetworkManagerDialog.startFromConfig")));
         for (int configNumber = 1; configNumber <= 4; configNumber++) {
-            JButton configButton = new JButton(String.valueOf(configNumber));
+            JToggleButton configButton = new JToggleButton(String.valueOf(configNumber));
             configButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.configStart.tooltip",
                   configNumber));
             configButton.setPreferredSize(UIUtil.scaleForGUI(44, 28));
@@ -230,7 +243,7 @@ public class C3NetworkManagerDialog extends JDialog {
             configStartButtons[configNumber - 1] = configButton;
             configPickerPanel.add(configButton);
         }
-        autoFormButton = new JButton(Messages.getString("C3NetworkManagerDialog.btnAutoForm"));
+        autoFormButton = new JToggleButton(Messages.getString("C3NetworkManagerDialog.btnAutoForm"));
         autoFormButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.btnAutoForm.tooltip"));
         autoFormButton.addActionListener(event -> createForcePlanTemplates());
         configPickerPanel.add(autoFormButton);
@@ -272,7 +285,7 @@ public class C3NetworkManagerDialog extends JDialog {
               Messages.getString("C3NetworkManagerDialog.btnFormPeerNetwork.tooltip"));
         formPeerNetworkButton.addActionListener(event -> formPeerNetwork());
 
-        JButton disconnectButton = new JButton(Messages.getString("C3NetworkManagerDialog.btnDisconnect"));
+        disconnectButton = new JButton(Messages.getString("C3NetworkManagerDialog.btnDisconnect"));
         disconnectButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.btnDisconnect.tooltip"));
         disconnectButton.addActionListener(event -> disconnectSelection());
 
@@ -284,9 +297,16 @@ public class C3NetworkManagerDialog extends JDialog {
         buildButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.btnBuild.tooltip"));
         buildButton.addActionListener(event -> buildNetworkFromBlueprint());
 
+        autoAssignPlanButton = new JButton(Messages.getString("C3NetworkManagerDialog.btnAutoAssignPlan"));
+        autoAssignPlanButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.btnAutoAssignPlan.tooltip"));
+        autoAssignPlanButton.addActionListener(event -> autoAssignEmptyPlans());
+
+        // Everything still in planning goes: the plan cards and masters dragged onto the panel. Built networks stay.
         discardPlanButton = new JButton(Messages.getString("C3NetworkManagerDialog.btnDiscardPlan"));
+        discardPlanButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.btnDiscardPlan.tooltip"));
         discardPlanButton.addActionListener(event -> {
             plans.clear();
+            seededMasterIds.clear();
             refresh();
         });
 
@@ -298,6 +318,7 @@ public class C3NetworkManagerDialog extends JDialog {
 
         buttonPanel.add(formPeerNetworkButton);
         buttonPanel.add(buildButton);
+        buttonPanel.add(autoAssignPlanButton);
         buttonPanel.add(discardPlanButton);
         buttonPanel.add(disconnectButton);
         buttonPanel.add(resetButton);
@@ -390,7 +411,8 @@ public class C3NetworkManagerDialog extends JDialog {
                 treeRoot.add(buildBlueprintNode(planIndex));
             }
         }
-        for (List<Entity> members : collectNetworks().values()) {
+        Map<String, List<Entity>> builtNetworks = collectNetworks();
+        for (List<Entity> members : builtNetworks.values()) {
             treeRoot.add(buildNetworkNode(members));
         }
         for (Entity seedMaster : seedMasters) {
@@ -410,10 +432,15 @@ public class C3NetworkManagerDialog extends JDialog {
         if (treeRoot.getChildCount() == 0) {
             treeRoot.add(new DefaultMutableTreeNode(new StartHint()));
         }
-        updateConfigurationFeasibility(masterUnits, seedMasters, slaveUnits);
+        updateConfigurationTooltips(masterUnits, seedMasters, slaveUnits);
         updateForcePlanSummary();
         buildButton.setVisible(!plans.isEmpty());
-        discardPlanButton.setVisible(!plans.isEmpty());
+        discardPlanButton.setVisible(!plans.isEmpty() || !seedMasters.isEmpty());
+        // Auto-assign only offers itself while the plan is laid out but holds no units yet
+        autoAssignPlanButton.setVisible(!plans.isEmpty() && (plansFilledCount() == 0));
+        updatePlanButtonHighlight();
+        // Disconnect acts only on built networks - plan cards and seeds are cleared with Discard Plan and Reset All
+        disconnectButton.setVisible(!builtNetworks.isEmpty());
         treeModel.reload();
         for (int row = 0; row < networkTree.getRowCount(); row++) {
             networkTree.expandRow(row);
@@ -430,8 +457,10 @@ public class C3NetworkManagerDialog extends JDialog {
                 unassignedUnitCount++;
             }
         }
+        // Count networks, not tree rows: the start hint, plan cards and peer drop rows are not networks
+        int networkCount = builtNetworks.size() + seedMasters.size();
         statusLabel.setText(Messages.getString("C3NetworkManagerDialog.status",
-              unassignedUnitCount, treeRoot.getChildCount()));
+              unassignedUnitCount, networkCount));
     }
 
     /** Selects the units handed over by the right-click flow: roster rows and network tree nodes alike. */
@@ -488,6 +517,9 @@ public class C3NetworkManagerDialog extends JDialog {
 
     /** One color per lance; slaves inherit their lance master's color so a lance reads as one block. */
     private static final String[] LANCE_COLORS = { "#D9534F", "#3F8FD2", "#4CAF7D", "#B15FC2" };
+
+    /** The company's own lance, matching the yellow lance beside the orange center of the diagram (CR p.199). */
+    private static final String COMPANY_LANCE_COLOR = "#E8C22D";
 
     /** Color for masterless peer networks (C3i, NC3, Nova CEWS). */
     private static final String PEER_COLOR = "#C0704D";
@@ -552,14 +584,106 @@ public class C3NetworkManagerDialog extends JDialog {
         return networkNode;
     }
 
-    /** Builds one member's subtree: slaves, free slave slots, subordinate lances, company master slots. */
+    /**
+     * Builds a company master's subtree, colored like its template card and the rulebook's configuration diagram
+     * (CR p.199): the slaves the head runs itself in blocks of three, one lance color per block, then its free
+     * slave slots, then its lance masters' lances, then its free company slots.
+     */
+    private DefaultMutableTreeNode buildCompanySubtree(Entity company, Map<Integer, List<Entity>> childrenByParent,
+          int[] lanceColorCounter, int networkRemaining) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(
+              new MemberRow(company, "C3NetworkManagerDialog.roleCompanyMaster", COMPANY_COLOR, networkRemaining));
+        List<Entity> headSlaves = new ArrayList<>();
+        List<Entity> lanceMasters = new ArrayList<>();
+        for (Entity child : childrenByParent.getOrDefault(company.getId(), List.of())) {
+            if (child.getOperableC3MCount() > 0) {
+                lanceMasters.add(child);
+            } else {
+                headSlaves.add(child);
+            }
+        }
+        for (int slaveIndex = 0; slaveIndex < headSlaves.size(); slaveIndex++) {
+            String blockColor = headLanceColor(slaveIndex / Entity.MAX_C3M_SUBORDINATES, lanceMasters.size());
+            node.add(buildMemberSubtree(headSlaves.get(slaveIndex), childrenByParent, blockColor, lanceColorCounter,
+                  networkRemaining));
+        }
+        int freeSlaveSlots = Math.min(company.calculateFreeC3Nodes(), networkRemaining);
+        if (freeSlaveSlots > 0) {
+            String nextBlockColor = headLanceColor(headSlaves.size() / Entity.MAX_C3M_SUBORDINATES,
+                  lanceMasters.size());
+            node.add(new DefaultMutableTreeNode(
+                  new SlotPlaceholder(company.getId(), false, freeSlaveSlots, nextBlockColor)));
+        }
+        // Configuration 1's company lance goes first, next to the head as in its template card
+        Entity configuration1CompanyLanceMaster = findConfiguration1CompanyLanceMaster(headSlaves, lanceMasters,
+              childrenByParent);
+        if (configuration1CompanyLanceMaster != null) {
+            node.add(buildMemberSubtree(configuration1CompanyLanceMaster, childrenByParent, COMPANY_LANCE_COLOR,
+                  lanceColorCounter, networkRemaining));
+        }
+        int otherLanceCount = 0;
+        for (Entity lanceMaster : lanceMasters) {
+            if (lanceMaster == configuration1CompanyLanceMaster) {
+                continue;
+            }
+            String lanceColor = LANCE_COLORS[otherLanceCount++ % LANCE_COLORS.length];
+            node.add(buildMemberSubtree(lanceMaster, childrenByParent, lanceColor, lanceColorCounter,
+                  networkRemaining));
+        }
+        int freeMasterSlots = Math.min(company.calculateFreeC3MNodes(), networkRemaining);
+        if (freeMasterSlots > 0) {
+            node.add(new DefaultMutableTreeNode(
+                  new SlotPlaceholder(company.getId(), true, freeMasterSlots, COMPANY_COLOR)));
+        }
+        return node;
+    }
+
+    /**
+     * The lance master whose lance is the company's own in a Configuration 1 network: with no slaves under the head
+     * and all three lance masters present, the diagram's short (two-slave) lance - the one with the fewest slaves,
+     * the last of them on a tie. {@code null} for any other shape, where the company's own lance is the head's
+     * slaves or cannot be told apart yet.
+     */
+    @Nullable
+    private Entity findConfiguration1CompanyLanceMaster(List<Entity> headSlaves, List<Entity> lanceMasters,
+          Map<Integer, List<Entity>> childrenByParent) {
+        if (!headSlaves.isEmpty() || (lanceMasters.size() != Entity.MAX_C3M_SUBORDINATES)) {
+            return null;
+        }
+        Entity shortestLanceMaster = null;
+        int fewestSlaves = Integer.MAX_VALUE;
+        for (Entity lanceMaster : lanceMasters) {
+            int slaveCount = childrenByParent.getOrDefault(lanceMaster.getId(), List.of()).size();
+            if (slaveCount <= fewestSlaves) {
+                shortestLanceMaster = lanceMaster;
+                fewestSlaves = slaveCount;
+            }
+        }
+        return shortestLanceMaster;
+    }
+
+    /**
+     * The color of one block of three slaves a company head runs itself: the first block is the company's own lance
+     * (yellow in the diagram), later blocks are lances of their own and take the lance colors after those of the
+     * head's lance masters - so Configuration 3 reads red lance master, blue head lance, and Configuration 4 yellow,
+     * red, blue.
+     */
+    private static String headLanceColor(int headLanceIndex, int lanceMasterCount) {
+        if (headLanceIndex == 0) {
+            return COMPANY_LANCE_COLOR;
+        }
+        return LANCE_COLORS[(lanceMasterCount + headLanceIndex - 1) % LANCE_COLORS.length];
+    }
+
+    /** Builds one member's subtree: slaves, free slave slots, subordinate lances. Company masters go elsewhere. */
     private DefaultMutableTreeNode buildMemberSubtree(Entity entity, Map<Integer, List<Entity>> childrenByParent,
           String color, int[] lanceColorCounter, int networkRemaining) {
+        if (entity.isC3CompanyCommander()) {
+            return buildCompanySubtree(entity, childrenByParent, lanceColorCounter, networkRemaining);
+        }
         boolean isMasterUnit = entity.getOperableC3MCount() > 0;
         String roleKey;
-        if (entity.isC3CompanyCommander()) {
-            roleKey = "C3NetworkManagerDialog.roleCompanyMaster";
-        } else if (isMasterUnit) {
+        if (isMasterUnit) {
             roleKey = "C3NetworkManagerDialog.roleLanceMaster";
         } else {
             roleKey = "C3NetworkManagerDialog.roleSlave";
@@ -586,13 +710,6 @@ public class C3NetworkManagerDialog extends JDialog {
                 String lanceColor = LANCE_COLORS[lanceColorCounter[0]++ % LANCE_COLORS.length];
                 node.add(buildMemberSubtree(child, childrenByParent, lanceColor, lanceColorCounter,
                       networkRemaining));
-            }
-        }
-        if (entity.isC3CompanyCommander()) {
-            int freeMasterSlots = Math.min(entity.calculateFreeC3MNodes(), networkRemaining);
-            if (freeMasterSlots > 0) {
-                node.add(new DefaultMutableTreeNode(
-                      new SlotPlaceholder(entity.getId(), true, freeMasterSlots, COMPANY_COLOR)));
             }
         }
         return node;
@@ -678,12 +795,8 @@ public class C3NetworkManagerDialog extends JDialog {
 
         /** The canonical shapes: 12, 12, 11 and 10 units (CR p.199 C3 Configuration Diagram). */
         static Blueprint forConfiguration(int configurationNumber) {
-            return switch (configurationNumber) {
-                case 2 -> new Blueprint(2, 3, new int[] { 3, 3 });
-                case 3 -> new Blueprint(3, 6, new int[] { 3 });
-                case 4 -> new Blueprint(4, 9, new int[0]);
-                default -> new Blueprint(1, 0, new int[] { 3, 3, 2 });
-            };
+            ConfigurationShape shape = ConfigurationShape.of(configurationNumber);
+            return new Blueprint(shape.configurationNumber(), shape.directSlaveCount(), shape.lanceSlaveCounts());
         }
 
         /** A remainder lance: one master (in the company slot) with up to three slaves. */
@@ -749,6 +862,16 @@ public class C3NetworkManagerDialog extends JDialog {
             return false;
         }
 
+        /** Empties every slot, keeping the card's layout. */
+        void clearSlots() {
+            companyId = null;
+            Arrays.fill(directSlaves, null);
+            Arrays.fill(lanceMasters, null);
+            for (Integer[] lance : lanceSlaves) {
+                Arrays.fill(lance, null);
+            }
+        }
+
         /** Removes the unit from whatever slot holds it, so a unit can never occupy two slots. */
         void unassignUnit(int entityId) {
             if ((companyId != null) && (companyId == entityId)) {
@@ -805,23 +928,17 @@ public class C3NetworkManagerDialog extends JDialog {
     private static final int[] SLAVES_NEEDED = { 8, 9, 9, 9 };
 
     /**
-     * Validates each configuration against the unassigned force and reflects it on the picker buttons: disabled
-     * without the required company unit (exactly N C3 Masters); enabled with a shortfall note when a partial
-     * network is the best the force can do; enabled with a "ready" note when every slot can be filled.
+     * Reports on each template button how far the unassigned force can fill that configuration: no unit to head
+     * it, short of lance masters or slaves, or every slot fillable. The buttons themselves stay available - a
+     * template is a layout the player fills, and Build skips the slots left empty.
      */
-    private void updateConfigurationFeasibility(List<Entity> masterUnits, List<Entity> seedMasters,
+    private void updateConfigurationTooltips(List<Entity> masterUnits, List<Entity> seedMasters,
           List<Entity> slaveUnits) {
         List<Entity> allMasters = new ArrayList<>(masterUnits);
         allMasters.addAll(seedMasters);
+        List<String> buttonStates = new ArrayList<>();
         for (int configNumber = 1; configNumber <= 4; configNumber++) {
-            JButton configButton = configStartButtons[configNumber - 1];
-            boolean planIsThisConfig = false;
-            for (Blueprint plan : plans) {
-                if (plan.configurationNumber == configNumber) {
-                    planIsThisConfig = true;
-                    break;
-                }
-            }
+            JToggleButton configButton = configStartButtons[configNumber - 1];
             // Extra computers idle, so any unit with at least N computers can head Configuration N
             int companyCandidates = 0;
             for (Entity master : allMasters) {
@@ -830,19 +947,19 @@ public class C3NetworkManagerDialog extends JDialog {
                 }
             }
             if (companyCandidates == 0) {
-                configButton.setEnabled(planIsThisConfig);
                 configButton.setToolTipText(
                       Messages.getString("C3NetworkManagerDialog.configNoCompany", configNumber));
+                buttonStates.add(configNumber + "=no company unit");
                 continue;
             }
             // Units, not computers: every master slot needs its own unit (the company unit fills none of the
-            // lance master slots), and every slave slot needs a slave unit. A template that cannot be completed
-            // is not offered - the free-form flow still covers deliberately partial networks.
+            // lance master slots), and every slave slot needs a slave unit
             int mastersShort = Math.max(0,
                   LANCE_MASTERS_NEEDED[configNumber - 1] - (allMasters.size() - 1));
             int slavesShort = Math.max(0, SLAVES_NEEDED[configNumber - 1] - slaveUnits.size());
             boolean fullyBuildable = (mastersShort == 0) && (slavesShort == 0);
-            configButton.setEnabled(fullyBuildable || planIsThisConfig);
+            buttonStates.add(configNumber + (fullyBuildable ? "=ready"
+                  : ("=short " + mastersShort + " masters/" + slavesShort + " slaves")));
             if (fullyBuildable) {
                 configButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.configReady",
                       configNumber, 1 + LANCE_MASTERS_NEEDED[configNumber - 1]
@@ -852,132 +969,23 @@ public class C3NetworkManagerDialog extends JDialog {
                       configNumber, mastersShort, slavesShort));
             }
         }
-    }
-
-    /** One planned full configuration in a force plan. */
-    private record PlannedCompany(int configurationNumber, Entity company, List<Entity> directSlaves,
-          List<Entity> lanceMasters, List<List<Entity>> lanceSlaves) {
-        int size() {
-            int total = 1 + directSlaves.size() + lanceMasters.size();
-            for (List<Entity> lance : lanceSlaves) {
-                total += lance.size();
-            }
-            return total;
-        }
-    }
-
-    /** One planned remainder lance: a master with slaves, or - all-master - a master heading other masters. */
-    private record PlannedLance(Entity master, List<Entity> members, boolean allMasters) {
-    }
-
-    /** How the whole unassigned force partitions into networks, plus what cannot be placed. */
-    private record ForcePlan(List<PlannedCompany> companies, List<PlannedLance> lances, int leftoverUnits) {
-        boolean isEmpty() {
-            return companies.isEmpty() && lances.isEmpty();
-        }
-    }
-
-    /**
-     * Partitions the unassigned hierarchical C3 units into networks, most consolidated configuration first
-     * (4 down to 1), then remainder lances, then all-master lances from leftover masters. Company slots prefer
-     * an exact computer-count fit and lance master slots take the smallest masters, so multi-computer units are
-     * saved for company roles.
-     */
-    private ForcePlan computeForcePlan() {
-        List<Entity> masters = new ArrayList<>();
-        List<Entity> slaves = new ArrayList<>();
-        for (Entity entity : sortedById(game.inGameTWEntities())) {
-            if ((entity.getOwnerId() != localPlayerId) || !entity.hasAnyC3System() || entity.hasNhC3()
-                  || isNetworked(entity)) {
-                continue;
-            }
-            if (entity.getOperableC3MCount() > 0) {
-                masters.add(entity);
-            } else if (entity.hasC3S()) {
-                slaves.add(entity);
-            }
-        }
-
-        List<PlannedCompany> companies = new ArrayList<>();
-        boolean progress = true;
-        while (progress) {
-            progress = false;
-            for (int configNumber = 4; (configNumber >= 1) && !progress; configNumber--) {
-                Blueprint shape = Blueprint.forConfiguration(configNumber);
-                int slavesNeeded = shape.directSlaves.length;
-                for (Integer[] lance : shape.lanceSlaves) {
-                    slavesNeeded += lance.length;
-                }
-                Entity company = pickCompanyCandidate(masters, configNumber);
-                if ((company == null) || ((masters.size() - 1) < shape.lanceMasters.length)
-                      || (slaves.size() < slavesNeeded)) {
-                    continue;
-                }
-                masters.remove(company);
-                sortByComputerCount(masters);
-                List<Entity> lanceMasterUnits = takeFirst(masters, shape.lanceMasters.length);
-                List<Entity> directSlaveUnits = takeFirst(slaves, shape.directSlaves.length);
-                List<List<Entity>> lanceSlaveUnits = new ArrayList<>();
-                for (Integer[] lance : shape.lanceSlaves) {
-                    lanceSlaveUnits.add(takeFirst(slaves, lance.length));
-                }
-                companies.add(new PlannedCompany(configNumber, company, directSlaveUnits, lanceMasterUnits,
-                      lanceSlaveUnits));
-                progress = true;
-            }
-        }
-
-        sortByComputerCount(masters);
-        List<PlannedLance> lances = new ArrayList<>();
-        while (!masters.isEmpty() && !slaves.isEmpty()) {
-            Entity lanceMaster = masters.remove(0);
-            lances.add(new PlannedLance(lanceMaster,
-                  takeFirst(slaves, Math.min(Entity.MAX_C3M_SUBORDINATES, slaves.size())), false));
-        }
-        while (masters.size() >= 2) {
-            Entity lanceMaster = masters.remove(0);
-            lances.add(new PlannedLance(lanceMaster,
-                  takeFirst(masters, Math.min(Entity.MAX_C3M_SUBORDINATES, masters.size())), true));
-        }
-        return new ForcePlan(companies, lances, masters.size() + slaves.size());
-    }
-
-    /** The company unit for a configuration: an exact computer-count fit if one exists, else the smallest fit. */
-    @Nullable
-    private Entity pickCompanyCandidate(List<Entity> masters, int configurationNumber) {
-        Entity bestCandidate = null;
-        for (Entity master : masters) {
-            int computerCount = master.getOperableC3MCount();
-            if (computerCount == configurationNumber) {
-                return master;
-            }
-            if ((computerCount > configurationNumber) && ((bestCandidate == null)
-                  || (computerCount < bestCandidate.getOperableC3MCount()))) {
-                bestCandidate = master;
-            }
-        }
-        return bestCandidate;
-    }
-
-    private void sortByComputerCount(List<Entity> masters) {
-        masters.sort(Comparator.comparingInt(Entity::getOperableC3MCount).thenComparing(Entity::getId));
-    }
-
-    /** Removes and returns the first count entries of the list. */
-    private List<Entity> takeFirst(List<Entity> units, int count) {
-        List<Entity> taken = new ArrayList<>(units.subList(0, count));
-        units.subList(0, count).clear();
-        return taken;
+        LOGGER.debug("[C3Manager] Configuration templates for {} masters, {} slaves: {}", allMasters.size(),
+              slaveUnits.size(), buttonStates);
     }
 
     /**
      * Lays out the whole force plan as staged template cards - one per network - without building anything.
-     * With auto-assign checked the slots come pre-filled with the planned units; unchecked they arrive empty and
-     * the player drags units in. Build Network applies the cards.
+     * With auto-assign the slots come pre-filled with the planned units, lobby lances kept whole; without, they
+     * arrive empty and the player drags units in. Build Network applies the cards.
      */
     private void createForcePlanTemplates() {
-        ForcePlan plan = computeForcePlan();
+        createForcePlanTemplates(autoAssignCheckBox.isSelected());
+    }
+
+    private void createForcePlanTemplates(boolean autoAssign) {
+        ForcePlan plan = newFormationPlanner().planForce();
         if (plan.isEmpty()) {
+            updatePlanButtonHighlight();
             return;
         }
         if (plansFilledCount() > 0) {
@@ -987,25 +995,16 @@ public class C3NetworkManagerDialog extends JDialog {
                   JOptionPane.YES_NO_OPTION,
                   JOptionPane.WARNING_MESSAGE);
             if (result != JOptionPane.YES_OPTION) {
+                updatePlanButtonHighlight();
                 return;
             }
         }
         plans.clear();
-        boolean autoAssign = autoAssignCheckBox.isSelected();
-        for (PlannedCompany company : plan.companies()) {
+        plansFromForcePlan = true;
+        for (TemplateAssignment company : plan.companies()) {
             Blueprint card = Blueprint.forConfiguration(company.configurationNumber());
             if (autoAssign) {
-                card.companyId = company.company().getId();
-                for (int slotIndex = 0; slotIndex < company.directSlaves().size(); slotIndex++) {
-                    card.directSlaves[slotIndex] = company.directSlaves().get(slotIndex).getId();
-                }
-                for (int lanceIndex = 0; lanceIndex < company.lanceMasters().size(); lanceIndex++) {
-                    card.lanceMasters[lanceIndex] = company.lanceMasters().get(lanceIndex).getId();
-                    List<Entity> lanceSlaveUnits = company.lanceSlaves().get(lanceIndex);
-                    for (int slotIndex = 0; slotIndex < lanceSlaveUnits.size(); slotIndex++) {
-                        card.lanceSlaves[lanceIndex][slotIndex] = lanceSlaveUnits.get(slotIndex).getId();
-                    }
-                }
+                applyAssignment(card, company);
             }
             plans.add(card);
         }
@@ -1024,20 +1023,23 @@ public class C3NetworkManagerDialog extends JDialog {
             plans.add(card);
         }
         refresh();
+        if (autoAssign) {
+            showLeftOutLances(plan.leftOut(), 0);
+        }
     }
 
     /** Updates the force-plan line and the Auto-Form button from the current unassigned pool. */
     private void updateForcePlanSummary() {
-        ForcePlan plan = computeForcePlan();
+        ForcePlan plan = newFormationPlanner().planForce();
         autoFormButton.setEnabled(!plan.isEmpty());
         if (plan.isEmpty()) {
             forcePlanLabel.setText(" ");
             return;
         }
         List<String> planParts = new ArrayList<>();
-        for (PlannedCompany company : plan.companies()) {
+        for (TemplateAssignment company : plan.companies()) {
             planParts.add(Messages.getString("C3NetworkManagerDialog.planPartConfig",
-                  company.configurationNumber(), company.size()));
+                  company.configurationNumber(), company.filledCount()));
         }
         for (PlannedLance lance : plan.lances()) {
             String key = lance.allMasters() ? "C3NetworkManagerDialog.planPartAllMasterLance"
@@ -1048,7 +1050,11 @@ public class C3NetworkManagerDialog extends JDialog {
               String.join(" + ", planParts), plan.leftoverUnits()));
     }
 
-    /** Starts a configuration plan; partially filled existing plans ask before being replaced. */
+    /**
+     * Lays out the configuration template; partially filled existing plans ask before being replaced. With
+     * auto-assign checked the slots are pre-filled from the unassigned force as far as it reaches, lobby lances kept
+     * whole; unchecked, the template arrives empty and the player drags units in.
+     */
     private void startBlueprint(int configurationNumber) {
         if (plansFilledCount() > 0) {
             int result = JOptionPane.showConfirmDialog(this,
@@ -1057,38 +1063,96 @@ public class C3NetworkManagerDialog extends JDialog {
                   JOptionPane.YES_NO_OPTION,
                   JOptionPane.WARNING_MESSAGE);
             if (result != JOptionPane.YES_OPTION) {
+                updatePlanButtonHighlight();
                 return;
             }
         }
         plans.clear();
+        plansFromForcePlan = false;
         Blueprint blueprint = Blueprint.forConfiguration(configurationNumber);
         plans.add(blueprint);
-        // Pre-assign the company slot when the choice is unambiguous, preferring an exact computer count so a
-        // bigger multi-master is not burned on a small configuration when a fitting unit exists
-        Entity exactCandidate = null;
-        int exactCandidateCount = 0;
-        Entity atLeastCandidate = null;
-        int atLeastCandidateCount = 0;
-        for (Entity entity : sortedById(game.inGameTWEntities())) {
-            if ((entity.getOwnerId() != localPlayerId) || isNetworked(entity) || entity.hasNhC3()) {
-                continue;
-            }
-            int computerCount = entity.getOperableC3MCount();
-            if (computerCount == configurationNumber) {
-                exactCandidate = entity;
-                exactCandidateCount++;
-            }
-            if (computerCount >= configurationNumber) {
-                atLeastCandidate = entity;
-                atLeastCandidateCount++;
-            }
-        }
-        if (exactCandidateCount == 1) {
-            blueprint.companyId = exactCandidate.getId();
-        } else if ((exactCandidateCount == 0) && (atLeastCandidateCount == 1)) {
-            blueprint.companyId = atLeastCandidate.getId();
+        List<LeftOutLance> leftOut = List.of();
+        if (autoAssignCheckBox.isSelected()) {
+            TemplateAssignment assignment = newFormationPlanner().planTemplate(configurationNumber);
+            applyAssignment(blueprint, assignment);
+            leftOut = assignment.leftOut();
         }
         refresh();
+        showLeftOutLances(leftOut, configurationNumber);
+    }
+
+    /**
+     * Fills the empty plan cards with units, as if auto-assign had been checked when they were laid out: a single
+     * configuration card is planned again for its configuration, a force plan is laid out again filled.
+     */
+    private void autoAssignEmptyPlans() {
+        boolean isSingleCard = plans.size() == 1;
+        boolean isConfigurationCard = isSingleCard && plans.getFirst().isCompanyConfiguration();
+        if (plansFromForcePlan || !isConfigurationCard) {
+            createForcePlanTemplates(true);
+            return;
+        }
+        Blueprint blueprint = plans.getFirst();
+        TemplateAssignment assignment = newFormationPlanner().planTemplate(blueprint.configurationNumber);
+        applyAssignment(blueprint, assignment);
+        refresh();
+        showLeftOutLances(assignment.leftOut(), blueprint.configurationNumber);
+    }
+
+    private C3FormationPlanner newFormationPlanner() {
+        return new C3FormationPlanner(game, localPlayerId);
+    }
+
+    /**
+     * Lights the button that laid out the plan on screen - a configuration number or Plan Force - and no other.
+     * The buttons toggle on click, so this also undoes a click whose plan was then not laid out (a declined
+     * replace prompt, an empty force plan).
+     */
+    private void updatePlanButtonHighlight() {
+        boolean hasConfigurationPlan = !plans.isEmpty() && !plansFromForcePlan;
+        for (int configNumber = 1; configNumber <= 4; configNumber++) {
+            configStartButtons[configNumber - 1].setSelected(hasConfigurationPlan
+                  && (plans.getFirst().configurationNumber == configNumber));
+        }
+        autoFormButton.setSelected(!plans.isEmpty() && plansFromForcePlan);
+    }
+
+    /** Copies planned units into a card's slots; the card and the assignment share the configuration's layout. */
+    private void applyAssignment(Blueprint card, TemplateAssignment assignment) {
+        card.companyId = idOrNull(assignment.head());
+        for (int slotIndex = 0; slotIndex < card.directSlaves.length; slotIndex++) {
+            card.directSlaves[slotIndex] = idOrNull(assignment.directSlaves()[slotIndex]);
+        }
+        for (int lanceIndex = 0; lanceIndex < card.lanceMasters.length; lanceIndex++) {
+            card.lanceMasters[lanceIndex] = idOrNull(assignment.lanceMasters()[lanceIndex]);
+            for (int slotIndex = 0; slotIndex < card.lanceSlaves[lanceIndex].length; slotIndex++) {
+                card.lanceSlaves[lanceIndex][slotIndex] = idOrNull(assignment.lanceSlaves()[lanceIndex][slotIndex]);
+            }
+        }
+    }
+
+    @Nullable
+    private static Integer idOrNull(@Nullable Entity unit) {
+        return (unit == null) ? null : unit.getId();
+    }
+
+    /**
+     * Names the lobby lances auto-assign kept out of the plan, with the reason, on the status line. Lances are
+     * never split, so a lance that fits no block of the template stays out whole.
+     *
+     * @param configurationNumber the template's configuration, or 0 for a force plan
+     */
+    private void showLeftOutLances(List<LeftOutLance> leftOut, int configurationNumber) {
+        if (leftOut.isEmpty()) {
+            return;
+        }
+        List<String> descriptions = new ArrayList<>();
+        for (LeftOutLance lance : leftOut) {
+            descriptions.add(Messages.getString("C3NetworkManagerDialog.leftOut." + lance.reason().name(),
+                  lance.lanceName(), lance.masterCount(), lance.slaveCount(), configurationNumber));
+        }
+        statusLabel.setText(Messages.getString("C3NetworkManagerDialog.leftOutLances",
+              String.join("; ", descriptions)));
     }
 
     /** Drops slots whose unit was deleted or got networked outside the plans since the last refresh. */
@@ -1100,7 +1164,11 @@ public class C3NetworkManagerDialog extends JDialog {
         }
     }
 
-    /** One plan card as a tree node: company/master slot on top, its slaves, then the lance blocks, all typed. */
+    /**
+     * One plan card as a tree node: company/master slot on top, its slaves, then the lance blocks, all typed. The
+     * company's own lance is listed first, next to the head as in the diagram (CR p.199) - the head's own slaves,
+     * or in Configuration 1 the short lance.
+     */
     private DefaultMutableTreeNode buildBlueprintNode(int planIndex) {
         Blueprint blueprint = plans.get(planIndex);
         DefaultMutableTreeNode planNode = new DefaultMutableTreeNode(new BlueprintHeader(planIndex));
@@ -1111,7 +1179,7 @@ public class C3NetworkManagerDialog extends JDialog {
             companyNode.add(new DefaultMutableTreeNode(
                   new BlueprintSlotRef(planIndex, SlotKind.DIRECT_SLAVE, -1, slotIndex)));
         }
-        for (int lanceIndex = 0; lanceIndex < blueprint.lanceMasters.length; lanceIndex++) {
+        for (int lanceIndex : lanceDisplayOrder(blueprint)) {
             DefaultMutableTreeNode lanceMasterNode = new DefaultMutableTreeNode(
                   new BlueprintSlotRef(planIndex, SlotKind.LANCE_MASTER, lanceIndex, -1));
             companyNode.add(lanceMasterNode);
@@ -1121,6 +1189,22 @@ public class C3NetworkManagerDialog extends JDialog {
             }
         }
         return planNode;
+    }
+
+    /** The card's lance indices in display order: Configuration 1's short company lance first, then the others. */
+    private List<Integer> lanceDisplayOrder(Blueprint blueprint) {
+        int companyLanceIndex = blueprint.isCompanyConfiguration()
+              ? ConfigurationShape.of(blueprint.configurationNumber).companyLanceIndex() : -1;
+        List<Integer> order = new ArrayList<>();
+        if (companyLanceIndex >= 0) {
+            order.add(companyLanceIndex);
+        }
+        for (int lanceIndex = 0; lanceIndex < blueprint.lanceMasters.length; lanceIndex++) {
+            if (lanceIndex != companyLanceIndex) {
+                order.add(lanceIndex);
+            }
+        }
+        return order;
     }
 
     /** True when the unit's equipment fits the slot: company computer count, master, or slave. */
@@ -1399,14 +1483,23 @@ public class C3NetworkManagerDialog extends JDialog {
     }
 
     /**
-     * Disconnects every C3 network of the local player after confirmation and clears dragged-over seeds, returning
-     * the dialog to its starting state. Peer-net name units are skipped - they fall back to solo automatically
-     * once their partners leave. Allied units in shared networks are not touched.
+     * Disconnects every C3 network of the local player after confirmation, demotes company masters left without
+     * a network, clears dragged-over seeds and empties the plan cards - the chosen plan stays laid out for the units
+     * to be placed again. Discard Plan is what removes the plan itself. Peer-net name units are skipped - they fall
+     * back to solo automatically once their partners leave. Allied units in shared networks are not touched.
      */
     private void resetNetworks() {
         List<Entity> unitsToDisconnect = new ArrayList<>();
+        List<Entity> loneCompanyMasters = new ArrayList<>();
         for (Entity entity : game.inGameTWEntities()) {
-            if ((entity.getOwnerId() != localPlayerId) || !entity.hasAnyC3System() || !isNetworked(entity)) {
+            if ((entity.getOwnerId() != localPlayerId) || !entity.hasAnyC3System()) {
+                continue;
+            }
+            if (!isNetworked(entity)) {
+                // A company master designated by Build keeps showing as a network even with nobody under it
+                if (entity.isC3CompanyCommander()) {
+                    loneCompanyMasters.add(entity);
+                }
                 continue;
             }
             String netId = entity.getC3NetId();
@@ -1416,7 +1509,9 @@ public class C3NetworkManagerDialog extends JDialog {
                 unitsToDisconnect.add(entity);
             }
         }
-        if (unitsToDisconnect.isEmpty() && seededMasterIds.isEmpty()) {
+        boolean hasNetworksToClear = !unitsToDisconnect.isEmpty() || !loneCompanyMasters.isEmpty();
+        boolean hasPlanningToClear = !seededMasterIds.isEmpty() || (plansFilledCount() > 0);
+        if (!hasNetworksToClear && !hasPlanningToClear) {
             statusLabel.setText(Messages.getString("C3NetworkManagerDialog.nothingToReset"));
             return;
         }
@@ -1429,9 +1524,18 @@ public class C3NetworkManagerDialog extends JDialog {
             return;
         }
         seededMasterIds.clear();
+        // The chosen plan stays laid out, emptied, so the player can fill it again
+        for (Blueprint plan : plans) {
+            plan.clearSlots();
+        }
         if (!unitsToDisconnect.isEmpty()) {
             lobby.lobbyActions.c3DisconnectFromNetwork(unitsToDisconnect);
         }
+        if (!loneCompanyMasters.isEmpty()) {
+            lobby.lobbyActions.c3SetLanceMaster(loneCompanyMasters);
+        }
+        LOGGER.debug("[C3Manager] Reset All: disconnected {} units, demoted {} lone company masters",
+              unitsToDisconnect.size(), loneCompanyMasters.size());
         refresh();
     }
 
@@ -1629,8 +1733,7 @@ public class C3NetworkManagerDialog extends JDialog {
     /** The label for one plan slot: the assigned unit in its lance color, or the typed empty-slot prompt. */
     private String blueprintSlotLabel(BlueprintSlotRef slotRef) {
         Blueprint blueprint = planAt(slotRef);
-        String color = ((slotRef.kind() == SlotKind.COMPANY) || (slotRef.kind() == SlotKind.DIRECT_SLAVE))
-              ? COMPANY_COLOR : LANCE_COLORS[slotRef.lanceIndex() % LANCE_COLORS.length];
+        String color = blueprintSlotColor(blueprint, slotRef);
         Integer assignedId = blueprint.slotValue(slotRef);
         Entity assigned = (assignedId == null) ? null : game.getEntity(assignedId);
         if (assigned != null) {
@@ -1652,6 +1755,30 @@ public class C3NetworkManagerDialog extends JDialog {
             case DIRECT_SLAVE, LANCE_SLAVE -> Messages.getString("C3NetworkManagerDialog.slotSlaveEmpty");
         };
         return "<html><i><font color='" + color + "'>" + emptyText + "</font></i></html>";
+    }
+
+    /**
+     * The color of one plan slot. Company templates are colored like the rulebook's configuration diagram (CR
+     * p.199): the head unit orange, the company's own lance yellow, the other lances red then blue. The company's
+     * own lance is the first three slaves the head runs itself, or in Configuration 1 the two-slave lance under its
+     * third lance master. Built networks use the same colors (see {@link #buildCompanySubtree}).
+     */
+    private String blueprintSlotColor(Blueprint blueprint, BlueprintSlotRef slotRef) {
+        if (!blueprint.isCompanyConfiguration()) {
+            return ((slotRef.kind() == SlotKind.COMPANY) || (slotRef.kind() == SlotKind.DIRECT_SLAVE))
+                  ? COMPANY_COLOR : LANCE_COLORS[slotRef.lanceIndex() % LANCE_COLORS.length];
+        }
+        return switch (slotRef.kind()) {
+            case COMPANY -> COMPANY_COLOR;
+            case DIRECT_SLAVE -> headLanceColor(slotRef.slotIndex() / Entity.MAX_C3M_SUBORDINATES,
+                  blueprint.lanceMasters.length);
+            case LANCE_MASTER, LANCE_SLAVE -> {
+                boolean isConfiguration1CompanyLance = (blueprint.configurationNumber == 1)
+                      && (slotRef.lanceIndex() == (blueprint.lanceMasters.length - 1));
+                yield isConfiguration1CompanyLance ? COMPANY_LANCE_COLOR
+                      : LANCE_COLORS[slotRef.lanceIndex() % LANCE_COLORS.length];
+            }
+        };
     }
 
     /**

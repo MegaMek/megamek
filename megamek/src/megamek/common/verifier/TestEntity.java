@@ -64,10 +64,10 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.CeilNotProvidedForWeightException;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
+import megamek.common.loaders.MekFileParser;
 import megamek.common.units.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.battleArmor.BAFlamerWeapon;
-import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -715,11 +715,12 @@ public abstract class TestEntity implements TestEntityOption {
 
     public double getWeightWeapon() {
         double weight = 0.0;
-        for (Mounted<?> m : getEntity().getTotalWeaponList()) {
-            if (m.isWeaponGroup()) {
+        for (Mounted<?> mounted : getEntity().getTotalWeaponList()) {
+            // Bomb pods (rocket launcher, TAG, Arrow IV...) are part of the bomb load, not the unit's own weight
+            if (mounted.isWeaponGroup() || mounted.isBombMounted()) {
                 continue;
             }
-            weight += m.getTonnage();
+            weight += mounted.getTonnage();
         }
         return weight;
     }
@@ -944,23 +945,15 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static int calcHeatNeutralHSRequirement(Entity entity) {
         int heat = 0;
-        for (Mounted<?> m : entity.getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
+        for (WeaponMounted m : entity.getWeaponList()) {
+            WeaponType wt = m.getType();
             if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NA))
                   || wt.hasFlag(WeaponType.F_PPC)
                   || wt.hasFlag(WeaponType.F_PLASMA)
                   || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
                   || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
-                heat += wt.getHeat();
-            }
-            // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
-                  && !m.getLinkedBy().isInoperable()
-                  && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
+                // heat-neutral units need sinks for a laser pulse module's pulse mode (IO:AE p. 87)
+                heat += (int) m.laserEnhancedHeat(wt.getHeat(), true);
             }
 
             if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
@@ -974,6 +967,10 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscTypeFlag.F_CLUB) && m.getType().hasFlag(MiscTypeFlag.S_SPOT_WELDER)
                   && entity.hasEngine() && (entity.getEngine().isFusion()
                   || (entity.getEngine().getEngineType() == Engine.FISSION))) {
+                continue;
+            }
+            // A laser pulse module's heat is counted with its laser above
+            if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) && (m.getLinked() != null)) {
                 continue;
             }
             heat += m.getType().getHeat();
@@ -1128,7 +1125,7 @@ public abstract class TestEntity implements TestEntityOption {
         if (unit.isProtoMek()) {
             return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
         } else if (unit.isSupportVehicle()) {
-            return Math.floor(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
+            return Math.round(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
         } else {
             return armorTons * getArmorPointsPerTon(unit);
         }
@@ -1618,7 +1615,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     private boolean isIntroducedByValidationYear(int introDate, int margin) {
-        return getIntroYearValidationYears().stream().anyMatch(year -> introDate <= year + margin);
+        // Compare in long so a year of Integer.MAX_VALUE (no year limit) or an extreme configured margin cannot overflow
+        return getIntroYearValidationYears().stream().anyMatch(year -> (long) introDate <= (long) year + margin);
     }
 
     public boolean hasFailedEquipment(StringBuffer buff) {
@@ -1749,24 +1747,18 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
 
-            if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) &&
-                  ((m.getLinked() == null)
-                        || (m.getLinked().getLocation() != m.getLocation())
-                        || !(m.getLinked().getType() instanceof WeaponType)
-                        || !(
-                        m.getLinked().getType().hasFlag(WeaponType.F_LASER)
-                              || m.getLinked().getType() instanceof CLChemicalLaserWeapon
-                  ))) {
+            boolean linkedToItsWeapon = (m.getLinked() != null) && MekFileParser.isEnhancementTarget(m, m.getLinked());
+            if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) && !linkedToItsWeapon) {
                 buff.append("Laser insulator requires a laser in the same location.\n");
                 illegal = true;
             }
-            if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) &&
-                  ((m.getLinked() == null)
-                        || (m.getLinked().getLocation() != m.getLocation())
-                        || !(m.getLinked().getType() instanceof WeaponType)
-                        || !m.getLinked().getType().hasFlag(WeaponType.F_LASER)
-                        || m.getLinked().getType().hasFlag(WeaponType.F_PULSE))) {
-                buff.append("RISC Laser Pulse Module requires a non-pulse laser in the same location.\n");
+            // TO:AUE p. 134
+            if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) && (getEntity().getWeight() > 200)) {
+                buff.append("Laser insulators are limited to units of 200 tons or less.\n");
+                illegal = true;
+            }
+            if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) && !linkedToItsWeapon) {
+                buff.append("RISC Laser Pulse Module requires an Inner Sphere standard or ER laser in the same location.\n");
                 illegal = true;
             }
         }

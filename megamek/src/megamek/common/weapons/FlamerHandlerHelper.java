@@ -34,14 +34,14 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.HitData;
 import megamek.common.Report;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.WeaponHandler;
 
 /**
  * Helper class that contains common functionality for flamer-type weapons.
@@ -54,9 +54,24 @@ public class FlamerHandlerHelper {
      */
     public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType weaponType,
           int subjectId, HitData hit) {
-        Report report = new Report(3400);
-        report.subject = subjectId;
-        report.indent(2);
+        vPhaseReport.addElement(heatReport(entityTarget, weaponType, subjectId, hit));
+    }
+
+    /**
+     * Applies the heat of a flamer that deals heat along with its damage, as the hit strikes and before its damage
+     * removes armor (Core pp. 183, 201).
+     *
+     * @return The report of the heat, or null when the flamer deals no heat to the target
+     */
+    public static @Nullable Report heatWithDamage(Game game, Entity entityTarget, WeaponType weaponType,
+          int subjectId, HitData hit) {
+        boolean heatAndDamage = Game.rulesManager.getRulesWeapons()
+              .flamerHeatAndDamage(game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT));
+        return (heatAndDamage && entityTarget.tracksHeat()) ? heatReport(entityTarget, weaponType, subjectId, hit)
+              : null;
+    }
+
+    private static Report heatReport(Entity entityTarget, WeaponType weaponType, int subjectId, HitData hit) {
         int heatDamage = weaponType.getDamage();
 
         // ER flamers don't do as much heat damage
@@ -64,32 +79,6 @@ public class FlamerHandlerHelper {
             heatDamage = Math.max(1, heatDamage / 2);
         }
 
-        boolean heatDamageReducedByArmor = false;
-        int actualDamage = heatDamage;
-
-        // armor can't reduce damage if there isn't any
-        if (entityTarget.getArmor(hit) > 0) {
-            // Does armor reduce the heat
-            actualDamage =
-                  Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(entityTarget.getArmorType(hit.getLocation()), heatDamage);
-            if (actualDamage != heatDamage) {
-                heatDamageReducedByArmor = true;
-            }
-        }
-
-        if (heatDamageReducedByArmor) {
-            entityTarget.heatFromExternal += actualDamage;
-            report.add(actualDamage);
-            report.choose(true);
-            report.messageId = 3406;
-            report.add(heatDamage);
-            report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-        } else {
-            entityTarget.heatFromExternal += heatDamage;
-            report.add(heatDamage);
-            report.choose(true);
-        }
-
-        vPhaseReport.addElement(report);
+        return WeaponHandler.externalHeatReport(entityTarget, hit, heatDamage, subjectId, weaponType);
     }
 }

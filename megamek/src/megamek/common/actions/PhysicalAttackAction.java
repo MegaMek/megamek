@@ -251,7 +251,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // if we're spotting for indirect fire, add +1
         if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()
-              && game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == ae.getId())) {
+              && !Compute.hasTagged(ae, ae.getSpotTarget(game), game)) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 
@@ -289,7 +289,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // water partial cover?
             if ((te.height() > 0) && (te.getElevation() == -1)
                   && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
-                toHit.addModifier(1, "target has partial cover");
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTargetHasPartialCover"));
             }
 
             // Pilot skills

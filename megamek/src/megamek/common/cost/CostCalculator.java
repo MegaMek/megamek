@@ -116,9 +116,7 @@ public class CostCalculator {
      */
     static long getWeaponsAndEquipmentCost(Entity entity, CalculationReport costReport, boolean ignoreAmmo) {
         long cost = 0;
-        NumberFormat costFormatter = NumberFormat.getInstance();
-        costFormatter.setMinimumFractionDigits(2);
-        costFormatter.setMaximumFractionDigits(2);
+        NumberFormat commaFormatter = NumberFormat.getInstance();
         Map<String, Double> weaponsNumberMap = new HashMap<>();
         Map<String, Long> weaponsCostMap = new HashMap<>();
 
@@ -178,7 +176,7 @@ public class CostCalculator {
         }
         for (String weapon : weaponsNumberMap.keySet()) {
             costReport.addLine((int) Math.ceil(weaponsNumberMap.get(weapon)) + " " + weapon, "",
-                  costFormatter.format(weaponsCostMap.get(weapon)));
+                  commaFormatter.format(weaponsCostMap.get(weapon)));
         }
 
         int count = entity.implicitClanCASE();
@@ -186,7 +184,7 @@ public class CostCalculator {
             long itemCost = 50000;
             cost += count * itemCost;
             for (int i = 0; i < count; i++) {
-                costReport.addLine(Messages.getString("CostCalculator.Case"), "", costFormatter.format(itemCost));
+                costReport.addLine(Messages.getString("CostCalculator.Case"), "", commaFormatter.format(itemCost));
             }
         }
         // Large craft have a separate section for bays
@@ -205,16 +203,16 @@ public class CostCalculator {
             }
             if (seatCost > 0) {
                 cost += seatCost;
-                costReport.addLine(Messages.getString("CostCalculator.Seating"), "", costFormatter.format(seatCost));
+                costReport.addLine(Messages.getString("CostCalculator.Seating"), "", commaFormatter.format(seatCost));
             }
             if (quartersCost > 0) {
                 cost += quartersCost;
                 costReport.addLine(Messages.getString("CostCalculator.Quarters"), "",
-                      costFormatter.format(quartersCost));
+                      commaFormatter.format(quartersCost));
             }
             if (bayCost > 0) {
                 cost += bayCost;
-                costReport.addLine(Messages.getString("CostCalculator.Bays"), "", costFormatter.format(bayCost));
+                costReport.addLine(Messages.getString("CostCalculator.Bays"), "", commaFormatter.format(bayCost));
             }
         }
         return cost;
@@ -247,11 +245,8 @@ public class CostCalculator {
      */
     static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo, String[] systemNames,
           int equipIndex, int costStartIndex, double cost, double[] costs) {
-        NumberFormat costFormatter = NumberFormat.getInstance();
-        costFormatter.setMinimumFractionDigits(2);
-        costFormatter.setMaximumFractionDigits(2);
-        NumberFormat multiplierFormatter = NumberFormat.getInstance();
-        multiplierFormatter.setMaximumFractionDigits(10);
+        NumberFormat commaFormatter = NumberFormat.getInstance();
+        commaFormatter.setMaximumFractionDigits(3);
         costReport.addHeader(MessageFormat.format(
               Messages.getString("CostCalculator.CostCalculatorHeader"),
               entity.getChassis(),
@@ -261,14 +256,14 @@ public class CostCalculator {
                 CostCalculator.getWeaponsAndEquipmentCost(entity, costReport, ignoreAmmo);
                 if ((entity instanceof Tank tank) && (tank.getExtraCrewSeats() > 0)) {
                     costReport.addLine(Messages.getString("CostCalculator.ExtraCrewSeats"), "",
-                          costFormatter.format(tank.getExtraCrewSeats() * 100L));
+                          commaFormatter.format(tank.getExtraCrewSeats() * 100L));
                 }
             } else {
-                String result = costFormatter.format(costs[l]);
+                String result = commaFormatter.format(costs[l]);
                 if (costs[l] == 0) {
                     result = Messages.getString("CostCalculator.Na");
                 } else if (costs[l] < 0) {
-                    result = "x " + multiplierFormatter.format(-costs[l]);
+                    result = "x " + commaFormatter.format(-costs[l]);
                 }
                 if (l < costStartIndex) {
                     costReport.addInformationalLine(systemNames[l], "", result);
@@ -277,7 +272,7 @@ public class CostCalculator {
                 }
             }
         }
-        costReport.addResultLine(Messages.getString("CostCalculator.TotalCost"), "", costFormatter.format(cost));
+        costReport.addResultLine(Messages.getString("CostCalculator.TotalCost"), "", commaFormatter.format(cost));
     }
 
 

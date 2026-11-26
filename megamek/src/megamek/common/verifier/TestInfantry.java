@@ -52,6 +52,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.InfantryMount;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * @author Jay Lawson (Taharqa)
@@ -189,22 +190,18 @@ public class TestInfantry extends TestEntity {
         }
 
         if (inf.getSecondaryWeapon() != null) {
-            int secondaryCrew = inf.getSecondaryWeapon().getCrew();
-            // Beast mounted infantry divide crew requirement in half, rounding up.
-            if (inf.getMount() != null) {
-                secondaryCrew = secondaryCrew / 2 + secondaryCrew % 2;
-            }
-            if (inf.getCrew() != null) {
-                if (inf.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                    secondaryCrew--;
-                }
-                if (inf.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                    secondaryCrew--;
-                }
-            }
-            secondaryCrew = Math.max(secondaryCrew, 1);
-            if (secondaryCrew * inf.getSecondaryWeaponsPerSquad() > inf.getSquadSize()) {
+            InfantryWeapon secondaryWeapon = inf.getSecondaryWeapon();
+
+            if (weaponCrew(inf, secondaryWeapon) * inf.getSecondaryWeaponsPerSquad() > inf.getSquadSize()) {
                 buff.append("Secondary weapon crew requirement exceeds squad size.\n\n");
+                correct = false;
+            }
+
+            if (secondaryWeapon.is("Particle Cannon (Support)")
+                  && inf.getMovementMode() != EntityMovementMode.INF_MOTORIZED
+                  && inf.getMovementMode() != EntityMovementMode.TRACKED) {
+                buff.append("The Support Particle Canon may only be employed by Motorized/Mechanized (Tracked) ")
+                      .append("infantry platoons.\n\n");
                 correct = false;
             }
         }
@@ -362,6 +359,31 @@ public class TestInfantry extends TestEntity {
         return Math.max(2, (int) Math.ceil(equip.getTonnage(infantry)));
     }
 
+    /**
+     * @param inf The infantry unit
+     * @param weapon The weapon
+     *
+     * @return The number of troopers required to crew the weapon for this infantry unit
+     */
+    public static int weaponCrew(ConvInfantry inf, InfantryWeapon weapon) {
+        int crew = weapon.getCrew();
+        // Beast mounted infantry divide crew requirement in half, rounding up.
+        if (inf.getMount() != null) {
+            crew = crew / 2 + crew % 2;
+        }
+
+        if (inf.getCrew() != null) {
+            if (inf.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+                crew--;
+            }
+            if (inf.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+                crew--;
+            }
+        }
+
+        return Math.max(crew, 1);
+    }
+
     public static int maxSecondaryWeapons(ConvInfantry inf) {
         int max;
         // Use getBaseMovementMode() to get the actual infantry type, not the virtual VTOL from powered flight
@@ -434,7 +456,7 @@ public class TestInfantry extends TestEntity {
 
         if (mount == null) {
             int squads = switch (movementMode) {
-                case VTOL, HOVER, WHEELED, TRACKED, SUBMARINE -> 4;
+                case VTOL, SUBMARINE -> 4;
                 case INF_UMU -> alt ? 2 : 4;
                 default -> 5;
             };

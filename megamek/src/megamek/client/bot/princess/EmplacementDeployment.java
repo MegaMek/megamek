@@ -33,12 +33,18 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 import jakarta.annotation.Nullable;
+import megamek.client.bot.princess.EmplacementFirepower.WeaponReach;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.board.Board;
@@ -47,6 +53,7 @@ import megamek.common.board.CubeCoords;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
@@ -65,16 +72,33 @@ import megamek.logging.MMLogger;
  * centre zone is the ragged fringe of the town, so the emplacements piled up there, height 1 among taller buildings,
  * unable to see or be seen (MegaMek issue #9302).</p>
  *
+ * <p>The first cure judged a hex purely on how far it could see. In a city the only long views are down the streets,
+ * so the emplacements went into the roadway, and because only infantry may enter an armoured building each one walled
+ * its street off. The rule below sites them the way a fortification officer would: beside the street, covering it by
+ * fire.</p>
+ *
  * <h2>The rule</h2>
  *
  * <ol>
- *     <li><b>Never in water or magma</b> unless there is nowhere else. An emplacement standing in a lake is legal to
- *     the building rules but nonsense on the table, and open water would otherwise win on field of fire.</li>
+ *     <li><b>The least troublesome ground</b>, see {@link SiteProblem}: never in water or magma, never across a
+ *     bottleneck, never on a road, never in place of a building, each only while some better hex is legal.</li>
  *     <li><b>At least {@link #MINIMUM_SPACING_HEXES} from another emplacement</b>, best effort: the hexes that miss by
  *     the least are the only ones considered.</li>
- *     <li>Among those, the hex with the <b>best field of fire</b>, judged by line of sight to sample hexes out to the
- *     emplacement's longest range, counting double the ones toward the enemy. Higher ground breaks ties in its
- *     favour.</li>
+ *     <li>Among those, the hex whose <b>guns are worth the most over the ground it overlooks</b>. Each hex in line of
+ *     sight counts for the damage the emplacement can expect to do there ({@link EmplacementFirepower}), weighed by
+ *     how much the ground matters ({@link EmplacementApproach}): most on the enemy's routes into the place defended,
+ *     less the further from that place, and double on a road. Higher ground breaks ties in its favour.</li>
+ *     <li><b>Interlocking fire.</b> Ground one other emplacement already covers counts for more, not less, so that
+ *     the enemy's way in lies under two guns; a third gun on the same ground adds little. An emplacement also earns a
+ *     bonus for each neighbour whose flanks it can hit and for each neighbour that can hit its own, so nothing walks
+ *     up to one of them unengaged.</li>
+ *     <li><b>Depth by reach.</b> Each emplacement loses score for standing nearer to or further from the front line
+ *     than its weapons fight best ({@link EmplacementFirepower#standoff}): short-range guns in the line, long-range
+ *     guns a band behind.</li>
+ *     <li><b>Indirect fire.</b> Missile racks and mortars also count ground they cannot see, when another emplacement
+ *     can see it or it lies on the enemy's routes and so will be watched, and they stand furthest back.</li>
+ *     <li>An emplacement with <b>artillery</b> needs no view, so it takes the hex that sees, and is seen from, the
+ *     least.</li>
  * </ol>
  *
  * <p>Emplacements are strictly height 1 and may not stand on other buildings (TO:AR), so the choice of hex is the only
@@ -83,26 +107,70 @@ import megamek.logging.MMLogger;
 public final class EmplacementDeployment {
     private static final MMLogger LOGGER = MMLogger.create(EmplacementDeployment.class);
 
-    /** How far apart emplacements try to stand, so they cover different ground. */
+    /** The closest two emplacements stand, so that one blast does not catch both. */
     static final int MINIMUM_SPACING_HEXES = 3;
 
-    /** Sightlines are only checked this far out; past it, a sample hex says little about the hex being judged. */
+    /** Ground is only judged this far out; past it, an emplacement's guns are worth little. */
     static final int MAX_SIGHTLINE_RANGE = 15;
 
-    /** The nearest ring of sample hexes; anything closer is seen from almost any hex. */
+    /** The shortest distance an emplacement is ever judged out to. */
     static final int MIN_SIGHTLINE_RANGE = 3;
 
     /** Range used for an emplacement with no weapons. */
     static final int DEFAULT_REACH = 9;
 
-    /** Line of sight is the expensive part, so it is only traced from this many of the best-spaced hexes. */
-    static final int MAX_CANDIDATES_TO_SIGHT = 80;
+    /**
+     * Line of sight is the expensive part, so it is only traced from this many of the best-spaced hexes: the first
+     * ones in the list given to {@link #choose}, which is why the caller sorts it with {@link #mostPromisingFirst}.
+     */
+    static final int MAX_CANDIDATES_TO_SIGHT = 120;
 
-    /** Field-of-fire points a level of ground is worth. */
-    static final int LEVEL_WEIGHT = 2;
+    /** Only one hex in this many is checked for line of sight; see {@link #isSampleHex}. */
+    static final int SAMPLE_SPACING = 3;
+
+    /** How much more a road hex is worth: it is where vehicles and fast units will be. */
+    static final int ROAD_WEIGHT = 2;
+
+    /**
+     * What ground exactly one other emplacement already covers is worth, in hundredths of its full value: more than
+     * fresh ground, because a second gun there makes a crossfire.
+     */
+    static final int SECOND_GUN_PERCENT = 150;
+
+    /** What ground two or more other emplacements already cover is worth, in hundredths of its full value. */
+    static final int EXTRA_GUN_PERCENT = 30;
+
+    /**
+     * The bonus, in hundredths of the score, for each neighbour whose flanks this emplacement can hit, and again for
+     * each neighbour that can hit the flanks of this one.
+     */
+    static final int MUTUAL_SUPPORT_PERCENT = 10;
+
+    /** How many neighbours count toward each half of the mutual support bonus. */
+    static final int MAX_NEIGHBOURS_COUNTED = 2;
+
+    /** Ground worth no more than this is merely in view, not covered: out of range or too far out to matter. */
+    static final int SEEN_ONLY_VALUE = 1;
 
     /** The height of the unit an emplacement is looking for: a 'Mek. */
     private static final int TARGET_HEIGHT = 1;
+
+    /**
+     * What is wrong with building on a hex, mildest first. An emplacement is only built on a hex with a problem when
+     * every legal hex has one at least as bad.
+     */
+    enum SiteProblem {
+        /** Nothing: clear ground beside the traffic. */
+        NONE,
+        /** A small building stands here, which the emplacement would replace. */
+        REPLACES_BUILDING,
+        /** The hex carries a road or a bridge. */
+        ON_ROAD,
+        /** An emplacement here would wall off a street; see {@link EmplacementStreetCheck}. */
+        BLOCKS_PASSAGE,
+        /** Water or magma: legal to the building rules but nonsense on the table. */
+        WATER_OR_MAGMA
+    }
 
     private EmplacementDeployment() {
     }
@@ -110,7 +178,7 @@ public final class EmplacementDeployment {
     /**
      * @param entity the unit being deployed
      *
-     * @return {@code true} for a TO:AR gun emplacement, which deploys through {@link #choose}
+     * @return {@code true} for a TO:AR gun emplacement, which deploys through {@link #site}
      */
     public static boolean isGunEmplacementBuilding(Entity entity) {
         return (entity instanceof AbstractBuildingEntity building)
@@ -118,28 +186,80 @@ public final class EmplacementDeployment {
     }
 
     /**
+     * Sites an emplacement: works out what is defended and how the enemy comes at it, what the emplacements already
+     * placed cover, and where this one's weapons fight best, then picks its hex with {@link #choose}.
+     *
+     * @param game              the game, for line of sight and the indirect fire rule
+     * @param board             the board it deploys on
+     * @param emplacement       the emplacement being placed
+     * @param legalCoords       hexes it may legally deploy on
+     * @param otherEmplacements the friendly emplacements already deployed on that board
+     * @param enemyCentre       the middle of the enemy's deployment zones, or {@code null} when unknown
+     *
+     * @return the chosen hex, or {@code null} when there are no legal hexes
+     */
+    public static @Nullable Coords site(Game game, Board board, Entity emplacement, List<Coords> legalCoords,
+          List<Entity> otherEmplacements, @Nullable Coords enemyCentre) {
+        EmplacementApproach approach = EmplacementApproach.plan(board, legalCoords, enemyCentre);
+        List<WeaponReach> weapons = EmplacementFirepower.weaponsOf(emplacement);
+        boolean isIndirectFireInUse = game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
+              && EmplacementFirepower.canFireIndirectly(weapons);
+
+        Map<Coords, Map<Coords, Integer>> neighbourGround = new HashMap<>();
+        Set<Coords> spottedGround = new HashSet<>();
+        for (Entity other : otherEmplacements) {
+            Map<Coords, Integer> ground = groundCovered(game, board, other.getPosition(), other, approach, Set.of());
+            neighbourGround.put(other.getPosition(), ground);
+            if (isIndirectFireInUse) {
+                spottedGround.addAll(ground.keySet());
+            }
+        }
+        if (isIndirectFireInUse) {
+            // the enemy's routes in are what the front line is sited to watch
+            spottedGround.addAll(approach.routes());
+        }
+        int standoff = EmplacementFirepower.standoff(weapons, isIndirectFireInUse);
+        LOGGER.info("[Emplacement] {}: defending {} out to {} hexes; {} hexes on the enemy's routes in from {}, "
+                    + "{} of them the front line; belongs {} hexes behind it and guards neighbours within {}; "
+                    + "indirect fire {}",
+              emplacement.getShortName(), approach.defended().toFriendlyString(), approach.radius(),
+              approach.routes().size(),
+              (enemyCentre == null) ? "an unknown direction" : enemyCentre.toFriendlyString(),
+              approach.front().size(), standoff, EmplacementFirepower.guardRange(weapons),
+              isIndirectFireInUse ? "counted" : "not counted");
+
+        List<Coords> mostPromisingFirst = mostPromisingFirst(approach.withinTheDefence(legalCoords), board,
+              emplacement, approach, standoff);
+        return choose(emplacement, mostPromisingFirst, board, new ArrayList<>(neighbourGround.keySet()),
+              site -> neighbourGround.containsKey(site) ? neighbourGround.get(site)
+                    : groundCovered(game, board, site, emplacement, approach, spottedGround),
+              site -> approach.depthPercent(site, standoff));
+    }
+
+    /**
      * Picks the hex to build the emplacement on.
      *
      * @param emplacement       the emplacement being placed
-     * @param candidates        hexes it may legally deploy on, in the order the caller would otherwise scan them
+     * @param candidates        hexes it may legally deploy on, most promising first; only the first
+     *                          {@link #MAX_CANDIDATES_TO_SIGHT} suitable ones are judged
      * @param board             the board it deploys on
      * @param otherEmplacements positions of the friendly emplacements already on that board
-     * @param fieldOfFire       how much a hex can see, from {@link #fieldOfFire}; supplied so it can be stubbed
+     * @param groundCovered     the hexes an emplacement on a given hex overlooks and what each is worth, from
+     *                          {@link #groundCovered}; asked for the candidates and for the other emplacements'
+     *                          hexes alike, and supplied so it can be stubbed
+     * @param depthPercent      the share of its score an emplacement keeps on a given hex for standing the right
+     *                          distance behind the front, from {@link EmplacementApproach#depthPercent}
      *
      * @return the chosen hex, or {@code null} when there are no candidates
      */
     public static @Nullable Coords choose(Entity emplacement, List<Coords> candidates, Board board,
-          List<Coords> otherEmplacements, ToIntFunction<Coords> fieldOfFire) {
+          List<Coords> otherEmplacements, Function<Coords, Map<Coords, Integer>> groundCovered,
+          ToIntFunction<Coords> depthPercent) {
         if (candidates.isEmpty()) {
             return null;
         }
 
-        List<Coords> sites = candidates.stream().filter(c -> !isUnsuitableSite(board.getHex(c))).toList();
-        if (sites.isEmpty()) {
-            LOGGER.warn("[Emplacement] {}: every legal hex is water or magma; building on one anyway",
-                  emplacement.getShortName());
-            sites = candidates;
-        }
+        List<Coords> sites = leastTroublesomeSites(emplacement, candidates, board, otherEmplacements);
 
         int leastCrowding = Integer.MAX_VALUE;
         for (Coords site : sites) {
@@ -147,24 +267,95 @@ public final class EmplacementDeployment {
         }
         final int bestSpacing = leastCrowding;
         List<Coords> spaced = sites.stream()
-              .filter(c -> crowding(c, otherEmplacements) == bestSpacing)
+              .filter(site -> crowding(site, otherEmplacements) == bestSpacing)
               .limit(MAX_CANDIDATES_TO_SIGHT)
               .toList();
 
+        Map<Coords, Map<Coords, Integer>> neighbourGround = new HashMap<>();
+        for (Coords other : otherEmplacements) {
+            neighbourGround.put(other, groundCovered.apply(other));
+        }
+        boolean isIndirectFire = EmplacementFirepower.isIndirectFire(emplacement);
+        int guardRange = EmplacementFirepower.guardRange(EmplacementFirepower.weaponsOf(emplacement));
+
         Coords best = null;
         int bestScore = Integer.MIN_VALUE;
+        int bestLevel = Integer.MIN_VALUE;
         for (Coords site : spaced) {
             Hex hex = board.getHex(site);
             int level = (hex == null) ? 0 : hex.getLevel();
-            int score = fieldOfFire.applyAsInt(site) + (LEVEL_WEIGHT * level);
-            if (score > bestScore) {
+            Map<Coords, Integer> covered = groundCovered.apply(site);
+            int score = isIndirectFire ? -covered.size()
+                  : (score(site, covered, neighbourGround, guardRange) * depthPercent.applyAsInt(site)) / 100;
+            if ((score > bestScore) || ((score == bestScore) && (level > bestLevel))) {
                 bestScore = score;
+                bestLevel = level;
                 best = site;
             }
         }
-        LOGGER.debug("[Emplacement] {}: chose {} with score {} from {} spaced of {} candidate hexes (crowding {})",
-              emplacement.getShortName(), best, bestScore, spaced.size(), candidates.size(), bestSpacing);
+        LOGGER.info("[Emplacement] {}: chose {} (level {}, score {}, {}, depth {} percent) from {} spaced of {} "
+                    + "candidate hexes (crowding {}, {} other emplacements)",
+              emplacement.getShortName(), best, bestLevel, bestScore,
+              isIndirectFire ? "artillery: least seen" : "most firepower over ground under interlocking fire",
+              (best == null) ? 0 : depthPercent.applyAsInt(best), spaced.size(), candidates.size(), bestSpacing,
+              otherEmplacements.size());
         return best;
+    }
+
+    /**
+     * Keeps the candidates with the mildest {@link SiteProblem}, and says so in the log when even those have one.
+     */
+    private static List<Coords> leastTroublesomeSites(Entity emplacement, List<Coords> candidates, Board board,
+          List<Coords> otherEmplacements) {
+        Map<Coords, SiteProblem> problems = new HashMap<>();
+        Map<SiteProblem, Integer> tally = new EnumMap<>(SiteProblem.class);
+        SiteProblem mildest = SiteProblem.WATER_OR_MAGMA;
+        for (Coords candidate : candidates) {
+            SiteProblem problem = siteProblem(board, candidate, otherEmplacements);
+            problems.put(candidate, problem);
+            tally.merge(problem, 1, Integer::sum);
+            if (problem.compareTo(mildest) < 0) {
+                mildest = problem;
+            }
+        }
+        if (mildest == SiteProblem.NONE) {
+            LOGGER.info("[Emplacement] {}: the {} legal hexes sort as {}", emplacement.getShortName(),
+                  candidates.size(), tally);
+        } else {
+            LOGGER.warn("[Emplacement] {}: no clear ground among {} legal hexes, which sort as {}; the best "
+                  + "available is {}", emplacement.getShortName(), candidates.size(), tally, mildest);
+        }
+        List<Coords> accepted = new ArrayList<>();
+        for (Coords candidate : candidates) {
+            if (problems.get(candidate) == mildest) {
+                accepted.add(candidate);
+            }
+        }
+        return accepted;
+    }
+
+    /**
+     * @param board             the board
+     * @param site              the hex to check
+     * @param otherEmplacements positions of the emplacements already placed
+     *
+     * @return the worst thing wrong with building an emplacement on the hex
+     */
+    static SiteProblem siteProblem(Board board, Coords site, List<Coords> otherEmplacements) {
+        Hex hex = board.getHex(site);
+        if (isUnsuitableSite(hex)) {
+            return SiteProblem.WATER_OR_MAGMA;
+        }
+        if (EmplacementStreetCheck.blocksPassage(board, site, otherEmplacements)) {
+            return SiteProblem.BLOCKS_PASSAGE;
+        }
+        if (EmplacementStreetCheck.isOnRoad(hex)) {
+            return SiteProblem.ON_ROAD;
+        }
+        if (hex.containsTerrain(Terrains.BUILDING)) {
+            return SiteProblem.REPLACES_BUILDING;
+        }
+        return SiteProblem.NONE;
     }
 
     /**
@@ -197,6 +388,68 @@ public final class EmplacementDeployment {
     }
 
     /**
+     * What the ground an emplacement overlooks is worth to the defence as a whole, under interlocking fire.
+     *
+     * <p>Ground nobody else covers counts in full. Ground one other emplacement covers counts for
+     * {@link #SECOND_GUN_PERCENT}, because the second gun makes a crossfire, and ground two or more already cover
+     * for only {@link #EXTRA_GUN_PERCENT}. On top of that comes {@link #MUTUAL_SUPPORT_PERCENT} for each neighbour
+     * within {@code guardRange} whose flanks this emplacement can hit, and the same for each neighbour that can hit
+     * the flanks of this one, up to {@link #MAX_NEIGHBOURS_COUNTED} each way.</p>
+     *
+     * @param site            the hex the emplacement would be built on
+     * @param covered         the hexes it overlooks and the value of each, from {@link #groundCovered}
+     * @param neighbourGround the same for each emplacement already placed, by the hex it stands on
+     * @param guardRange      how close a neighbour must stand to be guarded, from
+     *                        {@link EmplacementFirepower#guardRange}
+     *
+     * @return the score; higher is better
+     */
+    static int score(Coords site, Map<Coords, Integer> covered, Map<Coords, Map<Coords, Integer>> neighbourGround,
+          int guardRange) {
+        int score = 0;
+        for (Map.Entry<Coords, Integer> ground : covered.entrySet()) {
+            int otherGuns = 0;
+            for (Map<Coords, Integer> neighbour : neighbourGround.values()) {
+                if (neighbour.getOrDefault(ground.getKey(), 0) > SEEN_ONLY_VALUE) {
+                    otherGuns++;
+                }
+            }
+            int percent = switch (otherGuns) {
+                case 0 -> 100;
+                case 1 -> SECOND_GUN_PERCENT;
+                default -> EXTRA_GUN_PERCENT;
+            };
+            score += (ground.getValue() * percent) / 100;
+        }
+
+        int neighboursGuarded = 0;
+        int neighboursGuarding = 0;
+        for (Map.Entry<Coords, Map<Coords, Integer>> neighbour : neighbourGround.entrySet()) {
+            boolean isCloseEnough = site.distance(neighbour.getKey()) <= guardRange;
+            if (isCloseEnough && coversFlanksOf(neighbour.getKey(), covered)) {
+                neighboursGuarded++;
+            }
+            if (coversFlanksOf(site, neighbour.getValue())) {
+                neighboursGuarding++;
+            }
+        }
+        int supportPercent = MUTUAL_SUPPORT_PERCENT
+              * (Math.min(MAX_NEIGHBOURS_COUNTED, neighboursGuarded)
+              + Math.min(MAX_NEIGHBOURS_COUNTED, neighboursGuarding));
+        return score + ((score * supportPercent) / 100);
+    }
+
+    /** Whether any hex beside an emplacement is among the ground another one covers. */
+    private static boolean coversFlanksOf(Coords emplacement, Map<Coords, Integer> covered) {
+        for (int direction = 0; direction < 6; direction++) {
+            if (covered.getOrDefault(emplacement.translated(direction), 0) > SEEN_ONLY_VALUE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param emplacement the emplacement
      *
      * @return the longest long range among its weapons, held to the sightline limits
@@ -215,66 +468,125 @@ public final class EmplacementDeployment {
     }
 
     /**
-     * The hexes a candidate is judged against: on rings at the near limit, half the reach and the full reach, twelve
-     * per ring, one along each hex direction and one halfway between each pair.
+     * Whether a hex is one of those checked for line of sight. Checking every hex in reach from every candidate is too
+     * slow, so one hex in {@link #SAMPLE_SPACING} is used. The choice depends only on the hex, never on who is looking,
+     * so two emplacements that overlook the same ground are seen to overlook the same sample hexes.
      *
-     * @param origin the hex being judged
-     * @param reach  how far out to look, from {@link #reach}
+     * @param hex the hex
      *
-     * @return the sample hexes, some possibly off the board
+     * @return {@code true} if line of sight to the hex is checked
      */
-    static List<Coords> sightlineSamples(Coords origin, int reach) {
-        Set<Integer> rings = new LinkedHashSet<>();
-        rings.add(Math.min(MIN_SIGHTLINE_RANGE, reach));
-        rings.add(Math.max(MIN_SIGHTLINE_RANGE, reach / 2));
-        rings.add(reach);
-
-        List<Coords> samples = new ArrayList<>();
-        for (int ring : rings) {
-            for (int direction = 0; direction < 6; direction++) {
-                samples.add(origin.translated(direction, ring));
-                int half = ring / 2;
-                if (half > 0) {
-                    samples.add(origin.translated(direction, ring - half).translated((direction + 1) % 6, half));
-                }
-            }
-        }
-        return samples;
+    static boolean isSampleHex(Coords hex) {
+        return Math.floorMod(hex.getX() + (2 * hex.getY()), SAMPLE_SPACING) == 0;
     }
 
     /**
-     * How much of the surrounding ground an emplacement built on a hex could see: one point per sample hex in line of
-     * sight, two if it lies toward the enemy.
+     * The ground an emplacement built on a hex would cover: every sample hex within reach that it can see, and every
+     * one it cannot see but could fire on indirectly, with what each is worth. A hex is worth the damage the
+     * emplacement can expect to do to a moving target there, weighed by {@link EmplacementApproach#weightPercent}
+     * and times {@link #ROAD_WEIGHT} if it is a road.
      *
-     * @param game        the game, for line of sight
-     * @param board       the board the emplacement deploys on
-     * @param origin      the hex being judged
-     * @param emplacement the emplacement, for its height and reach
-     * @param enemyCentre the middle of the enemy's deployment zones, or {@code null} when unknown
+     * @param game          the game, for line of sight
+     * @param board         the board the emplacement deploys on
+     * @param origin        the hex being judged
+     * @param emplacement   the emplacement, for its height, weapons and crew
+     * @param approach      what is defended and how the enemy reaches it, from {@link EmplacementApproach#plan}
+     * @param spottedGround hexes a friendly unit can be expected to see, on which the emplacement may fire
+     *                      indirectly; empty when it has no indirect weapon or the rule is not in play
      *
-     * @return the field-of-fire score
+     * @return the hexes covered and the value of each
      */
-    static int fieldOfFire(Game game, Board board, Coords origin, Entity emplacement, @Nullable Coords enemyCentre) {
+    static Map<Coords, Integer> groundCovered(Game game, Board board, Coords origin, Entity emplacement,
+          EmplacementApproach approach, Set<Coords> spottedGround) {
+        Map<Coords, Integer> covered = new HashMap<>();
         Hex originHex = board.getHex(origin);
         if (originHex == null) {
-            return 0;
+            return covered;
         }
         int height = emplacementHeight(emplacement);
-        int score = 0;
-        for (Coords sample : sightlineSamples(origin, reach(emplacement))) {
-            Hex sampleHex = board.contains(sample) ? board.getHex(sample) : null;
+        List<WeaponReach> weapons = EmplacementFirepower.weaponsOf(emplacement);
+        int gunnery = EmplacementFirepower.gunneryOf(emplacement);
+        for (Coords sample : origin.allAtDistanceOrLess(reach(emplacement))) {
+            Hex sampleHex = sampleHexAt(board, origin, sample);
             if (sampleHex == null) {
                 continue;
             }
             LosEffects.AttackInfo attackInfo = LosEffects.buildAttackInfo(origin, sample, board.getBoardId(),
                   height, TARGET_HEIGHT, originHex.getLevel(), sampleHex.getLevel());
+            int distance = origin.distance(sample);
             if (LosEffects.calculateLos(game, attackInfo).canSee()) {
-                boolean towardEnemy = (enemyCentre != null)
-                      && (sample.distance(enemyCentre) < origin.distance(enemyCentre));
-                score += towardEnemy ? 2 : 1;
+                int firepower = EmplacementFirepower.valueAtRange(weapons, distance, gunnery);
+                // a hex in view but out of range still counts as seen, which is what artillery wants to avoid
+                covered.put(sample, Math.max(SEEN_ONLY_VALUE, groundValue(firepower, sample, sampleHex, approach)));
+            } else if (spottedGround.contains(sample)) {
+                int firepower = EmplacementFirepower.indirectValueAtRange(weapons, distance, gunnery);
+                int value = groundValue(firepower, sample, sampleHex, approach);
+                if (value > SEEN_ONLY_VALUE) {
+                    covered.put(sample, value);
+                }
             }
         }
-        return score;
+        return covered;
+    }
+
+    /**
+     * Sorts the hexes an emplacement may deploy on so that the ones worth tracing line of sight from come first.
+     * A hex's promise is what its guns would be worth if nothing blocked their view: cheap to work out, and never
+     * less than what {@link #groundCovered} will find. An emplacement with artillery wants the opposite, so its list
+     * runs the other way.
+     *
+     * @param candidates  hexes it may legally deploy on
+     * @param board       the board it deploys on
+     * @param emplacement the emplacement, for its weapons and crew
+     * @param approach    what is defended and how the enemy reaches it
+     * @param standoff    how far behind the front the emplacement belongs, from
+     *                    {@link EmplacementFirepower#standoff}
+     *
+     * @return the same hexes, most promising first
+     */
+    static List<Coords> mostPromisingFirst(List<Coords> candidates, Board board, Entity emplacement,
+          EmplacementApproach approach, int standoff) {
+        List<WeaponReach> weapons = EmplacementFirepower.weaponsOf(emplacement);
+        int gunnery = EmplacementFirepower.gunneryOf(emplacement);
+        int reach = reach(emplacement);
+        Map<Coords, Integer> promise = new HashMap<>();
+        for (Coords candidate : candidates) {
+            int groundPromise = promise(candidate, board, weapons, gunnery, reach, approach);
+            promise.put(candidate, (groundPromise * approach.depthPercent(candidate, standoff)) / 100);
+        }
+        Comparator<Coords> byPromise = Comparator.comparingInt(promise::get);
+        List<Coords> sorted = new ArrayList<>(candidates);
+        sorted.sort(EmplacementFirepower.isIndirectFire(emplacement) ? byPromise : byPromise.reversed());
+        return sorted;
+    }
+
+    private static int promise(Coords origin, Board board, List<WeaponReach> weapons, int gunnery, int reach,
+          EmplacementApproach approach) {
+        int promise = 0;
+        for (Coords sample : origin.allAtDistanceOrLess(reach)) {
+            Hex sampleHex = sampleHexAt(board, origin, sample);
+            if (sampleHex != null) {
+                int firepower = EmplacementFirepower.valueAtRange(weapons, origin.distance(sample), gunnery);
+                promise += groundValue(firepower, sample, sampleHex, approach);
+            }
+        }
+        return promise;
+    }
+
+    /**
+     * @return the hex at {@code sample} when it is one the rule checks, on the board and not the hex being judged;
+     *       otherwise {@code null}
+     */
+    private static @Nullable Hex sampleHexAt(Board board, Coords origin, Coords sample) {
+        if (!isSampleHex(sample) || sample.equals(origin)) {
+            return null;
+        }
+        return board.contains(sample) ? board.getHex(sample) : null;
+    }
+
+    private static int groundValue(int firepower, Coords ground, Hex groundHex, EmplacementApproach approach) {
+        return ((firepower * approach.weightPercent(ground)) / 100)
+              * (EmplacementStreetCheck.isOnRoad(groundHex) ? ROAD_WEIGHT : 1);
     }
 
     private static int emplacementHeight(Entity emplacement) {

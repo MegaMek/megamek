@@ -1539,6 +1539,7 @@ public class RATGenerator {
             // isInitialized() start iterating chassis/model/faction collections on another thread while this loop was
             // still adding to them, which threw ConcurrentModificationException.
             ratGenerator.getEraSet().forEach(e -> ratGenerator.loadEra(e, dir));
+            ratGenerator.logDroneModels();
             ratGenerator.initialized = true;
             ratGenerator.notifyListenersOfInitialization();
         }
@@ -1735,6 +1736,23 @@ public class RATGenerator {
 
             factionRecord.loadEra(factionNode, era);
         }
+    }
+
+    /**
+     * Logs how many models carry the drone role, and so are never generated unless drones are asked for. Without this
+     * line a missing drone carrier in a generated force would leave nothing in the log to explain it.
+     */
+    private void logDroneModels() {
+        StringJoiner droneModels = new StringJoiner(", ");
+        int droneCount = 0;
+        for (ModelRecord modelRecord : models.values()) {
+            if (modelRecord.getRoles().contains(MissionRole.DRONE)) {
+                droneCount++;
+                droneModels.add(modelRecord.getKey());
+            }
+        }
+        LOGGER.info("[ForceGen][Drones] {} model(s) carry the drone role and are only generated when drones are asked"
+              + " for: {}", droneCount, droneModels);
     }
 
     /**

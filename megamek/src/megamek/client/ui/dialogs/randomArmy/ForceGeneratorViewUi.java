@@ -935,6 +935,60 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
+     * The "Reroll unit" menu item for a unit in the tree. A unit that cannot be rerolled on its own still gets the
+     * item, disabled, with the reason as its tooltip, so the player learns why rather than finding nothing there.
+     *
+     * @param slot the unit the player right-clicked
+     *
+     * @return the menu item
+     */
+    private JMenuItem buildRerollUnitItem(ForceDescriptor slot) {
+        JMenuItem item = new JMenuItem(Messages.getString("ForceGeneratorDialog.rerollUnit"));
+        UnitReroller.Refusal refusal = UnitReroller.whyNotRerollable(slot);
+        if (refusal == null) {
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.rerollUnit.tooltip"));
+            item.addActionListener(actionEvent -> rerollUnit(slot));
+        } else {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString(refusal.getMessageKey()));
+        }
+        return item;
+    }
+
+    /**
+     * Swaps one unit for another drawn for the same slot, then shows the tree and the chosen-units table as they now
+     * stand. The rest of the formation is untouched. The old unit leaves the chosen list, since that entity no longer
+     * exists in the tree. When nothing else fits the slot, the player is told and the unit stays.
+     *
+     * <p>Public so a host such as MekHQ's Command Generator can offer the same reroll from its own controls.</p>
+     *
+     * @param slot the unit to replace
+     *
+     * @return what was done, or {@code null} when the unit was kept
+     */
+    public @Nullable UnitReroller.Outcome rerollUnit(ForceDescriptor slot) {
+        List<Entity> before = new ArrayList<>();
+        slot.addAllEntities(before);
+        UnitReroller.Outcome outcome = UnitReroller.reroll(slot);
+        if (outcome == null) {
+            UnitReroller.Refusal refusal = UnitReroller.whyNotRerollable(slot);
+            String reason = (refusal == null)
+                  ? Messages.getString("ForceGeneratorDialog.rerollUnit.noneFits", slot.getModelName())
+                  : Messages.getString(refusal.getMessageKey());
+            JOptionPane.showMessageDialog(parentFrame, reason, Messages.getString("ForceGeneratorDialog.rerollUnit"),
+                  JOptionPane.INFORMATION_MESSAGE);
+            return null;
+        }
+        modelChosen.removeEntities(before);
+        Object root = forceTree.getModel().getRoot();
+        if (accumulateModel && (root instanceof ForceDescriptor rootDescriptor)) {
+            panControls.updateSummaryTable(rootDescriptor);
+        }
+        refreshTreeAfterEdit();
+        return outcome;
+    }
+
+    /**
      * Runs the order-of-battle search against the current field text and jumps to the first match. Matches are
      * case-insensitive substring hits on each node's unit name/chassis/model, pilot name, ship fluff name, and
      * formation/cluster name. Non-destructive: the tree is only expanded and selected, never rebuilt or filtered.
@@ -1058,6 +1112,8 @@ public class ForceGeneratorViewUi implements ActionListener {
                         rerollItem.setToolTipText(Messages.getString("ForceGeneratorDialog.rerollShip.tooltip"));
                         rerollItem.addActionListener(actionEvent -> rerollShip(fd));
                         menu.add(rerollItem);
+                    } else if (fd.isElement()) {
+                        menu.add(buildRerollUnitItem(fd));
                     }
 
                     menu.add(buildChangeFormationMenu(fd));

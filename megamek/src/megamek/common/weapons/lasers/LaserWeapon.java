@@ -51,7 +51,6 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
-import megamek.common.weapons.handlers.InsulatedLaserWeaponHandler;
 import megamek.common.weapons.handlers.PulseLaserWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -104,10 +103,8 @@ public abstract class LaserWeapon extends EnergyWeapon {
 
     @Override
     public int getModesCount(Mounted<?> mounted) {
-        Mounted<?> linkedBy = mounted.getLinkedBy();
-        boolean hasRiscPulseModule = (linkedBy instanceof MiscMounted miscMounted)
-              && !linkedBy.isInoperable()
-              && miscMounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE);
+        MiscMounted pulseModule = mounted.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE);
+        boolean hasRiscPulseModule = (pulseModule != null) && !pulseModule.isInoperable();
         if (hasRiscPulseModule || (this instanceof PulseLaserWeapon)) {
             return super.getModesCount();
         }
@@ -132,9 +129,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
 
     @Override
     public int getToHitModifier(@Nullable Mounted<?> mounted) {
-        if ((mounted == null) || !(mounted.getLinkedBy() instanceof MiscMounted) || !mounted.getLinkedBy()
-              .getType()
-              .hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+        if ((mounted == null) || (mounted.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE) == null)) {
             return super.getToHitModifier(mounted);
         }
         return mounted.curMode().getName().startsWith("Pulse") ? -2 : 0;
@@ -145,13 +140,11 @@ public abstract class LaserWeapon extends EnergyWeapon {
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         try {
-            Mounted<?> linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
-            if ((linkedBy != null) && !linkedBy.isInoperable()) {
-                if (linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                    return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
-                } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    return new PulseLaserWeaponHandler(toHit, waa, game, manager);
-                }
+            // Every energy weapon handler makes the insulator check; the pulse handler adds the pulse module's
+            Mounted<?> laser = waa.getEntity(game).getEquipment(waa.getWeaponId());
+            Mounted<?> pulseModule = laser.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE);
+            if ((pulseModule != null) && !pulseModule.isInoperable()) {
+                return new PulseLaserWeaponHandler(toHit, waa, game, manager);
             }
 
             return new EnergyWeaponHandler(toHit, waa, game, manager);

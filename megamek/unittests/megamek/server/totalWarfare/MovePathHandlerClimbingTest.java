@@ -38,29 +38,39 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
+
 import megamek.common.CriticalSlot;
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
 import megamek.common.board.Coords;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Server-side regression tests for TacOps Climbing fall/abort handling in
@@ -101,6 +111,35 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
               size 1 2
               hex 0101 0 "water:2" ""
               hex 0102 3 "" ""
+              end""");
+
+        // Dry 4-level cliff, Mek on top. Used by the climbing roll modifier tests.
+        initializeBoard("BOARD_DRY_CLIFF_DROP_4", """
+              size 1 2
+              hex 0101 4 "" ""
+              hex 0102 0 "" ""
+              end""");
+
+        // Dry 4-level cliff, Mek at the foot. Used by the climbing roll modifier tests.
+        initializeBoard("BOARD_DRY_CLIFF_RISE_4", """
+              size 1 2
+              hex 0101 0 "" ""
+              hex 0102 4 "" ""
+              end""");
+
+        // Issue #9268: a Mek starting on a level-3 cliff top beside a level -1 canyon floor.
+        initializeBoard("BOARD_EDGE_DROP_4", """
+              size 1 2
+              hex 0101 3 "" ""
+              hex 0102 -1 "" ""
+              end""");
+
+        // Issue #9268: the same 4-level drop, but one hex of cliff top away from the start.
+        initializeBoard("BOARD_WALK_THEN_DROP_4", """
+              size 1 3
+              hex 0101 3 "" ""
+              hex 0102 3 "" ""
+              hex 0103 -1 "" ""
               end""");
     }
 
@@ -621,6 +660,63 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
               "Climb completes — flag clears.");
     }
 
+    // -----------------------------------------------------------------------
+    // Issue #9268: with Climbing on and Leaping off, a Mek that walked to a
+    // cliff edge and stepped off was walked to the bottom. These send the path
+    // through the real movement packet, as a client does.
+    // -----------------------------------------------------------------------
+
+    /**
+     * Sends {@code steps} for a fresh two-armed Mek through the server's movement packet, with TacOps Climbing on and
+     * TacOps Leaping off, and returns the Mek after the server has processed it.
+     */
+    private Mek sendClimbingMoveWithoutLeaping(String board, MoveStepType... steps) throws Exception {
+        setBoard(board);
+        enableTacOpsClimbing();
+        getGame().getOptions().getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING).setValue(false);
+
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+
+        Mek mek = createClimbableMek();
+        mek.setOwner(player);
+        MovePath movePath = getMovePathFor(mek, 0, EntityMovementMode.BIPED, steps);
+
+        getGame().setPhase(GamePhase.MOVEMENT);
+        getGame().setTurnVector(List.of(new SpecificEntityTurn(player.getId(), mek.getId())));
+        getGame().setTurnIndex(0, player.getId());
+        gameManager.handlePacket(player.getId(), new Packet(PacketCommand.ENTITY_MOVE, mek.getId(), movePath));
+        return mek;
+    }
+
+    @Test
+    void walkingToEdgeThenSteppingOffStopsAtTheEdgeWithoutLeaping() throws Exception {
+        Mek mek = sendClimbingMoveWithoutLeaping("BOARD_WALK_THEN_DROP_4",
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS,
+              MoveStepType.FORWARDS);
+
+        assertEquals(new Coords(0, 1), mek.getPosition(),
+              "The Mek walks to the edge but must not walk down the 4-level drop.");
+        assertEquals(0, mek.getElevation(), "The Mek stays standing on the cliff top.");
+        assertFalse(mek.isClimbing(), "Nothing about this move is a climb.");
+    }
+
+    @Test
+    void edgeDescentFromTurnStartHexStillDanglesWithoutLeaping() throws Exception {
+        Mek mek = sendClimbingMoveWithoutLeaping("BOARD_EDGE_DROP_4",
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+
+        assertEquals(new Coords(0, 1), mek.getPosition(), "The dangling Mek moves into the lower hex.");
+        assertEquals(2, mek.getElevation(),
+              "Cliff top at level 3, less the 2 dangle levels, is elevation 2 above the level -1 floor.");
+        assertTrue(mek.isDangling(), "Stepping off from the turn-start hex is still a dangle.");
+    }
+
     @Test
     void edgeDangleOffBuildingRoofLandsAtDangleElevation() throws Exception {
         setBoard("BOARD_5_FLOOR_BUILDING");
@@ -705,5 +801,90 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
         assertEquals(5, climbStep.getMp(),
               "FORWARDS onto bridge surface must cost 5 MP (1 base + 4 climb), not 7 — the "
                     + "Mek isn't wading through the water on this step.");
+    }
+
+    // -----------------------------------------------------------------------
+    // Climbing roll modifiers (TO:AR p.20). The +1 climbing modifier applies
+    // to other rolls made while climbing, "but not the climbing roll itself";
+    // only the +2 for climbing with one arm is added to the climbing roll.
+    // -----------------------------------------------------------------------
+
+    @Test
+    void edgeClimbDownRollHasNoClimbingModifierWithTwoHands() throws Exception {
+        setBoard("BOARD_DRY_CLIFF_DROP_4");
+        Mek mek = createClimbableMek();
+
+        List<PilotingRollData> rolls = runClimbAndCaptureRolls(mek, 0, 2);
+
+        int baseRoll = mek.getBasePilotingRoll(EntityMovementType.MOVE_WALK).getValue();
+        assertEquals(2, rolls.size(), "Climbing down 2 levels makes one roll per level.");
+        for (PilotingRollData roll : rolls) {
+            assertEquals(baseRoll, roll.getValue(), "A two-handed climbing roll is the base piloting roll.");
+        }
+    }
+
+    @Test
+    void edgeClimbDownRollAddsOnlyTheOneArmModifierWithOneHand() throws Exception {
+        setBoard("BOARD_DRY_CLIFF_DROP_4");
+        Mek mek = createClimbableMek();
+        mek.setCritical(Mek.LOC_RIGHT_ARM, 3, null);
+
+        List<PilotingRollData> rolls = runClimbAndCaptureRolls(mek, 0, 2);
+
+        int baseRoll = mek.getBasePilotingRoll(EntityMovementType.MOVE_WALK).getValue();
+        assertEquals(2, rolls.size(), "Climbing down 2 levels makes one roll per level.");
+        for (PilotingRollData roll : rolls) {
+            assertEquals(baseRoll + ClimbingHelper.ONE_ARM_PSR_MODIFIER, roll.getValue(),
+                  "A one-handed climbing roll adds only the one-arm modifier.");
+        }
+    }
+
+    @Test
+    void climbUpRollHasNoClimbingModifier() throws Exception {
+        setBoard("BOARD_DRY_CLIFF_RISE_4");
+        Mek mek = createClimbableMek();
+
+        List<PilotingRollData> rolls = runClimbAndCaptureRolls(mek, 0, 0);
+
+        int baseRoll = mek.getBasePilotingRoll(EntityMovementType.MOVE_WALK).getValue();
+        assertFalse(rolls.isEmpty(), "Climbing up makes a roll per level.");
+        for (PilotingRollData roll : rolls) {
+            assertEquals(baseRoll, roll.getValue(), "A two-handed climbing roll is the base piloting roll.");
+        }
+    }
+
+    /**
+     * Sends {@code mek} from hex 0101 one hex south in climb mode, with every piloting roll passing, and returns the
+     * rolls the server asked for.
+     *
+     * @param mek          the climbing Mek
+     * @param elevation    the Mek's starting elevation
+     * @param chosenLevels the levels picked in the descent dialog, or {@code 0} for none
+     *
+     * @return every piloting roll the server asked for during the move
+     */
+    private List<PilotingRollData> runClimbAndCaptureRolls(Mek mek, int elevation, int chosenLevels)
+          throws Exception {
+        enableTacOpsClimbing();
+        TWGameManager gameManager = spy(new TWGameManager());
+        gameManager.setGame(getGame());
+        ServerFactory.createServer(gameManager);
+        Player player = new Player(0, "Test");
+        getGame().addPlayer(0, player);
+        mek.setOwner(player);
+
+        MovePath movePath = getMovePathFor(mek, elevation, EntityMovementMode.BIPED,
+              MoveStepType.CLIMB_MODE_ON,
+              MoveStepType.FORWARDS);
+        mek.setClimbingLevelsChosen(chosenLevels);
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        new MovePathHandler(gameManager, mek, movePath, null).processMovement();
+
+        ArgumentCaptor<PilotingRollData> rollCaptor = ArgumentCaptor.forClass(PilotingRollData.class);
+        verify(gameManager, atLeast(0)).doSkillCheckWhileMoving(any(Entity.class), anyInt(),
+              any(Coords.class), any(Coords.class), rollCaptor.capture(), anyBoolean());
+        return rollCaptor.getAllValues();
     }
 }

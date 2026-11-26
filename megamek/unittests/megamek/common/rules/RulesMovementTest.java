@@ -23,19 +23,46 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.GameBoardTestCase;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.core.CoreRulesMovement;
 import megamek.common.rules.totalwarfare.TWRulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
+import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class RulesMovementTest {
+class RulesMovementTest extends GameBoardTestCase {
+    @Test
+    void groundInfantryAssetPaysTwoMpToChangeOneLevelInClearTerrain() {
+        RulesManager savedRules = Game.rulesManager;
+        try {
+            Game.rulesManager = new CoreRulesManager();
+            getGame().setBoard(BoardLoader.initializeBoard("""
+                  size 1 2
+                  hex 0101 0 "" ""
+                  hex 0102 1 "" ""
+                  end"""));
+            BattlefieldSupportAsset infantry = new BattlefieldSupportAsset();
+            infantry.setAssetType(BFSAssetType.CONV_INFANTRY);
+            MovePath path = getMovePathFor(infantry, 0, EntityMovementMode.INF_LEG, MoveStepType.FORWARDS);
+            assertTrue(path.isMoveLegal());
+            assertEquals(3, path.getMpUsed());
+        } finally {
+            Game.rulesManager = savedRules;
+        }
+    }
+
     @Test
     void coreAndTotalWarfareRulesExerciseMovementLogic() {
         CoreRulesMovement core = new CoreRulesMovement();
@@ -75,10 +102,12 @@ class RulesMovementTest {
         assertEquals(3, total.getUnderwaterMPCost());
         assertTrue(core.isMoveIntoWaterDangerous(EntityMovementType.MOVE_RUN, EntityMovementMode.BIPED));
         assertTrue(total.isMoveIntoWaterDangerous(EntityMovementType.MOVE_RUN, EntityMovementMode.BIPED));
-        assertEquals(2, core.getAccidentalFallElevation(5, 3));
+        // Core p.116: levels fallen minus the target's height, which is one more than MegaMek's (Core p.57)
+        assertEquals(1, core.getAccidentalFallElevation(5, 3));
         assertEquals(4, total.getAccidentalFallElevation(4, 3));
-        assertEquals(3, core.getDFAElevation(game, 1, 2, coreStep));
-        assertEquals(3, total.getDFAElevation(game, 1, 2, totalStep));
+        // Core p.79: the higher level (the target's, at elevation 2) plus the target's 2-level height
+        assertEquals(4, core.getDFAElevation(game, 1, 2, coreStep, new Coords(0, 0)));
+        assertEquals(3, total.getDFAElevation(game, 1, 2, totalStep, new Coords(0, 0)));
         assertTrue(core.enableBackwardsElevationChange(true, mek));
         assertTrue(total.enableBackwardsElevationChange(true, mek));
         assertFalse(core.reduceMaxElevation(mek));

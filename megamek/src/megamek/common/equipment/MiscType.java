@@ -406,6 +406,24 @@ public class MiscType extends EquipmentType {
         return hasFlag(F_BOOBY_TRAP);
     }
 
+    /**
+     * @return The equipment whose turret the given equipment is in: a weapon enhancement is in its weapon's turret,
+     *       however the unit file marks it, as TO:AUE p.148 requires of a PPC capacitor; it then counts toward the
+     *       turret's weight (TO:AUE p.158)
+     */
+    private static Mounted<?> turretMount(Mounted<?> mounted) {
+        Mounted<?> weapon = mounted.getLinked();
+        return (isWeaponEnhancement(mounted.getType()) && (weapon != null)) ? weapon : mounted;
+    }
+
+    /**
+     * @return True for the equipment that is attached to a single weapon: Artemis and Apollo fire control systems,
+     *       PPC capacitors, laser insulators and RISC laser pulse modules
+     */
+    public static boolean isWeaponEnhancement(EquipmentType type) {
+        return (type instanceof MiscType) && type.hasFlag(F_WEAPON_ENHANCEMENT);
+    }
+
     public boolean isVibroblade() {
         return hasFlag(F_CLUB)
               && hasAnyFlag(
@@ -551,7 +569,7 @@ public class MiscType extends EquipmentType {
             double equipmentWeight = 0;
             for (Mounted<?> m : entity.getEquipment()) {
                 if ((m.getLocation() == locationToCheck) &&
-                      (m.isMekTurretMounted()) &&
+                      turretMount(m).isMekTurretMounted() &&
                       !(m.getType() instanceof AmmoType) &&
                       !((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_HEAT_SINK)) &&
                       (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
@@ -580,7 +598,7 @@ public class MiscType extends EquipmentType {
              */
             double equipmentWeight = 0;
             for (Mounted<?> m : entity.getEquipment()) {
-                if (m.isSponsonTurretMounted() &&
+                if (turretMount(m).isSponsonTurretMounted() &&
                       !(m.getType() instanceof AmmoType) &&
                       !((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_HEAT_SINK)) &&
                       (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
@@ -1254,8 +1272,9 @@ public class MiscType extends EquipmentType {
                 return 10;
             }
         } else if (hasFlag(F_JUMP_BOOSTER) || hasFlag(F_TALON)) {
-            return (entity instanceof QuadMek) ? 8 : 4; // all slots in all
-            // legs
+            // 2 slots in every leg (TO:AUE p. 100 Talons, p. 104 boosters); a superheavy leg holds them in 1 (IO:AE p. 157)
+            int legs = (entity instanceof QuadMek) ? 4 : (entity instanceof TripodMek) ? 3 : 2;
+            return legs * (((entity instanceof Mek) && entity.isSuperHeavy()) ? 1 : 2);
         } else if (hasFlag(F_HAND_WEAPON) && hasFlag(MiscTypeFlag.S_CLAW)) {
             return (int) Math.ceil(entity.getWeight() / 15);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
@@ -7150,7 +7169,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
-        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 83);
+        misc.rulesRefs = rulesRefs(rulesRef(SourceBookCode.IO_AE, 83), rulesRef(SourceBookCode.CORE, 208));
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3095, 3122, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -8097,11 +8116,13 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 0;
         misc.svSlots = 0;
         misc.cost = 3000;
+        // TO:AUE p. 134: available to BM, IM, CV, SV, AF, CF and SC, on units of 200 tons or less
         misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR,
               F_WEAPON_ENHANCEMENT,
               MiscType.F_SUPPORT_TANK_EQUIPMENT,
               MiscType.F_MEK_EQUIPMENT,
               MiscType.F_FIGHTER_EQUIPMENT,
+              MiscType.F_SC_EQUIPMENT,
               MiscType.F_TANK_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 134);
@@ -9077,6 +9098,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "MASH Equipment";
+        misc.shortName = "MASH";
         misc.setInternalName(misc.name);
         misc.addLookupName("MASH Core Component");
         misc.addLookupName("MASH Operation Theater");
@@ -9571,6 +9593,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
+        misc.cost = 200000; // IO:AE Alternate Eras equipment cost table
         misc.flags = misc.flags.or(F_RISC_LASER_PULSE_MODULE,
               F_WEAPON_ENHANCEMENT,
               F_MEK_EQUIPMENT,
@@ -9596,8 +9619,6 @@ public class MiscType extends EquipmentType {
               .setPrototypeFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
-        // FIXME: implement game rules, only BV and construction rules
-        // implemented
     }
 
     // Repeating TSEMP - See Weapons.
@@ -9616,7 +9637,10 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         // TODO: add game rules, BV rules are implemented
-        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 88);
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.IO_AE, 88),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.F)

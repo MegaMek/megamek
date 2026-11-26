@@ -442,6 +442,23 @@ public class Compute {
     }
 
     /**
+     * Rounds odds from {@link #oddsAbove(int, boolean)} down to one decimal place for display. Rounding down means a
+     * roll that can still fail never shows as 100%. For example, a target number of 3 rolled with Natural Aptitude is
+     * 99.54%, which shows as 99.5% rather than 100%.
+     *
+     * <p>One decimal place, not two, because the 2d6 odds are stored to one decimal place: 8 or more is stored as
+     * 41.6, so two places would show a false 41.60.</p>
+     *
+     * @param odds the odds of success, from 0 to 100
+     *
+     * @return the odds rounded down to one decimal place
+     */
+    public static double oddsAsDisplayPercent(double odds) {
+        // The tiny nudge stops a stored 97.2 from flooring to 97.1 when 97.2 * 10 lands just under 972
+        return Math.floor((odds * 10.0) + 1.0e-9) / 10.0;
+    }
+
+    /**
      * Returns an entity if the specified entity would cause a stacking violation entering a hex, or returns null if it
      * would not. The returned entity is the entity causing the violation.
      * <p>
@@ -560,7 +577,8 @@ public class Compute {
      * @param destBoardId  Allows setting a different board for checking destination hex
      * @param transport    Represents the unit transporting entering, which may affect stacking, can be null
      * @param climbMode    The moving Entity's climb mode at the point it enters the destination hex
-     * @param ignoreHidden true by default.
+     * @param ignoreHidden {@code true} to leave hidden enemies of the entering unit out of the check, as that unit
+     *                     does not know they are there; hidden units on its own side always count
      *
      * @return Entity instance that is causing the violation
      */
@@ -641,8 +659,10 @@ public class Compute {
                     continue;
                 }
 
-                // We are not allowed to consider hidden units here!
-                if (ignoreHidden && inHex.isHidden()) {
+                // A hidden enemy must not be considered: the entering unit does not know it is there. A hidden unit
+                // on the entering unit's own side is known to it and takes up room like any other unit.
+                boolean isUndiscoveredEnemy = inHex.isHidden() && inHex.isEnemyOf(entering);
+                if (ignoreHidden && isUndiscoveredEnemy) {
                     continue;
                 }
 
@@ -1007,6 +1027,8 @@ public class Compute {
         }
 
         // can't go up more levels than normally possible
+        int maxElevationChange = (entity instanceof Mek mek) ? mek.getMaxDisplacementElevationChange()
+              : entity.getMaxElevationChange();
         for (Coords c : intervening) {
             // ignore off-board hexes
             if (!game.getBoard().contains(c)) {
@@ -1015,7 +1037,7 @@ public class Compute {
             final Hex hex = game.getBoard().getHex(c);
             int change = entity.elevationOccupied(hex)
                   - entity.elevationOccupied(srcHex);
-            if (change > entity.getMaxElevationChange()) {
+            if (change > maxElevationChange) {
                 return false;
             }
         }
@@ -1035,22 +1057,58 @@ public class Compute {
     /**
      * Gets a valid displacement, from the hexes around src, as close to the original direction as is possible.
      *
-     * @return valid displacement coords, or null if none
+     * @return valid displacement coords, or {@code null} if none
      */
+    @Nullable
     public static Coords getValidDisplacement(Game game, int entityId,
           Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
-        int range = 1;
-        // check for a central drop-ship hex and if so, then displace to a two
-        // hex radius
-        for (Entity en : game.getEntitiesVector(src)) {
-            if ((en instanceof Dropship) && !en.isAirborne()
-                  && en.getPosition().equals(src)) {
-                range = 2;
+        int[] offsets = { 0, 1, 5, 2, 4, 3 };
+        int range = getDisplacementRange(game, src);
+        for (int offset : offsets) {
+            Coords destination = src.translated((direction + offset) % 6, range);
+            if (Compute.isValidDisplacement(game, entityId, src, destination)) {
+                return destination;
+            }
+            // code here borrowed from Compute.coordsAtRange
+            for (int count = 1; count < range; count++) {
+                destination = destination.translated((direction + offset + 2) % 6);
+                if (Compute.isValidDisplacement(game, entityId, src, destination)) {
+                    return destination;
+                }
             }
         }
+        // no hex around the source can take the unit
+        return null;
+    }
+
+    /**
+     * Gets the hex a unit is displaced into by an accidental fall from above. The rules in play decide how the hex is
+     * picked: Total Warfare looks nearest to the given direction first; the Core rules put a faller that missed as
+     * close as possible to the hex it fell from and push the unit fallen on into a random legal hex (Core p.116).
+     * Every other displacement follows its direction and uses {@link #getValidDisplacement(Game, int, Coords, int)}.
+     *
+     * @return valid displacement coords, or {@code null} if none
+     */
+    @Nullable
+    public static Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
+          boolean fallerMissed) {
         return Game.rulesManager.getRulesMovement().getAccidentalFallDisplacement(game, entityId, src, direction,
-              range);
+              getDisplacementRange(game, src), fallerMissed);
+    }
+
+    /**
+     * How far a unit is displaced out of the given hex: two hexes out of the central hex of a grounded DropShip,
+     * otherwise one.
+     */
+    private static int getDisplacementRange(Game game, Coords src) {
+        for (Entity entity : game.getEntitiesVector(src)) {
+            if ((entity instanceof Dropship) && !entity.isAirborne()
+                  && entity.getPosition().equals(src)) {
+                return 2;
+            }
+        }
+        return 1;
     }
 
     /**
@@ -1144,8 +1202,9 @@ public class Compute {
         for (Entity other : game.getEntitiesVector()) {
             // a Recon Camera that spotted the target counts as a spotter without the attack penalty (TO:AUE p.150)
             boolean isCameraSpotter = ReconCameraRules.isCameraSpotting(other, target);
-            if (((other.isSpotting() && (other.getSpotTargetId() == target
-                  .getId())) || isCameraSpotter || (taggedBy == other.getId()))
+            if (((other.isSpotting() && (other.getSpotTargetId() == target.getId())
+                  && Targetable.isSameTarget(other.getSpotTarget(game), target))
+                  || isCameraSpotter || (taggedBy == other.getId()))
                   && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 ToHitData mods = isCameraSpotter && ReconCameraRules.isAerospaceCamera(other)
@@ -1157,7 +1216,7 @@ public class Compute {
                 // a spotter suffers a penalty if it's also making an attack this round
                 // unless it has a command console, has TAG-ged the target or spotted it with a Recon Camera
                 if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && !isCameraSpotter &&
-                      (!isTargetTagged(attacker, target, game) || (taggedBy != -1))) {
+                      !hasTagged(other, target, game)) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
 
@@ -1218,6 +1277,65 @@ public class Compute {
         }
 
         return targetTagged;
+    }
+
+    /**
+     * @param attacker the unit attacking the target
+     * @param target   the target
+     * @param game     the game
+     *
+     * @return true if a unit friendly to the attacker designated the target with TAG and hit ("friendly TAG", Core
+     *       p.193; TW p.142)
+     */
+    public static boolean isTargetTaggedByFriend(Entity attacker, Targetable target, Game game) {
+        return findFriendlyTagger(attacker, target, game) != null;
+    }
+
+    /**
+     * Every TAG attack of the phase is recorded, hit or miss, so a later hostile designation does not hide an earlier
+     * friendly one.
+     *
+     * @param attacker the unit attacking the target
+     * @param target   the target
+     * @param game     the game
+     *
+     * @return a unit friendly to the attacker that designated the target with TAG and hit, or null
+     */
+    public static @Nullable Entity findFriendlyTagger(Entity attacker, Targetable target, Game game) {
+        for (TagInfo tagInfo : game.getTagInfo()) {
+            if (!tagInfo.missed && Targetable.isSameTarget(tagInfo.target, target)
+                  && isFriendlyTagger(attacker, tagInfo.attackerId, game)) {
+                return game.getEntity(tagInfo.attackerId);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param tagger the unit that may have fired TAG
+     * @param target the target
+     * @param game   the game
+     *
+     * @return true if the unit designated the target with TAG and hit; after a miss, spotting proceeds "in the normal
+     *       fashion" (Core p.70)
+     */
+    public static boolean hasTagged(Entity tagger, @Nullable Targetable target, Game game) {
+        if (target == null) {
+            return false;
+        }
+        for (TagInfo tagInfo : game.getTagInfo()) {
+            if (!tagInfo.missed && (tagInfo.attackerId == tagger.getId())
+                  && Targetable.isSameTarget(tagInfo.target, target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isFriendlyTagger(Entity attacker, int taggerId, Game game) {
+        Entity tagger = game.getEntity(taggerId);
+        return (tagger != null) && (tagger.getOwner() != null) && (attacker.getOwner() != null)
+              && !tagger.getOwner().isEnemyOf(attacker.getOwner());
     }
 
     /**
@@ -1421,6 +1539,7 @@ public class Compute {
 
         if (weaponUnderwater) {
             weaponRanges = weaponType.getWRanges();
+            useLOSRange &= Game.rulesManager.getRulesUnderwater().allowsLosRange(weaponType);
             boolean MPM = false;
             if ((weaponType.getAmmoType() == AmmoTypeEnum.SRM)
                   || (weaponType.getAmmoType() == AmmoTypeEnum.SRM_IMP)
@@ -3830,41 +3949,15 @@ public class Compute {
 
                 // Convert AV to fDamage for bay weapons, fighters, etc
                 if (attacker.usesWeaponBays()) {
+                    // Capital weapons have their own range scale. Capital missiles get higher priority than standard
+                    // missiles: damage plus a bonus for the critical hit threat they represent
+                    double threat = wt.isCapital() ? 12 : 1;
+                    int range = RangeType.rangeBracket(rangeToTarget, wt.getATRanges(), true, false);
                     double av = 0;
-                    double threat = 1;
                     for (WeaponMounted bayW : weapon.getBayWeapons()) {
-                        WeaponType bayWType = bayW.getType();
-                        // Capital weapons have a different range scale
-                        if (wt.isCapital()) {
-                            // Capital missiles get higher priority than standard missiles:
-                            // damage plus a bonus for the critical hit threat they represent
-                            threat = 12;
-                            if (rangeToTarget > 50) {
-                                av = 0;
-                            } else if (rangeToTarget > 40) {
-                                av += bayWType.getExtAV();
-                            } else if (rangeToTarget > 25) {
-                                av += bayWType.getLongAV();
-                            } else if (rangeToTarget > 12) {
-                                av += bayWType.getMedAV();
-                            } else {
-                                av += bayWType.getShortAV();
-                            }
-                        } else {
-                            if (rangeToTarget > 25) {
-                                av = 0;
-                            } else if (rangeToTarget > 20) {
-                                av += bayWType.getExtAV();
-                            } else if (rangeToTarget > 12) {
-                                av += bayWType.getLongAV();
-                            } else if (rangeToTarget > 6) {
-                                av += bayWType.getMedAV();
-                            } else {
-                                av += bayWType.getShortAV();
-                            }
-                        }
-                        fDamage = (float) (av * threat);
+                        av += bayW.getAttackValue(range);
                     }
+                    fDamage = (float) (av * threat);
                 } else if (attacker.isCapitalFighter()) {
                     double av = 0;
                     double threat = 1;

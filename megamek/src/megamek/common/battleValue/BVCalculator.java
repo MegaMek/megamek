@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -858,23 +857,21 @@ public abstract class BVCalculator {
             }
 
             // artemis bumps up the value
-            if ((weapon.getLinkedBy() != null) && (weapon.getLinkedBy().getType() instanceof MiscType)) {
-                Mounted<?> linkedBy = weapon.getLinkedBy();
-                if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    weaponBV *= 1.2;
-                    calculation += " x 1.2 (Art-IV)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                    weaponBV *= 1.1;
-                    calculation += " x 1.1 (P-Art)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    weaponBV *= 1.3;
-                    calculation += " x 1.3 (Art-V)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) ||
-                      linkedBy.getType().hasFlag(MiscType.F_APOLLO)) {
-                    weaponBV *= 1.15;
-                    calculation += " x 1.15 (" +
-                          (linkedBy.getType().hasFlag(MiscType.F_APOLLO) ? "Apollo)" : "RISC LPM)");
-                }
+            if (weapon.getEnhancement(MiscType.F_ARTEMIS) != null) {
+                weaponBV *= 1.2;
+                calculation += " x 1.2 (Art-IV)";
+            } else if (weapon.getEnhancement(MiscType.F_ARTEMIS_PROTO) != null) {
+                weaponBV *= 1.1;
+                calculation += " x 1.1 (P-Art)";
+            } else if (weapon.getEnhancement(MiscType.F_ARTEMIS_V) != null) {
+                weaponBV *= 1.3;
+                calculation += " x 1.3 (Art-V)";
+            } else if (weapon.getEnhancement(MiscType.F_APOLLO) != null) {
+                weaponBV *= 1.15;
+                calculation += " x 1.15 (Apollo)";
+            } else if (weapon.getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE) != null) {
+                weaponBV *= 1.15;
+                calculation += " x 1.15 (RISC LPM)";
             }
 
             if (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTC) {
@@ -1247,11 +1244,11 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Adjust the BV with force bonuses (TAG, C3) and pilot skill.
+     * Adjust the BV with force bonuses (TAG, then C3 on the BV including TAG) and pilot skill, in that order
+     * (TechManual p.315; Core errata v0.2 p.1).
      */
     protected void adjustBV() {
         adjustedBV = (int) Math.round(baseBV);
-        double c3Bonus = ignoreC3 ? 0 : entity.getExtraC3BV((int) Math.round(adjustedBV));
         List<String> pilotModifiers = new ArrayList<>();
         double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(entity, pilotModifiers);
 
@@ -1259,6 +1256,7 @@ public abstract class BVCalculator {
             processTagBonus();
         }
 
+        double c3Bonus = ignoreC3 ? 0 : entity.getExtraC3BV((int) Math.round(adjustedBV));
         if (c3Bonus > 0) {
             adjustedBV += c3Bonus;
             bvReport.addLine("Force Bonus (C3):", "+ " + formatForReport(c3Bonus), "= " + formatForReport(adjustedBV));
@@ -1419,40 +1417,31 @@ public abstract class BVCalculator {
         if (entity.getGame() == null) {
             return;
         }
-        long tagCount = workingTAGCount(entity);
-        // CORE if we need to adapt this for only SG, replace (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
-        // (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) && Game.rulesManager.getRulesGame().tagBVBump())
-        if ((tagCount == 0)) {
+        // One list of working TAGs decides both the count and the facing; a TAG pod still to be mounted is not
+        // rear-mounted
+        List<WeaponMounted> workingTags = entity.getWeaponList().stream()
+              .filter(m -> !m.isInoperable() && !m.isBreached() && m.getType().hasFlag(WeaponType.F_TAG))
+              .toList();
+        int pendingTagPods = ((entity instanceof IBomber asBomber) && entity.getBombs().isEmpty())
+              ? asBomber.getBombChoices().getCount(BombTypeEnum.TAG) : 0;
+        long tagCount = workingTags.size() + pendingTagPods;
+        if (tagCount == 0) {
             return;
         }
+        // Units "whose only such piece of equipment is rear-mounted add half" (TechManual p.315; Core errata v0.2 p.1)
+        boolean onlyRearTag = (pendingTagPods == 0) && workingTags.stream()
+              .allMatch(rearWeaponFilter().or(Mounted::isRearMounted));
 
         bvReport.startTentativeSection();
         bvReport.addLine("TAG Bonus (" + tagCount + " Tag" + (tagCount == 1 ? "" : "s") + "):", "", "");
         // In the lobby, bombs are represented as a bombChoices array, only later is it
         // real Mounted.
-        boolean hasGuided = false;
         double modifiedBV = Game.rulesManager.getRulesGame().tagBVBump(entity, bvReport, adjustedBV, tagCount,
-              hasGuided);
-        if (modifiedBV != adjustedBV) {
-            hasGuided = true;
-            adjustedBV = modifiedBV;
-        }
+              onlyRearTag);
+        boolean hasGuided = modifiedBV != adjustedBV;
+        adjustedBV = modifiedBV;
 
         bvReport.finalizeTentativeSection(hasGuided);
-    }
-
-    protected long workingTAGCount(Entity entity) {
-        long tagCount = entity.getWeaponList()
-              .stream()
-              .filter(m -> !m.isMissing() && !m.isDestroyed())
-              .map(Mounted::getType)
-              .filter(Objects::nonNull)
-              .filter(t -> t.hasFlag(WeaponType.F_TAG))
-              .count();
-        if (entity instanceof IBomber asBomber) {
-            tagCount += asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
-        }
-        return tagCount;
     }
 
     protected void processExternalStores() {

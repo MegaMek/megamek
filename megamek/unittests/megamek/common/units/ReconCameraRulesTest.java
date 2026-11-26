@@ -68,6 +68,8 @@ import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.weapons.Weapon;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
@@ -240,6 +242,30 @@ class ReconCameraRulesTest {
     }
 
     @Test
+    void onlyTheAttackingSpotterWhoDesignatedTheTargetAvoidsTheSpottingPenalty() throws LocationFullException {
+        BipedMek target = enemyAt(6);
+        BipedMek other = placeMek("Second spotter", cameraOwner, new Coords(6, 5));
+        BipedMek attacker = placeMek("LRM carrier", cameraOwner, new Coords(6, 2));
+        game.setPhase(GamePhase.FIRING);
+        for (BipedMek spotter : List.of(camera, other)) {
+            spotter.setSpotting(true);
+            spotter.setSpotTargetId(target.getId());
+            Mounted<?> laser = spotter.addEquipment(EquipmentType.get("ISMediumLaser"), Mek.LOC_RIGHT_ARM);
+            game.addAction(new WeaponAttackAction(spotter.getId(), target.getId(), spotter.getEquipmentNum(laser)));
+        }
+        // Both declared attacks and have identical movement and clear LOS. Give TAG to whichever lost the tie.
+        Entity first = Compute.findSpotter(game, attacker, target);
+        assertTrue((first == camera) || (first == other));
+        Entity tagger = (first == camera) ? other : camera;
+        game.addTagInfo(new TagInfo(tagger.getId(), Targetable.TYPE_ENTITY, target, true));
+        assertSame(first, Compute.findSpotter(game, attacker, target), "a missed designation leaves the tie in place");
+
+        game.addTagInfo(new TagInfo(tagger.getId(), Targetable.TYPE_ENTITY, target, false));
+        target.setTaggedBy(tagger.getId());
+        assertSame(tagger, Compute.findSpotter(game, attacker, target), "only the successful tagger avoids +1");
+    }
+
+    @Test
     void testACameraHitMakesTheUnitTheSpotter() {
         BipedMek target = enemyAt(7);
         BipedMek lrmCarrier = placeMek("LRM carrier", cameraOwner, new Coords(2, 2));
@@ -302,10 +328,17 @@ class ReconCameraRulesTest {
         assertEquals(standardToHit, semiGuidedToHit.getValue(),
               "a camera spot treats semi-guided missiles as standard LRMs: " + semiGuidedToHit.getDesc());
 
-        // the control: a real TAG designation does change the semi-guided shot, so the comparison above can see one
-        game.addTagInfo(new TagInfo(camera.getId(), Targetable.TYPE_ENTITY, target, false));
-        target.setTaggedBy(camera.getId());
-        assertNotEquals(semiGuidedToHit.getValue(), indirectToHit(semiGuidedCarrier, target).getValue());
+        // the control: under Total Warfare a real TAG designation drops the indirect fire modifier (TW p.142), so the
+        // comparison above could see a TAG benefit; Core keeps that modifier (Core p.193)
+        RulesManager rulesInPlay = Game.rulesManager;
+        Game.rulesManager = new TWRulesManager();
+        try {
+            int untagged = indirectToHit(semiGuidedCarrier, target).getValue();
+            game.addTagInfo(new TagInfo(camera.getId(), Targetable.TYPE_ENTITY, target, false));
+            assertNotEquals(untagged, indirectToHit(semiGuidedCarrier, target).getValue());
+        } finally {
+            Game.rulesManager = rulesInPlay;
+        }
     }
 
     private BipedMek lrmCarrier(Coords position, AmmoType ammo) throws LocationFullException {

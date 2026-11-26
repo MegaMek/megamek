@@ -101,12 +101,71 @@ public class ForcedWithdrawalTracker {
         LOGGER.debug("[ForcedWithdrawal] {} back in the lobby; forgetting withdrawing units {}", owner.getName(),
               owner.getMemory().crippledUnitIds());
         owner.getMemory().setCrippledUnits(Set.of());
+        owner.getMemory().forgetForfeitedProtection();
     }
 
     /**
-     * @return a snapshot of the bot's units withdrawing as of the last refresh, which the bot reports to clients
+     * Returns whether attacking one of the bot's units dishonors the attacker. That is a unit withdrawing as of the
+     * last refresh that has not fired while withdrawing. A unit that fires has chosen to fight, so it gives up the
+     * protection for the rest of the game, though it still heads for its edge.
+     *
+     * @param unitId one of the bot's units
+     *
+     * @return {@code true} if the unit is withdrawing and has not given up its protection
+     */
+    boolean isProtected(int unitId) {
+        return owner.getMemory().isCrippled(unitId) && !owner.getMemory().hasForfeitedProtection(unitId);
+    }
+
+    /**
+     * Notes which of the bot's withdrawing units attacked this turn, so they give up their protection. Without this
+     * a withdrawing unit could fire on a player who could not fire back without being dishonored (issue #9595).
+     *
+     * <p>Only units already withdrawing when this turn began count. Attacks are declared at the same time, so a unit
+     * crippled this turn fired as a healthy unit.</p>
+     *
+     * @param unitsWithdrawingAtStartOfTurn ids of this bot's units that were withdrawing when this turn began
+     */
+    void updateForfeitedProtection(Set<Integer> unitsWithdrawingAtStartOfTurn) {
+        if (unitsWithdrawingAtStartOfTurn.isEmpty()) {
+            return;
+        }
+        Set<Integer> attackerIds = attackersThisTurn();
+        for (int unitId : unitsWithdrawingAtStartOfTurn) {
+            if (attackerIds.contains(unitId) && owner.getMemory().rememberForfeitedProtection(unitId)) {
+                Entity unit = owner.getGame().getEntity(unitId);
+                LOGGER.info("[ForcedWithdrawal] {} attacked while withdrawing; it may now be attacked without "
+                      + "dishonor.", (unit == null) ? "Unit " + unitId : unit.getDisplayName());
+            }
+        }
+    }
+
+    /**
+     * @return the id of every unit that attacked anything this turn, read from the targets' attack records. Targets
+     *       destroyed this turn are counted too, since a kill is still an attack.
+     */
+    private Set<Integer> attackersThisTurn() {
+        Set<Integer> attackerIds = new HashSet<>();
+        for (Entity target : owner.getGame().getEntitiesVector()) {
+            attackerIds.addAll(target.getAttackedByThisTurn());
+        }
+        for (Entity target : owner.getGame().getOutOfGameEntitiesVector()) {
+            attackerIds.addAll(target.getAttackedByThisTurn());
+        }
+        return attackerIds;
+    }
+
+    /**
+     * @return the bot's units that are protected as of the last refresh (see {@link #isProtected(int)}), which the
+     *       bot reports to clients so they tag those units and warn before attacking them
      */
     Set<Integer> withdrawingUnitIds() {
-        return owner.getMemory().crippledUnitIds();
+        Set<Integer> protectedUnitIds = new HashSet<>();
+        for (int unitId : owner.getMemory().crippledUnitIds()) {
+            if (isProtected(unitId)) {
+                protectedUnitIds.add(unitId);
+            }
+        }
+        return protectedUnitIds;
     }
 }

@@ -139,19 +139,31 @@ public class WeaponMounted extends Mounted<WeaponType> {
         return Game.rulesManager.getRulesExplosions().equipmentDamage(this, getType());
     }
 
+    /**
+     * @return This weapon's Attack Value at the given range bracket, with the 5 of a PPC capacitor that fires its
+     *       charge (a capacitor in a weapon bay counts as charged, TO:AUE p.149), or 0 out of range
+     */
+    public double getAttackValue(int range) {
+        double attackValue = switch (range) {
+            case WeaponType.RANGE_SHORT -> getType().getShortAV();
+            case WeaponType.RANGE_MED -> getType().getMedAV();
+            case WeaponType.RANGE_LONG -> getType().getLongAV();
+            case WeaponType.RANGE_EXT -> getType().getExtAV();
+            default -> 0;
+        };
+        return ((attackValue > 0) && firesCapacitorCharge()) ? (attackValue + CAPACITOR_DAMAGE_BONUS) : attackValue;
+    }
+
     @Override
     public int getCurrentHeat() {
         int heat = getType().getHeat();
 
-        // AR10's have heat based upon the loaded missile
-        if (getType().getName().equals("AR10")) {
-            AmmoType ammoType = (AmmoType) getLinked().getType();
-            if (ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                return 10;
-            } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-                return 15;
-            } else { // AmmoType.F_AR10_KILLER_WHALE
-                return 20;
+        // The AR10's heat depends on the loaded missile (SO:AA p. 104, TW p. 304).
+        if ((getType().getAmmoType() == AmmoType.AmmoTypeEnum.AR10) && (getLinked() instanceof AmmoMounted ammo)) {
+            if (ammo.getType().hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                heat = 10;
+            } else if (ammo.getType().hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                heat = 15;
             }
         }
 
@@ -176,27 +188,24 @@ public class WeaponMounted extends Mounted<WeaponType> {
         if (hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_NO_COOLING)) {
             heat += 2;
         }
-        if (hasChargedCapacitor() == 2) {
-            heat += 10;
-        }
-        if (hasChargedCapacitor() == 1) {
+        if (firesCapacitorCharge()) {
             heat += 5;
         }
-        if ((getLinkedBy() != null)
-              && !getLinkedBy().isInoperable()
-              && (getLinkedBy().getType() instanceof MiscType)
-              && getLinkedBy().getType().hasFlag(
-              MiscType.F_LASER_INSULATOR)) {
-            heat -= 1;
-            if (heat == 0) {
-                heat++;
-            }
-        }
-        if (curMode().getName().startsWith("Pulse")) {
-            heat += 2;
-        }
+        return (int) laserEnhancedHeat(heat, curMode().getName().startsWith("Pulse"));
+    }
 
-        return heat;
+    /**
+     * @return The heat of this weapon with its laser enhancements: 2 more in the pulse mode of a RISC laser pulse
+     *       module (IO:AE p. 87), then, with a working laser insulator, 1 less to a minimum of 1 (TO:AUE p. 134)
+     *
+     * @param heat      The heat before the enhancements
+     * @param pulseMode True for the heat of the pulse mode
+     */
+    public double laserEnhancedHeat(double heat, boolean pulseMode) {
+        MiscMounted pulseModule = pulseMode ? getEnhancement(MiscType.F_RISC_LASER_PULSE_MODULE) : null;
+        double enhancedHeat = (pulseModule != null) ? (heat + pulseModule.getType().getHeat()) : heat;
+        Mounted<?> insulator = getEnhancement(MiscType.F_LASER_INSULATOR);
+        return ((insulator != null) && !insulator.isInoperable()) ? Math.max(1, enhancedHeat - 1) : enhancedHeat;
     }
 
     /**

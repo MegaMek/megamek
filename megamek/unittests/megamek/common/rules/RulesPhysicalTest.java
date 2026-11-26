@@ -57,6 +57,8 @@ class RulesPhysicalTest {
         assertTrue(total.getChargeDamageTakenBy(attacker, 6.0, true, 2) >= 0);
         assertEquals(-1, core.getPilotDiffModifier(4, 5, false));
         assertEquals(1, total.getPilotDiffModifier(5, 4, true));
+        // Core p.77: a charge or DFA against an immobile target assumes a target Piloting Skill of 4
+        assertEquals(1, core.getPilotDiffModifier(5, 5, true));
         assertTrue(core.getClubFindInRubble() >= 1);
         assertTrue(total.getClubFindInRubble() >= 1);
         assertEquals(9, core.getLanceTarget());

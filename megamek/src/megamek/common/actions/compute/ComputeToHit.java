@@ -174,7 +174,7 @@ public class ComputeToHit {
               (ammoType != null) &&
               ammoType.getMunitionType()
                     .contains(AmmoType.Munitions.M_SEMIGUIDED) &&
-              Compute.isTargetTagged(target, game);
+              Compute.isTargetTaggedByFriend(ae, target, game);
 
         boolean isInferno = ((ammoType != null) &&
               ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
@@ -376,11 +376,7 @@ public class ComputeToHit {
             if ((spotter == null) &&
                   (ammoType != null) &&
                   bSemiGuided) {
-                for (TagInfo ti : game.getTagInfo()) {
-                    if (target.getId() == ti.target.getId()) {
-                        spotter = game.getEntity(ti.attackerId);
-                    }
-                }
+                spotter = Compute.findFriendlyTagger(ae, target, game);
             }
         }
 
@@ -705,8 +701,12 @@ public class ComputeToHit {
             shortBuildingLos.setCoverBuildingPrimary(currentBuilding);
             shortBuildingLos.setCoverLocPrimary(target.getPosition());
 
+            // A building upgrades quarter cover (+0) to horizontal cover (+1). Count the modifier once.
+            int previousCoverModifier = los.partialCoverModifier(game);
             los.add(shortBuildingLos);
-            toHit.append(shortBuildingLos.losModifiers(game));
+            if (los.partialCoverModifier(game) > previousCoverModifier) {
+                toHit.append(shortBuildingLos.losModifiers(game));
+            }
         }
 
         // Collect the modifiers for the target's condition/actions
@@ -964,7 +964,7 @@ public class ComputeToHit {
 
         // Narc-capable missiles homing on an iNarc beacon
         if (isINarcGuided) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.iNarcHoming"));
+            Game.rulesManager.getRulesAmmo().iNarcHomingTarget(toHit);
         }
 
         // Listen-Kill ammo from War of 3039 sourcebook?
@@ -1682,12 +1682,14 @@ public class ComputeToHit {
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
                   (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)));
-            // semi guided ammo negates this modifier, if TAG succeeded
-            if ((ammoType != null) &&
-                  bSemiGuided &&
-                  (Compute.isTargetTagged(target, game))) {
+            // semi guided ammo at a target designated by friendly TAG ignores the spotter modifiers, and under TW the
+            // indirect fire modifier too (TW p.142; Core p.193)
+            boolean semiGuidedTagged = (ammoType != null) && bSemiGuided
+                  && Compute.isTargetTaggedByFriend(ae, target, game);
+            if (semiGuidedTagged
+                  && Game.rulesManager.getRulesAmmo().semiGuidedIndirectIgnoresIndirectFireModifier()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
-            } else if (!narcSpotter && (spotter != null)) {
+            } else if (!semiGuidedTagged && !narcSpotter && (spotter != null)) {
                 // Unless the target has been tagged, or the spotter has an active command
                 // console
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
@@ -1695,7 +1697,8 @@ public class ComputeToHit {
                 if (spotter.isAttackingThisTurn() &&
                       !spotter.getCrew().hasActiveCommandConsole() &&
                       !ReconCameraRules.isCameraSpotting(spotter, target) &&
-                      !Compute.isTargetTagged(target, game)) {
+                      // spotting by TAG lets "both spotter and attacker" ignore it (Core p.70, errata v0.2)
+                      !Compute.hasTagged(spotter, target, game)) {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
                 }
                 // Comm implant provides -1 bonus when spotting for indirect LRM

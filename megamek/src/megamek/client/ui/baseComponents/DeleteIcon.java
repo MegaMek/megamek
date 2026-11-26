@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,7 +57,7 @@ public class DeleteIcon extends FlatAbstractIcon {
      * Creates a delete/clear icon of the given size and with the GUIPreferences warning color.
      */
     public DeleteIcon(int size) {
-        super(size, size, GUIPreferences.getInstance().getWarningColor());
+        super(size, size, GUIPreferences.getInstance().getWarningColorForTheme());
         this.size = size;
     }
 

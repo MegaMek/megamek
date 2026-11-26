@@ -185,21 +185,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         // 1d6 extra heat; add half for heat calculations (1d3/+2 for small pulse)
         weaponHeat += wType.getHeatAdjustmentForBvCalculation();
 
-        // RISC laser pulse module adds 2 heat
-        if ((wType.hasFlag(WeaponType.F_LASER)) && (weapon.getLinkedBy() != null)
-              && (weapon.getLinkedBy().getType() instanceof MiscType)
-              && (weapon.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
-            weaponHeat += 2;
-        }
-
-        // laser insulator reduce heat by 1, to a minimum of 1
-        if (wType.hasFlag(WeaponType.F_LASER)
-              && (weapon.getLinkedBy() != null)
-              && !weapon.getLinkedBy().isInoperable()
-              && (weapon.getLinkedBy().getType() instanceof MiscType)
-              && weapon.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-            weaponHeat = Math.max(1, weaponHeat - 1);
-        }
+        weaponHeat = weapon.laserEnhancedHeat(weaponHeat, true);
 
         // half heat for streaks
         if ((wType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_STREAK)

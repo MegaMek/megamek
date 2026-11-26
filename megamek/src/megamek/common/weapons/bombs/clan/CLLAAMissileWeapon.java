@@ -92,7 +92,7 @@ public class CLLAAMissileWeapon extends CapitalRangeBombMissileWeapon {
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setClanAdvancement(DATE_NONE, DATE_NONE, 3074, DATE_NONE, DATE_NONE)
+              .setClanAdvancement(DATE_NONE, 3074, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.FW)
               .setProductionFactions(Faction.FW);

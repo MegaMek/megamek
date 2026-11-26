@@ -126,7 +126,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private Mounted<?> linked = null; // for ammo, or artemis
     private Mounted<?> linkedBy = null; // reverse link for convenience
 
-    private Mounted<?> crossLinkedBy = null; // Weapons with crossLinked capacitors
     private final int linkedBayId = -1;
 
     private final Entity entity; // what I'm mounted on
@@ -210,6 +209,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @see #hasChargedCapacitor()
      */
     public static final String MODE_CAPACITOR_CHARGE = "Charge";
+
+    /** The damage a charged PPC capacitor adds to its PPC's shot (TO:AUE p.149, Core p.188) */
+    public static final int CAPACITOR_DAMAGE_BONUS = 5;
 
     /**
      * Internal name of the sentinel mode reported when equipment has no current or pending mode set.
@@ -906,10 +908,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @return {@code true} if exploding this equipment now would do something
      */
     public boolean wouldExplodeWhenHit() {
-        if (isDestroyed()) {
+        // A hit this phase already had its chance to explode
+        if (isDestroyed() || isHit()) {
             return false;
         }
-        boolean isExplosiveNow = getType().isExplosive(this) || isHotLoaded() || (hasChargedCapacitor() != 0);
+        boolean isExplosiveNow = getType().isExplosive(this) || isHotLoaded();
         return isExplosiveNow && (getExplosionDamage() > 0);
     }
 
@@ -1068,6 +1071,18 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
+     * Clears the state this equipment builds up during a game that must not carry over into the next one. Called from
+     * {@link Entity#clearGameState()}; subclasses that add such state should override this and call super.
+     */
+    public void clearGameState() {
+        setUsedThisRound(false);
+        resetJam();
+        // Without this, an ammo dump under way when the last game ended would continue in the next
+        m_bPendingDump = false;
+        m_bDumping = false;
+    }
+
+    /**
      * Used for equipment that can vary in size. This is not used for equipment for which size is computed by outside
      * factors such as unit weight or targeting computer-linked weapons, but for equipment that comes in various
      * weights, lengths, or capacities. The meaning of the size varies according to the equipment. For robotic control
@@ -1173,15 +1188,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns 1 or 2 if this Mounted has a linked and charged (= set to charge in an earlier turn) PPC Capacitor.
+     * Returns 1 if this Mounted has a linked and charged (= set to charge in an earlier turn) PPC Capacitor, else 0.
      */
     public int hasChargedCapacitor() {
-        if (getCrossLinkedBy() != null &&
-              isWorkingCapacitor(getCrossLinkedBy()) &&
-              getCrossLinkedBy().curMode().equals("Charge")) {
-            return 2;
-        }
-
         if (getLinkedBy() != null && isWorkingCapacitor(getLinkedBy()) && getLinkedBy().curMode().equals("Charge")) {
             return 1;
         }
@@ -1189,8 +1198,25 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns 1 or 2 if this Mounted has a linked and charged (= set to charge in an earlier turn) or charging (= set
-     * to charge this turn) PPC Capacitor. Used to determine heat.
+     * @return True when this PPC's capacitor holds its charge, so that a critical hit on either sets it off: charged in
+     *       an earlier turn and not released by firing the PPC this turn (TO:AUE p.149, Core p.188)
+     */
+    public boolean holdsCapacitorCharge() {
+        return (hasChargedCapacitor() != 0) && !isUsedThisRound();
+    }
+
+    /**
+     * @return True when this weapon fires with the charge of a PPC capacitor: one charged in an earlier turn, or any
+     *       working one in a weapon bay, which counts as always charged for the bay's damage and heat (TO:AUE p.149)
+     */
+    public boolean firesCapacitorCharge() {
+        return (getLinkedBy() != null) && isWorkingCapacitor(getLinkedBy())
+              && (getLinkedBy().curMode().equals(MODE_CAPACITOR_CHARGE) || entity.usesWeaponBays());
+    }
+
+    /**
+     * Returns 1 if this Mounted has a linked and charged (= set to charge in an earlier turn) or charging (= set to
+     * charge this turn) PPC Capacitor, else 0. Used to determine heat.
      */
     public int hasChargedOrChargingCapacitor() {
         int isCharged = hasChargedCapacitor();
@@ -1199,12 +1225,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         } else {
             // When it has been set to charge this turn,
             // pendingMode is set
-            if (getCrossLinkedBy() != null &&
-                  isWorkingCapacitor(getCrossLinkedBy()) &&
-                  getCrossLinkedBy().pendingMode().equals("Charge")) {
-                return 2;
-            }
-
             if (getLinkedBy() != null &&
                   isWorkingCapacitor(getLinkedBy()) &&
                   getLinkedBy().pendingMode().equals("Charge")) {
@@ -1295,10 +1315,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return linkedBy;
     }
 
-    public @Nullable Mounted<?> getCrossLinkedBy() {
-        return crossLinkedBy;
-    }
-
     /**
      * Link this Mounted equipment to the given other equipment (or remove the link, if that other is null). When the
      * other is not null, that equipment's linkedBy is set to the present Mounted. Typically, weapons link to their
@@ -1309,15 +1325,79 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @see #setLinkedBy(Mounted)
      */
     public void setLinked(@Nullable Mounted<?> linked) {
-        if (linked == null && this.linked != null) {
-            this.linked.setLinkedBy(null);
-        }
+        Mounted<?> previous = this.linked;
 
         this.linked = linked;
 
         if (linked != null) {
             linked.setLinkedBy(this);
         }
+        // The weapon that an enhancement leaves stays linked by another of its enhancements
+        boolean enhancementMoves = (linked != null) && (previous != linked) && MiscType.isWeaponEnhancement(getType());
+        if ((previous != null) && ((linked == null) || (enhancementMoves && (previous.linkedBy == this)))) {
+            List<MiscMounted> enhancements = previous.getEnhancements();
+            previous.setLinkedBy(enhancements.isEmpty() ? null : enhancements.getFirst());
+        }
+    }
+
+    /**
+     * @return The weapon enhancements that are linked to this weapon. A weapon can have any number of laser
+     *       insulators and one other enhancement: a RISC laser pulse module, an Artemis or Apollo FCS or a PPC
+     *       capacitor. {@link #getLinkedBy()} is one of them.
+     *
+     * @see #getEnhancement(EquipmentFlag)
+     */
+    public List<MiscMounted> getEnhancements() {
+        List<MiscMounted> enhancements = new ArrayList<>();
+        if ((entity != null) && (linkedBy != null)) {
+            for (MiscMounted misc : entity.getMisc()) {
+                if ((misc.getLinked() == this) && MiscType.isWeaponEnhancement(misc.getType())) {
+                    enhancements.add(misc);
+                }
+            }
+        }
+        return enhancements;
+    }
+
+    /**
+     * Finds the weapon enhancement of the given kind that is linked to this weapon, among the others it may have. Of
+     * several laser insulators, this is one that works when there is any.
+     *
+     * @param kind The MiscType flag of the enhancement, such as {@link MiscType#F_LASER_INSULATOR}
+     *
+     * @return The enhancement, or null when this weapon has none of the kind
+     */
+    public @Nullable MiscMounted getEnhancement(EquipmentFlag kind) {
+        if (linkedBy == null) {
+            return null;
+        }
+        List<MiscMounted> ofKind = getEnhancements().stream().filter(misc -> misc.getType().hasFlag(kind)).toList();
+        return ofKind.stream().filter(misc -> !misc.isInoperable()).findFirst()
+              .orElse(ofKind.isEmpty() ? null : ofKind.getFirst());
+    }
+
+    /**
+     * @return Everything linked to this weapon: all its weapon enhancements (a laser may carry several) and any other
+     *       equipment that links it, such as an AP mount
+     */
+    public List<Mounted<?>> getLinkedEquipment() {
+        List<Mounted<?>> linked = new ArrayList<>(getEnhancements());
+        if ((linkedBy != null) && !linked.contains(linkedBy)) {
+            linked.add(linkedBy);
+        }
+        return linked;
+    }
+
+    /**
+     * @return True when the same kinds of equipment are linked to this weapon and the other one, so that the two count
+     *       as equal weapons where weapons are summed up
+     */
+    public boolean hasSameLinkedEquipment(Mounted<?> other) {
+        return linkedTypeNames(this).equals(linkedTypeNames(other));
+    }
+
+    private static List<String> linkedTypeNames(Mounted<?> weapon) {
+        return weapon.getLinkedEquipment().stream().map(linked -> linked.getType().getInternalName()).sorted().toList();
     }
 
     /**
@@ -1328,18 +1408,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private void setLinkedBy(@Nullable Mounted<?> linkedBy) {
         if (linkedBy == null || linkedBy.getLinked() == this) {
             this.linkedBy = linkedBy;
-        }
-    }
-
-    public void setCrossLinked(Mounted<?> linked) {
-        this.linked = linked;
-        linked.setCrossLinkedBy(this);
-    }
-
-    // called by setCrossLinked() when using cross-linked capacitors.
-    private void setCrossLinkedBy(Mounted<?> crossLinkedBy) {
-        if (crossLinkedBy == null || crossLinkedBy.getLinked() == this) {
-            this.crossLinkedBy = crossLinkedBy;
         }
     }
 
@@ -1367,9 +1435,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public int getExplosionDamage() {
         if (type instanceof MiscType miscType) {
             if (miscType.hasFlag(MiscTypeFlag.F_PPC_CAPACITOR)) {
-                if (curMode().equals("Charge") && (linked != null) && !linked.isFired()) {
-                    return 15;
-                }
+                // A charged capacitor explodes together with its PPC
+                return ((linked != null) && linked.holdsCapacitorCharge()) ? linked.getExplosionDamage() : 0;
             }
             if (miscType.hasFlag(MiscTypeFlag.F_FUEL)) {
                 return 20;
@@ -2169,17 +2236,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                       "]");
             } else {
                 state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
-            }
-        }
-        if (crossLinkedBy != null) {
-            if (crossLinkedBy.getEntity().getId() != entity.getId()) {
-                state.add("CrossLinkedBy: [" +
-                      crossLinkedBy.getEntity() +
-                      ":" +
-                      crossLinkedBy.getEntity().getEquipment().indexOf(crossLinkedBy) +
-                      "]");
-            } else {
-                state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
             }
         }
         if (linkedBayId != -1) {

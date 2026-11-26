@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,15 +33,18 @@
 package megamek.client.ui.dialogs.unitDisplay;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Rectangle;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.text.DefaultCaret;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -55,10 +58,10 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -68,8 +71,10 @@ import megamek.common.util.fileUtils.MegaMekFile;
 public class SummaryPanel extends PicMap {
 
     private final UnitDisplayPanel unitDisplayPanel;
-    private final JLabel unitInfo;
+    private final JEditorPane unitInfo;
     private final JPanel contentPanel;
+    // The unit last shown, so a new unit opens at the top while a refresh of the same one keeps its place
+    private int lastShownEntityId = Entity.NONE;
 
     private static final GUIPreferences GUI_PREFERENCES = GUIPreferences.getInstance();
 
@@ -87,9 +92,25 @@ public class SummaryPanel extends PicMap {
         // Add spacing at top
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        // Create the unit info label
-        unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT);
+        // A JLabel always lays its HTML out at the HTML's own preferred width, which the nested tooltip tables
+        // report as far narrower than the panel, so the text wrapped early whatever the panel's width (#9435). An
+        // editor pane lays the HTML out at the width it is given.
+        unitInfo = new JEditorPane("text/html", "");
+        unitInfo.setEditable(false);
+        unitInfo.setFocusable(false);
+        unitInfo.setHighlighter(null);
+        // The default caret follows each setText to the end of the text and scrolls it into view, which pulled the
+        // General tab to the bottom whenever the next unit was shown (#9573). This caret never moves. It is not a
+        // UIResource, so a theme change keeps it.
+        DefaultCaret fixedCaret = new DefaultCaret();
+        fixedCaret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+        unitInfo.setCaret(fixedCaret);
         unitInfo.setOpaque(false);
+        unitInfo.setBorder(null);
+        unitInfo.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        unitInfo.setFont(UIManager.getFont("Label.font"));
+        unitInfo.setForeground(UIManager.getColor("Label.foreground"));
+        unitInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
         contentPanel.add(unitInfo);
 
         // Use BorderLayout to ensure the content panel is properly sized
@@ -202,8 +223,10 @@ public class SummaryPanel extends PicMap {
                       unitDisplayPanel.getClientGUI().getClient(),
                       entity.getBoardId());
                 if (!hexTip.isEmpty()) {
+                    // The hex tip's minefield and objective lines use the light tooltip FG colour, so they need the
+                    // dark tooltip BG, the same as the board tooltip gives them
                     attr = String.format("FACE=Dialog BGCOLOR=%s",
-                          UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipTerrainBGColor()));
+                          UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);
                     row = UIUtil.tag("TR", "", col);
                     rows += row;
@@ -221,6 +244,12 @@ public class SummaryPanel extends PicMap {
 
         unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
 
+        // A refresh of the same unit can arrive as a new Entity object, so compare ids, not objects (#9573)
+        boolean isNewUnit = (entity != null) && (entity.getId() != lastShownEntityId);
+        if (entity != null) {
+            lastShownEntityId = entity.getId();
+        }
+
         // Force a revalidation to ensure proper sizing
         contentPanel.revalidate();
         contentPanel.setSize(contentPanel.getPreferredSize());
@@ -230,6 +259,9 @@ public class SummaryPanel extends PicMap {
             getParent().revalidate();
             if (getParent().getParent() instanceof JScrollPane) {
                 getParent().getParent().revalidate();
+            }
+            if (isNewUnit) {
+                scrollRectToVisible(new Rectangle(0, 0, 1, 1));
             }
         });
 

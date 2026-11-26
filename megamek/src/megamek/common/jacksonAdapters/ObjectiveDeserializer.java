@@ -56,6 +56,7 @@ import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
  *     controlRadius: 1
  *   - name: MacGuffin
  *     at: [ 20, 12 ]
+ *     scheme: raid
  *     variants: [ fragile, mobile ]
  * </PRE>
  *
@@ -63,7 +64,8 @@ import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
  * default 0), {@code vp} (victory point value, default 1), {@code destructible} (objectives are destructible by
  * default per the Objectives rules; set {@code false} when the mission states that objectives cannot be destroyed)
  * and {@code variants} (any of {@code potential}, {@code false}, {@code fragile}, {@code mobile}) are optional.
- * Potential and False Objectives cannot be combined (RAW).
+ * Potential and False Objectives cannot be combined (RAW), a Scan point cannot be Potential and only a Raid point can be
+ * Mobile (see {@link ObjectiveMarker#canBePotential} and {@link ObjectiveMarker#canBeMobile}).
  */
 public final class ObjectiveDeserializer {
 
@@ -82,10 +84,12 @@ public final class ObjectiveDeserializer {
     private static final String SCHEME_DEFEND = "defend";
     private static final String SCHEME_CAPTURE = "capture";
     private static final String SCHEME_SCAN = "scan";
-    private static final String SCAN_PAYOUT = "payout";
+    private static final String PAYOUT = "payout";
     private static final String PAYOUT_ON_SCAN = "scan";
     private static final String PAYOUT_ON_SCAN_UNTIL_LOST = "scanUntilLost";
     private static final String PAYOUT_ON_EXIT = "exit";
+    private static final String PAYOUT_EVERY_TURN = "everyTurn";
+    private static final String PAYOUT_GAME_END = "gameEnd";
     private static final String SCAN_REVEALS = "reveals";
     private static final String HOLD_TURNS = "turns";
     private static final String HOLD_COUNTING = "counting";
@@ -136,10 +140,7 @@ public final class ObjectiveDeserializer {
             marker.setScanRevealsNote(node.get(SCAN_REVEALS).asText());
         }
         parseVariants(marker, node);
-        if (marker.isPotential() && marker.isFalseObjective()) {
-            throw new IllegalArgumentException("Objective " + marker.generalName()
-                  + ": Potential Objectives cannot be used in conjunction with False Objectives");
-        }
+        checkVariantsFitTheScheme(marker);
 
         return new ObjectiveInfo(marker, readPosition(marker, node));
     }
@@ -149,16 +150,33 @@ public final class ObjectiveDeserializer {
      *       reading carried home, as the default
      */
     private static ObjectiveScoringScheme.ScanPayout parseScanPayout(ObjectiveMarker marker, JsonNode node) {
-        if (!node.hasNonNull(SCAN_PAYOUT)) {
+        if (!node.hasNonNull(PAYOUT)) {
             return ObjectiveScoringScheme.ScanPayout.ON_EXIT;
         }
-        String payout = node.get(SCAN_PAYOUT).asText();
+        String payout = node.get(PAYOUT).asText();
         return switch (payout) {
             case PAYOUT_ON_SCAN -> ObjectiveScoringScheme.ScanPayout.ON_SCAN;
             case PAYOUT_ON_SCAN_UNTIL_LOST -> ObjectiveScoringScheme.ScanPayout.ON_SCAN_UNTIL_LOST;
             case PAYOUT_ON_EXIT -> ObjectiveScoringScheme.ScanPayout.ON_EXIT;
             default -> throw new IllegalArgumentException("Unknown scan payout " + payout + " for objective "
                   + marker.generalName() + " - use scan, scanUntilLost or exit");
+        };
+    }
+
+    /**
+     * @return a Raid objective's {@code payout:} - {@code everyTurn} or {@code gameEnd} - with every turn, the
+     *       printed rule, as the default
+     */
+    private static ObjectiveScoringScheme.RaidPayout parseRaidPayout(ObjectiveMarker marker, JsonNode node) {
+        if (!node.hasNonNull(PAYOUT)) {
+            return ObjectiveScoringScheme.RaidPayout.EVERY_END_PHASE;
+        }
+        String payout = node.get(PAYOUT).asText();
+        return switch (payout) {
+            case PAYOUT_EVERY_TURN -> ObjectiveScoringScheme.RaidPayout.EVERY_END_PHASE;
+            case PAYOUT_GAME_END -> ObjectiveScoringScheme.RaidPayout.AT_GAME_END;
+            default -> throw new IllegalArgumentException("Unknown Raid payout " + payout + " for objective "
+                  + marker.generalName() + " - use everyTurn or gameEnd");
         };
     }
 
@@ -181,10 +199,34 @@ public final class ObjectiveDeserializer {
     }
 
     /**
+     * Rejects a combination of variants, or of a variant and the scoring scheme, that the rules forbid. The editor and
+     * the server apply the same rules from {@link ObjectiveMarker}, so a scenario cannot set up a point that could not
+     * be made in Victory Setup.
+     *
+     * @param marker the parsed objective, its scheme and variants already read
+     */
+    private static void checkVariantsFitTheScheme(ObjectiveMarker marker) {
+        if (marker.hasPotentialAndFalseVariants()) {
+            throw new IllegalArgumentException("Objective " + marker.generalName()
+                  + ": Potential Objectives cannot be used in conjunction with False Objectives");
+        }
+        ObjectiveScoringScheme.SchemePreset preset = marker.getScoringScheme().getPreset();
+        if (marker.isPotential() && !ObjectiveMarker.canBePotential(preset)) {
+            throw new IllegalArgumentException("Objective " + marker.generalName()
+                  + ": a Scan point cannot be a Potential Objective - the scan that confirms it also reads it");
+        }
+        if (marker.isMobile() && !ObjectiveMarker.canBeMobile(preset)) {
+            throw new IllegalArgumentException("Objective " + marker.generalName()
+                  + ": only a Raid point can be a Mobile Objective, not a " + preset + " point");
+        }
+    }
+
+    /**
      * Reads the objective's scoring scheme: {@code scheme:} names the preset ({@code standard}, {@code raid},
      * {@code hold}, {@code defend} or {@code capture}), and the scheme's numbers use the same names the setup
      * pane shows - {@code turns:} and {@code counting:} for Hold, {@code grip:} and {@code drain:} for Defend,
-     * {@code points:} and {@code rate:} for Capture. Without a {@code scheme:} key the marker keeps the
+     * {@code points:} and {@code rate:} for Capture, {@code payout:} for Raid and Scan. Without a {@code scheme:} key
+     * the marker keeps the
      * Standard scheme.
      *
      * @throws IllegalArgumentException on an unknown scheme or counting mode
@@ -196,7 +238,7 @@ public final class ObjectiveDeserializer {
         String scheme = node.get(SCHEME).asText();
         marker.setScoringScheme(switch (scheme) {
             case SCHEME_STANDARD -> ObjectiveScoringScheme.standard();
-            case SCHEME_RAID -> ObjectiveScoringScheme.raid();
+            case SCHEME_RAID -> ObjectiveScoringScheme.raid(parseRaidPayout(marker, node));
             case SCHEME_HOLD -> ObjectiveScoringScheme.hold(
                   node.hasNonNull(HOLD_TURNS) ? node.get(HOLD_TURNS).asInt() : 1,
                   parseCounting(marker, node));

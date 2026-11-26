@@ -1457,7 +1457,10 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
         armor.rulesRefs = rulesRefs(SourceBookCode.TM, 252);
         armor.techAdvancement.setTechBase(TechBase.CLAN)
-              .setClanAdvancement(DATE_NONE, 2868, 3054).setClanApproximate(true, true, false)
+              // Standard (Basic) is one armor; its ~2680 (TH) prototype covers the Clan weight too (IO:AE Universal
+              // Technology Advancement Table)
+              .setClanAdvancement(2680, 2868, 3054).setClanApproximate(true, true, false)
+              .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.CWF).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);

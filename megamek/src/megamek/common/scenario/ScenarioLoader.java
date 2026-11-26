@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -71,13 +71,14 @@ public record ScenarioLoader(File scenarioFile) {
      * @throws FileNotFoundException When the current file doesn't exist
      */
     private int findMmsVersion() throws IOException {
-        Scanner scanner = new Scanner(scenarioFile);
         Pattern versionPattern = Pattern.compile("^\\s*" + Scenario.MMS_VERSION + "\\s*[:=]\\s*(\\d)");
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            Matcher versionMatcher = versionPattern.matcher(line);
-            if (!isCommentLine(line) && versionMatcher.find()) {
-                return Integer.parseInt(versionMatcher.group(1));
+        try (Scanner scanner = new Scanner(scenarioFile)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                Matcher versionMatcher = versionPattern.matcher(line);
+                if (!isCommentLine(line) && versionMatcher.find()) {
+                    return Integer.parseInt(versionMatcher.group(1));
+                }
             }
         }
         return -1;

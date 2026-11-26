@@ -269,6 +269,7 @@ factions:
               - [2,2]
               - [5,5]
 
+    # NOT YET SUPPORTED: minefields are not read from V2 scenarios yet; this block is ignored
     minefields:                               # optional, availability depending on game type
     - conventional: 2
     - command: 0
@@ -314,7 +315,8 @@ factions:
 
 #        elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
 #        altitude: 8                             # default: 5 for aero
-        status: prone, hidden                   # default: none; values: shutdown, hulldown, prone, hidden
+        status: [ prone, hidden ]               # default: none; values: shutdown, hulldown, prone, hidden
+                                                # several values must be a list in brackets
 
         # Optional: the force is given as it is written to MUL files; from upper (regiment) to lower (lance) level
         # each level is <name>|<force id>; separate levels by a double pipe ||
@@ -359,9 +361,9 @@ factions:
         # ammo types and reduced amount
         # this usually requires looking up the unit file and possibly AmmoType.java for the type designations
         ammo:
-          LA:
-            slot: 5
-            shots: 2
+          LA:                                   # a list (use dashes), even for a single slot
+            - slot: 5
+              shots: 2
             # type: xyz (TODO)
 
         # Bombs for any IBomber types (LAM and aero units);
@@ -479,8 +481,8 @@ factions:
         #      y: 4                                    # must have both x and y or neither
         elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
         altitude: 8                             # default: 5 for aero
-        status: prone, hidden                   # default: none; other values: shutdown, hulldown
-        offboard: N                             # default: not offboard; values: N, E, S, W
+        status: [ prone, hidden ]               # default: none; other values: shutdown, hulldown
+        offboard: NORTH                         # default: not offboard; values: NORTH, EAST, SOUTH, WEST
         crew:                                   # default: unnamed 4/5 pilot
           name: Cpt. Frederic Nguyen
           piloting: 4
@@ -489,7 +491,7 @@ factions:
         fullname: Atlas AS7-D
         x: 5
         y: 3
-        reinforce: 2                            # default: deploy at start; here: reinforce at the start of round 2
+        deploymentround: 2                      # default: deploy at start; here: reinforce at the start of round 2
         # cannot be combined with a position
         crew:
           name: Cpt. Rhonda Snord

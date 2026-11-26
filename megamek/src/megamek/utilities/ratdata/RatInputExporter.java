@@ -228,6 +228,8 @@ public final class RatInputExporter {
         row.put("movementMode", model.getMovementMode().name());
         row.put("networkMask", model.getNetworkMask());
         row.put("speed", model.getSpeed());
+        // Walking MP on its own: the recon role takes untagged heavy Meks by walk, not by speed, which counts jumping
+        row.put("walkMp", model.getMekSummary().getWalkMp());
         row.put("longRange", model.getLongRange());
         row.put("flak", model.getFlak());
         row.put("ammoRequirement", model.getAmmoRequirement());

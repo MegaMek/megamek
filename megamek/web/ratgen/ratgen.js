@@ -46,6 +46,8 @@
     SPACE_STATION: 14, HANDHELD_WEAPON: 15, MOBILE_STRUCTURE: 16, ADVANCED_BUILDING: 17, AERO: 18,
   };
   const WC = { ULTRA_LIGHT: 0, LIGHT: 1, MEDIUM: 2, HEAVY: 3, ASSAULT: 4 };
+  /** MissionRole.FAST_HEAVY_RECON_MIN_WALK: walking MP an untagged heavy Mek needs for a recon slot. */
+  const FAST_HEAVY_RECON_MIN_WALK = 5;
   const NETWORK_C3_MASTER = 1 << 1;
   const NETWORK_COMPANY_COMMAND = 1 << 5;
   const MIN_OMNI_DIFFERENCE = 2.5;
@@ -197,6 +199,8 @@
     const mode = model.movementMode;
     const weightClass = model.weightClass;
     const speed = model.speed;
+    // MissionRole.isFastHeavyMek: an untagged heavy Mek with Walk 5+ (CO p. 65) can fill a recon slot
+    const isFastHeavyMek = type === UT.MEK && weightClass === WC.HEAVY && (model.walkMp || 0) >= FAST_HEAVY_RECON_MIN_WALK;
 
     const isSpecialized = () => {
       if (model.roleSet.size === 0) return false;
@@ -215,6 +219,7 @@
             else if (has('ew_support') || has('specops')) avRating += lightAdjust;
             else if (has('spotter')) avRating += minAdjust;
             else if ((type === UT.MEK || type === UT.PROTOMEK) && (weightClass === WC.LIGHT || weightClass === WC.MEDIUM) && speed >= 6) avRating = Math.max(avRating - strongAdjust, 1.0);
+            else if (isFastHeavyMek) avRating = Math.max(avRating - strongAdjust, 1.0);
             else if (type === UT.VTOL || mode === 'HOVER') avRating = Math.max(avRating - strongAdjust, 1.0);
             else return null;
             break;
@@ -325,7 +330,7 @@
             if (isSpecialized()) return null;
             if (has('cavalry')) avRating += mediumAdjust;
             else if (type === UT.MEK || type === UT.PROTOMEK) {
-              if (weightClass === WC.MEDIUM && speed >= 6) avRating -= Math.max(avRating - strongAdjust, 1.0); // as in Java
+              if (weightClass === WC.MEDIUM && speed >= 6) avRating = Math.max(avRating - strongAdjust, 1.0);
               else if (weightClass === WC.HEAVY && speed >= 5) avRating = Math.max(avRating - strongAdjust, 1.0);
               else if (weightClass === WC.LIGHT && speed >= 5 && speed <= 7) avRating = Math.max(avRating - strongAdjust, 1.0);
               else return null;

@@ -34,8 +34,25 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
+
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.MissionRole;
+import megamek.client.ratgenerator.SalvageChance;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
@@ -47,20 +64,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 
-import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableRowSorter;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
 
     private final AbstractRandomArmyDialog parentDialog;
@@ -68,6 +71,9 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
     private final JTable ratTable;
     private final RatTableModel ratModel;
     protected UnitTable generatedRAT;
+    private final JCheckBox chkNoSalvage = new JCheckBox(Messages.getString("RandomArmyDialog.noSalvage"));
+    private final JLabel lblSalvage = new JLabel(" ");
+    private final SalvageTableModel salvageModel = new SalvageTableModel();
 
     private final Action viewAction = new LambdaAction(Messages.getString("RandomArmyDialog.View"),
           e -> viewReadout());
@@ -101,6 +107,15 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
         ratTable.getColumnModel().getColumn(RatTableModel.COL_BV).setCellRenderer(rightRenderer);
 
+        chkNoSalvage.setToolTipText(Messages.getString("RandomArmyDialog.noSalvage.tooltip"));
+        JTable salvageTable = new JTable(salvageModel);
+        salvageTable.setName("RATSalvage");
+        salvageTable.setIntercellSpacing(new Dimension(5, 0));
+        salvageTable.getColumnModel().getColumn(SalvageTableModel.COL_SHARE).setCellRenderer(rightRenderer());
+        salvageTable.getColumnModel().getColumn(SalvageTableModel.COL_CHANCE).setCellRenderer(rightRenderer());
+        JScrollPane salvageScroll = new JScrollPane(salvageTable);
+        salvageScroll.setPreferredSize(UIUtil.scaleForGUI(400, 110));
+
         var fixingPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         fixingPanel.add(forceOptionsPanel);
 
@@ -127,6 +142,20 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
         gbc.weighty = 0.5;
         gbc.fill = GridBagConstraints.BOTH;
         add(new JScrollPane(ratTable), gbc);
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+        add(chkNoSalvage, gbc);
+        add(lblSalvage, gbc);
+        gbc.weighty = 0.15;
+        gbc.fill = GridBagConstraints.BOTH;
+        add(salvageScroll, gbc);
+    }
+
+    private static DefaultTableCellRenderer rightRenderer() {
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(JLabel.RIGHT);
+        return renderer;
     }
 
     /** @return the faction, or command, the table was built for; {@code null} when none is selected */
@@ -154,10 +183,13 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
         List<MekSummary> result = new ArrayList<>();
         int units = forceOptionsPanel.getNumUnits();
         if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
-            result.addAll(generatedRAT.generateUnits(units));
+            UnitTable table = generatedRAT;
+            result.addAll(chkNoSalvage.isSelected()
+                  ? UnitTable.callWithoutSalvage(() -> table.generateUnits(units))
+                  : table.generateUnits(units));
         }
-        // generateUnits removes salvage entries that have no units meeting criteria
-        ratModel.refreshData();
+        // Drawing drops salvage sources found to have no units, so the salvage table can change
+        refreshSalvage();
         return result;
     }
 
@@ -187,6 +219,83 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
                   (List<MissionRole>) forceOptionsPanel.getListOption("roles"),
                   forceOptionsPanel.getIntegerOption("roleStrictness"));
             ratModel.refreshData();
+            refreshSalvage();
+        }
+    }
+
+    /** Shows the generated table's salvage chance and sources below the unit table. */
+    private void refreshSalvage() {
+        if (generatedRAT == null) {
+            lblSalvage.setText(" ");
+            salvageModel.setChance(SalvageChance.NONE);
+            return;
+        }
+        SalvageChance chance = generatedRAT.getSalvageChance();
+        salvageModel.setChance(chance);
+        if (!chance.hasSalvage()) {
+            lblSalvage.setText(Messages.getString("RandomArmyDialog.salvageNone"));
+        } else {
+            FactionRecord faction = forceOptionsPanel.getFaction();
+            String headingKey = ((faction != null) && faction.isClan())
+                  ? "RandomArmyDialog.isorlaHeading"
+                  : "RandomArmyDialog.salvageHeading";
+            lblSalvage.setText(Messages.getString(headingKey, formatPercent(chance.percent())));
+        }
+    }
+
+    private static String formatPercent(double percent) {
+        return String.format("%.1f", percent);
+    }
+
+    /** The salvage sources of the generated table: who salvage comes from, and how likely each is. */
+    private class SalvageTableModel extends AbstractTableModel {
+        static final int COL_FACTION = 0;
+        static final int COL_SHARE = 1;
+        static final int COL_CHANCE = 2;
+
+        private SalvageChance chance = SalvageChance.NONE;
+        private final List<FactionRecord> sources = new ArrayList<>();
+
+        void setChance(SalvageChance chance) {
+            this.chance = chance;
+            sources.clear();
+            for (Map.Entry<FactionRecord, Double> entry : chance.factionWeights().entrySet()) {
+                sources.add(entry.getKey());
+            }
+            // Biggest source first; the list is short, so it is sorted once here rather than by a row sorter
+            sources.sort((first, second) -> Double.compare(chance.shareOf(second), chance.shareOf(first)));
+            fireTableDataChanged();
+        }
+
+        @Override
+        public int getRowCount() {
+            return sources.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return switch (column) {
+                case COL_FACTION -> Messages.getString("RandomArmyDialog.salvageColumnFaction");
+                case COL_SHARE -> Messages.getString("RandomArmyDialog.salvageColumnShare");
+                default -> Messages.getString("RandomArmyDialog.salvageColumnChance");
+            };
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            FactionRecord source = sources.get(row);
+            double share = chance.shareOf(source);
+            return switch (column) {
+                // Named as of five years back, the year the salvage table is drawn for
+                case COL_FACTION -> source.getName(getYear() - 5);
+                case COL_SHARE -> formatPercent(share * 100.0) + "%";
+                default -> formatPercent(share * chance.percent()) + "%";
+            };
         }
     }
 

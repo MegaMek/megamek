@@ -98,21 +98,29 @@ public class MekFileParser {
      */
     public static boolean isEnhancementTarget(Mounted<?> enhancement, Mounted<?> mount) {
         int location = enhancement.getLocation();
-        if (!MiscType.isWeaponEnhancement(enhancement.getType()) || !(mount.getType() instanceof WeaponType weapon)
-              || ((mount.getLocation() != location) && !(mount.isSplit() && (mount.getSecondLocation() == location)))) {
+        return MiscType.isWeaponEnhancement(enhancement.getType()) && (mount.getType() instanceof WeaponType weapon)
+              && ((mount.getLocation() == location) || (mount.isSplit() && (mount.getSecondLocation() == location)))
+              && canEnhance(enhancement.getType(), weapon, enhancement.getEntity().getYear());
+    }
+
+    /**
+     * @return True when the weapon enhancement may be attached to a weapon of the given type on a unit of the given
+     *       year, wherever the two are mounted
+     */
+    public static boolean canEnhance(EquipmentType enhancement, WeaponType weapon, int year) {
+        if (!(enhancement instanceof MiscType type)) {
             return false;
         }
-        EquipmentType type = enhancement.getType();
         if (type.hasFlag(MiscType.F_LASER_INSULATOR) || type.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-            // The laser pulse module is also restricted to non-pulse lasers, IS only
+            // The laser pulse module is also restricted to Inner Sphere standard and ER lasers (IO:AE p.87)
             return (weapon.hasFlag(WeaponType.F_LASER) || (weapon instanceof CLChemicalLaserWeapon))
                   && (!type.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
-                  || (!weapon.hasFlag(WeaponType.F_PULSE) && !weapon.isClan()));
+                  || weapon.hasFlag(WeaponType.F_RISC_LASER_PULSE_COMPATIBLE));
         } else if (type.hasFlag(MiscType.F_ARTEMIS) || type.hasFlag(MiscType.F_ARTEMIS_V)
               || type.hasFlag(MiscType.F_ARTEMIS_PROTO)) {
             return weapon.hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE);
         } else if (type.hasFlag(MiscType.F_PPC_CAPACITOR)) {
-            return weapon.hasFlag(WeaponType.F_PPC) && canLinkPpcCapacitor(weapon, enhancement.getEntity().getYear());
+            return weapon.hasFlag(WeaponType.F_PPC) && canLinkPpcCapacitor(weapon, year);
         }
         return type.hasFlag(MiscType.F_APOLLO) && (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
     }
@@ -121,7 +129,7 @@ public class MekFileParser {
      * @return True when the weapon has an enhancement of the kind of the given one. A weapon can have any number of
      *       laser insulators and one other enhancement.
      */
-    private static boolean hasEnhancementOfKind(Mounted<?> weapon, Mounted<?> enhancement) {
+    public static boolean hasEnhancementOfKind(Mounted<?> weapon, Mounted<?> enhancement) {
         boolean insulator = enhancement.getType().hasFlag(MiscType.F_LASER_INSULATOR);
         return weapon.getEnhancements().stream()
               .anyMatch(other -> other.getType().hasFlag(MiscType.F_LASER_INSULATOR) == insulator);

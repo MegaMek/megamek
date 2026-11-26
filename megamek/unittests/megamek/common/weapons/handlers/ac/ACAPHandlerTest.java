@@ -59,6 +59,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.rolls.Roll;
 import megamek.common.units.BipedMek;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
@@ -158,6 +159,7 @@ class ACAPHandlerTest {
         doReturn(0.5).when(mockBuilding).getDamageToScale();
 
         handler = new ACAPHandler(mockToHit, mockAction, mockGame, mockGameManager);
+        handler.roll = mock(Roll.class);
         setField(handler, "nDamPerHit", 10);
     }
 

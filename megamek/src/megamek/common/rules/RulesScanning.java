@@ -36,9 +36,13 @@ import java.util.Locale;
 
 import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
+import megamek.common.enums.BasementType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Mek;
@@ -74,7 +78,7 @@ public abstract class RulesScanning {
     public static final int PROBE_LEVEL_NONE = 0;
     /** Light Active Probe (Core Rules p.233). */
     public static final int PROBE_LEVEL_LIGHT = 1;
-    /** Active Probe, Beagle Active Probe and their Clan and Watchdog equivalents. */
+    /** Standard active probes, including the Watchdog under Core equipment rules. */
     public static final int PROBE_LEVEL_STANDARD = 2;
     /** Bloodhound Active Probe. */
     public static final int PROBE_LEVEL_BLOODHOUND = 3;
@@ -130,7 +134,7 @@ public abstract class RulesScanning {
     /**
      * @param unit the unit to inspect
      *
-     * @return the level of the unit's best working active probe that is not negated by hostile ECM:
+     * @return the level of the unit's active probe that is not negated by hostile ECM:
      *       {@link #PROBE_LEVEL_LIGHT}, {@link #PROBE_LEVEL_STANDARD} or {@link #PROBE_LEVEL_BLOODHOUND}, or
      *       {@link #PROBE_LEVEL_NONE} without one
      */
@@ -138,16 +142,9 @@ public abstract class RulesScanning {
         if (!unit.hasBAP(true)) {
             return PROBE_LEVEL_NONE;
         }
-        int probeLevel = PROBE_LEVEL_NONE;
-        for (MiscMounted miscEquipment : unit.getMisc()) {
-            boolean isWorkingProbe = miscEquipment.getType().hasFlag(MiscType.F_BAP) && !miscEquipment.isInoperable();
-            if (!isWorkingProbe) {
-                continue;
-            }
-            probeLevel = Math.max(probeLevel, probeLevelOf(miscEquipment.getType()));
-        }
-        // probe capability with no probe equipment behind it (a quirk or an implant) counts as the lightest probe
-        return (probeLevel == PROBE_LEVEL_NONE) ? PROBE_LEVEL_LIGHT : probeLevel;
+        MiscMounted probe = EquipmentActivation.activeProbe(unit);
+        // A probe supplied by an implant or quirk counts as light.
+        return probe == null ? PROBE_LEVEL_LIGHT : probeLevelOf(probe.getType());
     }
 
     /**
@@ -157,7 +154,11 @@ public abstract class RulesScanning {
      */
     private static int probeLevelOf(MiscType probeType) {
         String probeName = probeType.getInternalName().toLowerCase(Locale.ROOT);
-        if (probeName.contains("bloodhound")) {
+        if (probeType.hasFlag(MiscType.F_WATCHDOG)) {
+            return Game.rulesManager.getRulesEquipment().watchdogUsesLightProbe()
+                  ? PROBE_LEVEL_LIGHT : PROBE_LEVEL_STANDARD;
+        }
+        if (probeType.hasFlag(MiscType.F_BLOODHOUND)) {
             return PROBE_LEVEL_BLOODHOUND;
         }
         if (probeName.contains("light")) {
@@ -170,10 +171,33 @@ public abstract class RulesScanning {
      * @param scanner the scanning unit
      * @param target  the target, or {@code null}
      *
-     * @return {@code true} when the target is in the scanner's own hex
+     * @return {@code true} when the target is the hex the scanner occupies or a building there, not a unit
      */
-    protected static boolean isInOwnHex(Entity scanner, @Nullable Targetable target) {
-        boolean bothPlaced = (target != null) && (target.getPosition() != null) && (scanner.getPosition() != null);
-        return bothPlaced && scanner.getPosition().equals(target.getPosition());
+    protected static boolean isOwnHexOrBuilding(Entity scanner, @Nullable Targetable target) {
+        if (target == null || target.getPosition() == null || scanner.getPosition() == null
+              || scanner.getBoardId() != target.getBoardId()) {
+            return false;
+        }
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            return occupiesTargetBuilding(scanner, target);
+        }
+        return scanner.getPosition().equals(target.getPosition());
+    }
+
+    /** A building's footprint can extend beyond the hex stored as its position. */
+    public static boolean occupiesTargetBuilding(Entity scanner, Targetable target) {
+        if (!(target instanceof BuildingEntity building) || scanner.getBoardId() != building.getBoardId()
+              || !building.getOccupiedCoords().contains(scanner.getPosition()) || scanner.isAirborne()) {
+            return false;
+        }
+        int elevation = scanner.getElevation();
+        BasementType basement = building.getBasement(scanner.getPosition());
+        int depth = basement == null ? 0 : basement.getDepth();
+        return elevation >= -depth && elevation <= building.getHeight(scanner.getPosition());
+    }
+
+    /** Distance for a scan order, including one made from inside a multi-hex building. */
+    public static int scanDistance(Entity scanner, Targetable target) {
+        return occupiesTargetBuilding(scanner, target) ? 0 : scanner.getPosition().distance(target.getPosition());
     }
 }

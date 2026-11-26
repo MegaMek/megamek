@@ -149,7 +149,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             }
         }
         // Bracketing fire reduces the number of missiles that hit
-        av = (int) Math.floor(getBracketingMultiplier() * av);
+        av = bracketBayDamage(roundBayDamage(av), getBracketingMultiplier());
 
         // Point Defenses engage the missiles still aimed at us
         counterAV = calcCounterAV();

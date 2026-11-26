@@ -173,11 +173,12 @@ public abstract class RulesMovement {
      * @param src the source hex
      * @param direction the direction that it is coming from
      * @param range how far to displace (used for Dropships)
+     * @param fallerMissed true when placing a faller that missed its target, false when pushing the unit fallen on
      * @return the destination Coords.
      */
     @Nullable
     public abstract Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
-          int range);
+          int range, boolean fallerMissed);
 
     /**
      * When performing a DFA, and we move closer to the target, what elevation is the attacker at?
@@ -186,9 +187,10 @@ public abstract class RulesMovement {
      * @param attackerId entityId of the attacker
      * @param targetId entityId of the defender
      * @param step the movement step as accepted.
+     * @param attackHex the hex next to the target that the attacker is in until the DFA resolves
      * @return int, the elevation above the underlying terrain the attacker should be at
      */
-    public abstract int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step);
+    public abstract int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step, Coords attackHex);
 
     /**
      * Shields can reduce the MP to effectively 0

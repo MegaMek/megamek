@@ -58,7 +58,8 @@ public class MagneticPulseState implements Serializable {
     private static final int IMP_STEP = 3;
 
     // Standard Magnetic Pulse: rounds of +1 to-hit remaining, plus per-rate heat remainders so heat
-    // accumulates exactly across salvos without mixing the LRM (5) and SRM (3) rates.
+    // accumulates exactly across salvos without mixing the LRM (5) and SRM (3) rates. Heat counts are kept in
+    // half-warheads, so heat-dissipating armor can halve a warhead's share (see Entity#applyMagneticPulse).
     private int standardRounds = 0;
     private int lrmHeatRemainder = 0;
     private int srmHeatRemainder = 0;
@@ -89,20 +90,21 @@ public class MagneticPulseState implements Serializable {
      * Accumulates standard MP heat, carrying the sub-threshold remainder across salvos in the same turn. The remainder
      * is tracked separately per rate, so an MML firing both modes does not cross the 5- and 3-warhead rates.
      *
-     * @param missiles    warheads that hit in this salvo
-     * @param heatDivisor warheads per +1 heat ({@link #LRM_HEAT_DIVISOR} or {@link #SRM_HEAT_DIVISOR})
+     * @param halfWarheads half-warheads that one group adds, two per warhead unless armor reduced its share
+     * @param heatDivisor  warheads per +1 heat ({@link #LRM_HEAT_DIVISOR} or {@link #SRM_HEAT_DIVISOR})
      *
-     * @return the outside heat to bank for this salvo
+     * @return the outside heat to bank for this group
      */
-    public int computeStandardHeat(int missiles, int heatDivisor) {
+    public int computeStandardHeat(int halfWarheads, int heatDivisor) {
+        int halvesPerHeat = 2 * heatDivisor;
         if (heatDivisor == SRM_HEAT_DIVISOR) {
-            int total = missiles + srmHeatRemainder;
-            srmHeatRemainder = total % heatDivisor;
-            return (total - srmHeatRemainder) / heatDivisor;
+            int total = halfWarheads + srmHeatRemainder;
+            srmHeatRemainder = total % halvesPerHeat;
+            return total / halvesPerHeat;
         }
-        int total = missiles + lrmHeatRemainder;
-        lrmHeatRemainder = total % heatDivisor;
-        return (total - lrmHeatRemainder) / heatDivisor;
+        int total = halfWarheads + lrmHeatRemainder;
+        lrmHeatRemainder = total % halvesPerHeat;
+        return total / halvesPerHeat;
     }
 
     // --- Improved Magnetic Pulse (iATM IMP) ---
@@ -112,15 +114,15 @@ public class MagneticPulseState implements Serializable {
     }
 
     /**
-     * @param missiles warheads that hit in this salvo
+     * @param halfWarheads half-warheads that one group adds, two per warhead unless armor reduced its share
      *
-     * @return the outside heat to bank for an IMP salvo: +1 per 3 warheads, remainder carried across salvos in the same
-     *       turn
+     * @return the outside heat to bank for an IMP group: +1 per 3 warheads, remainder carried across groups in the
+     *       same turn
      */
-    public int computeImpHeat(int missiles) {
-        int total = missiles + impHeatRemainder;
-        impHeatRemainder = total % IMP_STEP;
-        return (total - impHeatRemainder) / IMP_STEP;
+    public int computeImpHeat(int halfWarheads) {
+        int total = halfWarheads + impHeatRemainder;
+        impHeatRemainder = total % (2 * IMP_STEP);
+        return total / (2 * IMP_STEP);
     }
 
     /** @return warheads currently affecting the unit (this turn plus the previous turn). */

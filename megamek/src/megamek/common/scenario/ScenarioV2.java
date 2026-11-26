@@ -84,6 +84,8 @@ import megamek.common.jacksonAdapters.TriggerDeserializer;
 import megamek.common.jacksonAdapters.VictoryDeserializer;
 import megamek.common.jacksonAdapters.dtos.GroundObjectInfo;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.units.Entity;
@@ -269,6 +271,7 @@ public class ScenarioV2 implements Scenario {
                 }
             }
 
+            warnAboutUnusableCrewAbilities(twGame);
             twGame.setupDeployment();
             if (node.has(PARAM_GAME_EXTERNAL_ID)) {
                 twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
@@ -282,6 +285,36 @@ public class ScenarioV2 implements Scenario {
         // TODO: check the game for inconsistencies such as units outside board
         // coordinates
         return game;
+    }
+
+    /**
+     * Scenarios skip the lobby, which is where SPAs and Edge are normally removed when their game options are off. Such
+     * a pilot keeps the ability on its record but cannot use it in play, so the log names the option to turn on.
+     */
+    private void warnAboutUnusableCrewAbilities(Game twGame) {
+        int unitsWithAbilities = 0;
+        int unitsWithEdge = 0;
+        for (Entity entity : twGame.getEntitiesVector()) {
+            if (entity.getCrew() == null) {
+                continue;
+            }
+            if (entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
+                unitsWithAbilities++;
+            }
+            if (entity.getCrew().getOptions().intOption(OptionsConstants.EDGE) > 0) {
+                unitsWithEdge++;
+            }
+        }
+        boolean abilitiesOff = !twGame.getOptions().booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES);
+        if ((unitsWithAbilities > 0) && abilitiesOff) {
+            logger.warn("[ScenarioCrew] {} unit(s) have SPAs but the game option {} is off; add it to options: on:",
+                  unitsWithAbilities, OptionsConstants.RPG_PILOT_ADVANTAGES);
+        }
+        boolean edgeOff = !twGame.getOptions().booleanOption(OptionsConstants.EDGE);
+        if ((unitsWithEdge > 0) && edgeOff) {
+            logger.warn("[ScenarioCrew] {} unit(s) have Edge points but the game option {} is off; "
+                  + "add it to options: on:", unitsWithEdge, OptionsConstants.EDGE);
+        }
     }
 
     private void parsePlanetaryConditions(PlanetaryConditionsUsing plGame) throws JsonProcessingException {

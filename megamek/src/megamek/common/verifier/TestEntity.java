@@ -945,22 +945,15 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static int calcHeatNeutralHSRequirement(Entity entity) {
         int heat = 0;
-        for (Mounted<?> m : entity.getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
+        for (WeaponMounted m : entity.getWeaponList()) {
+            WeaponType wt = m.getType();
             if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NA))
                   || wt.hasFlag(WeaponType.F_PPC)
                   || wt.hasFlag(WeaponType.F_PLASMA)
                   || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
                   || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
-                heat += wt.getHeat();
-            }
-            // laser insulator reduce heat by 1, to a minimum of 1
-            Mounted<?> insulator = m.getEnhancement(MiscType.F_LASER_INSULATOR);
-            if (wt.hasFlag(WeaponType.F_LASER) && (insulator != null) && !insulator.isInoperable()) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
+                // heat-neutral units need sinks for a laser pulse module's pulse mode (IO:AE p. 87)
+                heat += (int) m.laserEnhancedHeat(wt.getHeat(), true);
             }
 
             if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
@@ -974,6 +967,10 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscTypeFlag.F_CLUB) && m.getType().hasFlag(MiscTypeFlag.S_SPOT_WELDER)
                   && entity.hasEngine() && (entity.getEngine().isFusion()
                   || (entity.getEngine().getEngineType() == Engine.FISSION))) {
+                continue;
+            }
+            // A laser pulse module's heat is counted with its laser above
+            if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) && (m.getLinked() != null)) {
                 continue;
             }
             heat += m.getType().getHeat();
@@ -1755,8 +1752,13 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append("Laser insulator requires a laser in the same location.\n");
                 illegal = true;
             }
+            // TO:AUE p. 134
+            if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) && (getEntity().getWeight() > 200)) {
+                buff.append("Laser insulators are limited to units of 200 tons or less.\n");
+                illegal = true;
+            }
             if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) && !linkedToItsWeapon) {
-                buff.append("RISC Laser Pulse Module requires an Inner Sphere non-pulse laser in the same location.\n");
+                buff.append("RISC Laser Pulse Module requires an Inner Sphere standard or ER laser in the same location.\n");
                 illegal = true;
             }
         }

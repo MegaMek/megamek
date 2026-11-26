@@ -377,8 +377,12 @@ public class MtfFile implements IMekLoader {
             }
             setTechLevel(mek);
             boolean chassisIsFrankenMek = chassisConfig.contains("FrankenMek");
-            mek.setWeight(Integer.parseInt(tonnage.substring(5)));
-            mek.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
+            String structureLine = internalType.substring(internalType.indexOf(':') + 1).trim();
+            // CO p. 213: the center torso donor sets a FrankenMek's tonnage, so chassis-dependent parts follow it
+            Integer frankenMekChassisTonnage = chassisIsFrankenMek
+                  ? frankenMekStructureTonnage(mek, Mek.LOC_CENTER_TORSO, structureLine) : null;
+            mek.setWeight((frankenMekChassisTonnage != null) ? Math.max(10, frankenMekChassisTonnage)
+                  : Integer.parseInt(tonnage.substring(5)));
 
             boolean dblSinks = heatSinks.contains(HS_DOUBLE);
             boolean laserSinks = heatSinks.contains(HS_LASER);
@@ -387,7 +391,7 @@ public class MtfFile implements IMekLoader {
             int baseHeatSinks = Integer
                   .parseInt(baseChassisHeatSinks.substring("base chassis heat sinks:".length()).trim());
 
-            String thisStructureType = internalType.substring(internalType.indexOf(':') + 1).trim();
+            String thisStructureType = structureLine;
             if (!thisStructureType.isBlank()
                   && !thisStructureType.equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID)) {
                 StructureType structure = EquipmentType.getStructureFromName(thisStructureType);
@@ -685,30 +689,38 @@ public class MtfFile implements IMekLoader {
 
     private void parseFrankenMekStructure(Mek mek, String defaultStructureType) throws EntityLoadingException {
         mek.initializeFrankenMekStructure();
-        boolean hybridStructure = defaultStructureType.trim().equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID);
         for (Map.Entry<Integer, String> entry : frankenMekStructureValues.entrySet()) {
-            String structureValue = entry.getValue().substring(entry.getValue().indexOf(':') + 1).trim();
-            if (structureValue.isBlank()) {
+            Integer tonnage = frankenMekStructureTonnage(mek, entry.getKey(), defaultStructureType);
+            if (tonnage == null) {
                 continue;
             }
-            if (hybridStructure || structureValue.contains(":")) {
-                int splitIndex = structureValue.lastIndexOf(':');
-                if (splitIndex < 0) {
-                    continue;
-                }
+            String structureValue = frankenMekStructureValue(entry.getKey());
+            int splitIndex = structureValue.lastIndexOf(':');
+            if (splitIndex >= 0) {
                 EquipmentType structure = getStructureEquipment(mek, structureValue.substring(0, splitIndex).trim());
                 mek.setFrankenMekStructureType(entry.getKey(), structure);
-                mek.setFrankenMekStructureTonnage(entry.getKey(), parseFrankenMekStructureTonnage(
-                      mek, entry.getKey(), structureValue.substring(splitIndex + 1).trim()));
-            } else {
-                mek.setFrankenMekStructureTonnage(entry.getKey(),
-                      parseFrankenMekStructureTonnage(mek, entry.getKey(), structureValue));
             }
+            mek.setFrankenMekStructureTonnage(entry.getKey(), tonnage);
         }
     }
 
-    private int parseFrankenMekStructureTonnage(Mek mek, int location, String tonnageValue)
+    private String frankenMekStructureValue(int location) {
+        String line = frankenMekStructureValues.getOrDefault(location, "");
+        return line.substring(line.indexOf(':') + 1).trim();
+    }
+
+    /**
+     * @return The donor tonnage a location's structure line gives, or null when there is none; a bare tonnage under
+     *       a Hybrid structure line is ignored
+     */
+    private @Nullable Integer frankenMekStructureTonnage(Mek mek, int location, String defaultStructureType)
           throws EntityLoadingException {
+        String structureValue = frankenMekStructureValue(location);
+        boolean hybridStructure = defaultStructureType.trim().equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID);
+        if (structureValue.isBlank() || (hybridStructure && !structureValue.contains(":"))) {
+            return null;
+        }
+        String tonnageValue = structureValue.substring(structureValue.lastIndexOf(':') + 1).trim();
         try {
             return Integer.parseInt(tonnageValue);
         } catch (NumberFormatException ex) {
@@ -1087,8 +1099,15 @@ public class MtfFile implements IMekLoader {
                         if (etype.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER)) {
                             if (size == 0) {
                                 // legacy MTF loading: MJB gave their MP as the jump MP
-                                size = mek.getOriginalJumpMP(true);
-                                mek.setOriginalJumpMP(0);
+                                if (jumpMP == null) {
+                                    throw new EntityLoadingException(
+                                          "A mechanical jump booster without a size needs the jump MP line");
+                                }
+                                try {
+                                    size = Integer.parseInt(jumpMP.substring(8).trim());
+                                } catch (NumberFormatException exception) {
+                                    throw new EntityLoadingException("Invalid jump MP: " + jumpMP, exception);
+                                }
                             }
 
                             m.setSize(size);
@@ -1212,12 +1231,14 @@ public class MtfFile implements IMekLoader {
      */
     private static Mounted<?> addSplitRow(Mek mek, @Nullable Mounted<?> mount, EquipmentType equipmentType,
           int location) {
+        // A superheavy Mek's critical row holds two slots
+        int critsPerRow = mek.isSuperHeavy() ? 2 : 1;
         if (mount == null) {
             Mounted<?> newMount = Mounted.createMounted(mek, equipmentType);
-            newMount.setFoundCrits(1);
+            newMount.setFoundCrits(critsPerRow);
             return newMount;
         }
-        mount.setFoundCrits(mount.getFoundCrits() + (mek.isSuperHeavy() ? 2 : 1));
+        mount.setFoundCrits(mount.getFoundCrits() + critsPerRow);
         // if we're in a new location, set the weapon as split
         if (location != mount.getLocation()) {
             mount.setSplit(true);

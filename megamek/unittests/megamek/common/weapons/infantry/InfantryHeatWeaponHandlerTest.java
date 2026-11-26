@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -54,11 +55,15 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.InfantryWeaponMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.BipedMek;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
@@ -70,6 +75,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 
 class InfantryHeatWeaponHandlerTest {
@@ -135,6 +142,9 @@ class InfantryHeatWeaponHandlerTest {
         doReturn(hitData).when(mockEntityTarget).rollHitLocation(anyInt(), anyInt(), anyInt(), any(AimingMode.class), anyInt());
         doReturn("CT").when(mockEntityTarget).getLocationAbbr(any(HitData.class));
         doReturn(false).when(mockEntityTarget).removePartialCoverHits(anyInt(), anyInt(), anyInt());
+        // Outside heat goes through the target's own armor rules as it strikes
+        doCallRealMethod().when(mockEntityTarget).heatReceivingLocation(any(HitData.class));
+        doCallRealMethod().when(mockEntityTarget).addOutsideHeat(anyInt(), any(HitData.class));
 
         CalledShot mockCalledShot = mock(CalledShot.class);
         doReturn(CalledShot.CALLED_NONE).when(mockCalledShot).getCall();
@@ -184,6 +194,59 @@ class InfantryHeatWeaponHandlerTest {
     @Nested
     @DisplayName("handleEntityDamage")
     class HandleEntityDamage {
+
+        /** BMM p.114: laser-reflective armor halves the heat of flamers, not of other incendiary infantry weapons */
+        @ParameterizedTest
+        @CsvSource({"false, true, 5, 2", "false, true, 1, 1", "false, true, 0, 0", "true, true, 5, 5",
+                    "false, false, 5, 5"})
+        void reflectiveArmorUsesFlamerHeatRules(boolean core, boolean flamer, int heat, int expectedHeat)
+              throws Exception {
+            RulesManager original = Game.rulesManager;
+            try {
+                Game.rulesManager = core ? new CoreRulesManager() : new TWRulesManager();
+                doReturn(flamer).when(mockWeaponType).hasFlag(WeaponType.F_FLAMER);
+                setField(handler, "nDamPerHit", heat);
+                doReturn(1).when(mockEntityTarget).getArmor(any(HitData.class));
+                doReturn(EquipmentType.T_ARMOR_REFLECTIVE).when(mockEntityTarget).getArmorType(Mek.LOC_CENTER_TORSO);
+                Vector<Report> reports = new Vector<>();
+
+                handler.handleEntityDamage(mockEntityTarget, reports, null, 1, 1, 0);
+
+                assertEquals(expectedHeat, mockEntityTarget.heatFromExternal);
+                assertEquals(heat == expectedHeat ? 3400 : 3406, reports.lastElement().messageId);
+            } finally {
+                Game.rulesManager = original;
+            }
+        }
+
+        /** A platoon whose flamer is its secondary weapon delivers flamer heat, which reflective armor halves */
+        @Test
+        void aSecondaryFlamerIsThePlatoonsHeatWeapon() throws Exception {
+            RulesManager original = Game.rulesManager;
+            try {
+                Game.rulesManager = new TWRulesManager();
+                InfantryWeaponMounted platoonWeapons = mock(InfantryWeaponMounted.class);
+                InfantryWeapon flamer = mock(InfantryWeapon.class);
+                doReturn(true).when(flamer).isFlameBased();
+                doReturn(true).when(flamer).hasFlag(WeaponType.F_FLAMER);
+                doReturn(flamer).when(platoonWeapons).getOtherWeapon();
+                doReturn(mockWeapon.getCalledShot()).when(platoonWeapons).getCalledShot();
+                doReturn(mockWeaponType).when(platoonWeapons).getType();
+                doReturn(platoonWeapons).when(mockAttacker).getEquipment(0);
+                when(mockAttacker.getWeapon(0)).thenReturn(platoonWeapons);
+                InfantryHeatWeaponHandler secondaryFlamer = new InfantryHeatWeaponHandler(mockToHit, mockAction,
+                      mockGame, mockGameManager);
+                setField(secondaryFlamer, "nDamPerHit", 5);
+                doReturn(1).when(mockEntityTarget).getArmor(any(HitData.class));
+                doReturn(EquipmentType.T_ARMOR_REFLECTIVE).when(mockEntityTarget).getArmorType(Mek.LOC_CENTER_TORSO);
+
+                secondaryFlamer.handleEntityDamage(mockEntityTarget, new Vector<>(), null, 1, 1, 0);
+
+                assertEquals(2, mockEntityTarget.heatFromExternal);
+            } finally {
+                Game.rulesManager = original;
+            }
+        }
 
         @Test
         @DisplayName("damage is scaled when entity is inside a building")

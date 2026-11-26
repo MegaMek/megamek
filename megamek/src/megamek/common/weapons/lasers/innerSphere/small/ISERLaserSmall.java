@@ -82,6 +82,7 @@ public class ISERLaserSmall extends LaserWeapon {
         );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - Errata request to change common date
+        flags = flags.or(F_RISC_LASER_PULSE_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)

@@ -32,6 +32,7 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.HitData;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.RulesUnits;
@@ -46,7 +47,7 @@ public class TWRulesUnits extends RulesUnits {
      */
     @Override
     public int getMuleKickModifier() { return 1; }
-    
+
     /**
      * Does removing legs cause it to be immobile? No
      *
@@ -148,6 +149,12 @@ public class TWRulesUnits extends RulesUnits {
      */
     @Override
     public boolean hasBadLegs(Entity entity) {
+        return false;
+    }
+
+    /** An extra point created by composite structure does not transfer (BMM p.117). */
+    @Override
+    public boolean transfersCompositePip(Mek mek, HitData hit, boolean ammoExplosion) {
         return false;
     }
 }

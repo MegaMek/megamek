@@ -45,11 +45,14 @@ import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.RaidPayout;
 import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
+import megamek.common.units.Mek;
 import megamek.server.scriptedEvents.GameEndTriggeredEvent;
 import megamek.server.trigger.SpecificRoundEndTrigger;
 import org.junit.jupiter.api.BeforeEach;
@@ -317,7 +320,7 @@ class VictoryPointVictoryTest {
         ObjectiveMarker raidPoint = new ObjectiveMarker();
         raidPoint.setName("Raid Point");
         raidPoint.setVictoryPointValue(3);
-        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid(RaidPayout.AT_GAME_END));
         raidPoint.setController(1, ObjectiveMarker.NO_CONTROLLER);
         game.placeGroundObject(new megamek.common.board.Coords(2, 2), raidPoint);
 
@@ -325,6 +328,161 @@ class VictoryPointVictoryTest {
 
         assertTrue(result.isVictory());
         assertEquals(3, (int) result.getTeamScore(1));
+    }
+
+    @Test
+    void testACarriedRaidPointPaysItsCarriersSideAtGameEnd() {
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(1));
+        carrier.pickupCarryableObject(carriedRaidPoint(), Mek.LOC_RIGHT_ARM);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(3, (int) result.getTeamScore(1), "RAW: carrying an objective controls it");
+        assertTrue(result.getReports().stream().anyMatch(report -> report.messageId == 7176));
+    }
+
+    @Test
+    void testARaidPointCarriedOffTheBattlefieldPaysTheSideThatTookIt() {
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(2));
+        carrier.pickupCarryableObject(carriedRaidPoint(), Mek.LOC_RIGHT_ARM);
+        game.removeEntity(carrier.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(3, (int) result.getTeamScore(2), "RAW: carried out through a legal edge, it is taken off the field");
+        assertTrue(result.getReports().stream().anyMatch(report -> report.messageId == 7174));
+    }
+
+    @Test
+    void testARaidPointStillCarriedByACarrierPushedOffTheBattlefieldPaysItsSide() {
+        // RAW: pushed over an edge it may leave by, the carrier counts as having left with it (a push over any other
+        // edge leaves the objective behind on the board, so a pushed carrier still holding one took a legal edge)
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(2));
+        carrier.pickupCarryableObject(carriedRaidPoint(), Mek.LOC_RIGHT_ARM);
+        game.removeEntity(carrier.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(3, (int) result.getTeamScore(2));
+        assertTrue(result.getReports().stream().anyMatch(report -> report.messageId == 7174));
+    }
+
+    @Test
+    void testARaidPointLostWithADestroyedCarrierThatNeverDroppedItPaysNobody() {
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(2));
+        carrier.pickupCarryableObject(carriedRaidPoint(), Mek.LOC_RIGHT_ARM);
+        game.removeEntity(carrier.getId(), IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isDraw(), "only fleeing takes a point off the field; a wreck does not");
+    }
+
+    @Test
+    void testACarriedDecoyRaidPointPaysNothing() {
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(1));
+        ObjectiveMarker decoy = carriedRaidPoint();
+        decoy.setFalseObjective(true);
+        carrier.pickupCarryableObject(decoy, Mek.LOC_RIGHT_ARM);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isDraw());
+        assertTrue(result.getReports().stream()
+              .anyMatch(report -> report.messageId == VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
+    }
+
+    @Test
+    void testARaidPointPaidEveryEndPhaseIsNotPaidAgainAtGameEnd() {
+        enableObjectiveScoring();
+        ObjectiveMarker raidPoint = new ObjectiveMarker();
+        raidPoint.setName("Raid Point");
+        raidPoint.setVictoryPointValue(3);
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid(RaidPayout.EVERY_END_PHASE));
+        raidPoint.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        game.placeGroundObject(new Coords(2, 2), raidPoint);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isDraw(), "the End Phases have already paid it, turn by turn");
+    }
+
+    @Test
+    void testARaidPointPaidEveryEndPhaseStopsPayingOnceCarriedOffTheBattlefield() {
+        // Core p.217 pays for objectives a side controls in the End Phase; one carried off is no longer controlled
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(2));
+        ObjectiveMarker raidPoint = carriedRaidPoint();
+        raidPoint.getScoringScheme().setRaidPayout(RaidPayout.EVERY_END_PHASE);
+        carrier.pickupCarryableObject(raidPoint, Mek.LOC_RIGHT_ARM);
+        game.removeEntity(carrier.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isDraw());
+    }
+
+    @Test
+    void testARaidPointFromASaveMadeBeforeThePayoutChoiceStillPaysAtGameEnd() {
+        enableObjectiveScoring();
+        ObjectiveMarker raidPoint = new ObjectiveMarker();
+        raidPoint.setName("Raid Point");
+        raidPoint.setVictoryPointValue(3);
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+        // a scheme read from an older save has no payout field, which deserializes as null
+        raidPoint.getScoringScheme().setRaidPayout(null);
+        raidPoint.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        game.placeGroundObject(new Coords(2, 2), raidPoint);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(3, (int) result.getTeamScore(1), "a game in progress keeps the rules it was set up with");
+    }
+
+    private ObjectiveMarker carriedRaidPoint() {
+        ObjectiveMarker raidPoint = new ObjectiveMarker();
+        raidPoint.setName("Data Core");
+        raidPoint.setVictoryPointValue(3);
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid(RaidPayout.AT_GAME_END));
+        raidPoint.setMobile(true);
+        return raidPoint;
+    }
+
+    private BipedMek carrierOf(Player owner) {
+        BipedMek mek = new BipedMek();
+        mek.setGame(game);
+        mek.setId(nextEntityId++);
+        mek.setChassis("Carrier");
+        mek.setModel("C-" + mek.getId());
+        mek.setCrew(new Crew(CrewType.SINGLE));
+        mek.setOwner(owner);
+        mek.setPosition(new Coords(4, 4));
+        mek.setDeployed(true);
+        game.addEntity(mek);
+        return mek;
+    }
+
+    @Test
+    void testADecoyRaidPointPaysNothingAtGameEnd() {
+        enableObjectiveScoring();
+        ObjectiveMarker decoy = new ObjectiveMarker();
+        decoy.setName("Raid Point");
+        decoy.setVictoryPointValue(3);
+        decoy.setScoringScheme(ObjectiveScoringScheme.raid(RaidPayout.AT_GAME_END));
+        decoy.setFalseObjective(true);
+        decoy.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        game.placeGroundObject(new megamek.common.board.Coords(2, 2), decoy);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(0, VictoryPointTracker.getTracker(game).getTeamVictoryPoints(1), "a decoy never pays");
+        assertTrue(result.getReports().stream()
+              .anyMatch(report -> report.messageId == VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
     }
 
     // --- Part 4: mid-game enders (sudden death and the victory point thresholds) ---

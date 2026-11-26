@@ -63,7 +63,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * the carrier, and are dropped voluntarily or when the carrier is destroyed, falls, becomes immobile or fails the
  * forced-drop Piloting Skill Roll after taking damage.</P>
  */
-public class ObjectiveMarker extends GroundObject {
+public class ObjectiveMarker extends GroundObject implements Cloneable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -84,8 +84,10 @@ public class ObjectiveMarker extends GroundObject {
     private boolean insideBuilding = false;
     private boolean buildingLinkInitialized = false;
     /**
-     * What a successful scan of this point tells the scanning side, written by a game master, a scenario file or
-     * MekHQ: "The scan reveals..." Empty when there is nothing to say. Sent only to the side that scanned.
+     * What a successful scan of this point tells the scanning side, written by the player who placed the point, a
+     * game master, a scenario file or MekHQ: "The scan reveals..." Empty when there is nothing to say. Before the
+     * scan only the placer's side and a game master may read it (see {@link #isScanNoteVisibleTo(Player, Player)}),
+     * and afterwards only the side that scanned is told.
      */
     private String scanRevealsNote = "";
     private boolean destructionProcessed = false;
@@ -98,6 +100,15 @@ public class ObjectiveMarker extends GroundObject {
      */
     private boolean belongsToSideChosen = false;
     private int belongsToPlayerId = Player.PLAYER_NONE;
+    /**
+     * Which side scores a Scan point by scanning it. By default the side that placed it, which is how every scan
+     * point worked before the choice existed; set to the other side, a player can hide something for the enemy to
+     * find and write what they discover. Separate from {@link #getBelongsToPlayerId()}, which is whose the point is
+     * in the story and decides the flag's colour. The same two fields as belongs-to, for the same reason: player
+     * zero cannot be told apart from an unset int in a save written before this existed.
+     */
+    private boolean scannedBySideChosen = false;
+    private int scannedByPlayerId = Player.PLAYER_NONE;
     private int controllingTeam = NO_CONTROLLER;
     private int controllingPlayerId = NO_CONTROLLER;
     // the pre-set lobby placement position; null when the marker has no pre-set position
@@ -139,6 +150,28 @@ public class ObjectiveMarker extends GroundObject {
     }
 
     /**
+     * Tells whether a player may read a point's scan note before anyone has scanned it: the player who placed the
+     * point, their team and a game master. Anyone else learns the note only from the End Phase report of their own
+     * successful scan. The server asks this for every copy of the board it sends, removing the note from the copies
+     * of players who may not read it, and again when a player sends the board back, so a copy without the note
+     * cannot wipe it.
+     *
+     * @param placer the player who placed the point, or {@code null} when they are no longer in the game
+     * @param viewer the player who would read the note
+     *
+     * @return {@code true} when the viewer may read the note
+     */
+    public static boolean isScanNoteVisibleTo(@Nullable Player placer, Player viewer) {
+        if (viewer.isGameMaster()) {
+            return true;
+        }
+        if (placer == null) {
+            return false;
+        }
+        return isDesignationVisibleTo(placer, viewer);
+    }
+
+    /**
      * Claims every objective marker in the given carryables list for the given player. The server calls this when it
      * receives a player's ground-objects-to-place list, so a marker's owner is always the player whose list carried
      * it - the owner drives the flag's color, who may see the designation and who it returns to on a game reset, so
@@ -172,6 +205,22 @@ public class ObjectiveMarker extends GroundObject {
     public void setBelongsToPlayerId(int playerId) {
         this.belongsToPlayerId = playerId;
         this.belongsToSideChosen = true;
+    }
+
+    /**
+     * @return the player whose side scores this Scan point by scanning it, and reads its note when the scan
+     *       succeeds. Falls back to whoever placed it while no side has been chosen.
+     */
+    public int getScannedByPlayerId() {
+        return scannedBySideChosen ? scannedByPlayerId : getOwnerId();
+    }
+
+    /**
+     * @param playerId the player whose side scores this Scan point by scanning it
+     */
+    public void setScannedByPlayerId(int playerId) {
+        this.scannedByPlayerId = playerId;
+        this.scannedBySideChosen = true;
     }
 
     /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */
@@ -209,6 +258,34 @@ public class ObjectiveMarker extends GroundObject {
         this.scanRevealsNote = (scanRevealsNote == null) ? "" : scanRevealsNote.trim();
     }
 
+    /**
+     * Makes the copy of this point that is sent to a player who may not read its scan note: everything the same,
+     * the note emptied. The copy shares this point's scoring scheme, so it is for sending only, never for changing.
+     *
+     * @return a copy of this point without its scan note
+     */
+    public ObjectiveMarker copyWithoutScanNote() {
+        ObjectiveMarker copy = clone();
+        copy.scanRevealsNote = "";
+        return copy;
+    }
+
+    /**
+     * A shallow copy: the copy shares this point's scoring scheme and every other object it refers to, so changing
+     * one through the copy changes it here too. Used to send a point in a different form, never to edit one.
+     *
+     * @return a shallow copy of this point
+     */
+    @Override
+    protected ObjectiveMarker clone() {
+        try {
+            return (ObjectiveMarker) super.clone();
+        } catch (CloneNotSupportedException exception) {
+            // cannot happen: this class is Cloneable
+            throw new IllegalStateException("ObjectiveMarker must be cloneable", exception);
+        }
+    }
+
     public void setVictoryPointValue(int victoryPointValue) {
         this.victoryPointValue = victoryPointValue;
     }
@@ -238,6 +315,42 @@ public class ObjectiveMarker extends GroundObject {
 
     public void setFalseObjective(boolean falseObjective) {
         this.falseObjective = falseObjective;
+    }
+
+    /**
+     * Potential and False Objectives cannot be used together (RAW): a candidate waiting to be confirmed by a scan is
+     * not also a decoy. The scenario reader, the properties editor and the server all ask this one question, so a
+     * marker the editor would refuse is refused everywhere.
+     *
+     * @return {@code true} if this marker is flagged both Potential and False
+     */
+    public boolean hasPotentialAndFalseVariants() {
+        return potential && falseObjective;
+    }
+
+    /**
+     * A Scan point cannot be Potential: it is already read with sensors, so the one scan that would confirm it would
+     * also read it, and the flag would add nothing.
+     *
+     * @param preset the point's scoring scheme
+     *
+     * @return {@code true} if a point with this scheme may be Potential
+     */
+    public static boolean canBePotential(ObjectiveScoringScheme.SchemePreset preset) {
+        return preset != ObjectiveScoringScheme.SchemePreset.SCAN;
+    }
+
+    /**
+     * Only a Raid point can be Mobile. The other held schemes are won by a zone on the map, and scoring only reads
+     * objectives lying on the ground, so a zone carried off in a Mek's hand would stop scoring altogether. Raid asks who
+     * has the objective, each End Phase or when the game ends, which a carried objective answers.
+     *
+     * @param preset the point's scoring scheme
+     *
+     * @return {@code true} if a point with this scheme may be Mobile
+     */
+    public static boolean canBeMobile(ObjectiveScoringScheme.SchemePreset preset) {
+        return preset == ObjectiveScoringScheme.SchemePreset.RAID;
     }
 
     /** @return {@code true} if this is a Fragile Objective that risks destruction on qualifying events */
@@ -298,6 +411,40 @@ public class ObjectiveMarker extends GroundObject {
 
     public void setDestructionProcessed(boolean destructionProcessed) {
         this.destructionProcessed = destructionProcessed;
+    }
+
+    /**
+     * A carried objective is never hit by attacks on its carrier, unlike ordinary cargo (TW p.261). Damage to the
+     * carrier only calls for the forced-drop roll (Core Standard Missions, Mobile Objectives), and only a Fragile
+     * objective risks destruction, from the events listed under Fragile Objectives.
+     *
+     * @return {@link CarriedObjectDamageAllocation#NEVER}
+     */
+    @Override
+    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
+        return CarriedObjectDamageAllocation.NEVER;
+    }
+
+    /**
+     * Unlike cargo (TW p.261), a carried objective ties up only the arm holding it: "That arm cannot be used to make
+     * ranged or physical attacks for as long as the objective is carried" (Core Standard Missions, Mobile Objectives).
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean blocksTorsoWeaponsWhenCarried() {
+        return false;
+    }
+
+    /**
+     * Unlike cargo (TW p.261), picking up or setting down an objective does not stop the Mek attacking that turn; the
+     * Mobile Objectives rule only rules out the carrying arm, and only while the objective is carried.
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean blocksAttacksOnPickupOrDropTurn() {
+        return false;
     }
 
     /**
@@ -403,17 +550,47 @@ public class ObjectiveMarker extends GroundObject {
 
     // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES - verbatim quote from the printed Objectives rules
     /**
+     * The one rule the client's pickup option and the server's pickup step share: only a Mek carries an objective,
+     * and only one at a time (RAW: "one per 'Mech"). A Mek with two free hands could otherwise lift two, since an
+     * objective weighs nothing.
+     *
+     * @param unit the unit that would pick up an objective
+     *
+     * @return {@code true} if the unit may pick one up
+     */
+    public static boolean canCarryAnother(Entity unit) {
+        if (!(unit instanceof Mek)) {
+            return false;
+        }
+        for (ICarryable carriedObject : unit.getDistinctCarriedObjects()) {
+            if (carriedObject instanceof ObjectiveMarker) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES - verbatim quote from the printed Objectives rules
+    /**
      * Only Meks can pick up Mobile Objectives (RAW: "any standing mobile 'Mech with at least one functional hand
-     * actuator or claw"); pickup attempts by other unit types are refused here as the server-side gate.
+     * actuator or claw"), one at a time, and only an intact Mobile one; other pickup attempts are refused here as
+     * the server-side gate.
      */
     @Override
     public void processPickupStep(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
           Entity entityPickingUpTarget, EntityMovementType overallMoveType) {
-        if (!(entityPickingUpTarget instanceof Mek)) {
-            LOGGER.debug("[Objective] {} cannot pick up {}: only Meks can carry Mobile Objectives",
+        // the server's move-step handling checks only weight, and a flag weighs nothing
+        if (!canBePickedUp(false)) {
+            LOGGER.info("[Objective] {} cannot pick up {}: it is {}", entityPickingUpTarget.getShortName(),
+                  generalName(), destroyed ? "destroyed" : "not a Mobile objective");
+            return;
+        }
+        if (!canCarryAnother(entityPickingUpTarget)) {
+            LOGGER.info("[Objective] {} cannot pick up {}: only a Mek can carry an objective, and only one at a time",
                   entityPickingUpTarget.getShortName(), generalName());
             return;
         }
+        LOGGER.info("[Objective] {} picks up {}", entityPickingUpTarget.getShortName(), generalName());
         super.processPickupStep(step, cargoPickupLocation, gameManager, entityPickingUpTarget, overallMoveType);
     }
 

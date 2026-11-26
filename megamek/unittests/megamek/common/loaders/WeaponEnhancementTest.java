@@ -116,6 +116,19 @@ class WeaponEnhancementTest {
         return laser;
     }
 
+    /** A capacitor is in its PPC's turret (TO:AUE p.148), so it adds to the turret's weight (TO:AUE p.158) */
+    @Test
+    void anUnmarkedCapacitorWeighsInItsPpcsTurret() throws Exception {
+        Mek mek = newMek();
+        Mounted<?> turret = mek.addEquipment(EquipmentType.get("ISShoulderTurret"), Mek.LOC_RIGHT_TORSO);
+        Mounted<?> ppc = mek.addEquipment(EquipmentType.get("ISHeavyPPC"), Mek.LOC_RIGHT_TORSO);
+        ppc.setMekTurretMounted(true);
+        mek.addEquipment(EquipmentType.get("ISPPCCapacitor"), Mek.LOC_RIGHT_TORSO).setLinked(ppc);
+
+        // A tenth of the 10-ton heavy PPC and 1-ton capacitor, rounded up to the half ton
+        assertEquals(1.5, turret.getTonnage());
+    }
+
     @Test
     void enhancementsFollowTheirWeapon() throws Exception {
         List<Mounted<?>> mounts = loadRightTorso(MEDIUM_LASER, INSULATOR, INSULATOR, MEDIUM_LASER, INSULATOR,

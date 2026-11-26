@@ -35,8 +35,10 @@ package megamek.common.rules.core;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.annotation.Nullable;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
@@ -47,14 +49,16 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
-import megamek.common.units.QuadMek;
+import megamek.common.units.QuadVee;
 
 public class CoreRulesMovement extends RulesMovement {
     /**
      * {@inheritDoc}
-     * No skidding in Core Rules
+     * Core removed skidding: pavement forces no PSR (Core p.122), nor does entering ice (Core p.124; errata v0.2), and
+     * terrain never forces Assets to make PSRs (Core p.142). No unit skids under Core.
      */
-     public boolean skidEnabled() {
+    @Override
+    public boolean skidEnabled() {
         return false;
     }
 
@@ -101,28 +105,27 @@ public class CoreRulesMovement extends RulesMovement {
 
     /**
      * {@inheritDoc}
-     * Backwards elevation changes are enabled. Core p.46
+     * A walking Mek can make a backward level change (Core p.46), unless hip damage or a destroyed leg prevents it
+     * (Core pp.47, 90, 238). "An Asset cannot change levels on a turn that it moves backward" (Core p.141). Other units,
+     * a QuadVee in vehicle mode included (IO:AE p.127), are not in Core and keep the Tactical Operations option (TO:AR
+     * p.20).
      */
     @Override
     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
-        if (entity instanceof Mek) {
-            int legsDestroyed = ((Mek) entity).countBadLegs();
-            if (legsDestroyed >= 1 && !(entity instanceof QuadMek)) {
-                // No backwards elevation with a bad leg
-                return false;
-            } else if (legsDestroyed >= 3) {
-                // Quads run into this with 3 legs gone
-                return false;
-            }
-            return true;
+        boolean vehicleMode = (entity instanceof QuadVee quadVee)
+              && (quadVee.getConversionMode() == QuadVee.CONV_MODE_VEHICLE);
+        if ((entity instanceof Mek mek) && !vehicleMode) {
+            return !CoreRulesUnits.hasHipOrLegLevelRestriction(mek);
         }
-        // Not a Mek
-        return false;
+        if (entity.isBattlefieldSupportAsset()) {
+            return false;
+        }
+        return toBackwardsElevation;
     }
 
     /**
      * {@inheritDoc}
-     * Do we add leg damage together, yes. Core p.98
+     * Do we add leg damage together, yes. Core p.99
      */
     @Override
     public boolean cumulativeLegDamage(boolean bTOLegDamage) {
@@ -131,24 +134,11 @@ public class CoreRulesMovement extends RulesMovement {
 
     /**
      * {@inheritDoc}
-     * meks can only change 1 elevation level when leg destroyed. Core p.90, p.238
+     * A Mek with hip damage or a destroyed leg can only change one level per hex moving forward (Core pp.47, 90, 238).
      */
     @Override
     public boolean reduceMaxElevation(Mek mek) {
-        if (mek.atLeastOneBadLeg()) {
-            if (mek instanceof QuadMek) {
-                 if (mek.countBadLegs() >= 3) {
-                    return true;
-                 } else {
-                     return false;
-                 }
-            }
-            return false;
-        }
-        if (mek.hasHipCrit()) {
-            return true;
-        }
-        return false;
+        return CoreRulesUnits.hasHipOrLegLevelRestriction(mek);
     }
 
     /**
@@ -180,22 +170,19 @@ public class CoreRulesMovement extends RulesMovement {
 
     /**
      * {@inheritDoc}
-     *
-     * Core rules p.114
+     * The target Mek dodges "one hex directly forward or backward", but the hex the displacing Mek is coming from "is
+     * presumed to be occupied", and it "cannot move backward if it ran that turn" (Core p.114).
      */
     @Override
     public boolean isDominoMoveLegal(final int direction, final Entity entity, final MovePath step,
           boolean forwards) {
+        // The intruder comes from the hex opposite its direction of travel
+        int towardsIntruder = (direction + 3) % 6;
         if (forwards) {
-            if ((step.isMoveLegal() && direction != entity.getFacing())) {
-                return true;
-            }
-        } else {
-            if ((step.isMoveLegal() && direction != ((entity.getFacing()+3) % 6) && entity.moved == EntityMovementType.MOVE_WALK)) {
-                return true;
-            }
+            return step.isMoveLegal() && (entity.getFacing() != towardsIntruder);
         }
-        return false;
+        boolean ran = (entity.moved == EntityMovementType.MOVE_RUN) || (entity.moved == EntityMovementType.MOVE_SPRINT);
+        return step.isMoveLegal() && (((entity.getFacing() + 3) % 6) != towardsIntruder) && !ran;
     }
 
     /**
@@ -207,77 +194,74 @@ public class CoreRulesMovement extends RulesMovement {
 
     /**
      * {@inheritDoc}
-     * Height is minus the height of the unit landed on, Core rules p.116
+     * The damage multiplier is "the number of levels fallen, minus the target's height; minimum result of 1" (Core
+     * p.116). A standing Mek is 2 levels tall and a prone one 1 (Core p.57), one more than MegaMek's height.
      */
     @Override
-    public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) { return fallElevation - hitHeight; }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Clear hexes first, then randomly choose. Core p.116, 114
-     */
-    @Nullable
-    @Override
-    public Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
-          int range) {
-        ArrayList<Coords> hexCoordsArray = new ArrayList<>();
-        ArrayList<Coords> hexAlternateArray = new ArrayList<>();
-        for (int checkDirection = 0; checkDirection < 6; checkDirection++) {
-            Coords dest = src.translated(checkDirection, range);
-            if (Compute.isValidDisplacement(game, entityId, src, dest) && (Compute.stackingViolation(game, game.getEntity(entityId), dest, null,
-                  game.getEntity(entityId).climbMode(), false) == null)) {
-                // No other units there and a valid displacement
-                hexCoordsArray.add(dest);
-            }
-            if (Compute.isValidDisplacement(game, entityId, src, dest)
-                  && (Compute.stackingViolation(game, game.getEntity(entityId), dest, null,
-                  game.getEntity(entityId).climbMode(), false) != null)) {
-                // Valid displacement, but other units present
-                hexAlternateArray.add(dest);
-            }
-        }
-        // If we have a hex without something in it, randomly pick one
-        if (!hexCoordsArray.isEmpty()) {
-            int randomHex = Compute.randomInt(hexCoordsArray.size());
-            return hexCoordsArray.get(randomHex);
-        }
-        // I guess no valid hexes without units in them. Ok, pick one with something in it
-        if (!hexAlternateArray.isEmpty()) {
-            int randomHex = Compute.randomInt(hexAlternateArray.size());
-            return hexAlternateArray.get(randomHex);
-        }
-        // Uh oh, no valid hexes to go into, this is bad
-        return null;
+    public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) {
+        return Math.max(1, fallElevation - (hitHeight + 1));
     }
 
     /**
      * {@inheritDoc}
-     *
-     * Returns the higher of the current hex the attacker is in, or the defender hex
-     * Core p.79
+     * A faller that misses "lands in an adjacent hex as close as possible to the hex from which it fell"; the unit
+     * fallen on is "displaced to a random neighboring legal hex". Ties are random, "but empty hexes must be prioritized
+     * over occupied hexes" (Core p.116). Off the board, where the mission allows displacement there (Core p.114), is
+     * only its last resort.
+     */
+    @Nullable
+    @Override
+    public Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
+          int range, boolean fallerMissed) {
+        Entity entity = game.getEntity(entityId);
+        if (entity == null) {
+            return null;
+        }
+        Coords fellFrom = src.translated((direction + 3) % 6, range);
+        List<Coords> legalHexes = new ArrayList<>();
+        List<Coords> offBoardHexes = new ArrayList<>();
+        for (int checkDirection = 0; checkDirection < 6; checkDirection++) {
+            Coords dest = src.translated(checkDirection, range);
+            if (Compute.isValidDisplacement(game, entityId, src, dest) && !(fallerMissed && dest.equals(fellFrom))) {
+                // A faller that missed lands "in an adjacent hex", which an off-board hex is not
+                boolean offBoard = fallerMissed && !game.getBoard(entity.getBoardId()).contains(dest);
+                (offBoard ? offBoardHexes : legalHexes).add(dest);
+            }
+        }
+        if (legalHexes.isEmpty()) {
+            legalHexes = offBoardHexes;
+        }
+        List<Coords> candidates = legalHexes;
+        if (fallerMissed && !legalHexes.isEmpty()) {
+            int closest = legalHexes.stream().mapToInt(hex -> hex.distance(fellFrom)).min().getAsInt();
+            legalHexes.removeIf(hex -> hex.distance(fellFrom) > closest);
+            List<Coords> emptyHexes = legalHexes.stream()
+                  .filter(hex -> game.getEntitiesVector(hex, entity.getBoardId()).isEmpty())
+                  .toList();
+            candidates = emptyHexes.isEmpty() ? legalHexes : emptyHexes;
+        }
+        return candidates.isEmpty() ? null : candidates.get(Compute.randomInt(candidates.size()));
+    }
+
+    /**
+     * {@inheritDoc}
+     * Until the DFA resolves, "the attacker's level is the level of the target's hex or the attacker's hex (whichever is
+     * higher), plus the target's unit height", 2 levels for a standing Mek and 1 for a prone one (Core pp.57, 79), one
+     * more than MegaMek's height. Without a target the attacker lands as an ordinary jump (Core p.80).
      */
     @Override
-    public int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step) {
-        int elevation;
-
-        int dfaTargetElevation = game.getEntity(targetId).getElevation();
-        int dfaTargetHexElevation =
-              game.getBoard(game.getEntity(attackerId).getBoardId()).getHex(game.getEntity(targetId).getPosition()).getLevel();
-        dfaTargetElevation += dfaTargetHexElevation + game.getEntity(targetId).getHeight();
-        // step includes +1 elevation for jumping
-        int dfaEntityElevation = step.getElevation();
-        int dfaEntityHexElevation =
-              game.getBoard(game.getEntity(attackerId).getBoardId()).getHex(game.getEntity(attackerId).getPosition()).getLevel();
-        dfaEntityElevation += dfaEntityHexElevation;
-
-        if (dfaEntityElevation <= dfaTargetElevation) {
-            // The target elevation total is higher than the attacker. Use the higher value, modified for terrain
-            return (dfaTargetElevation - dfaEntityHexElevation);
-        } else {
-            // The attacking entity elevation is higher than the target needs to be
-            return (dfaEntityElevation - dfaEntityHexElevation);
+    public int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step, Coords attackHex) {
+        Entity attacker = game.getEntity(attackerId);
+        Entity target = game.getEntity(targetId);
+        if ((attacker == null) || (target == null)) {
+            return step.getElevation();
         }
+        Board board = game.getBoard(attacker.getBoardId());
+        int attackerHexLevel = board.getHex(attackHex).getLevel();
+        // A target standing on a roof or bridge stands at that level
+        int targetHexLevel = board.getHex(target.getPosition()).getLevel() + Math.max(0, target.getElevation());
+        int attackerLevel = Math.max(attackerHexLevel, targetHexLevel) + target.getHeight() + 1;
+        return attackerLevel - attackerHexLevel;
     }
 
     /**

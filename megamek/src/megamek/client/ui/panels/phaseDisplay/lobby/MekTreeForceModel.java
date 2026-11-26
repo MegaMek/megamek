@@ -157,8 +157,19 @@ public class MekTreeForceModel extends DefaultTreeModel {
         return node instanceof Entity;
     }
 
+    /**
+     * Returns the row index of the child under its parent, the same index {@link #getChild(Object, int)} takes. Swing
+     * uses it to place a drop between two rows; without the top-level case every gap between top-level rows came back
+     * as "unknown".
+     */
     @Override
     public int getIndexOfChild(Object parent, Object child) {
+        if (parent == root) {
+            if (allToplevel == null) {
+                createTopLevel();
+            }
+            return allToplevel.indexOf(child);
+        }
         if (child == root || !(parent instanceof Force pnt)
               || !((child instanceof Force) || (child instanceof Entity))) {
             return -1;
@@ -166,7 +177,9 @@ public class MekTreeForceModel extends DefaultTreeModel {
         if (child instanceof Entity) {
             return pnt.entityIndex((Entity) child);
         } else {
-            return pnt.subForceIndex((Force) child);
+            // A force lists its own units first, then its sub forces
+            int subForceIndex = pnt.subForceIndex((Force) child);
+            return (subForceIndex < 0) ? -1 : (pnt.entityCount() + subForceIndex);
         }
     }
 

@@ -321,6 +321,12 @@ factions:
         # the force ids are used to distinguish different forces with the same name (e.g. multiple "Assault Lance")
         force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
 
+        # random pre-existing damage from the Pre-Existing Damage Table (FSW p.144), the same roll as the
+        # unit editor's Pre-Existing Damage button; values: none, light, moderate, heavy, or random to roll the table
+        # rolled anew each time the scenario loads, added on top of remaining: and crits: below
+        # never destroys or immobilizes the unit; only Meks, vehicles and fighters, other units are left undamaged
+        damage: moderate
+
         # pre-applied damage may assign remaining armor and internal structure values. Values
         # higher than the undamaged values of the unit are ignored. Negative values set to 0 (TODO)
         remaining:
@@ -393,6 +399,21 @@ factions:
           hits: 3
           # Optional: a portrait, relative to data/images/portraits
           portrait: Male/MechWarrior/MW_M_13.png
+          # Optional: Edge points; Edge is only spent in play when the game option edge is on (options: on: - edge)
+          edge: 3
+          # Optional: SPAs, implants and Edge triggers, by their option name (see PilotOptions / OptionsConstants)
+          # a bare name switches an ability on; name: value sets a value
+          # SPAs only work in play when the game option pilot_advantages is on (options: on: - pilot_advantages)
+          # an unknown name stops the scenario from loading
+          abilities:
+            - dodge_maneuver
+            - weapon_specialist: Medium Laser
+            - edge_when_tac: false              # this pilot will not spend Edge on a TAC
+
+        # Optional: this unit is its force's commander; default: false
+        commander: true
+        # Optional, Meks and fighters: let the pilot eject automatically; default: the auto-eject client setting
+        autoeject: false
 
     # Carryable objects. These currently have no real owner, but if they are not pre-deployed, the present
     # player will deploy them. When pre-deployed (at: [ x, y ]), the owner is currently irrelevant.

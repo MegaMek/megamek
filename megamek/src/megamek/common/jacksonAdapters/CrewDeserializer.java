@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,11 +34,14 @@
 package megamek.common.jacksonAdapters;
 
 import java.io.File;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import megamek.common.icons.Portrait;
+import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
-import megamek.common.icons.Portrait;
 
 /**
  * This class parses the Crew from a YAML (scenario) file. This requires the entity's base crew as input, therefore it's
@@ -53,6 +56,8 @@ public class CrewDeserializer {
     private static final String NAME = "name";
     private static final String CALLSIGN = "callsign";
     private static final String PORTRAIT = "portrait";
+    private static final String EDGE = "edge";
+    private static final String ABILITIES = "abilities";
 
     public static void parseCrew(JsonNode entityNode, Entity entity) {
         if (entityNode.has(CREW)) {
@@ -67,6 +72,8 @@ public class CrewDeserializer {
             assignName(crew, crewNode);
             assignCallsign(crew, crewNode);
             assignPortrait(crew, crewNode);
+            assignAbilities(crew, crewNode);
+            assignEdge(crew, crewNode);
         }
     }
 
@@ -116,6 +123,80 @@ public class CrewDeserializer {
         if (crewNode.has(PORTRAIT)) {
             String portraitPath = crewNode.get(PORTRAIT).textValue();
             crew.setPortrait(new Portrait(new File(portraitPath)), 0);
+        }
+    }
+
+    /**
+     * Sets the crew's Edge points from {@code edge: 3}. Edge is only spent in play when the game option {@code edge} is
+     * on.
+     */
+    private static void assignEdge(Crew crew, JsonNode crewNode) {
+        if (crewNode.has(EDGE)) {
+            JsonNode edgeNode = crewNode.get(EDGE);
+            if (!edgeNode.canConvertToInt() || (edgeNode.asInt() < 0)) {
+                throw new IllegalArgumentException("Invalid edge value " + edgeNode.asText());
+            }
+            crew.getOptions().getOption(OptionsConstants.EDGE).setValue(edgeNode.asInt());
+        }
+    }
+
+    /**
+     * Sets pilot options by their option name, from a list under {@code abilities:}. A bare name switches an on/off
+     * ability on ({@code - dodge_maneuver}); a name with a value sets that value ({@code - weapon_specialist: Medium
+     * Laser}, {@code - edge_when_tac: false}). This covers SPAs, implants and Edge triggers alike.
+     *
+     * @throws IllegalArgumentException for an unknown option name or a value of the wrong kind
+     */
+    private static void assignAbilities(Crew crew, JsonNode crewNode) {
+        if (!crewNode.has(ABILITIES)) {
+            return;
+        }
+        JsonNode abilitiesNode = crewNode.get(ABILITIES);
+        if (!abilitiesNode.isArray()) {
+            throw new IllegalArgumentException("abilities must be a list (use dashes)");
+        }
+        for (JsonNode abilityNode : abilitiesNode) {
+            if (abilityNode.isTextual()) {
+                IOption option = findOption(crew, abilityNode.textValue());
+                if (option.getType() != IOption.BOOLEAN) {
+                    throw new IllegalArgumentException("Ability " + option.getName()
+                          + " needs a value, as in " + option.getName() + ": <value>");
+                }
+                option.setValue(true);
+            } else if (abilityNode.isObject()) {
+                for (Map.Entry<String, JsonNode> entry : abilityNode.properties()) {
+                    setOptionValue(findOption(crew, entry.getKey()), entry.getValue());
+                }
+            } else {
+                throw new IllegalArgumentException("Invalid ability entry " + abilityNode);
+            }
+        }
+    }
+
+    private static IOption findOption(Crew crew, String optionName) {
+        IOption option = crew.getOptions().getOption(optionName);
+        if (option == null) {
+            throw new IllegalArgumentException("Unknown ability " + optionName);
+        }
+        return option;
+    }
+
+    private static void setOptionValue(IOption option, JsonNode valueNode) {
+        switch (option.getType()) {
+            case IOption.BOOLEAN -> {
+                if (!valueNode.isBoolean()) {
+                    throw new IllegalArgumentException("Ability " + option.getName() + " takes true or false");
+                }
+                option.setValue(valueNode.booleanValue());
+            }
+            case IOption.INTEGER -> {
+                if (!valueNode.canConvertToInt()) {
+                    throw new IllegalArgumentException("Ability " + option.getName() + " takes a whole number");
+                }
+                option.setValue(valueNode.asInt());
+            }
+            case IOption.STRING, IOption.CHOICE -> option.setValue(valueNode.asText());
+            default -> throw new IllegalArgumentException("Ability " + option.getName() + " cannot be set here");
         }
     }
 }

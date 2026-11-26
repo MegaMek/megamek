@@ -217,6 +217,9 @@ public class UnitOrderCommand extends ClientServerCommand {
         if ((owner == null) || !owner.isBot()) {
             return Messages.getString("UnitOrder.cmd.notBot", entity.getDisplayName());
         }
+        if (!OrderEligibility.takesUnitOrders(gameManager.getGame(), owner)) {
+            return Messages.getString("UnitOrder.cmd.notCaspar", entity.getDisplayName());
+        }
         if (!OrderEligibility.isOrderableKind(entity)) {
             return Messages.getString("UnitOrder.cmd.notOrderable", entity.getDisplayName());
         }

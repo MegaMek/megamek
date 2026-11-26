@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -58,7 +58,7 @@ public class UnderConstructionPanel extends JPanel {
 
         JPanel symbolPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel symbolLabel = new JLabel(sign);
-        symbolLabel.setForeground(GUIPreferences.getInstance().getCautionColor());
+        symbolLabel.setForeground(GUIPreferences.getInstance().getCautionColorForTheme());
         symbolPanel.add(symbolLabel);
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));

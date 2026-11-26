@@ -314,6 +314,19 @@ public class Faction2 {
         return (logoByYear == null) ? legacyLogo : logoByYear.getValue();
     }
 
+    /**
+     * Returns {@code true} when the faction names a {@link #getLegacyLogo(int) legacy logo} but no
+     * {@link #getIcon(int) icon}. MegaMek only shows icons, so such a faction, typically a custom one written for
+     * MekHQ, gets the generic logo instead of its own.
+     *
+     * @return {@code true} if the faction has a legacy logo and no icon
+     */
+    public boolean hasLegacyLogoWithoutIcon() {
+        boolean hasIcon = ((icon != null) && !icon.isBlank()) || !iconChanges.isEmpty();
+        boolean hasLegacyLogo = ((legacyLogo != null) && !legacyLogo.isBlank()) || !legacyLogoChanges.isEmpty();
+        return hasLegacyLogo && !hasIcon;
+    }
+
     public int[] getEraMods() {
         return eraMods;
     }

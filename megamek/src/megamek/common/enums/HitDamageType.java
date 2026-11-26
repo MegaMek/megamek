@@ -47,5 +47,11 @@ public enum HitDamageType {
     DAMAGE_IGNORES_DMG_REDUCTION,
     DAMAGE_AX,
     DAMAGE_PHYSICAL_NONATTACK,
-    DAMAGE_HEAT;
+    DAMAGE_HEAT,
+    /** A taser scoring a conventional infantry casualty or removing a full pip of special armor. */
+    DAMAGE_TASER;
+
+    public boolean ignoresArmorDamageReduction() {
+        return this == DAMAGE_IGNORES_DMG_REDUCTION || this == DAMAGE_TASER;
+    }
 }

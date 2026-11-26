@@ -43,6 +43,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.logging.MMLogger;
 
@@ -153,6 +154,11 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
         }
         WeaponMounted weapon = candidates.get(Compute.randomInt(candidates.size()));
         weapon.setHit(true);
+        // An autocannon can ignore its first critical hit, whatever unit mounts it (Core pp.92, 183)
+        Game.rulesManager.getRulesWeapons().setACHit(null, weapon, reports, building.getId());
+        if (!weapon.isHit()) {
+            return;
+        }
         Report report = publicReport(3840, 1);
         report.add(weapon.getDesc());
         reports.add(report);

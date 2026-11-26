@@ -276,6 +276,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     protected AimedShotHandler ash;
 
+    /**
+     * Set while the right-click menu picks the target, so {@link #showAimWindow()} leaves the aim window closed. The
+     * window would take focus and close the menu on some window managers (#9472).
+     */
+    private boolean isAimWindowSuppressed = false;
+
     protected boolean isStrafing = false;
 
     protected int phaseInternalBombs = 0;
@@ -618,6 +624,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (GUIP.getAutoSelectNextUnit()) {
             selectEntity(clientgui.getClient().getFirstEntityNum());
         }
+        logger.info("[FiringTurn] Turn begun; {}", describeTurnState());
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -1076,6 +1083,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (checkNags()) {
             return;
         }
+        logger.info("[FiringTurn] Sending {} declared action(s) and ending the turn; {}",
+              attacks.size(), describeTurnState());
 
         // stop further input (hopefully)
         disableButtons();
@@ -1687,7 +1696,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        addAttack(new SpotAction(currentEntity, target.getId()));
+        addAttack(new SpotAction(currentEntity, target));
     }
 
     /**
@@ -1859,6 +1868,51 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         ash.setAimingMode();
         updateTarget();
+        showAimWindow();
+    }
+
+    /**
+     * Targets something without opening the aim window. Used by the right-click menu, which picks the only enemy in
+     * the clicked hex while it is being built: the aim window would take focus and close the menu on some window
+     * managers. Choosing the menu's Target item still opens the window, after the menu has closed. An aim window left
+     * open for a different, earlier target is closed, so its chosen location cannot carry over to the new target.
+     *
+     * @param targetable the target to pick
+     */
+    public void targetWithoutAimWindow(Targetable targetable) {
+        Targetable previousTarget = target;
+        isAimWindowSuppressed = true;
+        try {
+            target(targetable);
+        } finally {
+            isAimWindowSuppressed = false;
+        }
+        boolean isNewTarget = isDifferentTarget(previousTarget, target);
+        if (isNewTarget) {
+            ash.closeDialog();
+        }
+        logger.info("[AimWindow] Right-click menu targeted {}; aim window not opened; earlier aim window closed: {}",
+              (target == null) ? "nothing" : target.getDisplayName(), isNewTarget);
+    }
+
+    private static boolean isDifferentTarget(Targetable previousTarget, Targetable currentTarget) {
+        if ((previousTarget == null) || (currentTarget == null)) {
+            return previousTarget != currentTarget;
+        }
+        return (previousTarget.getTargetType() != currentTarget.getTargetType())
+              || (previousTarget.getId() != currentTarget.getId());
+    }
+
+    /**
+     * Opens the aim window for the current target, unless the right-click menu is picking the target (see
+     * {@link #targetWithoutAimWindow(Targetable)}).
+     */
+    protected void showAimWindow() {
+        if (isAimWindowSuppressed) {
+            return;
+        }
+        logger.info("[AimWindow] Aim window requested for {} (aiming mode {})",
+              (target == null) ? "nothing" : target.getDisplayName(), ash.getAimingMode());
         ash.showDialog();
     }
 
@@ -2102,6 +2156,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     @Override
     public void hexSelected(BoardViewEvent event) {
         if (isIgnoringEvents()) {
+            logIgnoredBoardClick("Hex click");
             return;
         }
 
@@ -2150,7 +2205,58 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                     target(target);
                 }
             }
+        } else {
+            logIgnoredBoardClick("Hex click");
         }
+    }
+
+    /**
+     * Logs a board click that this display drops although the firing phase is running: either the display is
+     * muted, or it is this player's turn and no unit is selected. Both leave the player clicking with nothing
+     * happening and no reason shown (issue #9650), so the log has to say which it was.
+     *
+     * @param clickDescription what was clicked, for the log
+     */
+    private void logIgnoredBoardClick(String clickDescription) {
+        if (!game.getPhase().isFiring()) {
+            return;
+        }
+        if (isIgnoringEvents()) {
+            logger.info("[FiringTurn] {} ignored - the display is muted; {}", clickDescription, describeTurnState());
+        } else if (isMyTurn() && (currentEntity() == null)) {
+            logger.info("[FiringTurn] {} ignored - it is this player's turn but no unit is selected; {}",
+                  clickDescription, describeTurnState());
+        }
+    }
+
+    /**
+     * Logs a click on one of this player's own units that cannot take the current turn, so that a unit the
+     * player expects to act with and cannot select leaves a reason in the log.
+     *
+     * @param entity the clicked unit
+     */
+    private void logUnselectableOwnUnit(Entity entity) {
+        if (entity.getOwnerId() != clientgui.getClient().getLocalPlayerNumber()) {
+            return;
+        }
+        logger.info("[FiringTurn] Click on {} ignored - it cannot take the current turn (done: {}, selectable: {}); {}",
+              entity.getDisplayName(), entity.isDone(), entity.isSelectableThisTurn(), describeTurnState());
+    }
+
+    /**
+     * @return the turn as this client sees it, for the log: whose turn it is, whether the client counts it as its
+     *       own, which unit is selected and whether the display is muted
+     */
+    private String describeTurnState() {
+        GameTurn turn = game.getTurn();
+        Entity selectedEntity = currentEntity();
+        return String.format("turn index %d, turn player %s, local player %d, my turn %b, selected unit %s, muted %b",
+              game.getTurnIndex(),
+              (turn == null) ? "none" : String.valueOf(turn.playerId()),
+              clientgui.getClient().getLocalPlayerNumber(),
+              isMyTurn(),
+              (selectedEntity == null) ? "none" : selectedEntity.getDisplayName(),
+              isIgnoringEvents());
     }
 
     //
@@ -2177,6 +2283,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         if (isIgnoringEvents() || !game.getPhase().isFiring()) {
+            if (game.getPhase().isFiring()) {
+                logger.info("[FiringTurn] Turn change not handled - the display is muted; {}", describeTurnState());
+            }
             return;
         }
 
@@ -2213,8 +2322,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             if (needsUnitSelectedForTurn()) {
                 beginMyTurn();
                 clientgui.bingMyTurn();
+            } else {
+                logger.info("[FiringTurn] Turn change kept the current selection - turn-start setup not run; {}",
+                      describeTurnState());
             }
         } else {
+            if (currentEntity != Entity.NONE) {
+                logger.info("[FiringTurn] Turn change ends this player's turn with a unit still selected; {}",
+                      describeTurnState());
+            }
             endMyTurn();
             clientgui.bingOthersTurn();
         }
@@ -2769,6 +2885,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     @Override
     public void unitSelected(BoardViewEvent event) {
         if (isIgnoringEvents()) {
+            logIgnoredBoardClick("Unit click");
             return;
         }
 
@@ -2777,6 +2894,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             if (isMyTurn()) {
                 if (clientgui.getClient().getMyTurn().isValidEntity(entity, game)) {
                     selectEntity(entity.getId());
+                } else {
+                    logUnselectableOwnUnit(entity);
                 }
             } else {
                 clientgui.maybeShowUnitDisplay();

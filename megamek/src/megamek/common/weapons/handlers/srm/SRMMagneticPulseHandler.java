@@ -59,8 +59,6 @@ public class SRMMagneticPulseHandler extends SRMHandler {
     /** Warheads needed per +1 heat for SRM-class launchers (TO:AUE p.182). */
     private static final int SRM_HEAT_DIVISOR = MagneticPulseState.SRM_HEAT_DIVISOR;
 
-    private boolean effectApplied = false;
-
     public SRMMagneticPulseHandler(ToHitData toHit, WeaponAttackAction weaponAttackAction, Game game,
           TWGameManager gameManager) throws EntityLoadingException {
         super(toHit, weaponAttackAction, game, gameManager);
@@ -75,34 +73,6 @@ public class SRMMagneticPulseHandler extends SRMHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
-        // The damage loop calls this once per cluster with the full hit count first; apply the
-        // pulse effect a single time using that total. MP missiles deal no damage, so the normal
-        // damage application is skipped entirely.
-        if (effectApplied) {
-            return;
-        }
-        effectApplied = true;
-
-        // MP missiles have no effect against conventional infantry (TO:AUE p.182).
-        if (entityTarget.isConventionalInfantry()) {
-            Report report = new Report(3348);
-            report.subject = subjectId;
-            report.indent(2);
-            vPhaseReport.addElement(report);
-            return;
-        }
-
-        int warheads = Math.max(0, hits - Math.max(0, bldgAbsorbs));
-        boolean wasAffected = entityTarget.getMagneticPulseRounds() > 0;
-        entityTarget.applyMagneticPulse(warheads, SRM_HEAT_DIVISOR);
-
-        Report report = new Report(3344);
-        report.subject = subjectId;
-        report.indent(2);
-        vPhaseReport.addElement(report);
-
-        if (!wasAffected && (entityTarget.getMagneticPulseRounds() > 0)) {
-            gameManager.sendMagneticPulseToast(entityTarget, false, true);
-        }
+        handleMagneticPulseGroup(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs, SRM_HEAT_DIVISOR);
     }
 }

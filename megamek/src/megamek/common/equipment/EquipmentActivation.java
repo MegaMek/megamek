@@ -276,4 +276,15 @@ public final class EquipmentActivation {
         }
         return false;
     }
+
+    /** The probe supplying the unit's range and scan effects. Only one probe operates at a time (Core p.197). */
+    public static @Nullable MiscMounted activeProbe(Entity unit) {
+        for (MiscMounted mount : unit.getMisc()) {
+            if (mount.getType() != null && mount.getType().hasFlag(MiscType.F_BAP)
+                  && !mount.isInoperable() && !mount.isModeTurnedOff()) {
+                return mount;
+            }
+        }
+        return null;
+    }
 }

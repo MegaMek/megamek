@@ -552,7 +552,7 @@ public class BotConfigDialog extends AbstractButtonDialog
 
         removeTargetButton.setMnemonic(KeyEvent.VK_R);
         removeTargetButton.setFont(UIUtil.getDefaultFont());
-        removeTargetButton.setForeground(GUIPreferences.getInstance().getWarningColor());
+        removeTargetButton.setForeground(GUIPreferences.getInstance().getWarningColorForTheme());
         removeTargetButton.addActionListener(this);
 
         JPanel removeButtonPanel = new FixedXPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -820,8 +820,10 @@ public class BotConfigDialog extends AbstractButtonDialog
         savePrincessProperties();
 
         if (client != null) {
-            String msg = client.getLocalPlayer() + " changed settings for bot " + getBotName();
-            client.sendServerChat(Player.PLAYER_NONE, msg);
+            String aiTypeName = Messages.getString("BotConfigDialog.aiType." + getSelectedAIType().name());
+            String message = Messages.getString("BotConfigDialog.settingsChanged",
+                  client.getLocalPlayer(), getBotName(), aiTypeName);
+            client.sendServerChat(Player.PLAYER_NONE, message);
         }
     }
 

@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ResourceBundle;
 
 import megamek.codeUtilities.MathUtility;
+import megamek.release.ReleaseChannel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,28 @@ class VersionTest {
         int parsed = MathUtility.parseInt(value, -1);
         assertNotEquals(-1, parsed, "Nonrepresentable packaged version component: " + value);
         return parsed;
+    }
+
+    @Test
+    void buildChannelReadsPackagedProperties() {
+        ResourceBundle packaged = ResourceBundle.getBundle("Version");
+        ReleaseChannel expected = packaged.containsKey("channel")
+              ? ReleaseChannel.fromKey(packaged.getString("channel")) : null;
+        assertEquals(expected, Version.getBuildChannel());
+        assertEquals(expected == ReleaseChannel.CORE, Version.isCoreBuild());
+    }
+
+    @Test
+    void parseBuildChannelAcceptsStampedChannels() {
+        assertEquals(ReleaseChannel.CORE, Version.parseBuildChannel("core"));
+        assertEquals(ReleaseChannel.EXPERIMENTAL, Version.parseBuildChannel(" Experimental "));
+    }
+
+    @Test
+    void parseBuildChannelTreatsUnstampedOrUnknownAsDevelopmentBuild() {
+        assertNull(Version.parseBuildChannel(null));
+        assertNull(Version.parseBuildChannel(""));
+        assertNull(Version.parseBuildChannel("nightly"));
     }
 
     @BeforeEach
@@ -235,6 +258,76 @@ class VersionTest {
     @Test
     void pointReleaseIsNotEqualToTheReleaseItBuildsOn() {
         assertNotEquals(versionWithoutExtra("0.51.0.1"), versionWithoutExtra("0.51.0"));
+    }
+
+    @Test
+    void differentRevisionsAreTheSameRelease() {
+        assertTrue(new Version("0.51.01.2").isSameRelease(new Version("0.51.01.1")));
+        assertTrue(new Version("0.51.01.1").isSameRelease(new Version("0.51.01.2")));
+    }
+
+    @Test
+    void revisionAndNoRevisionAreTheSameRelease() {
+        assertTrue(new Version("0.51.01.3").isSameRelease(new Version("0.51.01")));
+        assertTrue(new Version("0.51.01").isSameRelease(new Version("0.51.01.3")));
+    }
+
+    @Test
+    void extraInformationDoesNotChangeTheRelease() {
+        assertTrue(new Version("0.51.01.1").isSameRelease(new Version("0.51.01.1-nightly-abc1234")));
+    }
+
+    @Test
+    void differentPatchIsNotTheSameRelease() {
+        assertFalse(new Version("0.51.02").isSameRelease(new Version("0.51.01")));
+        assertFalse(new Version("0.51.01.1").isSameRelease(new Version("0.51.02.1")));
+    }
+
+    @Test
+    void differentMinorIsNotTheSameRelease() {
+        assertFalse(new Version("0.52.01").isSameRelease(new Version("0.51.01")));
+    }
+
+    @Test
+    void differentMajorIsNotTheSameRelease() {
+        assertFalse(new Version("1.51.01").isSameRelease(new Version("0.51.01")));
+    }
+
+    @Test
+    void saveLoadsIntoTheSameRevision() {
+        assertTrue(new Version("0.51.01.1").canLoadSaveFrom(new Version("0.51.01.1")));
+    }
+
+    @Test
+    void saveLoadsIntoALaterRevision() {
+        assertTrue(new Version("0.51.01.6").canLoadSaveFrom(new Version("0.51.01.1")));
+    }
+
+    @Test
+    void saveWithoutARevisionLoadsIntoAPointRelease() {
+        assertTrue(new Version("0.51.01.3").canLoadSaveFrom(new Version("0.51.01")));
+    }
+
+    @Test
+    void saveDoesNotLoadIntoAnOlderRevision() {
+        assertFalse(new Version("0.51.01.1").canLoadSaveFrom(new Version("0.51.01.6")));
+    }
+
+    @Test
+    void pointReleaseSaveDoesNotLoadIntoTheReleaseItBuildsOn() {
+        assertFalse(new Version("0.51.01").canLoadSaveFrom(new Version("0.51.01.1")));
+    }
+
+    @Test
+    void nightlySaveLoadsIntoTheSameRevision() {
+        assertTrue(new Version("0.51.01.1").canLoadSaveFrom(new Version("0.51.01.1-nightly-abc1234")));
+    }
+
+    @Test
+    void saveDoesNotLoadIntoADifferentRelease() {
+        assertFalse(new Version("0.51.02").canLoadSaveFrom(new Version("0.51.01")));
+        assertFalse(new Version("0.51.01").canLoadSaveFrom(new Version("0.51.02")));
+        assertFalse(new Version("0.52.01").canLoadSaveFrom(new Version("0.51.01")));
     }
 
     @Test

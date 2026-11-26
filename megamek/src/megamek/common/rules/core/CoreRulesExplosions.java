@@ -35,7 +35,6 @@ package megamek.common.rules.core;
 
 import java.util.Vector;
 
-import megamek.common.CriticalSlot;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
@@ -45,13 +44,13 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
-import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
 
 public class CoreRulesExplosions extends RulesExplosions {
     /**
      * {@inheritDoc}
-     * Damage reduction for CASE, CASE II, explosions
+     * Internal explosion damage to the internal structure is capped at 20, 10 with CASE and 1 with CASE II
+     * (Core pp.96-97).
      */
     @Override
     public int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
@@ -71,31 +70,24 @@ public class CoreRulesExplosions extends RulesExplosions {
             if (damage <= cap) {
                 return damage;
             }
-
-            report = new Report(caseIId ? 6134 : cased ? 6133 : 6132);
-            report.subject = mek.getId();
-            report.indent(3);
-            report.add(damage);
-            reportVec.addElement(report);
+            reportCap(mek, damage, caseIId ? 6134 : cased ? 6133 : 6132, reportVec);
 
             // Torso locations damage out the rear armor
             boolean torso = mek.locationIsTorso(loc);
 
-            if (mek.getInternal(loc) > cap) { // Location survives, blow out armor
-                int armorDamage = damage - cap;
-                int armorDamageCap = 10;
-                if ((caseIId || cased) &&
-                      (mek.getArmor(loc, torso) > armorDamage ||
-                            mek.getArmor(loc,torso) > armorDamageCap)) {
-                    if (armorDamage > armorDamageCap) {
-                        armorDamage = armorDamageCap;
-                    }
-                    if (mek.getArmor(loc, torso) < armorDamage) {
-                        armorDamage = mek.getArmor(loc, torso);
-                    }
+            // With CASE or CASE II, a location that survives takes up to 10 points to its armor (Core pp.96-97).
+            // Without CASE the armor is vented where the last point lands, see ventCappedExplosion. Whether the
+            // location survives is judged after composite or reinforced structure modifies the capped damage, as
+            // modifiers apply "after any damage cap is applied" (Core p.96; Core p.205).
+            boolean survives = mek.hasCompositeStructure(loc) ? (mek.getInternal(loc) > cap * 2)
+                  : mek.hasReinforcedStructure(loc) ? (mek.getReinforcedStructureCapacity(loc) > cap)
+                  : (mek.getInternal(loc) > cap);
+            if ((caseIId || cased) && survives) {
+                int armorDamage = Math.min(damage - cap, 10);
+                if (mek.getArmor(loc, torso) > armorDamage) {
                     mek.setArmor(mek.getArmor(loc, torso) - armorDamage, loc, torso);
                 } else {
-                    armorDamage = mek.getArmor(loc, torso);
+                    armorDamage = Math.max(0, mek.getArmor(loc, torso));
                     mek.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
                 }
 
@@ -109,6 +101,43 @@ public class CoreRulesExplosions extends RulesExplosions {
             }
 
             return cap;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Core writes the rotary autocannon without the Total Warfare explosion when hit while jammed (Core p.183).
+     */
+    @Override
+    public boolean jammedRotaryAutocannonExplodes() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * If an explosion was over the 20-point cap, the location where its last point is applied, if not destroyed by
+     * it, loses all its armor; a torso loses only its rear armor (Core p.96).
+     */
+    @Override
+    public void ventCappedExplosion(Mek mek, HitData hit, Vector<Report> reportVec) {
+        int loc = hit.getLocation();
+        boolean torso = mek.locationIsTorso(loc);
+        int armorDamage = Math.max(0, mek.getArmor(loc, torso));
+        mek.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
+        mek.damageThisPhase += armorDamage;
+        Report report = new Report(6131);
+        report.subject = mek.getId();
+        report.indent(3);
+        report.add((torso ? "Rear " : "") + mek.getLocationAbbr(loc));
+        report.add(armorDamage);
+        reportVec.addElement(report);
+    }
+
+    private static void reportCap(Entity entity, int damage, int messageId, Vector<Report> reportVec) {
+        Report report = new Report(messageId);
+        report.subject = entity.getId();
+        report.indent(3);
+        report.add(damage);
+        reportVec.addElement(report);
     }
 
     /**
@@ -186,7 +215,7 @@ public class CoreRulesExplosions extends RulesExplosions {
 
     /**
      * {@inheritDoc}
-     * CASE II reduces the crit chance for ammo explosions
+     * CASE II applies a -1 to the critical hit check for internal explosions (Core p.91, p.97)
      */
     @Override
     public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
@@ -198,49 +227,32 @@ public class CoreRulesExplosions extends RulesExplosions {
 
     /**
      * {@inheritDoc}
-     * How much damage to equipment explosions do
+     * A component explosion "does 2 points of damage, multiplied by the number of slots that item occupies" (Core p.96),
+     * for every explosive component.
      */
     @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
-        // Charged PPC capacitors when hit can cause an explosion.
-        if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
-            if (mounted.isFired()) {
-                return 0;
-            }
+        // A charged PPC capacitor explodes with its PPC for twice their combined slots (Core p.188)
+        if (mounted.holdsCapacitorCharge()) {
+            return (explodingSlots(mounted) + explodingSlots(mounted.getLinkedBy())) * 2;
         }
+        return explodingSlots(mounted) * 2;
+    }
 
-        if (mounted.getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
-            // Superheavies have compressed criticals. They only explode based on the number of Crit Slots they take
+    /** @return The critical slots the exploding equipment fills */
+    private static int explodingSlots(Mounted<?> mounted) {
+        if ((mounted.getEntity() instanceof Mek) && (mounted.getEntity().isSuperHeavy())) {
+            // Superheavy Meks have compressed criticals. They only explode based on the number of Crit Slots they take
             // up, not the base amount of crits they need. Core p.240
-            int critSlots = 0;
-            // Only do this if the weapon can cross locations
-            if (weaponType.isSpreadable()) {
-                for (int loc = 0; loc < mounted.getEntity().locations(); loc++) {
-                    for (int slot = 0; slot < mounted.getEntity().getNumberOfCriticalSlots(loc); slot++) {
-                        final CriticalSlot crit = mounted.getEntity().getCritical(loc, slot);
-                        if ((crit != null) && ((crit.getMount() == mounted) || (crit.getMount2() == mounted))) {
-                            critSlots++;
-                        }
-                    }
-                }
-            } else {
-                // We skip a bunch of extra work by doing this
-                for (int slot = 0; slot < mounted.getEntity().getNumberOfCriticalSlots(mounted.getLocation()); slot++) {
-                    final CriticalSlot crit = mounted.getEntity().getCritical(mounted.getLocation(), slot);
-                    if ((crit != null) && ((crit.getMount() == mounted) || (crit.getMount2() == mounted))) {
-                        critSlots++;
-                    }
-                }
-            }
-            return (critSlots * 2);
+            return mounted.getEntity().occupiedCriticalSlots(mounted);
         }
 
-        return mounted.getNumCriticalSlots() * 2;
+        return mounted.getNumCriticalSlots();
     }
 
     /**
      * {@inheritDoc}
-     * These are not explosive in core. return false.
+     * Unexpended pods do not cause an internal explosion (Core p.189)
      */
     @Override
     public boolean arePodsExplosive(Mounted<?> mounted) {
@@ -249,7 +261,7 @@ public class CoreRulesExplosions extends RulesExplosions {
 
     /**
     * {@inheritDoc}
-    * Explosions are reduced under Core rules.
+    * Internal explosion damage is capped (Core p.96).
     */
     @Override
     public boolean explosionsAreReduced() {

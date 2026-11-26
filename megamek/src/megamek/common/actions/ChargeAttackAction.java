@@ -302,10 +302,10 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             toHit.addModifier(+1, "attacker is spotting");
         }
         // piloting skill differential
-        if (attackingEntity.getCrew().getPiloting() != te.getCrew().getPiloting()) {
-            toHit.addModifier(Game.rulesManager.getRulesPhysical().getPilotDiffModifier(attackingEntity.getCrew().getPiloting(),
-                  te.getCrew().getPiloting(), te.isImmobile()),
-                  "piloting skill differential");
+        int pilotDiffModifier = Game.rulesManager.getRulesPhysical()
+              .getPilotDiffModifier(attackingEntity.getCrew().getPiloting(), te.getCrew().getPiloting(), te.isImmobile());
+        if (pilotDiffModifier != 0) {
+            toHit.addModifier(pilotDiffModifier, "piloting skill differential");
         }
 
         // target prone
@@ -316,7 +316,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // water partial cover?
         if ((te.height() > 0) && (te.getElevation() == -1)
               && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
-            toHit.addModifier(1, "target has partial cover");
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTargetHasPartialCover"));
         }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three

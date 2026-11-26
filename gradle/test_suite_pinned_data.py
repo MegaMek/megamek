@@ -33,6 +33,7 @@ class PinnedDataTests(unittest.TestCase):
                 with self.subTest(executable=executable):
                     command = [str(gradle), ":megamek:verifySuiteMegaMekArchive",
                                "--console=plain", "-PsuiteReleaseVersion=0.51.01",
+                               "-PsuiteReleaseChannel=experimental",
                                "-PsuiteArchiveFile=" + str(base / "not-an-archive.tar.gz"),
                                "-PsuitePythonExecutable=" + str(executable)]
                     command += ["-P" + flag + "=" + letter * 40 for flag, letter in (
@@ -45,6 +46,18 @@ class PinnedDataTests(unittest.TestCase):
                     self.assertIn(expected_detail, message)
                     if executable != Path(sys.executable):
                         self.assertIn("suitePythonExecutable", message)
+            with self.subTest(channel=None):
+                command = [str(gradle), ":megamek:verifySuiteMegaMekArchive",
+                           "--console=plain", "-PsuiteReleaseVersion=0.51.01",
+                           "-PsuiteArchiveFile=" + str(base / "not-an-archive.tar.gz"),
+                           "-PsuitePythonExecutable=" + sys.executable]
+                command += ["-P" + flag + "=" + letter * 40 for flag, letter in (
+                    ("suiteMegaMekCommit", "a"), ("suiteMegaMekLabCommit", "b"),
+                    ("suiteMekHQCommit", "c"), ("suiteMmDataCommit", "d"))]
+                result = subprocess.run(command, cwd=root, capture_output=True,
+                                        text=True, check=False, timeout=180)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("suiteReleaseChannel", result.stdout + result.stderr)
 
     def test_crlf_checkout_stages_exact_blobs_for_loose_files_and_all_zips(self):
         with tempfile.TemporaryDirectory() as directory:

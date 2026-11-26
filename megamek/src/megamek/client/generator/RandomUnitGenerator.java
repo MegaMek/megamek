@@ -53,6 +53,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -85,13 +86,14 @@ public class RandomUnitGenerator implements Serializable {
     private static final long serialVersionUID = 5765118329881301375L;
 
     // The RATs are stored in a hashmap of string vectors. The keys are the RAT names and the vectors just contain
-    // the unit names listed a number of times equal to the frequency
-    private final Map<String, RatEntry> rats = new HashMap<>();
+    // the unit names listed a number of times equal to the frequency. RATs are loaded on a background thread while
+    // other threads may already be iterating the map, so it must be safe for concurrent access.
+    private final Map<String, RatEntry> rats = new ConcurrentHashMap<>();
     private static RandomUnitGenerator rug;
     private static boolean interrupted = false;
     private Thread loader;
-    private boolean initialized;
-    private boolean initializing;
+    private volatile boolean initialized;
+    private volatile boolean initializing;
 
     private final ArrayList<ActionListener> listeners;
 

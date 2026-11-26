@@ -367,6 +367,9 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         // but we want them to go away anyway, as a building with CF 0 cannot stand
         final int phaseCF = bldg.hasCFIn(coords) ? bldg.getPhaseCF(coords) : 0;
 
+        // an objective inside the building is destroyed with it
+        new ObjectiveDestructionHandler(gameManager).destroyObjectivesInCollapsedHex(coords, bldg.getBoardId());
+
         // Loop through the hexes in the building, and apply
         // damage to all entities inside or on top of the building.
         Report r;

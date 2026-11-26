@@ -134,6 +134,11 @@ ext.verifySuiteArchiveShared = { String product, File archive, File copyJar = nu
     if (product == 'MekHQ') {
         args += ['--dependency-version', "megameklabVersion=${labVersion}"]
     }
+    def channel = rootProject.findProperty('suiteReleaseChannel')?.toString()
+    if (!(channel in ['core', 'experimental'])) {
+        throw new GradleException("Suite verification requires -PsuiteReleaseChannel=core or experimental; got ${channel}")
+    }
+    args += ['--channel', channel]
     if (rootProject.hasProperty('suiteArchiveFile') && product != 'MegaMek') {
         def companion = rootProject.findProperty('suiteMegaMekArchiveFile')
         if (companion == null) {

@@ -51,6 +51,9 @@ public abstract class RulesAmmo {
      */
     public abstract int armorPiercingMod(AmmoType inType);
 
+    /** Whether armor-piercing ammunition can cause a critical check on an aerospace unit. */
+    public abstract boolean armorPiercingAffectsAerospace();
+
     public void updateAmmoBVs() {
         List<EquipmentType> equipmentTypes = EquipmentType.allTypes();
         for (EquipmentType equipmentType : equipmentTypes) {
@@ -78,6 +81,14 @@ public abstract class RulesAmmo {
      * @param toHit to-hit object
      */
     public abstract void narcHomingTarget(ToHitData toHit);
+
+    /**
+     * Applies the to-hit modifier for Narc-capable missiles homing on an iNarc homing pod, where the ruleset gives
+     * iNarc a bonus of its own on top of {@link #narcHomingTarget(ToHitData)}.
+     *
+     * @param toHit to-hit object
+     */
+    public abstract void iNarcHomingTarget(ToHitData toHit);
 
     /**
      * Acid (AX) missiles reduce cluster roll.
@@ -118,6 +129,14 @@ public abstract class RulesAmmo {
      * @return true if cover is ignored
      */
     public abstract boolean semiGuidedIgnoresCover();
+
+    /**
+     * Does semi-guided indirect fire at a target designated by friendly TAG ignore the indirect fire modifier? Total
+     * Warfare ignores "indirect fire, terrain and spotter movement modifiers" (TW p.142).
+     *
+     * @return true if the indirect fire modifier is ignored
+     */
+    public abstract boolean semiGuidedIndirectIgnoresIndirectFireModifier();
 
     /**
      * Does the semi-guided impact the number of missiles.

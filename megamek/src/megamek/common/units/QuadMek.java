@@ -338,36 +338,9 @@ public class QuadMek extends Mek {
             roll.addModifier(-2, "AES bonus");
         }
 
-        boolean destroyedLegCounted = false;
         Game.rulesManager.getRulesUnits().quadPilotModForLegsDestroyed(destroyedLegs, roll);
-
-        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM)) {
-            if (!isLocationBad(loc))  {
-                // check for damaged hip actuators
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
-                    roll.addModifier(Game.rulesManager.getRulesPSR().getHipPenalty(), getLocationName(loc) + " Hip "
-                              + "Actuator destroyed");
-                    if (!gameOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                        continue;
-                    }
-                }
-                // upper leg actuators?
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
-                }
-                // lower leg actuators?
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
-                }
-                // foot actuators?
-                if (Game.rulesManager.getRulesPSR().getFootActuatorPsr()) {
-                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
-                        roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
-                    }
-                }
-            }
-        }
+        Game.rulesManager.getRulesPSR().legDamageModifiers(this, roll, gameOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));
 
         return super.addEntityBonuses(roll);
     }

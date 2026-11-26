@@ -64,23 +64,30 @@ import megamek.server.totalWarfare.TWGameManager;
 public class PPCHandler extends EnergyWeaponHandler {
     @Serial
     private static final long serialVersionUID = 5545991061428671743L;
-    private int chargedCapacitor = 0;
+    /** The capacitor was charged in an earlier turn: firing releases it, and a to-hit roll of 2 burns it out */
+    private boolean chargedCapacitor = false;
+    /** The shot adds the capacitor's 5 damage: a charged capacitor, or any in a weapon bay (TO:AUE p.149) */
+    private boolean firesCapacitorCharge = false;
 
     public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
-        // remember capacitor state and turn it off here,
-        // so a crit in the firing phase does not cause an explosion, per the
-        // rules in TO
-        if (weapon.hasChargedCapacitor() != 0) {
-            if (weapon.hasChargedCapacitor() == 2) {
-                chargedCapacitor = 2;
-                weapon.getCrossLinkedBy().setMode("Off");
-            }
-            if (weapon.hasChargedCapacitor() == 1) {
-                chargedCapacitor = 1;
-                weapon.getLinkedBy().setMode("Off");
-            }
+        chargedCapacitor = weapon.hasChargedCapacitor() == 1;
+        firesCapacitorCharge = weapon.firesCapacitorCharge();
+        // Firing releases the charge, so the capacitor holds none from the next turn on
+        if (chargedCapacitor) {
+            weapon.getLinkedBy().setMode("Off");
         }
+    }
+
+    /**
+     * A charged PPC Capacitor adds {@code 5} to the PPC's damage, and so to its Attack Value when the Attack Value is
+     * used.
+     *
+     * @return {@code 5} with a charged capacitor, otherwise {@code 0}
+     */
+    @Override
+    protected int getAttackValueBonus() {
+        return firesCapacitorCharge ? Mounted.CAPACITOR_DAMAGE_BONUS : 0;
     }
 
     /*
@@ -97,8 +104,8 @@ public class PPCHandler extends EnergyWeaponHandler {
             toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
 
-        if (chargedCapacitor != 0) {
-            toReturn += 5;
+        if (firesCapacitorCharge) {
+            toReturn += Mounted.CAPACITOR_DAMAGE_BONUS;
         }
         // during a swarm, all damage gets applied as one block to one location
         if ((attackingEntity instanceof BattleArmor)
@@ -211,9 +218,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                     rep.indent(2);
                 }
                 vPhaseReport.addAll(newReports);
-                // Deal damage to the pilot
-                vPhaseReport.addAll(gameManager.damageCrew(attackingEntity,
-                      Game.rulesManager.getRulesPilot().getExplosionPilotHits(),
+                // Feedback "will always" deal two pilot hits (TO:AR p.101); it is not an internal explosion
+                vPhaseReport.addAll(gameManager.damageCrew(attackingEntity, 2,
                       attackingEntity.getCrew().getCurrentPilotIndex()));
                 r = new Report(3185);
                 r.subject = subjectId;
@@ -223,12 +229,19 @@ public class PPCHandler extends EnergyWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        // resolve roll for charged capacitor
-        if (chargedCapacitor != 0) {
+        return false;
+    }
+
+    @Override
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
+        // The bay checks its own roll for capacitor burnout before resolving its individual weapons.
+        if (chargedCapacitor && (parentBayHandler == null)) {
             Report r = Game.rulesManager.getRulesWeapons().checkPPCCapacitor(roll.getIntValue(), attackingEntity,
                   weapon);
             if (r != null) {
                 vPhaseReport.add(r);
+                // Burnout ends the attack before it can damage the target or its building (TO:AUE p.149).
+                return true;
             }
         }
         return false;

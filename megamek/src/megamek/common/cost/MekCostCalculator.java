@@ -33,9 +33,6 @@
 
 package megamek.common.cost;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
 import megamek.common.equipment.ArmorType;
@@ -92,15 +89,14 @@ public class MekCostCalculator {
         if (mek.hasEngine()) {
             costs[i++] = (mek.getEngine().getBaseCost() * mek.getEngine().getRating() * mek.getWeight()) / 75.0;
         }
-        if (mek.getGyroType() == Mek.GYRO_XL) {
-            costs[i++] = 750000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f) * 0.5;
-        } else if (mek.getGyroType() == Mek.GYRO_COMPACT) {
-            costs[i++] = 400000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f) * 1.5;
-        } else if ((mek.getGyroType() == Mek.GYRO_HEAVY_DUTY) || (mek.getGyroType() == Mek.GYRO_SUPERHEAVY)) {
-            costs[i++] = 500000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f) * 2;
-        } else if (mek.getGyroType() == Mek.GYRO_STANDARD) {
-            costs[i++] = 300000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f);
-        }
+        int gyroCostPerTon = switch (mek.getGyroType()) {
+            case Mek.GYRO_XL -> 750000;
+            case Mek.GYRO_COMPACT -> 400000;
+            case Mek.GYRO_HEAVY_DUTY, Mek.GYRO_SUPERHEAVY -> 500000;
+            case Mek.GYRO_STANDARD -> 300000;
+            default -> 0;
+        };
+        costs[i++] = gyroCostPerTon * mek.getGyroWeight();
         double jumpBaseCost = 200;
         double jumpCost;
         // Cannot have JJs and UMUs on the same unit.
@@ -110,7 +106,11 @@ public class MekCostCalculator {
             if (mek.getJumpType() == Mek.JUMP_IMPROVED) {
                 jumpBaseCost = 500;
             }
-            jumpCost = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
+            // The TechManual cost table prices jump jets by the number installed (TM p. 278); primitive prototype jets
+            // by the Jumping MP they give (IO:AE p. 181)
+            int jumpJets = (mek.getJumpType() == Mek.JUMP_PROTOTYPE) ? mek.getOriginalJumpMP(true)
+                  : mek.getJumpJetCount();
+            jumpCost = Math.pow(jumpJets, 2.0) * mek.getWeight() * jumpBaseCost;
         }
         if (mek.getOriginalMechanicalJumpBoosterMP() > 0) {
             jumpCost += Math.pow(mek.getOriginalMechanicalJumpBoosterMP(), 2.0) * mek.getWeight() * 150;
@@ -183,15 +183,13 @@ public class MekCostCalculator {
             weightMultiplier = 1 + (mek.getWeight() / 400f);
         }
         costs[i] = -weightMultiplier; // negative just marks it as multiplier
-        double roundedCost = BigDecimal.valueOf(cost * weightMultiplier)
-              .setScale(2, RoundingMode.UP)
-              .doubleValue();
+        cost = Math.round(cost * weightMultiplier);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators",
                                  "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
                                  "Armored System Components", "Armor", "Equipment",
                                  "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, roundedCost, costs);
-        return roundedCost;
+        CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, cost, costs);
+        return cost;
     }
 
     private static int getStructureCost(Mek mek) {

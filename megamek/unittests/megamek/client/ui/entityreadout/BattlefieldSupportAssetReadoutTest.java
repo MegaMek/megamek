@@ -46,6 +46,8 @@ import megamek.common.battlefieldSupport.BFSSpecial;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.battlefieldSupport.BattlefieldSupportAssetData;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.EntityMovementMode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -90,6 +92,27 @@ class BattlefieldSupportAssetReadoutTest {
         assertTrue(plainText.contains("APC1, IF2"));
         assertTrue(plainText.contains("23(27)"));
         assertTrue(plainText.contains("460(540)"));
+    }
+
+    @Test
+    void fluffTextFollowsTheShowUnitFluffTextPreference() {
+        ClientPreferences preferences = PreferenceManager.getClientPreferences();
+        boolean original = preferences.getShowUnitFluffText();
+        try {
+            BattlefieldSupportAsset asset = testAsset();
+            asset.getFluff().setOverview("Test overview");
+
+            preferences.setShowUnitFluffText(true);
+            String shown = EntityReadout.createReadout(asset, false, false).getFullReadout(null, ViewFormatting.NONE);
+            assertTrue(shown.contains("Test overview"));
+
+            preferences.setShowUnitFluffText(false);
+            String hidden = EntityReadout.createReadout(asset, false, false).getFullReadout(null, ViewFormatting.NONE);
+            assertFalse(hidden.contains("Test overview"));
+            assertTrue(hidden.contains("Destroy Check"));
+        } finally {
+            preferences.setShowUnitFluffText(original);
+        }
     }
 
     private static BattlefieldSupportAsset testAsset() {

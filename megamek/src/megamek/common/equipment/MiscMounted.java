@@ -103,6 +103,17 @@ public class MiscMounted extends Mounted<MiscType> {
         return bridgeLayerState != null;
     }
 
+    @Override
+    public void clearGameState() {
+        super.clearGameState();
+        // Without this, a bridge laid or about to be laid in the last game still counts as placed, at a hex of that
+        // game's map. Damage to the bridge and its deploy mechanism is kept.
+        if (bridgeLayerState != null) {
+            bridgeLayerState.clearPendingDeploy();
+            bridgeLayerState.setDeployed(false);
+        }
+    }
+
     public int getBaseDamageAbsorptionRate() {
         return baseDamageAbsorptionRate;
     }

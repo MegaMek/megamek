@@ -62,6 +62,7 @@ import megamek.client.Client;
 import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.Messages;
 import megamek.client.ui.PackageBugReportAction;
+import megamek.client.ui.ReleaseNotesAction;
 import megamek.client.ui.ShowBugReportDialogAction;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.KeyBindParser;
@@ -465,6 +466,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         menu.addSeparator();
 
+        menu.add(new ReleaseNotesAction());
         JMenuItem helpAbout = new JMenuItem(getString("CommonMenuBar.helpAbout"));
         initMenuItem(helpAbout, menu, HELP_ABOUT);
 

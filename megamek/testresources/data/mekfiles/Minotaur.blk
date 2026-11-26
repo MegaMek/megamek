@@ -1,0 +1,171 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-e0c3-7912-acfd-3d50243f8d51
+</UUID>
+
+<UnitType>
+ProtoMek
+</UnitType>
+
+<Name>
+Minotaur
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+2186
+</mul id:>
+
+<year>
+3059
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Biped
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<interface_cockpit>
+false
+</interface_cockpit>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+42
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+2
+</armor_tech_level>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+5
+15
+3
+3
+10
+</armor>
+
+<Body Equipment>
+ProtoMechJumpJet
+ProtoMechJumpJet
+ProtoMechJumpJet
+EIInterface
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+CLERMediumLaser
+CLERMediumLaser
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
+<capabilities>
+<p>The Minotaur twin ER Medium Lasers give it the most potent energy weapon suite of any first-generation ProtoMek, delivering a combined damage output that can threaten medium-weight BattleMeks at respectable range. As energy-only armament, the weapons have no ammunition dependency, allowing the Minotaur to fight indefinitely without resupply. Three jump jets provide ninety meters of jumping distance, partially compensating for the design slow thirty-two-kilometer-per-hour cruising speed. Thirty-six points of armor make the Minotaur the most heavily protected first-generation ProtoMek, capable of surviving hits that would destroy lighter designs outright.</p><p>The Minotaur primary weakness is its glacial ground speed. At thirty-two kilometers per hour, it is easily outpaced by virtually every combat unit on the battlefield, including most assault-class BattleMeks. The jump jets help somewhat, but ninety meters of leaping distance is barely adequate for clearing terrain obstacles. An entire Point of Minotaurs working together can concentrate enough firepower to rapidly destroy light and medium targets, but getting into effective range against mobile opponents requires careful positioning and terrain exploitation. The design is at its best in defensive operations where it can select strong positions and force enemies to come to it, leveraging its firepower and armor from prepared fighting positions.</p>
+</capabilities>
+
+<overview>
+<p>The Minotaur is a nine-ton first-generation ProtoMek developed by Clan Smoke Jaguar as the heaviest and most powerful design in the original ProtoMek program on Huntress. Built to serve as the assault element of ProtoMek formations, the Minotaur sacrifices speed for devastating firepower and thick armor protection, mounting two ER Medium Lasers that deliver as much damage as many light BattleMeks. Combined with thirty-six points of armor sufficient to withstand a heavy autocannon hit, the Minotaur represented the upper limit of what first-generation ProtoMek technology could achieve. Its intended role as a defensive strongpoint leverages its impressive combat power while minimizing the impact of its slow ground speed.</p>
+</overview>
+
+<deployment>
+<p>The base Minotaur mounts two ER Medium Lasers in the torso alongside three body-mounted jump jets providing ninety meters of jumping distance. The dual laser configuration delivers devastating combined firepower with no ammunition dependency, allowing the Minotaur to fight indefinitely in its preferred defensive role. The forty-five-rated fusion engine delivers a modest thirty-two kilometers per hour cruising speed. Thirty-six points of armor provide excellent protection for the weight class. First produced at the Abysmal Manufacturing Complex on Huntress, the base Minotaur entered production at Csesztreg Industriplex Epsilon under Clan Wolf and Industriplex Upsilon on Niles under Clan Hell Horses, among other facilities.</p>
+</deployment>
+
+<history>
+<p>The Minotaur was developed as the capstone of the original Smoke Jaguar ProtoMek program, representing the maximum weight and combat power that first-generation ProtoMek technology could support. Jaguar scientists designed it specifically for the defensive role, recognizing that the ProtoMek concept was best suited to creating multiple small, lethal defensive positions rather than attempting to match BattleMeks in open maneuver warfare. The decision to mount two ER Medium Lasers was considered ambitious for the weight class, but testing proved that the nine-ton chassis could handle the thermal load with proper heat sink integration.</p><p>During the Battle of Huntress in 3060, Minotaur Points served as the backbone of Jaguar defensive positions around key installations. Their ability to absorb significant punishment while delivering devastating return fire made them the most feared ProtoMek design among Task Force Serpent personnel. Several Inner Sphere light Mek pilots reported being caught by surprise when what appeared to be a trivially small target returned fire with medium laser energy that could penetrate their armor in two or three exchanges. The Minotaur combination of small size and BattleMek-grade firepower represented a genuinely new tactical challenge.</p><p>After the Jaguar Annihilation, the Minotaur became one of the most widely produced ProtoMek designs. Clan Wolf established an early production line at Csesztreg Industriplex Epsilon, while Clan Hell Horses produced Minotaurs at Industriplex Upsilon on Niles. The design straightforward combat philosophy appealed to Clans across the political spectrum, from the aggressive Blood Spirits to the more cautious Diamond Sharks. The Minotaur lack of specialized equipment meant it could be manufactured more easily than probe or ECM-equipped designs.</p><p>The Minotaur has inspired the broadest range of variants of any first-generation ProtoMek, reflecting the diverse tactical philosophies of its many operators. The Minotaur 2 mounts an LB-X AC/2 for long-range cluster fire. The Minotaur 3 carries an LRM-12 with jump jets and a faster engine for mobile fire support. The Minotaur 4 mounts a ProtoMek AC/2 with enhanced mobility. The Minotaur P2, from Clan Goliath Scorpion, adds a Magnetic Clamp System with dual Improved Heavy Small Lasers and an SRM-4. The experimental Minotaur XP pushes the armor to forty-five points with Improved Heavy Small Lasers and an SRM-5.</p><p>The Wars of Reaving produced the Minotaur Z variant, equipped with a Magnetic Clamp System and an Improved Medium Heavy Laser for Society asymmetric operations. The destruction and restructuring of multiple Clans during the Reaving disrupted production at several facilities, but the Minotaur manufacturing base was broad enough to survive the upheaval. The design remains the standard heavy ProtoMek across the surviving Homeworld Clans, its combination of firepower and protection still unmatched in the first-generation weight range.</p>
+</history>
+
+<manufacturer>
+Abysmal Manufacturing Complex|Complex 18|Complex H-6 CCC|Csesztreg Industriplex Epsilon|Niles Industriplex Alpha|Reserve Industriplex-2
+</manufacturer>
+
+<primaryFactory>
+Huntress (Abysmal)|Albion (Junction City)|Homer|Csesztreg|Niles|York
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+ENGINE:45 Fusion
+</systemModels>
+
+<source>
+TR:3060
+</source>
+
+<published>
+RS:3060u
+</published>
+
+<tonnage>
+9.0
+</tonnage>
+

@@ -1,0 +1,175 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-ad51-79dd-bfb0-19f2362bdf17
+</UUID>
+
+<UnitType>
+AeroSpaceFighter
+</UnitType>
+
+<Name>
+Shilone
+</Name>
+
+<Model>
+SL-17
+</Model>
+
+<mul id:>
+2923
+</mul id:>
+
+<year>
+2796
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Fire Support
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+1
+</armor_tech_level>
+
+<armor>
+60
+44
+44
+36
+</armor>
+
+<Nose Equipment>
+LRM 20
+Large Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+SRM 4
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo SRM-4
+</Fuselage Equipment>
+
+<capabilities>
+<p>The Shilone carries a weapons loadout weighted toward long-range engagement. Its nose-mounted Shigunga LRM rack allows pilots to pound targets before closing to visual range, while a Diverse Optics large laser provides a heat-efficient complement to the missile barrage. Two wing-mounted medium lasers extend the fighter's effectiveness once inside effective missile range, and a rear-facing NCK short-range missile launcher discourages pursuit. The combination yields a fighter capable of effective engagement across nearly every range band, though the Shilone performs best when pilots leverage its long-range punch to wear down enemies before transitioning to close-quarters fire.</p><p>Mass tactics are common among Shilone squadrons, with entire flights coordinating concentrated missile salvos onto a single target before breaking into individual engagements. Against other aerospace fighters this approach is moderately effective, but against DropShips or orbital installations the concentrated fire can be devastating. The Shilone carries heavier armor than most fighters of comparable mass, lending it staying power that lighter designs lack. Its pilot entry hatch is unconventionally located on the belly rather than the canopy, a quirk that has not affected operational effectiveness but frequently surprises new crew. Twenty single heat sinks handle the energy load adequately, though sustained simultaneous use of the full weapon suite generates heat levels that demand pilot discipline.</p>
+</capabilities>
+
+<overview>
+<p>The SL-17 Shilone is Wakazashi Enterprises' signature medium aerospace fighter, designed to meet the Draconis Combine's urgent need for a capable and resilient interceptor at the dawn of the Succession Wars. Built at Chatham, the Shilone quickly earned a reputation as a genuine overperformer in its weight class, fielding heavy firepower and substantial armor coverage more typical of fighters in heavier tonnage brackets. Nicknamed "The Boomerang" by its pilots for its remarkable habit of returning from even heavily contested engagements, it became a mainstay of the Draconis Combine Aerospace Force, eventually spreading through licensing agreements to the Outworlds Alliance and the Taurian Concordat. Pilots from every nation who have had occasion to fly the Shilone typically come away with a high regard for its combat reliability and well-balanced design.</p>
+</overview>
+
+<deployment>
+<p>The base SL-17 serves across every faction that operates the Shilone. In Combine service it remains the primary configuration in garrison and second-line units that have not yet received the SL-17R upgrade. Outworlds Alliance forces flying Shilones manufactured by the United Outworlders Corporation on Ramora operated almost exclusively in the base configuration during the Succession Wars. The Taurian Concordat receives the SL-17 through licensed facilities on Pinard, while the Marian Hegemony fields examples sourced from Hadrian Mechanized Industries on Pompey, where production began during the Jihad.</p>
+</deployment>
+
+<history>
+<p>The Shilone's origins trace to the chaos of the First Succession War, when Wakazashi Enterprises found itself facing a key choice. As the Inner Sphere tore itself apart, Wakazashi's leadership announced plans to relocate operations to the relative safety of the Periphery. Coordinator Minoru Kurita moved quickly to prevent this, offering the company a substantial defense contract to stay and design a new medium fighter. The result was the Shilone, purpose-built to give the Combine a decisive edge in aerospace superiority battles.</p><p>The new fighter entered service during the First Succession War, with an early and little-publicized engagement at Barlow's Folly in 2786 marking its actual battlefield debut. That action ended without distinction, and later official accounts quietly omitted the date; the system's prior name of Cussar was likewise dropped from revised records. The Shilone's public reputation instead took shape at Kentares IV in 2796, where concentrated missile salvos from entire Shilone squadrons disrupted Davion aerospace formations before they could mount effective interception screens, allowing Combine DropShips to reach orbit and land their ground forces with minimal interference. That success established the massed long-range strike as the type's defining tactic.</p><p>The early production run was not without problems. In 2799, engineers discovered a structural defect in the wing joint assemblies of the original SL-17 models, a flaw responsible for several fatal crashes. Wakazashi moved aggressively to address the problem, and by 2802 all operational Shilones had been rebuilt with improved wing joints. The redesigned structure eliminated the issue entirely, and no structural failures have been reported since.</p><p>By the late Succession Wars period the Shilone's reputation was firmly established, and demand extended well beyond Combine borders. Wakazashi licensed production to the Outworlds Alliance in the 3020s, with the United Outworlders Corporation on Ramora taking up manufacture for Alliance aerospace forces. Both the Chatham and Ramora facilities subsequently entered long-term supply agreements with the Taurian Concordat, giving that state access to one of the Inner Sphere's most respected medium fighters. Pilots across every operating nation called the Shilone "a queen among aerospace fighters" and took personal pride in flying a machine that consistently outperformed its weight class.</p><p>The Ronin War of 3034 put Shilone squadrons in the skies over the newly independent Free Rasalhague Republic, where the fighter saw heavy use in the aerospace engagements that characterized that conflict. It was during this period that the type became closely identified with the Flying Drakøns, the aerospace wing of the First Rasalhague Drakøns, whose crews flew Shilones with exceptional skill and dedication. When the Clan Invasion began in 3050, those same pilots would write the Shilone's most defining chapter.</p><p>On 31 October 3050, the invasion reached a turning point above Radstadt. Elected Prince Haakon Magnusson and his escort, fleeing ahead of advancing Clan forces, jumped into the Radstadt system unaware that Clan Wolf had just completed its conquest of the planet. Aboard the Wolf flagship Dire Wolf, ilKhan Leo Showers had convened a Grand Kurultai to censure Clan Wolf's rapid advance. The Flying Drakøns immediately deployed to buy the Elected Prince time to escape, making repeated attack runs on the massive WarShip while Clan fighters scrambled to respond. The Drakøns took heavy losses in the exchange, and as the Prince's JumpShip finally broke free of the system, many of the surviving fighters were badly damaged. Kapten Tyra Miraborg found herself at the controls of a stricken Shilone, bleeding from multiple wounds, her fighter barely responding. Rather than withdraw, she disengaged all engine restraints and guided the crippled machine directly into the bridge of the Dire Wolf. The impact killed ilKhan Showers and devastated the flagship, ending the Grand Kurultai and leaving the Clans without a unifying leader at a critical moment in the invasion. Miraborg's sacrifice bought the Inner Sphere a year's lull in hostilities, time that proved decisive in organizing the defense that would ultimately stop the Clan advance at Tukayyid. Both the KungsArmé and the Clans honored her in their own ways: the Remembrance was amended with a passage in her memory, a new class of carrier DropShip was renamed in her honor, and the Tyra Miraborg Memorial Academy was later founded on Gunzburg to train the next generation of Rasalhague aerospace pilots.</p><p>In the years following the Clan Invasion, Wakazashi introduced the SL-17R, a modernization replacing the original single heat sinks with double-strength units that substantially improved sustained fire tolerance. Chatham production shifted toward the SL-17R as the standard Combine configuration, with the Ramora facility adding its own SL-17R line during the Jihad. As the Word of Blake's war reshaped the Inner Sphere, Wakazashi introduced the substantially redesigned SL-18, fitted with a lighter powerplant and updated weapons suite suited to that conflict's demands. A parallel experimental program produced a single prototype exploring oversized ballistic integration, an impressive technical demonstration that proved impractical for mass production.</p>
+</history>
+
+<manufacturer>
+Wakazashi Enterprises|United Outworlders Corporation|Wingman Enterprises, Ltd|Hadrian Mechanized Industries
+</manufacturer>
+
+<primaryFactory>
+Chatham|Ramora|Pinard|Pompey
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Wakazashi
+ENGINE:Shinobi
+ARMOR:Naketsu
+COMMUNICATIONS:Duoteck
+TARGETING:RCA
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Wakazashi III
+ENGINE:260
+ARMOR:Naketsu AeroWeave Standard
+COMMUNICATIONS:Duoteck 100
+TARGETING:RCA Instatrac Mark XI
+</systemModels>
+
+<source>
+TR:3039
+</source>
+
+<published>
+RSFP:Wave 2
+</published>
+
+<tonnage>
+65.0
+</tonnage>
+

@@ -56,8 +56,12 @@ import megamek.logging.MMLogger;
  *
  * <p>The text is three sentences: a lead for the outcome, then one sentence per side that names the side's units
  * with their report links, follows them with a clause for the side's strongest {@link MarinePointsTrait}, and ends
- * with the side's loss. Each outcome has several leads and one is chosen at random, so a siege that runs for turns
- * does not read the same every time.</p>
+ * with the side's loss. Each of those has several wordings and one is chosen at random, so a siege that runs for
+ * turns does not read the same every time.</p>
+ *
+ * <p>The leads fit the size of the building: a {@link BuildingScale#SMALL} one, such as a gun emplacement, is a door
+ * and a room, while a {@link BuildingScale#LARGE} one has corridors, stairwells and floors. The trait clauses fit
+ * either. A side of one person gets its loss in the singular.</p>
  */
 class InfantryActionNarrator extends AbstractTWRuleHandler {
 
@@ -66,24 +70,61 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     /** How the roll went, in the order the resolution decides it. */
     enum Outcome {
         /** Nothing of the attacking force survived. */
-        ATTACKERS_ELIMINATED(5667),
+        ATTACKERS_ELIMINATED(5730),
         /** The garrison is gone and the building taken. */
-        DEFENDERS_ELIMINATED(5670),
+        DEFENDERS_ELIMINATED(5740),
         /** An R result: the attackers are thrown out. */
-        REPULSED(5673),
+        REPULSED(5750),
         /** The attackers chose to leave this turn. */
-        WITHDRAWAL(5682),
+        WITHDRAWAL(5760),
         /** A P result: the attackers hold most of the building. */
-        PENETRATION(5679),
+        PENETRATION(5770),
         /** Both sides still stand where they stood. */
-        ENGAGED(5676),
+        ENGAGED(5780),
         /** House rule: the defending infantry chose to leave, giving up the building. */
-        DEFENDERS_WITHDRAW(5718);
+        DEFENDERS_WITHDRAW(5790);
 
-        private final int firstLead;
+        private final int firstLargeBuildingLead;
 
-        Outcome(int firstLead) {
-            this.firstLead = firstLead;
+        Outcome(int firstLargeBuildingLead) {
+            this.firstLargeBuildingLead = firstLargeBuildingLead;
+        }
+
+        /**
+         * @param scale the size of the building fought over
+         *
+         * @return the first report id of this outcome's leads for a building that size
+         */
+        int firstLead(BuildingScale scale) {
+            return firstLargeBuildingLead + scale.leadOffset;
+        }
+    }
+
+    /** The size of the building fought over, which decides the set of leads the story draws from. */
+    enum BuildingScale {
+        /** Several hexes or more than {@link #SMALL_MAX_LEVELS} levels: corridors, stairwells and floors. */
+        LARGE(0),
+        /** One hex of no more than {@link #SMALL_MAX_LEVELS} levels, such as a gun emplacement: a door and a room. */
+        SMALL(70);
+
+        /** A one-hex building is small up to this many levels. */
+        static final int SMALL_MAX_LEVELS = 2;
+
+        private final int leadOffset;
+
+        BuildingScale(int leadOffset) {
+            this.leadOffset = leadOffset;
+        }
+
+        /**
+         * @param building the building fought over
+         *
+         * @return {@link #SMALL} for a one-hex building of one or two levels, otherwise {@link #LARGE}
+         */
+        static BuildingScale of(AbstractBuildingEntity building) {
+            int hexCount = building.getInternalBuilding().getCoordsList().size();
+            int levels = building.getInternalBuilding().getBuildingHeight();
+            return ((hexCount <= 1) && (levels <= SMALL_MAX_LEVELS)) ? SMALL : LARGE;
         }
     }
 
@@ -92,12 +133,13 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
      *
      * @param units            the units that counted for the side, in order, named in the story
      * @param traits           what the side brought, the union over its units
+     * @param headCount        the people in those units before this roll's losses
      * @param marinePointsLost the Marine Points the side lost this roll
      * @param ownStrength      the side's own strength the loss is measured against
      * @param eliminated       {@code true} when nothing of the side remains
      */
-    record Side(List<Entity> units, Set<MarinePointsTrait> traits, int marinePointsLost, int ownStrength,
-          boolean eliminated) {
+    record Side(List<Entity> units, Set<MarinePointsTrait> traits, int headCount, int marinePointsLost,
+          int ownStrength, boolean eliminated) {
 
         /**
          * A side read from the game before its losses are applied: the units still in the fight that score
@@ -116,6 +158,7 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
               int own, boolean eliminated) {
             List<Entity> units = new ArrayList<>();
             EnumSet<MarinePointsTrait> traits = EnumSet.noneOf(MarinePointsTrait.class);
+            int headCount = 0;
             for (int entityId : entityIds) {
                 Entity entity = game.getEntity(entityId);
                 if ((entity == null) || InfantryActionReporter.isOutOfTheFight(entity)) {
@@ -127,8 +170,9 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
                 }
                 units.add(entity);
                 traits.addAll(breakdown.traits());
+                headCount += breakdown.headCount();
             }
-            return new Side(List.copyOf(units), traits, lost, own, eliminated);
+            return new Side(List.copyOf(units), traits, headCount, lost, own, eliminated);
         }
 
         /**
@@ -137,22 +181,33 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
          * @return this side with that answer
          */
         Side withEliminated(boolean eliminated) {
-            return new Side(units, traits, marinePointsLost, ownStrength, eliminated);
+            return new Side(units, traits, headCount, marinePointsLost, ownStrength, eliminated);
+        }
+
+        /** @return {@code true} for a side of one person, whose loss is told in the singular */
+        boolean isLoneFighter() {
+            return headCount == 1;
         }
     }
 
-    /** Every outcome has this many leads to choose from. */
-    static final int LEADS_PER_OUTCOME = 3;
+    /** Every outcome has this many leads to choose from, for each {@link BuildingScale}. */
+    static final int LEADS_PER_OUTCOME = 5;
+    /** Every trait, and a side with none, has this many clauses to choose from. */
+    static final int CLAUSES_PER_TRAIT = 3;
+    /** Every loss fragment has this many wordings to choose from. */
+    static final int WORDINGS_PER_LOSS = 3;
     /** The building fell because nothing was committed to its defence. */
     static final int NO_DEFENCE = 5685;
-    /** The clause for a side with no trait worth a mention. */
-    static final int PLAIN_TROOPERS = 5701;
-    /** The side lost a share of its strength; a platoon or a squad is a body of troops, so always "their". */
-    static final int LOST_SHARE = 5702;
-    /** None of the side survived. */
-    static final int NONE_SURVIVED = 5703;
-    /** The side lost nothing. */
-    static final int LOST_NOBODY = 5704;
+    /** The first clause for a side with no trait worth a mention. */
+    static final int PLAIN_TROOPERS = 5945;
+    /** The side lost a share of its strength, given as a short tag after the clause. First wording. */
+    static final int LOST_SHARE = 5950;
+    /** None of the side survived. First wording. */
+    static final int NONE_SURVIVED = 5955;
+    /** The side lost nothing. First wording. */
+    static final int LOST_NOBODY = 5960;
+    /** Added to a loss fragment for a side of one person, whose wordings are in the singular. */
+    static final int LONE_FIGHTER_OFFSET = 15;
     /** A unit's linked name inside the sentence. */
     static final int UNIT_NAME = 5707;
     /** Joins the captured building on to the defenders' sentence. */
@@ -165,6 +220,8 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     static final int BUILDING_FALLS = 5711;
     /** A building's crew, named as the unit that fought. */
     static final int BUILDING_CREW_NAME = 5715;
+    /** A building's crew when they open the sentence, so with a capital. */
+    static final int BUILDING_CREW_NAME_FIRST = 5724;
     /** The building falls with no crew left to surrender. */
     static final int BUILDING_FALLS_NOBODY_LEFT = 5716;
     /** Ends a side's sentence. */
@@ -177,32 +234,43 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     private static final int NO_LINE_BREAK = 0;
     private static final int WHOLE_PERCENT = 100;
 
-    private final IntUnaryOperator leadPicker;
+    private final IntUnaryOperator variantPicker;
 
     InfantryActionNarrator(TWGameManager gameManager) {
         this(gameManager, Compute::randomInt);
     }
 
     /**
-     * @param leadPicker chooses a lead by index, given how many there are; tests pass a fixed choice
+     * @param variantPicker chooses a wording by index, given how many there are; tests pass a fixed choice
      */
-    InfantryActionNarrator(TWGameManager gameManager, IntUnaryOperator leadPicker) {
+    InfantryActionNarrator(TWGameManager gameManager, IntUnaryOperator variantPicker) {
         super(gameManager);
-        this.leadPicker = leadPicker;
+        this.variantPicker = variantPicker;
+    }
+
+    /** One of the wordings that start at a report id, by the picker's choice wrapped into their number. */
+    private int pick(int firstWording, int wordings) {
+        return firstWording + Math.floorMod(variantPicker.applyAsInt(wordings), wordings);
     }
 
     /**
      * Writes the story of one roll as one paragraph: the lead for the outcome, then a sentence for each side.
      *
-     * @param outcome          how the roll went
-     * @param attackers        the attackers' part
-     * @param defenders        the defenders' part
-     * @param capturedBuilding the building that falls to the attackers on this roll, or {@code null} for none
+     * @param outcome   how the roll went
+     * @param attackers the attackers' part
+     * @param defenders the defenders' part
+     * @param building  the building fought over
+     * @param captured  {@code true} when the building falls to the attackers on this roll
      */
-    void narrate(Outcome outcome, Side attackers, Side defenders, @Nullable AbstractBuildingEntity capturedBuilding) {
-        int lead = outcome.firstLead + Math.floorMod(leadPicker.applyAsInt(LEADS_PER_OUTCOME), LEADS_PER_OUTCOME);
-        LOGGER.debug("[InfantryAction] narrative: {} lead {}, attackers {} {}, defenders {} {}", outcome, lead,
-              attackers.units().size(), attackers.traits(), defenders.units().size(), defenders.traits());
+    void narrate(Outcome outcome, Side attackers, Side defenders, AbstractBuildingEntity building,
+          boolean captured) {
+        BuildingScale scale = BuildingScale.of(building);
+        int lead = pick(outcome.firstLead(scale), LEADS_PER_OUTCOME);
+        LOGGER.info("[InfantryAction] narrative: {} in a {} building, lead {}, attackers {} ({} people) {}, "
+                    + "defenders {} ({} people) {}", outcome, scale, lead, attackers.units().size(),
+              attackers.headCount(), attackers.traits(), defenders.units().size(), defenders.headCount(),
+              defenders.traits());
+        AbstractBuildingEntity capturedBuilding = captured ? building : null;
         List<Entity> everyone = new ArrayList<>(attackers.units());
         everyone.addAll(defenders.units());
         if (capturedBuilding != null) {
@@ -225,7 +293,7 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     }
 
     /** The names, the clause for the strongest trait, the loss, and the full stop or the building's fall. */
-    private static List<Report> sideSentence(Side side, int fallbackSubject,
+    private List<Report> sideSentence(Side side, int fallbackSubject,
           @Nullable AbstractBuildingEntity capturedBuilding, List<Entity> everyone) {
         List<Report> sentence = new ArrayList<>();
         if (side.units().isEmpty()) {
@@ -236,9 +304,9 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
             if (index > 0) {
                 sentence.add(new Report((index == last) ? AND : COMMA));
             }
-            sentence.add(nameOf(side.units().get(index), everyone));
+            sentence.add(nameOf(side.units().get(index), everyone, index == 0));
         }
-        sentence.add(new Report(clauseFor(strongestTrait(side.traits()))));
+        sentence.add(new Report(pick(clauseFor(strongestTrait(side.traits())), CLAUSES_PER_TRAIT)));
         sentence.add(lossFragment(side));
         if (capturedBuilding != null) {
             sentence.add(new Report(AND_THE_BUILDING));
@@ -252,8 +320,9 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     }
 
     /** A unit's linked name; a building is named by its crew, since the crew are who fought. */
-    private static Report nameOf(Entity entity, List<Entity> everyone) {
-        Report name = new Report((entity instanceof AbstractBuildingEntity) ? BUILDING_CREW_NAME : UNIT_NAME);
+    private static Report nameOf(Entity entity, List<Entity> everyone, boolean opensSentence) {
+        int crewName = opensSentence ? BUILDING_CREW_NAME_FIRST : BUILDING_CREW_NAME;
+        Report name = new Report((entity instanceof AbstractBuildingEntity) ? crewName : UNIT_NAME);
         name.subject = entity.getId();
         name.addEntityName(entity, storyName(entity, everyone));
         return name;
@@ -289,14 +358,16 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
         return chassis;
     }
 
-    private static Report lossFragment(Side side) {
+    /** The side's loss in one of its wordings, in the singular for a side of one person. */
+    private Report lossFragment(Side side) {
+        int loneFighterOffset = side.isLoneFighter() ? LONE_FIGHTER_OFFSET : 0;
         if (side.eliminated()) {
-            return new Report(NONE_SURVIVED);
+            return new Report(pick(NONE_SURVIVED + loneFighterOffset, WORDINGS_PER_LOSS));
         }
         if (side.marinePointsLost() <= 0) {
-            return new Report(LOST_NOBODY);
+            return new Report(pick(LOST_NOBODY + loneFighterOffset, WORDINGS_PER_LOSS));
         }
-        Report loss = new Report(LOST_SHARE);
+        Report loss = new Report(pick(LOST_SHARE + loneFighterOffset, WORDINGS_PER_LOSS));
         loss.add(percentOfOwnStrength(side));
         return loss;
     }
@@ -318,7 +389,7 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
             return WHOLE_PERCENT;
         }
         long percent = Math.round((double) side.marinePointsLost() * WHOLE_PERCENT / side.ownStrength());
-        return (int) Math.max(1, Math.min(WHOLE_PERCENT, percent));
+        return Math.clamp(percent, 1, WHOLE_PERCENT);
     }
 
     /** The trait that most shaped the fighting, by the enum's order; {@code null} for a side with none. */
@@ -331,27 +402,30 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
         return null;
     }
 
-    /** The report message for a side's strongest trait: a clause that follows the side's names. */
+    /**
+     * The first of the {@link #CLAUSES_PER_TRAIT} report messages for a side's strongest trait: a clause that
+     * follows the side's names.
+     */
     static int clauseFor(@Nullable MarinePointsTrait trait) {
         if (trait == null) {
             return PLAIN_TROOPERS;
         }
         return switch (trait) {
-            case ELEMENTALS -> 5686;
-            case INNER_SPHERE_BATTLE_ARMOR -> 5687;
-            case MARINES -> 5688;
-            case LINE_INFANTRY -> 5689;
-            case ARMORED_INFANTRY -> 5690;
-            case BUILDING_CREW -> 5691;
-            case CIVILIANS -> 5692;
-            case HEAVY_SUITS -> 5693;
-            case LIGHT_SUITS -> 5694;
-            case BURST_FIRE -> 5695;
-            case FLAME -> 5696;
-            case CLAWS -> 5697;
-            case TORCHES_OR_DRILLS -> 5698;
-            case ANTI_PERSONNEL_MOUNTS -> 5699;
-            case MAGNETIC_CLAMPS -> 5700;
+            case ELEMENTALS -> 5870;
+            case INNER_SPHERE_BATTLE_ARMOR -> 5875;
+            case MARINES -> 5880;
+            case LINE_INFANTRY -> 5885;
+            case ARMORED_INFANTRY -> 5890;
+            case BUILDING_CREW -> 5895;
+            case CIVILIANS -> 5900;
+            case HEAVY_SUITS -> 5905;
+            case LIGHT_SUITS -> 5910;
+            case BURST_FIRE -> 5915;
+            case FLAME -> 5920;
+            case CLAWS -> 5925;
+            case TORCHES_OR_DRILLS -> 5930;
+            case ANTI_PERSONNEL_MOUNTS -> 5935;
+            case MAGNETIC_CLAMPS -> 5940;
         };
     }
 }

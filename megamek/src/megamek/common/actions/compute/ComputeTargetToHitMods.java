@@ -255,8 +255,7 @@ public class ComputeTargetToHitMods {
             toHit.append(thTemp);
 
             // semi-guided ammo may negate this modifier, if TAG succeeded
-            if (bSemiGuided
-                  && (entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED)) {
+            if (bSemiGuided && Compute.isTargetTaggedByFriend(attacker, target, game)) {
                 int nAdjust = Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(thTemp.getValue(), true, false);
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, Messages.getString("WeaponAttackAction.SemiGuidedTag")));

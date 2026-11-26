@@ -65,7 +65,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
         Entity closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
         var ignoredTargets = getOwner().getBehaviorSettings().getIgnoredUnitTargets();
-        var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
+        var priorityTargets = getOwner().getPriorityUnitTargets();
         for (Entity enemy : enemies) {
             // targets that are withdrawing and are not priorities are ignored
             // targets in the ignore list are ignored

@@ -33,6 +33,11 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+/**
+ * Selects the rule implementations for a game. The abstract Rules classes contain shared behavior and declare
+ * the operations that differ. The TW and Core classes implement those differences, including the Tactical
+ * Operations rules each supports. Future optional rules based on Core extend the corresponding Core class.
+ */
 public interface RulesManager {
 
     /**

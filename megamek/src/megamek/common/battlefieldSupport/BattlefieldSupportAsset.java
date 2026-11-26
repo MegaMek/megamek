@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.ECMInfo;
 import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
 import megamek.common.Report;
@@ -54,6 +55,7 @@ import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.SkillLevel;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
@@ -582,9 +584,13 @@ public class BattlefieldSupportAsset extends Entity {
         return cost;
     }
 
-    /** @return the BSP cost for the current crew level: the Veteran BSP when Veteran is selected, else the Regular BSP. */
+    /**
+     * @return the BSP cost for the current crew level: the Veteran BSP when Veteran is selected, else the Regular BSP,
+     *       plus the TAG surcharge
+     */
     public int getEffectiveBsp() {
-        return isVeteranCrew() ? veteranCost : cost;
+        boolean veteran = isVeteranCrew();
+        return (veteran ? veteranCost : cost) + tagSurchargeBsp(veteran);
     }
 
     /** @return the Veteran cost in Battlefield Support Points, or {@code null} if there is no Veteran variant */
@@ -655,7 +661,28 @@ public class BattlefieldSupportAsset extends Entity {
           CalculationReport calculationReport) {
         // Asset BV is a designer-set cost (BSP x 20), not an equipment/skill computation. The Regular/Veteran crew
         // level selects between the two static costs; ignoreSkill forces the Regular (base) value.
-        return (!ignoreSkill && isVeteranCrew()) ? getVeteranBv() : getBv();
+        boolean veteran = !ignoreSkill && isVeteranCrew();
+        return (veteran ? getVeteranBv() : getBv()) + (ignoreTAG ? 0 : tagSurchargeBv(veteran));
+    }
+
+    /**
+     * @param veteran true for the improved (Veteran) Skill
+     *
+     * @return the TAG surcharge in BSP: an Asset with the TAG Special adds 3, 5 or 7 BSP (Skill 6, 5 or 4) per launcher
+     *       with Homing ammo in its force (Core errata v0.2 p.1)
+     */
+    public int tagSurchargeBsp(boolean veteran) {
+        int assetSkill = (veteran && veteranSkill != null) ? veteranSkill : skill;
+        return Game.rulesManager.getRulesGame().assetTagSurchargeBsp(this, assetSkill);
+    }
+
+    /**
+     * @param veteran true for the improved (Veteran) Skill
+     *
+     * @return the TAG surcharge in BV, at 20 BV per BSP
+     */
+    public int tagSurchargeBv(boolean veteran) {
+        return tagSurchargeBsp(veteran) * BV_PER_BSP;
     }
 
     public List<BFSSpecial> getSpecials() {
@@ -686,6 +713,23 @@ public class BattlefieldSupportAsset extends Entity {
      */
     public boolean hasSpecial(BFSSpecialType type) {
         return findSpecial(type).isPresent();
+    }
+
+    @Override
+    public int getECMRange() {
+        ECMInfo field = getGroundECMSpecialField();
+        return field == null ? super.getECMRange() : field.getRange();
+    }
+
+    @Override
+    public boolean hasActiveECM(boolean stealth) {
+        return getGroundECMSpecialField() != null || super.hasActiveECM(stealth);
+    }
+
+    private @Nullable ECMInfo getGroundECMSpecialField() {
+        // Ground Assets use the same field for jamming, the map and double-blind updates.
+        // Space ECM resolves separately and already queries getECMRange().
+        return hasSpecial(BFSSpecialType.ECM) && !isSpaceborne() ? getECMInfo() : null;
     }
 
     /**
@@ -749,6 +793,18 @@ public class BattlefieldSupportAsset extends Entity {
     @Override
     public HitData getTransferLocation(HitData hit) {
         return new HitData(Entity.LOC_DESTROYED);
+    }
+
+    /** "Assets cannot charge or perform any other physical attack" (Core p.145). */
+    @Override
+    public boolean canCharge() {
+        return false;
+    }
+
+    /** "Assets cannot charge or perform any other physical attack" (Core p.145). */
+    @Override
+    public boolean canDFA() {
+        return false;
     }
 
     @Override

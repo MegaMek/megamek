@@ -459,7 +459,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panContent.add(cmbFaction, gbc);
         cmbFaction.setToolTipText(Messages.getString("CustomMekDialog.acfFactionChooser"));
         cmbFaction.setRenderer(factionCbRenderer);
-        updateFactionChoice(getFactionFromCode(team.getFaction(), year));
+        // a player who joined a running game has no team yet
+        String teamFaction = (team != null) ? team.getFaction() : FactionRecord.IS_GENERAL_KEY;
+        updateFactionChoice(getFactionFromCode(teamFaction, year));
         panContent.add(butAutoconfigure, gbc);
         butAutoconfigure.addActionListener(listener);
         butAutoconfigure.setToolTipText(Messages.getString("CustomMekDialog.acfExecuteConfig"));
@@ -751,7 +753,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         // Unit Munition Configuration
         String faction = getFactionCode();
-        team.setFaction(faction);
+        if (team != null) {
+            team.setFaction(faction);
+        }
         if (clientgui.chatlounge != null) {
             ArrayList<Entity> updateEntities = clientgui.getClient().getGame().getPlayerEntities(player, false);
 
@@ -1063,6 +1067,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
             // Team configuration
             if (butAutoconfigure.equals(e.getSource())) {
+                // the loadout is generated from the team; without one there is nothing to configure
+                if (team == null) {
+                    return;
+                }
                 // disable button until Faction changes; result won't change.
                 butRestoreMT.setEnabled(true);
                 butAutoconfigure.setEnabled(false);

@@ -48,11 +48,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
@@ -70,6 +72,7 @@ import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.buttonDialogs.BotTargetPickerDialog;
+import megamek.client.ui.dialogs.minimap.HexPickingMap;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
@@ -90,6 +93,7 @@ import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.OrderEligibility;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -109,6 +113,8 @@ public class BotCommandsPanel extends JPanel {
     private final MegaMekController controller;
     private final ClientGUI clientGUI;
     private String serverPassword = "";
+    // where to pick hexes when there is no board view, e.g. the Commander window's minimap
+    private HexPickingMap hexPickingMap;
     private final MegaMekButton miscButton =
           new MegaMekButton("", SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
     // This latch is used only to change the state of the button from pause to continue and back
@@ -117,10 +123,16 @@ public class BotCommandsPanel extends JPanel {
     private boolean isStartPauseDue = true;
     /** How many groups the Move Order menu shows before it scrolls, so a bot with thirty lances still fits. */
     private static final int MOVE_ORDER_SCROLL_THRESHOLD = 20;
+    /**
+     * Explains an empty Move Order or Quick Orders popup: the player commands bots, but none of their units take unit
+     * orders - see {@link megamek.common.orders.OrderEligibility}.
+     */
+    private static final String NO_ORDERABLE_UNITS_KEY = "BotCommandPanel.emptyPopup.noOrderableUnits";
 
     private MegaMekButton pauseContinue;
     private List<MegaMekButton> commandButtons = List.of();
     private BotOrdersMenuBuilder ordersMenuBuilder;
+    private PrincessWaypointMenuBuilder princessMenuBuilder;
 
     /**
      * Bot Commands Panel constructor.
@@ -206,6 +218,10 @@ public class BotCommandsPanel extends JPanel {
               (orderDescription, singleHex, onPicked) -> pickTargetHexes(orderDescription, singleHex, 0,
                     "BotCommandPanel.WaypointPrompt.message", onPicked),
               this::acknowledgeOrder);
+        princessMenuBuilder = new PrincessWaypointMenuBuilder(client,
+              (orderDescription, singleHex, onPicked) -> pickTargetHexes(orderDescription, singleHex, 0,
+                    "BotCommandPanel.WaypointPrompt.message", onPicked),
+              this::acknowledgeOrder);
         pauseContinue = createButton("PauseGame");
         var moveOrder = createButton("MoveOrder");
         var quickOrders = createButton("QuickOrders");
@@ -216,23 +232,23 @@ public class BotCommandsPanel extends JPanel {
         commandButtons = List.of(moveOrder, quickOrders, targets, maneuver, setBehavior, artillery);
 
         moveOrder.addActionListener(event -> {
-            // with one bot and nothing to choose between, the editor opens at once; its Choose units... narrows it
-            List<Player> botPlayers = new ArrayList<>();
-            for (Player botPlayer : getBotPlayersUnderYourCommand()) {
-                if (hasOnBoardUnits(botPlayer)) {
-                    botPlayers.add(botPlayer);
-                }
-            }
-            if ((clientGUI != null) && (botPlayers.size() == 1)) {
+            List<Player> botPlayers = getBotPlayersWithOnBoardUnits();
+            logOrderMenus(moveOrder, botPlayers);
+            // with one CASPAR bot and nothing to choose between, the editor opens at once; its Choose units...
+            // narrows it
+            if ((clientGUI != null) && (botPlayers.size() == 1) && takesUnitOrders(botPlayers.getFirst())) {
                 List<BotOrdersMenuBuilder.OrderGroup> lances = ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst());
                 if (lances.size() == 1) {
                     openMoveOrder(botPlayers.getFirst(), lances.getFirst());
                     return;
                 }
             }
-            showButtonPopup(moveOrder, this::createMoveOrderPopup);
+            showButtonPopup(moveOrder, this::createMoveOrderPopup, NO_ORDERABLE_UNITS_KEY);
         });
-        quickOrders.addActionListener(event -> showButtonPopup(quickOrders, this::createQuickOrdersPopup));
+        quickOrders.addActionListener(event -> {
+            logOrderMenus(quickOrders, getBotPlayersWithOnBoardUnits());
+            showButtonPopup(quickOrders, this::createQuickOrdersPopup, NO_ORDERABLE_UNITS_KEY);
+        });
         targets.addActionListener(event -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
         setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
@@ -412,6 +428,16 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
+     * Sets the map to pick hexes on when there is no board view, so orders that need hexes are given by clicking it
+     * instead of typing hex numbers. The Commander window passes its minimap.
+     *
+     * @param hexPickingMap the map, or {@code null} to go back to typing hex numbers
+     */
+    public void setHexPickingMap(@Nullable HexPickingMap hexPickingMap) {
+        this.hexPickingMap = hexPickingMap;
+    }
+
+    /**
      * Clears the misc button, removing any text, tooltip, and action listener, disabling it and taking it back out of
      * the panel so that it does not leave an empty cell behind.
      */
@@ -448,20 +474,36 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Builds a button's popup and shows it, logging the reason instead of silently doing nothing if the build throws or
-     * the popup ends up empty. Popups are built lazily on click, so an exception there is otherwise lost on the AWT
-     * event thread and leaves the button looking dead (e.g. clicking it does nothing).
+     * Builds a button's popup and shows it, logging the reason if the build throws. Popups are built lazily on click,
+     * so an exception there is otherwise lost on the AWT event thread and leaves the button looking dead.
      *
      * @param button       The button the popup is anchored to
      * @param popupFactory Supplies the popup to display
      */
     private void showButtonPopup(MegaMekButton button, Supplier<JPopupMenu> popupFactory) {
+        showButtonPopup(button, popupFactory, "BotCommandPanel.emptyPopup.nothingToOffer");
+    }
+
+    /**
+     * Builds a button's popup and shows it. When the popup ends up empty it is shown anyway, holding one grayed-out
+     * line that says why, so the button never looks dead: the Commander window MekHQ's auto-resolve uses has no board
+     * to show a toast on, and an all-aerospace force left Move Order and Quick Orders doing nothing at all on a click
+     * (issue #10836).
+     *
+     * @param button          The button the popup is anchored to
+     * @param popupFactory    Supplies the popup to display
+     * @param emptyMessageKey The resource key of the line explaining an empty popup when the player does command bots
+     */
+    private void showButtonPopup(MegaMekButton button, Supplier<JPopupMenu> popupFactory, String emptyMessageKey) {
         try {
             JPopupMenu popup = popupFactory.get();
             if (popup.getComponentCount() == 0) {
-                LOGGER.info("[BotPanel] {} popup has no entries to show (no commandable bots or applicable options)",
-                      button.getText());
-                return;
+                String messageKey = getBotPlayersUnderYourCommand().isEmpty()
+                      ? "BotCommandPanel.emptyPopup.noBots" : emptyMessageKey;
+                LOGGER.info("[BotPanel] {} popup has no entries to show ({})", button.getText(), messageKey);
+                JMenuItem explanation = new JMenuItem(Messages.getString(messageKey));
+                explanation.setEnabled(false);
+                popup.add(explanation);
             }
             popup.show(button, 0, button.getHeight());
         } catch (Exception exception) {
@@ -498,11 +540,16 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * The Move Order editor for each bot: pick all its units or a lance here, then set their route, each waypoint's
-     * facing and hold, and their formation in one window. One unit or a mix is picked in the editor.
+     * The Move Order menu for each bot. A CASPAR bot gets the Move Order editor: pick all its units or a lance here,
+     * then set their route, each waypoint's facing and hold, and their formation in one window; one unit or a mix is
+     * picked in the editor. A Princess bot gets her waypoint commands for each unit.
      */
     private JPopupMenu createMoveOrderPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> {
+            if (!takesUnitOrders(botPlayer)) {
+                princessMenuBuilder.populateMoveOrders(botMenu, botPlayer);
+                return;
+            }
             if (clientGUI == null) {
                 // no board to click in this GUI: the orders menu, where routes are typed as hex numbers
                 ordersMenuBuilder.populate(botMenu, botPlayer, null);
@@ -517,11 +564,17 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * The one-click orders for each bot's units: pause, resume, stop, hold position, edges, priority and formation off.
+     * The one-click orders for each bot. A CASPAR bot's units get pause, resume, stop, hold position, edges, priority
+     * and formation off; a Princess bot gets hold position and resume.
      */
     private JPopupMenu createQuickOrdersPopup() {
-        return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populateQuick(botMenu, botPlayer),
-              this::hasOnBoardUnits);
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            if (takesUnitOrders(botPlayer)) {
+                ordersMenuBuilder.populateQuick(botMenu, botPlayer);
+            } else {
+                princessMenuBuilder.populateQuickOrders(botMenu, botPlayer);
+            }
+        }, this::hasOnBoardUnits);
     }
 
     /**
@@ -578,6 +631,53 @@ public class BotCommandsPanel extends JPanel {
             }
         }
         return false;
+    }
+
+    /**
+     * @param botPlayer The bot to inspect
+     *
+     * @return {@code true} if the bot is a CASPAR bot, the only kind that follows unit orders, with at least one
+     *       on-board unit to give them to
+     */
+    private boolean takesUnitOrders(Player botPlayer) {
+        return (client.getGame() instanceof Game game) && OrderEligibility.takesUnitOrders(game, botPlayer)
+              && hasOnBoardUnits(botPlayer);
+    }
+
+    /**
+     * @return the bots under the player's command that have at least one on-board unit, CASPAR or Princess
+     */
+    private List<Player> getBotPlayersWithOnBoardUnits() {
+        List<Player> botPlayers = new ArrayList<>();
+        for (Player botPlayer : getBotPlayersUnderYourCommand()) {
+            if (hasOnBoardUnits(botPlayer)) {
+                botPlayers.add(botPlayer);
+            }
+        }
+        return botPlayers;
+    }
+
+    /**
+     * Logs which menu each bot gets from an order button: the unit orders for a CASPAR bot, the waypoint commands for
+     * a Princess bot. Logged on every click, so a test in game shows the choice made and not only whether a menu
+     * appeared.
+     *
+     * @param button     The order button that was clicked
+     * @param botPlayers The bots the menu is built for
+     */
+    private void logOrderMenus(MegaMekButton button, List<Player> botPlayers) {
+        if (botPlayers.isEmpty()) {
+            LOGGER.info("[BotOrders] {}: no bot under your command has units on the board", button.getText());
+            return;
+        }
+        for (Player botPlayer : botPlayers) {
+            if (takesUnitOrders(botPlayer)) {
+                LOGGER.info("[BotOrders] {}: {} is CASPAR, unit orders menu", button.getText(), botPlayer.getName());
+            } else {
+                LOGGER.info("[BotOrders] {}: {} is Princess, waypoint menu, {} unit(s)", button.getText(),
+                      botPlayer.getName(), princessMenuBuilder.unitsFor(botPlayer).size());
+            }
+        }
     }
 
     /**
@@ -718,7 +818,9 @@ public class BotCommandsPanel extends JPanel {
     /**
      * Builds a popup whose top level is one submenu per commandable bot, each populated with the command's actions
      * already bound to that bot. When the player commands exactly one bot, the bot level is skipped and that bot's
-     * actions are inlined directly into the popup so no extra navigation is needed.
+     * actions are inlined directly into the popup so no extra navigation is needed. With two or more bots the level
+     * is always shown, labelled with each bot's name and type, even when only one of them fits the command: on a
+     * team of one Princess and one CASPAR bot, an unlabelled menu would not say which bot the order goes to.
      *
      * @param populator Fills a given bot's submenu with the command's actions, bound to that bot
      *
@@ -766,8 +868,10 @@ public class BotCommandsPanel extends JPanel {
     private JPopupMenu createBotFirstPopup(BiConsumer<JMenu, Player> populator, int scrollThreshold,
           Predicate<Player> botFilter) {
         JPopupMenu popup = new JPopupMenu();
-        List<Player> botPlayers = getBotPlayersUnderYourCommand().stream().filter(botFilter).toList();
-        if (botPlayers.size() == 1) {
+        Collection<Player> commandedBots = getBotPlayersUnderYourCommand();
+        List<Player> botPlayers = commandedBots.stream().filter(botFilter).toList();
+        boolean isOnlyBotCommanded = commandedBots.size() == 1;
+        if (isOnlyBotCommanded && (botPlayers.size() == 1)) {
             // Single-bot shortcut: inline the only bot's actions, dropping the redundant bot submenu level.
             JMenu botMenu = new JMenu();
             populator.accept(botMenu, botPlayers.getFirst());
@@ -779,7 +883,7 @@ public class BotCommandsPanel extends JPanel {
             }
         } else {
             for (Player botPlayer : botPlayers) {
-                JMenu botMenu = new JMenu(botPlayer.getName());
+                JMenu botMenu = new JMenu(botMenuLabel(botPlayer));
                 populator.accept(botMenu, botPlayer);
                 if (botMenu.getItemCount() > 0) {
                     if (scrollThreshold > 0) {
@@ -790,6 +894,21 @@ public class BotCommandsPanel extends JPanel {
             }
         }
         return popup;
+    }
+
+    /**
+     * @param botPlayer The bot a submenu is for
+     *
+     * @return The submenu's label: the bot's name and its type, e.g. "Bravo (Princess)", so a player commanding both
+     *       kinds of bot can tell which one an order goes to
+     */
+    private String botMenuLabel(Player botPlayer) {
+        boolean isCasparBot = (client.getGame() instanceof Game game)
+              && OrderEligibility.takesUnitOrders(game, botPlayer);
+        String botTypeName = Messages.getString(isCasparBot
+              ? "BotConfigDialog.aiType.CASPAR"
+              : "BotConfigDialog.aiType.PRINCESS");
+        return Messages.getString("BotCommandPanel.botMenuLabel", botPlayer.getName(), botTypeName);
     }
 
     /**
@@ -946,21 +1065,38 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Adds the item that opens the priority target picker for a bot. Without a client window to open it from, falls
-     * back to the plain list of enemy units, which adds a target at the default priority.
+     * Adds the item that opens the priority target picker for a bot. The picker opens over the game window, or over the
+     * Commander window when there is no game window. Without any window to open it from, falls back to the plain list
+     * of enemy units, which adds a target at the default priority.
      *
      * @param botMenu   the bot submenu to add the item to
      * @param botPlayer the bot the orders go to
      */
     private void addPriorityTargetItem(JMenu botMenu, Player botPlayer) {
-        if (clientGUI == null) {
+        JFrame parentFrame = pickerParentFrame();
+        if ((parentFrame == null) || !(client.getGame() instanceof Game game)) {
+            LOGGER.info("[PriorityTargets] {}: plain unit list, no window to open the picker from",
+                  botPlayer.getName());
             addEnemyUnitMenu(botMenu, botPlayer, "PriorityTargetMenu", this::setPriorityTarget);
             return;
         }
+        LOGGER.info("[PriorityTargets] {}: priority target picker over the {} window", botPlayer.getName(),
+              (clientGUI != null) ? "game" : "Commander");
         JMenuItem pickerItem = new JMenuItem(Messages.getString("BotCommandPanel.PriorityTargetPicker.title"));
         pickerItem.setToolTipText(Messages.getString("BotCommandPanel.PriorityTargetPicker.tooltip"));
-        pickerItem.addActionListener(event -> pickPriorityTargets(botPlayer));
+        pickerItem.addActionListener(event -> pickPriorityTargets(botPlayer, parentFrame, game));
         botMenu.add(pickerItem);
+    }
+
+    /**
+     * @return the window to open a dialog over: the game window, or else the window this panel sits in, such as the
+     *       Commander window; {@code null} when there is neither
+     */
+    private @Nullable JFrame pickerParentFrame() {
+        if (clientGUI != null) {
+            return clientGUI.getFrame();
+        }
+        return (SwingUtilities.getWindowAncestor(this) instanceof JFrame frame) ? frame : null;
     }
 
     /**
@@ -968,10 +1104,11 @@ public class BotCommandsPanel extends JPanel {
      * whose target priority changed. Units already on the bot list cannot be unticked here, since the bot takes no
      * order to drop one.
      *
-     * @param botPlayer the bot the orders go to
+     * @param botPlayer   the bot the orders go to
+     * @param parentFrame the window to open the picker over
+     * @param game        the game as this client sees it
      */
-    private void pickPriorityTargets(Player botPlayer) {
-        Game game = clientGUI.getClient().getGame();
+    private void pickPriorityTargets(Player botPlayer, JFrame parentFrame, Game game) {
         Map<Integer, Integer> currentPriorities = new HashMap<>();
         // the server sends every bot's settings when a client connects; before that the map can still be missing
         Map<String, BehaviorSettings> allBotSettings = game.getBotSettings();
@@ -981,7 +1118,7 @@ public class BotCommandsPanel extends JPanel {
                 currentPriorities.put(unitId, knownSettings.getTargetPriority(unitId));
             }
         }
-        var picker = new BotTargetPickerDialog(clientGUI.getFrame(), game, botPlayer,
+        var picker = new BotTargetPickerDialog(parentFrame, game, botPlayer,
               currentPriorities, currentPriorities.keySet());
         picker.setVisible(true);
         if (picker.getResult() != DialogResult.CONFIRMED) {
@@ -995,7 +1132,7 @@ public class BotCommandsPanel extends JPanel {
                 ordersSent++;
             }
         }
-        LOGGER.debug("[PriorityTargets] sent {} priority target order(s) to {}", ordersSent, botPlayer.getName());
+        LOGGER.info("[PriorityTargets] sent {} priority target order(s) to {}", ordersSent, botPlayer.getName());
         if (ordersSent > 0) {
             acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.priorityTargets", ordersSent));
         }
@@ -1315,7 +1452,7 @@ public class BotCommandsPanel extends JPanel {
 
     /**
      * Lets the player designate target hexes by clicking them on the board. When no board view is available (e.g. in
-     * the Commander GUI), falls back to a typed hex number prompt.
+     * the Commander GUI), they click the hex picking map instead if one is set, or else type the hex numbers.
      *
      * @param orderDescription  Human-readable description of the order shown while picking
      * @param singleHex         {@code true} to finish after the first hex is picked
@@ -1331,6 +1468,11 @@ public class BotCommandsPanel extends JPanel {
                   .filter(BoardView.class::isInstance)
                   .map(BoardView.class::cast)
                   .orElse(null);
+        }
+        if ((boardView == null) && (hexPickingMap != null)) {
+            new MinimapHexPicker(hexPickingMap, client.getGame(), orderDescription, singleHex, maxHexes,
+                  onTargetsSelected).start();
+            return;
         }
         if (boardView == null) {
             String targets = promptForHexNumbers(fallbackPromptKey, "BotCommandPanel.TargetHexPrompt.title", maxHexes);

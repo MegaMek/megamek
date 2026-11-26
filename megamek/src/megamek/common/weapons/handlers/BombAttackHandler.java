@@ -62,6 +62,7 @@ import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
@@ -140,6 +141,8 @@ public class BombAttackHandler extends WeaponHandler {
         Player player = entity.getOwner();
         String bombMsg;
         Vector<Integer> hitIds = null;
+        // The first bomb uses the roll made when this handler was created; every later bomb rolls its own.
+        boolean firstBomb = true;
 
         // now go through the payload and drop the bombs one at a time
         for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {
@@ -175,6 +178,12 @@ public class BombAttackHandler extends WeaponHandler {
             }
 
             for (int i = 0; i < bombCount; i++) {
+                // Rolled at the top of the loop, so a bomb that leaves the board cannot pass its dice to the next one
+                if (!firstBomb) {
+                    roll = rollBombAttack();
+                }
+                firstBomb = false;
+
                 // Report weapon attack and its to-hit value.
                 Report report;
 
@@ -321,7 +330,8 @@ public class BombAttackHandler extends WeaponHandler {
                 dropHex.setTargetLevel(((HexTarget) target).getTargetLevel());
 
                 if (type == BombTypeEnum.INFERNO) {
-                    hitIds = gameManager.deliverBombInferno(drop, attackingEntity, subjectId, vPhaseReport);
+                    hitIds = gameManager.deliverBombInferno(drop, target.getBoardId(), attackingEntity, subjectId,
+                          vPhaseReport);
                 } else if (type == BombTypeEnum.THUNDER) {
                     gameManager.deliverThunderMinefield(drop,
                           attackingEntity.getOwner().getId(),
@@ -354,17 +364,20 @@ public class BombAttackHandler extends WeaponHandler {
                                     + " " + coords.getBoardNum()));
                     }
                 }
-
-                // Finally, we need a new attack roll for the next bomb, if any. Made the same way as the first
-                // bomb's roll in WeaponHandler, so the crew's Natural Aptitude applies to every bomb in the run.
-                if (attackingEntity.getCrew() != null) {
-                    roll = attackingEntity.getCrew().rollGunnerySkill(game, weaponAttackAction);
-                } else {
-                    roll = Compute.rollD6(2);
-                }
             }
         }
 
         return false;
+    }
+
+    /**
+     * Rolls the to-hit for the next bomb in the run. Made the same way as the first bomb's roll in WeaponHandler, so
+     * the crew's Natural Aptitude applies to every bomb in the run.
+     */
+    private Roll rollBombAttack() {
+        if (attackingEntity.getCrew() != null) {
+            return attackingEntity.getCrew().rollGunnerySkill(game, weaponAttackAction);
+        }
+        return Compute.rollD6(2);
     }
 }

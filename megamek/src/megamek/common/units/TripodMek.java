@@ -288,28 +288,8 @@ public class TripodMek extends MekWithArms {
             roll.addModifier(-1, "tripod bonus");
         }
 
-        for (int loc : List.of(LOC_LEFT_LEG, LOC_RIGHT_LEG, LOC_CENTER_LEG)) {
-            if (isLocationBad(loc)) {
-                roll.addModifier(5, getLocationName(loc) + " destroyed");
-            } else {
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
-                    roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                    if (!gameOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                        continue;
-                    }
-                }
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
-                }
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
-                }
-                if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
-                }
-            }
-        }
+        Game.rulesManager.getRulesPSR().legDamageModifiers(this, roll, gameOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));
 
         return super.addEntityBonuses(roll);
     }

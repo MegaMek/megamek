@@ -715,7 +715,7 @@ public enum MissionRole {
                               mRec.getUnitType() == UnitType.PROTOMEK)) {
                             if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM &&
                                   mRec.getSpeed() >= 6) {
-                                avRating -= Math.max(avRating - strong_adjust, 1.0);
+                                avRating = Math.max(avRating - strong_adjust, 1.0);
                             } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY &&
                                   mRec.getSpeed() >= 5) {
                                 avRating = Math.max(avRating - strong_adjust, 1.0);

@@ -34,6 +34,7 @@
 package megamek.common.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,7 +43,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the hardware lines written to the log header and bug reports.
+ * Tests the hardware values written to the log header and the bug report form.
  */
 class HardwareDescriptionTest {
 
@@ -50,39 +51,39 @@ class HardwareDescriptionTest {
 
     @Test
     void processorLineShowsCoresThreadsAndSpeed() {
-        assertEquals("CPU: AMD Ryzen 7 5800X 8-Core Processor (8 cores, 16 threads, 3.80 GHz)",
+        assertEquals("AMD Ryzen 7 5800X 8-Core Processor (8 cores, 16 threads, 3.80 GHz)",
               HardwareDescription.describeProcessor("AMD Ryzen 7 5800X 8-Core Processor", 1, 8, 16, 3_800_000_000L));
     }
 
     @Test
     void processorLineNamesSocketsOnlyWhenThereIsMoreThanOne() {
-        assertEquals("CPU: Xeon (2 CPUs, 32 cores, 64 threads)",
+        assertEquals("Xeon (2 CPUs, 32 cores, 64 threads)",
               HardwareDescription.describeProcessor("Xeon", 2, 32, 64, 0L));
     }
 
     @Test
     void graphicsCardLineShowsMemoryAndDriver() {
-        assertEquals("GPU: NVIDIA GeForce RTX 3070 (8 GB VRAM, driver 32.0.15.6094)",
+        assertEquals("NVIDIA GeForce RTX 3070 (8 GB VRAM, driver 32.0.15.6094)",
               HardwareDescription.describeGraphicsCard("NVIDIA GeForce RTX 3070", 8 * GIGABYTE,
                     "DriverVersion=32.0.15.6094"));
     }
 
     @Test
     void integratedGraphicsMemoryIsShownInMegabytes() {
-        assertEquals("GPU: Intel(R) UHD Graphics (128 MB VRAM, driver 31.0.101.5187)",
+        assertEquals("Intel(R) UHD Graphics (128 MB VRAM, driver 31.0.101.5187)",
               HardwareDescription.describeGraphicsCard("Intel(R) UHD Graphics", 128L * 1024L * 1024L,
                     "DriverVersion=31.0.101.5187"));
     }
 
     @Test
     void graphicsCardLineDropsUnknownDetails() {
-        assertEquals("GPU: Microsoft Basic Display Adapter",
+        assertEquals("Microsoft Basic Display Adapter",
               HardwareDescription.describeGraphicsCard("Microsoft Basic Display Adapter", 0L, "unknown"));
     }
 
     @Test
     void memoryLineShowsTotalAndFree() {
-        assertEquals("System RAM: 32 GB (18 GB free)", HardwareDescription.describeMemory(32 * GIGABYTE,
+        assertEquals("32 GB (18 GB free)", HardwareDescription.describeMemory(32 * GIGABYTE,
               18 * GIGABYTE));
     }
 
@@ -94,5 +95,19 @@ class HardwareDescriptionTest {
         assertTrue(lines.getFirst().startsWith("CPU: "), lines.toString());
         assertTrue(lines.getLast().startsWith("System RAM: "), lines.toString());
         assertSame(lines, HardwareDescription.lines(), "the second call should reuse the first result");
+    }
+
+    @Test
+    void logLinesAreBuiltFromTheSameValuesAsTheFormFields() {
+        List<String> lines = HardwareDescription.lines();
+        List<String> graphicsCards = HardwareDescription.graphicsCards();
+
+        assertEquals("CPU: " + HardwareDescription.processor(), lines.getFirst());
+        assertEquals("System RAM: " + HardwareDescription.systemMemory(), lines.getLast());
+        assertFalse(graphicsCards.isEmpty(), "an unreadable card list falls back to one unknown entry");
+        assertEquals(graphicsCards.size() + 2, lines.size(), lines.toString());
+        for (int i = 0; i < graphicsCards.size(); i++) {
+            assertEquals("GPU: " + graphicsCards.get(i), lines.get(i + 1));
+        }
     }
 }

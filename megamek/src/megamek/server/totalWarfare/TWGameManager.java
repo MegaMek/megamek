@@ -23773,6 +23773,11 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
         if (entity instanceof Mek mek) {
+            // Tainted or toxic air only ever reaches the cockpit, wherever it is mounted (TO:AR p.54)
+            if (entity.getLocationStatus(loc) == ILocationExposureStatus.TAINTED) {
+                vDesc.addAll(new TaintedAtmosphereHandler(this).resolveMekCockpitBreach(mek, loc));
+                return vDesc;
+            }
             boolean breachedLegIsDestroyed = entity.locationIsLeg(loc) &&
                   Game.rulesManager.getRulesUnderwater().treatBreachedLegAsDestroyed();
             // equipment and crits will be marked in applyDamage?
@@ -23824,8 +23829,6 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(destroyEntity(entity, "hull breach"));
                 if (entity.getLocationStatus(loc) == ILocationExposureStatus.WET) {
                     r = new Report(6355);
-                } else if (entity.getLocationStatus(loc) == ILocationExposureStatus.TAINTED) {
-                    r = new Report(7716);
                 } else {
                     r = new Report(6360);
                 }

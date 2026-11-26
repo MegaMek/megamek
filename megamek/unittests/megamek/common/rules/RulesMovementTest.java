@@ -31,6 +31,7 @@ import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.core.CoreRulesMovement;
 import megamek.common.rules.totalwarfare.TWRulesMovement;
@@ -38,6 +39,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -61,6 +63,50 @@ class RulesMovementTest extends GameBoardTestCase {
         } finally {
             Game.rulesManager = savedRules;
         }
+    }
+
+    /**
+     * Issue #9727: a Combat Vehicle is not in the Core Rulebook, so under Core Rules it follows the Tactical
+     * Operations Expanded Backward Movement option (TO:AR p.20), the same as under Total Warfare. The tank starts on
+     * level 1 facing north and backs south one hex, down to level 0.
+     */
+    @Test
+    void coreRulesLetTankBackDownOneLevelOnlyWithTacOpsOption() {
+        assertTrue(isTankBackingDownOneLevelLegal(true));
+        assertFalse(isTankBackingDownOneLevelLegal(false));
+    }
+
+    private boolean isTankBackingDownOneLevelLegal(boolean expandedBackwardMovement) {
+        RulesManager savedRules = Game.rulesManager;
+        try {
+            Game.rulesManager = new CoreRulesManager();
+            getGame().getOptions()
+                  .getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
+                  .setValue(expandedBackwardMovement);
+            getGame().setBoard(BoardLoader.initializeBoard("""
+                  size 1 2
+                  hex 0101 1 "" ""
+                  hex 0102 0 "" ""
+                  end"""));
+            MovePath path = getMovePathFor(new Tank(), 0, EntityMovementMode.TRACKED,
+                  MoveStepType.TURN_LEFT, MoveStepType.TURN_LEFT, MoveStepType.TURN_LEFT, MoveStepType.BACKWARDS);
+            return path.isMoveLegal();
+        } finally {
+            Game.rulesManager = savedRules;
+        }
+    }
+
+    /**
+     * A Battlefield Support Asset is played by the Core Rulebook, where "An Asset cannot change levels on a turn that
+     * it moves backward" (Core p.141), so the Tactical Operations option does not apply to it.
+     */
+    @Test
+    void coreRulesNeverLetBattlefieldSupportAssetBackAcrossLevel() {
+        CoreRulesMovement core = new CoreRulesMovement();
+        BattlefieldSupportAsset vehicleAsset = new BattlefieldSupportAsset();
+        vehicleAsset.setAssetType(BFSAssetType.VEHICLE);
+
+        assertFalse(core.enableBackwardsElevationChange(true, vehicleAsset));
     }
 
     @Test

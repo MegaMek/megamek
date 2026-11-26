@@ -269,6 +269,7 @@ factions:
               - [2,2]
               - [5,5]
 
+    # NOT YET SUPPORTED: minefields are not read from V2 scenarios yet; this block is ignored
     minefields:                               # optional, availability depending on game type
     - conventional: 2
     - command: 0
@@ -314,12 +315,19 @@ factions:
 
 #        elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
 #        altitude: 8                             # default: 5 for aero
-        status: prone, hidden                   # default: none; values: shutdown, hulldown, prone, hidden
+        status: [ prone, hidden ]               # default: none; values: shutdown, hulldown, prone, hidden
+                                                # several values must be a list in brackets
 
         # Optional: the force is given as it is written to MUL files; from upper (regiment) to lower (lance) level
         # each level is <name>|<force id>; separate levels by a double pipe ||
         # the force ids are used to distinguish different forces with the same name (e.g. multiple "Assault Lance")
         force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
+
+        # random pre-existing damage from the Pre-Existing Damage Table (FSW p.144), the same roll as the
+        # unit editor's Pre-Existing Damage button; values: none, light, moderate, heavy, or random to roll the table
+        # rolled anew each time the scenario loads, added on top of remaining: and crits: below
+        # never destroys or immobilizes the unit; only Meks, vehicles and fighters, other units are left undamaged
+        damage: moderate
 
         # pre-applied damage may assign remaining armor and internal structure values. Values
         # higher than the undamaged values of the unit are ignored. Negative values set to 0 (TODO)
@@ -353,9 +361,9 @@ factions:
         # ammo types and reduced amount
         # this usually requires looking up the unit file and possibly AmmoType.java for the type designations
         ammo:
-          LA:
-            slot: 5
-            shots: 2
+          LA:                                   # a list (use dashes), even for a single slot
+            - slot: 5
+              shots: 2
             # type: xyz (TODO)
 
         # Bombs for any IBomber types (LAM and aero units);
@@ -393,6 +401,21 @@ factions:
           hits: 3
           # Optional: a portrait, relative to data/images/portraits
           portrait: Male/MechWarrior/MW_M_13.png
+          # Optional: Edge points; Edge is only spent in play when the game option edge is on (options: on: - edge)
+          edge: 3
+          # Optional: SPAs, implants and Edge triggers, by their option name (see PilotOptions / OptionsConstants)
+          # a bare name switches an ability on; name: value sets a value
+          # SPAs only work in play when the game option pilot_advantages is on (options: on: - pilot_advantages)
+          # an unknown name stops the scenario from loading
+          abilities:
+            - dodge_maneuver
+            - weapon_specialist: Medium Laser
+            - edge_when_tac: false              # this pilot will not spend Edge on a TAC
+
+        # Optional: this unit is its force's commander; default: false
+        commander: true
+        # Optional, Meks and fighters: let the pilot eject automatically; default: the auto-eject client setting
+        autoeject: false
 
     # Carryable objects. These currently have no real owner, but if they are not pre-deployed, the present
     # player will deploy them. When pre-deployed (at: [ x, y ]), the owner is currently irrelevant.
@@ -458,8 +481,8 @@ factions:
         #      y: 4                                    # must have both x and y or neither
         elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
         altitude: 8                             # default: 5 for aero
-        status: prone, hidden                   # default: none; other values: shutdown, hulldown
-        offboard: N                             # default: not offboard; values: N, E, S, W
+        status: [ prone, hidden ]               # default: none; other values: shutdown, hulldown
+        offboard: NORTH                         # default: not offboard; values: NORTH, EAST, SOUTH, WEST
         crew:                                   # default: unnamed 4/5 pilot
           name: Cpt. Frederic Nguyen
           piloting: 4
@@ -468,7 +491,7 @@ factions:
         fullname: Atlas AS7-D
         x: 5
         y: 3
-        reinforce: 2                            # default: deploy at start; here: reinforce at the start of round 2
+        deploymentround: 2                      # default: deploy at start; here: reinforce at the start of round 2
         # cannot be combined with a position
         crew:
           name: Cpt. Rhonda Snord

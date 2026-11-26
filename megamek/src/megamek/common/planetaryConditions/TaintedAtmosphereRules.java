@@ -208,13 +208,13 @@ public final class TaintedAtmosphereRules {
     }
 
     /**
-     * Whether a BattleMek in this atmosphere makes a hull breach check on its head. Only cockpit breaches have any
+     * Whether a BattleMek in this atmosphere makes a hull breach check on its cockpit. Only cockpit breaches have any
      * effect on Meks (TO:AR p.54), and the only breach effect the table gives for a Mek is the toxic one, so no
      * check is made in a merely tainted atmosphere.
      *
      * @param atmosphericTaint the air the Mek is operating in
      *
-     * @return {@code true} if a breach check should be made on the Mek's head
+     * @return {@code true} if a breach check should be made on the Mek's cockpit
      */
     public static boolean causesMekCockpitBreaches(AtmosphericTaint atmosphericTaint) {
         return atmosphericTaint.isToxic() && isHarmfulToPersonnel(atmosphericTaint);
@@ -222,8 +222,9 @@ public final class TaintedAtmosphereRules {
 
     /**
      * Whether one location of one unit is open to the fouled air, and so should have breach checks made against it.
-     * A vehicle exposes every location; a BattleMek exposes only its head, because TO:AR p.54 states that on Meks
-     * only cockpit breaches have any effect. Every other unit type is sealed by construction and is never exposed.
+     * A vehicle exposes every location; a BattleMek exposes only the location holding its cockpit, because TO:AR p.54
+     * states that on Meks only cockpit breaches have any effect. Every other unit type is sealed by construction and
+     * is never exposed.
      *
      * @param entity           the unit standing in the atmosphere
      * @param location         the location being checked
@@ -238,10 +239,26 @@ public final class TaintedAtmosphereRules {
         if (entity instanceof Tank) {
             return causesVehicleBreaches(atmosphericTaint);
         }
-        if (entity instanceof Mek) {
-            return (location == Mek.LOC_HEAD) && causesMekCockpitBreaches(atmosphericTaint);
+        if (entity instanceof Mek mek) {
+            return (location == getCockpitLocation(mek)) && causesMekCockpitBreaches(atmosphericTaint);
         }
         return false;
+    }
+
+    /**
+     * The location that holds a Mek's cockpit. A torso-mounted cockpit, and the Virtual Reality Piloting Pod built on
+     * one, sits in the center torso and leaves the head with only its sensors (TO:AUE p.113); every other cockpit is
+     * in the head.
+     *
+     * @param mek the Mek to check
+     *
+     * @return {@link Mek#LOC_CENTER_TORSO} for a torso-mounted cockpit, otherwise {@link Mek#LOC_HEAD}
+     */
+    public static int getCockpitLocation(Mek mek) {
+        if (mek.hasTorsoMountedCockpit()) {
+            return Mek.LOC_CENTER_TORSO;
+        }
+        return Mek.LOC_HEAD;
     }
 
     /**

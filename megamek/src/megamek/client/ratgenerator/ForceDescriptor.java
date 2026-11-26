@@ -199,6 +199,12 @@ public class ForceDescriptor {
      * while {@link UnitVariety} is in force. Set only for the length of one pick.
      */
     private final Set<String> excludedModels = new HashSet<>();
+    /**
+     * Models a pick for this slot must never return, whatever else the table offers: the designs a player has rerolled
+     * away. Unlike {@link #excludedModels} this holds on every pick path, not only a chassis-limited one. Set only for
+     * the length of one reroll by {@link UnitReroller}.
+     */
+    private final Set<String> rejectedModels = new HashSet<>();
     /** Whether this node is the "Naval Units" branch the transport stage attaches to a force. */
     private boolean transportRoot = false;
     /**
@@ -606,9 +612,43 @@ public class ForceDescriptor {
                 }
             }
         }
+        logReconFormation(subs, unitList);
         return unitList.stream()
               .map(mekSummary -> RATGenerator.getInstance().getModelRecord(mekSummary.getName()))
               .collect(Collectors.toList());
+    }
+
+    /**
+     * Logs which units a recon formation drew, so a playtest can tell from the log alone whether a heavy recon lance
+     * was filled from more than one model (MegaMek/mekhq#11219). Formations without the recon role log nothing.
+     *
+     * @param subs     the formation's slots
+     * @param unitList the units drawn for them
+     */
+    private void logReconFormation(List<ForceDescriptor> subs, List<MekSummary> unitList) {
+        boolean isRecon = false;
+        for (ForceDescriptor sub : subs) {
+            if (sub.getRoles().contains(MissionRole.RECON)) {
+                isRecon = true;
+                break;
+            }
+        }
+        if (!isRecon) {
+            return;
+        }
+        if (unitList.isEmpty()) {
+            LOGGER.info("[ForceGen][Recon] '{}' formation={} faction={} year={} weightClass={} -> no units fit the"
+                        + " formation; generating as an ordinary lance", parseName(), formationType.getName(), faction,
+                  year, getWeightClassCode());
+            return;
+        }
+        StringJoiner units = new StringJoiner(", ");
+        for (MekSummary mekSummary : unitList) {
+            units.add(mekSummary.getName() + " (" + Math.round(mekSummary.getTons()) + "t, Walk "
+                  + mekSummary.getWalkMp() + ")");
+        }
+        LOGGER.info("[ForceGen][Recon] '{}' formation={} faction={} year={} weightClass={} -> {}",
+              parseName(), formationType.getName(), faction, year, getWeightClassCode(), units);
     }
 
     /**
@@ -669,13 +709,29 @@ public class ForceDescriptor {
         if (!baseSubs.isEmpty()) {
             baseUnitList = generateFormation(baseSubs, networkMask, numGroups);
         }
-        if (baseUnitList == null) {
+        // generateFormation reports a formation it cannot fill with an empty list, not null. The base units must
+        // still be picked here, or none of them count as omnis below and every battle armor slot asks for
+        // magnetic clamps that most Clans do not have.
+        boolean formationFailed = (baseUnitList != null) && baseUnitList.isEmpty();
+        if ((baseUnitList == null) || formationFailed) {
+            if (formationFailed) {
+                LOGGER.debug("[ForceGen][Nova] '{}': {} could not be filled by {} base unit(s); generating them"
+                      + " as an ordinary lance", parseName(), formationType, baseSubs.size());
+                formationType = null;
+            }
             generateLance(baseSubs);
             baseUnitList = baseSubs.stream()
                   .map(ForceDescriptor::getModelName)
                   .map(m -> RATGenerator.getInstance().getModelRecord(m))
                   .filter(Objects::nonNull)
                   .collect(Collectors.toList());
+            if (formationFailed && (baseUnitList.size() < baseSubs.size())) {
+                // The caller assigns this list to the base slots by position, so a short list cannot be used.
+                // Hand back nothing and let the caller generate the whole Nova as an ordinary lance.
+                LOGGER.debug("[ForceGen][Nova] '{}': only {} of {} base unit(s) resolved; leaving the Nova to the"
+                      + " ordinary lance fallback", parseName(), baseUnitList.size(), baseSubs.size());
+                return new ArrayList<>();
+            }
         }
 
         // Any BA in excess of the number of omni base units will require mag clamps, up to the number of base units.
@@ -1228,9 +1284,23 @@ public class ForceDescriptor {
             }
         } else {
             for (String ratGenRating : ratingFallbackList()) {
-                ModelRecord modelRecord = generateAtRating(ratGenRating, failureTrace, true);
+                ModelRecord modelRecord = generateAtRating(ratGenRating, failureTrace, true, true);
                 if (modelRecord != null) {
                     return modelRecord;
+                }
+            }
+            // The ladder drops the roles only after it has moved off the requested weight class, so a slot whose
+            // role no unit of that class has is never tried at that class without it. Example: a medium battle armor
+            // slot asked for magnetic clamps, when the only suit the faction fields is a medium one with none.
+            if (hasRoleForOwnUnitType()) {
+                for (String ratGenRating : ratingFallbackList()) {
+                    ModelRecord modelRecord = generateAtRating(ratGenRating, failureTrace, true, false);
+                    if (modelRecord != null) {
+                        LOGGER.debug("[ForceGen][Weight] generate() {} requestedWeight={}: no unit met roles {};"
+                                    + " picked {} with the roles dropped", describeUnitType(unitType), weightClass,
+                              roles, modelRecord.getKey());
+                        return modelRecord;
+                    }
                 }
             }
         }
@@ -1262,7 +1332,7 @@ public class ForceDescriptor {
      * Renders a unit type for diagnostic messages without unboxing a {@code null}.
      *
      * <p>{@link #unitType} is a nullable {@link Integer} - a subforce can spawn child nodes without
-     * propagating a unit type (see {@link #generateAtRating(String, List, boolean)}) - while
+     * propagating a unit type (see {@link #generateAtRating(String, List, boolean, boolean)}) - while
      * {@link UnitType#getTypeDisplayableName(int)} takes a primitive. Passing the field straight through
      * throws a {@link NullPointerException} on unboxing, and because logger arguments are evaluated
      * eagerly it throws even when {@code DEBUG} is disabled.</p>
@@ -1283,7 +1353,7 @@ public class ForceDescriptor {
      * every leaf of the force tree, so a per-attempt loop floods the log and violates the project rule
      * against logging inside loops.</p>
      *
-     * @param failureTrace the attempt descriptions gathered by {@link #generateAtRating(String, List, boolean)}; may
+     * @param failureTrace the attempt descriptions gathered by {@link #generateAtRating(String, List, boolean, boolean)}; may
      *                     be empty when {@code DEBUG} is disabled, in which case nothing is appended
      *
      * @return a newline-prefixed block of indented attempt lines, or the empty string when there are none
@@ -1340,11 +1410,34 @@ public class ForceDescriptor {
               movementModes,
               EnumSet.of(MissionRole.ARTILLERY),
               2);
-        MekSummary mekSummary = table.generateUnit();
+        MekSummary mekSummary = table.generateUnit(rejectedModelsFilter());
         if (mekSummary == null) {
             return null;
         }
         return RATGenerator.getInstance().getModelRecord(mekSummary.getName());
+    }
+
+    /** @return {@code true} unless the unit is one a reroll of this slot has ruled out */
+    private boolean isNotRejected(MekSummary unit) {
+        return !rejectedModels.contains(unit.getName());
+    }
+
+    /**
+     * @return a filter refusing the rejected models, or {@code null} when there are none, so an ordinary pick draws
+     *       from the table exactly as it did before rerolls existed
+     */
+    private @Nullable UnitTable.UnitFilter rejectedModelsFilter() {
+        return rejectedModels.isEmpty() ? null : this::isNotRejected;
+    }
+
+    /**
+     * The models a pick for this slot must not return. {@link UnitReroller} fills it for one reroll and empties it
+     * afterwards; nothing else writes to it.
+     *
+     * @return the live set, never {@code null}
+     */
+    Set<String> getRejectedModels() {
+        return rejectedModels;
     }
 
     /**
@@ -1368,13 +1461,13 @@ public class ForceDescriptor {
             ownRatingsFirst.addAll(ruleset.getRatingsBetterThan(ratGeneratorRating()));
         }
         for (String ratGenRating : ownRatingsFirst) {
-            ModelRecord ownUnit = generateAtRating(ratGenRating, failureTrace, false);
+            ModelRecord ownUnit = generateAtRating(ratGenRating, failureTrace, false, true);
             if (ownUnit != null) {
                 return ownUnit;
             }
         }
         for (String ratGenRating : ratingFallbackList()) {
-            ModelRecord salvagedUnit = generateAtRating(ratGenRating, failureTrace, true);
+            ModelRecord salvagedUnit = generateAtRating(ratGenRating, failureTrace, true, true);
             if (salvagedUnit != null) {
                 LOGGER.debug("[ForceGen][InfantryClass] {} {}: none of the faction's own at any rating; salvaged {}",
                       faction, infantryClass, salvagedUnit.getKey());
@@ -1403,6 +1496,21 @@ public class ForceDescriptor {
     }
 
     /**
+     * Whether this descriptor asks for at least one role its own unit type can take. Roles the unit type cannot take
+     * are dropped before every pick (see {@link MissionRole#fitsUnitType(int)}), so they never block one.
+     *
+     * @return {@code true} if a role can narrow this descriptor's picks
+     */
+    private boolean hasRoleForOwnUnitType() {
+        for (MissionRole role : roles) {
+            if (role.fitsUnitType(unitType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Generates a single unit for this descriptor at a fixed equipment rating. If the criteria cannot be matched, first
      * tries the next closest weight class, then ignores mission role, then the next weight class, then ignores motive
      * types, then the remaining weight classes. Returns {@code null} if no unit could be generated at the given
@@ -1412,9 +1520,11 @@ public class ForceDescriptor {
      * @param failureTrace collects one line per attempt for the failure log
      * @param allowSalvage {@code false} to draw an infantry-class pick from the faction's own table only; ordinary
      *                     picks always allow salvage
+     * @param applyRoles   {@code false} to ignore this descriptor's roles from the first attempt, for the last-resort
+     *                     pass in {@link #generate()}
      */
     private @Nullable ModelRecord generateAtRating(String ratGenRating, List<String> failureTrace,
-          boolean allowSalvage) {
+          boolean allowSalvage, boolean applyRoles) {
         final int[][] alternateWeights = { { 1, 2, 3, 4, 5 }, // UL
                                            { 2, 0, 3, 4, 5 }, // L
                                            { 3, 1, 4, 0, 5 }, // M
@@ -1427,7 +1537,9 @@ public class ForceDescriptor {
         workingCopy.setEchelon(echelon);
         workingCopy.setCoRank(coRank);
         workingCopy.getRoles().clear();
-        workingCopy.getRoles().addAll(roles.stream().filter(role -> role.fitsUnitType(unitType)).toList());
+        if (applyRoles) {
+            workingCopy.getRoles().addAll(roles.stream().filter(role -> role.fitsUnitType(unitType)).toList());
+        }
 
         // Without a unit type there is no table to draw from. This can happen when a subforce
         // spawns child nodes without propagating a unit type (e.g. a Solahma star group). Treat it
@@ -1463,13 +1575,16 @@ public class ForceDescriptor {
                 } else if (!workingCopy.getChassis().isEmpty()) {
                     mekSummary = table.generateUnit(unit -> workingCopy.getChassis().contains(unit.getChassis())
                           && !excludedModels.contains(unit.getName())
+                          && isNotRejected(unit)
                           && workingCopy.acceptsForInfantryClass(unit));
                 } else if (workingCopy.isInfantryClassApplied()) {
+                    UnitTable.UnitFilter classFilter = unit -> workingCopy.acceptsForInfantryClass(unit)
+                          && isNotRejected(unit);
                     mekSummary = allowSalvage
-                          ? table.generateUnit(workingCopy::acceptsForInfantryClass)
-                          : table.generateUnitWithoutSalvage(workingCopy::acceptsForInfantryClass);
+                          ? table.generateUnit(classFilter)
+                          : table.generateUnitWithoutSalvage(classFilter);
                 } else {
-                    mekSummary = table.generateUnit();
+                    mekSummary = table.generateUnit(rejectedModelsFilter());
                 }
                 // Gate on the log level, not on the unit type: the force generator serves combined-arms
                 // forces, so tanks, aero, infantry and vessels need this trace as much as Meks do. The

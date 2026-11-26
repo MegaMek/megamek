@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.client.ratgenerator;
 import java.util.Collection;
 import java.util.HashSet;
 
+import megamek.common.loaders.MekSummary;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitType;
@@ -75,6 +76,9 @@ public enum MissionRole {
     MIXED_ARTILLERY,
     /* Roles for advanced buildings and mobile structures */
     GENERATOR, CONTROL;
+
+    /** Walking MP an untagged heavy Mek needs to fill a recon slot; the Recon Lance needs Walk 5+ (CO p. 65). */
+    private static final int FAST_HEAVY_RECON_MIN_WALK = 5;
 
     /**
      * Identifies if a role applies to a given unit type
@@ -342,9 +346,9 @@ public enum MissionRole {
 
                     // Calling for recon units will exclude non-combat and civilian units.
                     // EW_SUPPORT, SPECOPS, and SPOTTER roles ARE included at a lower priority.
-                    // Additional fast VTOL, hovercraft, and light Mek/ProtoMek units may also
-                    // be included if they do not explicitly have the role. All other units are
-                    // excluded.
+                    // Additional fast VTOL, hovercraft, light/medium Mek/ProtoMek and heavy Mek
+                    // units may also be included if they do not explicitly have the role. All
+                    // other units are excluded.
                     case RECON:
                         if (isSpecialized(desiredRoles, mRec)) {
                             return null;
@@ -362,6 +366,8 @@ public enum MissionRole {
                                     mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)
                               &&
                               (mRec.getSpeed() >= 6)) {
+                            avRating = Math.max(avRating - strong_adjust, 1.0);
+                        } else if (isFastHeavyMek(mRec)) {
                             avRating = Math.max(avRating - strong_adjust, 1.0);
                         } else if (mRec.getUnitType() == UnitType.VTOL ||
                               mRec.getMovementMode() == EntityMovementMode.HOVER) {
@@ -715,7 +721,7 @@ public enum MissionRole {
                               mRec.getUnitType() == UnitType.PROTOMEK)) {
                             if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM &&
                                   mRec.getSpeed() >= 6) {
-                                avRating -= Math.max(avRating - strong_adjust, 1.0);
+                                avRating = Math.max(avRating - strong_adjust, 1.0);
                             } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY &&
                                   mRec.getSpeed() >= 5) {
                                 avRating = Math.max(avRating - strong_adjust, 1.0);
@@ -1277,6 +1283,28 @@ public enum MissionRole {
         }
 
         return avRating;
+    }
+
+    /**
+     * Whether an untagged unit is a heavy Mek fast enough to fill a recon slot. Without this, a recon formation limited
+     * to heavy and assault weights could only draw the few heavy and assault Meks tagged for recon, and for some
+     * factions and eras that is a single model (MegaMek/mekhq#11219: Mercenary lances of four Charger CGR-1A1s in
+     * 3000). The threshold is the Recon Lance's own Walk 5+ requirement, so a unit that passes here can also satisfy
+     * the formation. Walking MP is used rather than {@link ModelRecord#getSpeed()}, which counts jumping.
+     *
+     * @param modelRecord the unit to check
+     *
+     * @return {@code true} for a heavy Mek with Walk {@value #FAST_HEAVY_RECON_MIN_WALK} or more
+     */
+    private static boolean isFastHeavyMek(ModelRecord modelRecord) {
+        if (modelRecord.getUnitType() != UnitType.MEK) {
+            return false;
+        }
+        if (modelRecord.getWeightClass() != EntityWeightClass.WEIGHT_HEAVY) {
+            return false;
+        }
+        MekSummary mekSummary = modelRecord.getMekSummary();
+        return (mekSummary != null) && (mekSummary.getWalkMp() >= FAST_HEAVY_RECON_MIN_WALK);
     }
 
     /**

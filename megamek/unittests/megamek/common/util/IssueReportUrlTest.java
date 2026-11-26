@@ -37,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.Test;
 
 class IssueReportUrlTest {
@@ -50,6 +52,50 @@ class IssueReportUrlTest {
         assertTrue(url.contains("custom-megamek-version="), url);
         assertTrue(url.contains("operating-system="), url);
         assertTrue(url.contains("java-version="), url);
+    }
+
+    @Test
+    void prefillsTheHardwareAndBuildFields() {
+        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES);
+
+        assertTrue(url.contains("&cpu="), url);
+        assertTrue(url.contains("&graphics-cards="), url);
+        assertTrue(url.contains("&system-memory="), url);
+        assertTrue(url.contains("&java-max-memory="), url);
+        assertTrue(url.contains("&locale="), url);
+        assertTrue(url.contains("&build="), url);
+    }
+
+    /** The graphics field is a textarea with one card per line, so its newlines must survive as {@code %0A}. */
+    @Test
+    void neverPutsARawNewlineInTheUrl() {
+        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES);
+
+        assertFalse(url.contains("\n"), "a raw newline would break the link: " + url);
+    }
+
+    @Test
+    void javaMaxMemoryIsShownInGigabytes() {
+        assertEquals("4 GB", IssueReportUrl.describeJavaMaxMemory(4L * 1024L * 1024L * 1024L));
+    }
+
+    /** A 512 MB limit would round to "1 GB" or "0 GB", hiding the most likely cause of an out-of-memory report. */
+    @Test
+    void javaMaxMemoryUnderOneGigabyteIsShownInMegabytes() {
+        assertEquals("512 MB", IssueReportUrl.describeJavaMaxMemory(512L * 1024L * 1024L));
+    }
+
+    @Test
+    void buildLineShortensRevisionsAndKeepsPlaceholders() {
+        assertEquals("2026-11-20 | MM eba3a49e10, MML Unknown, MHQ Unknown",
+              IssueReportUrl.describeBuild(LocalDateTime.of(2026, 11, 20, 14, 5),
+                    "eba3a49e1006e51b16db12446caf5e43f57a18a7", "Unknown", "Unknown"));
+    }
+
+    @Test
+    void buildLineSaysWhenTheBuildDateIsMissing() {
+        assertEquals("N/A | MM Unknown, MML Unknown, MHQ Unknown",
+              IssueReportUrl.describeBuild(null, "Unknown", "Unknown", "Unknown"));
     }
 
     @Test

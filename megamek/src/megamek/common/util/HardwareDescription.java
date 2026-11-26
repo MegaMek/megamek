@@ -53,7 +53,11 @@ import oshi.hardware.HardwareAbstractionLayer;
  * processor ID, motherboard, network adapters, disks or user accounts.</p>
  *
  * <p>The lookup runs once and is cached; later calls are free. If OSHI cannot read the hardware on a platform, the
- * lines fall back to what plain Java knows (thread count and total memory) rather than failing the caller.</p>
+ * values fall back to what plain Java knows (thread count and total memory) rather than failing the caller.</p>
+ *
+ * <p>Each part is also available on its own ({@link #processor()}, {@link #graphicsCards()},
+ * {@link #systemMemory()}) so the bug report form can fill one field per part. The log lines are built from the same
+ * values, so the form and the log header always agree.</p>
  */
 public final class HardwareDescription {
     private static final MMLogger LOGGER = MMLogger.create(HardwareDescription.class);
@@ -63,7 +67,21 @@ public final class HardwareDescription {
     private static final double HERTZ_PER_GIGAHERTZ = 1_000_000_000.0;
     private static final String UNKNOWN = "unknown";
 
-    private static volatile List<String> cachedLines;
+    private static final String PROCESSOR_PREFIX = "CPU: ";
+    private static final String GRAPHICS_CARD_PREFIX = "GPU: ";
+    private static final String MEMORY_PREFIX = "System RAM: ";
+
+    private static volatile Hardware cachedHardware;
+
+    /**
+     * What was read from this machine, kept together so every caller sees the same lookup.
+     *
+     * @param processor     the CPU description, without its log prefix
+     * @param graphicsCards one description per graphics card, without the log prefix; never empty
+     * @param systemMemory  the system memory description, without its log prefix
+     * @param lines         the log header lines built from the three values above
+     */
+    private record Hardware(String processor, List<String> graphicsCards, String systemMemory, List<String> lines) {}
 
     private HardwareDescription() {}
 
@@ -72,71 +90,109 @@ public final class HardwareDescription {
      *       {@code CPU: AMD Ryzen 7 5800X 8-Core Processor (8 cores, 16 threads, 3.80 GHz)}
      */
     public static List<String> lines() {
-        List<String> lines = cachedLines;
-        if (lines == null) {
+        return hardware().lines();
+    }
+
+    /**
+     * @return the CPU, such as {@code AMD Ryzen 7 5800X 8-Core Processor (8 cores, 16 threads, 3.80 GHz)}
+     */
+    public static String processor() {
+        return hardware().processor();
+    }
+
+    /**
+     * @return one entry per graphics card, such as {@code NVIDIA GeForce RTX 3070 (8 GB VRAM, driver 32.0.15.6094)};
+     *       a single {@code unknown} entry when none could be read
+     */
+    public static List<String> graphicsCards() {
+        return hardware().graphicsCards();
+    }
+
+    /**
+     * @return the installed and free system memory, such as {@code 32 GB (18 GB free)}
+     */
+    public static String systemMemory() {
+        return hardware().systemMemory();
+    }
+
+    private static Hardware hardware() {
+        Hardware hardware = cachedHardware;
+        if (hardware == null) {
             synchronized (HardwareDescription.class) {
-                lines = cachedLines;
-                if (lines == null) {
-                    lines = readLines();
-                    cachedLines = lines;
+                hardware = cachedHardware;
+                if (hardware == null) {
+                    hardware = readHardware();
+                    cachedHardware = hardware;
                 }
             }
         }
-        return lines;
+        return hardware;
     }
 
-    private static List<String> readLines() {
+    private static Hardware readHardware() {
         long startNanos = System.nanoTime();
-        List<String> lines;
+        Hardware hardware;
         try {
-            lines = readWithOshi();
+            hardware = readWithOshi();
         } catch (Throwable throwable) {
             // OSHI uses native calls through JNA; an unsupported platform throws an Error rather than an Exception.
             LOGGER.warn("[Hardware] OSHI could not read the hardware ({}); using plain Java values",
                   throwable.toString());
-            lines = readWithPlainJava();
+            hardware = readWithPlainJava();
         }
-        LOGGER.info("[Hardware] Read {} hardware line(s) in {} ms", lines.size(),
+        LOGGER.info("[Hardware] Read {} hardware line(s) in {} ms", hardware.lines().size(),
               (System.nanoTime() - startNanos) / 1_000_000L);
-        return List.copyOf(lines);
+        return hardware;
     }
 
-    private static List<String> readWithOshi() {
+    private static Hardware readWithOshi() {
         HardwareAbstractionLayer hardware = new SystemInfo().getHardware();
-        List<String> lines = new ArrayList<>();
 
         CentralProcessor processor = hardware.getProcessor();
-        lines.add(describeProcessor(processor.getProcessorIdentifier().getName().strip(),
+        String processorDescription = describeProcessor(processor.getProcessorIdentifier().getName().strip(),
               processor.getPhysicalPackageCount(),
               processor.getPhysicalProcessorCount(),
               processor.getLogicalProcessorCount(),
-              processor.getMaxFreq()));
+              processor.getMaxFreq());
 
-        List<GraphicsCard> graphicsCards = hardware.getGraphicsCards();
-        if (graphicsCards.isEmpty()) {
-            lines.add("GPU: " + UNKNOWN);
-        }
-        for (GraphicsCard graphicsCard : graphicsCards) {
-            lines.add(describeGraphicsCard(graphicsCard.getName(), graphicsCard.getVRam(),
+        List<String> graphicsCardDescriptions = new ArrayList<>();
+        for (GraphicsCard graphicsCard : hardware.getGraphicsCards()) {
+            graphicsCardDescriptions.add(describeGraphicsCard(graphicsCard.getName(), graphicsCard.getVRam(),
                   graphicsCard.getVersionInfo()));
         }
 
         GlobalMemory memory = hardware.getMemory();
-        lines.add(describeMemory(memory.getTotal(), memory.getAvailable()));
-        return lines;
+        return assemble(processorDescription, graphicsCardDescriptions,
+              describeMemory(memory.getTotal(), memory.getAvailable()));
     }
 
-    private static List<String> readWithPlainJava() {
-        List<String> lines = new ArrayList<>();
-        lines.add("CPU: %s (%d threads)".formatted(UNKNOWN, Runtime.getRuntime().availableProcessors()));
-        lines.add("GPU: " + UNKNOWN);
+    private static Hardware readWithPlainJava() {
+        String processorDescription = "%s (%d threads)".formatted(UNKNOWN, Runtime.getRuntime().availableProcessors());
+        String memoryDescription = UNKNOWN;
         if (ManagementFactory.getOperatingSystemMXBean()
               instanceof com.sun.management.OperatingSystemMXBean operatingSystem) {
-            lines.add(describeMemory(operatingSystem.getTotalMemorySize(), operatingSystem.getFreeMemorySize()));
-        } else {
-            lines.add("System RAM: " + UNKNOWN);
+            memoryDescription = describeMemory(operatingSystem.getTotalMemorySize(),
+                  operatingSystem.getFreeMemorySize());
         }
-        return lines;
+        return assemble(processorDescription, List.of(), memoryDescription);
+    }
+
+    /**
+     * @param processor     the CPU description
+     * @param graphicsCards the graphics card descriptions, possibly empty
+     * @param systemMemory  the memory description
+     *
+     * @return the values together with the log lines built from them
+     */
+    private static Hardware assemble(String processor, List<String> graphicsCards, String systemMemory) {
+        List<String> cards = graphicsCards.isEmpty() ? List.of(UNKNOWN) : List.copyOf(graphicsCards);
+        List<String> lines = new ArrayList<>();
+        lines.add(PROCESSOR_PREFIX + processor);
+        for (String card : cards) {
+            lines.add(GRAPHICS_CARD_PREFIX + card);
+        }
+        lines.add(MEMORY_PREFIX + systemMemory);
+        return new Hardware(processor, cards, systemMemory, List.copyOf(lines));
     }
 
     /**
@@ -146,7 +202,7 @@ public final class HardwareDescription {
      * @param threadCount   the logical processors across all sockets
      * @param maxFrequency  the rated clock speed in hertz, or zero or less when unknown
      *
-     * @return the CPU line
+     * @return the CPU description, without the log prefix
      */
     static String describeProcessor(String name, int packageCount, int coreCount, int threadCount,
           long maxFrequency) {
@@ -158,7 +214,7 @@ public final class HardwareDescription {
         if (maxFrequency > 0) {
             details.append(", ").append(String.format(Locale.ROOT, "%.2f GHz", maxFrequency / HERTZ_PER_GIGAHERTZ));
         }
-        return "CPU: %s (%s)".formatted(name.isBlank() ? UNKNOWN : name, details);
+        return "%s (%s)".formatted(name.isBlank() ? UNKNOWN : name, details);
     }
 
     /**
@@ -166,7 +222,7 @@ public final class HardwareDescription {
      * @param videoMemory   the card's memory in bytes, or zero or less when unknown
      * @param versionInfo   the driver version as OSHI reports it, often prefixed {@code DriverVersion=}
      *
-     * @return the GPU line
+     * @return the graphics card description, without the log prefix
      */
     static String describeGraphicsCard(String name, long videoMemory, String versionInfo) {
         List<String> details = new ArrayList<>();
@@ -181,17 +237,17 @@ public final class HardwareDescription {
             details.add("driver " + driverVersion);
         }
         String cardName = ((name == null) || name.isBlank()) ? UNKNOWN : name.strip();
-        return details.isEmpty() ? "GPU: " + cardName : "GPU: %s (%s)".formatted(cardName, String.join(", ", details));
+        return details.isEmpty() ? cardName : "%s (%s)".formatted(cardName, String.join(", ", details));
     }
 
     /**
      * @param totalBytes     the installed memory
      * @param availableBytes the memory free right now
      *
-     * @return the memory line
+     * @return the memory description, without the log prefix
      */
     static String describeMemory(long totalBytes, long availableBytes) {
-        return String.format(Locale.ROOT, "System RAM: %.0f GB (%.0f GB free)", totalBytes / BYTES_PER_GIGABYTE,
+        return String.format(Locale.ROOT, "%.0f GB (%.0f GB free)", totalBytes / BYTES_PER_GIGABYTE,
               availableBytes / BYTES_PER_GIGABYTE);
     }
 }

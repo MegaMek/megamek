@@ -606,9 +606,43 @@ public class ForceDescriptor {
                 }
             }
         }
+        logReconFormation(subs, unitList);
         return unitList.stream()
               .map(mekSummary -> RATGenerator.getInstance().getModelRecord(mekSummary.getName()))
               .collect(Collectors.toList());
+    }
+
+    /**
+     * Logs which units a recon formation drew, so a playtest can tell from the log alone whether a heavy recon lance
+     * was filled from more than one model (MegaMek/mekhq#11219). Formations without the recon role log nothing.
+     *
+     * @param subs     the formation's slots
+     * @param unitList the units drawn for them
+     */
+    private void logReconFormation(List<ForceDescriptor> subs, List<MekSummary> unitList) {
+        boolean isRecon = false;
+        for (ForceDescriptor sub : subs) {
+            if (sub.getRoles().contains(MissionRole.RECON)) {
+                isRecon = true;
+                break;
+            }
+        }
+        if (!isRecon) {
+            return;
+        }
+        if (unitList.isEmpty()) {
+            LOGGER.info("[ForceGen][Recon] '{}' formation={} faction={} year={} weightClass={} -> no units fit the"
+                        + " formation; generating as an ordinary lance", parseName(), formationType.getName(), faction,
+                  year, getWeightClassCode());
+            return;
+        }
+        StringJoiner units = new StringJoiner(", ");
+        for (MekSummary mekSummary : unitList) {
+            units.add(mekSummary.getName() + " (" + Math.round(mekSummary.getTons()) + "t, Walk "
+                  + mekSummary.getWalkMp() + ")");
+        }
+        LOGGER.info("[ForceGen][Recon] '{}' formation={} faction={} year={} weightClass={} -> {}",
+              parseName(), formationType.getName(), faction, year, getWeightClassCode(), units);
     }
 
     /**

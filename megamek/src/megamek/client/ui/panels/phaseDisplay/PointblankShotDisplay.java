@@ -628,7 +628,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             }
         }
 
-        if (ash.allowAimedShotWith(mounted) && !ash.getAimingMode().isNone() && ash.isAimingAtLocation()) {
+        if (ash.allowAimedShotWith(mounted) && !ash.getAimingMode().isNone() && ash.isAimingAtLocationFor(mounted)) {
             waa.setAimedLocation(ash.getAimingAt());
             waa.setAimingMode(ash.getAimingMode());
         } else {
@@ -718,8 +718,8 @@ public class PointblankShotDisplay extends FiringDisplay {
             ToHitData toHit;
             if (!ash.getAimingMode().isNone()) {
                 WeaponMounted weapon = (WeaponMounted) currentEntity().getEquipment(weaponId);
-                boolean aiming = ash.isAimingAtLocation() && ash.allowAimedShotWith(weapon);
-                ash.setEnableAll(aiming);
+                boolean aiming = ash.isAimingAtLocationFor(weapon) && ash.allowAimedShotWith(weapon);
+                ash.setEnableFor(weapon);
                 if (aiming) {
                     toHit = WeaponAttackAction.toHit(game, currentEntity, target,
                           weaponId, ash.getAimingAt(), ash.getAimingMode(),

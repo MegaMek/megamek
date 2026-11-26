@@ -40,6 +40,7 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.io.Serial;
+import java.util.function.IntPredicate;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -175,4 +176,14 @@ public class AimedShotDialog extends JDialog {
         }
     }
 
+    /**
+     * Enables only the locations the current weapon can reach, among those the target allows.
+     *
+     * @param isReachable tells whether the current weapon can reach a location index
+     */
+    public void setEnableWhere(IntPredicate isReachable) {
+        for (int i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].setEnabled(boxEnabled[i] && isReachable.test(i));
+        }
+    }
 }

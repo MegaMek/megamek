@@ -56,6 +56,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.force.Force;
+import megamek.common.force.Forces;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
 import megamek.common.interfaces.ForceAssignable;
@@ -234,6 +235,18 @@ class LobbyMekCellFormatter {
     }
 
     /**
+     * Returns what is drawn in front of a C3 unit: the network branch, or in the Sortable View a plain "C3" tag when
+     * the network's members sit in different formations. Formations are kept together there, so such a network is not
+     * one block of rows and a branch would point at the wrong row.
+     */
+    private static String c3Marker(Entity entity, ChatLounge lobby, boolean forceView) {
+        if (!forceView && lobby.formationDisplay().isSplitC3Network(entity)) {
+            return "C3&nbsp;";
+        }
+        return c3Branch(entity);
+    }
+
+    /**
      * The opening corner for a unit heading a hierarchical C3 network; empty for units networked with no one.
      */
     private static String hierarchicalNetworkTopBranch(Entity entity) {
@@ -362,8 +375,9 @@ class LobbyMekCellFormatter {
         }
 
         // Networked C3 units draw the network as a tree the same way - the C3 sorter wrapper keeps a network's
-        // members adjacent in hierarchy order under every sorter, so the branch always points at the master above
-        result.append(UIUtil.fontHTML(uiC3Color())).append(c3Branch(entity)).append("</FONT>");
+        // members adjacent in hierarchy order inside a formation, so the branch points at the master above. A network
+        // split across formations gets a plain tag instead (see c3Marker).
+        result.append(UIUtil.fontHTML(uiC3Color())).append(c3Marker(entity, lobby, forceView)).append("</FONT>");
 
         if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(UIUtil.fontHTML(uiYellow()));
@@ -905,7 +919,7 @@ class LobbyMekCellFormatter {
         }
 
         // Networked C3 units draw the network as a tree the same way (see formatUnitFull)
-        result.append(UIUtil.fontHTML(uiC3Color())).append(c3Branch(entity)).append("</FONT>");
+        result.append(UIUtil.fontHTML(uiC3Color())).append(c3Marker(entity, lobby, forceView)).append("</FONT>");
 
         if (isCarried) {
             result.append(UIUtil.fontHTML(uiGreen())).append(LOADED_SIGN).append("</FONT>");
@@ -1278,6 +1292,101 @@ class LobbyMekCellFormatter {
         result.append("</FONT>");
 
         return result.toString();
+    }
+
+    /**
+     * Creates the display content of the Formation column. The first row of a formation's block shows the unit's own
+     * formation in bold, in the owner's my / ally / enemy colour, then in gray its parent and, on a third line, the
+     * formations above the parent, nearest first ("2nd Battalion &lt; 1st Regiment"). The other rows of the block
+     * show only the formation's name, in the same colour but not bold, since the row above already says the rest.
+     * Rows are only treated as a block while "Group by Formation" is on; otherwise every row shows its whole chain. Names are cut at their first
+     * bracket ("A-1 Assault Lance (Heavy Mek Lance (Assault))" shows as "A-1 Assault Lance"); the tooltip has them
+     * whole. Compact view puts everything on one line. A unit outside any formation shows "None".
+     *
+     * @param entity       the unit
+     * @param lobby        the lobby
+     * @param compactView  {@code true} for the one-line compact view
+     * @param firstOfBlock {@code true} when the row above is not in the same formation
+     *
+     * @return the cell's HTML
+     */
+    static String formationTableEntry(Entity entity, ChatLounge lobby, boolean compactView, boolean firstOfBlock) {
+        Forces forces = lobby.game().getForces();
+        List<Force> chain = forces.forceChain(entity);
+        StringBuilder result = new StringBuilder("<HTML><NOBR>");
+        if (chain.isEmpty()) {
+            result.append(fontHTML(uiGray())).append(Messages.getString("ChatLounge.noFormation")).append("</FONT>");
+            return result.toString();
+        }
+
+        Force formation = chain.get(chain.size() - 1);
+        String formationName = shortFormationName(formation.getName());
+        Client client = lobby.getClientGUI().getClient();
+        Player localPlayer = client.getLocalPlayer();
+        Player owner = client.getGame().getPlayer(forces.getOwnerId(formation));
+        Color color = GUIP.getEnemyUnitColor();
+        if ((owner != null) && (owner.getId() == localPlayer.getId())) {
+            color = GUIP.getMyUnitColor();
+        } else if ((owner != null) && !localPlayer.isEnemyOf(owner)) {
+            color = GUIP.getAllyUnitColor();
+        }
+        color = addGray(color, 128).brighter();
+        if (!firstOfBlock) {
+            result.append(fontHTML(color)).append(formationName).append("</FONT>");
+            return result.toString();
+        }
+        result.append(fontHTML(color)).append("<B>").append(formationName).append("</B></FONT>");
+
+        if (chain.size() < 2) {
+            return result.toString();
+        }
+        // Parents nearest first: the formation's own parent, then its parent, up to the top-level formation
+        List<String> parentNames = new ArrayList<>();
+        for (int index = chain.size() - 2; index >= 0; index--) {
+            parentNames.add(shortFormationName(chain.get(index).getName()));
+        }
+        result.append(fontHTML(uiGray()));
+        if (compactView) {
+            result.append(MekTableModel.DOT_SPACER).append(String.join(" &lt; ", parentNames));
+        } else {
+            // Three lines, as tall as the Unit column: the formation, its parent, then the rest above the parent
+            result.append("<BR>").append(parentNames.get(0));
+            if (parentNames.size() > 1) {
+                result.append("<BR>").append(String.join(" &lt; ", parentNames.subList(1, parentNames.size())));
+            }
+        }
+        result.append("</FONT>");
+        return result.toString();
+    }
+
+    /**
+     * Creates the tooltip of the Formation column: the unit's whole formation chain with full names, one formation per
+     * line, from the top-level formation down to the unit's own.
+     *
+     * @param entity the unit
+     * @param lobby  the lobby
+     *
+     * @return the tooltip HTML, or {@code null} for a unit outside any formation
+     */
+    static @Nullable String formationTooltip(Entity entity, ChatLounge lobby) {
+        List<Force> chain = lobby.game().getForces().forceChain(entity);
+        if (chain.isEmpty()) {
+            return null;
+        }
+        List<String> names = new ArrayList<>();
+        for (Force force : chain) {
+            names.add(force.getName());
+        }
+        return "<HTML>" + String.join("<BR>", names);
+    }
+
+    /**
+     * Returns a formation name without the bracketed type the force generator appends: "A-1 Assault Lance (Heavy Mek
+     * Lance (Assault))" becomes "A-1 Assault Lance". A name that starts with a bracket, or has none, is kept whole.
+     */
+    static String shortFormationName(String name) {
+        int bracket = name.indexOf(" (");
+        return (bracket > 0) ? name.substring(0, bracket) : name;
     }
 
     /**

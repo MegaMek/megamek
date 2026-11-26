@@ -38,6 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import megamek.common.Player;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
@@ -46,6 +47,7 @@ import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import org.junit.jupiter.api.BeforeAll;
@@ -58,8 +60,10 @@ import org.junit.jupiter.api.Test;
  * <p>
  * A targeting computer cannot pick a hit location on a ProtoMek at all - they are too small (TW p.185) - and cannot
  * aim at a Mek's head (TW p.143).
+ * <p>
+ * Battle armor may aim at an immobile target like any other attacker (TW p.110).
  */
-@DisplayName("AimedShotHandler targeting-computer aiming")
+@DisplayName("AimedShotHandler aiming modes")
 class AimedShotHandlerTest {
 
     private Game game;
@@ -142,5 +146,51 @@ class AimedShotHandlerTest {
         boolean[] mask = handler.createEnabledMask(target.getLocationNames().length);
         assertFalse(mask[Mek.LOC_HEAD], "the Mek head should be disabled under a targeting computer (TW p.143)");
         assertTrue(mask[Mek.LOC_CENTER_TORSO], "the Mek center torso should stay selectable");
+    }
+
+    private BattleArmor createSquadAttacker() {
+        BattleArmor squad = new BattleArmor();
+        squad.setGame(game);
+        squad.setId(1);
+        squad.setChassis("Test BA");
+        squad.setModel("Standard");
+        squad.setSquadSize(5);
+        squad.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
+        squad.setCrew(new Crew(CrewType.INFANTRY_CREW));
+        squad.setOwner(game.getPlayer(0));
+        squad.autoSetInternal();
+        squad.setPosition(new Coords(0, 0));
+        squad.setFacing(3);
+        return squad;
+    }
+
+    private AimedShotHandler squadHandlerAimingAt(Entity target) {
+        when(firingDisplay.currentEntity()).thenReturn(createSquadAttacker());
+        when(firingDisplay.getTarget()).thenReturn(target);
+        AimedShotHandler handler = new AimedShotHandler(firingDisplay);
+        handler.setAimingMode();
+        return handler;
+    }
+
+    @Test
+    @DisplayName("Battle armor can make an aimed shot at a shut-down Mek")
+    void battleArmorAimsAtShutDownMek() {
+        BipedMek target = createMek(2, "Test Target", new Coords(0, 2), 0);
+        target.setShutDown(true);
+
+        AimedShotHandler handler = squadHandlerAimingAt(target);
+
+        assertTrue(handler.getAimingMode().isImmobile(),
+              "aimed shots at immobile targets are limited by weapon, not by attacker type (TW p.110)");
+    }
+
+    @Test
+    @DisplayName("Battle armor cannot make an aimed shot at an active Mek")
+    void battleArmorCannotAimAtActiveMek() {
+        BipedMek target = createMek(2, "Test Target", new Coords(0, 2), 0);
+
+        AimedShotHandler handler = squadHandlerAimingAt(target);
+
+        assertTrue(handler.getAimingMode().isNone(), "without a targeting computer only immobile targets can be aimed at");
     }
 }

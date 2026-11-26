@@ -938,6 +938,34 @@ tasks.register('alphaStrikeMassConvert', JavaExec) {
     mainClass = 'megamek.utilities.AlphaStrikeMassConvert'
 }
 
+// Writes every RAT Generator table for the RAT Probability Explorer on the website.
+// Optional: -PratDataOut=<folder> -PratDataTables -PratDataFrom=<year> -PratDataTo=<year> -PratDataNoRoles -PratDataBuildId=<text>
+tasks.register('ratData', JavaExec) {
+    dependsOn jar
+    mustRunAfter(stageDataFiles)
+    description = 'Writes the RAT Generator inputs (and with -PratDataTables every table) for the website'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.ratdata.RatDataExporter'
+    def ratDataArgs = ['--out', project.findProperty('ratDataOut') ?: "${layout.buildDirectory.get()}/ratdata"]
+    if (project.hasProperty('ratDataTables')) {
+        ratDataArgs += ['--tables']
+    }
+    if (project.hasProperty('ratDataFrom')) {
+        ratDataArgs += ['--from', project.property('ratDataFrom')]
+    }
+    if (project.hasProperty('ratDataTo')) {
+        ratDataArgs += ['--to', project.property('ratDataTo')]
+    }
+    if (project.hasProperty('ratDataNoRoles')) {
+        ratDataArgs += ['--no-roles']
+    }
+    if (project.hasProperty('ratDataBuildId')) {
+        ratDataArgs += ['--build-id', project.property('ratDataBuildId')]
+    }
+    args = ratDataArgs
+}
+
 tasks.register('boardsTagger', JavaExec) {
     dependsOn jar
     description = 'Tags all boards'

@@ -285,7 +285,7 @@ public abstract class MekTableSorter implements Comparator<Entity> {
      * carried, so both links are followed.
      * </p>
      */
-    private static List<Entity> carrierPath(Entity entity) {
+    static List<Entity> carrierPath(Entity entity) {
         List<Entity> path = new ArrayList<>();
         Set<Integer> visited = new HashSet<>();
         Entity current = entity;

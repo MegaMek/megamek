@@ -34,12 +34,17 @@ package megamek.common.rules.core;
 
 import jakarta.annotation.Nullable;
 import megamek.common.Messages;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BFSSpecialType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.compute.ComputeECM;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;
 import megamek.common.units.Entity;
+import megamek.common.units.ProtoMek;
 import megamek.common.units.Targetable;
 
 /**
@@ -48,7 +53,8 @@ import megamek.common.units.Targetable;
  * hits prevent sensor checks altogether), minus the level of a working active probe that is not inside hostile
  * ECM, and +2 against a target with an active stealth system. The range is 2 hexes, or the probe's range. A probe
  * is negated when either the probe or the target sits inside hostile ECM (p.197); a Bloodhound ignores ordinary ECM
- * and is negated only by Angel ECM. Infantry scan the hex they stand in automatically. Aerospace units - fighters,
+ * and is negated only by Angel ECM. Infantry follow the infantry Asset rules: they scan the hex they stand in
+ * automatically and anything else at TN 8 plus the probe modifier. Units without Piloting Skill scan with Gunnery. Aerospace units - fighters,
  * small craft and DropShips - cannot scan; a VTOL is a vehicle and scans like one, airborne or not.
  */
 public class CoreRulesScanning extends RulesScanning {
@@ -61,15 +67,20 @@ public class CoreRulesScanning extends RulesScanning {
     public static final int BLOCKING_SENSOR_HITS = 2;
     /** Scanning a target whose stealth system is active (Core Rules p.233). */
     public static final int STEALTH_MODIFIER = 2;
+    /** Ground Assets, and non-Asset infantry, scan at this TN regardless of skill (Core Rules p.233). */
+    public static final int GROUND_ASSET_SCAN_TARGET = 8;
     /** Scanning range without a working active probe. */
     public static final int DEFAULT_SCANNING_RANGE = 2;
+    /** "Assume an Asset with the Probe Special has a probe range of 4" (Core p.150). */
+    public static final int PROBE_SPECIAL_RANGE = 4;
 
     @Override
     public int scanningRange(Entity scanner, @Nullable Targetable target) {
         if (refusalReason(scanner) != null) {
             return 0;
         }
-        int probeRange = hasWorkingProbeAgainst(scanner, target) ? scanner.getBAPRange() : 0;
+        int probeRange = !hasWorkingProbeAgainst(scanner, target) ? 0
+              : hasProbeSpecial(scanner) ? PROBE_SPECIAL_RANGE : scanner.getBAPRange();
         return Math.max(DEFAULT_SCANNING_RANGE, probeRange);
     }
 
@@ -84,7 +95,11 @@ public class CoreRulesScanning extends RulesScanning {
      * @return {@code true} when the probe gives its range and its target number bonus against this target
      */
     boolean hasWorkingProbeAgainst(Entity scanner, @Nullable Targetable target) {
-        if (!scanner.hasBAP(true)) {
+        // An Asset's Probe Special is a standard probe, negated by hostile ECM like any other (Core pp.150, 233)
+        boolean probeWorks = hasProbeSpecial(scanner)
+              ? !ComputeECM.isAffectedByECM(scanner, scanner.getPosition(), scanner.getPosition())
+              : scanner.hasBAP(true);
+        if (!probeWorks) {
             return false;
         }
         if ((target == null) || (target.getPosition() == null)) {
@@ -96,18 +111,18 @@ public class CoreRulesScanning extends RulesScanning {
         return !isTargetInsideHostileEcm(scanner, target);
     }
 
+    private static boolean hasProbeSpecial(Entity scanner) {
+        return (scanner instanceof BattlefieldSupportAsset asset) && asset.hasSpecial(BFSSpecialType.PROBE);
+    }
+
     /**
      * @param scanner the scanning unit
      *
      * @return {@code true} when the unit's working probe is a Bloodhound
      */
     private static boolean hasBloodhound(Entity scanner) {
-        for (MiscMounted mounted : scanner.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_BLOODHOUND) && !mounted.isInoperable()) {
-                return true;
-            }
-        }
-        return false;
+        MiscMounted probe = EquipmentActivation.activeProbe(scanner);
+        return probe != null && probe.getType().hasFlag(MiscType.F_BLOODHOUND);
     }
 
     /** Seam for tests: whether ECM hostile to the scanner covers the target's hex. */
@@ -126,16 +141,26 @@ public class CoreRulesScanning extends RulesScanning {
         if (refusal != null) {
             return new TargetRoll(TargetRoll.IMPOSSIBLE, refusal);
         }
-        if (scanner.isInfantry() && isInOwnHex(scanner, target)) {
-            return new TargetRoll(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("RulesScanning.infantryOwnHex"));
+        TargetRoll roll;
+        if (scanner.isInfantry() || scanner.isBattlefieldSupportAsset()) {
+            // Ground Assets, and non-Asset infantry, scan at TN 8 regardless of skill, modified only by a probe or the
+            // PRB Special; infantry automatically scan "any building and/or hex they occupy" (Core pp.150, 233)
+            if (isInfantryScanner(scanner) && isOwnHexOrBuilding(scanner, target)) {
+                return new TargetRoll(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("RulesScanning.infantryOwnHex"));
+            }
+            roll = new TargetRoll(GROUND_ASSET_SCAN_TARGET, Messages.getString("RulesScanning.infantryScan"));
+        } else {
+            // ProtoMeks have no Piloting Skill (TW p.187); such units scan with Gunnery (Core p.233)
+            roll = (scanner instanceof ProtoMek)
+                  ? new TargetRoll(scanner.getCrew().getGunnery(), Messages.getString("RulesScanning.gunnerySkill"))
+                  : new TargetRoll(scanner.getCrew().getPiloting(), Messages.getString("RulesScanning.pilotingSkill"));
+            roll.addModifier(SCAN_MODIFIER, Messages.getString("RulesScanning.scanning"));
+            if (sensorCriticalHits(scanner) > 0) {
+                roll.addModifier(SENSOR_HIT_MODIFIER, Messages.getString("RulesScanning.sensorHit"));
+            }
         }
-        TargetRoll roll = new TargetRoll(scanner.getCrew().getPiloting(),
-              Messages.getString("RulesScanning.pilotingSkill"));
-        roll.addModifier(SCAN_MODIFIER, Messages.getString("RulesScanning.scanning"));
-        if (sensorCriticalHits(scanner) > 0) {
-            roll.addModifier(SENSOR_HIT_MODIFIER, Messages.getString("RulesScanning.sensorHit"));
-        }
-        int probeLevel = hasWorkingProbeAgainst(scanner, target) ? activeProbeLevel(scanner) : PROBE_LEVEL_NONE;
+        int probeLevel = !hasWorkingProbeAgainst(scanner, target) ? PROBE_LEVEL_NONE
+              : hasProbeSpecial(scanner) ? PROBE_LEVEL_STANDARD : activeProbeLevel(scanner);
         if (probeLevel > PROBE_LEVEL_NONE) {
             roll.addModifier(-probeLevel, Messages.getString("RulesScanning.activeProbe", probeLevel));
         }
@@ -153,6 +178,14 @@ public class CoreRulesScanning extends RulesScanning {
      *       mean stealth armour, a Null Signature System, a Void Signature System or a Chameleon Light Polarisation
      *       Shield, rather than stealth armour alone
      */
+    private static boolean isInfantryScanner(Entity scanner) {
+        if (scanner instanceof BattlefieldSupportAsset asset) {
+            return (asset.getAssetType() == BFSAssetType.CONV_INFANTRY)
+                  || (asset.getAssetType() == BFSAssetType.BATTLE_ARMOR);
+        }
+        return scanner.isInfantry();
+    }
+
     private static boolean hasActiveStealthSystem(Entity target) {
         return target.isStealthActive()
               || target.isNullSigActive()
@@ -171,6 +204,10 @@ public class CoreRulesScanning extends RulesScanning {
         }
         if (scanner.getCrew() == null) {
             return Messages.getString("RulesScanning.noCrew");
+        }
+        // "A scan is a sensor check" (Core p.233), and shutdown Meks "cannot make sensor checks" (Core p.105)
+        if (scanner.isShutDown()) {
+            return Messages.getString("RulesScanning.shutdown");
         }
         if (sensorCriticalHits(scanner) >= BLOCKING_SENSOR_HITS) {
             return Messages.getString("RulesScanning.sensorsOut");

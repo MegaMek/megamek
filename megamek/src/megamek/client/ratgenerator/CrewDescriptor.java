@@ -52,6 +52,8 @@ public class CrewDescriptor {
     public static final int SKILL_REGULAR = 1;
     public static final int SKILL_VETERAN = 2;
     public static final int SKILL_ELITE = 3;
+    public static final int SKILL_HEROIC = 4;
+    public static final int SKILL_LEGENDARY = 5;
 
     /**
      * How much better a Clan warrior-caste crew is than the same rating elsewhere, which is what puts
@@ -191,13 +193,15 @@ public class CrewDescriptor {
      */
     static int[] escalateExceptionalCrew(int experience, int gunnery, int piloting,
           boolean hasPilotingSkill) {
-        if ((experience < SKILL_ELITE) || (Compute.d6() < 6)) {
+        boolean reachesHeroic = (experience >= SKILL_HEROIC)
+              || ((experience >= SKILL_ELITE) && (Compute.d6() >= 6));
+        if (!reachesHeroic) {
             return new int[] { gunnery, piloting };
         }
         int escalatedGunnery = Math.min(gunnery, HEROIC_GUNNERY);
         int escalatedPiloting = hasPilotingSkill ? Math.min(piloting, HEROIC_PILOTING) : piloting;
 
-        if (Compute.d6() < 6) {
+        if ((experience < SKILL_LEGENDARY) && (Compute.d6() < 6)) {
             return new int[] { escalatedGunnery, escalatedPiloting };
         }
         return new int[] { Math.min(escalatedGunnery, LEGENDARY_GUNNERY),

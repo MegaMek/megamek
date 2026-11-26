@@ -295,6 +295,7 @@ public class MULParser {
     public static final String ATTR_ARMOR_NAME = "armorName";
     public static final String ATTR_ARMOR_DIVISOR = "armorDivisor";
     public static final String ATTR_ARMOR_ENC = "armorEncumbering";
+    public static final String ATTR_INF_ARMOR_KIT = "infantryArmorKit";
     public static final String ATTR_DEST_ARMOR = "destArmor";
     public static final String ATTR_SPACESUIT = "spacesuit";
     public static final String ATTR_SNEAK_CAMO = "sneakCamo";
@@ -1220,6 +1221,19 @@ public class MULParser {
 
         // Load some values for conventional infantry
         if (entity instanceof ConvInfantry inf) {
+            // The kit is restored first. Only its effects (encumbering, space suit, and so on) are saved as separate
+            // attributes, so without the kit itself a platoon in a snow suit or heat suit comes back unprotected and
+            // is doomed in extreme temperatures. Setting it here lets the explicit attributes below still apply.
+            String infantryArmorKitName = entityTag.getAttribute(ATTR_INF_ARMOR_KIT);
+            if (!infantryArmorKitName.isBlank()) {
+                EquipmentType infantryArmorKit = EquipmentType.get(infantryArmorKitName);
+                if (infantryArmorKit == null) {
+                    LOGGER.warn("Unknown infantry armor kit '{}' for {}", infantryArmorKitName, entity.getShortName());
+                } else {
+                    inf.setArmorKit(infantryArmorKit);
+                }
+            }
+
             String armorName = entityTag.getAttribute(ATTR_ARMOR_NAME);
             inf.setCustomArmorName(armorName);
 

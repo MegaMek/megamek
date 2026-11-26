@@ -218,6 +218,10 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         return LOCATION_NAMES;
     }
 
+    protected int getLocRear() {
+        return LOC_REAR;
+    }
+
     public int getLocTurret() {
         return LOC_TURRET;
     }
@@ -717,7 +721,10 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     @Override
     public boolean isImmobile(boolean checkCrew) {
         if (isActiveOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES)) {
-            return super.isImmobile(checkCrew);
+            // The option waives the immobile penalty for drive and engine damage only. A vehicle whose crew was
+            // killed (a carcass) is immobile whatever the motive state, TW p.194.
+            boolean isCrewKilled = checkCrew && isCarcass();
+            return isCrewKilled || super.isImmobile(checkCrew);
         }
 
         if (isTrailer()) {
@@ -1373,7 +1380,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                    rv.setEffect(HitData.EFFECT_TAC);
                     break;
                 case 3, 4:
                     rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -1385,7 +1392,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                     } else if (bRear) {
                         rv = new HitData(LOC_LEFT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
-                        rv = new HitData(LOC_LEFT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        rv = new HitData(LOC_RIGHT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     }
                     rv.setMotiveMod(motiveMod);
                     break;
@@ -1968,6 +1975,19 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         infernos.clear();
     }
 
+    @Override
+    public void clearGameState() {
+        super.clearGameState();
+        unjamTurret(getLocTurret());
+        unjamTurret(getLocTurret2());
+        resetJammedWeapons();
+        extinguishAll();
+        m_nStunnedTurns = 0;
+        // Fortifying and rubble clearing in progress refer to hexes of the last game's map
+        cancelFortify();
+        cancelClearingRubble();
+    }
+
     /**
      * adds minor, moderate or heavy movement system damage
      *
@@ -2108,7 +2128,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                             return CRIT_CREW_KILLED;
                         }
                 }
-            } else if (loc == LOC_REAR) {
+            } else if (loc == getLocRear()) {
                 switch (roll) {
                     case 6:
                         for (Mounted<?> m : getWeaponList()) {
@@ -2149,14 +2169,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                             }
                         }
                     case 12:
-                        if (hasEngine()) {
-                            if (getEngine().isFusion() && !engineHit) {
-                                return CRIT_ENGINE;
-                            } else if (!getEngine().isFusion()) {
-                                return CRIT_FUEL_TANK;
-                            }
-                        } else {
-                            return CRIT_NONE;
+                        int fuelTank = getFuelTankCriticalEffect();
+                        if (fuelTank != CRIT_NONE || getEngineType() == Engine.NONE) {
+                            return fuelTank;
                         }
                 }
             } else if ((loc == getLocTurret()) || (loc == getLocTurret2())) {
@@ -2244,17 +2259,30 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                             return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if (hasEngine()) {
-                            if (getEngine().isFusion() && !engineHit) {
-                                return CRIT_ENGINE;
-                            } else if (!getEngine().isFusion()) {
-                                return CRIT_FUEL_TANK;
-                            }
-                        } else {
-                            return CRIT_NONE;
+                        int fuelTank = getFuelTankCriticalEffect();
+                        if (fuelTank != CRIT_NONE || getEngineType() == Engine.NONE) {
+                            return fuelTank;
                         }
                 }
             }
+        }
+        return CRIT_NONE;
+    }
+
+    /**
+     * Fuel Tank on the side and rear critical tables (TW pp. 195, 197–198, errata v12.0 PRE).
+     * An inapplicable result on a powered vehicle wraps to the top of the same column.
+     */
+    protected int getFuelTankCriticalEffect() {
+        int engineType = getEngineType();
+        if (engineType == Engine.NONE) {
+            return CRIT_NONE;
+        }
+        if (Engine.isFusion(engineType) || engineType == Engine.FISSION) {
+            return engineHit ? CRIT_NONE : CRIT_ENGINE;
+        }
+        if (this instanceof VTOL || engineType == Engine.COMBUSTION_ENGINE || engineType == Engine.FUEL_CELL) {
+            return CRIT_FUEL_TANK;
         }
         return CRIT_NONE;
     }

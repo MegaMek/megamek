@@ -35,18 +35,11 @@ package megamek.common.rules.core;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
-import java.util.EnumSet;
-
 import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.enums.GamePhase;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponTypeFlag;
-import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
-import megamek.common.units.IBomber;
 import megamek.logging.MMLogger;
 
 public class CoreRulesGame extends RulesGame {
@@ -60,6 +53,9 @@ public class CoreRulesGame extends RulesGame {
     public boolean ammoDumping() {
         return false;
     }
+
+    /** TAG surcharge per launcher with Homing ammo (Core errata v0.2 p.1). */
+    public static final int HOMING_TAG_BV = 50;
 
     /**
      * {@inheritDoc} Immobile not eligible in movement Core p.49 RAC Unjamming does not prevent usage (only limits
@@ -91,76 +87,37 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * TAG can increase BV when homing arrow IV is present {@inheritDoc}
-     * <p>
-     * Core rules errata v0.1 https://www.battletech.com/forums/index.php/topic,91365.0.html
+     * {@inheritDoc}
+     * 50 BV for every Arrow IV or artillery launcher on a friendly unit with Homing ammo, Asset Arrow IV launchers
+     * included, once per TAG on the unit; half that when the unit's only TAG is rear-mounted (Core errata v0.2 p.1,
+     * applied to all Homing per the rules team). No other Core munition, semi-guided LRMs included, adds a surcharge.
+     * Homing bombs keep their Tactical Operations cost.
      */
     @Override
     public double tagBVBump(Entity entity,
           CalculationReport bvReport,
           double adjustedBV,
           long tagCount,
-          boolean hasGuided) {
+          boolean onlyRearTag) {
+        double tags = tagCount * (onlyRearTag ? 0.5 : 1);
+        for (String launcher : homingLaunchers(entity)) {
+            adjustedBV += HOMING_TAG_BV * tags;
+            bvReport.addLine("- " + launcher,
+                  "+ " + formatForReport(tags) + " x " + HOMING_TAG_BV,
+                  "= " + formatForReport(adjustedBV));
+        }
+
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
             if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
-            for (Mounted<?> mounted : otherEntity.getWeaponList()) {
-                boolean foundHoming = false;
-                if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV) || mounted.getType()
-                      .hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
-                    for (Mounted<?> mountedAmmo : otherEntity.getAmmo()) {
-                        AmmoType ammoType = (AmmoType) mountedAmmo.getType();
-                        EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
-                        if ((mountedAmmo.getUsableShotsLeft() > 0) &&
-                              (munitionType.contains(AmmoType.Munitions.M_HOMING))) {
-                            // Once we know it has homing ammo on this unit, we can break out
-                            foundHoming = true;
-                            break;
-                        }
-                    }
-                    if (foundHoming) {
-                        // Each Arrow IV or artillery launcher with homing ammo adds 50 BV per TAG in the force
-                        adjustedBV += 50 * tagCount;
-                        bvReport.addLine("- " + equipmentDescriptor(mounted, entity),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(50) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
-                        hasGuided = true;
-                    }
-                }
-            }
-
-            if (otherEntity instanceof IBomber asBomber) {
-                BombType bomb = BombType.createBombByType(BombType.BombTypeEnum.HOMING);
-                if (bomb != null) {
-                    int homingCount = asBomber.getBombChoices().getCount(BombType.BombTypeEnum.HOMING);
-                    if (homingCount > 0) {
-                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
-                        bvReport.addLine("- " + bomb.getName(),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(bomb.getBV(otherEntity)) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
-                        hasGuided = true;
-                    }
-                }
-            }
+            adjustedBV = addHomingBombBV(otherEntity, bvReport, adjustedBV, tags);
         }
         return adjustedBV;
     }
 
     /**
-     * {@inheritDoc} Core rules allows minefields
+     * {@inheritDoc} Core rules allows minefields (Core p.156)
      */
     @Override
     public boolean allowMinefields(boolean toMinefields) {
@@ -168,7 +125,7 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc} Core has walk on deployment by default
+     * {@inheritDoc} Core has walk on deployment by default (Core p.37)
      *
      * @return true
      */
@@ -178,7 +135,7 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc} Core omits immobile units from movement/initiative
+     * {@inheritDoc} Core omits immobile units from movement/initiative (Core pp.41, 49)
      *
      * @return false if it should not include them
      */

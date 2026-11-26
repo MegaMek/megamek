@@ -45,9 +45,7 @@ import java.util.Objects;
 
 import jakarta.annotation.Nullable;
 import megamek.MMConstants;
-import megamek.common.Configuration;
 import megamek.common.moves.MovePath;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 public class ClientPreferences extends PreferenceStoreProxy {
@@ -61,8 +59,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String LAST_SERVER_PORT = "LastServerPort";
     public static final String LOCALE = "Locale";
     public static final String MAP_TILESET = "MapTileset";
-    public static final String MINIMAP_THEME = "MinimapTheme";
-    public static final String STRATEGIC_VIEW_THEME = "StrategicViewTheme";
     public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
     public static final String DATA_DIRECTORY = "DataDirectory";
     public static final String LOG_DIRECTORY = "LogDirectory";
@@ -120,6 +116,12 @@ public class ClientPreferences extends PreferenceStoreProxy {
     private static final String REPORT_FILTER_KEYWORDS_DEFAULTS = "Fire Hit Damage\nHit Damage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String SPRITES_ONLY = "SpritesOnly";
+    /**
+     * Whether unit readouts and TRO views show the narrative fluff text (overview, capabilities, deployment and
+     * history). When off, MegaMekLab also hides its Fluff tab. Shared by the suite through the common client settings
+     * file.
+     */
+    public static final String SHOW_UNIT_FLUFF_TEXT = "ShowUnitFluffText";
     public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
     public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
     public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
@@ -144,8 +146,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(LAST_CONNECT_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(LAST_SERVER_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(MAP_TILESET, "saxarba.tileset");
-        store.setDefault(MINIMAP_THEME, "default.theme");
-        store.setDefault(STRATEGIC_VIEW_THEME, "gbc green.theme");
         store.setDefault(MAX_PATHFINDER_TIME, MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");
         store.setDefault(LOG_DIRECTORY, "logs");
@@ -172,6 +172,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_FILTER_KEYWORDS, REPORT_FILTER_KEYWORDS_DEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(SPRITES_ONLY, false);
+        store.setDefault(SHOW_UNIT_FLUFF_TEXT, true);
         store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
         store.setDefault(USER_DIR, "");
         store.setDefault(MML_PATH, "");
@@ -179,7 +180,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(DATA_LOGGING, true);
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, false);
         store.setDefault(STAMP_FILENAMES, false);
-        store.setDefault(USE_CASPAR, false);
+        store.setDefault(USE_CASPAR, true);
         store.setDefault(LOBBY_SHOW_UNIT_ID, true);
         store.setDefault(LOBBY_SHOW_FORMATION_COLUMN, true);
         store.setDefault(LOBBY_GROUP_BY_FORMATION, true);
@@ -330,9 +331,9 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     /**
-     * @return {@code true} if the experimental CASPAR bot is offered as a selectable AI. This is a hidden
-     *       option: it is not shown in any settings UI and defaults to {@code false}; enable it by hand-adding
-     *       {@code <UseCASPAR>true</UseCASPAR>} to clientsettings.xml.
+     * @return {@code true} if the CASPAR bot is offered as a selectable AI. This defaults to {@code true} and is
+     *       not shown in any settings UI; hide it by hand-adding
+     *       {@code <preference name="UseCASPAR" value="false"/>} to clientsettings.xml.
      */
     public boolean getUseCASPAR() {
         return store.getBoolean(USE_CASPAR);
@@ -504,31 +505,25 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(SPRITES_ONLY, value);
     }
 
+    /**
+     * @return {@code true} if unit readouts and TRO views should show the narrative fluff text
+     *
+     * @see #SHOW_UNIT_FLUFF_TEXT
+     */
+    public boolean getShowUnitFluffText() {
+        return store.getBoolean(SHOW_UNIT_FLUFF_TEXT);
+    }
+
+    public void setShowUnitFluffText(boolean value) {
+        store.setValue(SHOW_UNIT_FLUFF_TEXT, value);
+    }
+
     public void setEnableExperimentalBotFeatures(boolean value) {
         store.setValue(ENABLE_EXPERIMENTAL_BOT_FEATURES, value);
     }
 
     public boolean getEnableExperimentalBotFeatures() {
         return store.getBoolean(ENABLE_EXPERIMENTAL_BOT_FEATURES);
-    }
-
-    public void setStrategicViewTheme(String theme) {
-        store.setValue(STRATEGIC_VIEW_THEME, theme);
-    }
-
-    public File getStrategicViewTheme() {
-        return new MegaMekFile(Configuration.minimapThemesDir(), store.getString(STRATEGIC_VIEW_THEME)).getFile();
-    }
-
-    public void setMinimapTheme(String theme) {
-        if (theme == null) {
-            return;
-        }
-        store.setValue(MINIMAP_THEME, theme);
-    }
-
-    public File getMinimapTheme() {
-        return new MegaMekFile(Configuration.minimapThemesDir(), store.getString(MINIMAP_THEME)).getFile();
     }
 
     protected Locale locale = null;

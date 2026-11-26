@@ -163,9 +163,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
 
         // Capital weapons are spread out over all sorts of weapons.
         if (isCapital()) {
-            if ((getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE)
-                  && (getAtClass() != WeaponType.CLASS_TELE_MISSILE)
-                  && (getAtClass() != WeaponType.CLASS_AR10)) {
+            if (canBracketFire()) {
 
                 if ((this instanceof CapitalLaserBayWeapon)
                       || (this instanceof SubCapLaserBayWeapon)) {
@@ -192,7 +190,8 @@ public abstract class Weapon extends WeaponType implements Serializable {
                     clearModes();
                 }
 
-            } else {
+            } else if (getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE
+                  || getAtClass() == WeaponType.CLASS_TELE_MISSILE || getAtClass() == WeaponType.CLASS_AR10) {
                 if (getAtClass() == WeaponType.CLASS_TELE_MISSILE) {
                     setInstantModeSwitch(true);
                     addMode(MODE_NORMAL);

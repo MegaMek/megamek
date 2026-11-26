@@ -97,6 +97,7 @@ import megamek.common.compute.TurretFacing;
 import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.OrderEligibility;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
@@ -468,15 +469,17 @@ public class MapMenu extends JPopupMenu {
         JMenu ignoreTargetMenu = new JMenu(Messages.getString("Bot.commands.ignore"));
         JMenu behaviorMenu = createBehaviorMenu(bot);
 
-        // the same orders as the Bot Commands panel's Orders button, with this hex as the route
-        JMenu ordersMenu = new JMenu(Messages.getString("BotCommandPanel.Orders.title"));
-        new BotOrdersMenuBuilder(client, (orderDescription, singleHex, onPicked) -> onPicked.accept(
-              coords.getBoardNum()), (botPlayer, orderText) -> gui.addToast(ToastLevel.SUCCESS,
-              Messages.getString("BotCommandPanel.toast.orderSent", botPlayer.getName(), orderText)))
-              .withFacingChooser(this::chooseBotOrderFacings)
-              .populate(ordersMenu, bot, coords);
-        if (ordersMenu.getItemCount() > 0) {
-            menu.add(ordersMenu);
+        // the same orders as the Bot Commands panel's Orders button, with this hex as the route; CASPAR bots only
+        if (OrderEligibility.takesUnitOrders(client.getGame(), bot)) {
+            JMenu ordersMenu = new JMenu(Messages.getString("BotCommandPanel.Orders.title"));
+            new BotOrdersMenuBuilder(client, (orderDescription, singleHex, onPicked) -> onPicked.accept(
+                  coords.getBoardNum()), (botPlayer, orderText) -> gui.addToast(ToastLevel.SUCCESS,
+                  Messages.getString("BotCommandPanel.toast.orderSent", botPlayer.getName(), orderText)))
+                  .withFacingChooser(this::chooseBotOrderFacings)
+                  .populate(ordersMenu, bot, coords);
+            if (ordersMenu.getItemCount() > 0) {
+                menu.add(ordersMenu);
+            }
         }
 
         JMenu targetHexMenu = createTargetHexMenuItem(bot);
@@ -769,7 +772,7 @@ public class MapMenu extends JPopupMenu {
             marker.setOwnerId(client.getLocalPlayer().getId());
         }
         VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(gui.getFrame(), marker,
-              client.getGame().getPlayersList(), true);
+              client.getGame().getPlayersList());
         switch (result) {
             case SAVED -> client.sendObjectiveEdit(coords, marker);
             case REMOVED -> client.sendObjectiveEdit(coords, null);
@@ -1817,7 +1820,8 @@ public class MapMenu extends JPopupMenu {
         if (list.size() == 1) {
             myTarget = selectedEntity = list.firstElement();
             if (currentPanel instanceof FiringDisplay panel) {
-                panel.target(myTarget);
+                // The aim window would take focus and close this menu before it can be used (#9472)
+                panel.targetWithoutAimWindow(myTarget);
             } else if (currentPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay) currentPanel).target(myTarget);
             } else if (currentPanel instanceof TargetingPhaseDisplay) {

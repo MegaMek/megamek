@@ -38,6 +38,12 @@ import megamek.common.rules.RulesAmmo;
 import megamek.server.totalWarfare.TWDamageManager;
 
 public class CoreRulesAmmo extends RulesAmmo {
+    /** Core p.191 gives armor-only damage an AP check for every target. */
+    @Override
+    public boolean armorPiercingAffectsAerospace() {
+        return true;
+    }
+
 
     /**
      * {@inheritDoc} Different modifiers. Core Rules p.191
@@ -74,6 +80,15 @@ public class CoreRulesAmmo extends RulesAmmo {
     @Override
     public void narcHomingTarget(ToHitData toHit) {
         toHit.addModifier(-1, "target has a narc pod");
+    }
+
+    /**
+     * {@inheritDoc} Does nothing in Core: an iNarc homing pod gives the same single -1 as a Narc pod, which
+     * {@link #narcHomingTarget(ToHitData)} already applies. Core pp.188, 193
+     */
+    @Override
+    public void iNarcHomingTarget(ToHitData toHit) {
+        // No separate iNarc modifier in Core
     }
 
     /**
@@ -122,6 +137,15 @@ public class CoreRulesAmmo extends RulesAmmo {
     }
 
     /**
+     * {@inheritDoc} Core waives only "Spotter Attacking, Spotter LOS, and Spotter Movement" for semi-guided indirect
+     * fire (Core p.193); the indirect fire +1 stays (Core p.70).
+     */
+    @Override
+    public boolean semiGuidedIndirectIgnoresIndirectFireModifier() {
+        return false;
+    }
+
+    /**
      * {@inheritDoc} Semi-guided changes number of missiles depending on tag and direct/indirect. Core p.193
      */
     @Override
@@ -136,7 +160,7 @@ public class CoreRulesAmmo extends RulesAmmo {
 
     /**
      * {@inheritDoc}
-     * Core has no special ammo BVs. This is as per Core Rules Errata v0.1
+     * Core has no special ammo BVs (Core errata v0.2 p.1)
      *
      * @param munition AmmoType of the item being considered
      * @return Call the super for any ammos not in core

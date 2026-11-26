@@ -34,6 +34,7 @@
 package megamek.server.totalWarfare;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.MMConstants;
@@ -100,7 +101,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                       Messages.getString("HeatBreakdown.movementRunning"));
             } else if ((entity.moved == EntityMovementType.MOVE_JUMP)
                   && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance),
+                entity.changeHeatBuildup(entity.getJumpHeatForDistance(entity.delta_distance),
                       Messages.getString("HeatBreakdown.movementJumping"));
             } else if ((entity.moved == EntityMovementType.MOVE_SPRINT) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)) {
@@ -163,23 +164,15 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             if (entity.hasActivatedRadicalHS()) {
                 if (entity instanceof Mek) {
-                    radicalHSBonus = ((Mek) entity).getActiveSinks();
+                    radicalHSBonus = ((Mek) entity).getActiveSinksOfAnyType();
                 } else if (entity instanceof Aero) {
-                    radicalHSBonus = ((Aero) entity).getHeatSinks();
+                    radicalHSBonus = ((Aero) entity).getActiveSinks();
                 } else {
                     LOGGER.error("Radical heat sinks mounted on non-mek, non-aero Entity!");
                 }
 
                 // Mark that RHS was used this turn (for tracking consecutive uses in newRound)
                 entity.setUsedRHSLastTurn(true);
-
-                // RHS activation report
-                report = new Report(5540);
-                report.subject = entity.getId();
-                report.indent();
-                report.addDesc(entity);
-                report.add(radicalHSBonus);
-                rhsReports.add(report);
 
                 Roll diceRoll = Compute.rollD6(2);
                 // Increment consecutive RHS uses for this activation attempt (success or failure),
@@ -197,8 +190,16 @@ class HeatResolver extends AbstractTWRuleHandler {
                 report.choose(rhsFailure);
                 rhsReports.add(report);
 
-                // Show RHS stress level and next activation TN (only if RHS didn't fail)
+                // Show the cooling and the RHS stress level and next activation TN (only if RHS didn't fail; a failed
+                // activation cools nothing, Core p.208)
                 if (!rhsFailure) {
+                    report = new Report(5540);
+                    report.subject = entity.getId();
+                    report.indent();
+                    report.addDesc(entity);
+                    report.add(radicalHSBonus);
+                    rhsReports.add(report);
+
                     int nextTargetNumber =
                           Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses() + 1);
                     report = new Report(5547);
@@ -210,6 +211,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                 }
 
                 if (rhsFailure) {
+                    radicalHSBonus = 0;
                     entity.setHasDamagedRHS(true);
                     int loc = Entity.LOC_NONE;
                     for (Mounted<?> m : entity.getEquipment()) {
@@ -257,18 +259,12 @@ class HeatResolver extends AbstractTWRuleHandler {
                   (entityHex.getFireTurn() > 0) &&
                   (entity.getElevation() <= 1) &&
                   (entity.getAltitude() == 0)) {
-                int heatToAdd = 5;
-                boolean isMekWithHeatDissipatingArmor = (entity instanceof Mek) &&
-                      ((Mek) entity).hasIntactHeatDissipatingArmor();
-                if (isMekWithHeatDissipatingArmor) {
-                    heatToAdd /= 2;
-                }
-                entity.heatFromExternal += heatToAdd;
+                int heatToAdd = entity.addOutsideHeat(5);
                 report = new Report(5030);
                 report.add(heatToAdd);
                 report.subject = entity.getId();
                 heatEffectsReports.add(report);
-                if (isMekWithHeatDissipatingArmor) {
+                if (heatToAdd < 5) {
                     report = new Report(5550);
                     heatEffectsReports.add(report);
                 }
@@ -412,16 +408,12 @@ class HeatResolver extends AbstractTWRuleHandler {
             if (entityHex != null) {
                 int magma = entityHex.terrainLevel(Terrains.MAGMA);
                 if ((magma > 0) && (entity.getElevation() == 0)) {
-                    int heatToAdd = 5 * magma;
-                    if (mek.hasIntactHeatDissipatingArmor()) {
-                        heatToAdd /= 2;
-                    }
-                    entity.heatFromExternal += heatToAdd;
+                    int heatToAdd = entity.addOutsideHeat(5 * magma);
                     report = new Report(5032);
                     report.subject = entity.getId();
                     report.add(heatToAdd);
                     heatEffectsReports.add(report);
-                    if (mek.hasIntactHeatDissipatingArmor()) {
+                    if (heatToAdd < 5 * magma) {
                         report = new Report(5550);
                         heatEffectsReports.add(report);
                     }
@@ -449,9 +441,6 @@ class HeatResolver extends AbstractTWRuleHandler {
             for (Mounted<?> m : entity.getEquipment()) {
                 if ((m.hasChargedOrChargingCapacitor() == 1) && !m.isUsedThisRound()) {
                     capHeat += 5;
-                }
-                if ((m.hasChargedOrChargingCapacitor() == 2) && !m.isUsedThisRound()) {
-                    capHeat += 10;
                 }
             }
             if (capHeat > 0) {
@@ -523,45 +512,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                 heatEffectsReports.add(report);
             }
 
-            // should we use a coolant pod?
-            int dissipationBeforeCoolantPod = toSink;
-            int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
-            int possibleSinkage = mek.getNumberOfSinks();
-            for (Mounted<?> m : entity.getEquipment()) {
-                if (m.getType() instanceof AmmoType at) {
-                    if ((at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) && m.isAmmoUsable()) {
-                        EquipmentMode mode = m.curMode();
-                        if (mode.equals("dump")) {
-                            report = new Report(5260);
-                            report.subject = entity.getId();
-                            heatEffectsReports.add(report);
-                            m.setShotsLeft(0);
-                            toSink += possibleSinkage;
-                            break;
-                        }
-                        if (mode.equals("safe") && ((entity.heat - toSink) > safeHeat)) {
-                            report = new Report(5265);
-                            report.subject = entity.getId();
-                            heatEffectsReports.add(report);
-                            m.setShotsLeft(0);
-                            toSink += possibleSinkage;
-                            break;
-                        }
-                        if (mode.equals("efficient") && ((entity.heat - toSink) >= possibleSinkage)) {
-                            report = new Report(5270);
-                            report.subject = entity.getId();
-                            heatEffectsReports.add(report);
-                            m.setShotsLeft(0);
-                            toSink += possibleSinkage;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (toSink > dissipationBeforeCoolantPod) {
-                entity.getHeatBreakdown().addDissipation(toSink - dissipationBeforeCoolantPod, Messages.getString("HeatBreakdown.coolantPod"));
-            }
+            toSink += useCoolantPod(entity, mek.getActiveSinksOfAnyType(), toSink, heatEffectsReports);
             toSink = Math.min(toSink, entity.heat);
             entity.heat -= toSink;
             report = new Report(5035);
@@ -1086,46 +1037,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             entity.getHeatBreakdown().addDissipation(radicalHSBonus, Messages.getString("HeatBreakdown.radicalHeatSink"));
         }
 
-        // should we use a coolant pod?
-        int dissipationBeforeCoolantPod = toSink;
-        int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
-        int possibleSinkage = ((Aero) entity).getHeatSinks();
-        for (Mounted<?> mounted : entity.getEquipment()) {
-            if (mounted.getType() instanceof AmmoType at) {
-                if ((at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) && mounted.isAmmoUsable()) {
-                    EquipmentMode mode = mounted.curMode();
-                    if (mode.equals("dump")) {
-                        report = new Report(5260);
-                        report.subject = entity.getId();
-                        vPhaseReport.add(report);
-                        mounted.setShotsLeft(0);
-                        toSink += possibleSinkage;
-                        break;
-                    }
-                    if (mode.equals("safe") && ((entity.heat - toSink) > safeHeat)) {
-                        report = new Report(5265);
-                        report.subject = entity.getId();
-                        vPhaseReport.add(report);
-                        mounted.setShotsLeft(0);
-                        toSink += possibleSinkage;
-                        break;
-                    }
-                    if (mode.equals("efficient")
-                          && ((entity.heat - toSink) >= possibleSinkage)) {
-                        report = new Report(5270);
-                        report.subject = entity.getId();
-                        vPhaseReport.add(report);
-                        mounted.setShotsLeft(0);
-                        toSink += possibleSinkage;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (toSink > dissipationBeforeCoolantPod) {
-            entity.getHeatBreakdown().addDissipation(toSink - dissipationBeforeCoolantPod, Messages.getString("HeatBreakdown.coolantPod"));
-        }
+        toSink += useCoolantPod(entity, ((Aero) entity).getActiveSinks(), toSink, vPhaseReport);
         toSink = Math.min(toSink, entity.heat);
         entity.heat -= toSink;
         report = new Report(5035);
@@ -1361,29 +1273,64 @@ class HeatResolver extends AbstractTWRuleHandler {
         }
     }
 
+    /**
+     * Uses the first coolant pod whose mode calls for it this turn (TO:AUE p. 116): it adds 1 point of cooling to each
+     * active heat sink, but none while a radical heat sink is engaged (Core pp. 103, 208; a unit built under IO:AE p. 83
+     * can't mount both). A pod set to dump is then "triggered but has no effect" (Core p. 208), and the report says so;
+     * safe and efficient trigger only when the pod would cool.
+     *
+     * @param activeSinks the active heat sinks the pod cools
+     * @param toSink      the heat dissipated without the pod
+     *
+     * @return the heat the pod dissipates
+     */
+    private int useCoolantPod(Entity entity, int activeSinks, int toSink, List<Report> reports) {
+        int possibleSinkage = entity.hasActivatedRadicalHS() ? 0 : activeSinks;
+        int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
+        for (Mounted<?> mounted : entity.getEquipment()) {
+            if (!(mounted.getType() instanceof AmmoType ammoType)
+                  || (ammoType.getAmmoType() != AmmoType.AmmoTypeEnum.COOLANT_POD) || !mounted.isAmmoUsable()) {
+                continue;
+            }
+            EquipmentMode mode = mounted.curMode();
+            int messageId = 0;
+            if (mode.equals("dump")) {
+                messageId = entity.hasActivatedRadicalHS() ? 5261 : 5260;
+            } else if (mode.equals("safe") && (possibleSinkage > 0) && ((entity.heat - toSink) > safeHeat)) {
+                messageId = 5265;
+            } else if (mode.equals("efficient") && (possibleSinkage > 0)
+                  && ((entity.heat - toSink) >= possibleSinkage)) {
+                messageId = 5270;
+            }
+            if (messageId != 0) {
+                Report report = new Report(messageId);
+                report.subject = entity.getId();
+                reports.add(report);
+                mounted.setShotsLeft(0);
+                if (possibleSinkage > 0) {
+                    entity.getHeatBreakdown().addDissipation(possibleSinkage,
+                          Messages.getString("HeatBreakdown.coolantPod"));
+                }
+                return possibleSinkage;
+            }
+        }
+        return 0;
+    }
+
     void adjustHeatExtremeTemp(Entity entity, Vector<Report> vPhaseReport) {
         Report report;
         int tempDiff = getGame().getPlanetaryConditions().getTemperatureDifference(50, -30);
-        boolean heatArmor = false;
-
-        if (entity instanceof Mek) {
-            heatArmor = ((Mek) entity).hasIntactHeatDissipatingArmor();
-        }
-
         if (entity.isSpaceborne() || (tempDiff == 0)) {
             return;
         } else {
             if (getGame().getPlanetaryConditions().getTemperature() > 50) {
-                int heatToAdd = tempDiff;
-                if (heatArmor) {
-                    heatToAdd /= 2;
-                }
+                int heatToAdd = Game.rulesManager.getRulesArmor().reduceExtremeHeat(entity, tempDiff);
                 entity.heatFromExternal += heatToAdd;
                 report = new Report(5020);
                 report.subject = entity.getId();
                 report.add(heatToAdd);
                 vPhaseReport.add(report);
-                if (heatArmor) {
+                if (heatToAdd < tempDiff) {
                     report = new Report(5550);
                     vPhaseReport.add(report);
                 }

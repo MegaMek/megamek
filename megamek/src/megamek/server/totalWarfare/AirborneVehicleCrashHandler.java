@@ -345,11 +345,17 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
             if (gameManager.resolveAccidentalFallFromAboveHit(tank, fallenOn, fallElevation, reports)) {
                 gameManager.displaceUnitFallenOn(tank, crashPos, direction, reports);
             } else {
-                Coords landing = Compute.getValidDisplacement(getGame(), tank.getId(), crashPos, direction);
-                if (landing != null) {
-                    tank.setPosition(landing);
-                } else {
+                // A miss lands the vehicle as for any accidental fall from above (TW p.68)
+                Coords landing = Compute.getAccidentalFallDisplacement(getGame(), tank.getId(), crashPos, direction,
+                      true);
+                if (landing == null) {
                     reports.addAll(gameManager.destroyEntity(tank, "impossible displacement", false, false));
+                } else if (!getGame().getBoard(tank).contains(landing)) {
+                    // Off the board there is no hex to land in: the vehicle is forced from the field
+                    reports.addAll(gameManager.doEntityDisplacement(tank, crashPos, landing, null));
+                    return reports;
+                } else {
+                    tank.setPosition(landing);
                 }
             }
         }

@@ -62,6 +62,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for Damage Interrupt Circuit (DIC) functionality per IO p.39.
@@ -315,9 +317,7 @@ public class DamageInterruptCircuitTest {
 
             assertTrue(mek.hasWorkingDIC(), "DIC should start working");
 
-            // Create hit with TAC effect (EFFECT_CRITICAL indicates roll of 2)
-            HitData hit = new HitData(Mek.LOC_CENTER_TORSO);
-            hit.setEffect(HitData.EFFECT_CRITICAL);
+            HitData hit = new HitData(Mek.LOC_CENTER_TORSO, false, HitData.EFFECT_TAC);
 
             DamageInfo damageInfo = new DamageInfo(mek, hit, 5);
             damageManager.damageEntity(damageInfo);
@@ -326,16 +326,15 @@ public class DamageInterruptCircuitTest {
             assertFalse(mek.hasWorkingDIC(), "DIC should not be working after TAC");
         }
 
-        @Test
-        @DisplayName("Normal hit should not disable DIC")
-        void normalHitDoesNotDisableDic() {
+        @ParameterizedTest
+        @ValueSource(ints = {HitData.EFFECT_NONE, HitData.EFFECT_CRITICAL})
+        @DisplayName("A hit without a location roll of 2 leaves the DIC working")
+        void nonTacHitDoesNotDisableDic(int effect) {
             Mek mek = createMekForDamageTest(true);
 
             assertTrue(mek.hasWorkingDIC(), "DIC should start working");
 
-            // Create normal hit without TAC effect
-            HitData hit = new HitData(Mek.LOC_CENTER_TORSO);
-            // No EFFECT_CRITICAL set
+            HitData hit = new HitData(Mek.LOC_CENTER_TORSO, false, effect);
 
             DamageInfo damageInfo = new DamageInfo(mek, hit, 5);
             damageManager.damageEntity(damageInfo);
@@ -351,9 +350,7 @@ public class DamageInterruptCircuitTest {
 
             assertFalse(mek.hasDamageInterruptCircuit(), "Mek should not have DIC");
 
-            // Create hit with TAC effect
-            HitData hit = new HitData(Mek.LOC_CENTER_TORSO);
-            hit.setEffect(HitData.EFFECT_CRITICAL);
+            HitData hit = new HitData(Mek.LOC_CENTER_TORSO, false, HitData.EFFECT_TAC);
 
             DamageInfo damageInfo = new DamageInfo(mek, hit, 5);
             // Should not throw any exceptions
@@ -370,9 +367,7 @@ public class DamageInterruptCircuitTest {
 
             assertTrue(mek.isDICDisabled(), "DIC should start disabled");
 
-            // Create hit with TAC effect
-            HitData hit = new HitData(Mek.LOC_CENTER_TORSO);
-            hit.setEffect(HitData.EFFECT_CRITICAL);
+            HitData hit = new HitData(Mek.LOC_CENTER_TORSO, false, HitData.EFFECT_TAC);
 
             DamageInfo damageInfo = new DamageInfo(mek, hit, 5);
             // Should not throw any exceptions

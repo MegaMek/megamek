@@ -65,7 +65,7 @@ public class TWRulesWeapons extends RulesWeapons {
     public int getATMClusterSize() { return 5; }
 
     /**
-     * Can ultra autocannons jam? Yes.
+     * Can ultra autocannons jam? Yes (TW p.114).
      *
      * @return true if ultra autocannons can jam
      */
@@ -138,7 +138,8 @@ public class TWRulesWeapons extends RulesWeapons {
     }
 
     /**
-     * PPC Capacitor check.
+     * PPC Capacitor check: a to-hit roll of 2 with a capacitor-charged PPC "burns out the system before it can fire,
+     * damaging the capacitor slot as well as the first critical slot of the corresponding weapon" (TO:AUE p.149).
      *
      * @param roll the dice roll result
      * @param attackingEntity the entity firing the PPC
@@ -147,31 +148,36 @@ public class TWRulesWeapons extends RulesWeapons {
      */
     @Nullable
     @Override
-    public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
-          weapon) {
-        Report r = new Report(3178);
-        if (roll == 2) {
-            r.subject = attackingEntity.getId();
-            r.indent();
-            // Oops, we ruined our day...
-            int wLocation = weapon.getLocation();
-            weapon.setHit(true);
-            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(wLocation); i++) {
-                CriticalSlot slot = attackingEntity.getCritical(wLocation, i);
-                if ((slot == null)
-                      || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                    continue;
-                }
-                // Only one Crit needs to be damaged.
-                Mounted<?> mounted = slot.getMount();
-                if (mounted.equals(weapon)) {
-                    slot.setDestroyed(true);
-                    break;
-                }
-            }
-            return r;
+    public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted weapon) {
+        if (roll != 2) {
+            return null;
         }
-        return null;
+        applyBurnoutCritical(attackingEntity, weapon);
+        Mounted<?> capacitor = weapon.getLinkedBy();
+        if (capacitor != null) {
+            applyBurnoutCritical(attackingEntity, capacitor);
+        }
+        Report report = new Report(3178);
+        report.subject = attackingEntity.getId();
+        report.indent();
+        return report;
+    }
+
+    /** Burnout hits the first slot of each mount. Intact slot armor absorbs that hit (BMM pp. 105, 118). */
+    private void applyBurnoutCritical(Entity entity, Mounted<?> mount) {
+        for (CriticalSlot slot : entity.getCriticalSlots(mount.getLocation())) {
+            if ((slot == null) || ((slot.getMount() != mount) && (slot.getMount2() != mount))) {
+                continue;
+            }
+            if (slot.isArmored()) {
+                slot.hitArmored();
+                return;
+            }
+            slot.setDestroyed(true);
+            break;
+        }
+        // Aerospace units without equipment slots also suffer the hit on the mount.
+        mount.setHit(true);
     }
 
     /**

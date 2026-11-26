@@ -43,7 +43,8 @@ import jakarta.annotation.Nullable;
  * How a control point is fought over and what it is worth: the scoring scheme of an {@link ObjectiveMarker}.
  *
  * <P>A scheme is one of five presets. {@code STANDARD} and {@code RAID} are the two printed-rules schemes:
- * standard control scoring (the per-turn friendly-plus-enemy pairing) and Objective Raid end-scoring. The other
+ * standard control scoring (the per-turn friendly-plus-enemy pairing) and Objective Raid, which pays each point's
+ * controller every End Phase (Core p.217) or, as an alternative, once when the game ends. The other
  * three are labeled mission options beyond the printed rules, each built on a per-point counter:</P>
  *
  * <UL>
@@ -76,7 +77,10 @@ public class ObjectiveScoringScheme implements Serializable {
     public enum SchemePreset {
         /** Printed rules: standard control scoring, the per-turn friendly-plus-enemy pairing (the default). */
         STANDARD,
-        /** Printed rules: Objective Raid - the point awards its value once, to its controller at game end. */
+        /**
+         * Printed rules: Objective Raid - the point has no owner and pays its value to whoever controls it, every End
+         * Phase or once at game end as its {@link RaidPayout} says.
+         */
         RAID,
         /** Mission option: hold the point for a number of turns to secure it. */
         HOLD,
@@ -102,6 +106,14 @@ public class ObjectiveScoringScheme implements Serializable {
         ON_EXIT
     }
 
+    /** When a {@code RAID} point pays its victory points; the player chooses this at game setup. */
+    public enum RaidPayout {
+        /** Every End Phase, to the side controlling it then (Core p.217, Objective Raid; the default). */
+        EVERY_END_PHASE,
+        /** Once, to the side controlling it when the game ends. An alternative to the printed rule. */
+        AT_GAME_END
+    }
+
     /** How the {@code HOLD} preset counts held turns; the player chooses this at game setup. */
     public enum HoldCounting {
         /** Losing the point resets the count - an unbroken run is required (the default). */
@@ -123,6 +135,7 @@ public class ObjectiveScoringScheme implements Serializable {
     private boolean defendGripInitialized = false;
     private boolean retainsControlWhenEmpty = false;
     private ScanPayout scanPayout = ScanPayout.ON_EXIT;
+    private RaidPayout raidPayout = RaidPayout.EVERY_END_PHASE;
     private Map<Integer, Integer> heldTurnsByTeam = new HashMap<>();
     private Map<Integer, Integer> heldTurnsByPlayer = new HashMap<>();
     private Map<Integer, Integer> captureProgressByTeam = new HashMap<>();
@@ -133,10 +146,23 @@ public class ObjectiveScoringScheme implements Serializable {
         return new ObjectiveScoringScheme();
     }
 
-    /** @return an Objective Raid scheme (printed rules): the point end-scores its value to its final controller */
+    /**
+     * @return an Objective Raid scheme as printed (Core p.217): the point pays its value to its controller every End
+     *       Phase
+     */
     public static ObjectiveScoringScheme raid() {
+        return raid(RaidPayout.EVERY_END_PHASE);
+    }
+
+    /**
+     * @param payout when the point pays: every End Phase, or once at game end
+     *
+     * @return an Objective Raid scheme that pays its controller when the payout says
+     */
+    public static ObjectiveScoringScheme raid(RaidPayout payout) {
         ObjectiveScoringScheme scheme = new ObjectiveScoringScheme();
         scheme.preset = SchemePreset.RAID;
+        scheme.raidPayout = payout;
         return scheme;
     }
 
@@ -209,6 +235,32 @@ public class ObjectiveScoringScheme implements Serializable {
 
     public void setScanPayout(ScanPayout scanPayout) {
         this.scanPayout = scanPayout;
+    }
+
+    /**
+     * When a Raid point pays. {@link RaidPayout#EVERY_END_PHASE}, the printed rule and the default for a new point,
+     * pays the controller each End Phase. {@link RaidPayout#AT_GAME_END} pays only the controller when the game ends.
+     *
+     * @return when the point pays; never {@code null}. A scheme from a save made before the choice existed reads as at
+     *       game end, which is how Raid paid then, so a game in progress keeps its rules
+     */
+    public RaidPayout getRaidPayout() {
+        return (raidPayout == null) ? RaidPayout.AT_GAME_END : raidPayout;
+    }
+
+    /** @param raidPayout when a Raid point pays; {@code null} reads as at game end, as in a save made before the choice */
+    public void setRaidPayout(@Nullable RaidPayout raidPayout) {
+        this.raidPayout = raidPayout;
+    }
+
+    /** @return {@code true} for a Raid point that pays its controller every End Phase */
+    public boolean isRaidPaidEveryEndPhase() {
+        return (preset == SchemePreset.RAID) && (getRaidPayout() == RaidPayout.EVERY_END_PHASE);
+    }
+
+    /** @return {@code true} for a Raid point that pays only when the game ends */
+    public boolean isRaidPaidAtGameEnd() {
+        return (preset == SchemePreset.RAID) && (getRaidPayout() == RaidPayout.AT_GAME_END);
     }
 
     public SchemePreset getPreset() {

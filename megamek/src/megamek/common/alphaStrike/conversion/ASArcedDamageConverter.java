@@ -109,9 +109,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         return weapon1.getType().equals(weapon2.getType())
               && weapon1.getLocation() == weapon2.getLocation()
               && weapon1.isRearMounted() == weapon2.isRearMounted()
-              && ((weapon1.getLinkedBy() == null && weapon2.getLinkedBy() == null)
-              || (weapon1.getLinkedBy() != null
-              && weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
+              && weapon1.hasSameLinkedEquipment(weapon2);
     }
 
     @Override

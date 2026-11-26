@@ -73,6 +73,8 @@ class ObjectiveMarkerTest {
         assertFalse(marker.canBePickedUp(true));
         assertFalse(marker.canBePickedUp(false));
         assertFalse(marker.isDestroyed());
+        // a new point is one placed during the game, which a reset to the lobby clears
+        assertFalse(marker.isPresentAtGameStart());
     }
 
     @Test
@@ -124,6 +126,40 @@ class ObjectiveMarkerTest {
     }
 
     @Test
+    void testOnlyPotentialTogetherWithFalseIsAForbiddenCombination() {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setFragile(true);
+        marker.setMobile(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "Fragile and Mobile combine with anything");
+
+        marker.setPotential(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "Potential alone is allowed");
+
+        marker.setPotential(false);
+        marker.setFalseObjective(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "False alone is allowed");
+
+        marker.setPotential(true);
+        assertTrue(marker.hasPotentialAndFalseVariants());
+    }
+
+    @Test
+    void testEveryHeldSchemeButNotScanCanBePotential() {
+        for (ObjectiveScoringScheme.SchemePreset preset : ObjectiveScoringScheme.SchemePreset.values()) {
+            boolean isScan = preset == ObjectiveScoringScheme.SchemePreset.SCAN;
+            assertEquals(!isScan, ObjectiveMarker.canBePotential(preset), preset.name());
+        }
+    }
+
+    @Test
+    void testOnlyARaidPointCanBeMobile() {
+        for (ObjectiveScoringScheme.SchemePreset preset : ObjectiveScoringScheme.SchemePreset.values()) {
+            boolean isRaid = preset == ObjectiveScoringScheme.SchemePreset.RAID;
+            assertEquals(isRaid, ObjectiveMarker.canBeMobile(preset), preset.name());
+        }
+    }
+
+    @Test
     void testAnyDamageDestroys() {
         ObjectiveMarker marker = new ObjectiveMarker();
 
@@ -150,6 +186,7 @@ class ObjectiveMarkerTest {
         marker.setInvulnerable(true);
         marker.setController(4, ObjectiveMarker.NO_CONTROLLER);
         marker.setLobbyPosition(new Coords(7, 9));
+        marker.setPresentAtGameStart(true);
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteStream)) {
@@ -178,6 +215,9 @@ class ObjectiveMarkerTest {
         assertEquals(4, restoredMarker.getControllingTeam());
         assertEquals(ObjectiveMarker.NO_CONTROLLER, restoredMarker.getControllingPlayerId());
         assertEquals(new Coords(7, 9), restoredMarker.getLobbyPosition());
+        // the Victory Setup phase sends the board back as serialized markers, so losing this would turn a
+        // scenario's points into ones the next reset clears
+        assertTrue(restoredMarker.isPresentAtGameStart());
     }
 
     @Test
@@ -248,6 +288,31 @@ class ObjectiveMarkerTest {
         assertEquals(HoldCounting.CUMULATIVE, restoredScheme.getHoldCounting());
         assertEquals(3, restoredScheme.getHeldTurns(2, ObjectiveScoringScheme.NO_SIDE));
         assertFalse(restoredScheme.isDecided());
+    }
+
+    @Test
+    void testRaidPayoutSurvivesSerialization() throws Exception {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setScoringScheme(ObjectiveScoringScheme.raid(ObjectiveScoringScheme.RaidPayout.AT_GAME_END));
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(byteStream)) {
+            objectOutput.writeObject(marker);
+        }
+        ObjectiveMarker restored;
+        try (ObjectInputStream objectInput = new ObjectInputStream(
+              new ByteArrayInputStream(byteStream.toByteArray()))) {
+            restored = (ObjectiveMarker) objectInput.readObject();
+        }
+
+        assertEquals(ObjectiveScoringScheme.RaidPayout.AT_GAME_END, restored.getScoringScheme().getRaidPayout(),
+              "the payout chosen in Victory Setup must reach the server and the other clients");
+    }
+
+    @Test
+    void testANewRaidPointPaysEveryEndPhaseAsPrinted() {
+        assertEquals(ObjectiveScoringScheme.RaidPayout.EVERY_END_PHASE,
+              ObjectiveScoringScheme.raid().getRaidPayout());
     }
 
     // --- control retention (a mission with more points than units) ---

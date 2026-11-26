@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -327,7 +327,7 @@ public final class HexTooltip {
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
 
         String sBuilding = Messages.getString("BoardView1.Tooltip.Building",
-              mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords),
+              structureHeight(mhex), bldg.toString(), bldg.getCurrentCF(mcoords),
               bldg.getArmor(mcoords), bldg.getBasement(mcoords).toString());
 
         if (bldg.getBasementCollapsed(mcoords)) {
@@ -345,13 +345,27 @@ public final class HexTooltip {
         return UIUtil.tag("TABLE", attr, row);
     }
 
+    /**
+     * Returns the height of the structure in the given hex. Bridges and fuel tanks keep their height in their own
+     * terrain (BRIDGE_ELEV, FUEL_TANK_ELEV) rather than BLDG_ELEV; reading BLDG_ELEV for them returns
+     * Terrain.LEVEL_NONE (Integer.MIN_VALUE), which showed as a height of -2,147,483,648.
+     */
+    private static int structureHeight(Hex hex) {
+        if (hex.containsTerrain(Terrains.BRIDGE)) {
+            return hex.terrainLevel(Terrains.BRIDGE_ELEV);
+        } else if (hex.containsTerrain(Terrains.FUEL_TANK)) {
+            return hex.terrainLevel(Terrains.FUEL_TANK_ELEV);
+        }
+        return hex.terrainLevel(Terrains.BLDG_ELEV);
+    }
+
     public static String getOneLineSummary(BuildingTarget target, Board board) {
         String result = "";
         Coords mcoords = target.getPosition();
         IBuilding bldg = board.getBuildingAt(mcoords);
         Hex mhex = board.getHex(mcoords);
         result += Messages.getString("BoardView1.Tooltip.BuildingLine",
-              mhex.terrainLevel(Terrains.BLDG_ELEV),
+              structureHeight(mhex),
               bldg.getCurrentCF(mcoords),
               bldg.getArmor(mcoords));
 
@@ -363,7 +377,6 @@ public final class HexTooltip {
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, boardId, mcoords).getIndicator();
-        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
 
         String result;
         // Hex number and level, with the terrain features following inline on the same line (separated by the
@@ -375,9 +388,10 @@ public final class HexTooltip {
                     mhex.getLevel()
               )
         );
-        // Illumination indicator, only when the hex is specially lit (the NONE level has a blank indicator).
+        // Illumination indicator, only when the hex is specially lit (the NONE level has a blank indicator). Bold in
+        // the Terrain FG colour: the Caution yellow it used to have is unreadable on the light Terrain BG.
         if (!indicator.isBlank()) {
-            sTerrain.append(DOT_SPACER).append(UIUtil.tag("FONT", attr, indicator));
+            sTerrain.append(DOT_SPACER).append(UIUtil.tag("B", "", indicator));
         }
         // Types that represent Elevations need converting and possibly zeroing if board is in Atmosphere (Low Alt.)
         List<Integer> typesThatNeedAltitudeChecked = List.of(
@@ -407,7 +421,8 @@ public final class HexTooltip {
         }
         sTerrain.append("<BR>");
 
-        attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s",
+              UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
         result = UIUtil.tag("FONT", attr, sTerrain.toString());
         result = UIUtil.tag("span", fontSizeAttr, result);
 
@@ -443,8 +458,8 @@ public final class HexTooltip {
             sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
             String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
 
-            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
-            sTerrain += UIUtil.tag("FONT", attr, tmp);
+            // Bold in the Terrain FG colour: this line sits on the light Terrain BG, where Warning red is unreadable
+            sTerrain += UIUtil.tag("B", "", tmp);
             sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
         }
 
@@ -610,6 +625,9 @@ public final class HexTooltip {
             description.append(" &mdash; ").append(Messages.getString("VictoryHex.tooltip.placedBy",
                   owner.getName()));
         }
+        if (marker.isDestroyed()) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.destroyed"));
+        }
         description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.heldBy",
               currentHolder(marker, game)));
         description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.worth",
@@ -618,6 +636,18 @@ public final class HexTooltip {
         if (progress != null) {
             description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.progress",
                   progress));
+        }
+        // whether a Potential point still needs its scan is public: both sides can see a candidate on the map
+        if (marker.isPotential()) {
+            description.append("<BR>&nbsp;").append(Messages.getString(marker.isConfirmed()
+                  ? "VictoryHex.tooltip.candidateConfirmed" : "VictoryHex.tooltip.candidate"));
+        }
+        // whether a point can be carried or broken is part of what it is, so both sides are told
+        if (marker.isMobile()) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.mobile"));
+        }
+        if (marker.isFragile()) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.fragile"));
         }
         description.append("<BR>&nbsp;").append(VictoryHexPropertiesPane.describeScheme(scheme));
         return description.toString();

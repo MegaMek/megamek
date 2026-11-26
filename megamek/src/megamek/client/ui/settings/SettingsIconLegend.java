@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.settings;
 
+import static megamek.client.ui.WrapLayout.wordWrap;
 import static megamek.client.ui.util.FontHandler.symbolIcon;
 
 import java.awt.BorderLayout;
@@ -48,9 +49,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 import megamek.client.ui.util.UIUtil;
+import org.apache.commons.text.StringEscapeUtils;
 
 /** Reference legend for resolved {@link SettingsBadge} markers. */
 public class SettingsIconLegend extends JPanel {
@@ -70,17 +70,24 @@ public class SettingsIconLegend extends JPanel {
         List<SettingsBadge> legendBadges = List.copyOf(badges);
         JButton button = new JButton(text);
         button.setName("btnSettingsIconLegend");
-        button.setToolTipText(tooltip);
+        button.setToolTipText(tooltip == null ? null : wordWrap(tooltip));
         button.setIcon(symbolIcon(0xE88E, button.getFont().getSize(), button.getForeground()));
         button.addActionListener(event -> showLegendPopupAbove(button, new SettingsIconLegend(legendBadges)));
         return button;
     }
 
     private void addEntry(int row, int column, SettingsBadge badge) {
-        Color iconColor = badge.color() == null ? UIManager.getColor("Label.foreground") : badge.color();
-        JLabel label = new JLabel("<html>" + StringEscapeUtils.escapeHtml4(badge.description()) + "</html>");
-        label.setIcon(symbolIcon(badge.codePoint(), UIUtil.scaleForGUI(ICON_SIZE), iconColor));
-        label.setIconTextGap(UIUtil.scaleForGUI(6));
+        String description = StringEscapeUtils.escapeHtml4(badge.description());
+        JLabel label;
+        if (badge.isText()) {
+            // A text marker has no glyph to draw as the icon, so lead the description with the marker itself.
+            label = new JLabel("<html><nobr>" + badge.toHtml().strip() + "</nobr>&nbsp; " + description + "</html>");
+        } else {
+            Color iconColor = badge.color() == null ? UIManager.getColor("Label.foreground") : badge.color();
+            label = new JLabel("<html>" + description + "</html>");
+            label.setIcon(symbolIcon(badge.codePoint(), UIUtil.scaleForGUI(ICON_SIZE), iconColor));
+            label.setIconTextGap(UIUtil.scaleForGUI(6));
+        }
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = column;

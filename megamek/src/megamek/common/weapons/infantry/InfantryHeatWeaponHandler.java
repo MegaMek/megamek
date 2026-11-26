@@ -43,8 +43,8 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.ComputeSideTable;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.InfantryWeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -76,6 +76,15 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
         bSalvo = true;
     }
 
+    /** A platoon's heat comes from its flame-based weapon, whether that is its primary or its secondary one */
+    @Override
+    protected Report applyExternalHeat(Entity entityTarget, int heat) {
+        WeaponType heatWeapon = ((weapon instanceof InfantryWeaponMounted platoonWeapons)
+              && !((weaponType instanceof InfantryWeapon primary) && primary.isFlameBased())
+              && platoonWeapons.getOtherWeapon().isFlameBased()) ? platoonWeapons.getOtherWeapon() : weaponType;
+        return externalHeatReport(entityTarget, hit, heat, subjectId, heatWeapon);
+    }
+
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
@@ -104,9 +113,6 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                 return;
             }
 
-            Report report = new Report(3400);
-            report.subject = subjectId;
-            report.indent(2);
             int nDamage = nDamPerHit * Math.min(nCluster, hits);
             // Building may absorb some damage.
             boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
@@ -116,6 +122,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
             nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
+            Report heatReport = applyExternalHeat(entityTarget, nDamage);
             // If using BMM heat option, do damage as well as heat
             if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
                 vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
@@ -124,20 +131,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                             damageType,
                       false, false, throughFront, underWater, nukeS2S));
             }
-            if (entityTarget.getArmor(hit) > 0 &&
-                  (entityTarget.getArmorType(hit.getLocation()) ==
-                        EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                entityTarget.heatFromExternal += nDamage / 2;
-                report.add(nDamage / 2);
-                report.choose(true);
-                report.messageId = 3406;
-                report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else {
-                entityTarget.heatFromExternal += nDamage;
-                report.add(nDamage);
-                report.choose(true);
-            }
-            vPhaseReport.addElement(report);
+            vPhaseReport.add(heatReport);
         } else {
             // Only heat-tracking targets can be hurt by the heat itself. Against anything else - vehicles,
             // infantry, ProtoMeks - the attack falls back to ordinary damage, so say why rather than leaving the

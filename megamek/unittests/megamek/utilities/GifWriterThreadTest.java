@@ -33,18 +33,29 @@
 
 package megamek.utilities;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Tests for {@link GifWriterThread}'s producer/consumer behavior.
@@ -63,6 +74,8 @@ class GifWriterThreadTest {
         CountDownLatch releaseEncode = new CountDownLatch(1);
 
         GifWriter gifWriter = mock(GifWriter.class);
+        // The discard stop below deletes the temporary file, so the mock needs one to look at
+        when(gifWriter.getOutputFile()).thenReturn(new File("missing-test-summary.gif"));
         // Make the first encode block until the test releases it, simulating a slow frame.
         doAnswer(invocation -> {
             encodingStarted.countDown();
@@ -92,5 +105,247 @@ class GifWriterThreadTest {
             thread.join(5000);
             assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
         }
+    }
+
+    /**
+     * Regression guard: a normal stop at the end of the game must reach the save prompt with the
+     * thread's interrupt flag cleared. With the flag still set, the modal "Save the GIF?" dialog closes
+     * immediately, reads as "No", and the recorded GIF is deleted before the player sees it.
+     */
+    @Test
+    void testSavePromptRunsWithInterruptFlagCleared() throws Exception {
+        GifWriter gifWriter = mock(GifWriter.class);
+        AtomicBoolean promptReached = new AtomicBoolean(false);
+        AtomicBoolean interruptedAtPrompt = new AtomicBoolean(true);
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                promptReached.set(true);
+                interruptedAtPrompt.set(Thread.currentThread().isInterrupted());
+            }
+        };
+        thread.start();
+        thread.addFrame(new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB), 100);
+
+        // The same call MinimapPanel makes when the game reaches the victory phase.
+        thread.stopThread();
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        assertTrue(promptReached.get(), "A normal stop should offer to save the GIF");
+        assertFalse(interruptedAtPrompt.get(), "The save prompt must not run on an interrupted thread");
+    }
+
+    /**
+     * Regression guard: MekHQ closes the game client right after the victory phase, which calls
+     * {@code stopThread(true)} while the save prompt may be on screen. That second stop must not
+     * interrupt the prompt, or it closes before the player can answer and the GIF is deleted.
+     */
+    @Test
+    void testLaterStopDoesNotInterruptSavePrompt() throws Exception {
+        GifWriter gifWriter = mock(GifWriter.class);
+        CountDownLatch promptShowing = new CountDownLatch(1);
+        CountDownLatch playerAnswers = new CountDownLatch(1);
+        AtomicBoolean promptInterrupted = new AtomicBoolean(false);
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                promptShowing.countDown();
+                try {
+                    // Stands in for the modal dialog waiting on the player.
+                    playerAnswers.await(5, TimeUnit.SECONDS);
+                } catch (InterruptedException interruptedException) {
+                    promptInterrupted.set(true);
+                }
+            }
+        };
+        thread.start();
+
+        thread.stopThread();
+        assertTrue(promptShowing.await(2, TimeUnit.SECONDS), "A normal stop should offer to save the GIF");
+
+        // MekHQ tearing the client down while the prompt is open.
+        thread.stopThread(true);
+        playerAnswers.countDown();
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        assertFalse(promptInterrupted.get(), "A later stop must not interrupt the open save prompt");
+    }
+
+    /**
+     * Regression guard: a stop that arrives just as a frame finishes encoding must not interrupt the save
+     * prompt. The stop has to interrupt the thread before it marks the thread as stopped. In the other order
+     * the writer can leave its loop and open the prompt before the interrupt lands, and the interrupt then
+     * closes the prompt. The overridden {@code interrupt()} holds the interrupt back for a moment, as a busy
+     * machine can, to give the writer that chance.
+     */
+    @Test
+    void testDelayedInterruptDoesNotReachSavePrompt() throws Exception {
+        CountDownLatch encodingStarted = new CountDownLatch(1);
+        CountDownLatch releaseEncode = new CountDownLatch(1);
+        CountDownLatch promptShowing = new CountDownLatch(1);
+        CountDownLatch playerAnswers = new CountDownLatch(1);
+        AtomicBoolean promptInterrupted = new AtomicBoolean(false);
+
+        GifWriter gifWriter = mock(GifWriter.class);
+        doAnswer(invocation -> {
+            encodingStarted.countDown();
+            releaseEncode.await(5, TimeUnit.SECONDS);
+            return null;
+        }).when(gifWriter).appendFrame(any(), anyLong());
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            public void interrupt() {
+                // The frame finishes encoding while the stop request is still on its way.
+                releaseEncode.countDown();
+                try {
+                    promptShowing.await(250, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException interruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                super.interrupt();
+            }
+
+            @Override
+            void saveGifNag() {
+                promptShowing.countDown();
+                try {
+                    // Stands in for the modal dialog waiting on the player.
+                    playerAnswers.await(5, TimeUnit.SECONDS);
+                } catch (InterruptedException interruptedException) {
+                    promptInterrupted.set(true);
+                }
+            }
+        };
+        thread.start();
+        thread.addFrame(new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB), 100);
+        assertTrue(encodingStarted.await(2, TimeUnit.SECONDS), "Encoder should have started");
+
+        thread.stopThread();
+        assertTrue(promptShowing.await(2, TimeUnit.SECONDS), "A normal stop should offer to save the GIF");
+        playerAnswers.countDown();
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        assertFalse(promptInterrupted.get(), "The stop request must not interrupt the open save prompt");
+    }
+
+    /**
+     * Regression guard: frames still queued when the game ends must be encoded, not dropped, so the
+     * last turns of the game appear in the GIF.
+     */
+    @Test
+    void testNormalStopEncodesQueuedFrames() throws Exception {
+        GifWriter gifWriter = mock(GifWriter.class);
+        CountDownLatch encodingStarted = new CountDownLatch(1);
+        AtomicBoolean releaseEncode = new AtomicBoolean(false);
+        // The first encode is slow and ignores interrupts, like a real file write, so later frames queue up.
+        doAnswer(invocation -> {
+            encodingStarted.countDown();
+            while (!releaseEncode.get()) {
+                Thread.onSpinWait();
+            }
+            return null;
+        }).when(gifWriter).appendFrame(any(), anyLong());
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                // No dialog in tests.
+            }
+        };
+        thread.start();
+        BufferedImage frame = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+        thread.addFrame(frame, 100);
+        assertTrue(encodingStarted.await(2, TimeUnit.SECONDS), "Encoder should have started");
+        thread.addFrame(frame, 100);
+        thread.addFrame(frame, 100);
+
+        thread.stopThread();
+        releaseEncode.set(true);
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        verify(gifWriter, times(3)).appendFrame(any(), anyLong());
+    }
+
+    /**
+     * Regression guard for #9543: closing a game early stops the writer in discard mode. That stop
+     * skips the save prompt, and the temporary GIF used to be deleted only after the prompt, so every
+     * game closed early left its GIF behind in {@code logs/gameSummaries/minimap}.
+     */
+    @Test
+    void testDiscardStopDeletesTemporaryGif(@TempDir Path tempDir) throws Exception {
+        File temporaryGif = Files.createFile(tempDir.resolve("summary.gif")).toFile();
+        GifWriter gifWriter = mock(GifWriter.class);
+        when(gifWriter.getOutputFile()).thenReturn(temporaryGif);
+        when(gifWriter.delete()).thenAnswer(invocation -> temporaryGif.delete());
+        AtomicBoolean promptShown = new AtomicBoolean(false);
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                promptShown.set(true);
+            }
+        };
+        thread.start();
+        thread.stopThread(true);
+        thread.join(5000);
+
+        assertFalse(thread.isAlive(), "GifWriterThread should terminate within the join timeout");
+        assertFalse(promptShown.get(), "A discard stop must not show the save prompt");
+        verify(gifWriter).close();
+        assertFalse(temporaryGif.exists(), "A discard stop must delete the temporary GIF");
+    }
+
+    /** A normal stop leaves the file alone until the save prompt has been answered. */
+    @Test
+    void testNormalStopKeepsGifForSavePrompt(@TempDir Path tempDir) throws IOException, InterruptedException {
+        File temporaryGif = Files.createFile(tempDir.resolve("summary.gif")).toFile();
+        GifWriter gifWriter = mock(GifWriter.class);
+        when(gifWriter.getOutputFile()).thenReturn(temporaryGif);
+        AtomicBoolean fileExistedAtPrompt = new AtomicBoolean(false);
+
+        GifWriterThread thread = new GifWriterThread(gifWriter, "test-gif-thread") {
+            @Override
+            void saveGifNag() {
+                fileExistedAtPrompt.set(temporaryGif.exists());
+            }
+        };
+        thread.start();
+        thread.stopThread();
+        thread.join(5000);
+
+        assertTrue(fileExistedAtPrompt.get(), "The GIF must still exist when the save prompt opens");
+        verify(gifWriter, never()).delete();
+    }
+
+    /** The save dialog opens in the folder the player last saved a GIF to. */
+    @Test
+    void testSaveDialogOpensInRememberedFolder(@TempDir Path tempDir) {
+        File startDirectory = GifWriterThread.resolveStartDirectory(tempDir.toString());
+
+        assertEquals(tempDir.toFile(), startDirectory);
+    }
+
+    /** A remembered folder that has since been deleted falls back to the old default instead of failing. */
+    @Test
+    void testSaveDialogFallsBackWhenRememberedFolderIsGone(@TempDir Path tempDir) {
+        String deletedFolder = tempDir.resolve("deleted-folder").toString();
+
+        File startDirectory = GifWriterThread.resolveStartDirectory(deletedFolder);
+
+        assertEquals(new File("."), startDirectory);
+    }
+
+    /** With no remembered folder (first save ever), the dialog opens in the old default folder. */
+    @Test
+    void testSaveDialogUsesDefaultFolderWithoutRememberedFolder() {
+        assertEquals(new File("."), GifWriterThread.resolveStartDirectory(""));
+        assertEquals(new File("."), GifWriterThread.resolveStartDirectory(null));
     }
 }

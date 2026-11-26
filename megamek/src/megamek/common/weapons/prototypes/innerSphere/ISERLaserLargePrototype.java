@@ -91,6 +91,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         cost = 600000;
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 97);
         flags = flags.or(F_PROTOTYPE);
+        flags = flags.or(F_RISC_LASER_PULSE_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)

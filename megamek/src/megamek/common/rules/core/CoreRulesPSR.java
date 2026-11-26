@@ -34,29 +34,28 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import java.util.ArrayList;
+
 import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPSR;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
-import megamek.common.units.Entity;
-import megamek.common.units.MekWithArms;
 import megamek.common.units.QuadMek;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
 public class CoreRulesPSR extends RulesPSR {
     /**
      * {@inheritDoc}
-     * Called from Entity
+     * Running at least one hex forces one PSR for each gyro hit, hip actuator hit or destroyed leg, at most one per leg
+     * (Core pp.45, 110-111), with a quad's leg damage in biped terms (Core p.238).
      */
     @Override
-    public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
+    public int checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType, int distance) {
         if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage = 0;
@@ -64,20 +63,54 @@ public class CoreRulesPSR extends RulesPSR {
         boolean bRunningAndCanFall =
               (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) &&
               entity.canFall());
-        if (bRunningAndCanFall && distance > 0) {
-            if (((entity instanceof MekWithArms && ((Mek) entity).countBadLegs() > 0) ||
-                  (entity instanceof QuadMek && ((QuadMek) entity).countBadLegs() > 2))) {
-                // Running with a leg destroyed
-                roll.append(new PilotingRollData(entity.getId(), 0, "running with destroyed leg"));
-            } else if ((gyroDamage > 0) || entity.hasHipCrit()) {
-                // append the reason modifier
-                roll.append(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
-            } else {
-                roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
-            }
-        } else {
+        if (!bRunningAndCanFall || (distance <= 0) || !(entity instanceof Mek mek)) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity cannot fall or did not move at least 1 hex");
+            return 0;
         }
+        int checks = ((gyroDamage > 0) ? 1 : 0) + CoreRulesUnits.legsForcingRunningChecks(mek);
+        if (checks == 0) {
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
+            return 0;
+        }
+        roll.append(new PilotingRollData(entity.getId(), 0, "running with destroyed leg, damaged hip actuator or gyro"));
+        return checks;
+    }
+
+    /**
+     * {@inheritDoc}
+     * One PSR for gyro damage and one per leg that is destroyed or has an actuator hit (Core pp.90, 99, 110), with a
+     * quad's leg damage in biped terms (Core p.238).
+     */
+    @Override
+    public int landingWithDamageChecks(Entity entity, int gyroHits) {
+        if (!(entity instanceof Mek mek)) {
+            return singleLandingCheckForDamage(entity, gyroHits);
+        }
+        return ((gyroHits > 0) ? 1 : 0) + CoreRulesUnits.legsForcingLandingChecks(mek);
+    }
+
+    /**
+     * {@inheritDoc}
+     * A quad's first hip hit has none of the standard effects, so it forces no PSR (Core p.238).
+     */
+    @Override
+    public void hitActuator(final Game game, Entity entity, int loc, int hitPart) {
+        if ((hitPart == Mek.ACTUATOR_HIP) && (entity instanceof QuadMek quad) && !hasOtherHitHip(quad, loc)) {
+            return;
+        }
+        super.hitActuator(game, entity, loc, hitPart);
+    }
+
+    private boolean hasOtherHitHip(QuadMek quad, int hitLocation) {
+        for (int loc = 0; loc < quad.locations(); loc++) {
+            // Include hits from this phase, before their critical slots are marked destroyed.
+            if ((loc != hitLocation) && quad.locationIsLeg(loc)
+                  && !quad.isLocationBad(loc) && !quad.isLocationDoomed(loc)
+                  && (quad.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -95,22 +128,32 @@ public class CoreRulesPSR extends RulesPSR {
      */
     @Override
     public void facingChangeAfterFall(Entity entity, int facing) {}
-    
+
     /**
      * {@inheritDoc}
-     * Leg PSR numbers changed. Core p.90, 93
+     * +4 for a destroyed leg (Core p.90) and +1 for each destroyed hip, upper and lower leg actuator, with no foot
+     * modifier (Core pp.110-111). The Tactical Operations leg damage option does not change this.
      */
     @Override
-    public void legDamageModifiers(MekWithArms unit, final PilotingRollData roll, final boolean toLegDamage) {
-        for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
+    public void legDamageModifiers(Mek unit, final PilotingRollData roll, final boolean toLegDamage) {
+        // A tripod follows the biped rules (Core p.237); a quad ignores its first hip hit (Core p.238)
+        boolean quad = unit instanceof QuadMek;
+        boolean quadHipIgnored = false;
+        for (int loc = 0; loc < unit.locations(); loc++) {
+            if (!unit.locationIsLeg(loc)) {
+                continue;
+            }
             if (unit.isLocationBad(loc)) {
-                roll.addModifier(4, unit.getLocationName(loc) + " destroyed");
-                
+                if (!quad) {
+                    roll.addModifier(4, unit.getLocationName(loc) + " destroyed");
+                }
             } else {
+                // "The modifiers from each destroyed actuator are all applied" (Core p.110)
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
-                    roll.addModifier(1, unit.getLocationName(loc) + " Hip Actuator destroyed");
-                    if (toLegDamage) {
-                        continue;
+                    if (quad && !quadHipIgnored) {
+                        quadHipIgnored = true;
+                    } else {
+                        roll.addModifier(1, unit.getLocationName(loc) + " Hip Actuator destroyed");
                     }
                 }
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) > 0) {
@@ -125,7 +168,7 @@ public class CoreRulesPSR extends RulesPSR {
 
     /**
      * {@inheritDoc}
-     * Reduce PSR rolls for actuator hits to the highest per leg in a turn. Core p.93
+     * Leg actuator damage forces one PSR per leg at a time, at the highest modifier (Core p.110)
      */
     @Override
     public void checkLegActuatorPsrRolls(Game game, Entity entity) {
@@ -136,7 +179,7 @@ public class CoreRulesPSR extends RulesPSR {
         ArrayList<PilotingRollData> rollCL = new ArrayList<>();
         ArrayList<PilotingRollData> rollFLL = new ArrayList<>();
         ArrayList<PilotingRollData> rollFRL = new ArrayList<>();
-        
+
         // Organize all rolls by location
         for (PilotingRollData roll : pilotRolls) {
                 // Assign rolls to locations
@@ -159,7 +202,7 @@ public class CoreRulesPSR extends RulesPSR {
                         rollCL.add(roll);
                 }
         }
-        
+
         if (!rollLL.isEmpty()) {
             rollRemoveHighest(rollLL);
             if (!rollLL.isEmpty()) { rollsToRemove.addAll(rollLL); }
@@ -180,12 +223,12 @@ public class CoreRulesPSR extends RulesPSR {
             rollRemoveHighest(rollCL);
             if (!rollCL.isEmpty()) { rollsToRemove.addAll(rollCL); }
         }
-        
+
         if (!rollsToRemove.isEmpty()) {
             game.removePSRsByArray(rollsToRemove);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      * Remove the highest roll from the list
@@ -200,8 +243,8 @@ public class CoreRulesPSR extends RulesPSR {
             rollList.remove(rollList.getFirst());
             return;
         }
-        
-        // Find the highest value by iterating the list, and remove it. If nothing is higher than 0, it removes the 
+
+        // Find the highest value by iterating the list, and remove it. If nothing is higher than 0, it removes the
         // first entry
         int highest = 0;
         int highestValue = 0;
@@ -213,7 +256,7 @@ public class CoreRulesPSR extends RulesPSR {
         }
         rollList.remove(highest);
     }
-    
+
     /**
      * {@inheritDoc}
      * Do we do Foot Actuator PSRs? No, not in core.
@@ -222,7 +265,7 @@ public class CoreRulesPSR extends RulesPSR {
     public boolean getFootActuatorPsr() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      * What is the hip hit penalty? Core p.99
@@ -231,7 +274,7 @@ public class CoreRulesPSR extends RulesPSR {
     public int getHipPenalty() {
         return 1;
     }
-    
+
     /**
      * {@inheritDoc}
      * Gyro hit modifiers
@@ -271,7 +314,7 @@ public class CoreRulesPSR extends RulesPSR {
     public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
         return (overallMoveType == EntityMovementType.MOVE_WALK) ? false : true;
     }
-    
+
     /**
      * {@inheritDoc}
      * Successful DFA is PSR+2 Core p.80
@@ -280,7 +323,7 @@ public class CoreRulesPSR extends RulesPSR {
     public int getSuccessfulDFAModifier() {
         return 2;
     }
-    
+
     /**
      * {@inheritDoc}
      * Successful club causes PSR . Core p.79
@@ -293,11 +336,12 @@ public class CoreRulesPSR extends RulesPSR {
 
     /**
      * {@inheritDoc}
-     * Special gyro jump modifier. Core p.98
+     * Heavy-duty gyro jump modifier (Core p.98, p.204). A superheavy gyro is not in Core and damages like a standard
+     * gyro (IO:AE p.154).
      */
     @Override
     public int getGyroJumpModifier(final int gyroHits, final int gyroType) {
-        if (gyroType == Mek.GYRO_HEAVY_DUTY || gyroType == Mek.GYRO_SUPERHEAVY) {
+        if (gyroType == Mek.GYRO_HEAVY_DUTY) {
             return switch (gyroHits) {
                 case 1 -> 1;
                 case 3 -> -1;
@@ -309,30 +353,26 @@ public class CoreRulesPSR extends RulesPSR {
 
     /**
      * {@inheritDoc}
-     * do you need a PSR for walking with a leg destroyed? Yes. Core p.90
+     *
+     * Core p.115: a unit falling in or into water falls the levels to the surface plus the water's depth (the given
+     * fall height already reaches the bottom), taking 1 damage per 10 tons (rounding up) times the levels plus 1,
+     * "divided by 2 (rounding down)". A unit standing in water falls 0 levels.
      */
     @Override
-    public PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
-          int hexesMoved) {
-        PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
-        if (entity.hasBadLegs() && overallMoveType == EntityMovementType.MOVE_WALK && hexesMoved > 0) {
-            roll.append(new PilotingRollData(entity.getId(), 0, "walking with destroyed leg and moved at least 1 hex"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: does not apply");
-        }
-        entity.addPilotingModifierForTerrain(roll);
-        return roll;
+    public FallDamageInWater reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
+        int waterDamage = ((int) Math.ceil(weight / 10.0) * (Math.max(0, fallHeight) + 1)) / 2;
+        return new FallDamageInWater(0, waterDamage);
     }
-    
+
     /**
      * {@inheritDoc}
+     * Core does not apply any modifiers for water level. Core p.111, p.122
      *
-     * Falls into and in water get half damage. Core p.115
-     * */
+     * @param waterLevel
+     * @return
+     */
     @Override
-    public FallDamageInWater reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
-        int waterDamage = (int) (((int) Math.round(weight / 10.0) * (fallHeight + waterDepth + 1)) / 2.0);
-        int newDamage = 0;        
-        return new FallDamageInWater(newDamage, waterDamage);
+    public int getWaterLevelModifier(final int waterLevel) {
+        return 0;
     }
 }

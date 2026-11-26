@@ -66,6 +66,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        checkInsulator(gameManager, roll.getIntValue(), weapon, subjectId, vPhaseReport);
         if (roll.getIntValue() <= 3) {
             // The RISC Hyper Laser explodes on a 3 or less. Edge may reroll the malfunction check.
             int edgeReroll = rerollRiscMalfunctionWithEdge(attackingEntity, subjectId, vPhaseReport);

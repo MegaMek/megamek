@@ -12,7 +12,7 @@ body:
       value: |
         The quickest way to file this is the **Report a Bug** button in MegaMek - on the Help menu, on
         the Commands button above the board, or beside the Done button. It saves your game, gathers the
-        logs into a single ZIP, and fills in the version fields below for you.
+        logs into a single ZIP, and fills in the version and hardware fields below for you.
 
         If your version does not have that button yet, attach your save and the contents of the `logs`
         folder by hand.
@@ -95,6 +95,49 @@ body:
       placeholder: "Example: Eclipse Adoptium 21.0.8+9"
     validations:
       required: true
+
+  - type: input
+    id: cpu
+    attributes:
+      label: "CPU"
+      description: "Optional. Filled in for you if you opened this form from the program. By hand: the CPU line of the log header."
+      placeholder: "Example: AMD Ryzen 7 5800X 8-Core Processor (8 cores, 16 threads, 3.80 GHz)"
+
+  - type: textarea
+    id: graphics-cards
+    attributes:
+      label: "Graphics card(s)"
+      description: "Optional. One card per line - many laptops have two. From the GPU lines of the log header."
+      placeholder: "Example: NVIDIA GeForce RTX 3070 (8 GB VRAM, driver 32.0.15.6094)"
+      render: text
+
+  - type: input
+    id: system-memory
+    attributes:
+      label: "System memory"
+      description: "Optional. Installed memory, and how much was free when the form was opened."
+      placeholder: "Example: 32 GB (18 GB free)"
+
+  - type: input
+    id: java-max-memory
+    attributes:
+      label: "Java max memory"
+      description: "Optional. The most memory Java is allowed to use."
+      placeholder: "Example: 4 GB"
+
+  - type: input
+    id: locale
+    attributes:
+      label: "Locale"
+      description: "Optional. Your system language and region, which change how numbers and text are shown."
+      placeholder: "Example: en_CA"
+
+  - type: input
+    id: build
+    attributes:
+      label: "Build"
+      description: "Optional. The build date and code revisions, which tell a nightly build from a release."
+      placeholder: "Example: 2026-11-20 | MM a1b2c3d4e5, MML Unknown, MHQ Unknown"
 
   - type: checkboxes
     id: final-checks

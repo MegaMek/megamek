@@ -33,9 +33,29 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import java.util.Set;
+
+import megamek.common.options.OptionsConstants;
 import megamek.common.rules.*;
 
 public class CoreRulesManager implements RulesManager {
+    /**
+     * Game options the Core Rules ignore: the Core rules classes give the same result whether each is on or off, so the
+     * Game Options dialog makes them read-only under Core. An option the Core rules classes read, such as Tactical
+     * Operations Expanded Backward Movement for vehicles, must not be listed here, or a value set under Total Warfare
+     * (or sent by MekHQ) would apply under Core with no way to change it.
+     */
+    public static final Set<String> IGNORED_GAME_OPTIONS = Set.of(
+          OptionsConstants.BASE_FLAMER_HEAT,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES,
+          OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
+          OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
+          OptionsConstants.ADVANCED_MINEFIELDS,
+          OptionsConstants.ADVANCED_ALTERNATE_MASC,
+          OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
+
     private CoreRulesTarget coreRulesTarget = new CoreRulesTarget();
     private CoreRulesAmmo coreRulesAmmo = new CoreRulesAmmo();
     private CoreRulesC3 coreRulesC3 = new CoreRulesC3();

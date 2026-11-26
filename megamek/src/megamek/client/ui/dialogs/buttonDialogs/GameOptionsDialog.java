@@ -82,6 +82,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -96,17 +97,7 @@ import org.w3c.dom.NodeList;
 public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
     private static final MMLogger LOGGER = MMLogger.create(GameOptionsDialog.class);
     private static final int BUTTON_GAP = 8;
-    private static final Set<String> CORE_RULES_DISABLED_OPTIONS = Set.of(
-          OptionsConstants.BASE_FLAMER_HEAT,
-          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
-          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
-          OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS,
-          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES,
-          OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
-          OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
-          OptionsConstants.ADVANCED_MINEFIELDS,
-          OptionsConstants.ADVANCED_ALTERNATE_MASC,
-          OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
+    private static final Set<String> CORE_RULES_DISABLED_OPTIONS = CoreRulesManager.IGNORED_GAME_OPTIONS;
 
     private ClientGUI clientGui;
     private JFrame frame;

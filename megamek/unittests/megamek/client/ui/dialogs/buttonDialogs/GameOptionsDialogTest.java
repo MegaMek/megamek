@@ -197,7 +197,6 @@ class GameOptionsDialogTest {
               OptionsConstants.BASE_FLAMER_HEAT,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
-              OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES,
               OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
               OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
@@ -222,6 +221,9 @@ class GameOptionsDialogTest {
         });
         assertEquals(expectedDisabledOptions, disabledOptions);
         assertTrue(optionComponents.get(OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE)
+              .getFirst().getEditable());
+        // Issue #9730: Core Rules use this option for vehicles, so it stays editable under Core
+        assertTrue(optionComponents.get(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
               .getFirst().getEditable());
 
         GameOptionsDialog.applyRulesSystemEditability(optionComponents, true, OptionsConstants.RULES_TW);

@@ -343,6 +343,26 @@ public class UnitTable {
     }
 
     /**
+     * @param index index of the entry
+     *
+     * @return the faction whose table a salvage entry rolls on, or {@code null} if the entry at this index is a unit
+     */
+    public @Nullable FactionRecord getSalvageFaction(int index) {
+        if ((index >= 0) && (index < salvageTable.size())) {
+            return salvageTable.get(index).getSalvageFaction();
+        }
+        return null;
+    }
+
+    /**
+     * @return the chance, as a whole percentage from 0 to 100, that a roll on this table goes to a salvage faction
+     *       instead of this faction's own units
+     */
+    public int getSalvagePct() {
+        return salvagePct;
+    }
+
+    /**
      * @param index of the BV
      *
      * @return - the BV of the unit at the indicated index, or 0 if this is a salvage entry

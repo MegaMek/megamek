@@ -938,6 +938,77 @@ tasks.register('alphaStrikeMassConvert', JavaExec) {
     mainClass = 'megamek.utilities.AlphaStrikeMassConvert'
 }
 
+// Writes every RAT Generator table for the RAT Probability Explorer on the website.
+// Optional: -PratDataOut=<folder> -PratDataTables -PratDataFrom=<year> -PratDataTo=<year> -PratDataNoRoles -PratDataBuildId=<text>
+tasks.register('ratData', JavaExec) {
+    dependsOn jar
+    mustRunAfter(stageDataFiles)
+    description = 'Writes the RAT Generator inputs (and with -PratDataTables every table) for the website'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.ratdata.RatDataExporter'
+    def ratDataArgs = ['--out', project.findProperty('ratDataOut') ?: "${layout.buildDirectory.get()}/ratdata"]
+    if (project.hasProperty('ratDataTables')) {
+        ratDataArgs += ['--tables']
+    }
+    if (project.hasProperty('ratDataFrom')) {
+        ratDataArgs += ['--from', project.property('ratDataFrom')]
+    }
+    if (project.hasProperty('ratDataTo')) {
+        ratDataArgs += ['--to', project.property('ratDataTo')]
+    }
+    if (project.hasProperty('ratDataNoRoles')) {
+        ratDataArgs += ['--no-roles']
+    }
+    if (project.hasProperty('ratDataBuildId')) {
+        ratDataArgs += ['--build-id', project.property('ratDataBuildId')]
+    }
+    args = ratDataArgs
+}
+
+// Checks the website's copy of the RAT Generator (web/ratgen/ratgen.js) against UnitTable.findTable on random
+// tables with random RAT Generator filters. Needs Node.js on the PATH (or -PnodeExecutable=<path>).
+// Optional: -PratParityCount=<number of tables, default 2000> -PratParitySeed=<seed, default 1>
+def ratParityDir = layout.buildDirectory.dir('ratparity')
+def nodeExecutable = project.findProperty('nodeExecutable') ?: 'node'
+
+tasks.register('ratParityInputs', JavaExec) {
+    dependsOn jar
+    mustRunAfter(stageDataFiles)
+    description = 'Writes the RAT Generator inputs for the parity check'
+    group = 'verification'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.ratdata.RatDataExporter'
+    args = ['--out', ratParityDir.get().asFile.absolutePath]
+}
+
+tasks.register('ratParityCases', Exec) {
+    dependsOn ratParityInputs
+    description = 'Draws random RAT Generator requests for the parity check'
+    group = 'verification'
+    commandLine nodeExecutable, file('web/ratgen/parity.js').absolutePath, 'make',
+          "${ratParityDir.get().asFile}/inputs.json.gz", project.findProperty('ratParityCount') ?: '2000',
+          project.findProperty('ratParitySeed') ?: '1', "${ratParityDir.get().asFile}/cases.txt"
+}
+
+tasks.register('ratParityReference', JavaExec) {
+    dependsOn ratParityCases
+    description = 'Writes MegaMek\'s own tables for the parity cases'
+    group = 'verification'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.ratdata.RatParityReference'
+    args = ["${ratParityDir.get().asFile}/cases.txt", "${ratParityDir.get().asFile}/reference.tsv"]
+}
+
+tasks.register('ratParity', Exec) {
+    dependsOn ratParityReference
+    description = 'Fails if the website\'s RAT Generator copy gives different tables from MegaMek'
+    group = 'verification'
+    commandLine nodeExecutable, file('web/ratgen/parity.js').absolutePath, 'check',
+          "${ratParityDir.get().asFile}/inputs.json.gz", "${ratParityDir.get().asFile}/cases.txt",
+          "${ratParityDir.get().asFile}/reference.tsv"
+}
+
 tasks.register('boardsTagger', JavaExec) {
     dependsOn jar
     description = 'Tags all boards'

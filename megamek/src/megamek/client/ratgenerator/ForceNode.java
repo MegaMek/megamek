@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,10 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import megamek.common.units.EntityMovementMode;
@@ -178,7 +180,11 @@ public class ForceNode extends RulesetNode {
                             // What the rule offered, captured before the pick applies its result and changes the
                             // properties the predicates were judged against.
                             fd.setEligibleFormations(offeredFormations(rule, fd));
+                            // Picking a formation can add a role (role="+recon"); note the roles before the pick so
+                            // the ones the formation brought can be dropped again if it cannot be filled.
+                            Set<MissionRole> rolesBeforeFormation = new HashSet<>(fd.getRoles());
                             valueNode = rule.selectOption(fd, true);
+                            fd.recordFormationRoles(rolesBeforeFormation);
                             if (valueNode == null) {
                                 break;
                             }

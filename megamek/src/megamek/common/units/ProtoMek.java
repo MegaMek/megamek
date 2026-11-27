@@ -1279,7 +1279,12 @@ public class ProtoMek extends Entity {
 
     @Override
     public boolean isCrippled() {
-        if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
+        return isCrippled(true);
+    }
+
+    @Override
+    public boolean isCrippled(boolean checkCrew) {
+        if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 LOGGER.debug("{} CRIPPLED: Pilot has taken 4+ damage.", getDisplayName());
             }
@@ -1299,17 +1304,17 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public boolean isCrippled(boolean checkCrew) {
-        return isCrippled();
+    public boolean isDmgHeavy() {
+        return isDmgHeavy(true);
     }
 
     @Override
-    public boolean isDmgHeavy() {
+    public boolean isDmgHeavy(boolean checkCrew) {
         if (getArmorRemainingPercent() <= 0.25) {
             return true;
         }
 
-        if ((getCrew() != null) && (getCrew().getHits() == 3)) {
+        if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 3)) {
             return true;
         }
 
@@ -1325,11 +1330,16 @@ public class ProtoMek extends Entity {
 
     @Override
     public boolean isDmgModerate() {
+        return isDmgModerate(true);
+    }
+
+    @Override
+    public boolean isDmgModerate(boolean checkCrew) {
         if (getArmorRemainingPercent() <= 0.5) {
             return true;
         }
 
-        if ((getCrew() != null) && (getCrew().getHits() == 2)) {
+        if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 2)) {
             return true;
         }
 
@@ -1345,11 +1355,16 @@ public class ProtoMek extends Entity {
 
     @Override
     public boolean isDmgLight() {
+        return isDmgLight(true);
+    }
+
+    @Override
+    public boolean isDmgLight(boolean checkCrew) {
         if (getArmorRemainingPercent() <= 0.75) {
             return true;
         }
 
-        if ((getCrew() != null) && (getCrew().getHits() == 1)) {
+        if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 1)) {
             return true;
         }
 

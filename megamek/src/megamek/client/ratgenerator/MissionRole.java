@@ -75,7 +75,12 @@ public enum MissionRole {
     /* allows artillery but does not filter out all other roles */
     MIXED_ARTILLERY,
     /* Roles for advanced buildings and mobile structures */
-    GENERATOR, CONTROL;
+    GENERATOR, CONTROL,
+    /*
+     * Drones and the units built to carry and control them. Never generated unless drones are asked for. Derived from
+     * drone equipment in ModelRecord, and may also be tagged in the year files.
+     */
+    DRONE;
 
     /** Walking MP an untagged heavy Mek needs to fill a recon slot; the Recon Lance needs Walk 5+ (CO p. 65). */
     private static final int FAST_HEAVY_RECON_MIN_WALK = 5;
@@ -301,6 +306,10 @@ public enum MissionRole {
 
             // CONTROL applies to advanced buildings which represent basic control centers
             case CONTROL -> unitType == UnitType.ADVANCED_BUILDING;
+
+            // DRONE applies to any unit type: drones and drone carriers come as vehicles, Meks, fighters and
+            // DropShips
+            case DRONE -> true;
         };
     }
 
@@ -323,6 +332,9 @@ public enum MissionRole {
         boolean roleApplied = false;
         if (desiredRoles == null) {
             desiredRoles = new HashSet<>();
+        }
+        if (isUnrequestedDrone(desiredRoles, mRec)) {
+            return null;
         }
         double[] avAdj = new double[5];
         for (int i = 0; i < avAdj.length; i++) {
@@ -1209,6 +1221,13 @@ public enum MissionRole {
                         }
                         break;
 
+                    // Calling for DRONE only returns drones and drone carriers.
+                    case DRONE:
+                        if (!mRec.getRoles().contains(DRONE)) {
+                            return null;
+                        }
+                        break;
+
                     // Calling for RECOVERY only returns units that recover downed units, in the same
                     // manner as MINESWEEPER/MINELAYER. Without this a request for recovery falls back on
                     // the cargo haulers these vehicles share their other roles with.
@@ -1305,6 +1324,23 @@ public enum MissionRole {
         }
         MekSummary mekSummary = modelRecord.getMekSummary();
         return (mekSummary != null) && (mekSummary.getWalkMp() >= FAST_HEAVY_RECON_MIN_WALK);
+    }
+
+    /**
+     * Whether a unit is a drone or drone carrier that was not asked for. Such units are never generated: a carrier
+     * arrives without its drones, and the drones on their own do nothing a combat force wants. A heavy recon vehicle
+     * lance built four Hi-Scout Drone Carriers (MegaMek/mekhq#11219). Asking for the {@link #DRONE} role still returns
+     * them, for a ruleset that wants a drone formation on purpose.
+     *
+     * @param desiredRoles the roles asked for; empty for general use
+     * @param modelRecord  the unit to check
+     *
+     * @return {@code true} if the unit carries the drone role and drones were not asked for
+     */
+    private static boolean isUnrequestedDrone(Collection<MissionRole> desiredRoles, ModelRecord modelRecord) {
+        boolean isDroneUnit = modelRecord.getRoles().contains(DRONE);
+        boolean wereDronesRequested = desiredRoles.contains(DRONE);
+        return isDroneUnit && !wereDronesRequested;
     }
 
     /**
@@ -1413,6 +1449,7 @@ public enum MissionRole {
             case "minelayer" -> MINELAYER;
             case "generator" -> GENERATOR;
             case "control" -> CONTROL;
+            case "drone" -> DRONE;
             default -> null;
         };
     }

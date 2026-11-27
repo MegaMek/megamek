@@ -732,6 +732,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Add the umbrella ENGINEER role plus any specific engineer facet (bridging,
                 // demolition, fieldworks, minesweeping) implied by carried engineering equipment.
                 addEngineerRoles(eq, roles);
+                addDroneRole(eq, roles);
                 // Save a bit of time, anything introduced after this date is assumed to be
                 // advanced
                 if (!losTech && (eq.getIntroductionDate() >= 3067)) {
@@ -763,6 +764,24 @@ public class ModelRecord extends AbstractUnitRecord {
         primitive = basePrimitive && !losTech && !clan;
         retroTech = basePrimitive && (losTech || clan);
 
+    }
+
+    /**
+     * Adds the {@link MissionRole#DRONE} role to a drone or a drone carrier. A drone runs on a drone operating system
+     * or a smart robotic control system; a carrier mounts a drone carrier control system. Both are kept out of
+     * generated forces unless drones are asked for. Units the equipment misses can be tagged {@code drone} in the year
+     * files.
+     *
+     * @param equipment a single piece of the unit's equipment
+     * @param roles     the role set to add the drone role to
+     */
+    static void addDroneRole(EquipmentType equipment, Set<MissionRole> roles) {
+        boolean isRemoteDrone = equipment.hasFlag(MiscTypeFlag.F_DRONE_OPERATING_SYSTEM);
+        boolean isRoboticDrone = equipment.hasFlag(MiscTypeFlag.F_SRCS) || equipment.hasFlag(MiscTypeFlag.F_SASRCS);
+        boolean isDroneCarrier = equipment.hasFlag(MiscTypeFlag.F_DRONE_CARRIER_CONTROL);
+        if (isRemoteDrone || isRoboticDrone || isDroneCarrier) {
+            roles.add(MissionRole.DRONE);
+        }
     }
 
     /**

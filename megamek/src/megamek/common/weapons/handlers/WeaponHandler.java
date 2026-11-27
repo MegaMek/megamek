@@ -62,6 +62,7 @@ import megamek.common.actions.compute.ComputeTerrainMods;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.AimedShotLocations;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
@@ -115,6 +116,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bDirect = false;
     protected boolean bLowProfileGlancing = false;
     protected boolean nukeS2S = false;
+    /** Set once an unreachable aimed location has been logged, so a salvo logs it only once. */
+    private transient boolean isUnreachableAimReported;
     protected WeaponType weaponType;
     protected AmmoType ammoType;
     protected String typeName;
@@ -2037,13 +2040,36 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
+     * Returns the location this attack aimed at, or {@link Entity#LOC_NONE} when the attack cannot reach that
+     * location (a leg attack aimed at the head, for example). An unreachable aimed location resolves as an unaimed
+     * hit, logged once per attack.
+     *
+     * @param entityTarget the entity being hit
+     *
+     * @return the aimed location, or {@link Entity#LOC_NONE}
+     */
+    protected int getReachableAimedLocation(Entity entityTarget) {
+        int aimedLocation = weaponAttackAction.getAimedLocation();
+        if ((aimedLocation == Entity.LOC_NONE)
+              || AimedShotLocations.canAimAt(attackingEntity, weaponType, entityTarget, aimedLocation)) {
+            return aimedLocation;
+        }
+        if (!isUnreachableAimReported) {
+            isUnreachableAimReported = true;
+            LOGGER.info("[AimedShot] {} cannot reach {} on {}; resolving as an unaimed hit",
+                  weaponType.getName(), entityTarget.getLocationName(aimedLocation), entityTarget.getShortName());
+        }
+        return Entity.LOC_NONE;
+    }
+
+    /**
      * Worker function that initializes the actual hit, including a hit location and various other properties.
      *
      * @param entityTarget Entity being hit.
      */
     protected void initHit(Entity entityTarget) {
         hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-              toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+              toHit.getSideTable(), getReachableAimedLocation(entityTarget),
               weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setCapital(weaponType.isCapital());

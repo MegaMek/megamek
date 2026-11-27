@@ -50,6 +50,8 @@
   const FAST_HEAVY_RECON_MIN_WALK = 5;
   const NETWORK_C3_MASTER = 1 << 1;
   const NETWORK_COMPANY_COMMAND = 1 << 5;
+  /** RatTableContent.SALVAGE_WEIGHT_SCALE: a salvage faction's weight is its share of all salvage, out of this. */
+  const SALVAGE_WEIGHT_SCALE = 10000;
   const MIN_OMNI_DIFFERENCE = 2.5;
   const MIN_CLAN_DIFFERENCE = 2.5;
   const MIN_SL_DIFFERENCE = 2.5;
@@ -208,6 +210,9 @@
       if (has('civilian') && !wants('civilian')) return true;
       return (type !== UT.DROPSHIP) && (model.roleSet.size === 1) && (has('artillery') || has('missile_artillery'));
     };
+
+    // MissionRole.isUnrequestedDrone: drones and drone carriers are never generated unless drones are asked for
+    if (has('drone') && !wants('drone')) return null;
 
     if (desired.length > 0) {
       roleApplied = true;
@@ -431,6 +436,7 @@
           case 'battleship':
           case 'generator':
           case 'control':
+          case 'drone':
             if (!has(role)) return null;
             break;
           case 'engineer':
@@ -534,6 +540,7 @@
         || (t >= UT.SMALL_CRAFT && t <= UT.SPACE_STATION) || t === UT.ADVANCED_BUILDING || t === UT.MOBILE_STRUCTURE;
       case 'recovery': return t === UT.TANK;
       case 'generator': case 'control': return t === UT.ADVANCED_BUILDING;
+      case 'drone': return true;
       default: return false;
     }
   }
@@ -793,12 +800,12 @@
 
     // ---------------------------------------------------------------- generateTable
     /**
-     * RATGenerator.generateTable. Returns { units: [[modelIndex, weight]], salvage: [[factionKey, weight]] }, or
-     * { error } where MegaMek itself would throw.
+     * RATGenerator.generateTable. Returns { units: [[modelIndex, weight]] }, or { error } where MegaMek itself would
+     * throw. Salvage is not part of the table; see getSalvageChance.
      */
     function generateTable(params) {
       const fRec = getFaction(params.faction);
-      if (!fRec) return { units: [], salvage: [] };
+      if (!fRec) return { units: [] };
       const user = params.user ? getFaction(params.user) : fRec;
       const unitType = params.unitType;
       const year = params.year;
@@ -884,7 +891,7 @@
         }
       }
 
-      if (unitWeights.size === 0 || chassisWeightTotal === 0.0) return { units: [], salvage: [] };
+      if (unitWeights.size === 0 || chassisWeightTotal === 0.0) return { units: [] };
       for (const [modelIndex, weight] of unitWeights) unitWeights.set(modelIndex, 100.0 * weight / chassisWeightTotal);
 
       // Weight class rebalance
@@ -925,48 +932,18 @@
         }
       }
 
-      // Salvage
-      const salvageWeights = new Map(); // factionKey -> weight
-      const pctSalvage = eraSettings(fRec, currentEra).pctSalvage;
-      if (pctSalvage !== null && pctSalvage !== undefined) {
-        const salvageEntries = new Map();
-        const current = eraSettings(fRec, currentEra).salvage || {};
-        const next = eraSettings(fRec, nextEra).salvage || {};
-        for (const [key, value] of Object.entries(current)) {
-          salvageEntries.set(key, currentEra === year ? value
-            : interpolate(value, next[key] === undefined ? null : next[key], currentEra, nextEra, year));
-        }
-        if (nextEra !== currentEra) {
-          for (const [key, value] of Object.entries(next)) {
-            if (!salvageEntries.has(key)) salvageEntries.set(key, interpolate(0.0, value, currentEra, nextEra, year));
-          }
-        }
-        let totalTableWeight = 0;
-        for (const weight of unitWeights.values()) totalTableWeight += weight;
-        let overallSalvage = pctSalvage;
-        if (overallSalvage >= 100) {
-          overallSalvage = totalTableWeight;
-          unitWeights.clear();
-        } else {
-          overallSalvage = totalTableWeight * overallSalvage / 100.0;
-        }
-        let totalFactionWeight = 0;
-        for (const value of salvageEntries.values()) totalFactionWeight += value;
-        for (const [key, value] of salvageEntries) {
-          if (factions.has(key)) salvageWeights.set(key, overallSalvage * value / totalFactionWeight);
-        }
-      }
-
       if (ratingLevel >= 0
         && (unitType === UT.MEK || unitType === UT.AEROSPACE_FIGHTER || unitType === UT.TANK || unitType === UT.VTOL)
         && roles.length === 0) {
-        adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, currentEra, nextEra);
+        adjustForRating(fRec, unitType, year, ratingLevel, unitWeights,
+          clanSalvageWeight(fRec, getSalvageChance(fRec, year), unitWeights.values()), currentEra, nextEra);
       }
 
+      // Salvage is not part of the table: it is rolled for after each unit is drawn (see getSalvageChance).
       // Scale to keep weights between 0.5 and 1000, then round as Java does
       let min = Infinity;
       let max = -Infinity;
-      for (const weight of [...salvageWeights.values(), ...unitWeights.values()]) {
+      for (const weight of unitWeights.values()) {
         if (weight > 0) { min = Math.min(min, weight); max = Math.max(max, weight); }
       }
       let adj = 1.0;
@@ -974,16 +951,80 @@
         adj = 0.5 / min;
         if (max * adj > 1000.0) adj = 1000.0 / max;
       }
-      const result = { units: [], salvage: [] };
-      for (const [key, weight] of salvageWeights) {
-        const rounded = javaInt(weight * adj + 0.5);
-        if (rounded > 0) result.salvage.push([key, rounded]);
-      }
+      const result = { units: [] };
       for (const [modelIndex, weight] of unitWeights) {
         const rounded = javaInt(weight * adj + 0.5);
         if (rounded > 0) result.units.push([modelIndex, rounded]);
       }
       return result;
+    }
+
+    /**
+     * RATGenerator.getSalvageChance: how likely a unit drawn for a faction is to be salvage, and whose salvage it is.
+     * The sources are interpolated between the eras either side of the year; the overall chance is the one for the
+     * era the year falls in. Returns { percent, factionWeights: Map(factionKey -> weight) }, keeping only known
+     * factions with a positive weight.
+     */
+    function getSalvageChance(fRec, year) {
+      const none = { percent: 0.0, factionWeights: new Map() };
+      if (!fRec) return none;
+      let currentEra = floorEra(year);
+      if (currentEra === null) currentEra = eras[0];
+      let nextEra = null;
+      if (!eraSet.has(year)) nextEra = ceilingEra(year);
+      if (nextEra === null) nextEra = currentEra;
+
+      const pctSalvage = eraSettings(fRec, currentEra).pctSalvage;
+      if (pctSalvage === null || pctSalvage === undefined) return none;
+
+      // A source only in the next era fades in from zero.
+      const sourceWeights = new Map();
+      const current = eraSettings(fRec, currentEra).salvage || {};
+      const next = eraSettings(fRec, nextEra).salvage || {};
+      for (const [key, value] of Object.entries(current)) {
+        sourceWeights.set(key, currentEra === year ? value
+          : interpolate(value, next[key] === undefined ? null : next[key], currentEra, nextEra, year));
+      }
+      if (nextEra !== currentEra) {
+        for (const [key, value] of Object.entries(next)) {
+          if (!sourceWeights.has(key)) sourceWeights.set(key, interpolate(0.0, value, currentEra, nextEra, year));
+        }
+      }
+
+      const factionWeights = new Map();
+      for (const [key, weight] of sourceWeights) {
+        if (factions.has(key) && weight !== null && weight > 0.0) factionWeights.set(key, weight);
+      }
+      return { percent: clamp(pctSalvage, 0.0, 100.0), factionWeights };
+    }
+
+    /** SalvageChance.hasSalvage */
+    function hasSalvage(salvageChance) {
+      return salvageChance.percent > 0.0 && salvageChance.factionWeights.size > 0;
+    }
+
+    /** SalvageChance.shareOf: a source's share of all salvage, from 0 to 1. */
+    function salvageShareOf(salvageChance, factionKey) {
+      let total = 0.0;
+      for (const weight of salvageChance.factionWeights.values()) total += weight;
+      const weight = salvageChance.factionWeights.get(factionKey);
+      return (weight === undefined || total <= 0.0) ? 0.0 : weight / total;
+    }
+
+    /**
+     * RATGenerator.clanSalvageWeight: the weight an Inner Sphere faction's Clan salvage would have if it sat in the
+     * table. The Clan share balancing counts it as Clan tech, so splitting salvage out leaves balanced tables as they
+     * were.
+     */
+    function clanSalvageWeight(fRec, salvageChance, unitWeights) {
+      if (fRec.clan || !hasSalvage(salvageChance)) return 0.0;
+      let clanShare = 0.0;
+      for (const key of salvageChance.factionWeights.keys()) {
+        if (factions.get(key).clan) clanShare += salvageShareOf(salvageChance, key);
+      }
+      let tableWeight = 0.0;
+      for (const weight of unitWeights) tableWeight += weight;
+      return tableWeight * salvageChance.percent / 100.0 * clanShare;
     }
 
     function totalModelWeight(validModels, currentEra, exactYear, nextEra, fRec, roles, roleStrictness, equipRating,
@@ -1017,7 +1058,7 @@
       return total;
     }
 
-    function adjustForRating(fRec, unitType, year, rating, unitWeights, salvageWeights, currentEra, nextEra) {
+    function adjustForRating(fRec, unitType, year, rating, unitWeights, clanSalvageWeight, currentEra, nextEra) {
       const model = (index) => models[index];
       let totalWeight = 0.0, totalOmniWeight = 0.0, totalClanWeight = 0.0, totalSLWeight = 0.0, totalOtherWeight = 0.0;
       for (const [index, weight] of unitWeights) {
@@ -1121,11 +1162,7 @@
         }
       }
 
-      let clanSalvageWeight = 0.0;
       if (pctClan !== null) {
-        if (!fRec.clan) {
-          for (const [key, weight] of salvageWeights) if (factions.get(key).clan) clanSalvageWeight += weight;
-        }
         const clanPctDifference = pctClan - (100.0 * Math.min(totalWeight, totalClanWeight + clanSalvageWeight) / totalWeight);
         if (Math.abs(clanPctDifference) > MIN_CLAN_DIFFERENCE && totalClanWeight > 0.0) {
           const totalNonClanWeight = Math.min(totalWeight, totalClanWeight + clanSalvageWeight) - totalWeight;
@@ -1163,10 +1200,15 @@
     const roleOrderIndex = new Map(inputs.roles.map((role, index) => [role, index]));
     const roleOrder = (role) => (roleOrderIndex.has(role) ? roleOrderIndex.get(role) : Number.MAX_SAFE_INTEGER);
 
-    /** UnitTable: the faction must be active; salvagePct is a whole-number share. */
+    /**
+     * UnitTable: the faction must be active. The table holds only the faction's own units; salvage is rolled after
+     * each draw, so it sits apart from the unit weights. salvagePct is the whole-number chance a drawn unit is
+     * salvage, and each salvage entry is [factionKey, share of all salvage out of SALVAGE_WEIGHT_SCALE], as
+     * RatTableContent stores them.
+     */
     function findTable(params) {
       const faction = getFaction(params.faction);
-      const empty = { units: [], salvage: [], salvagePct: 0, unitTotal: 0, salvageTotal: 0 };
+      const empty = { units: [], salvage: [], salvagePct: 0, unitTotal: 0 };
       if (!faction || !isActiveInYear(faction, params.year)) return empty;
       // UnitTable's Parameters keeps roles in an EnumSet, so MegaMek applies them in MissionRole declaration order
       // (the order of inputs.roles), not the order they were picked. Some role rules clamp, so the order matters.
@@ -1174,11 +1216,14 @@
       const table = generateTable({ ...params, roles });
       if (table.error) return { ...empty, error: table.error };
       let unitTotal = 0;
-      let salvageTotal = 0;
       for (const [, weight] of table.units) unitTotal += weight;
-      for (const [, weight] of table.salvage) salvageTotal += weight;
-      const salvagePct = (salvageTotal + unitTotal > 0) ? javaInt(salvageTotal * 100 / (salvageTotal + unitTotal)) : 0;
-      return { units: table.units, salvage: table.salvage, salvagePct, unitTotal, salvageTotal };
+      const salvageChance = getSalvageChance(faction, params.year);
+      const salvage = [];
+      for (const key of salvageChance.factionWeights.keys()) {
+        salvage.push([key, Math.round(salvageShareOf(salvageChance, key) * SALVAGE_WEIGHT_SCALE)]);
+      }
+      const salvagePct = hasSalvage(salvageChance) ? Math.round(salvageChance.percent) : 0;
+      return { units: table.units, salvage, salvagePct, unitTotal };
     }
 
     // ---------------------------------------------------------------- editing (test weights)

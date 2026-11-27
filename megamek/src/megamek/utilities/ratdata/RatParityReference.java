@@ -44,6 +44,7 @@ import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.RATGenerator;
+import megamek.client.ratgenerator.SalvageChance;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.loaders.MekSummary;
@@ -62,7 +63,8 @@ import megamek.logging.MMLogger;
  * </p>
  * <p>
  * Output is tab-separated, one row per entry: {@code case kind entry value}, where kind is {@code unit} (entry is the
- * unit name), {@code salvage} (entry is the faction key), {@code salvagePct}, or {@code error} when MegaMek throws.
+ * unit name), {@code salvage} (entry is the faction key, value its share of all salvage out of
+ * {@value RatTableContent#SALVAGE_WEIGHT_SCALE}), {@code salvagePct}, or {@code error} when MegaMek throws.
  * </p>
  * <p>
  * Arguments: {@code <cases file> <output file>}. Run from the megamek folder so {@code data/} resolves.
@@ -193,15 +195,14 @@ public final class RatParityReference {
                 MekSummary unit = table.getMekSummary(entryIndex);
                 if (unit != null) {
                     output.println(caseIndex + "\tunit\t" + unit.getName() + "\t" + table.getEntryWeight(entryIndex));
-                    continue;
-                }
-                FactionRecord salvageFaction = table.getSalvageFaction(entryIndex);
-                if (salvageFaction != null) {
-                    output.println(caseIndex + "\tsalvage\t" + salvageFaction.getKey() + "\t"
-                          + table.getEntryWeight(entryIndex));
                 }
             }
-            output.println(caseIndex + "\tsalvagePct\t-\t" + table.getSalvagePct());
+            SalvageChance salvageChance = table.getSalvageChance();
+            for (FactionRecord salvageFaction : salvageChance.factionWeights().keySet()) {
+                output.println(caseIndex + "\tsalvage\t" + salvageFaction.getKey() + "\t"
+                      + RatTableContent.salvageWeight(salvageChance, salvageFaction));
+            }
+            output.println(caseIndex + "\tsalvagePct\t-\t" + RatTableContent.salvagePct(salvageChance));
         } catch (RuntimeException exception) {
             // MegaMek itself fails on some requests (see FactionRecord.getWeightDistribution); the website must too
             output.println(caseIndex + "\terror\t" + exception.getClass().getSimpleName() + "\t0");

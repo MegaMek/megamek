@@ -22,8 +22,9 @@
  *       classes, motive types, C3 network, mission roles, strictness). One case per line, in the format
  *       megamek.utilities.ratdata.RatParityReference reads.
  *   node parity.js check <inputs.json.gz> <cases.txt> <reference.tsv>
- *       Compares the engine's table for every case with MegaMek's. A weight may differ by 1 (and the salvage share
- *       by 1 point), which is MegaMek's own run-to-run rounding wobble. Exits 1 on any larger difference.
+ *       Compares the engine's table for every case with MegaMek's. A unit weight may differ by 1, which is MegaMek's
+ *       own run-to-run rounding wobble. Salvage shares and the salvage chance must match. Exits 1 on any larger
+ *       difference.
  */
 'use strict';
 const fs = require('fs');
@@ -144,8 +145,8 @@ function check(inputs, cases, reference) {
     }
     const gotUnits = new Map(got.units.map(([modelIndex, weight]) => [engine.models[modelIndex].key, weight]));
     const gotSalvage = new Map(got.salvage);
-    // The salvage share is worked out from the weights, so it is only compared when every weight agrees exactly: a
-    // weight off by MegaMek's own rounding wobble can move the whole-number share by more than one point.
+    // Salvage sits apart from the unit weights: each source's share of all salvage and the chance per drawn unit come
+    // straight from the faction data, so the chance is compared even when a unit weight wobbles.
     let maxDifference = 0;
     const differences = [];
     for (const [expectedMap, gotMap, label] of [[expected.units, gotUnits, 'unit'], [expected.salvage, gotSalvage, 'salvage']]) {
@@ -157,7 +158,7 @@ function check(inputs, cases, reference) {
         maxDifference = Math.max(maxDifference, difference);
       }
     }
-    if (maxDifference === 0 && expected.salvagePct !== got.salvagePct) {
+    if (expected.salvagePct !== got.salvagePct) {
       differences.push(`salvage share: MegaMek ${expected.salvagePct}%, engine ${got.salvagePct}%`);
       maxDifference = 2;
     }

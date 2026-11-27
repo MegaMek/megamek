@@ -3176,6 +3176,10 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
         // The round refers to the last game; engines that are still destroyed count as lost before this game starts,
         // and repaired ones as not lost at all
         enginesLostRound = (engineHits >= getMaxEngineHits()) ? 0 : Integer.MAX_VALUE;
+        // Crew hits already taken this battle, an ejection under way and altitude still to lose refer to the last game
+        ignoredCrewHits = 0;
+        ejecting = false;
+        altLoss = 0;
     }
 
     @Override

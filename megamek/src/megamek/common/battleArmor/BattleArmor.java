@@ -866,6 +866,14 @@ public class BattleArmor extends Infantry {
         return Arrays.copyOf(isClan() ? CLAN_NUM_OF_SLOTS : IS_NUM_OF_SLOTS, squadSize + 1);
     }
 
+    @Override
+    public void clearGameState() {
+        super.clearGameState();
+        // Troopers knocked out by Improved Magnetic Pulse missiles in the last game are back in action
+        improvedMagneticPulseDisabledTroopers = 0;
+        improvedMagneticPulseDisabledRounds = 0;
+    }
+
     /**
      * Prepare the entity for a new round of action.
      */

@@ -345,7 +345,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     public void startTimer() {
-        turnTimer = TurnTimer.init(this, clientGUI.getClient());
+        if (turnTimer == null) {
+            turnTimer = TurnTimer.init(this, clientGUI.getClient());
+        }
     }
 
     public void stopTimer() {

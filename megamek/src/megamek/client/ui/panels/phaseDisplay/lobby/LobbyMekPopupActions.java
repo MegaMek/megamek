@@ -160,6 +160,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_F_ASSIGN:
             case LMP_F_ASSIGN_ONLY:
             case LMP_F_CREATE_FROM:
+            case LMP_F_EXPLAIN:
             case LMP_SBF_FORMATION:
             case LMP_FC_DELETE_EMPTY:
                 forceAction(command, entities, info);
@@ -183,6 +184,11 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 LOGGER.info("[ForceOrder] Add to... menu: {} unit(s) to force id {}", entities.size(), forceId);
                 lobby.lobbyActions.forceAddEntity(entities, forceId);
+                break;
+
+            case LMP_F_EXPLAIN:
+                forceId = StringUtil.toInt(info, Force.NO_FORCE);
+                lobby.lobbyActions.explainFormation(forceId);
                 break;
 
             case LMP_F_RENAME:

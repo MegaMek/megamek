@@ -2057,18 +2057,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         gear = MovementDisplay.GEAR_LAND;
 
         if (anchor != null) {
-            // Press escape once
-            // entity.isAero will check if a unit is a LAM in Fighter mode
-            if ((currentlySelectedEntity instanceof IAero aero) && (currentlySelectedEntity.isAero())) {
-                currentlySelectedEntity.setAltitude(anchor.elevation());
-                if (anchor.elevation() == 0) {
-                    aero.land();
-                } else {
-                    aero.liftOff(anchor.elevation());
-                }
-            } else {
-                currentlySelectedEntity.setElevation(anchor.elevation());
-            }
+            // Press escape once. Restore the placement the same way the deploy click applied it, so an aero
+            // unit at altitude 0 on a space map stays in flight instead of being landed as a ground unit.
+            new DeploymentHelper(clientgui).applyDeploymentElevation(currentlySelectedEntity,
+                                                                     game.getBoard(anchor.boardId()),
+                                                                     anchor.elevation());
             currentlySelectedEntity.setPosition(anchor.coords());
             currentlySelectedEntity.setBoardId(anchor.boardId());
             currentlySelectedEntity.setFacing(anchor.facing());

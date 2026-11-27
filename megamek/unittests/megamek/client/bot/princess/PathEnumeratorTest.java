@@ -65,6 +65,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.units.BipedMek;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -123,18 +124,9 @@ class PathEnumeratorTest {
         Player owner = new Player(1, "Owner");
         game.addPlayer(1, owner);
 
-        BipedMek mek = spy(new BipedMek());
-        mek.setId(1);
-        mek.setGame(game);
-        mek.setOwner(owner);
-        // Weight and internal structure, so the legs count as intact and the walk MP is real
-        mek.setWeight(50);
-        mek.autoSetInternal();
-        mek.setOriginalWalkMP(4);
-        mek.setPosition(new Coords(10, 18));
-        mek.setFacing(0);
-        mek.setDeployed(true);
-        doReturn(true).when(mek).isSelectableThisTurn();
+        // A subclass rather than a Mockito spy: the long-range search calls the Mek millions of times, and a spy
+        // records every call, which made this test run for minutes and fill gigabytes of heap
+        BipedMek mek = createMek(game, owner);
         game.addEntity(mek);
 
         // A unit with no enemy in sight moves to contact, across the board
@@ -159,6 +151,26 @@ class PathEnumeratorTest {
         assertNotNull(longRangePaths);
         assertFalse(longRangePaths.isEmpty(), "the first request builds the long-range paths");
         assertSame(longRangePaths, pathEnumerator.getLongRangePathsFor(mek), "a second request must not rebuild them");
+    }
+
+    private static @NonNull BipedMek createMek(Game game, Player owner) {
+        BipedMek mek = new BipedMek() {
+            @Override
+            public boolean isSelectableThisTurn() {
+                return true;
+            }
+        };
+        mek.setId(1);
+        mek.setGame(game);
+        mek.setOwner(owner);
+        // Weight and internal structure, so the legs count as intact and the walk MP is real
+        mek.setWeight(50);
+        mek.autoSetInternal();
+        mek.setOriginalWalkMP(4);
+        mek.setPosition(new Coords(10, 18));
+        mek.setFacing(0);
+        mek.setDeployed(true);
+        return mek;
     }
 
     /**

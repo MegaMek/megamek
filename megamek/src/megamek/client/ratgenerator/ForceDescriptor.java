@@ -195,6 +195,8 @@ public class ForceDescriptor {
     private ExistingLift existingLift = ExistingLift.NONE;
     /** Whether repeat units are made less likely while this force is generated; see {@link UnitVariety}. */
     private boolean unitVarietyBias = false;
+    /** Whether every unit comes from the faction's own tables, with no other faction's salvage mixed in. */
+    private boolean salvageExcluded = false;
     /** The model names of units earlier rolls of the same command already brought, for {@link UnitVariety}. */
     private List<String> earlierUnits = List.of();
     /**
@@ -281,6 +283,10 @@ public class ForceDescriptor {
      * Goes through the force tree structure and generates units for all leaf nodes.
      */
     public void generateUnits(ProgressListener l, double progress) {
+        if (isSalvageExcludedInTree() && !UnitTable.isSalvageExcluded()) {
+            UnitTable.runWithoutSalvage(() -> generateUnits(l, progress));
+            return;
+        }
         // The outermost call of a generation decides whether repeat units are made less likely for all of it. The
         // recursion below comes back through here with variety already in force, or already declined.
         if (UnitVariety.active() == null) {
@@ -3518,6 +3524,37 @@ public class ForceDescriptor {
      */
     public void setUnitVarietyBias(boolean unitVarietyBias) {
         this.unitVarietyBias = unitVarietyBias;
+    }
+
+    /**
+     * @return {@code true} if this force alone asked for no salvage; see {@link #isSalvageExcludedInTree()} for the
+     *       setting that applies to it
+     */
+    public boolean isSalvageExcluded() {
+        return salvageExcluded;
+    }
+
+    /**
+     * Asks for every unit of this force, and anything under it, to come from the faction's own tables, with no other
+     * faction's salvage. Off by default.
+     *
+     * @param salvageExcluded {@code true} for no salvage
+     */
+    public void setSalvageExcluded(boolean salvageExcluded) {
+        this.salvageExcluded = salvageExcluded;
+    }
+
+    /**
+     * @return {@code true} if this force or any force above it asked for no salvage, so the setting holds when one
+     *       formation or unit is generated again on its own
+     */
+    public boolean isSalvageExcludedInTree() {
+        for (ForceDescriptor current = this; current != null; current = current.getParent()) {
+            if (current.salvageExcluded) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

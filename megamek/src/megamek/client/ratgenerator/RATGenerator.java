@@ -47,7 +47,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 
@@ -919,70 +918,7 @@ public class RATGenerator {
             }
         }
 
-        // If there are salvage percentages defined for the generating faction
-        HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
-        if (fRec.getPctSalvage(currentEra) != null) {
-            HashMap<String, Double> salvageEntries = new HashMap<>();
-
-            // If current year is directly on an era data point take it, otherwise
-            // interpolate between current era and next era values.
-            for (Entry<String, Integer> entry : fRec.getSalvage(currentEra).entrySet()) {
-                salvageEntries.put(entry.getKey(),
-                      currentEra == year ?
-                            entry.getValue() :
-                            interpolate(entry.getValue(),
-                                  fRec.getSalvage(nextEra).get(entry.getKey()),
-                                  currentEra,
-                                  nextEra,
-                                  year));
-            }
-
-            // Add salvage from the next era that is not already present
-            if (!nextEra.equals(currentEra)) {
-                for (Entry<String, Integer> entry : fRec.getSalvage(nextEra).entrySet()) {
-                    if (!salvageEntries.containsKey(entry.getKey())) {
-                        salvageEntries.put(entry.getKey(),
-                              interpolate(0.0,
-                                    entry.getValue(),
-                                    currentEra,
-                                    nextEra,
-                                    year));
-                    }
-                }
-            }
-
-            // Use the total salvage percentage from the faction data to get the total
-            // weight of all salvage entries, from the current overall table weight.
-            // If a salvage percentage of 100 percent is specified (unlikely, but possible)
-            // then clear the existing table and regenerate everything again based purely
-            // on salvage.
-            double totalTableWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
-            double overallSalvage = fRec.getPctSalvage(currentEra);
-            if (overallSalvage >= 100) {
-                overallSalvage = totalTableWeight;
-                unitWeights.clear();
-            } else {
-                overallSalvage = totalTableWeight * overallSalvage / 100.0;
-            }
-
-            // Break down the total salvage weight by relative weights of each
-            // provided salvage faction
-            double totalFactionWeight = salvageEntries.values().stream()
-                  .mapToDouble(Double::doubleValue)
-                  .sum();
-            for (String fKey : salvageEntries.keySet()) {
-                FactionRecord salvageFaction = factions.get(fKey);
-                if (salvageFaction == null) {
-                    LOGGER.debug("Could not locate faction {} for {} salvage.",
-                          fKey, fRec.getKey());
-                } else {
-                    double factionSalvageWeight = overallSalvage * salvageEntries.get(fKey) / totalFactionWeight;
-                    salvageWeights.put(salvageFaction, factionSalvageWeight);
-                }
-            }
-        }
-
-        // Adjust weights of standard table entries and salvage entries for established
+        // Adjust weights of the table entries for established
         // percentages of Omni-units, base Clan tech, and Star League/advanced tech.
         // Only do this for Omni-capable unit types, which also covers those which are
         // commonly fitted with Clan or Star League/advanced technology.
@@ -994,14 +930,21 @@ public class RATGenerator {
                     unitType == UnitType.TANK ||
                     unitType == UnitType.VTOL) &&
               ((roles == null) || roles.isEmpty())) {
-            adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, currentEra, nextEra);
+            adjustForRating(fRec,
+                  unitType,
+                  year,
+                  ratingLevel,
+                  unitWeights,
+                  clanSalvageWeight(fRec, getSalvageChance(fRec, year), unitWeights.values()),
+                  currentEra,
+                  nextEra);
         }
 
-        // Incorporate the salvage entries with the unit entries. Then re-calculate
-        // weights as necessary to keep the range of values between 0 and 1000.
+        // Salvage is not part of the table: it is rolled for after each unit is drawn (see getSalvageChance).
+        // Re-calculate weights as necessary to keep the range of values between 0 and 1000.
         double adj = 1.0;
-        DoubleSummaryStatistics stats = Stream
-              .concat(salvageWeights.values().stream(), unitWeights.values().stream())
+        DoubleSummaryStatistics stats = unitWeights.values()
+              .stream()
               .mapToDouble(Double::doubleValue)
               .filter(d -> d > 0)
               .summaryStatistics();
@@ -1013,12 +956,6 @@ public class RATGenerator {
         }
 
         List<TableEntry> retVal = new ArrayList<>();
-        for (FactionRecord faction : salvageWeights.keySet()) {
-            int wt = (int) (salvageWeights.get(faction) * adj + 0.5);
-            if (wt > 0) {
-                retVal.add(new TableEntry(wt, faction));
-            }
-        }
         for (ModelRecord mRec : unitWeights.keySet()) {
             int wt = (int) (unitWeights.get(mRec) * adj + 0.5);
             if (wt > 0) {
@@ -1030,25 +967,118 @@ public class RATGenerator {
     }
 
     /**
-     * Adjust weighted random selection value based on percentage values for Omni-units, Clan-tech units, and Star
-     * League/advanced tech units from faction data. The {@code unitWeights} and {@code salvageWeights} parameters are
-     * modified rather than returning a single unified set.
+     * The weight an Inner Sphere faction's Clan salvage would have if it sat in the table, as it did before salvage
+     * was split out of the table (#9744). The Clan share balancing counts it as Clan tech, so splitting salvage out
+     * leaves the balanced tables as they were.
      *
-     * @param fRec           faction used to generate units
-     * @param unitType       type of unit being generated
-     * @param year           current game year
-     * @param rating         equipment rating based on available range, typically F (0)/D/C/B/A (4)
-     * @param unitWeights    random frequency rates (entries for the table), excluding salvage
-     * @param salvageWeights random frequency rates of salvaged units by faction
-     * @param currentEra     current era
-     * @param nextEra        next era
+     * @param fRec          the faction the table is for
+     * @param salvageChance the faction's salvage chance
+     * @param unitWeights   the table's unit weights before balancing
+     *
+     * @return the Clan salvage weight; 0 for a Clan faction or one with no Clan salvage
+     */
+    static double clanSalvageWeight(FactionRecord fRec, SalvageChance salvageChance, Collection<Double> unitWeights) {
+        if (fRec.isClan() || !salvageChance.hasSalvage()) {
+            return 0.0;
+        }
+        double clanShare = 0.0;
+        for (FactionRecord source : salvageChance.factionWeights().keySet()) {
+            if (source.isClan()) {
+                clanShare += salvageChance.shareOf(source);
+            }
+        }
+        double tableWeight = 0.0;
+        for (double weight : unitWeights) {
+            tableWeight += weight;
+        }
+        return tableWeight * salvageChance.percent() / 100.0 * clanShare;
+    }
+
+    /**
+     * Works out how likely a unit drawn for a faction is to be salvage, and whose salvage it is. The salvage sources
+     * are interpolated between the eras either side of the year, as the unit weights are; the overall chance is the
+     * one for the era the year falls in.
+     *
+     * @param fRec the faction the units are drawn for; {@code null} gives no salvage
+     * @param year the game year
+     *
+     * @return the salvage chance; {@link SalvageChance#NONE} when the faction has no salvage data for the era
+     */
+    public SalvageChance getSalvageChance(@Nullable FactionRecord fRec, int year) {
+        if (fRec == null) {
+            return SalvageChance.NONE;
+        }
+        loadYear(year);
+        Integer currentEra = eraSet.floor(year);
+        if (currentEra == null) {
+            currentEra = eraSet.first();
+        }
+        Integer nextEra = null;
+        if (!eraSet.contains(year)) {
+            nextEra = eraSet.ceiling(year);
+        }
+        if (nextEra == null) {
+            nextEra = currentEra;
+        }
+
+        Integer pctSalvage = fRec.getPctSalvage(currentEra);
+        if (pctSalvage == null) {
+            return SalvageChance.NONE;
+        }
+
+        // If the year is directly on an era data point take it, otherwise interpolate between the current and next
+        // era values. A source only in the next era fades in from zero.
+        Map<String, Double> sourceWeights = new LinkedHashMap<>();
+        for (Entry<String, Integer> entry : fRec.getSalvage(currentEra).entrySet()) {
+            sourceWeights.put(entry.getKey(),
+                  currentEra == year ?
+                        entry.getValue().doubleValue() :
+                        interpolate(entry.getValue(),
+                              fRec.getSalvage(nextEra).get(entry.getKey()),
+                              currentEra,
+                              nextEra,
+                              year));
+        }
+        if (!nextEra.equals(currentEra)) {
+            for (Entry<String, Integer> entry : fRec.getSalvage(nextEra).entrySet()) {
+                if (!sourceWeights.containsKey(entry.getKey())) {
+                    sourceWeights.put(entry.getKey(), interpolate(0.0, entry.getValue(), currentEra, nextEra, year));
+                }
+            }
+        }
+
+        Map<FactionRecord, Double> factionWeights = new LinkedHashMap<>();
+        for (Entry<String, Double> entry : sourceWeights.entrySet()) {
+            FactionRecord salvageFaction = factions.get(entry.getKey());
+            if (salvageFaction == null) {
+                LOGGER.debug("Could not locate faction {} for {} salvage.", entry.getKey(), fRec.getKey());
+            } else {
+                factionWeights.merge(salvageFaction, entry.getValue(), Double::sum);
+            }
+        }
+        return new SalvageChance(pctSalvage, factionWeights);
+    }
+
+    /**
+     * Adjust weighted random selection value based on percentage values for Omni-units, Clan-tech units, and Star
+     * League/advanced tech units from faction data. The {@code unitWeights} parameter is modified in place.
+     *
+     * @param fRec              faction used to generate units
+     * @param unitType          type of unit being generated
+     * @param year              current game year
+     * @param rating            equipment rating based on available range, typically F (0)/D/C/B/A (4)
+     * @param unitWeights       random frequency rates (entries for the table)
+     * @param clanSalvageWeight the weight Clan salvage would have in the table, counted as Clan tech toward the
+     *                          faction's Clan share; see {@link #clanSalvageWeight}
+     * @param currentEra        current era
+     * @param nextEra           next era
      */
     private void adjustForRating(FactionRecord fRec,
           int unitType,
           int year,
           int rating,
           Map<ModelRecord, Double> unitWeights,
-          Map<FactionRecord, Double> salvageWeights,
+          double clanSalvageWeight,
           Integer currentEra,
           Integer nextEra) {
 
@@ -1339,18 +1369,7 @@ public class RATGenerator {
 
         // Re-balance Clan designs against SL and low-tech units to match
         // faction data.
-        double clanSalvageWeight = 0.0;
         if (pctClan != null) {
-
-            // Non-Clan factions count salvage weights from Clan factions as Clan tech
-            if (!fRec.isClan()) {
-                clanSalvageWeight = salvageWeights.
-                      keySet().
-                      stream().
-                      filter(FactionRecord::isClan).
-                      mapToDouble(salvageWeights::get).
-                      sum();
-            }
 
             double clanPctDifference = pctClan -
                   (100.0 * Math.min(totalWeight, totalClanWeight + clanSalvageWeight) /

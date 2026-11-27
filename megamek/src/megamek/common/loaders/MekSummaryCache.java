@@ -55,7 +55,6 @@ import megamek.common.bays.*;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Transporter;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Aero;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.DropShuttleBay;
@@ -65,6 +64,7 @@ import megamek.common.units.Mek;
 import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.Tank;
 import megamek.common.units.UnitType;
+import megamek.common.util.fileUtils.DataFolders;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;
@@ -488,11 +488,9 @@ public class MekSummaryCache {
                 bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits, false);
             }
 
-            // load units from the external user data dir
-            String userDir = PreferenceManager.getClientPreferences().getUserDir();
-            File userDataUnits2 = new File(userDir, "");
-            if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
-                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits2, false);
+            // load units from the player's data folders
+            for (File dataFolder : DataFolders.current().folders()) {
+                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, dataFolder, false);
             }
 
             // load units from story arcs

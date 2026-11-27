@@ -64,9 +64,9 @@ import megamek.common.Configuration;
 import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.loaders.MekSummary;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.units.BTObject;
 import megamek.common.units.Mek;
+import megamek.common.util.fileUtils.DataFolders;
 import megamek.logging.MMLogger;
 
 /**
@@ -238,22 +238,22 @@ public final class FluffImageHelper {
 
         List<String> nameCandidates = nameCandidates(unit);
 
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        // No existence check on the user dir itself: listing its root can be slow on cloud-synced drives, and a
-        // missing user dir simply yields empty (cached) listings for its fluff subdirectories below
-        boolean hasUserDir = !userDir.isBlank();
+        // No existence check on the data folders themselves: listing their root can be slow on cloud-synced drives, and
+        // a missing folder simply yields empty (cached) listings for its fluff subdirectories below. Later data folders
+        // win, so they are searched first.
+        List<File> dataFolders = DataFolders.current().configuredFolders().reversed();
 
         // Assets search their own folder first, then the folder of the corresponding TW unit type; all other units
         // search a single folder. The folders are searched in order so that the most specific art wins.
         for (String fluffPath : getFluffPaths(unit)) {
             File fluffDir = new File(Configuration.fluffImagesDir(), fluffPath);
 
-            // UserDir matches
-            // For internal use: in [user dir]/data/images/rs/<type> images for record sheets can be placed; these
+            // Data folder matches
+            // For internal use: in [data folder]/data/images/rs/<type> images for record sheets can be placed; these
             // will be preferentially loaded when the recordSheet parameter is true (i.e. when called from RS printing)
-            if (hasUserDir) {
-                File fluffUserDir = userFluffDir(userDir, false, fluffPath);
-                File rsFluffUserDir = userFluffDir(userDir, true, fluffPath);
+            for (File dataFolder : dataFolders) {
+                File fluffUserDir = userFluffDir(dataFolder.getPath(), false, fluffPath);
+                File rsFluffUserDir = userFluffDir(dataFolder.getPath(), true, fluffPath);
 
                 if (recordSheet) {
                     fileCandidates.addAll(findMatchingFiles(rsFluffUserDir, nameCandidates));

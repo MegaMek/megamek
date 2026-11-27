@@ -60,7 +60,7 @@ import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.common.Configuration;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.util.fileUtils.DataFolders;
 
 /**
  * Panel with elements for viewing and adjusting different SkinSpecification instances.
@@ -236,10 +236,8 @@ public class SkinSpecEditorPanel extends JPanel implements ListSelectionListener
         currSkinCombo.removeAllItems();
         List<String> xmlFiles = new ArrayList<>(CommonSettingsDialog.filteredFiles(Configuration.skinsDir(), ".xml"));
 
-        String userDirName = PreferenceManager.getClientPreferences().getUserDir();
-        File userDir = new File(userDirName);
-        if (!userDirName.isBlank() && userDir.isDirectory()) {
-            xmlFiles.addAll(CommonSettingsDialog.filteredFilesWithSubDirs(userDir, ".xml"));
+        for (File dataFolder : DataFolders.current().folders()) {
+            xmlFiles.addAll(CommonSettingsDialog.filteredFilesWithSubDirs(dataFolder, ".xml"));
         }
 
         xmlFiles.removeIf(file -> !SkinXMLHandler.validSkinSpecFile(file));
@@ -392,11 +390,10 @@ public class SkinSpecEditorPanel extends JPanel implements ListSelectionListener
     }
 
     private String saveDialog() {
-        String userDirName = PreferenceManager.getClientPreferences().getUserDir();
-        File userDir = new File(userDirName);
+        File myData = DataFolders.current().myData();
         String path;
-        if (!userDirName.isBlank() && userDir.isDirectory()) {
-            path = userDir.getPath();
+        if ((myData != null) && myData.isDirectory()) {
+            path = myData.getPath();
         } else {
             path = Configuration.skinsDir().getPath();
         }

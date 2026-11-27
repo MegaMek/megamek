@@ -76,6 +76,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.DeploymentElevationType;
 import megamek.common.board.ElevationOption;
+import megamek.common.compute.AimedShotLocations;
 import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
@@ -3046,9 +3047,12 @@ public class Princess extends BotClient {
 
             Mek target = (Mek) shot.getTarget();
             int maximumTN;
+            // A leg attack only reaches the legs, and a swarming unit never reaches a biped's legs
+            boolean canReachAimLocation = AimedShotLocations.canAimAt(shooter, shot.getWeapon().getType(), target,
+                  aimLocation);
 
             // If set for aimed shots, and the weapon can make aimed shots
-            if ((aimLocation != Mek.LOC_NONE) &&
+            if ((aimLocation != Mek.LOC_NONE) && canReachAimLocation &&
                   Compute.allowAimedShotWith(shot.getWeapon(),
                         target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
 

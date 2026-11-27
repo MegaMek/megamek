@@ -53,6 +53,7 @@ import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
+import megamek.client.ratgenerator.SalvageChance;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.loaders.MekSummary;
@@ -282,28 +283,28 @@ public final class RatDataExporter {
 
     private RatTableContent toContent(UnitTable table) {
         List<RatTableContent.WeightedEntry> unitEntries = new ArrayList<>();
-        List<RatTableContent.WeightedEntry> salvageEntries = new ArrayList<>();
         for (int entryIndex = 0; entryIndex < table.getNumEntries(); entryIndex++) {
-            int weight = table.getEntryWeight(entryIndex);
             MekSummary mekSummary = table.getMekSummary(entryIndex);
-            if (mekSummary != null) {
-                Integer unitIndex = unitIndexByName.get(mekSummary.getName());
-                if (unitIndex == null) {
-                    missingUnitCounts.merge(mekSummary.getName(), 1, Integer::sum);
-                } else {
-                    unitEntries.add(new RatTableContent.WeightedEntry(unitIndex, weight));
-                }
+            if (mekSummary == null) {
                 continue;
             }
-            FactionRecord salvageFaction = table.getSalvageFaction(entryIndex);
-            if (salvageFaction != null) {
-                Integer salvageIndex = factionIndexByKey.get(salvageFaction.getKey());
-                if (salvageIndex != null) {
-                    salvageEntries.add(new RatTableContent.WeightedEntry(salvageIndex, weight));
-                }
+            Integer unitIndex = unitIndexByName.get(mekSummary.getName());
+            if (unitIndex == null) {
+                missingUnitCounts.merge(mekSummary.getName(), 1, Integer::sum);
+            } else {
+                unitEntries.add(new RatTableContent.WeightedEntry(unitIndex, table.getEntryWeight(entryIndex)));
             }
         }
-        int salvagePct = salvageEntries.isEmpty() ? 0 : table.getSalvagePct();
+        SalvageChance salvageChance = table.getSalvageChance();
+        List<RatTableContent.WeightedEntry> salvageEntries = new ArrayList<>();
+        for (FactionRecord salvageFaction : salvageChance.factionWeights().keySet()) {
+            Integer salvageIndex = factionIndexByKey.get(salvageFaction.getKey());
+            if (salvageIndex != null) {
+                salvageEntries.add(new RatTableContent.WeightedEntry(salvageIndex,
+                      RatTableContent.salvageWeight(salvageChance, salvageFaction)));
+            }
+        }
+        int salvagePct = salvageEntries.isEmpty() ? 0 : RatTableContent.salvagePct(salvageChance);
         return new RatTableContent(salvagePct, unitEntries, salvageEntries);
     }
 

@@ -2886,6 +2886,7 @@ public class ConvInfantry extends Infantry {
         super.clearGameState();
         // Pheromone impairment only lasts for the remainder of the scenario
         pheromoneImpaired = false;
+        impEnergyWeaponsDisabledRounds = 0;
     }
 
     /**

@@ -54,6 +54,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.equipment.*;
 import megamek.common.game.IGame;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
@@ -255,6 +256,31 @@ class EntityPersistenceRegressionTest {
     }
 
     /**
+     * The generic test only checks that exposure is reset, so it cannot catch a breach being cleared too. A breach is
+     * damage that MekHQ repairs, so it must survive; being underwater, in vacuum or in tainted air must not (MegaMek
+     * issue #9719).
+     */
+    @Test
+    void clearGameStateKeepsBreachesButClearsOtherExposure() throws Exception {
+        Entity entity = clearedEntity(UnitFixture.WOLVERINE_WVR_6R);
+        entity.setLocationStatus(Mek.LOC_HEAD, ILocationExposureStatus.BREACHED, true);
+        entity.setLocationStatus(Mek.LOC_LEFT_LEG, ILocationExposureStatus.WET, true);
+        entity.setLocationStatus(Mek.LOC_RIGHT_LEG, ILocationExposureStatus.VACUUM, true);
+        entity.setLocationStatus(Mek.LOC_CENTER_TORSO, ILocationExposureStatus.TAINTED, true);
+
+        entity.clearGameState();
+
+        assertEquals(ILocationExposureStatus.BREACHED, entity.getLocationStatus(Mek.LOC_HEAD),
+              "A breached head should stay breached until MekHQ repairs it");
+        assertEquals(ILocationExposureStatus.NORMAL, entity.getLocationStatus(Mek.LOC_LEFT_LEG),
+              "A leg left underwater should be dry in the next battle");
+        assertEquals(ILocationExposureStatus.NORMAL, entity.getLocationStatus(Mek.LOC_RIGHT_LEG),
+              "A leg left in vacuum should be back to normal in the next battle");
+        assertEquals(ILocationExposureStatus.NORMAL, entity.getLocationStatus(Mek.LOC_CENTER_TORSO),
+              "A torso left in tainted air should be back to normal in the next battle");
+    }
+
+    /**
      * Changes one field of the subject (or of one of its equipment), runs clearGameState, and checks the field is back
      * to the value a freshly cleared unit has.
      *
@@ -365,6 +391,7 @@ class EntityPersistenceRegressionTest {
             entity.aTracker.setSpotterHasCommImplant(true);
         });
         changes.put("Entity.infernos", (owner, field) -> changeEveryPrimitiveField(field.get(owner)));
+        changes.put("Entity.magneticPulseState", (owner, field) -> changeEveryPrimitiveField(field.get(owner)));
         changes.put("Entity.unitOrders", (owner, field) -> ((Entity) owner).setUnitOrders(
               UnitOrderAction.EXIT_BY_EDGE.apply(UnitOrders.NONE, List.of(), OffBoardDirection.NORTH,
                     UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, 1)));

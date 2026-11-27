@@ -73,27 +73,18 @@ Entity.sec_facing                               GAME_RESET  reset by Mek and Tan
 Entity.twistedPhase                             GAME_RESET  cleared by Entity.newRound
 Entity.walkMP                                   KEEP        design
 Entity.jumpMP                                   KEEP        design
-Entity.climbing                                 KNOWN_LEAK  climbing a building when the last battle ended
-Entity.dangling                                 KNOWN_LEAK  dangling from a building when the last battle ended
 Entity.climbingLevelsChosen                     GAME_RESET  reset by Entity.newRound
 Entity.findingClub                              GAME_RESET  reset by Entity.newRound
 Entity.armsFlipped                              GAME_RESET  reset by Entity.newRound
 Entity.unjammingRAC                             GAME_RESET  reset by Entity.newRound
-Entity.selfDestructing                          KNOWN_LEAK  self-destruct left unresolved by the last battle
-Entity.selfDestructInitiated                    KNOWN_LEAK  self-destruct left unresolved by the last battle
-Entity.boobyTrapInitiated                       KNOWN_LEAK  booby trap left unresolved by the last battle
 Entity.selfDestructedThisTurn                   GAME_RESET  reset by Entity.newRound
-Entity.pendingAbandon                           KNOWN_LEAK  abandonment left unresolved by the last battle
-Entity.abandonmentAnnouncedRound                KNOWN_LEAK  round number from the last battle
 Entity.hasExternalSearchlight                   KEEP        equipment; the server also sets it from the quirk
 Entity.searchlightOverride                      KEEP        player setting
 Entity.illuminated                              GAME_RESET  reset by the server every phase
 Entity.usedSearchlight                          GAME_RESET  reset by the server every phase
 Entity.eiShutdown                               KEEP        never changed by game code
-Entity.canUnstickByJumping                      KNOWN_LEAK  swamp state from the last battle
 Entity.taggedBy                                 GAME_RESET  reset by Entity.newRound
 Entity.layingMines                              GAME_RESET  reset by Entity.newRound
-Entity._isEMId                                  KNOWN_LEAK  EMI from the last battle
 Entity.hardenedArmorDamaged                     KEEP        damage
 Entity.locationBlownOff                         KEEP        damage
 Entity.locationBlownOffThisPhase                GAME_RESET  cleared when damage is applied every phase
@@ -123,7 +114,6 @@ Entity.wigeBonus                                GAME_RESET  reset by Entity.newR
 Entity.inReverse                                GAME_RESET  reset by Entity.newRound
 Entity.struck                                   GAME_RESET  reset by Entity.newRound
 Entity.fell                                     GAME_RESET  reset by Entity.newRound
-Entity.exposure                                 KNOWN_LEAK  location exposure from the last battle
 Entity.armor                                    KEEP        damage
 Entity.internal                                 KEEP        damage
 Entity.orig_armor                               KEEP        design
@@ -163,9 +153,7 @@ Entity.published                                KEEP        design
 Entity.techFaction                              KEEP        design
 Entity.tsempHitsThisTurn                        GAME_RESET  reset by Entity.newRound
 Entity.tsempEffect                              GAME_RESET  cleared by Entity.newRound
-Entity.asewAffectedTurns                        KNOWN_LEAK  ASEW countdown from the last battle
 Entity.firedTsempThisTurn                       GAME_RESET  reset by Entity.newRound
-Entity.hasFiredTsemp                            KNOWN_LEAK  never set back to false
 Entity.equipmentList                            KEEP        equipment
 Entity.weaponList                               KEEP        equipment
 Entity.weaponBayList                            KEEP        equipment
@@ -195,11 +183,9 @@ Entity.entitySeenBy                             GAME_RESET  recomputed by the se
 Entity.entityDetectedBy                         GAME_RESET  recomputed by the server's visibility update
 Entity.sensorContacts                           GAME_RESET  rebuilt by the sensor check
 Entity.firingSolutions                          GAME_RESET  rebuilt by the sensor check
-Entity.altitude                                 KNOWN_LEAK  clearGameState only resets it for aerospace units
 Entity.hitBySwarmsEntity                        GAME_RESET  cleared by Entity.newRound
 Entity.hitBySwarmsWeapon                        GAME_RESET  cleared by Entity.newRound
 Entity.canon                                    KEEP        design
-Entity.assaultDropInProgress                    KNOWN_LEAK  Entity.newRound only clears a finished drop
 Entity.climbMode                                GAME_RESET  reset by Entity.newRound
 Entity.lastTargetDisplayName                    KNOWN_LEAK  display only
 Entity.spotTargetId                             GAME_RESET  reset by Entity.newRound
@@ -226,16 +212,6 @@ Entity.ghostTargetOverride                      GAME_RESET  rerolled by Entity.n
 Entity.ghostTargetDefensiveBonus                GAME_RESET  reset by Entity.newRound
 Entity.ghostTargetOffensiveBonus                GAME_RESET  reset by Entity.newRound
 Entity.heatSinkCoolantFailureFactor             KEEP        only Meks use it, and clearGameState resets it for them
-Entity.taserShutdownRounds                      KNOWN_LEAK  countdown from the last battle
-Entity.shutdownByBATaser                        KNOWN_LEAK  countdown from the last battle
-Entity.taserFeedBackRounds                      KNOWN_LEAK  countdown from the last battle
-Entity.taserInterference                        KNOWN_LEAK  countdown from the last battle
-Entity.taserInterferenceRounds                  KNOWN_LEAK  countdown from the last battle
-Entity.taserInterferenceHeat                    KNOWN_LEAK  countdown from the last battle
-Entity.empInterferenceRounds                    KNOWN_LEAK  countdown from the last battle
-Entity.empInterferenceHeat                      KNOWN_LEAK  countdown from the last battle
-Entity.empShutdownRounds                        KNOWN_LEAK  countdown from the last battle
-Entity.magneticPulseState                       KNOWN_LEAK  countdown from the last battle
 Entity.fluff                                    KEEP        design
 Entity.armorTonnage                             KEEP        design
 Entity.newC3NetIdString                         KNOWN_LEAK  pending C3 network change from the last battle
@@ -328,9 +304,6 @@ Tank.usingConsoleCommander                      KEEP        managed by MekHQ
 Tank.extraCrewSeats                             KEEP        design
 Tank.potCrit                                    GAME_RESET  overwritten before each use during damage resolution
 Tank.overThresh                                 GAME_RESET  overwritten before each use during damage resolution
-Tank.driverHitPS                                KNOWN_LEAK  per-phase crew hit flag from the last battle
-Tank.commanderHitPS                             KNOWN_LEAK  per-phase crew hit flag from the last battle
-Tank.crewHitPS                                  KNOWN_LEAK  per-phase crew hit flag from the last battle
 Tank.baseChassisTurretWeight                    KEEP        design
 Tank.baseChassisTurret2Weight                   KEEP        design
 Tank.baseChassisSponsonPintleWeight             KEEP        design
@@ -359,7 +332,6 @@ ConvInfantry.primaryName                        KEEP        design
 ConvInfantry.secondaryWeapon                    KEEP        design
 ConvInfantry.secondName                         KEEP        design
 ConvInfantry.secondaryWeaponsPerSquad           KEEP        design
-ConvInfantry.impEnergyWeaponsDisabledRounds     KNOWN_LEAK  countdown from the last battle
 ConvInfantry.disposableName                     KEEP        design
 ConvInfantry.mount                              KEEP        design
 ConvInfantry.customArmorName                    KEEP        design
@@ -394,8 +366,6 @@ ConvInfantry.bridgeDismantleRequiredTurns       KNOWN_LEAK  bridge building left
 ConvInfantry.bridgeBuildPaused                  KNOWN_LEAK  bridge building left from the last battle
 ConvInfantry.bridgeBuildIsRepair                KNOWN_LEAK  bridge building left from the last battle
 BattleArmor.troopersShooting                    GAME_RESET  overwritten before each attack
-BattleArmor.improvedMagneticPulseDisabledTroopers KNOWN_LEAK  countdown from the last battle
-BattleArmor.improvedMagneticPulseDisabledRounds KNOWN_LEAK  countdown from the last battle
 BattleArmor.myCost                              KEEP        design
 BattleArmor.weightClass                         KEEP        design
 BattleArmor.chassisType                         KEEP        design
@@ -442,15 +412,12 @@ Aero.structIntegrity                            KEEP        damage
 Aero.orig_structIntegrity                       KEEP        design
 Aero.damThresh                                  KEEP        derived from armor
 Aero.potCriticalSlot                            GAME_RESET  overwritten before each use during damage resolution
-Aero.ignoredCrewHits                            KNOWN_LEAK  crew hit bookkeeping from the last battle
 Aero.cockpitType                                KEEP        design
 Aero.autoEject                                  KEEP        player setting
 Aero.condEjectAmmo                              KEEP        player setting
 Aero.condEjectFuel                              KEEP        player setting
 Aero.condEjectSIDest                            KEEP        player setting
-Aero.ejecting                                   KNOWN_LEAK  ejection from the last battle
 Aero.straightMoves                              KNOWN_LEAK  movement state from the last battle
-Aero.altLoss                                    KNOWN_LEAK  altitude loss from the last battle
 Aero.flyingOff                                  GAME_RESET  reset by Aero.newRound
 Aero.exitAltitude                               GAME_RESET  cleared when the unit deploys
 Aero.altLossThisRound                           GAME_RESET  reset by Aero.newRound
@@ -507,7 +474,6 @@ Mounted.hit                                     KEEP        damage
 Mounted.missing                                 KEEP        damage
 Mounted.useless                                 KEEP        damage
 Mounted.fired                                   KEEP        used one-shot weapons, reloaded by MekHQ
-Mounted.tsempDowntime                           KNOWN_LEAK  TSEMP recharge from the last battle
 Mounted.rapidFire                               KEEP        player setting
 Mounted.hotLoaded                               KEEP        player setting
 Mounted.repairable                              KEEP        damage

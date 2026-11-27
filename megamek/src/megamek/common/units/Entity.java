@@ -14011,6 +14011,8 @@ public abstract class Entity extends TurnOrdered
         setDeployRound(0);
         setNeverDeployed(true);
         setElevation(0);
+        // Aerospace units set their starting altitude in their own override; every other unit starts on the ground
+        altitude = 0;
         setPassedThrough(new Vector<>());
         resetFiringArcs();
         setEvading(false);
@@ -14076,6 +14078,9 @@ public abstract class Entity extends TurnOrdered
         manualShutdown = false;
         carcass = false;
         captured = false;
+        clearElectronicEffects();
+        clearLocationExposure();
+        clearUnfinishedActions();
 
         // Interactions with other units and objects of the last game
         if (carriedObjects != null) {
@@ -14099,6 +14104,54 @@ public abstract class Entity extends TurnOrdered
         for (Mounted<?> mounted : getEquipment()) {
             mounted.clearGameState();
         }
+    }
+
+    /**
+     * Clears the countdowns left by taser, EMP, magnetic pulse, ASEW, EMI and TSEMP hits. Without this, the next
+     * battle's first new round can shut the unit down again or keep it jammed (MegaMek issue #9719).
+     */
+    private void clearElectronicEffects() {
+        taserShutdownRounds = 0;
+        shutdownByBATaser = false;
+        taserFeedBackRounds = 0;
+        taserInterference = 0;
+        taserInterferenceRounds = 0;
+        taserInterferenceHeat = false;
+        empInterferenceRounds = 0;
+        empInterferenceHeat = false;
+        empShutdownRounds = 0;
+        magneticPulseState = new MagneticPulseState();
+        asewAffectedTurns = 0;
+        _isEMId = false;
+        hasFiredTsemp = false;
+    }
+
+    /**
+     * Sets every location back to normal exposure, so a location left wet, in vacuum or in tainted air by the last
+     * battle starts the next one dry. A breached location stays breached: that is damage, which MekHQ repairs.
+     */
+    private void clearLocationExposure() {
+        for (int location = 0; location < exposure.length; location++) {
+            if (exposure[location] != ILocationExposureStatus.BREACHED) {
+                exposure[location] = ILocationExposureStatus.NORMAL;
+            }
+        }
+    }
+
+    /**
+     * Cancels actions the last battle ended before resolving: a self-destruct or booby trap, an abandonment, climbing
+     * or hanging from a building, a swamp the unit could jump out of, and an assault drop.
+     */
+    private void clearUnfinishedActions() {
+        selfDestructing = false;
+        selfDestructInitiated = false;
+        boobyTrapInitiated = false;
+        pendingAbandon = false;
+        abandonmentAnnouncedRound = -1;
+        climbing = false;
+        dangling = false;
+        canUnstickByJumping = false;
+        assaultDropInProgress = 0;
     }
 
     public PilotingRollData checkSideSlip(EntityMovementType moveType,

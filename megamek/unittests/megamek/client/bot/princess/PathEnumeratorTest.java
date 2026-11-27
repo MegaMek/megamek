@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import jakarta.annotation.Nonnull;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.BulldozerMovePath;
@@ -65,7 +66,6 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.units.BipedMek;
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -153,7 +153,7 @@ class PathEnumeratorTest {
         assertSame(longRangePaths, pathEnumerator.getLongRangePathsFor(mek), "a second request must not rebuild them");
     }
 
-    private static @NonNull BipedMek createMek(Game game, Player owner) {
+    private static @Nonnull BipedMek createMek(Game game, Player owner) {
         BipedMek mek = new BipedMek() {
             @Override
             public boolean isSelectableThisTurn() {

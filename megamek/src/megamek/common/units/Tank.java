@@ -1982,6 +1982,10 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         // Fortifying and rubble clearing in progress refer to hexes of the last game's map
         cancelFortify();
         cancelClearingRubble();
+        // Crew hits taken in the last game's final phase, not yet applied
+        driverHitPS = false;
+        commanderHitPS = false;
+        crewHitPS = false;
     }
 
     /**

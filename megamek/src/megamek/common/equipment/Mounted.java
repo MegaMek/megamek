@@ -1076,6 +1076,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         // Without this, an ammo dump under way when the last game ended would continue in the next
         m_bPendingDump = false;
         m_bDumping = false;
+        // A TSEMP fired at the end of the last game is ready again
+        tsempDowntime = false;
     }
 
     /**

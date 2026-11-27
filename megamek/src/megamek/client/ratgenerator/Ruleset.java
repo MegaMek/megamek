@@ -271,6 +271,12 @@ public class Ruleset {
     }
 
     public void processRoot(ForceDescriptor fd, ProgressListener l) {
+        // Covers the whole run, the transport and fighter passes included, not just the main unit draw.
+        if (fd.isSalvageExcludedInTree() && !UnitTable.isSalvageExcluded()) {
+            logger.info("[ForceGen][Salvage] {}: generating with no salvage", fd.getFaction());
+            UnitTable.runWithoutSalvage(() -> processRoot(fd, l));
+            return;
+        }
         logger.debug("[ForceGen][Weight] processRoot ENTER: faction={} echelon={} unitType={} rating={} " +
                     "weightClass={} ({})",
               fd.getFaction(), fd.getEchelon(), fd.getUnitType(), fd.getRating(),

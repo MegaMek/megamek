@@ -142,6 +142,10 @@ public final class UnitReroller {
      *       left exactly as it was in that case
      */
     public static @Nullable Outcome reroll(ForceDescriptor slot) {
+        // A force that asked for no salvage keeps to its own faction's units when one of them is rerolled, too.
+        if (slot.isSalvageExcludedInTree() && !UnitTable.isSalvageExcluded()) {
+            return UnitTable.callWithoutSalvage(() -> reroll(slot));
+        }
         if (whyNotRerollable(slot) != null) {
             return null;
         }

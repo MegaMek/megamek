@@ -90,6 +90,10 @@ public final class ShipReroller {
      *       its place
      */
     public static @Nullable Outcome reroll(ForceDescriptor ship) {
+        // A force that asked for no salvage keeps to its own faction's ships, and their fighters, when one is rerolled.
+        if (ship.isSalvageExcludedInTree() && !UnitTable.isSalvageExcluded()) {
+            return UnitTable.callWithoutSalvage(() -> reroll(ship));
+        }
         if (!isShip(ship)) {
             LOGGER.debug("[ForceGen][Reroll] '{}' is not a ship; nothing to reroll", ship.parseName());
             return null;

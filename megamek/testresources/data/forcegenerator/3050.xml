@@ -25,6 +25,8 @@
             <pctOmni>0,0</pctOmni>
             <pctClan>0,0</pctClan>
             <pctSL>0,0</pctSL>
+            <!-- No salvage; UnitTableSalvageTest sets it per test -->
+            <salvage pct='0'></salvage>
         </faction>
         <!-- Written under the retired code RET, which resolves to SUC. This is the shape of the shipped 3082 to
              3160 files, where Clan Goliath Scorpion's blocks are keyed CEI and then SE and no CGS block exists.
@@ -35,6 +37,11 @@
             <pctSL>89,79,69,59,49</pctSL>
             <techMargin>7</techMargin>
             <salvage pct='13'>LA:2</salvage>
+        </faction>
+        <!-- Fields the Atlas only (the Archer is MRG:0). Its salvage is set by each test in UnitTableSalvageTest,
+             so this block only has to give the era a salvage list to fill in. -->
+        <faction key='MRG'>
+            <salvage pct='0'></salvage>
         </faction>
     </factions>
     <units>
@@ -49,7 +56,7 @@
             </model>
         </chassis>
         <chassis name='Atlas' unitType='Mek'>
-            <availability>LA:8</availability>
+            <availability>LA:8,MRG:8</availability>
             <model name='AS7-D'>
                 <availability>General:5</availability>
             </model>

@@ -517,9 +517,21 @@ public class Building implements Serializable {
         };
     }
 
+    /**
+     * Returns the display name shown in hex tooltips, attack targets and game reports, e.g. "Heavy Building #12" or
+     * "Medium Hangar Building #7". The class word is left out for a standard building and the weight word for a wall,
+     * because the name already holds them.
+     */
     @Override
     public String toString() {
-        return getBuildingType().toString() + " " + className(getBldgClass()) + " " + name;
+        StringBuilder displayName = new StringBuilder();
+        if (getBuildingType() != BuildingType.WALL) {
+            displayName.append(getBuildingType()).append(' ');
+        }
+        if (getBldgClass() != IBuilding.STANDARD) {
+            displayName.append(className(getBldgClass())).append(' ');
+        }
+        return displayName.append(name).toString();
     }
 
     /**

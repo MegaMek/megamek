@@ -859,8 +859,9 @@ public class ForceGeneratorViewUi implements ActionListener {
      * so the model tree and committed TOE read "Battle Armor Battalion" instead of "Battalion". This
      * looks at the *resolved* display name ({@link ForceDescriptor#parseName()}), not the raw name,
      * because a rolled command often carries a template like {@code "{ordinal} Battalion"} that resolves
-     * to just "Battalion"; a name that already includes the unit type (or a descriptor with no unit
-     * type / no echelon name) is left untouched.
+     * to just "Battalion". Only a blank or bare-echelon name is replaced: a name the ruleset chose, such
+     * as "Heavy Assault Regiment", is kept even though it does not mention the unit type. A descriptor
+     * with no unit type or no echelon name is left untouched.
      *
      * @param descriptor the command to name in place
      */
@@ -878,14 +879,34 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
         String unitTypeName = UnitType.getTypeDisplayableName(unitType);
         String displayName = descriptor.parseName();
-        if (displayName != null && displayName.contains(unitTypeName)) {
-            // The resolved name already carries the unit type (or a meaningful name), so keep it.
+        if (!isBareEchelonName(displayName, echelonName)) {
+            // The ruleset gave this command a real name ("Heavy Assault Regiment", "Dragoon Regiment",
+            // "Freemen"), so keep it even though it does not mention the unit type.
+            logger.debug("[ForceGen] ensureDescriptiveName: id={} keeps its ruleset name '{}'",
+                  System.identityHashCode(descriptor), displayName);
             return;
         }
         String descriptiveName = unitTypeName + " " + echelonName;
         logger.info("[ForceGen] ensureDescriptiveName: id={} '{}' -> '{}'",
               System.identityHashCode(descriptor), displayName, descriptiveName);
         descriptor.setName(descriptiveName);
+    }
+
+    /**
+     * Tells whether a resolved command name says nothing beyond the echelon, so it is worth replacing with a
+     * unit-type-qualified one. A blank name, or one that is just the echelon ("Regiment", "Battalion"), is
+     * bare. Anything else is a name the ruleset chose on purpose, such as a weight-based regiment name.
+     *
+     * @param displayName the command's resolved name, or {@code null} if it has none
+     * @param echelonName the ruleset's name for the command's echelon
+     *
+     * @return {@code true} if the name is blank or only the echelon name
+     */
+    private static boolean isBareEchelonName(@Nullable String displayName, String echelonName) {
+        if ((displayName == null) || displayName.isBlank()) {
+            return true;
+        }
+        return displayName.trim().equalsIgnoreCase(echelonName.trim());
     }
 
     /**

@@ -1,12 +1,19 @@
 name: Backport Merged Pull Requests
 
 # A small bug fix goes to main and to the current release branch. Instead of opening the second pull
-# request by hand, put a "backport <branch>" label on the main pull request, for example
-# "backport releases/0.51.01". When it merges, this workflow cherry-picks the merged commit onto that
-# branch and opens the patch pull request, titled with "(PATCH)" after the colon:
+# request by hand, put the "Backport" label on the main pull request. When it merges, this workflow
+# cherry-picks the merged commit onto the current release branch and opens the patch pull request,
+# titled with "(PATCH)" after the colon:
 #
 #     Fix #9720: Toxic air breaches the cockpit        (the main pull request)
 #     Fix #9720: (PATCH) Toxic air breaches the cockpit (the one this workflow opens)
+#
+# The current release branch is the newest "releases/<version>" branch in the repository, so nothing
+# here changes when a new release branch is cut. To pin a different branch, set the BACKPORT_BRANCH
+# Actions variable (repository or organization level); it wins over the newest branch.
+#
+# To send a fix to some other branch, use a "backport <branch>" label instead, for example
+# "backport releases/0.50.10". Both kinds of label can be on one pull request.
 #
 # The label also works when added after the merge. If the cherry-pick conflicts, no pull request is
 # opened: the workflow comments on the main pull request instead, and the backport is done by hand.
@@ -30,13 +37,17 @@ permissions:
 jobs:
   backport:
     # Merged pull requests only: on the merge itself when a backport label is already there, or when a
-    # backport label is added to a pull request that has already merged.
+    # backport label is added to a pull request that has already merged. Only pull requests into the
+    # default branch count, so a patch pull request can never start a backport of its own.
     if: >
       github.event.pull_request.merged &&
+      github.event.pull_request.base.ref == github.event.repository.default_branch &&
       (
         (github.event.action == 'closed' &&
-          contains(toJSON(github.event.pull_request.labels.*.name), '"backport ')) ||
-        (github.event.action == 'labeled' && startsWith(github.event.label.name, 'backport '))
+          (contains(github.event.pull_request.labels.*.name, 'Backport') ||
+            contains(toJSON(github.event.pull_request.labels.*.name), '"backport '))) ||
+        (github.event.action == 'labeled' &&
+          (github.event.label.name == 'Backport' || startsWith(github.event.label.name, 'backport ')))
       )
     runs-on: ubuntu-latest
 
@@ -56,6 +67,25 @@ jobs:
           patch_title="${patch_title//\$\{/\{}"
           echo "patch_title=${patch_title}" >> "$GITHUB_OUTPUT"
 
+      # The branch the "Backport" label sends a fix to: the BACKPORT_BRANCH variable when it is set,
+      # otherwise the newest releases/<version> branch, compared as version numbers.
+      - name: Find the current release branch
+        id: release
+        env:
+          PINNED_BRANCH: ${{ vars.BACKPORT_BRANCH }}
+          REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          if [[ -n "$PINNED_BRANCH" ]]; then
+            branch="$PINNED_BRANCH"
+          else
+            branch="$(git ls-remote --heads "$REPOSITORY_URL" 'releases/*' | sed 's#.*refs/heads/##' | sort -V | tail -n 1)"
+          fi
+          if [[ -z "$branch" ]]; then
+            echo "::warning::No releases/* branch found, so the Backport label has nowhere to send this fix."
+          fi
+          echo "Current release branch: ${branch:-none}"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+
       - name: Check out the repository
         uses: actions/checkout@v7
 
@@ -63,18 +93,21 @@ jobs:
         uses: korthout/backport-action@v5
         with:
           pull_title: ${{ steps.title.outputs.patch_title }}
+          # The "Backport" label means the current release branch. A "backport <branch>" label names
+          # its own branch, and the action reads those by itself.
+          target_branches: ${{ contains(github.event.pull_request.labels.*.name, 'Backport') && steps.release.outputs.branch || '' }}
           # The note at the top says plainly that no person opened this pull request.
           pull_description: |-
             > [!NOTE]
-            > **Opened automatically** by the Backport Merged Pull Requests workflow, because #${pull_number} merged with the `backport ${target_branch}` label. Nobody has built or tested this branch yet.
+            > **Opened automatically** by the Backport Merged Pull Requests workflow, because #${pull_number} merged with a backport label for `${target_branch}`. Nobody has built or tested this branch yet.
             >
             > CI does not start on its own. Close and reopen this pull request to run it.
 
             Backport of #${pull_number} to `${target_branch}`.
 
             ${pull_description}
-          # The same labels as the main pull request. The backport label itself is never copied.
-          copy_labels_pattern: '.*'
+          # The same labels as the main pull request, apart from the backport labels.
+          copy_labels_pattern: '^(?!Backport$).*'
           # Marks the pull request as opened by this workflow, in pull request lists as well as on the page.
           add_labels: Automated Backport
           # The author of the fix owns the backport, and any conflict in it.

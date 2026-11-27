@@ -1230,6 +1230,18 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * inLab flag controls whether the game effects of quirks should be applied.
+     */
+    protected boolean inLab = false;
+
+    /**
+     * Put the entity into meklab mode. This means the game effects of quirks are not applied.
+     */
+    public void putInLab() {
+        inLab = true;
+    }
+
+    /**
      * @see UnitType
      */
     public abstract int getUnitType();
@@ -4548,7 +4560,7 @@ public abstract class Entity extends TurnOrdered
 
     public int getArmorForReal(int loc,
                                boolean rear) {
-        return armor[loc];
+        return Math.min(armor[loc], getOArmor(loc));
     }
 
     public int getArmorForReal(int loc) {
@@ -14099,6 +14111,9 @@ public abstract class Entity extends TurnOrdered
         for (Mounted<?> mounted : getEquipment()) {
             mounted.clearGameState();
         }
+
+        // Remove inLab state
+        inLab = false;
     }
 
     public PilotingRollData checkSideSlip(EntityMovementType moveType,

@@ -873,7 +873,8 @@ class TWDamageManagerTest {
 
     @Test
     void testDamageMekCowlDamageCowlOnly() throws EntityLoadingException {
-        String unit = "Cyclops CP-10-Z.mtf";
+        // Use a mek that only has a cowl
+        String unit = "Gladiator GLD-3R.mtf";
         BipedMek mek = loadMek(unit);
 
         // Configure game for Quirks
@@ -898,7 +899,8 @@ class TWDamageManagerTest {
 
     @Test
     void testDamageMekCowlDamageAllHeadArmor() throws EntityLoadingException {
-        String unit = "Cyclops CP-10-Z.mtf";
+        // Use a mek that only has a cowl
+        String unit = "Gladiator GLD-3R.mtf";
         BipedMek mek = loadMek(unit);
 
         // Configure game for Quirks
@@ -913,6 +915,60 @@ class TWDamageManagerTest {
         HitData hit = new HitData(BipedMek.LOC_HEAD);
         hit.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 12);
+        manager.damageEntity(damageInfo);
+
+        // Armor is _gone_ but not _destroyed
+        assertEquals(0, mek.getArmor(BipedMek.LOC_HEAD));
+        assertEquals(3, mek.getInternal(BipedMek.LOC_HEAD));
+        assertFalse(gameMan.checkForPSRFromDamage(mek));
+    }
+
+    @Test
+    void testMekWeakHeadArmorToggling() throws EntityLoadingException {
+        // Use a mek that only has weak head armor
+        String unit = "Komodo KIM-2.mtf";
+        BipedMek mek = loadMek(unit);
+
+        // Configure game for Quirks
+        IOption quirkOption = game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
+
+        // Validate armor before applying quirks
+        assertEquals(9, mek.getArmor(BipedMek.LOC_HEAD));
+        assertEquals(3, mek.getInternal(BipedMek.LOC_HEAD));
+
+        // Toggle on
+        quirkOption.setValue(true);
+
+        // Validate armor after applying quirks
+        assertEquals(7, mek.getArmor(BipedMek.LOC_HEAD));
+        assertEquals(3, mek.getInternal(BipedMek.LOC_HEAD));
+
+        // Toggle off
+        quirkOption.setValue(false);
+
+        // Validate armor after removing quirks
+        assertEquals(9, mek.getArmor(BipedMek.LOC_HEAD));
+        assertEquals(3, mek.getInternal(BipedMek.LOC_HEAD));
+    }
+
+    @Test
+    void testDamageMekWeakHeadArmor() throws EntityLoadingException {
+        // Use a mek that only has weak head armor
+        String unit = "Komodo KIM-2.mtf";
+        BipedMek mek = loadMek(unit);
+
+        // Configure game for Quirks
+        IOption quirkOption = game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
+        quirkOption.setValue(true);
+
+        // Validate starting armor
+        assertEquals(7, mek.getArmor(BipedMek.LOC_HEAD));
+        assertEquals(3, mek.getInternal(BipedMek.LOC_HEAD));
+
+        // Deal 7 points of damage leaving armor at 0 but no crits)
+        HitData hit = new HitData(BipedMek.LOC_HEAD);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 7);
         manager.damageEntity(damageInfo);
 
         // Armor is _gone_ but not _destroyed

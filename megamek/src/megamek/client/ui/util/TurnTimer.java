@@ -160,6 +160,7 @@ public class TurnTimer {
         int timerLimit = 0;
 
         switch (phase) {
+            case OFFBOARD:
             case TARGETING:
             case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:

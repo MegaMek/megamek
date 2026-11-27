@@ -15,8 +15,12 @@ name: Backport Merged Pull Requests
 # To send a fix to some other branch, use a "backport <branch>" label instead, for example
 # "backport releases/0.50.10". Both kinds of label can be on one pull request.
 #
-# The label also works when added after the merge. If the cherry-pick conflicts, no pull request is
-# opened: the workflow comments on the main pull request instead, and the backport is done by hand.
+# The label also works when added after the merge.
+#
+# main and the release branch drift apart, so some fixes will not fit. If the cherry-pick conflicts,
+# the workflow opens the patch pull request as a draft with the conflict committed, and comments on
+# the main pull request with how to resolve it. A draft is never merged automatically: fix the
+# conflict on its branch, mark it ready and merge it by hand.
 #
 # With a GitHub App configured, the rest is automatic too. The fix was already reviewed on main, so
 # the patch pull request gets no second review: its CI starts by itself, and the workflow merges it
@@ -26,6 +30,10 @@ name: Backport Merged Pull Requests
 #
 # The App is set with the BACKPORT_APP_ID variable and the BACKPORT_APP_PRIVATE_KEY secret
 # (repository or organization level). It needs write access to contents and pull requests.
+#
+# To keep the App but stop the automatic merge, set the BACKPORT_AUTO_MERGE variable to "false". The
+# patch pull request is still opened and built; a person merges it. Use this once main has moved far
+# enough from the release branch that every patch should be looked at.
 #
 # Without the App, the patch pull request is opened with GITHUB_TOKEN. GitHub does not start CI on
 # it then, and nothing is merged automatically: close and reopen it to run CI, then merge it by hand.
@@ -145,7 +153,7 @@ jobs:
             > [!NOTE]
             > **Opened automatically** by the Backport Merged Pull Requests workflow, because #${pull_number} merged with a backport label for `${target_branch}`. Nobody has built or tested this branch yet.
             >
-            > ${{ steps.app.outputs.token && 'It merges by itself once its build passes. If the build fails, it stays open and a comment says why.' || 'CI does not start on its own. Close and reopen this pull request to run it, then merge it by hand.' }}
+            > ${{ steps.app.outputs.token && (vars.BACKPORT_AUTO_MERGE != 'false' && 'It merges by itself once its build passes. If the build fails, it stays open and a comment says why. A draft has a conflict to fix by hand first, and is never merged automatically.' || 'Its build starts by itself. Automatic merging is paused, so merge it by hand once the build is green.') || 'CI does not start on its own. Close and reopen this pull request to run it, then merge it by hand.' }}
 
             Backport of #${pull_number} to `${target_branch}`.
 
@@ -156,12 +164,19 @@ jobs:
           add_labels: Automated Backport
           # The author of the fix owns the backport, and any conflict in it.
           add_author_as_assignee: true
+          # A fix that does not fit the release branch still gets a pull request: a draft with the
+          # conflict committed, so the author starts from a branch instead of from nothing.
+          experimental: >
+            {"conflict_resolution": "draft_commit_conflicts"}
 
       # The fix was reviewed on main, so the patch pull request needs no second review. It does need
       # its own build, because the release branch holds older code. Wait for every CI run on the
       # patch commit, then merge only if all of them passed.
       - name: Merge the patch pull request once its build passes
-        if: steps.app.outputs.token != '' && steps.backport.outputs.created_pull_numbers != ''
+        if: >
+          steps.app.outputs.token != '' &&
+          steps.backport.outputs.created_pull_numbers != '' &&
+          vars.BACKPORT_AUTO_MERGE != 'false'
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           GH_REPO: ${{ github.repository }}
@@ -173,6 +188,11 @@ jobs:
         run: |
           not_merged=0
           for number in $PATCH_PULL_NUMBERS; do
+            # A draft holds a cherry-pick conflict. It is left for its author.
+            if [[ "$(gh pr view "$number" --json isDraft --jq .isDraft)" == "true" ]]; then
+              echo "Patch pull request #${number} is a draft with a conflict to fix by hand. Not merged."
+              continue
+            fi
             head_sha="$(gh pr view "$number" --json headRefOid --jq .headRefOid)"
             echo "Patch pull request #${number} at ${head_sha}: waiting for its build."
             sleep "$SETTLE_SECONDS"

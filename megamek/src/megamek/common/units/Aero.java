@@ -2596,6 +2596,11 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
 
     @Override
     public boolean isDmgHeavy() {
+        return isDmgHeavy(true);
+    }
+
+    @Override
+    public boolean isDmgHeavy(boolean checkCrew) {
         double armorPercent = getArmorRemainingPercent();
         if ((armorPercent <= 0.33) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Heavily Damaged: Armour Remaining percent of {} is less than or equal to 0.33.",
@@ -2607,7 +2612,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
                   getDisplayName(),
                   getInternalRemainingPercent());
             return true;
-        } else if ((getCrew() != null) && (getCrew().getHits() == 3)) {
+        } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 3)) {
             LOGGER.debug("{} Moderately Damaged: The crew has taken a minimum of three hits.", getDisplayName());
             return true;
         }
@@ -2630,6 +2635,11 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
 
     @Override
     public boolean isDmgModerate() {
+        return isDmgModerate(true);
+    }
+
+    @Override
+    public boolean isDmgModerate(boolean checkCrew) {
         double armorPercent = getArmorRemainingPercent();
         if ((armorPercent <= 0.5) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Moderately Damaged: Armour Remaining percent of {} is less than or equal to 0.50.",
@@ -2641,7 +2651,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
                   getDisplayName(),
                   getInternalRemainingPercent());
             return true;
-        } else if ((getCrew() != null) && (getCrew().getHits() == 2)) {
+        } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 2)) {
             LOGGER.debug("{} Moderately Damaged: The crew has taken a minimum of two hits.", getDisplayName());
             return true;
         }
@@ -2663,6 +2673,11 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
 
     @Override
     public boolean isDmgLight() {
+        return isDmgLight(true);
+    }
+
+    @Override
+    public boolean isDmgLight(boolean checkCrew) {
         double armorPercent = getArmorRemainingPercent();
         if ((armorPercent <= 0.75) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Lightly Damaged: Armour Remaining percent of {} is less than or equal to 0.75.",
@@ -2674,7 +2689,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
                   getDisplayName(),
                   getInternalRemainingPercent());
             return true;
-        } else if ((getCrew() != null) && (getCrew().getHits() == 1)) {
+        } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 1)) {
             LOGGER.debug("{} Lightly Damaged: The crew has taken a minimum of one hit.", getDisplayName());
             return true;
         }

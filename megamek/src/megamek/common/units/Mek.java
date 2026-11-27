@@ -6914,7 +6914,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public boolean isCrippled() {
-        return isCrippled(false);
+        return isCrippled(true);
     }
 
     @Override
@@ -6961,7 +6961,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             }
         }
 
-        if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
+        if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {
             LOGGER.debug("{} CRIPPLED: Pilot has taken 4+ damage.", getDisplayName());
             return true;
         }
@@ -7067,6 +7067,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public boolean isDmgHeavy() {
+        return isDmgHeavy(true);
+    }
+
+    @Override
+    public boolean isDmgHeavy(boolean checkCrew) {
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.33) {
             LOGGER.debug("{} HEAVY DAMAGE: Less than 1/3 head armor remaining", getDisplayName());
             return true;
@@ -7097,7 +7102,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return true;
         }
 
-        if ((getCrew() != null) && (getCrew().getHits() == 3)) {
+        if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 3)) {
             LOGGER.debug("{} Three crew hits", getDisplayName());
             return true;
         }
@@ -7123,6 +7128,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public boolean isDmgModerate() {
+        return isDmgModerate(true);
+    }
+
+    @Override
+    public boolean isDmgModerate(boolean checkCrew) {
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.67) {
             LOGGER.debug("{} MODERATE DAMAGE: Less than 2/3 head armor", getDisplayName());
             return true;
@@ -7138,7 +7148,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return true;
         }
 
-        if ((getCrew() != null) && (getCrew().getHits() == 2)) {
+        if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 2)) {
             LOGGER.debug("{} MODERATE DAMAGE: 2 crew hits", getDisplayName());
             return true;
         }
@@ -7165,6 +7175,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public boolean isDmgLight() {
+        return isDmgLight(true);
+    }
+
+    @Override
+    public boolean isDmgLight(boolean checkCrew) {
         if (getArmor(LOC_HEAD) < getOArmor(LOC_HEAD)) {
             LOGGER.debug("{} LIGHT DAMAGE: head armor damaged", getDisplayName());
             return true;
@@ -7175,7 +7190,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return true;
         }
 
-        if ((getCrew() != null) && (getCrew().getHits() == 1)) {
+        if (checkCrew && (getCrew() != null) && (getCrew().getHits() == 1)) {
             LOGGER.debug("{} LIGHT DAMAGE: crew hit", getDisplayName());
             return true;
         }

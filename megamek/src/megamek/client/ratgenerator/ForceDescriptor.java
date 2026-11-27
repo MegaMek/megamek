@@ -499,50 +499,31 @@ public class ForceDescriptor {
     }
 
     private List<ModelRecord> generateFormationUnits(List<ForceDescriptor> subs, int networkMask, int numGroups) {
-        // Collect the weight classes the force tree assigned to this formation's elements. Passing
-        // them to the formation builder keeps it within the lance's intended weight profile; left
-        // null it would pick any weight the FormationType itself allows (e.g. a light Mek in a
-        // Heavy/Assault Hunter lance).
-        Set<Integer> formationWeightClasses = new TreeSet<>();
-        for (ForceDescriptor sub : subs) {
-            if (sub.useWeightClass() && (sub.getWeightClass() != null)
-                  && (sub.getWeightClass() >= EntityWeightClass.WEIGHT_ULTRA_LIGHT)) {
-                formationWeightClasses.add(sub.getWeightClass());
-            }
-        }
-        Map<Parameters, Integer> paramCount = new HashMap<>();
-        for (ForceDescriptor sub : subs) {
-            paramCount.merge(new Parameters(sub.getFactionRec(),
-                  sub.getUnitType(),
-                  sub.getYear(),
-                  sub.ratGeneratorRating(),
-                  formationWeightClasses.isEmpty() ? null : formationWeightClasses,
-                  networkMask,
-                  sub.getMovementModes(),
-                  sub.getRoles(),
-                  0,
-                  sub.getFactionRec()), 1, Integer::sum);
-        }
-
+        // Each element asks for the weight class the force tree gave it, so an Assault, Heavy, Heavy, Heavy lance
+        // draws one assault and three heavy units. Left null the builder would pick any weight the FormationType
+        // allows (e.g. a light Mek in a Heavy/Assault Hunter lance); shared across the lance, every element could
+        // draw any of the lance's classes and a Heavy lance could come out all assault.
+        Set<Integer> pooledWeightClasses = FormationSlotWeights.pooledWeightClasses(subs);
+        boolean usePooled = false;
         List<Parameters> params = new ArrayList<>();
         List<Integer> numUnits = new ArrayList<>();
-        for (Map.Entry<Parameters, Integer> e : paramCount.entrySet()) {
-            params.add(e.getKey());
-            numUnits.add(e.getValue());
+        fillFormationRequest(subs, networkMask, pooledWeightClasses, false, params, numUnits);
+        List<MekSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
+        if (unitList.isEmpty() && FormationSlotWeights.canFallBackToPooled(pooledWeightClasses)) {
+            // No unit fits some element's own class. Share the lance's classes, as before, rather than lose the
+            // formation.
+            usePooled = true;
+            params.clear();
+            numUnits.clear();
+            fillFormationRequest(subs, networkMask, pooledWeightClasses, true, params, numUnits);
+            unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
         }
+        LOGGER.debug("[ForceGen][Formation] CALLER name='{}' formation='{}' pooledWeightClasses={} usePooled={}"
+                    + " requested={} -> got {} units: {}", parseName(), formationType.getName(), pooledWeightClasses,
+              usePooled, subs.size(), unitList.size(), unitList);
         // Check for amount of C3 equipment generated and if certain thresholds are met
         // regenerate the unit
         // with a valid network.
-        List<MekSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
-        LOGGER.debug(
-              "[ForceGen][Formation] CALLER name='{}' formation='{}' subWeightClasses={} requested={} -> got {} units: {}",
-              parseName(),
-              formationType.getName(),
-              formationWeightClasses,
-              subs.size(),
-              unitList.size(),
-              unitList.stream().map(mekSummary -> mekSummary.getName() + "(" + mekSummary.getWeightClass() + ")")
-                    .collect(java.util.stream.Collectors.joining(", ")));
         if (networkMask == ModelRecord.NETWORK_NONE) {
             int c3m = 0;
             int c3s = 0;
@@ -612,6 +593,12 @@ public class ForceDescriptor {
                 }
             }
         }
+        List<Integer> slotWeightClasses = new ArrayList<>(subs.size());
+        for (ForceDescriptor sub : subs) {
+            slotWeightClasses.add(FormationSlotWeights.ownWeightClass(sub));
+        }
+        unitList = FormationSlotWeights.alignToSlots(slotWeightClasses, unitList);
+        logFormationWeights(subs, pooledWeightClasses, usePooled, unitList);
         logReconFormation(subs, unitList);
         return unitList.stream()
               .map(mekSummary -> RATGenerator.getInstance().getModelRecord(mekSummary.getName()))
@@ -649,6 +636,67 @@ public class ForceDescriptor {
         }
         LOGGER.info("[ForceGen][Recon] '{}' formation={} faction={} year={} weightClass={} -> {}",
               parseName(), formationType.getName(), faction, year, getWeightClassCode(), units);
+    }
+
+    /**
+     * Builds the formation builder's request: one {@link Parameters} per distinct set of inputs, with how many
+     * elements share it, in element order.
+     *
+     * @param subs                the formation's elements
+     * @param networkMask         the C3 network requirement
+     * @param pooledWeightClasses every weight class in the formation
+     * @param usePooled           {@code true} to give every element the pooled classes instead of its own
+     * @param params              filled with the parameter sets
+     * @param numUnits            filled with how many elements use each parameter set, parallel to {@code params}
+     */
+    private void fillFormationRequest(List<ForceDescriptor> subs, int networkMask, Set<Integer> pooledWeightClasses,
+          boolean usePooled, List<Parameters> params, List<Integer> numUnits) {
+        Map<Parameters, Integer> paramCount = new LinkedHashMap<>();
+        for (ForceDescriptor sub : subs) {
+            paramCount.merge(new Parameters(sub.getFactionRec(),
+                  sub.getUnitType(),
+                  sub.getYear(),
+                  sub.ratGeneratorRating(),
+                  FormationSlotWeights.requestedWeightClasses(sub, pooledWeightClasses, usePooled),
+                  networkMask,
+                  sub.getMovementModes(),
+                  sub.getRoles(),
+                  0,
+                  sub.getFactionRec()), 1, Integer::sum);
+        }
+        for (Map.Entry<Parameters, Integer> entry : paramCount.entrySet()) {
+            params.add(entry.getKey());
+            numUnits.add(entry.getValue());
+        }
+    }
+
+    /**
+     * Logs the weight classes a formation's elements asked for and the units they got, so a playtest can check from
+     * the log alone that a Heavy lance drew heavy units. One line per formation.
+     *
+     * @param subs                the formation's elements
+     * @param pooledWeightClasses every weight class in the formation
+     * @param usePooled           whether the elements had to share the pooled classes
+     * @param unitList            the units drawn, in element order
+     */
+    private void logFormationWeights(List<ForceDescriptor> subs, Set<Integer> pooledWeightClasses, boolean usePooled,
+          List<MekSummary> unitList) {
+        StringJoiner slots = new StringJoiner(",");
+        for (ForceDescriptor sub : subs) {
+            slots.add(sub.getWeightClassCode());
+        }
+        StringJoiner units = new StringJoiner(", ");
+        for (MekSummary mekSummary : unitList) {
+            units.add(mekSummary.getName() + " (" + Math.round(mekSummary.getTons()) + "t)");
+        }
+        String request;
+        if (usePooled) {
+            request = "nothing fit each slot's own class; shared " + FormationSlotWeights.describe(pooledWeightClasses);
+        } else {
+            request = "each slot drew its own class";
+        }
+        LOGGER.info("[ForceGen][Weights] '{}' formation={} slots={} -> {} -> {}", parseName(),
+              formationType.getName(), slots, request, unitList.isEmpty() ? "no units" : units);
     }
 
     /**

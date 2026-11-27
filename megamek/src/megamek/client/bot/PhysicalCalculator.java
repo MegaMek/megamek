@@ -296,7 +296,8 @@ public final class PhysicalCalculator {
                 continue;
             }
 
-            if (honorUtil.isEnemyBroken(entity.getId(), entity.getOwnerId(), behaviorSettings.isForcedWithdrawal())) {
+            // Don't strike a crippled or surrendered enemy, unless its owner has already dishonored themselves
+            if (honorUtil.isEnemyBroken(target.getId(), target.getOwnerId(), behaviorSettings.isForcedWithdrawal())) {
                 continue;
             }
 

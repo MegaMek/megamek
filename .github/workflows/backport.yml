@@ -17,10 +17,18 @@ name: Backport Merged Pull Requests
 #
 # The label also works when added after the merge. If the cherry-pick conflicts, no pull request is
 # opened: the workflow comments on the main pull request instead, and the backport is done by hand.
-# Nothing is merged automatically; the patch pull request is reviewed like any other.
 #
-# The patch pull request is opened with GITHUB_TOKEN, so GitHub does not start CI on it. To run CI,
-# close and reopen it. A GitHub App token would remove that step (see the action's README).
+# With a GitHub App configured, the rest is automatic too. The fix was already reviewed on main, so
+# the patch pull request gets no second review: its CI starts by itself, and the workflow merges it
+# once every CI run on it has passed. The build is the one check that is not a repeat, because the
+# release branch holds older code than main. If the build fails, the patch pull request stays open
+# and a comment on it says why.
+#
+# The App is set with the BACKPORT_APP_ID variable and the BACKPORT_APP_PRIVATE_KEY secret
+# (repository or organization level). It needs write access to contents and pull requests.
+#
+# Without the App, the patch pull request is opened with GITHUB_TOKEN. GitHub does not start CI on
+# it then, and nothing is merged automatically: close and reopen it to run CI, then merge it by hand.
 #
 # pull_request_target gives the token write access when the main pull request came from a fork. The
 # workflow only cherry-picks the merged commit; it never builds or runs the pull request's code.
@@ -50,8 +58,39 @@ jobs:
           (github.event.label.name == 'Backport' || startsWith(github.event.label.name, 'backport ')))
       )
     runs-on: ubuntu-latest
+    # Long enough to wait for the patch pull request's build before merging it.
+    timeout-minutes: 120
 
     steps:
+      # Secrets cannot be read in an "if", so this step turns "is the App set up?" into an output.
+      - name: Check for the backport App
+        id: app_config
+        env:
+          APP_ID: ${{ vars.BACKPORT_APP_ID }}
+          APP_KEY_PRESENT: ${{ secrets.BACKPORT_APP_PRIVATE_KEY != '' }}
+        run: |
+          if [[ -n "$APP_ID" && "$APP_KEY_PRESENT" == "true" ]]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No backport App is configured. The patch pull request will need a close and reopen to start CI, and a merge by hand."
+          fi
+
+      # A pull request opened with the App's token starts CI like one a person opened. The token only
+      # reaches this repository. If it cannot be made, the workflow carries on with GITHUB_TOKEN.
+      - name: Get a token for the backport App
+        id: app
+        if: steps.app_config.outputs.ready == 'true'
+        continue-on-error: true
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.BACKPORT_APP_ID }}
+          private-key: ${{ secrets.BACKPORT_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+          permission-pull-requests: write
+
       # The title only reaches the shell through an environment variable.
       - name: Build the (PATCH) title
         id: title
@@ -88,10 +127,15 @@ jobs:
 
       - name: Check out the repository
         uses: actions/checkout@v7
+        with:
+          # The backport branch is pushed with this token.
+          token: ${{ steps.app.outputs.token || github.token }}
 
       - name: Open the patch pull request
+        id: backport
         uses: korthout/backport-action@v5
         with:
+          github_token: ${{ steps.app.outputs.token || github.token }}
           pull_title: ${{ steps.title.outputs.patch_title }}
           # The "Backport" label means the current release branch. A "backport <branch>" label names
           # its own branch, and the action reads those by itself.
@@ -101,7 +145,7 @@ jobs:
             > [!NOTE]
             > **Opened automatically** by the Backport Merged Pull Requests workflow, because #${pull_number} merged with a backport label for `${target_branch}`. Nobody has built or tested this branch yet.
             >
-            > CI does not start on its own. Close and reopen this pull request to run it.
+            > ${{ steps.app.outputs.token && 'It merges by itself once its build passes. If the build fails, it stays open and a comment says why.' || 'CI does not start on its own. Close and reopen this pull request to run it, then merge it by hand.' }}
 
             Backport of #${pull_number} to `${target_branch}`.
 
@@ -112,3 +156,60 @@ jobs:
           add_labels: Automated Backport
           # The author of the fix owns the backport, and any conflict in it.
           add_author_as_assignee: true
+
+      # The fix was reviewed on main, so the patch pull request needs no second review. It does need
+      # its own build, because the release branch holds older code. Wait for every CI run on the
+      # patch commit, then merge only if all of them passed.
+      - name: Merge the patch pull request once its build passes
+        if: steps.app.outputs.token != '' && steps.backport.outputs.created_pull_numbers != ''
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          PATCH_PULL_NUMBERS: ${{ steps.backport.outputs.created_pull_numbers }}
+          # Time for GitHub to start the CI runs before the first look at them.
+          SETTLE_SECONDS: 120
+          POLL_SECONDS: 60
+          WAIT_MINUTES: 90
+        run: |
+          not_merged=0
+          for number in $PATCH_PULL_NUMBERS; do
+            head_sha="$(gh pr view "$number" --json headRefOid --jq .headRefOid)"
+            echo "Patch pull request #${number} at ${head_sha}: waiting for its build."
+            sleep "$SETTLE_SECONDS"
+
+            deadline=$(( $(date +%s) + WAIT_MINUTES * 60 ))
+            result="did not finish within ${WAIT_MINUTES} minutes"
+            while (( $(date +%s) < deadline )); do
+              # One line for each CI workflow on the patch commit: "<status> <conclusion> <name>".
+              # Only the newest run of a workflow counts, so a re-run replaces the run before it.
+              runs="$(gh run list --commit "$head_sha" --event pull_request --limit 50 \
+                --json status,conclusion,name,createdAt \
+                --jq 'group_by(.name) | map(max_by(.createdAt)) | .[] | "\(.status) \(.conclusion) \(.name)"' || true)"
+              if [[ -z "$runs" ]] || grep -q -v '^completed ' <<< "$runs"; then
+                sleep "$POLL_SECONDS"
+                continue
+              fi
+              failed_runs="$(grep -v -E '^completed (success|skipped|neutral) ' <<< "$runs" \
+                | sed -E 's/^completed [a-z_]* //' | paste -sd ',' - || true)"
+              if [[ -n "$failed_runs" ]]; then
+                result="failed (${failed_runs})"
+              else
+                result="passed"
+              fi
+              break
+            done
+
+            if [[ "$result" == "passed" ]]; then
+              # Refused if anyone pushed to the branch after the build that was checked.
+              if gh pr merge "$number" --merge --delete-branch --match-head-commit "$head_sha"; then
+                echo "Merged patch pull request #${number}."
+                continue
+              fi
+              result="passed, but the merge was refused"
+            fi
+
+            echo "::error::Patch pull request #${number} was not merged: its build ${result}."
+            gh pr comment "$number" --body "Not merged automatically: the build ${result}. This pull request stays open. Fix the branch and merge it by hand, or close it." || true
+            not_merged=1
+          done
+          exit "$not_merged"

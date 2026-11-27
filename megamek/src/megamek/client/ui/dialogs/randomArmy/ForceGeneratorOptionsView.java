@@ -143,6 +143,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JComboBox<InfantryClass> cbInfantryClass;
     private JLabel lblWeightClass;
     private JCheckBox chkDetachments;
+    private JCheckBox chkNoSalvage;
     private JPanel panGenerateOptions;
 
     private final DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>(Messages.getString(
@@ -627,6 +628,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // Turning detachments off withdraws the aerospace and infantry formations, so the editor has to be rebuilt.
         chkDetachments.addActionListener(this);
         panGenerateOptions.add(chkDetachments);
+        chkNoSalvage = new JCheckBox(Messages.getString("ForceGeneratorDialog.noSalvage"));
+        chkNoSalvage.setToolTipText(Messages.getString("ForceGeneratorDialog.noSalvage.tooltip"));
+        panGenerateOptions.add(chkNoSalvage);
         // Behind a button rather than inline: which formations a force offers depends on the selections above, so
         // the list is a couple of dozen rows that would crowd out everything else on an already dense panel.
         btnFormationMix = new JButton(Messages.getString("ForceGeneratorDialog.formationMix.button"));
@@ -1117,6 +1121,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
         fd.setInfantryClass(selectedInfantryClass());
         fd.setAttachments(chkDetachments.isSelected());
+        fd.setSalvageExcluded(chkNoSalvage.isSelected());
         panMissionRoleFilters.applyTo(fd, forceDesc.getUnitType());
 
         // Internal storage uses fraction (0.0–N.0+); the textbox shows percentage (0–N00).
@@ -2731,6 +2736,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         chkDetachments.setSelected(selected);
         refreshInlineFormationMixEditor();
         fireSelectionListeners();
+    }
+
+    /** @return {@code true} if units are generated with no other faction's salvage mixed in */
+    public boolean isNoSalvageSelected() {
+        return chkNoSalvage.isSelected();
+    }
+
+    /** @param selected {@code true} to generate every unit from the faction's own tables, with no salvage */
+    public void setNoSalvageSelected(boolean selected) {
+        chkNoSalvage.setSelected(selected);
     }
 
     /** Opens the formation mix editor for the force the current selections describe, as its button does. */

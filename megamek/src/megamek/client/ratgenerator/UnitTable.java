@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -193,17 +194,63 @@ public class UnitTable {
         return retVal;
     }
 
+    /** Empties the table cache, so the next lookup builds each table again from the current faction data. */
+    static synchronized void clearCache() {
+        cache.clear();
+    }
+
+    /** Set while a generation that asked for no salvage is running on this thread. */
+    private static final ThreadLocal<Boolean> SALVAGE_EXCLUDED = ThreadLocal.withInitial(() -> false);
+
+    /**
+     * Runs work with salvage turned off: every unit drawn from any table on this thread meanwhile comes from the
+     * table's own faction. Nested calls are fine; salvage stays off until the outermost one returns.
+     *
+     * @param work the generation to run
+     * @param <T>  what the work returns
+     *
+     * @return what the work returned
+     */
+    public static <T> T callWithoutSalvage(Supplier<T> work) {
+        if (SALVAGE_EXCLUDED.get()) {
+            return work.get();
+        }
+        SALVAGE_EXCLUDED.set(true);
+        try {
+            return work.get();
+        } finally {
+            SALVAGE_EXCLUDED.set(false);
+        }
+    }
+
+    /**
+     * Runs work with salvage turned off, as {@link #callWithoutSalvage(Supplier)} does.
+     *
+     * @param work the generation to run
+     */
+    public static void runWithoutSalvage(Runnable work) {
+        callWithoutSalvage(() -> {
+            work.run();
+            return null;
+        });
+    }
+
+    /** @return {@code true} while salvage is turned off on this thread */
+    public static boolean isSalvageExcluded() {
+        return SALVAGE_EXCLUDED.get();
+    }
+
     private final Parameters key;
-    private final List<TableEntry> salvageTable = new ArrayList<>();
     private final List<TableEntry> unitTable = new ArrayList<>();
 
-    int salvageTotal;
     int unitTotal;
-    /*
-     * Filtering can reduce the total weight of the units. Calculate the salvage pct
-     * when
-     * creating the table to maintain the same proportion.
-     */ int salvagePct;
+    /** The chance, from 0 to 100, that a drawn unit is replaced by another faction's salvage. */
+    private double salvagePercent;
+    /**
+     * Where salvage comes from, by relative weight. A source whose table turns out to have no units is dropped, so
+     * later draws do not keep trying it.
+     */
+    private final Map<FactionRecord, Double> salvageSources = new LinkedHashMap<>();
 
     /**
      * Initializes table based on restrictions provided by a Parameters object
@@ -234,18 +281,16 @@ public class UnitTable {
                             key.getDeployingFaction());
                 Collections.sort(table);
 
-                table.forEach(te -> {
-                    if (te.isUnit()) {
-                        unitTotal += te.weight;
-                        unitTable.add(te);
-                    } else {
-                        salvageTotal += te.weight;
-                        salvageTable.add(te);
+                for (TableEntry entry : table) {
+                    if (entry.isUnit()) {
+                        unitTotal += entry.weight;
+                        unitTable.add(entry);
                     }
-                });
-                if (salvageTotal + unitTotal > 0) {
-                    salvagePct = salvageTotal * 100 / (salvageTotal + unitTotal);
                 }
+                SalvageChance salvageChance = RATGenerator.getInstance()
+                      .getSalvageChance(key.getFaction(), key.getYear());
+                salvagePercent = salvageChance.percent();
+                salvageSources.putAll(salvageChance.factionWeights());
             }
         } else {
             LOGGER.warn("key.getFaction() returned null; likely faction lookup error");
@@ -257,7 +302,15 @@ public class UnitTable {
      */
 
     public int getNumEntries() {
-        return salvageTable.size() + unitTable.size();
+        return unitTable.size();
+    }
+
+    /**
+     * @return the chance that a drawn unit is salvage, and the factions it comes from; sources found to have no units
+     *       for this table's parameters are left out
+     */
+    public synchronized SalvageChance getSalvageChance() {
+        return new SalvageChance(salvagePercent, salvageSources);
     }
 
     /**
@@ -267,10 +320,7 @@ public class UnitTable {
      */
     private TableEntry getEntry(int index) {
         try {
-            if (index < salvageTable.size()) {
-                return salvageTable.get(index);
-            }
-            return unitTable.get(index - salvageTable.size());
+            return unitTable.get(index);
         } catch (IndexOutOfBoundsException e) {
             // Can't log from a static context
         }
@@ -293,15 +343,7 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getEntryText(int index) {
-        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
-            return unitTable.get(index - salvageTable.size()).getUnitEntry().getName();
-        } else {
-            if (key.getFaction().isClan()) {
-                return "Isorla: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
-            } else {
-                return "Salvage: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
-            }
-        }
+        return unitTable.get(index).getUnitEntry().getName();
     }
 
     /**
@@ -310,11 +352,7 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getTechBase(int index) {
-        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
-            return unitTable.get(index - salvageTable.size()).getUnitEntry().isClan() ? "Clan" : "IS";
-        } else {
-            return key.getFaction().isClan() ? "Clan" : "IS";
-        }
+        return unitTable.get(index).getUnitEntry().isClan() ? "Clan" : "IS";
     }
 
     /**
@@ -323,23 +361,17 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getUnitRole(int index) {
-        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
-            return unitTable.get(index - salvageTable.size()).getUnitEntry().getRole().toString();
-        } else {
-            return "";
-        }
+        return unitTable.get(index).getUnitEntry().getRole().toString();
     }
 
     /**
      * @param index of the {@link MekSummary}
      *
-     * @return - the MekSummary entry for the indicated index, or null if this is a salvage entry
+     * @return - the MekSummary entry for the indicated index, or {@code null} if there is no entry at that index
      */
-    public MekSummary getMekSummary(int index) {
-        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
-            return unitTable.get(index - salvageTable.size()).getUnitEntry();
-        }
-        return null;
+    public @Nullable MekSummary getMekSummary(int index) {
+        TableEntry entry = getEntry(index);
+        return (entry != null) ? entry.getUnitEntry() : null;
     }
 
     /**
@@ -365,14 +397,11 @@ public class UnitTable {
     /**
      * @param index of the BV
      *
-     * @return - the BV of the unit at the indicated index, or 0 if this is a salvage entry
+     * @return - the BV of the unit at the indicated index, or 0 if there is no entry at that index
      */
     public int getBV(int index) {
-        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
-            return unitTable.get(index - salvageTable.size()).getUnitEntry().getBV();
-        } else {
-            return 0;
-        }
+        TableEntry entry = getEntry(index);
+        return (entry != null) ? entry.getUnitEntry().getBV() : 0;
     }
 
     /**
@@ -412,14 +441,26 @@ public class UnitTable {
      * @return the selected unit, or null if no units pass the filter
      */
     private @Nullable MekSummary generateUnit(@Nullable UnitFilter filter, List<MekSummary> drawnThisCall) {
-        int roll = Compute.randomInt(100);
-        if (roll < salvagePct) {
-            MekSummary ms = generateSalvage(filter, drawnThisCall);
-            if (ms != null) {
-                return ms;
+        if (rollsSalvage()) {
+            MekSummary salvagedUnit = generateSalvage(filter, drawnThisCall);
+            if (salvagedUnit != null) {
+                return salvagedUnit;
             }
         }
         return drawFromOwnTable(filter, drawnThisCall);
+    }
+
+    /** @return {@code true} if this draw is to be salvage: salvage is allowed and the chance roll succeeds */
+    private boolean rollsSalvage() {
+        if (isSalvageExcluded() || (salvagePercent <= 0.0)) {
+            return false;
+        }
+        synchronized (this) {
+            if (salvageSources.isEmpty()) {
+                return false;
+            }
+        }
+        return Compute.randomFloat() * 100.0 < salvagePercent;
     }
 
     /**
@@ -538,47 +579,65 @@ public class UnitTable {
     }
 
     /**
-     * Selects a faction from the salvage list and generates a table using the same parameters as this table, but from
-     * five years earlier. Generated tables are cached for later use. If the generated table contains no units, it is
-     * discarded and the selected entry is deleted. This continues until either a unit is generated or there are no
-     * remaining entries.
+     * Picks a faction from the salvage sources by weight and draws from its table, built with the same parameters as
+     * this one but five years earlier. The draw comes from that faction's own units only, so salvage never chains on to
+     * a third faction. A source whose table has no units is dropped and another is picked, until a source with units
+     * is found or none are left.
      *
-     * @param filter - passed to generateUnit() in the generated table.
+     * @param filter        passed on to the draw from the salvage faction's table
+     * @param drawnThisCall units already drawn earlier in the same multi-unit draw
      *
-     * @return - a unit generated from another faction, or null if none of the factions in the salvage list contain any
-     *       units that meet the parameters.
+     * @return a unit of another faction, or {@code null} if no source has units that meet the parameters and filter
      */
     private @Nullable MekSummary generateSalvage(@Nullable UnitFilter filter, List<MekSummary> drawnThisCall) {
-        while (salvageTotal > 0) {
-            int roll = Compute.randomInt(salvageTotal);
-            TableEntry salvageEntry = null;
-            for (TableEntry te : salvageTable) {
-                if (roll < te.weight) {
-                    salvageEntry = te;
-                    break;
-                }
-                roll -= te.weight;
+        FactionRecord source;
+        while ((source = pickSalvageSource()) != null) {
+            UnitTable salvage = UnitTable.findTable(source,
+                  key.getUnitType(),
+                  key.getYear() - 5,
+                  key.getRating(),
+                  key.getWeightClasses(),
+                  key.getNetworkMask(),
+                  key.getMovementModes(),
+                  key.getRoles(),
+                  key.getRoleStrictness(),
+                  key.getFaction());
+            if (salvage.hasUnits()) {
+                MekSummary salvagedUnit = salvage.drawFromOwnTable(filter, drawnThisCall);
+                LOGGER.debug("[ForceGen][Salvage] {}: drew {} from {} salvage", key.getFaction().getKey(),
+                      (salvagedUnit == null) ? "nothing that passes the filter" : salvagedUnit.getName(),
+                      source.getKey());
+                return salvagedUnit;
             }
-            if (salvageEntry != null) {
-                UnitTable salvage = UnitTable.findTable(salvageEntry.getSalvageFaction(),
-                      key.getUnitType(),
-                      key.getYear() - 5,
-                      key.getRating(),
-                      key.getWeightClasses(),
-                      key.getNetworkMask(),
-                      key.getMovementModes(),
-                      key.getRoles(),
-                      key.getRoleStrictness(),
-                      key.getFaction());
-                if (salvage.hasUnits()) {
-                    return salvage.generateUnit(filter, drawnThisCall);
-                } else {
-                    salvageTotal -= salvageEntry.weight;
-                    salvageTable.remove(salvageEntry);
-                }
+            LOGGER.debug("[ForceGen][Salvage] {}: {} has no units for this table; dropped as a salvage source",
+                  key.getFaction().getKey(), source.getKey());
+            synchronized (this) {
+                salvageSources.remove(source);
             }
         }
         return null;
+    }
+
+    /** @return a salvage source picked by weight, or {@code null} if there are none left */
+    private synchronized @Nullable FactionRecord pickSalvageSource() {
+        double total = 0.0;
+        for (double weight : salvageSources.values()) {
+            total += weight;
+        }
+        if (total <= 0.0) {
+            return null;
+        }
+        double roll = Compute.randomFloat() * total;
+        FactionRecord last = null;
+        for (Map.Entry<FactionRecord, Double> entry : salvageSources.entrySet()) {
+            last = entry.getKey();
+            if (roll < entry.getValue()) {
+                return last;
+            }
+            roll -= entry.getValue();
+        }
+        // Rounding can leave the roll a hair past the last weight.
+        return last;
     }
 
     /*

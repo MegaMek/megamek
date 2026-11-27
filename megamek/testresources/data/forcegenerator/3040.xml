@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+-->
+<!-- Earlier era for UnitTableSalvageTest. Salvage is drawn from the source's table five years back, so a salvage
+     draw that chained on to a second faction would reach into this era. -->
+<ratgen>
+    <factions>
+        <faction key='LA'>
+            <salvage pct='0'></salvage>
+        </faction>
+        <faction key='MRG'>
+            <salvage pct='0'></salvage>
+        </faction>
+    </factions>
+    <units>
+        <chassis name='Archer' unitType='Mek'>
+            <availability>LA:6,MRG:0</availability>
+            <model name='ARC-2R'>
+                <availability>General:6</availability>
+            </model>
+        </chassis>
+        <chassis name='Atlas' unitType='Mek'>
+            <availability>LA:8,MRG:8</availability>
+            <model name='AS7-D'>
+                <availability>General:5</availability>
+            </model>
+        </chassis>
+    </units>
+</ratgen>

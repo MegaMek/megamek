@@ -5692,8 +5692,13 @@ public class TWGameManager extends AbstractGameManager {
         if (motiveDamage && isGroundVehicle) {
             addReport(vehicleMotiveDamage((Tank) entity, motiveDamageMod));
         }
+        if (turnEnds) {
+            // The hexes already moved still count toward the target movement modifier; the move handler reads
+            // this back when the result ends movement (TO:AR p.24)
+            entity.delta_distance = distance;
+        }
         if (skid && !entity.isDoomed()) {
-            // Preserve pre-skid movement distance for TMM and charge damage calculations
+            // Charge damage from a skid collision uses the pre-skid movement distance
             entity.delta_distance = distance - 1;
 
             if (!flip && isGroundVehicle) {
@@ -5709,12 +5714,16 @@ public class TWGameManager extends AbstractGameManager {
                   entity.getMovementMode() == EntityMovementMode.WIGE) {
                 skidDistance = Math.min(marginOfFailure, distance);
             }
+            int hexesSkidded = 0;
             if (skidDistance > 0) {
                 int skidDirection = prevStep.getFacing();
                 if (isBackwards) {
                     skidDirection = (skidDirection + 3) % 6;
                 }
-                processSkid(entity,
+                // The stored position may still be the start of the move, so a skid that never leaves its first
+                // hex shows as no change in position rather than as a hex count
+                Coords positionBeforeSkid = entity.getPosition();
+                boolean removedFromPlay = processSkid(entity,
                       curPos,
                       prevStep.getElevation(),
                       skidDirection,
@@ -5722,7 +5731,21 @@ public class TWGameManager extends AbstractGameManager {
                       prevStep,
                       lastStepMoveType,
                       flip);
+                Coords positionAfterSkid = entity.getPosition();
+                boolean skidMovedTheUnit = !removedFromPlay
+                      && (positionAfterSkid != null)
+                      && !positionAfterSkid.equals(positionBeforeSkid);
+                if (skidMovedTheUnit) {
+                    // A skid runs in a straight line from curPos, so the hexes between are the hexes skidded
+                    hexesSkidded = curPos.distance(positionAfterSkid);
+                }
             }
+            // Hexes moved and hexes skidded both count toward the target movement modifier (TW p.62)
+            entity.delta_distance = distance + hexesSkidded;
+        }
+        if (turnEnds) {
+            LOGGER.debug("[FailedManeuver] {}: movement ends after {} hexes moved; {} hexes count toward TMM",
+                  entity.getShortName(), distance, entity.delta_distance);
         }
         return turnEnds;
     }

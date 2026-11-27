@@ -3490,7 +3490,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (mof > 0) {
                     // If the bootlegger maneuver fails, we treat it as a turn in a random
                     // direction.
-                    gameManager.processFailedVehicleManeuver(entity,
+                    boolean failureEndsMovement = gameManager.processFailedVehicleManeuver(entity,
                                                              curPos,
                                                              Compute.d6() < 4 ? -1 : 1,
                                                              (prevStep == null) ? step : prevStep,
@@ -3499,6 +3499,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                              distance,
                                                              2,
                                                              mof);
+                    if (failureEndsMovement) {
+                        // Keep the hexes moved and skidded for the target movement modifier
+                        distance = entity.delta_distance;
+                    }
                     curFacing = entity.getFacing();
                     curPos = entity.getPosition();
                     break;

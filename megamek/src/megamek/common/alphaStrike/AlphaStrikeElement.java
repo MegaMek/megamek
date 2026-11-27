@@ -166,7 +166,16 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
 
     @Override
     public UnitRole getRole() {
+        UnitRole roleOverride = getRoleOverride();
+        return roleOverride.hasRole() ? roleOverride : UnitRole.bestRoleFor(this);
+    }
+
+    public UnitRole getRoleOverride() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    public boolean hasRoleOverride() {
+        return getRoleOverride() != UnitRole.UNDETERMINED;
     }
 
     /**
@@ -376,7 +385,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * Sets the AS element's battlefield role (ROLE).
      */
     public void setRole(UnitRole newRole) {
-        role = newRole;
+        role = (newRole == null) ? UnitRole.UNDETERMINED : newRole;
     }
 
     /**

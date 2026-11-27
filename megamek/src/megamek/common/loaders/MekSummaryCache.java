@@ -37,6 +37,7 @@ package megamek.common.loaders;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -473,6 +474,105 @@ public class MekSummaryCache {
         done();
     }
 
+    /**
+     * The folders the unit list reads besides the official units folder: the internal user data folder, the user
+     * directory set in the client settings, and the units folder of each story arc. Only folders that exist are
+     * listed.
+     *
+     * @return the user unit folders, in the order they are read
+     */
+    private static List<File> getUserUnitFolders() {
+        List<File> folders = new ArrayList<>();
+        File userDataUnits = new File(Configuration.userDataDir(), Configuration.unitsDir().toString());
+        if (userDataUnits.isDirectory()) {
+            folders.add(userDataUnits);
+        }
+
+        String userDirectory = PreferenceManager.getClientPreferences().getUserDir();
+        File userDirectoryFolder = new File(userDirectory, "");
+        if (!userDirectory.isBlank() && userDirectoryFolder.isDirectory()) {
+            folders.add(userDirectoryFolder);
+        }
+
+        File storyArcsDir = Configuration.storyArcsDir();
+        File[] storyArcs = storyArcsDir.isDirectory() ? storyArcsDir.listFiles() : null;
+        if (storyArcs != null) {
+            for (File storyArc : storyArcs) {
+                File storyArcUnitsDir = new File(storyArc.getPath() + "/data/mekfiles");
+                if (storyArc.isDirectory() && storyArcUnitsDir.isDirectory()) {
+                    folders.add(storyArcUnitsDir);
+                }
+            }
+        }
+        return folders;
+    }
+
+    /**
+     * @param folderName the name of a folder inside a unit folder
+     *
+     * @return {@code true} if the unit list never reads that folder: "unsupported" holds units with features MegaMek
+     *       does not have yet, ".mml_tmp" holds MegaMekLab's backups of unsaved work, and "_svn" and ".svn" are
+     *       Subversion work folders
+     */
+    private static boolean isSkippedFolder(String folderName) {
+        return folderName.equalsIgnoreCase("unsupported")
+              || folderName.equalsIgnoreCase(".mml_tmp")
+              || folderName.equalsIgnoreCase("_svn")
+              || folderName.equalsIgnoreCase(".svn");
+    }
+
+    /**
+     * Tells whether a unit file saved at the given place would be read into the unit list, so a program that saves a
+     * design and then looks it up by name, as a MekHQ refit does, can refuse a place the list never reads before it
+     * saves. The file itself need not exist yet. Unofficial units are counted as read, as they are when the list is
+     * loaded with unofficial units included.
+     *
+     * @param unitFile where the unit file is or would be saved
+     *
+     * @return {@code true} if the file is inside the official units folder or one of the user unit folders, and not
+     *       inside a folder the unit list skips
+     */
+    public static boolean isInUnitListFolder(File unitFile) {
+        Path filePath;
+        try {
+            filePath = unitFile.getCanonicalFile().toPath();
+        } catch (IOException exception) {
+            logger.warn(exception, "Could not resolve {}, so it is not counted as in a unit folder", unitFile);
+            return false;
+        }
+
+        List<File> unitFolders = new ArrayList<>();
+        unitFolders.add(Configuration.unitsDir());
+        unitFolders.addAll(getUserUnitFolders());
+        for (File unitFolder : unitFolders) {
+            Path folderPath;
+            try {
+                folderPath = unitFolder.getCanonicalFile().toPath();
+            } catch (IOException exception) {
+                logger.warn(exception, "Could not resolve the unit folder {}", unitFolder);
+                continue;
+            }
+            if (filePath.startsWith(folderPath) && !isInsideSkippedFolder(folderPath, filePath)) {
+                return true;
+            }
+        }
+        logger.debug("{} is not inside any folder the unit list reads", filePath);
+        return false;
+    }
+
+    private static boolean isInsideSkippedFolder(Path unitFolder, Path filePath) {
+        Path foldersBetween = unitFolder.relativize(filePath).getParent();
+        if (foldersBetween == null) {
+            return false;
+        }
+        for (Path folder : foldersBetween) {
+            if (isSkippedFolder(folder.toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void checkForChanges(boolean ignoreUnofficial, Vector<MekSummary> vMeks,
           Set<String> sKnownFiles, long lLastCheck) {
         // load any changes since the last check time
@@ -482,34 +582,8 @@ public class MekSummaryCache {
         // Official units are in the internal dir, not in the user dirs or story arcs
         // dir
         if (!ignoreUnofficial) {
-            // load units from the MM internal user data dir
-            File userDataUnits = new File(Configuration.userDataDir(), Configuration.unitsDir().toString());
-            if (userDataUnits.isDirectory()) {
-                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits, false);
-            }
-
-            // load units from the external user data dir
-            String userDir = PreferenceManager.getClientPreferences().getUserDir();
-            File userDataUnits2 = new File(userDir, "");
-            if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
-                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits2, false);
-            }
-
-            // load units from story arcs
-            File storyArcsDir = Configuration.storyArcsDir();
-            if (storyArcsDir.exists() && storyArcsDir.isDirectory()) {
-                File[] storyArcsFiles = storyArcsDir.listFiles();
-                if (storyArcsFiles != null) {
-                    for (File file : storyArcsFiles) {
-                        if (file.isDirectory()) {
-                            File storyArcUnitsDir = new File(file.getPath() + "/data/mekfiles");
-                            if (storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
-                                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, storyArcUnitsDir,
-                                      false);
-                            }
-                        }
-                    }
-                }
+            for (File userUnitFolder : getUserUnitFolders()) {
+                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userUnitFolder, false);
             }
         }
 
@@ -1199,21 +1273,13 @@ public class MekSummaryCache {
                     continue;
                 }
                 if (f.isDirectory()) {
-                    if (f.getName().equalsIgnoreCase("unsupported") || f.getName().equalsIgnoreCase(".mml_tmp")) {
-                        // Meks in "unsupported" are ignored because
-                        // they have features not implemented in MM yet.
-                        //
-                        // Meks in ".mml_tmp" are created by MML to back up unsaved work,
-                        // and should only be loaded by the MML unit recovery process.
+                    // Units in ".mml_tmp" should only be loaded by the MegaMekLab unit recovery process
+                    if (isSkippedFolder(f.getName())) {
                         continue;
                     } else if (f.getName().equalsIgnoreCase("unofficial") && ignoreUnofficial) {
                         // Meks in this directory are ignored because
                         // they are unofficial, and we don't want those right
                         // now.
-                        continue;
-                    } else if (f.getName().equalsIgnoreCase("_svn")
-                          || f.getName().equalsIgnoreCase(".svn")) {
-                        // This is a Subversion work directory. Let's ignore it.
                         continue;
                     }
                     // recursion is fun

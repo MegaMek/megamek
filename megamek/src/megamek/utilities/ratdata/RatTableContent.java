@@ -38,6 +38,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import megamek.client.ratgenerator.FactionRecord;
+import megamek.client.ratgenerator.SalvageChance;
+
 /**
  * One random assignment table as the RAT data export stores it: the faction's own units with their weights, the
  * salvage factions with their weights, and the chance a roll goes to salvage.
@@ -56,14 +59,19 @@ import java.util.List;
  * salvageCount x (uint16 factionIndex, uint16 weight)
  * </pre>
  *
- * @param salvagePct the whole-number chance, 0 to 100, that a roll goes to a salvage faction
+ * @param salvagePct the whole-number chance, 0 to 100, that a drawn unit is replaced by salvage
  * @param units      the faction's own units, each an index into the export's unit list with its table weight
- * @param salvage    the salvage factions, each an index into the export's faction list with its table weight
+ * @param salvage    the salvage factions, each an index into the export's faction list with its share of all
+ *                   salvage in units of 1/{@value #SALVAGE_WEIGHT_SCALE}; salvage is rolled after each unit is drawn,
+ *                   so these weights are not in the same pool as the unit weights
  */
 public record RatTableContent(int salvagePct, List<WeightedEntry> units, List<WeightedEntry> salvage) {
 
     /** Largest index or weight that fits the encoding. */
     static final int MAX_UINT16 = 0xFFFF;
+
+    /** A salvage faction's weight is its share of all salvage, out of this total. */
+    public static final int SALVAGE_WEIGHT_SCALE = 10000;
 
     /**
      * An index into one of the export's lists, with its weight in the table.
@@ -72,6 +80,26 @@ public record RatTableContent(int salvagePct, List<WeightedEntry> units, List<We
      * @param weight the table weight, as {@code UnitTable} returns it
      */
     public record WeightedEntry(int index, int weight) {}
+
+    /**
+     * @param salvageChance the table's salvage chance
+     *
+     * @return the chance that a drawn unit is salvage, rounded to a whole percentage; 0 when there are no salvage
+     *       sources
+     */
+    public static int salvagePct(SalvageChance salvageChance) {
+        return salvageChance.hasSalvage() ? (int) Math.round(salvageChance.percent()) : 0;
+    }
+
+    /**
+     * @param salvageChance the table's salvage chance
+     * @param faction       one of its salvage sources
+     *
+     * @return the faction's share of all salvage, in units of 1/{@value #SALVAGE_WEIGHT_SCALE}
+     */
+    public static int salvageWeight(SalvageChance salvageChance, FactionRecord faction) {
+        return (int) Math.round(salvageChance.shareOf(faction) * SALVAGE_WEIGHT_SCALE);
+    }
 
     public RatTableContent {
         if ((salvagePct < 0) || (salvagePct > 100)) {

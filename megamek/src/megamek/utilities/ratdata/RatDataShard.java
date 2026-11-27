@@ -64,7 +64,7 @@ import java.util.Map;
 public class RatDataShard {
 
     /** Bumped whenever the layout changes, so the website can refuse data it does not understand. */
-    public static final int FORMAT_VERSION = 1;
+    public static final int FORMAT_VERSION = 2;
 
     /** Role index stored for a general table. */
     public static final int NO_ROLE = 255;

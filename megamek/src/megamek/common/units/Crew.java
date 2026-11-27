@@ -1657,17 +1657,27 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Sets crew state fields back to defaults. Used by MekHQ to clear game state.
+     * Sets crew state fields back to defaults. Used by MekHQ to clear game state between scenarios.
+     *
+     * <p>Hits are cleared too: they are battle state (for example {@link #setDoomed(boolean)} sets every slot to 6),
+     * and MekHQ re-applies each crew member's current injuries after calling this. Without the reset, hits from the
+     * last battle would carry into the next one and keep the unit counted as damaged or crippled after the pilot has
+     * healed (MegaMek/megamek#9719).</p>
      */
     public void resetGameState() {
         fatigueTurnCount = 0;
         doomed = false;
         ejected = false;
-        for (int i = 0; i < crewType.getCrewSlots(); i++) {
-            unconscious[i] = false;
-            dead[i] = false;
-            missing[i] = false;
-            pendingConRolls[i] = false;
+        swapConsoleRoles = false;
+        getSkillModifiers().clear();
+        for (int slot = 0; slot < crewType.getCrewSlots(); slot++) {
+            hits[slot] = 0;
+            unconscious[slot] = false;
+            dead[slot] = false;
+            missing[slot] = false;
+            pendingConRolls[slot] = false;
+            koThisRound[slot] = false;
+            actedThisTurn[slot] = false;
         }
     }
 

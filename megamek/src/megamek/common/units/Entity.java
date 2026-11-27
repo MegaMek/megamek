@@ -16819,6 +16819,18 @@ public abstract class Entity extends TurnOrdered
     public abstract boolean isDmgHeavy();
 
     /**
+     * Returns TRUE if the entity has been heavily damaged, optionally ignoring crew hits. Unit types whose heavy damage
+     * check counts crew hits override this; all others ignore {@code checkCrew}.
+     *
+     * @param checkCrew whether crew hits should count towards the damage level
+     *
+     * @return boolean
+     */
+    public boolean isDmgHeavy(boolean checkCrew) {
+        return isDmgHeavy();
+    }
+
+    /**
      * Returns TRUE if the entity has been moderately damaged.
      *
      * @return boolean
@@ -16826,11 +16838,35 @@ public abstract class Entity extends TurnOrdered
     public abstract boolean isDmgModerate();
 
     /**
+     * Returns TRUE if the entity has been moderately damaged, optionally ignoring crew hits. Unit types whose moderate
+     * damage check counts crew hits override this; all others ignore {@code checkCrew}.
+     *
+     * @param checkCrew whether crew hits should count towards the damage level
+     *
+     * @return boolean
+     */
+    public boolean isDmgModerate(boolean checkCrew) {
+        return isDmgModerate();
+    }
+
+    /**
      * Returns TRUE if the entity has been lightly damaged.
      *
      * @return boolean
      */
     public abstract boolean isDmgLight();
+
+    /**
+     * Returns TRUE if the entity has been lightly damaged, optionally ignoring crew hits. Unit types whose light damage
+     * check counts crew hits override this; all others ignore {@code checkCrew}.
+     *
+     * @param checkCrew whether crew hits should count towards the damage level
+     *
+     * @return boolean
+     */
+    public boolean isDmgLight(boolean checkCrew) {
+        return isDmgLight();
+    }
 
     /**
      * Returns the entity's current damage level.
@@ -16844,19 +16880,22 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns the entity's current damage level.
      *
+     * @param checkCrew whether crew hits should count towards the damage level; MekHQ passes {@code false} so that a
+     *                  repaired unit with an injured pilot is not reported as damaged
+     *
      * @return DMG_CRIPPLED, DMG_HEAVY, DMG_MODERATE, DMG_LIGHT or DMG_NONE.
      */
     public int getDamageLevel(boolean checkCrew) {
         if (isCrippled(checkCrew)) {
             return DMG_CRIPPLED;
         }
-        if (isDmgHeavy()) {
+        if (isDmgHeavy(checkCrew)) {
             return DMG_HEAVY;
         }
-        if (isDmgModerate()) {
+        if (isDmgModerate(checkCrew)) {
             return DMG_MODERATE;
         }
-        if (isDmgLight()) {
+        if (isDmgLight(checkCrew)) {
             return DMG_LIGHT;
         }
         return DMG_NONE;

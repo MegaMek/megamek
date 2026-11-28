@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -151,18 +151,31 @@ public class RandomUnitGenerator implements Serializable {
         }
     }
 
-    public synchronized void registerListener(ActionListener l) {
-        listeners.add(l);
+    /**
+     * Registers a listener to be told once when the tables have finished loading. When they already have, the listener
+     * would never be called, so it is not kept.
+     *
+     * @param listener the listener to notify when loading finishes
+     */
+    public synchronized void registerListener(ActionListener listener) {
+        if (!initialized) {
+            listeners.add(listener);
+        }
     }
 
     /**
-     * Notifies all the listeners that initialization is finished
+     * Notifies all the listeners that initialization is finished, then forgets them.
+     *
+     * <p>Loading happens once, so no listener is called again. This generator lives for the whole application, and a
+     * listener kept here keeps whatever it belongs to in memory: the random army dialog of every finished battle in a
+     * MekHQ session, and through it that battle's whole game window (issue #9789).</p>
      */
-    public void notifyListenersOfInitialization() {
+    public synchronized void notifyListenersOfInitialization() {
         if (initialized) {
-            for (ActionListener l : listeners) {
-                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "rugInitialized"));
+            for (ActionListener listener : listeners) {
+                listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "rugInitialized"));
             }
+            listeners.clear();
         }
     }
 

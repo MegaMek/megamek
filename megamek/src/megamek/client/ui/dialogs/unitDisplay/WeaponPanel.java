@@ -2755,4 +2755,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         displayMek(entity);
         selectWeapon(weaponNum);
     }
+
+    /**
+     * Stops listening to the GUI preferences. They live for the whole application, so while this panel stays
+     * registered there it keeps its client and game in memory (issue #9789).
+     */
+    public void dispose() {
+        GUIP.removePreferenceChangeListener(this);
+    }
 }

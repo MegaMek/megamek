@@ -299,6 +299,10 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             RATGenerator.getInstance().registerListener(this);
         }
         if (RATGenerator.getInstance().isInitialized()) {
+            // registerListener() waits on the loader's lock, so a panel built while the tables load is registered only
+            // after the "loaded" notice has gone out and is never told. Left registered, the long-lived generator keeps
+            // this panel's whole game window in memory after the game ends (issue #9789).
+            RATGenerator.getInstance().removeListener(this);
             updateFactionChoice();
         }
 

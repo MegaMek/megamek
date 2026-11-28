@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -115,6 +115,11 @@ public abstract class AbstractBoardView implements IBoardView {
     @Override
     public void dispose() {
         boardViewListeners.clear();
+        // Overlays may be registered with objects that outlive this board view (issue #9789)
+        for (IDisplayable overlay : overlays) {
+            overlay.dispose();
+        }
+        overlays.clear();
     }
 
     @Override

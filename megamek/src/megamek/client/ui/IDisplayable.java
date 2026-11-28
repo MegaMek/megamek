@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -123,4 +123,11 @@ public interface IDisplayable {
     default boolean slide() {
         return false;
     }
+
+    /**
+     * Called when the board view showing this IDisplayable is disposed. An overlay that registered with anything that
+     * outlives the board view, such as the GUI preferences or the game, must unregister here, or the board view and its
+     * game stay in memory after the game ends. The default for this method will do nothing.
+     */
+    default void dispose() {}
 }

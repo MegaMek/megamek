@@ -840,8 +840,12 @@ public class ClientGUI extends AbstractClientGUI
     @Override
     protected void initializeFrame() {
         super.initializeFrame();
-        menuBar = CommonMenuBar.getMenuBarForGame();
-        menuBar.setClientSupplier(() -> client);
+        // This runs several times while the window is set up. Each menu bar registers with application-wide listener
+        // lists and only the one held here is released in die(), so build it once and reuse it (issue #9789).
+        if (menuBar == null) {
+            menuBar = CommonMenuBar.getMenuBarForGame();
+            menuBar.setClientSupplier(() -> client);
+        }
         frame.setJMenuBar(menuBar);
     }
 
@@ -1010,9 +1014,6 @@ public class ClientGUI extends AbstractClientGUI
 
     @Override
     public void initialize() {
-        menuBar = CommonMenuBar.getMenuBarForGame();
-        menuBar.setClientSupplier(() -> client);
-        frame.setJMenuBar(menuBar);
         initializeFrame();
         super.initialize();
         boardViewsContainer.setName(CG_BOARD_VIEW);
@@ -1775,6 +1776,9 @@ public class ClientGUI extends AbstractClientGUI
 
         for (String s : phaseComponents.keySet()) {
             JComponent component = phaseComponents.get(s);
+            if (component instanceof StatusBarPhaseDisplay statusBarPhaseDisplay) {
+                statusBarPhaseDisplay.removePreferenceListeners();
+            }
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
@@ -1786,6 +1790,14 @@ public class ClientGUI extends AbstractClientGUI
             }
         }
         phaseComponents.clear();
+
+        // These register with application-wide preference stores. Left registered, they keep this window and its
+        // game in memory after the game ends, one more for every battle in a MekHQ session (issue #9789).
+        unitDisplayPanel.dispose();
+        if (forceDisplayPanel != null) {
+            forceDisplayPanel.dispose();
+        }
+        tilesetManager.dispose();
 
         client.die();
 

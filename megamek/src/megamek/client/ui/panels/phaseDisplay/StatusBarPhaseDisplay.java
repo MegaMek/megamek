@@ -357,6 +357,15 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         }
     }
 
+    /**
+     * Stops listening to the GUI preferences and key bindings. Both live for the whole application, so while this
+     * display stays registered there it keeps its game window and game in memory (issue #9789).
+     */
+    public void removePreferenceListeners() {
+        GUIP.removePreferenceChangeListener(this);
+        KeyBindParser.removePreferenceChangeListener(this);
+    }
+
     public void extendTimer() {
         if (turnTimer != null) {
             turnTimer.setExtendTimer();

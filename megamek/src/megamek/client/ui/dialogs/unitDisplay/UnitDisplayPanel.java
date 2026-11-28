@@ -621,4 +621,12 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
     public ClientGUI getClientGUI() {
         return clientgui;
     }
+
+    /**
+     * Releases the listeners this display's panels hold on application-wide objects. Call it when the display's
+     * owner is torn down, or the display and its game stay in memory (issue #9789).
+     */
+    public void dispose() {
+        wPan.dispose();
+    }
 }

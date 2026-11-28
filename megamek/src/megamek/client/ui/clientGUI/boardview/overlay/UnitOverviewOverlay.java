@@ -574,4 +574,9 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             clientgui.getCurrentBoardView().ifPresent(IBoardView::refreshDisplayables);
         }
     }
+
+    @Override
+    public void dispose() {
+        GUIP.removePreferenceChangeListener(this);
+    }
 }

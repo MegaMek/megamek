@@ -6054,6 +6054,7 @@ public final class BoardView extends AbstractBoardView
         super.dispose();
         redrawTimerTask.cancel();
         fovHighlightingAndDarkening.die();
+        tileManager.dispose();
         KeyBindParser.removePreferenceChangeListener(this);
         GUIP.removePreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);

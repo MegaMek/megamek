@@ -180,6 +180,19 @@ public class Client extends AbstractClient {
         return tilesetManager;
     }
 
+    /**
+     * Shuts the client down and releases its tile set, which stays registered with the application-wide preference
+     * stores (and so keeps this client's game in memory) until it is disposed.
+     */
+    @Override
+    public synchronized void die() {
+        super.die();
+        if (tilesetManager != null) {
+            tilesetManager.dispose();
+            tilesetManager = null;
+        }
+    }
+
     @Override
     public Game getGame() {
         return game;

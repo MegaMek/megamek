@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,13 +50,13 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.game.Game;
 import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
@@ -97,6 +97,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     private float alpha = 1;
     private int overlayWidth = 500;
     private int overlayHeight = 500;
+    private final GameListener gameListener;
 
     public AbstractBoardViewOverlay(BoardView boardView, Font font) {
         this.font = font;
@@ -107,7 +108,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
         currentPhase = currentGame.getPhase();
         // Detects phase and turn changes to display
         // The active player has changed
-        GameListener gameListener = new GameListenerAdapter() {
+        gameListener = new GameListenerAdapter() {
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 currentPhase = e.getNewPhase();
@@ -327,6 +328,18 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
                 setDirty();
                 break;
         }
+    }
+
+    /**
+     * Unregisters from the game, the GUI preferences and the key bindings. The preferences and key bindings live for
+     * the whole application, so while this overlay stays registered there it keeps its board view and game in memory
+     * (issue #9789).
+     */
+    @Override
+    public void dispose() {
+        currentGame.removeGameListener(gameListener);
+        GUIPreferences.getInstance().removePreferenceChangeListener(this);
+        KeyBindParser.removePreferenceChangeListener(this);
     }
 
     /** Makes the BoardView redraw, updating the overlay in the process. */

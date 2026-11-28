@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -65,6 +65,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Configuration;
+import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
@@ -158,6 +159,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
     private boolean cursorVisible = true;
     private final Timer cursorBlinkTimer;
+    private final GameListener gameListener;
 
     public ChatterBoxOverlay(ClientGUI clientGUI, BoardView boardview, MegaMekController controller,
           ChatterBox chatterBox) {
@@ -172,7 +174,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
             boardView.refreshDisplayables();
         });
         cursorBlinkTimer.start();
-        client.getGame().addGameListener(new GameListenerAdapter() {
+        gameListener = new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 addChatMessage(e.getMessage());
@@ -192,7 +194,8 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
                     addChatMessage("MegaMek: " + e.toString());
                 }
             }
-        });
+        };
+        client.getGame().addGameListener(gameListener);
 
         adaptToGUIScale();
 
@@ -968,8 +971,15 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         }
     }
 
+    /**
+     * Stops the cursor blink timer and unregisters from the game and the GUI preferences. A running Swing timer and
+     * the preferences both outlive the board view, so either one alone keeps it and its game in memory (issue #9789).
+     */
+    @Override
     public void dispose() {
         stopCursorBlinking();
+        client.getGame().removeGameListener(gameListener);
+        GUIP.removePreferenceChangeListener(this);
     }
 
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -486,5 +486,14 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         }
 
         forceTree.setBackground(GUIP.getUnitToolTipBGColor());
+    }
+
+    /**
+     * Stops listening to the game and to the GUI preferences. The preferences live for the whole application, so
+     * while this panel stays registered there it keeps its game window and game in memory (issue #9789).
+     */
+    public void dispose() {
+        client.getGame().removeGameListener(this);
+        GUIP.removePreferenceChangeListener(this);
     }
 }

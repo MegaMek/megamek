@@ -164,6 +164,18 @@ public class TilesetManager implements IPreferenceChangeListener {
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
+    /**
+     * Stops listening to the shared preference stores. Call this when the owner of this manager is torn down.
+     *
+     * <p>Both preference stores live for the whole application, so while this manager stays registered with them it
+     * cannot be collected, and neither can the game and the image caches it holds. In MekHQ, which runs many battles in
+     * one session, every finished battle used to stay in memory this way (issue #9789).</p>
+     */
+    public void dispose() {
+        PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
+        GUIPreferences.getInstance().removePreferenceChangeListener(this);
+    }
+
     /** React to changes in the settings. */
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {

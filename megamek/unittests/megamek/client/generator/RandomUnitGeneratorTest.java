@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,8 +39,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import megamek.common.loaders.MekSummary;
 import org.junit.jupiter.api.Test;
@@ -132,5 +134,43 @@ class RandomUnitGeneratorTest {
         expected.add(mockMek8);
         doReturn(0.99).when(testRug).getRandom();
         assertEquals(expected, testRug.generate(1, "mockRat"));
+    }
+
+    /**
+     * A listener waiting for the tables to load is told once and then forgotten. The generator lives for the whole
+     * application, so a listener it kept would keep its owner in memory: issue #9789, where every finished MekHQ
+     * battle stayed in memory through its random army dialog.
+     */
+    @Test
+    void listenerIsToldOnceAndThenForgotten() throws Exception {
+        RandomUnitGenerator generator = new RandomUnitGenerator();
+        AtomicInteger notifications = new AtomicInteger();
+        generator.registerListener(event -> notifications.incrementAndGet());
+
+        markLoaded(generator);
+        generator.notifyListenersOfInitialization();
+        generator.notifyListenersOfInitialization();
+
+        assertEquals(1, notifications.get());
+    }
+
+    /** A listener registered after the tables have loaded can never be told, so it is not kept. */
+    @Test
+    void listenerRegisteredAfterLoadingIsNotKept() throws Exception {
+        RandomUnitGenerator generator = new RandomUnitGenerator();
+        markLoaded(generator);
+        AtomicInteger notifications = new AtomicInteger();
+        generator.registerListener(event -> notifications.incrementAndGet());
+
+        generator.notifyListenersOfInitialization();
+
+        assertEquals(0, notifications.get());
+    }
+
+    /** Marks the generator's tables as loaded without reading any files. */
+    private static void markLoaded(RandomUnitGenerator generator) throws Exception {
+        Field initialized = RandomUnitGenerator.class.getDeclaredField("initialized");
+        initialized.setAccessible(true);
+        initialized.setBoolean(generator, true);
     }
 }

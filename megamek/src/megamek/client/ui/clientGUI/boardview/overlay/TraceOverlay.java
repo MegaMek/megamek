@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -94,5 +94,10 @@ public class TraceOverlay implements IDisplayable, IPreferenceChangeListener {
                 boardView.refreshDisplayables();
             }
         }
+    }
+
+    @Override
+    public void dispose() {
+        GUIP.removePreferenceChangeListener(this);
     }
 }

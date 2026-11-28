@@ -448,6 +448,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
         if (client != null) {
             client.addCloseClientListener(() -> {
+                // The GUI preferences outlive the game; staying registered there keeps this minimap, its game window
+                // and its game in memory after the game ends (issue #9789)
+                GUIP.removePreferenceChangeListener(this);
                 GIF_RECORDING_DECISIONS.remove(game.getUUIDString());
                 if (ownsSummaryGif && (gifWriterThread != null)) {
                     if (gifWriterThread.isAlive()) {

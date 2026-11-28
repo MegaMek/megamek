@@ -1,5 +1,7 @@
-"""Offline fake-runner coverage; never invokes Git or Gradle."""
+"""Offline coverage: fake Git and Gradle runners, plus local-only Git for staging."""
 
+import os
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -121,6 +123,18 @@ class PinnedBuildTests(unittest.TestCase):
         self.assertEqual(ancestry, {"refs/remotes/origin/releases/0.51.02"})
         checkouts = [c[-1] for c, _ in self.calls if "checkout" in c]
         self.assertEqual(checkouts, [branch[r] for r in pinned.SOURCES])
+        tracking = "refs/remotes/origin/releases/0.51.02"
+        fetches = [c for c, _ in self.calls if "fetch" in c]
+        self.assertEqual(len(fetches), len(pinned.SOURCES))
+        self.assertTrue(all(c[-1] == f"+{tracking}:{tracking}" for c in fetches))
+        for repo in pinned.SOURCES:
+            # The branch must arrive from the local source before origin is rewritten.
+            steps = [c for c, _ in self.calls
+                     if c[:2] == ["git", "-C"] and Path(c[2]).name == repo
+                     and Path(c[2]).parent != self.sources]
+            self.assertEqual([next(w for w in ("fetch", "set-url", "checkout") if w in c)
+                              for c in steps if {"fetch", "set-url", "checkout"} & set(c)],
+                             ["fetch", "set-url", "checkout"])
         self.assertTrue(all("-PsuiteReleaseChannel=core" in c for c in self.gradle_calls()))
 
     def test_noop_and_unsafe_inventories_fail_before_clone(self):
@@ -213,6 +227,51 @@ class PinnedBuildTests(unittest.TestCase):
         self.assertIn("Execution failed for task ':megamek:distTar'.", str(caught.exception))
         self.assertIn("Missing pinned data.", str(caught.exception))
         self.assertEqual(len(calls), 1)
+
+
+@unittest.skipUnless(shutil.which("git"), "requires Git")
+class StageWithGitTests(unittest.TestCase):
+    """Real local Git: clone ref semantics cannot be modelled by the fake runner."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        isolated = {"GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1",
+                    "GIT_AUTHOR_NAME": "Suite", "GIT_AUTHOR_EMAIL": "suite@example.invalid",
+                    "GIT_COMMITTER_NAME": "Suite", "GIT_COMMITTER_EMAIL": "suite@example.invalid"}
+        environment = patch.dict(os.environ, isolated)
+        environment.start()
+        self.addCleanup(environment.stop)
+
+    def git(self, *args):
+        return subprocess.run(["git", *args], check=True, capture_output=True,
+                              text=True).stdout.strip()
+
+    def official_source(self, repo, branch):
+        """A full clone whose branch exists only as a remote-tracking ref, as in the workflow."""
+        upstream = self.root / "upstream" / repo
+        self.git("init", "-q", "-b", "main", str(upstream))
+        self.git("-C", str(upstream), "commit", "-q", "--allow-empty", "-m", "main")
+        self.git("-C", str(upstream), "switch", "-q", "-c", branch)
+        self.git("-C", str(upstream), "commit", "-q", "--allow-empty", "-m", "patch")
+        sha = self.git("-C", str(upstream), "rev-parse", "HEAD")
+        self.git("-C", str(upstream), "switch", "-q", "main")
+        source = self.root / "sources" / repo
+        self.git("clone", "-q", str(upstream), str(source))
+        self.git("-C", str(source), "remote", "set-url", "origin", pinned.official(repo))
+        return sha
+
+    def test_stages_commits_that_exist_only_on_the_release_branch(self):
+        branch = "releases/0.51.02"
+        commits = {repo: self.official_source(repo, branch) for repo in pinned.SOURCES}
+        staged = self.root / "staged"
+        staged.mkdir()
+        pinned.stage(self.root / "sources", commits, staged, subprocess.run, branch=branch)
+        for repo, sha in commits.items():
+            self.assertEqual(self.git("-C", str(staged / repo), "rev-parse", "HEAD"), sha)
+            self.assertEqual(self.git("-C", str(staged / repo), "remote", "get-url", "origin"),
+                             pinned.official(repo))
 
 
 if __name__ == "__main__":

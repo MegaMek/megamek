@@ -65,9 +65,14 @@ def stage(sources, commits, parent, runner, *, branch="main"):
         inspect_source(Path(sources) / repo, repo, commits[repo], runner, branch)
     for repo in SOURCES:
         dest = parent / repo
-        # No fetch, branch checkout, or network operation. Clone copies only Git objects.
+        # No branch checkout or network operation; Git objects come only from the local source.
         run(["git", "clone", "--no-local", "--no-checkout", "--origin", "origin",
              str(Path(sources) / repo), str(dest)], runner)
+        # Clone copies only the source's local branches and tags. A release branch exists there
+        # only as a remote-tracking ref, so fetch it locally before origin points at GitHub.
+        tracking = f"refs/remotes/origin/{branch}"
+        run(["git", "-C", str(dest), "fetch", "--no-tags", "origin",
+             f"+{tracking}:{tracking}"], runner)
         run(["git", "-C", str(dest), "remote", "set-url", "origin", official(repo)], runner)
         run(["git", "-C", str(dest), "checkout", "--detach", commits[repo]], runner)
         if run(["git", "-C", str(dest), "remote", "get-url", "origin"], runner) != official(repo):

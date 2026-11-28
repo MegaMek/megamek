@@ -2911,6 +2911,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         GUIP.removePreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
         MekSummaryCache.getInstance().removeListener(mekSummaryCacheListener);
+        // The map preview is otherwise only disposed when the game starts through the lobby; a scenario, or a window
+        // closed in the lobby, left it holding the whole game window in memory (issue #9789)
+        killPreviewBV();
 
         if (loader != null) {
             loader.cancel(true);

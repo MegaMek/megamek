@@ -1735,4 +1735,84 @@ class PrincessTest {
             assertFalse(mockPrincess.canRecoverMobility(mockMek));
         }
     }
+
+    /**
+     * Regression tests for {@link Princess#hasNoRetreatPath(Entity)} (issue #9794): a crippled, withdrawing Mek
+     * that is too hot to walk this turn is not trapped, so it must keep holding its fire. The numbers come from the
+     * Hellstar in the reporter's game: 22 heat, zero MP, sinking 50 against 10 heat a turn from engine damage.
+     */
+    @Nested
+    class HasNoRetreatPathTests {
+
+        private UnitBehavior mockBehaviorTracker;
+
+        @BeforeEach
+        void setUpRetreatCheck() {
+            Game mockGame = mock(Game.class);
+            Hex mockHex = mock(Hex.class);
+            when(mockHex.containsTerrain(Terrains.FIRE)).thenReturn(false);
+            when(mockGame.getHex(any(Coords.class), anyInt())).thenReturn(mockHex);
+            doReturn(mockGame).when(mockPrincess).getGame();
+            mockBehaviorTracker = mock(UnitBehavior.class);
+            when(mockPrincess.getUnitBehaviorTracker()).thenReturn(mockBehaviorTracker);
+            when(mockPrincess.hasNoRetreatPath(any(Entity.class))).thenCallRealMethod();
+            when(mockPrincess.canRecoverMobility(any(Entity.class))).thenCallRealMethod();
+            when(mockPrincess.recurringHeat(any(Entity.class), anyBoolean())).thenCallRealMethod();
+        }
+
+        /** A standing Mek with no jump jets in a hex that is not burning, labelled with the given behavior. */
+        private Mek withdrawingMek(int runMP, int heatCapacity, int engineCritHeat, BehaviorType behavior) {
+            Mek mockMek = mock(BipedMek.class);
+            when(mockMek.isPermanentlyImmobilized(true)).thenReturn(false);
+            when(mockMek.getRunMP()).thenReturn(runMP);
+            when(mockMek.getHeatCapacity()).thenReturn(heatCapacity);
+            when(mockMek.getHeatCapacityWithWater()).thenReturn(heatCapacity);
+            when(mockMek.getEngineCritHeat()).thenReturn(engineCritHeat);
+            when(mockMek.isProne()).thenReturn(false);
+            when(mockMek.getAnyTypeMaxJumpMP()).thenReturn(0);
+            when(mockMek.tracksHeat()).thenReturn(true);
+            when(mockMek.getAltitude()).thenReturn(0);
+            when(mockMek.getElevation()).thenReturn(0);
+            when(mockMek.getPosition()).thenReturn(new Coords(24, 26));
+            when(mockMek.getBoardId()).thenReturn(0);
+            when(mockBehaviorTracker.getBehaviorType(mockMek, mockPrincess)).thenReturn(behavior);
+            return mockMek;
+        }
+
+        @Test
+        void heatStoppedMekIsNotTrapped() {
+            // The reporter's Hellstar: no long-range paths at zero MP, so the movement phase labelled it "no path".
+            // It cools 40 points a turn and walks again next turn, so it holds its fire.
+            Mek hellstar = withdrawingMek(0, 50, 10, BehaviorType.NoPathToDestination);
+            assertFalse(mockPrincess.hasNoRetreatPath(hellstar));
+        }
+
+        @Test
+        void mekThatCannotCoolIsTrapped() {
+            // Sinks that only match the incoming heat never bring the movement back, so the Mek is stuck for good.
+            Mek overheated = withdrawingMek(0, 10, 10, BehaviorType.NoPathToDestination);
+            assertTrue(mockPrincess.hasNoRetreatPath(overheated));
+        }
+
+        @Test
+        void mekWithLegsGoneIsTrapped() {
+            // Movement lost to damage does not come back, so the unit may still fight.
+            Mek legless = withdrawingMek(0, 50, 0, BehaviorType.NoPathToDestination);
+            when(legless.isPermanentlyImmobilized(true)).thenReturn(true);
+            assertTrue(mockPrincess.hasNoRetreatPath(legless));
+        }
+
+        @Test
+        void mekBoxedInWithMovementLeftIsTrapped() {
+            // A unit that can still move but has no route to its edge is the case the rule was written for.
+            Mek boxedIn = withdrawingMek(5, 50, 0, BehaviorType.NoPathToDestination);
+            assertTrue(mockPrincess.hasNoRetreatPath(boxedIn));
+        }
+
+        @Test
+        void mekWithARouteHomeIsNotTrapped() {
+            Mek withdrawing = withdrawingMek(5, 50, 0, BehaviorType.ForcedWithdrawal);
+            assertFalse(mockPrincess.hasNoRetreatPath(withdrawing));
+        }
+    }
 }

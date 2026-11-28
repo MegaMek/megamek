@@ -3361,12 +3361,26 @@ public class Princess extends BotClient {
      * Returns {@code true} when the given unit is withdrawing but has no path to its retreat edge. A trapped
      * unit cannot trade distance for safety, so it is allowed to fight instead of holding its fire.
      *
+     * <p>A unit stopped only by heat it will shed is not trapped (issue #9794). The movement phase labels any
+     * unit with no long-range paths "no path to destination", and a unit at zero MP has none, so the label alone
+     * would let a crippled Mek fire every turn it ran too hot to walk. Firing keeps it hot, so it would never
+     * leave.</p>
+     *
      * @param entity the withdrawing unit to check
      *
-     * @return {@code true} when no route to the retreat edge exists for this unit
+     * @return {@code true} when no route to the retreat edge exists for this unit and it will not regain movement
+     *       by cooling down
      */
     boolean hasNoRetreatPath(final Entity entity) {
-        return getUnitBehaviorTracker().getBehaviorType(entity, this) == BehaviorType.NoPathToDestination;
+        if (getUnitBehaviorTracker().getBehaviorType(entity, this) != BehaviorType.NoPathToDestination) {
+            return false;
+        }
+        if (canRecoverMobility(entity)) {
+            LOGGER.info("[ForcedWithdrawal] {} has no path this turn only because of heat; not treating it as "
+                  + "trapped.", entity.getDisplayName());
+            return false;
+        }
+        return true;
     }
 
     MoraleUtil getMoraleUtil() {

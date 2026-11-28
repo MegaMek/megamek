@@ -14616,6 +14616,11 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
+            // Only an attack that hits makes the target roll to stay standing (Core p.79)
+            if (te.canFall() && caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
+                Game.rulesManager.getRulesPSR().clubImpact(game, te);
+            }
+
             // Chain whips can entangle 'Mek and ProtoMek limbs. This
             // implementation assumes that in order to do so the limb must still
             // have some structure left, so if the whip hits and destroys a
@@ -29669,11 +29674,6 @@ public class TWGameManager extends AbstractGameManager {
                     } else if (clubType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)) {
                         damage += Compute.d6(4);
                     }
-                }
-                if (caa.getTargetType() == Targetable.TYPE_ENTITY &&
-                      ((Entity) caa.getTarget(game)).canFall() &&
-                      caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
-                    Game.rulesManager.getRulesPSR().clubImpact(game, (Entity) caa.getTarget(game));
                 }
             }
             case DfaAttackAction daa -> {
